@@ -32,13 +32,8 @@ class _FollowupReports extends State<FollowupReports> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<FollowupReportsProvider>(context, listen: false);
-      reportsProvider.setFollowupSearch(
-        '',
-        '',
-        '',
-        '',
-        '',
-      );
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1); // 1 is 'Today' index
       reportsProvider.getFollowupReports(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
@@ -552,12 +547,6 @@ class _FollowupReports extends State<FollowupReports> {
                           //     String toDate = reportsProvider.formattedToDate;
                           //     print(
                           //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          //     reportsProvider.setSearchCriteria(
-                          //       reportsProvider.search,
-                          //       fromDate,
-                          //       toDate,
-                          //       status,
-                          //     );
                           //     reportsProvider.getSearchCustomers(context);
                           //   },
                           //   style: ElevatedButton.styleFrom(

@@ -29,7 +29,9 @@ class InvoiceReportProvider extends ChangeNotifier {
   String _enquirySource = '';
   String _enquiryFor = '';
   bool _hasFetched = false;
+  bool _isLoading = false;
   bool get hasFetched => _hasFetched;
+  bool get isLoading => _isLoading;
   String get enquirySource => _enquirySource;
   String get enquiryFor => _enquiryFor;
   String get Search => _Search;
@@ -207,25 +209,19 @@ class InvoiceReportProvider extends ChangeNotifier {
 
 //bill and payments report
   Future<void> getBillandPaymentsReport(BuildContext context) async {
+    if (_isLoading) return;
     try {
+      _isLoading = true;
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      print(_fromDateS);
-      print(_toDateS);
       String isDate = "1";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
         _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
         _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-
-      String toUserId = (_selectedUser ?? 0).toString();
-
-      String isCheck = _isChecked ? "1" : "0";
-      print(isCheck);
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
@@ -235,7 +231,6 @@ class InvoiceReportProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          // log(data.toString());
           _tempData = (data as List<dynamic>)
               .map((item) => InvoiceReportModel.fromJson(item))
               .toList();
@@ -248,58 +243,45 @@ class InvoiceReportProvider extends ChangeNotifier {
             }
           }
 
-          // Remove the last item from _tempData
-          _tempData.removeLast();
-
-          // Pass the remaining items in _tempData to _leadData
+          if (_tempData.isNotEmpty) {
+            _tempData.removeLast();
+          }
           _taskReport = List.from(_tempData);
-
-          // _taskReport = (data as List<dynamic>)
-          //     .map((item) => InvoiceReportModel.fromJson(item))
-          //     .toList();
-
-          Loader.stopLoader(context);
-          _hasFetched = true;
-          notifyListeners();
         }
       } else {
-        _hasFetched = true;
-        Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
-      _hasFetched = true;
-      Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    } finally {
+      Loader.stopLoader(context);
+      _isLoading = false;
+      _hasFetched = true;
+      notifyListeners();
     }
   }
 
   //task report
   Future<void> getSearchTaskReport(BuildContext context) async {
+    if (_isLoading) return;
     try {
+      _isLoading = true;
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      print(_fromDateS);
-      print(_toDateS);
       String isDate = "1";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
         _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
         _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-
-      String toUserId = (_selectedUser ?? 0).toString();
-
       String isCheck = _isChecked ? "1" : "0";
-      print(isCheck);
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
@@ -309,7 +291,6 @@ class InvoiceReportProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          // log(data.toString());
           _tempData = (data as List<dynamic>)
               .map((item) => InvoiceReportModel.fromJson(item))
               .toList();
@@ -322,33 +303,25 @@ class InvoiceReportProvider extends ChangeNotifier {
             }
           }
 
-          // Remove the last item from _tempData
-          _tempData.removeLast();
-
-          // Pass the remaining items in _tempData to _leadData
+          if (_tempData.isNotEmpty) {
+            _tempData.removeLast();
+          }
           _taskReport = List.from(_tempData);
-
-          // _taskReport = (data as List<dynamic>)
-          //     .map((item) => InvoiceReportModel.fromJson(item))
-          //     .toList();
-
-          Loader.stopLoader(context);
-          _hasFetched = true;
-          notifyListeners();
         }
       } else {
-        Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
-      _hasFetched = true;
-      Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    } finally {
+      Loader.stopLoader(context);
+      _hasFetched = true;
+      notifyListeners();
     }
   }
 

@@ -35,7 +35,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
 
-      // reportsProvider.setTaskSearchCriteria('', '', '', '', '', '', '');
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1); // 1 is 'Today' index
       reportsProvider.getSearchTaskReport(context);
       dropDownProvider.getEnquirySource(context);
       dropDownProvider.getEnquiryFor(context);
@@ -97,7 +98,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           ),
                           child: TextField(
                             controller: searchController,
-                            textAlignVertical: TextAlignVertical.center,
+                            textAlign: TextAlign.center,
                             onSubmitted: (query) {
                               reportsProvider.setTaskSearchCriteria(
                                   query,
@@ -120,61 +121,74 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                 color: Colors.grey[600],
                                 size: 20,
                               ),
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    reportsProvider.setTaskSearchCriteria(
+                                        searchController.text,
+                                        reportsProvider.fromDateS,
+                                        reportsProvider.toDateS,
+                                        reportsProvider.Status,
+                                        reportsProvider.AssignedTo,
+                                        reportsProvider.enquiryFor,
+                                        reportsProvider.enquirySource);
+                                    reportsProvider
+                                        .getSearchTaskReport(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF6C7C93),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                  ),
+                                  child: const Text('Search',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500)),
+                                ),
+                              ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              suffixIcon: searchController.text.isNotEmpty ||
-                                      reportsProvider.Search.isNotEmpty
-                                  ? IconButton(
-                                      icon: const Icon(Icons.close),
-                                      onPressed: () {
-                                        searchController.clear();
-                                        reportsProvider.setTaskSearchCriteria(
-                                            '',
-                                            reportsProvider.fromDateS,
-                                            reportsProvider.toDateS,
-                                            reportsProvider.Status,
-                                            reportsProvider.AssignedTo,
-                                            reportsProvider.enquiryFor,
-                                            reportsProvider.enquirySource);
-                                        reportsProvider
-                                            .getSearchTaskReport(context);
-                                      },
-                                    )
-                                  : null,
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        OutlinedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
+                          icon: const Icon(Icons.filter_list),
                           label: Text(MediaQuery.of(context).size.width > 860
                               ? 'Filter'
                               : ''),
-                          style: ElevatedButton.styleFrom(
+                          style: OutlinedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
                                 : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
+                                ? const Color(0xFF5499D9)
                                 : Colors.white,
-                            elevation: 0,
-                            side: BorderSide(color: AppColors.primaryBlue),
+                            side: BorderSide(
+                                color: reportsProvider.isFilter
+                                    ? const Color(0xFF5499D9)
+                                    : AppColors.primaryBlue),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
-                              vertical: 12,
+                              vertical: 0,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        const SizedBox(width: 8),
+                        CustomElevatedButton(
                           onPressed: () {
                             exportToExcel(
                               headers: [
@@ -186,23 +200,21 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                 'Invoice Amount',
                                 'Receipt Amount',
                                 'Balance Amount',
-                                'Registered Date',
+                                'Registered Date'
                               ],
                               data: reportsProvider.taskReport.map((task) {
                                 return {
                                   'Customer Name': task.customerName,
+                                  'Mobile': task.contactNumber,
                                   'Address': task.address1,
                                   'Invoice No': task.invoiceNo,
                                   'Invoice Date': task.invoiceDate.isNotEmpty
                                       ? DateFormat('dd MMM yyyy').format(
                                           DateTime.parse(task.invoiceDate))
                                       : '',
-                                  'Invoice Amount':
-                                      task.invoiceAmount.toString(),
-                                  'Receipt Amount':
-                                      task.recieptAmount.toString(),
-                                  'Balance Amount':
-                                      task.balanceAmount.toString(),
+                                  'Invoice Amount': task.invoiceAmount,
+                                  'Receipt Amount': task.recieptAmount,
+                                  'Balance Amount': task.balanceAmount,
                                   'Registered Date': task
                                           .registeredDate.isNotEmpty
                                       ? DateFormat('dd MMM yyyy').format(
@@ -213,22 +225,11 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               fileName: 'Invoice_Report',
                             );
                           },
-                          icon: const Icon(Icons.download, size: 18),
-                          label: const Text('Export',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 15,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        )
+                          buttonText: 'Export to Excel',
+                          textColor: AppColors.whiteColor,
+                          borderColor: const Color(0xFFEBB12B),
+                          backgroundColor: const Color(0xFFEBB12B),
+                        ),
                       ],
                     ),
                   )
@@ -249,7 +250,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               ),
                               child: TextField(
                                 controller: searchController,
-                                textAlignVertical: TextAlignVertical.center,
+                                textAlign: TextAlign.center,
                                 onSubmitted: (query) {
                                   reportsProvider.setTaskSearchCriteria(
                                       query,
@@ -276,20 +277,23 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                   ),
-                                  suffixIcon: searchController.text.isNotEmpty ||
+                                  suffixIcon: searchController
+                                              .text.isNotEmpty ||
                                           reportsProvider.Search.isNotEmpty
                                       ? IconButton(
                                           icon: const Icon(Icons.close),
                                           onPressed: () {
                                             searchController.clear();
-                                            reportsProvider.setTaskSearchCriteria(
-                                                '',
-                                                reportsProvider.fromDateS,
-                                                reportsProvider.toDateS,
-                                                reportsProvider.Status,
-                                                reportsProvider.AssignedTo,
-                                                reportsProvider.enquiryFor,
-                                                reportsProvider.enquirySource);
+                                            reportsProvider
+                                                .setTaskSearchCriteria(
+                                                    '',
+                                                    reportsProvider.fromDateS,
+                                                    reportsProvider.toDateS,
+                                                    reportsProvider.Status,
+                                                    reportsProvider.AssignedTo,
+                                                    reportsProvider.enquiryFor,
+                                                    reportsProvider
+                                                        .enquirySource);
                                             reportsProvider
                                                 .getSearchTaskReport(context);
                                           },
@@ -318,7 +322,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                         ? AppColors.primaryBlue
                                         : Colors.white,
                                     elevation: 0,
-                                    side: BorderSide(color: AppColors.primaryBlue),
+                                    side: BorderSide(
+                                        color: AppColors.primaryBlue),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 12,
@@ -329,65 +334,67 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      exportToExcel(
-                                        headers: [
-                                          'Customer Name',
-                                          'Mobile',
-                                          'Address',
-                                          'Invoice No',
-                                          'Invoice Date',
-                                          'Invoice Amount',
-                                          'Receipt Amount',
-                                          'Balance Amount',
-                                          'Registered Date',
-                                        ],
-                                        data: reportsProvider.taskReport.map((task) {
-                                          return {
-                                            'Customer Name': task.customerName,
-                                            'Mobile': task.contactNumber,
-                                            'Address': task.address1,
-                                            'Invoice No': task.invoiceNo,
-                                            'Invoice Date':
-                                                task.invoiceDate.isNotEmpty
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.invoiceDate))
-                                                    : '',
-                                            'Invoice Amount':
-                                                task.invoiceAmount.toString(),
-                                            'Receipt Amount':
-                                                task.recieptAmount.toString(),
-                                            'Balance Amount':
-                                                task.balanceAmount.toString(),
-                                            'Registered Date':
-                                                task.registeredDate.isNotEmpty
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.registeredDate))
-                                                    : '',
-                                          };
-                                        }).toList(),
-                                        fileName: 'Invoice_Report',
-                                      );
-                                    },
-                                    icon: const Icon(Icons.download, size: 18),
-                                    label: const Text('Export',
-                                        style: TextStyle(fontWeight: FontWeight.bold)),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      elevation: 0,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24,
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    exportToExcel(
+                                      headers: [
+                                        'Customer Name',
+                                        'Mobile',
+                                        'Address',
+                                        'Invoice No',
+                                        'Invoice Date',
+                                        'Invoice Amount',
+                                        'Receipt Amount',
+                                        'Balance Amount',
+                                        'Registered Date',
+                                      ],
+                                      data: reportsProvider.taskReport
+                                          .map((task) {
+                                        return {
+                                          'Customer Name': task.customerName,
+                                          'Mobile': task.contactNumber,
+                                          'Address': task.address1,
+                                          'Invoice No': task.invoiceNo,
+                                          'Invoice Date':
+                                              task.invoiceDate.isNotEmpty
+                                                  ? DateFormat('dd MMM yyyy')
+                                                      .format(DateTime.parse(
+                                                          task.invoiceDate))
+                                                  : '',
+                                          'Invoice Amount':
+                                              task.invoiceAmount.toString(),
+                                          'Receipt Amount':
+                                              task.recieptAmount.toString(),
+                                          'Balance Amount':
+                                              task.balanceAmount.toString(),
+                                          'Registered Date':
+                                              task.registeredDate.isNotEmpty
+                                                  ? DateFormat('dd MMM yyyy')
+                                                      .format(DateTime.parse(
+                                                          task.registeredDate))
+                                                  : '',
+                                        };
+                                      }).toList(),
+                                      fileName: 'Invoice_Report',
+                                    );
+                                  },
+                                  icon: const Icon(Icons.download, size: 18),
+                                  label: const Text('Export',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryBlue,
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
                                     ),
-                                  )
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           ],
@@ -1085,7 +1092,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                   ),
                                   child: const Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         width: 80,
@@ -1143,7 +1151,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                     shrinkWrap: true,
                                     physics:
                                         const AlwaysScrollableScrollPhysics(),
-                                    itemCount: reportsProvider.taskReport.length,
+                                    itemCount:
+                                        reportsProvider.taskReport.length,
                                     itemBuilder: (context, index) {
                                       var invoice =
                                           reportsProvider.taskReport[index];
@@ -1162,10 +1171,10 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                               SizedBox(
                                                 width: 80,
                                                 child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                          vertical: 12.0,
-                                                          horizontal: 25.0),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 12.0,
+                                                      horizontal: 25.0),
                                                   child: Text(
                                                       (index + 1).toString(),
                                                       style: const TextStyle(
@@ -1193,30 +1202,60 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                           BorderRadius.circular(
                                                               50),
                                                     ),
-                                                    child: MediaQuery.of(context)
-                                                                .size
-                                                                .width >
-                                                            1700
-                                                        ? Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize.min,
-                                                            children: [
-                                                              const Icon(
-                                                                Icons
-                                                                    .account_circle,
-                                                                size: 15,
-                                                                color: Color(
-                                                                    0xFF152D70),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 8),
-                                                              Text(
-                                                                invoice.customerName
-                                                                            .length >
-                                                                        20
-                                                                    ? '${invoice.customerName.substring(0, 20)}...'
-                                                                    : invoice
-                                                                        .customerName,
+                                                    child:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width >
+                                                                1700
+                                                            ? Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  const Icon(
+                                                                    Icons
+                                                                        .account_circle,
+                                                                    size: 15,
+                                                                    color: Color(
+                                                                        0xFF152D70),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 8),
+                                                                  Text(
+                                                                    invoice.customerName.length >
+                                                                            20
+                                                                        ? '${invoice.customerName.substring(0, 20)}...'
+                                                                        : invoice
+                                                                            .customerName,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 8),
+                                                                  const Icon(
+                                                                    Icons
+                                                                        .arrow_forward_ios,
+                                                                    size: 12,
+                                                                    color: Color(
+                                                                        0xFF152D70),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            : Text(
+                                                                invoice
+                                                                    .customerName,
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
@@ -1231,31 +1270,6 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                                   fontSize: 14,
                                                                 ),
                                                               ),
-                                                              const SizedBox(
-                                                                  width: 8),
-                                                              const Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios,
-                                                                size: 12,
-                                                                color: Color(
-                                                                    0xFF152D70),
-                                                              ),
-                                                            ],
-                                                          )
-                                                        : Text(
-                                                            invoice.customerName,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                const TextStyle(
-                                                              color: Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight.bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
                                                   ),
                                                 ),
                                               ),
@@ -1300,9 +1314,10 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                   title: (invoice.registeredDate
                                                           .toString()
                                                           .isNotEmpty)
-                                                      ? DateFormat('dd MMM yyyy')
-                                                          .format(DateTime.parse(
-                                                              invoice
+                                                      ? DateFormat(
+                                                              'dd MMM yyyy')
+                                                          .format(DateTime
+                                                              .parse(invoice
                                                                   .registeredDate
                                                                   .toString()))
                                                       : ''),
@@ -1336,7 +1351,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                     shrinkWrap: true,
                                     physics:
                                         const AlwaysScrollableScrollPhysics(),
-                                    itemCount: reportsProvider.taskReport.length,
+                                    itemCount:
+                                        reportsProvider.taskReport.length,
                                     itemBuilder: (context, index) {
                                       var invoice =
                                           reportsProvider.taskReport[index];
@@ -1358,10 +1374,10 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                               SizedBox(
                                                 width: 80,
                                                 child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                          vertical: 12.0,
-                                                          horizontal: 25.0),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 12.0,
+                                                      horizontal: 25.0),
                                                   child: Text(
                                                       (index + 1).toString(),
                                                       style: const TextStyle(
@@ -1389,30 +1405,60 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                           BorderRadius.circular(
                                                               50),
                                                     ),
-                                                    child: MediaQuery.of(context)
-                                                                .size
-                                                                .width >
-                                                            1700
-                                                        ? Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize.min,
-                                                            children: [
-                                                              const Icon(
-                                                                Icons
-                                                                    .account_circle,
-                                                                size: 15,
-                                                                color: Color(
-                                                                    0xFF152D70),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 8),
-                                                              Text(
-                                                                invoice.customerName
-                                                                            .length >
-                                                                        20
-                                                                    ? '${invoice.customerName.substring(0, 20)}...'
-                                                                    : invoice
-                                                                        .customerName,
+                                                    child:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width >
+                                                                1700
+                                                            ? Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  const Icon(
+                                                                    Icons
+                                                                        .account_circle,
+                                                                    size: 15,
+                                                                    color: Color(
+                                                                        0xFF152D70),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 8),
+                                                                  Text(
+                                                                    invoice.customerName.length >
+                                                                            20
+                                                                        ? '${invoice.customerName.substring(0, 20)}...'
+                                                                        : invoice
+                                                                            .customerName,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 8),
+                                                                  const Icon(
+                                                                    Icons
+                                                                        .arrow_forward_ios,
+                                                                    size: 12,
+                                                                    color: Color(
+                                                                        0xFF152D70),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            : Text(
+                                                                invoice
+                                                                    .customerName,
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
@@ -1427,31 +1473,6 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                                   fontSize: 14,
                                                                 ),
                                                               ),
-                                                              const SizedBox(
-                                                                  width: 8),
-                                                              const Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios,
-                                                                size: 12,
-                                                                color: Color(
-                                                                    0xFF152D70),
-                                                              ),
-                                                            ],
-                                                          )
-                                                        : Text(
-                                                            invoice.customerName,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                const TextStyle(
-                                                              color: Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight.bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
                                                   ),
                                                 ),
                                               ),
@@ -1490,9 +1511,10 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                   title: (invoice.registeredDate
                                                           .toString()
                                                           .isNotEmpty)
-                                                      ? DateFormat('dd MMM yyyy')
-                                                          .format(DateTime.parse(
-                                                              invoice
+                                                      ? DateFormat(
+                                                              'dd MMM yyyy')
+                                                          .format(DateTime
+                                                              .parse(invoice
                                                                   .registeredDate
                                                                   .toString()))
                                                       : ''),

@@ -37,7 +37,8 @@ class _ConversionReportPage extends State<ConversionReportPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<ConversionReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1); // 1 is 'Today' index
       reportsProvider.getSearchConversionReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getEnquiryFor(context);
@@ -123,18 +124,6 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             controller: searchController,
                             textAlign: TextAlign.center,
                             textAlignVertical: TextAlignVertical.center,
-                            onChanged: (query) {
-                              if (query.isEmpty) {
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  reportsProvider.fromDateS,
-                                  reportsProvider.toDateS,
-                                  reportsProvider.Status,
-                                  reportsProvider.AssignedTo,
-                                );
-                                reportsProvider.getSearchConversionReport(context);
-                              }
-                            },
                             onSubmitted: (query) {
                               reportsProvider.setTaskSearchCriteria(
                                 query,
@@ -157,23 +146,35 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 color: Colors.grey[600],
                                 size: 20,
                               ),
-                              suffixIcon: reportsProvider.Search.isNotEmpty
-                                  ? IconButton(
-                                      icon: const Icon(Icons.close, size: 18),
-                                      onPressed: () {
-                                        searchController.clear();
-                                        reportsProvider.setTaskSearchCriteria(
-                                          '',
-                                          reportsProvider.fromDateS,
-                                          reportsProvider.toDateS,
-                                          reportsProvider.Status,
-                                          reportsProvider.AssignedTo,
-                                        );
-                                        reportsProvider
-                                            .getSearchConversionReport(context);
-                                      },
-                                    )
-                                  : null,
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    reportsProvider.setTaskSearchCriteria(
+                                      searchController.text,
+                                      reportsProvider.fromDateS,
+                                      reportsProvider.toDateS,
+                                      reportsProvider.Status,
+                                      reportsProvider.AssignedTo,
+                                    );
+                                    reportsProvider.getSearchConversionReport(
+                                        context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF6C7C93),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                  ),
+                                  child: const Text('Search',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500)),
+                                ),
+                              ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -182,34 +183,36 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        OutlinedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
+                          icon: const Icon(Icons.filter_list),
                           label: Text(MediaQuery.of(context).size.width > 860
                               ? 'Filter'
                               : ''),
-                          style: ElevatedButton.styleFrom(
+                          style: OutlinedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
                                 : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
+                                ? const Color(0xFF5499D9)
                                 : Colors.white,
-                            elevation: 0,
-                            side: BorderSide(color: AppColors.primaryBlue),
+                            side: BorderSide(
+                                color: reportsProvider.isFilter
+                                    ? const Color(0xFF5499D9)
+                                    : AppColors.primaryBlue),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
-                              vertical: 12,
+                              vertical: 0,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        const SizedBox(width: 8),
+                        CustomElevatedButton(
                           onPressed: () {
                             exportToExcel(
                               headers: [
@@ -255,22 +258,12 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               fileName: 'Conversion_Report',
                             );
                           },
-                          icon: const Icon(Icons.download, size: 18),
-                          label: const Text('Export',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 15,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        )
+                          buttonText: 'Export to Excel',
+                          textColor: AppColors.whiteColor,
+                          borderColor: const Color(0xFFEBB12B),
+                          backgroundColor: const Color(0xFFEBB12B),
+                        ),
+
                       ],
                     ),
                   )
@@ -304,7 +297,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               ),
                               child: TextField(
                                 controller: searchController,
-                                textAlignVertical: TextAlignVertical.center,
+                                textAlign: TextAlign.center,
                                 onSubmitted: (query) {
                                   reportsProvider.setTaskSearchCriteria(
                                     query,

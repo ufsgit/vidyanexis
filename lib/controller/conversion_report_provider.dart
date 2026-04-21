@@ -40,6 +40,8 @@ class ConversionReportProvider extends ChangeNotifier {
   int? get selectedStatus => _selectedStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   void toggleFilter() {
     _isFilter = !_isFilter;
@@ -176,13 +178,13 @@ class ConversionReportProvider extends ChangeNotifier {
 
   //conversion report
   Future<void> getSearchConversionReport(BuildContext context) async {
+    if (_isLoading) return;
     try {
+      _isLoading = true;
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      print(_fromDateS);
-      print(_toDateS);
       String isDate = "0";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
         isDate = "0";
@@ -196,7 +198,6 @@ class ConversionReportProvider extends ChangeNotifier {
         isDate = "1";
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
 
       String toUserId = (_selectedUser ?? 0).toString();
 
@@ -208,27 +209,24 @@ class ConversionReportProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          // log(data.toString());
-
           _conversionReport = (data as List<dynamic>)
               .map((item) => ConversionModel.fromJson(item))
               .toList();
-
-          Loader.stopLoader(context);
-          notifyListeners();
         }
       } else {
-        Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
-      Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    } finally {
+      Loader.stopLoader(context);
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

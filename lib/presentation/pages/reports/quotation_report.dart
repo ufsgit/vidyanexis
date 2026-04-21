@@ -31,8 +31,9 @@ class _QuotationReport extends State<QuotationReport> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<QuotationReportProvider>(context, listen: false);
-      reportsProvider.setQuotationSearch('', '', '', '');
-      // reportsProvider.getQuotationReports(context);
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1); // 1 is 'Today' index
+      reportsProvider.getQuotationReports(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       provider.getUserDetails(context);

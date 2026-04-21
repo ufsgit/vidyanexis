@@ -24,7 +24,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<AttendanceReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1); // 1 is 'Today' index
       reportsProvider.getSearchTaskReport(context);
 
       final provider = Provider.of<DropDownProvider>(context, listen: false);

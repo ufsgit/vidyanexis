@@ -35,7 +35,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<TaskReportProvider>(context, listen: false);
-      reportsProvider.removeStatus();
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1);
       reportsProvider.getSearchTaskReport(context);
 
       final provider = Provider.of<DropDownProvider>(context, listen: false);

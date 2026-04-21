@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +7,9 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_report_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
@@ -22,6 +25,168 @@ class LeadCheckInReportScreen extends StatefulWidget {
 class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
   TextEditingController searchController = TextEditingController();
 
+  List<String> dateButtonTitles = [
+    'Yesterday',
+    'Today',
+    'Tomorrow',
+    'This Week',
+    'This Month',
+  ];
+
+  void onClickTopButton(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Consumer<LeadCheckInReportProvider>(
+        builder: (context, reportProvider, child) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            contentPadding: const EdgeInsets.all(10),
+            content: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'Choose Date',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
+                        String title = dateButtonTitles[index];
+                        return ActionChip(
+                          onPressed: () {
+                            reportProvider.setDateFilter(title);
+                            reportProvider.selectDateFilterOption(index);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          label: Text(title),
+                          backgroundColor:
+                              reportProvider.selectedDateFilterIndex == index
+                                  ? AppColors.primaryBlue
+                                  : Colors.white,
+                          labelStyle: TextStyle(
+                            color:
+                                reportProvider.selectedDateFilterIndex == index
+                                    ? Colors.white
+                                    : Colors.black,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Pick a date',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () =>
+                                reportProvider.selectDate(context, true),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              hintText: reportProvider.fromDate != null
+                                  ? '${reportProvider.fromDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'From',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () =>
+                                reportProvider.selectDate(context, false),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              hintText: reportProvider.toDate != null
+                                  ? '${reportProvider.toDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'To',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              reportProvider.setDates(null, null);
+                              reportProvider.selectDateFilterOption(null);
+                              Navigator.pop(context);
+                              reportProvider.fetchReports(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: AppColors.textRed),
+                              foregroundColor: AppColors.textRed,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Clear'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              reportProvider.formatDate();
+                              Navigator.pop(context);
+                              reportProvider.fetchReports(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Apply'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -31,11 +196,9 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
       final dropdownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
 
-      // Initialize dates for this month
-      DateTime now = DateTime.now();
-      DateTime fromDate = DateTime(now.year, now.month, 1);
-      DateTime toDate = DateTime(now.year, now.month + 1, 0);
-      reportProvider.setDates(fromDate, toDate);
+      // Initialize dates for Today
+      reportProvider.setDateFilter('Today');
+      reportProvider.selectDateFilterOption(1); // 1 is 'Today' index
 
       dropdownProvider.getUserDetails(context);
 
@@ -101,79 +264,82 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             height: 48,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.grey[300]!),
             ),
             child: TextField(
               controller: searchController,
               textAlign: TextAlign.center,
-              textAlignVertical: TextAlignVertical.center,
-              onChanged: (query) {
-                if (query.isEmpty) {
-                  reportProvider.setLeadSearch('');
-                  reportProvider.fetchReports(context);
-                }
-              },
+              style: const TextStyle(fontSize: 14),
               onSubmitted: (query) {
                 reportProvider.setLeadSearch(query);
                 reportProvider.fetchReports(context);
               },
               decoration: InputDecoration(
                 hintText: 'Search here....',
-                hintStyle: GoogleFonts.plusJakartaSans(
-                  color: Colors.grey[400],
-                  fontSize: 14,
-                ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.grey[600],
-                  size: 20,
-                ),
-                suffixIcon: reportProvider.leadSearch.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.close, size: 18),
-                        onPressed: () {
-                          searchController.clear();
-                          reportProvider.setLeadSearch('');
-                          reportProvider.fetchReports(context);
-                        },
-                      )
-                    : null,
+                hintStyle: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400),
+                prefixIcon:
+                    Icon(Icons.search, color: Colors.grey[600], size: 20),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                 ),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      reportProvider.setLeadSearch(searchController.text);
+                      reportProvider.fetchReports(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6C7C93),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    child: const Text('Search',
+                        style: TextStyle(fontWeight: FontWeight.w500)),
+                  ),
+                ),
               ),
             ),
           ),
           const SizedBox(width: 16),
-          ElevatedButton.icon(
+          OutlinedButton.icon(
             onPressed: () {
               reportProvider.toggleFilter();
             },
-            icon: const Icon(Icons.filter_list, size: 18),
+            icon: const Icon(Icons.filter_list),
             label:
                 Text(MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
-            style: ElevatedButton.styleFrom(
+            style: OutlinedButton.styleFrom(
               foregroundColor: reportProvider.isFilter
                   ? Colors.white
                   : AppColors.primaryBlue,
               backgroundColor: reportProvider.isFilter
-                  ? AppColors.primaryBlue
+                  ? const Color(0xFF5499D9)
                   : Colors.white,
-              elevation: 0,
-              side: BorderSide(color: AppColors.primaryBlue),
+              side: BorderSide(
+                  color: reportProvider.isFilter
+                      ? const Color(0xFF5499D9)
+                      : AppColors.primaryBlue),
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: 12,
+                vertical: 0,
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
           ),
-          const SizedBox(width: 16),
-          ElevatedButton.icon(
+          const SizedBox(width: 8),
+          CustomElevatedButton(
             onPressed: () {
               exportToExcel(
                 headers: [
@@ -202,21 +368,10 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                 fileName: 'Check_in_Reports',
               );
             },
-            icon: const Icon(Icons.download, size: 18),
-            label: const Text('Export',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 15,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
+            buttonText: 'Export to Excel',
+            textColor: AppColors.whiteColor,
+            borderColor: const Color(0xFFEBB12B),
+            backgroundColor: const Color(0xFFEBB12B),
           ),
         ],
       ),
@@ -295,16 +450,53 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          CommonReportDateFilter(
-            fromDate: reportProvider.fromDate?.toString(),
-            toDate: reportProvider.toDate?.toString(),
-            formattedFromDate: reportProvider.fromDate != null
-                ? DateFormat('dd MMM yyyy').format(reportProvider.fromDate!)
-                : '',
-            formattedToDate: reportProvider.toDate != null
-                ? DateFormat('dd MMM yyyy').format(reportProvider.toDate!)
-                : '',
-            onTap: () => reportProvider.selectDate(context, true),
+          GestureDetector(
+            onTap: () => onClickTopButton(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: reportProvider.fromDate != null ||
+                          reportProvider.toDate != null
+                      ? AppColors.primaryBlue
+                      : Colors.grey[300]!,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (reportProvider.fromDate == null &&
+                      reportProvider.toDate == null)
+                    Text('Date: ',
+                        style:
+                            TextStyle(color: Colors.grey[600], fontSize: 13)),
+                  if (reportProvider.fromDate == null &&
+                      reportProvider.toDate == null)
+                    const Text('All',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 13)),
+                  if (reportProvider.fromDate != null &&
+                      reportProvider.toDate != null)
+                    Text('Date: ',
+                        style:
+                            TextStyle(color: Colors.grey[600], fontSize: 13)),
+                  if (reportProvider.fromDate != null &&
+                      reportProvider.toDate != null)
+                    Text(
+                        '${DateFormat('dd MMM yyyy').format(reportProvider.fromDate!)} - ${DateFormat('dd MMM yyyy').format(reportProvider.toDate!)}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 13)),
+                  const SizedBox(width: 10),
+                  const Icon(
+                    Icons.arrow_drop_down_outlined,
+                    color: Colors.black45,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
           ),
           const Spacer(),
           if (reportProvider.fromDate != null ||
@@ -469,41 +661,49 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                       ),
                       TableWidget(
                         flex: 2,
-                        data: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE9EDF1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.person,
-                                size: 15,
-                                color: Color(0xFF152D70),
-                              ),
-                              const SizedBox(width: 6),
-                              Flexible(
-                                child: Text(
-                                  record.leadName ?? 'N/A',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                        data: InkWell(
+                          onTap: () {
+                            if (record.customerId != null) {
+                              context.push(
+                                  '${CustomerDetailsScreen.route}${record.customerId.toString()}/${'true'}');
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE9EDF1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.person,
+                                  size: 15,
+                                  color: Color(0xFF152D70),
+                                ),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    record.leadName ?? 'N/A',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 4),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 10,
-                                color: Color(0xFF152D70),
-                              ),
-                            ],
+                                const SizedBox(width: 4),
+                                const Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 10,
+                                  color: Color(0xFF152D70),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
