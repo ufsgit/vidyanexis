@@ -229,7 +229,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: ConversionReportPage()),
         ),
-      if (settingsProvider.menuIsViewMap[21].toString() == '1')
+      if (settingsProvider.menuIsViewMap[11].toString() == '1')
         SidebarOption(
           title: 'Invoice Reports',
           iconPath: 'assets/images/Reports.svg',
