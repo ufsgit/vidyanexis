@@ -571,7 +571,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   heroTag: 'apply_filter_fab',
                   onPressed: () {
                     leadProvider.setSearchCriteria(
-                      leadProvider.search,
+                      searchController.text,
                       leadProvider.fromDateS,
                       leadProvider.toDateS,
                       leadId: leadIdController.text,
@@ -752,7 +752,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
                           leadProvider.setSearchCriteria(
-                            leadProvider.search,
+                            searchController.text,
                             fromDate,
                             toDate,
                             leadId: leadIdController.text,
@@ -789,7 +789,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
                           leadProvider.setSearchCriteria(
-                            leadProvider.search,
+                            searchController.text,
                             fromDate,
                             toDate,
                           );
