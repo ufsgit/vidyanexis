@@ -22,6 +22,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/utils/pdf_function.dart';
 
 class LeadPageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -335,6 +336,73 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               textColor: AppColors.whiteColor,
                               borderColor: const Color(0xFFEBB12B),
                               backgroundColor: const Color(0xFFEBB12B),
+                            ),
+                            const SizedBox(width: 8),
+                            CustomElevatedButton(
+                              onPressed: () async {
+                                final allLeads = await leadReportProvider
+                                    .fetchAllLeadsForExport(context);
+                                if (allLeads.isNotEmpty) {
+                                  exportToPDF(
+                                    headers: [
+                                      'Cus. ID',
+                                      'Customer Name',
+                                      'Mobile no',
+                                      'Address',
+                                      'Enquiry For',
+                                      'Enquiry Source',
+                                      'By User',
+                                      'Assigned To',
+                                      'Status',
+                                      'Created Date',
+                                      'Next Follow-up Date',
+                                      'Remark'
+                                    ],
+                                    data: (leadReportProvider
+                                                .selectedLeadIds.isEmpty
+                                            ? allLeads
+                                            : allLeads.where((lead) =>
+                                                leadReportProvider
+                                                    .selectedLeadIds
+                                                    .contains(lead.customerId)))
+                                        .map((task) {
+                                      return {
+                                        'Cus. ID': task.customerId,
+                                        'Customer Name': task.customerName,
+                                        'Mobile no': task.contactNumber,
+                                        'Address': [
+                                          task.address1,
+                                          task.address2,
+                                          task.address3,
+                                          task.address4
+                                        ].where((a) => a.isNotEmpty).join(', '),
+                                        'Enquiry For': task.enquiryFor,
+                                        'Enquiry Source':
+                                            task.enquirySourceName,
+                                        'By User': task.byUserName,
+                                        'Assigned To': task.toUserName,
+                                        'Status': task.statusName,
+                                        'Created Date': _formatDateSafely(
+                                            task.creationDate),
+                                        'Next Follow-up Date':
+                                            _formatDateSafely(
+                                                task.nextFollowUpDate),
+                                        'Remark': task.remark,
+                                      };
+                                    }).toList(),
+                                    fileName: 'Lead_Report',
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('No data found')),
+                                  );
+                                }
+                              },
+                              buttonText: 'Export to PDF',
+                              textColor: AppColors.whiteColor,
+                              borderColor: AppColors.primaryBlue,
+                              backgroundColor: AppColors.primaryBlue,
                             ),
                           ],
                         ),

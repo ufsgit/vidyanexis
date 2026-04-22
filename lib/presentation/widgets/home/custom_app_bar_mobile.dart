@@ -32,6 +32,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final void Function()? onClearTap;
   final void Function()? onSearchTap;
   final void Function()? onExcelTap;
+  final void Function()? onPdfTap;
 
   final String searchHintText;
   final TextStyle? searchHintStyle;
@@ -39,6 +40,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final InputDecoration? searchDecoration;
   final bool showSearch;
   final bool showExcel;
+  final bool showPdf;
   final bool showTransfer;
   final void Function()? onTransferTap;
 
@@ -60,6 +62,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showFilterIcon = true,
     this.onSearchTap,
     this.onExcelTap,
+    this.onPdfTap,
     this.showLogo = true,
     this.showUserName = true,
     // Styling defaults
@@ -79,6 +82,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.searchDecoration,
     this.showSearch = true,
     this.showExcel = false,
+    this.showPdf = false,
     this.showTransfer = false,
     this.onTransferTap,
 
@@ -123,7 +127,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ? _buildSearchField(searchProvider)
           : widget.customTitle ?? _defaultTitle(),
       actions: _buildActions(searchProvider, widget.onFilterTap,
-          widget.onClearTap, widget.onSearchTap, widget.onExcelTap),
+          widget.onClearTap, widget.onSearchTap, widget.onExcelTap, widget.onPdfTap),
     );
   }
 
@@ -193,7 +197,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
       void Function()? onFilterTap,
       void Function()? onClear,
       void Function()? onSearchTap,
-      void Function()? onExcelTap) {
+      void Function()? onExcelTap,
+      void Function()? onPdfTap) {
     if (searchProvider.isSearching) {
       return [
         Padding(
@@ -232,6 +237,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   size: widget.searchIconSize,
                 ),
                 onPressed: onExcelTap,
+              ),
+            if (widget.showPdf)
+              IconButton(
+                icon: Icon(
+                  Icons.picture_as_pdf,
+                  color: widget.iconColor,
+                  size: widget.searchIconSize,
+                ),
+                onPressed: onPdfTap,
               ),
             if (widget.showTransfer)
               IconButton(

@@ -17,6 +17,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/utils/pdf_function.dart';
 
 class ConversionReportPage extends StatefulWidget {
   final bool fromDashBoard;
@@ -263,6 +264,58 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           borderColor: const Color(0xFFEBB12B),
                           backgroundColor: const Color(0xFFEBB12B),
                         ),
+                        const SizedBox(width: 8),
+                        CustomElevatedButton(
+                          onPressed: () {
+                            exportToPDF(
+                              headers: [
+                                'No.',
+                                'Cus. ID',
+                                'Lead Name',
+                                'Mobile No',
+                                'Address',
+                                'Enquiry For',
+                                'Enquiry Source',
+                                'By User',
+                                'Assigned Staff',
+                                'Status',
+                                'Created Date',
+                                'Next Follow-up',
+                                'Remark'
+                              ],
+                              data: reportsProvider.conversionReport
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
+                                final index = entry.key;
+                                final task = entry.value;
+                                return {
+                                  'No.': (index + 1).toString(),
+                                  'Cus. ID': task.customerId.toString(),
+                                  'Lead Name': task.customerName,
+                                  'Mobile No': task.mobile,
+                                  'Address':
+                                      '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                                  'Enquiry For': task.enquiryForName.toString(),
+                                  'Enquiry Source': task.enquirySourceName,
+                                  'By User': task.byUserName,
+                                  'Assigned Staff': task.toUserName,
+                                  'Status': task.statusName,
+                                  'Created Date':
+                                      _formatDateSafely(task.creationDate),
+                                  'Next Follow-up':
+                                      _formatDateSafely(task.nextFollowUpDate),
+                                  'Remark': task.remark,
+                                };
+                              }).toList(),
+                              fileName: 'Conversion_Report',
+                            );
+                          },
+                          buttonText: 'Export to PDF',
+                          textColor: AppColors.whiteColor,
+                          borderColor: AppColors.primaryBlue,
+                          backgroundColor: AppColors.primaryBlue,
+                        ),
 
                       ],
                     ),
@@ -413,6 +466,58 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                       TextStyle(fontWeight: FontWeight.bold)),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 15,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                exportToPDF(
+                                  headers: [
+                                    'Customer Name',
+                                    'Conversion By',
+                                    'Creation Date',
+                                    'Conversion Date',
+                                    'Enquiry For',
+                                    'Status',
+                                  ],
+                                  data: reportsProvider.conversionReport
+                                      .map((task) {
+                                    return {
+                                      'ID': task.customerId,
+                                      'Customer Name': task.customerName,
+                                      'Contact No': task.mobile,
+                                      'Address':
+                                          '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                                      'Enquiry For': task.enquiryForName,
+                                      'Enquiry Source': task.enquirySourceName,
+                                      'By User': task.byUserName,
+                                      'Assigned Staff': task.toUserName,
+                                      'Status': task.statusName,
+                                      'Created Date': DateFormat('dd MMM yyyy')
+                                          .format(task.creationDate),
+                                      'Next FollowUp': DateFormat('dd MMM yyyy')
+                                          .format(task.nextFollowUpDate),
+                                      'Remark': task.remark,
+                                    };
+                                  }).toList(),
+                                  fileName: 'Conversion_Report',
+                                );
+                              },
+                              icon: const Icon(Icons.picture_as_pdf, size: 18),
+                              label: const Text('Export PDF',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
                                 foregroundColor: Colors.white,
                                 elevation: 0,
                                 padding: const EdgeInsets.symmetric(
