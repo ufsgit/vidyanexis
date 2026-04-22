@@ -727,8 +727,18 @@ class SettingsProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data != null && data['success'] == true) {
-          return CampaignModel.fromJson(data['data'][0]);
+        // API returns: { "campaign": {...}, "users": [{"User_Id": X}, ...] }
+        if (data != null && data['campaign'] != null) {
+          final campaignMap =
+              Map<String, dynamic>.from(data['campaign'] as Map);
+          final usersList = (data['users'] as List<dynamic>?) ?? [];
+          // Build comma-separated User_Ids string from the users array
+          final userIdsStr = usersList
+              .map((u) => (u['User_Id'] ?? 0).toString())
+              .where((s) => s != '0')
+              .join(',');
+          campaignMap['User_Ids'] = userIdsStr;
+          return CampaignModel.fromJson(campaignMap);
         }
       }
     } catch (e) {

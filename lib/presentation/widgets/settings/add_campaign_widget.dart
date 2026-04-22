@@ -38,16 +38,8 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
     if (widget.isEdit) {
       settingsProvider.campaignNameController.text = widget.campaignName;
       settingsProvider.campaignIdStringController.text = widget.campaignIdString;
-      if (widget.userIds.isNotEmpty) {
-        selectedUserIds = widget.userIds
-            .split(',')
-            .where((s) => s.isNotEmpty)
-            .map((s) => int.parse(s))
-            .toList();
-      } else {
-        // If userIds is empty but it's an edit, fetch full details
-        _fetchCampaignDetails();
-      }
+      // Always fetch from server to get accurate pre-checked users
+      _fetchCampaignDetails();
     } else {
       settingsProvider.campaignNameController.clear();
       settingsProvider.campaignIdStringController.clear();
