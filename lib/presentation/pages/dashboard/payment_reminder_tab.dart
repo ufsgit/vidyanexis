@@ -84,7 +84,7 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                                 onTap: () {
                                   provider.selectDateFilterOption(
                                       null); // Clear dates
-                                  provider.getPaymentReminders(context);
+                                  provider.getPaymentReminders(context, isFilter: true);
                                 },
                                 child: const Icon(Icons.close,
                                     size: 16, color: Colors.red),
@@ -254,7 +254,7 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
           ],
           onChanged: (value) {
             provider.setUserFilterStatus(value ?? 0);
-            provider.getPaymentReminders(context);
+            provider.getPaymentReminders(context, isFilter: true);
           },
           isDense: true,
         ),
@@ -371,7 +371,7 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
 
                           print(provider.formattedFromDate);
                           print(provider.formattedToDate);
-                          provider.getPaymentReminders(context);
+                          provider.getPaymentReminders(context, isFilter: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -394,7 +394,7 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                         onPressed: () {
                           Navigator.pop(context);
                           provider.selectDateFilterOption(null);
-                          provider.getPaymentReminders(context);
+                          provider.getPaymentReminders(context, isFilter: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),

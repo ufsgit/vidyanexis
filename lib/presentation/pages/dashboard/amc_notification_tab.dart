@@ -82,7 +82,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                                 onTap: () {
                                   provider.selectDateFilterOption(
                                       null); // Clear dates
-                                  provider.getAmcNotification(context);
+                                  provider.getAmcNotification(context, isFilter: true);
                                 },
                                 child: const Icon(Icons.close,
                                     size: 16, color: Colors.red),
@@ -294,7 +294,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
           ],
           onChanged: (value) {
             provider.setUserFilterStatus(value ?? 0);
-            provider.getAmcNotification(context);
+            provider.getAmcNotification(context, isFilter: true);
           },
           isDense: true,
         ),
@@ -411,7 +411,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
 
                           print(provider.formattedFromDate);
                           print(provider.formattedToDate);
-                          provider.getAmcNotification(context);
+                          provider.getAmcNotification(context, isFilter: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -434,7 +434,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                         onPressed: () {
                           Navigator.pop(context);
                           provider.selectDateFilterOption(null);
-                          provider.getAmcNotification(context);
+                          provider.getAmcNotification(context, isFilter: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
