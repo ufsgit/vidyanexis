@@ -159,6 +159,40 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
                 fontWeight: FontWeight.w500,
               ),
             ),
+            if (selectedUserIds.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: selectedUserIds.map((id) {
+                  final userIndex = settingsProvider.searchUserDetails
+                      .indexWhere((u) => u.userDetailsId == id);
+                  String displayName = 'User $id';
+                  if (userIndex != -1) {
+                    displayName =
+                        settingsProvider.searchUserDetails[userIndex].userDetailsName;
+                  }
+                  return Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: AppColors.primaryBlue.withOpacity(0.3)),
+                    ),
+                    child: Text(
+                      displayName,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.primaryBlue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
             const SizedBox(height: 8),
             InkWell(
               onTap: _showUserSelectionDialog,
