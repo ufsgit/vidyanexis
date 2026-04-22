@@ -211,13 +211,13 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: AmcReportScreen()),
         ),
-      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+      if (settingsProvider.menuIsViewMap[112].toString() == '1')
         SidebarOption(
           title: 'Out Of Warranty Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: OutOfWarrentyReportScreen()),
         ),
-      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+      if (settingsProvider.menuIsViewMap[117].toString() == '1')
         SidebarOption(
           title: 'Upcoming Warranty Reports',
           iconPath: 'assets/images/Reports.svg',
@@ -255,7 +255,7 @@ class _HomePageState extends State<HomePage> {
           baseContent: const Center(child: TimeTrackReportPage()),
         ),
 
-      if (settingsProvider.menuIsViewMap[53].toString() == '1')
+      if (settingsProvider.menuIsViewMap[119].toString() == '1')
         SidebarOption(
           title: 'Enquiry Source Reports',
           iconPath: 'assets/images/Reports.svg',
@@ -273,13 +273,13 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const LeadCheckInReportScreen(),
         ),
-      if (settingsProvider.menuIsViewMap[54].toString() == '1')
+      if (settingsProvider.menuIsViewMap[115].toString() == '1')
         SidebarOption(
           title: 'Followup Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: FollowupReports()),
         ),
-      if (settingsProvider.menuIsViewMap[55].toString() == '1')
+      if (settingsProvider.menuIsViewMap[118].toString() == '1')
         SidebarOption(
           title: 'Quotation Reports',
           iconPath: 'assets/images/Reports.svg',
@@ -291,13 +291,13 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadPageReport()),
         ),
-      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+      if (settingsProvider.menuIsViewMap[113].toString() == '1')
         SidebarOption(
           title: 'Commission Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: CommissionReportPage()),
         ),
-      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+      if (settingsProvider.menuIsViewMap[114].toString() == '1')
         SidebarOption(
           title: 'Sub Contract Reports',
           iconPath: 'assets/images/Reports.svg',
@@ -351,7 +351,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: OutstandingReportPage()),
         ),
-      if (settingsProvider.menuIsViewMap[110].toString() == '1' || kDebugMode)
+      if (settingsProvider.menuIsViewMap[116].toString() == '1' || kDebugMode)
         SidebarOption(
           title: 'Customer Outstanding Reports',
           iconPath: 'assets/images/Reports.svg',
