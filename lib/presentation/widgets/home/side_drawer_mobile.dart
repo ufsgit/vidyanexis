@@ -40,6 +40,11 @@ import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen
 import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/commission_report_mobile.dart';
+import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_mobile.dart';
+import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_mobile.dart';
 
 class SidebarDrawer extends StatefulWidget {
   const SidebarDrawer({super.key});
@@ -89,19 +94,19 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           'title': 'Periodic Service Reports',
           'page': const PeriodicServiceReportPageMobile()
         },
-      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+      if (settingsProvider.menuIsViewMap[112].toString() == '1')
         {
           'title': 'Out Of Warranty Reports',
           'page': const OutOfWarrentyReportScreen()
         },
-      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+      if (settingsProvider.menuIsViewMap[117].toString() == '1')
         {
           'title': 'Upcoming Warranty Reports',
           'page': const UpcomingWarrentyReportScreen()
         },
       if (settingsProvider.menuIsViewMap[10].toString() == '1')
         {'title': 'Conversion Reports', 'page': const ConversionReportPage()},
-      if (settingsProvider.menuIsViewMap[21].toString() == '1')
+      if (settingsProvider.menuIsViewMap[11].toString() == '1')
         {'title': 'Invoice Reports', 'page': const InvoiceReportsScreen()},
       // {
       //   'title': 'Billing & Payments Report',
@@ -114,7 +119,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
         {'title': 'Expense Reports', 'page': const ExpenseReportScreen()},
 
-      if (settingsProvider.menuIsViewMap[53].toString() == '1')
+      if (settingsProvider.menuIsViewMap[119].toString() == '1')
         {
           'title': 'Enquiry Source Reports',
           'page': const EnquirySourceSummaryReportScreen()
@@ -129,9 +134,9 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       //     'title': 'Employee Location Reports',
       //     'page': const EmployeeLocationReportScreen()
       //   },
-      if (settingsProvider.menuIsViewMap[54].toString() == '1')
+      if (settingsProvider.menuIsViewMap[115].toString() == '1')
         {'title': 'Followup Reports', 'page': const FollowupReportMobile()},
-      if (settingsProvider.menuIsViewMap[55].toString() == '1')
+      if (settingsProvider.menuIsViewMap[118].toString() == '1')
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
@@ -155,10 +160,26 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[75].toString() == '1')
         {'title': 'Outstanding Reports', 'page': const OutstandingReportPage()},
-      if (settingsProvider.menuIsViewMap[7].toString() == '1')
+      if (settingsProvider.menuIsViewMap[89].toString() == '1')
         {
           'title': 'Task Summary Reports',
           'page': const TaskSummaryReportScreen()
+        },
+      if (settingsProvider.menuIsViewMap[80].toString() == '1')
+        {'title': 'Stock Reports', 'page': const StockReport()},
+      if (settingsProvider.menuIsViewMap[113].toString() == '1')
+        {'title': 'Commission Reports', 'page': const CommissionReportMobile()},
+      if (settingsProvider.menuIsViewMap[114].toString() == '1')
+        {
+          'title': 'Sub Contract Reports',
+          'page': const SubContractReportMobile()
+        },
+      if (settingsProvider.menuIsViewMap[88].toString() == '1')
+        {'title': 'Receipt Reports', 'page': const ReceiptReportPage()},
+      if (settingsProvider.menuIsViewMap[116].toString() == '1')
+        {
+          'title': 'Customer Outstanding Reports',
+          'page': const CustomerOutstandingReportMobile()
         },
     ];
 

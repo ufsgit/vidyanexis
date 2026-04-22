@@ -292,6 +292,10 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                 width: 40,
                 child: Text('No.', style: _headerStyle),
               ),
+              SizedBox(
+                width: 60,
+                child: Text('Menu ID', style: _headerStyle),
+              ),
               Expanded(
                 child: Text('Menu Name', style: _headerStyle),
               ),
@@ -317,6 +321,13 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                   width: 40,
                   child: Text(
                     '${startIndex + index}',
+                    style: _rowStyle,
+                  ),
+                ),
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    '${item.menuId}',
                     style: _rowStyle,
                   ),
                 ),
@@ -422,6 +433,22 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                         style: TextStyle(
                           color: AppColors.primaryBlue,
                           fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'ID: ${item.menuId}',
+                        style: const TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
                         ),
                       ),
                     ),
