@@ -24,6 +24,7 @@ class TaskTypeModel {
   int conversionTask;
   int locationTracking;
   int commissionNumber;
+  int orderBy;
   String? description;
 
   String? departmentName;
@@ -42,6 +43,7 @@ class TaskTypeModel {
       required this.conversionTask,
       required this.locationTracking,
       required this.commissionNumber,
+      required this.orderBy,
       required this.statuses,
       required this.departmentName,
       this.description});
@@ -69,6 +71,8 @@ class TaskTypeModel {
                         json["commission_number"]?.toString() ?? 
                         json["commision_number"]?.toString() ?? 
                         json["Commision_Number"]?.toString() ?? '0') ?? 0,
+      orderBy: int.tryParse(json["Order_By"]?.toString() ?? 
+                         json["order_by"]?.toString() ?? '0') ?? 0,
       statuses: json["Statuses"] == null
           ? []
           : List<Status>.from(json["Statuses"].map((x) => Status.fromJson(x))),
@@ -90,6 +94,7 @@ class TaskTypeModel {
         "Is_Active": conversionTask,
         "Location_Tracking": locationTracking,
         "Commission_Number": commissionNumber,
+        "Order_By": orderBy,
         "Statuses": List<dynamic>.from(statuses.map((x) => x.toJson())),
         "Department_Name": departmentName,
         "Description": description,

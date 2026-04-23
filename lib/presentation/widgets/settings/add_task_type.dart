@@ -11,8 +11,6 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
-
-
 class AddTaskType extends StatefulWidget {
   final bool isEdit;
   final String status;
@@ -141,6 +139,12 @@ class _AddTaskTypeState extends State<AddTaskType> {
               widget.taskType!.duration.toString();
         } else {
           settingsProvider.durationController.clear();
+        }
+        if (widget.taskType?.orderBy != null) {
+          settingsProvider.orderByController.text =
+              widget.taskType!.orderBy.toString();
+        } else {
+          settingsProvider.orderByController.clear();
         }
         bool isActive = widget.taskType?.conversionTask != 0;
         bool isLocationTracking = widget.taskType?.locationTracking != 0;
@@ -390,6 +394,19 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       const SizedBox(height: 20),
                                       SizedBox(
                                         width: double.infinity,
+                                        child: CustomTextField(
+                                          readOnly: false,
+                                          height: 54,
+                                          controller: settingsProvider
+                                              .orderByController,
+                                          hintText: 'Order By',
+                                          labelText: '',
+                                          keyboardType: TextInputType.number,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      SizedBox(
+                                        width: double.infinity,
                                         child: CommonDropdown<int>(
                                           hintText: 'Department*',
                                           selectedValue: widget.isEdit
@@ -479,8 +496,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                           "Amount",
                                           style: TextStyle(fontSize: 14),
                                         ),
-                                        value:
-                                            settingsProvider.isCommissionChecked,
+                                        value: settingsProvider
+                                            .isCommissionChecked,
                                         onChanged: (value) {
                                           settingsProvider
                                               .toggleCommission(value!);
@@ -712,6 +729,19 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                   const SizedBox(height: 20),
                                   SizedBox(
                                     width: double.infinity,
+                                    child: CustomTextField(
+                                      readOnly: false,
+                                      height: 54,
+                                      controller:
+                                          settingsProvider.orderByController,
+                                      hintText: 'Order By',
+                                      labelText: '',
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    width: double.infinity,
                                     child: CommonDropdown<int>(
                                       hintText: 'Department*',
                                       selectedValue: widget.isEdit
@@ -794,7 +824,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       value:
                                           settingsProvider.isCommissionChecked,
                                       onChanged: (value) {
-                                        settingsProvider.toggleCommission(value!);
+                                        settingsProvider
+                                            .toggleCommission(value!);
                                       },
                                       controlAffinity:
                                           ListTileControlAffinity.leading,
@@ -816,8 +847,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                         ),
                                         contentPadding:
                                             const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 10),
+                                                horizontal: 12, vertical: 10),
                                       ),
                                     ),
                                   ),
@@ -1062,7 +1092,10 @@ class _AddTaskTypeState extends State<AddTaskType> {
                           "Location_Tracking":
                               settingsProvider.isLocationTracking ? 1 : 0,
                           "Commission_Number":
-                              settingsProvider.isCommissionChecked ? 1 : 0
+                              settingsProvider.isCommissionChecked ? 1 : 0,
+                          "order_by": int.tryParse(
+                                  settingsProvider.orderByController.text) ??
+                              0,
                         };
 
                         settingsProvider.addTaskType(

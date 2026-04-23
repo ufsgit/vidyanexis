@@ -212,6 +212,7 @@ class SettingsProvider extends ChangeNotifier {
   //tasktype
   final TextEditingController taskTypeController = TextEditingController();
   final TextEditingController durationController = TextEditingController();
+  final TextEditingController orderByController = TextEditingController();
   final TextEditingController departmentTaskController =
       TextEditingController();
   final TextEditingController statusTaskController = TextEditingController();
@@ -3828,6 +3829,7 @@ class SettingsProvider extends ChangeNotifier {
         searchTaskTypeController.clear();
         defaultStatusController.clear();
         durationController.clear();
+        orderByController.clear();
         taskTypeDescriptionController.clear();
         _selectedDefaultStatusId = -1;
         _selectedDepartmentId = -1;
@@ -3867,6 +3869,7 @@ class SettingsProvider extends ChangeNotifier {
         } else {
           searchTaskType('', context);
           taskTypeController.clear();
+          orderByController.clear();
           searchTaskTypeController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Task Type deleted successfully')),
