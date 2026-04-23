@@ -157,13 +157,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     final newTabs = [
       Tab(key: _firstTabKey, text: "Info"),
+      if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Summary"),
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[85] == 1) const Tab(text: "Forms"),
-      if (settingsprovider.menuIsViewMap[13] == 1)
-        const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[14] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Complaints"),
@@ -3060,6 +3059,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         ],
                                                       ))
                                                 : Container(),
+                                            // Summary Tab
+                                            if (settingsprovider
+                                                    .menuIsViewMap[13] ==
+                                                1)
+                                              CustomerTaskOverviewTab(
+                                                  customerId:
+                                                      widget.customerId),
+
                                             // Tasks Tab
                                             if (settingsprovider
                                                     .menuIsViewMap[13] ==
@@ -3601,13 +3608,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   customerId:
                                                       widget.customerId),
 
-                                            // Task Overview Tab
-                                            if (settingsprovider
-                                                    .menuIsViewMap[13] ==
-                                                1)
-                                              CustomerTaskOverviewTab(
-                                                  customerId:
-                                                      widget.customerId),
+
 
                                             // Complaints Tab (can be customized as needed)
                                             if (settingsprovider

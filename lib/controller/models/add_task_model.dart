@@ -111,7 +111,9 @@ class AddTaskModel {
         "Task_Master_Id": taskMasterId,
         "Task_Status_Id": taskStatusId,
         "Task_Status_Name": taskStatusName,
-        "Task_user": List<dynamic>.from(taskUser!.map((x) => x.toJson())),
+        "Task_user": taskUser != null
+            ? List<dynamic>.from(taskUser!.map((x) => x.toJson()))
+            : [],
         "Customer_Id": customerId,
         "Created_By": createdBy,
         "Task_Date":

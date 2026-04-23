@@ -57,13 +57,12 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
         Provider.of<SettingsProvider>(context, listen: false);
     tabs = [
       const Tab(text: "Details"),
+      if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Summary"),
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[85] == 1) const Tab(text: "Forms"),
-      if (settingsprovider.menuIsViewMap[13] == 1)
-        const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[100] == 1) const Tab(text: "Activity"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[14] == 1)
         const Tab(text: "Complaints"),
@@ -367,6 +366,10 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
           DetailsTabMobile(
             customerId: widget.customerId.toString(),
           ),
+          if (settingsprovider.menuIsViewMap[13] == 1)
+            CustomerTaskOverviewTab(
+              customerId: widget.customerId.toString(),
+            ),
           // Tasks Tab
           if (settingsprovider.menuIsViewMap[13] == 1)
             TaskListPageMobile(
@@ -383,10 +386,6 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             ),
           if (settingsprovider.menuIsViewMap[85] == 1)
             FormsTabWidget(
-              customerId: widget.customerId.toString(),
-            ),
-          if (settingsprovider.menuIsViewMap[13] == 1)
-            CustomerTaskOverviewTab(
               customerId: widget.customerId.toString(),
             ),
           if (settingsprovider.menuIsViewMap[100] == 1)
