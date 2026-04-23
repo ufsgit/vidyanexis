@@ -2323,7 +2323,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     return CustomElevatedButton(
       onPressed: () async {
         await customerDetailsProvider.loadQuotationFromCustomFields(
-            context, "view_in_quotation");
+            context, "view_in_quotation", customerDetailsProvider.selectedQuotationType);
         if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
           final quotation = customerDetailsProvider.quotationListByMaster.first;
           customerDetailsProvider.populateAllQuotationFields(

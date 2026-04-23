@@ -3769,7 +3769,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   Future<void> loadQuotationFromCustomFields(
-      BuildContext context, String type) async {
+      BuildContext context, String type, int quotationType) async {
     try {
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.loadQuotationFromCustomFields,
@@ -3777,7 +3777,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
             "custom_fields":
                 customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
                     [],
-            "type": type
+            "type": type,
+            "quotation_type_id": quotationType
           });
 
       if (response?.statusCode == 200) {
