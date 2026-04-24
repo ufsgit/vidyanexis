@@ -1685,6 +1685,7 @@ class SettingsProvider extends ChangeNotifier {
             76: 'AMC Notification',
             77: 'Payment Reminders',
             84: 'Dashboard count',
+            120: 'Lead Search',
           };
 
           for (var entry in customPermissions.entries) {

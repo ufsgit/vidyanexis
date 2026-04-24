@@ -17,6 +17,7 @@ import 'package:vidyanexis/presentation/pages/reports/work_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
+import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 
 final GoRouter appRouter = GoRouter(
   debugLogDiagnostics: true, // Helpful for debugging
@@ -157,6 +158,12 @@ final GoRouter appRouter = GoRouter(
       path: CustomerOutstandingReportPage.route,
       pageBuilder: (context, state) {
         return fadeTransition(const CustomerOutstandingReportPage());
+      },
+    ),
+    GoRoute(
+      path: LeadSearchPage.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const LeadSearchPage());
       },
     ),
   ],

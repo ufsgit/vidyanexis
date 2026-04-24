@@ -49,6 +49,7 @@ import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.
 import 'package:vidyanexis/presentation/pages/reports/commission_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
+import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 
 class HomePage extends StatefulWidget {
   static String route = '/home';
@@ -122,6 +123,12 @@ class _HomePageState extends State<HomePage> {
                     customerId: sideProvider.customerId,
                     report: 'false',
                   )),
+      if (settingsProvider.menuIsViewMap[120].toString() == '1')
+        SidebarOption(
+          title: 'Lead Search',
+          iconPath: 'assets/images/Leads.svg',
+          baseContent: const LeadSearchPage(),
+        ),
       if (settingsProvider.menuIsViewMap[35].toString() == '1')
         SidebarOption(
           title: 'Task',

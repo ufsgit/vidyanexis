@@ -45,6 +45,7 @@ import 'package:vidyanexis/presentation/pages/reports/commission_report_mobile.d
 import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_mobile.dart';
+import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 
 class SidebarDrawer extends StatefulWidget {
   const SidebarDrawer({super.key});
