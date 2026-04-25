@@ -59,6 +59,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
       if (userType != "1") {
         dashBoardProvider.setUserFilterStatus(userId);
+      } else {
+        // For admins, also ensure flags are cleared so fresh data is fetched
+        dashBoardProvider.clearDashboardFlags();
       }
 
       // Load data for the initial tab only
@@ -179,191 +182,219 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     );
                   },
                 ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: 'Refresh Data',
+                  onPressed: () =>
+                      dashBoardProvider.refreshDashboardData(context),
+                ),
               ],
             )
           : null,
       drawer: const SidebarDrawer(),
-      body: ListView(
-        padding: AppStyles.isWebScreen(context)
-            ? const EdgeInsets.symmetric(vertical: 18, horizontal: 130)
-            : const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-        children: [
-          // TextButton(onPressed: (){
-          //   if (formKey.currentState!.validate()) {
+      body: RefreshIndicator(
+        onRefresh: () => dashBoardProvider.refreshDashboardData(context),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: AppStyles.isWebScreen(context)
+              ? const EdgeInsets.symmetric(vertical: 18, horizontal: 130)
+              : const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+          children: [
+            // TextButton(onPressed: (){
+            //   if (formKey.currentState!.validate()) {
 
-          //   }
-          // }, child: Text("data")),
-          if (AppStyles.isWebScreen(context))
-            Text(
-              'Dashboard',
-              style: AppStyles.getHeadingTextStyle(
-                  fontSize: 24, fontColor: AppColors.primaryViolet),
-            ),
-          const SizedBox(height: 10),
-          CustomTab(dashBoardProvider: dashBoardProvider),
-          // const SizedBox(height: 10),
-          // const SizedBox(height: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Consumer<AttendanceReportProvider>(
-                builder: (context, attendanceProvider, child) {
-                  if (settingsProvider.menuIsViewMap[26].toString() != '1') {
-                    return const SizedBox.shrink();
-                  }
+            //   }
+            // }, child: Text("data")),
+            if (AppStyles.isWebScreen(context))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Dashboard',
+                    style: AppStyles.getHeadingTextStyle(
+                        fontSize: 24, fontColor: AppColors.primaryViolet),
+                  ),
+                  TextButton.icon(
+                    onPressed: () =>
+                        dashBoardProvider.refreshDashboardData(context),
+                    icon: const Icon(Icons.refresh, size: 20),
+                    label: const Text('Refresh'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.primaryBlue,
+                    ),
+                  ),
+                ],
+              ),
+            const SizedBox(height: 10),
+            CustomTab(dashBoardProvider: dashBoardProvider),
+            // const SizedBox(height: 10),
+            // const SizedBox(height: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Consumer<AttendanceReportProvider>(
+                  builder: (context, attendanceProvider, child) {
+                    if (settingsProvider.menuIsViewMap[26].toString() != '1') {
+                      return const SizedBox.shrink();
+                    }
 
-                  if (attendanceProvider.isCompletedToday) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: Text(
-                        'Attendance Completed',
-                        style: AppStyles.getBoldTextStyle(
-                          fontColor: AppColors.btnRed,
-                          fontSize: 16,
+                    if (attendanceProvider.isCompletedToday) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        child: Text(
+                          'Attendance Completed',
+                          style: AppStyles.getBoldTextStyle(
+                            fontColor: AppColors.btnRed,
+                            fontSize: 16,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return ElevatedButton.icon(
+                      onPressed: () {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const AddAttendanceWidget(
+                                editId: '0',
+                                isEdit: false,
+                                user: '',
+                                userId: 0);
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.add),
+                      label: const Text('Mark Attendance'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
                       ),
                     );
-                  }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Render tab body only if permitted
+            Builder(builder: (context) {
+              final allowedTabs = <int>[
+                if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0')
+                  6, // Dashboard count
+                if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0')
+                  0, // Leads Overview
+                if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0')
+                  1, // Work Overview
+                if ((settingsProvider.menuIsViewMap[76] ?? 1).toString() != '0')
+                  4, // Amc Notification
+                if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0')
+                  5, // Payment Reminders
+                if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0')
+                  2, // Task Overview
+                if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0')
+                  3, // Task Summary
+              ];
+              //change permissions id in CustomTab also ----------------
 
-                  return ElevatedButton.icon(
-                    onPressed: () {
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const AddAttendanceWidget(
-                              editId: '0', isEdit: false, user: '', userId: 0);
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('Mark Attendance'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
+              if (allowedTabs.isEmpty) {
+                return Container();
+              }
+
+              final safeIndex =
+                  dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
+              final activeTab = allowedTabs[safeIndex];
+
+              switch (activeTab) {
+                case 6:
+                  return AnimatedAlign(
+                    duration: const Duration(milliseconds: 600),
+                    alignment: safeIndex == allowedTabs.indexOf(6)
+                        ? const Alignment(0, 0)
+                        : const Alignment(-100, 0),
+                    child: Column(
+                      children: [
+                        filterWidget(dashBoardProvider: dashBoardProvider),
+                        const SizedBox(height: 20),
+                        DashboardCountTab(
+                          dashBoardProvider: dashBoardProvider,
+                        ),
+                      ],
                     ),
                   );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Render tab body only if permitted
-          Builder(builder: (context) {
-            final allowedTabs = <int>[
-              if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0')
-                6, // Dashboard count
-              if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0')
-                0, // Leads Overview
-              if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0')
-                1, // Work Overview
-              if ((settingsProvider.menuIsViewMap[76] ?? 1).toString() != '0')
-                4, // Amc Notification
-              if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0')
-                5, // Payment Reminders
-              if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0')
-                2, // Task Overview
-              if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0')
-                3, // Task Summary
-            ];
-            //change permissions id in CustomTab also ----------------
-
-            if (allowedTabs.isEmpty) {
-              return Container();
-            }
-
-            final safeIndex =
-                dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
-            final activeTab = allowedTabs[safeIndex];
-
-            switch (activeTab) {
-              case 6:
-                return AnimatedAlign(
-                  duration: const Duration(milliseconds: 600),
-                  alignment: safeIndex == allowedTabs.indexOf(6)
-                      ? const Alignment(0, 0)
-                      : const Alignment(-100, 0),
-                  child: Column(
-                    children: [
-                      filterWidget(dashBoardProvider: dashBoardProvider),
-                      const SizedBox(height: 20),
-                      DashboardCountTab(
-                        dashBoardProvider: dashBoardProvider,
-                      ),
-                    ],
-                  ),
-                );
-              case 0:
-                return AnimatedAlign(
-                  duration: const Duration(milliseconds: 600),
-                  alignment: safeIndex == allowedTabs.indexOf(0)
-                      ? const Alignment(0, 0)
-                      : const Alignment(-100, 0),
-                  child: Column(
-                    children: [
-                      filterWidget(dashBoardProvider: dashBoardProvider),
-                      const SizedBox(height: 20),
-                      LeadsOverViewTab(
-                        dashBoardProvider: dashBoardProvider,
-                        taskAllocationData:
-                            dashBoardProvider.taskAllocationSummaryData,
-                        followUpLeadData: dashBoardProvider.followUpSummaryData,
-                        leadConversionData: dashBoardProvider.conversionData,
-                        countLeadData: dashBoardProvider.conversionCountData,
-                        pieData: dashBoardProvider.leadProgressReport,
-                      ),
-                    ],
-                  ),
-                );
-              case 1:
-                return AnimatedAlign(
-                  duration: const Duration(milliseconds: 600),
-                  alignment: safeIndex == 1
-                      ? const Alignment(0, 0)
-                      : const Alignment(0, -100),
-                  child: WorkOverViewTab(
-                    dashboardProvider: dashBoardProvider,
-                    taskData: dashBoardProvider.taskAllocationSummaryData,
-                    data: dashBoardProvider.conversionData,
-                    countLeadData: dashBoardProvider.conversionCountData,
-                  ),
-                );
-              case 4:
-                return AnimatedAlign(
-                  duration: const Duration(milliseconds: 600),
-                  alignment: const Alignment(0, 0),
-                  child: const AmcNotificationTab(),
-                );
-              case 5:
-                return AnimatedAlign(
-                  duration: const Duration(milliseconds: 600),
-                  alignment: const Alignment(0, 0),
-                  child: const PaymentReminderTab(),
-                );
-              case 2:
-                return AnimatedAlign(
-                  duration: const Duration(milliseconds: 600),
-                  alignment: const Alignment(0, 0),
-                  child: const TaskOverviewTab(),
-                );
-              case 3:
-                return AnimatedAlign(
-                  duration: const Duration(milliseconds: 600),
-                  alignment: const Alignment(0, 0),
-                  child: const TaskSummaryPage(),
-                );
-              default:
-                return Container();
-            }
-          }),
-        ],
+                case 0:
+                  return AnimatedAlign(
+                    duration: const Duration(milliseconds: 600),
+                    alignment: safeIndex == allowedTabs.indexOf(0)
+                        ? const Alignment(0, 0)
+                        : const Alignment(-100, 0),
+                    child: Column(
+                      children: [
+                        filterWidget(dashBoardProvider: dashBoardProvider),
+                        const SizedBox(height: 20),
+                        LeadsOverViewTab(
+                          dashBoardProvider: dashBoardProvider,
+                          taskAllocationData:
+                              dashBoardProvider.taskAllocationSummaryData,
+                          followUpLeadData:
+                              dashBoardProvider.followUpSummaryData,
+                          leadConversionData: dashBoardProvider.conversionData,
+                          countLeadData: dashBoardProvider.conversionCountData,
+                          pieData: dashBoardProvider.leadProgressReport,
+                        ),
+                      ],
+                    ),
+                  );
+                case 1:
+                  return AnimatedAlign(
+                    duration: const Duration(milliseconds: 600),
+                    alignment: safeIndex == 1
+                        ? const Alignment(0, 0)
+                        : const Alignment(0, -100),
+                    child: WorkOverViewTab(
+                      dashboardProvider: dashBoardProvider,
+                      taskData: dashBoardProvider.taskAllocationSummaryData,
+                      data: dashBoardProvider.conversionData,
+                      countLeadData: dashBoardProvider.conversionCountData,
+                    ),
+                  );
+                case 4:
+                  return AnimatedAlign(
+                    duration: const Duration(milliseconds: 600),
+                    alignment: const Alignment(0, 0),
+                    child: const AmcNotificationTab(),
+                  );
+                case 5:
+                  return AnimatedAlign(
+                    duration: const Duration(milliseconds: 600),
+                    alignment: const Alignment(0, 0),
+                    child: const PaymentReminderTab(),
+                  );
+                case 2:
+                  return AnimatedAlign(
+                    duration: const Duration(milliseconds: 600),
+                    alignment: const Alignment(0, 0),
+                    child: const TaskOverviewTab(),
+                  );
+                case 3:
+                  return AnimatedAlign(
+                    duration: const Duration(milliseconds: 600),
+                    alignment: const Alignment(0, 0),
+                    child: const TaskSummaryPage(),
+                  );
+                default:
+                  return Container();
+              }
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -540,7 +571,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Widget _buildAssignedStaffFilter(DashboardProvider dashBoardProvider) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
-        bool isAdmin = userType == "1" || userType == "0"; 
+        bool isAdmin = userType == "1" || userType == "0";
         int dropdownValue;
         List<DropdownMenuItem<int>> dropdownItems;
 

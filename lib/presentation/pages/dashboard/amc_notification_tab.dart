@@ -234,6 +234,74 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                               ),
                             ],
                           ),
+                        ],
+                        if (item.intervalDetails != null && item.intervalDetails!.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.calendar_month_outlined, size: 16, color: Color(0xFF64748B)),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      "Service Intervals",
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color(0xFF334155),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: item.intervalDetails!.map((interval) {
+                                    bool isCompleted = interval.completedStatus == 1;
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: isCompleted ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                                        border: Border.all(
+                                          color: isCompleted ? Colors.green.withOpacity(0.4) : Colors.orange.withOpacity(0.4),
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            isCompleted ? Icons.check_circle : Icons.schedule,
+                                            size: 14,
+                                            color: isCompleted ? Colors.green : Colors.orange,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            _formatDate(interval.intervalDate),
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: isCompleted ? Colors.green.shade700 : Colors.orange.shade800,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
                         ]
                       ],
                     ),

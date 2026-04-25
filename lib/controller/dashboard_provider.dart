@@ -657,14 +657,13 @@ class DashboardProvider extends ChangeNotifier {
             leadCountMap.clear();
             leadDashboardCountData.clear();
             counts.forEach((key, value) {
-              if (value is int) {
-                leadCountMap[key] = value;
-                leadDashboardCountData.add(DashBoardCountModel(
-                  tp: 1,
-                  title: key,
-                  dataCount: value,
-                ));
-              }
+              final intValue = int.tryParse(value.toString()) ?? 0;
+              leadCountMap[key] = intValue;
+              leadDashboardCountData.add(DashBoardCountModel(
+                tp: 1,
+                title: key,
+                dataCount: intValue,
+              ));
             });
           }
           isDashboardCountLoaded = true;
