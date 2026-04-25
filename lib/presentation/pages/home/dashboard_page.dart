@@ -553,11 +553,11 @@ class _DashBoardPageState extends State<DashBoardPage> {
   }
 
   List<String> dateButtonTitles = [
-    'Yesterday',
+    // 'Yesterday',
     'Today',
     'Tomorrow',
-    'This Week',
-    'This Month',
+    // 'This Week',
+    // 'This Month',
   ];
 
   // Filters (no date): User, Client, Project Type, Expense Type
