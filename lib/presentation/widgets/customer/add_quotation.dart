@@ -1604,12 +1604,24 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
-                    Text(
-                      'Subsidy:   ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                          fontSize: 16),
+                    Row(
+                      children: [
+                        const Text(
+                          'Subsidy:   ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              fontSize: 16),
+                        ),
+                        Checkbox(
+                          activeColor: AppColors.appViolet,
+                          value: customerDetailsProvider.isSubsidyChecked,
+                          onChanged: (value) {
+                            customerDetailsProvider.isSubsidyChecked =
+                                value ?? false;
+                          },
+                        ),
+                      ],
                     ),
                     Container(
                       width: 140,
@@ -2328,10 +2340,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           );
           return;
         }
-        await customerDetailsProvider.loadQuotationFromCustomFields(
-            context,
-            "view_in_quotation",
-            customerDetailsProvider.selectedQuotationType);
+        await customerDetailsProvider.loadQuotationFromCustomFields(context,
+            "view_in_quotation", customerDetailsProvider.selectedQuotationType);
         if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
           final quotation = customerDetailsProvider.quotationListByMaster.first;
           customerDetailsProvider.populateAllQuotationFields(

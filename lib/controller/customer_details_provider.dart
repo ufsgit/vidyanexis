@@ -364,6 +364,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController(text: '0');
   final TextEditingController qDiscountController =
       TextEditingController(text: '0');
+  bool _isSubsidyChecked = false;
+  bool get isSubsidyChecked => _isSubsidyChecked;
+  set isSubsidyChecked(bool value) {
+    _isSubsidyChecked = value;
+    updateTotal();
+    notifyListeners();
+  }
 
   final TextEditingController itemNameController = TextEditingController();
   final TextEditingController itemPriceController = TextEditingController();
@@ -1204,7 +1211,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         double.tryParse(shippingChargesController.text) ?? 0.0;
 
     if (subtotal != null) {
-      total = subtotal + shippingCharges - subsidy - discount;
+      total = subtotal + shippingCharges - (_isSubsidyChecked ? subsidy : 0) - discount;
     } else {
       print("Invalid input for price or quantity");
     }
@@ -2341,6 +2348,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     deliveryController.clear();
     quotationStatusController.clear();
     qsubsidyAmountController.text = '0';
+    _isSubsidyChecked = false;
     qDiscountController.text = '0';
     qtermsConditionsController.clear();
     qwarrentyController.clear();
@@ -3979,6 +3987,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     deliveryController.text = quotation.onDeliveryPercentage;
     workCompletionController.text = quotation.workCompletionPercentage;
     qsubsidyAmountController.text = quotation.subsidyAmount;
+    _isSubsidyChecked = (double.tryParse(quotation.subsidyAmount) ?? 0) > 0;
     qDiscountController.text = quotation.discountAmount;
     qwarrentyController.text = quotation.warranty;
     qtermsConditionsController.text = quotation.termsAndConditions;
