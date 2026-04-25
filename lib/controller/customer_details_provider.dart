@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'dart:developer';
 import 'dart:math' as math;
 
@@ -407,7 +408,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController billuomController = TextEditingController();
   TextEditingController quotationStatusController = TextEditingController();
   TextEditingController systemPriceController = TextEditingController();
-  TextEditingController additionalStructureController = TextEditingController(text: '200');
+  TextEditingController additionalStructureController =
+      TextEditingController(text: '200');
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
 
@@ -2124,9 +2126,15 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } catch (e) {
       log('Network error: $e');
       if (context.mounted) {
+        String errorMessage = 'Connection error. Please check your internet.';
+        if (e is DioException && e.response?.data != null) {
+          final data = e.response?.data;
+          if (data is Map && data.containsKey('message')) {
+            errorMessage = data['message'];
+          }
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Connection error. Please check your internet.')),
+          SnackBar(content: Text(errorMessage)),
         );
       }
     }
@@ -3820,9 +3828,15 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } catch (e) {
       log('Network error: $e');
       if (context.mounted) {
+        String errorMessage = 'Connection error. Please check your internet.';
+        if (e is DioException && e.response?.data != null) {
+          final data = e.response?.data;
+          if (data is Map && data.containsKey('message')) {
+            errorMessage = data['message'];
+          }
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Connection error. Please check your internet.')),
+          SnackBar(content: Text(errorMessage)),
         );
       }
     }

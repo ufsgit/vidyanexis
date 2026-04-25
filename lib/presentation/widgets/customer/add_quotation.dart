@@ -2322,8 +2322,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     );
     return CustomElevatedButton(
       onPressed: () async {
+        if (customerDetailsProvider.selectedQuotationType == 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select a Quotation Type')),
+          );
+          return;
+        }
         await customerDetailsProvider.loadQuotationFromCustomFields(
-            context, "view_in_quotation", customerDetailsProvider.selectedQuotationType);
+            context,
+            "view_in_quotation",
+            customerDetailsProvider.selectedQuotationType);
         if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
           final quotation = customerDetailsProvider.quotationListByMaster.first;
           customerDetailsProvider.populateAllQuotationFields(
