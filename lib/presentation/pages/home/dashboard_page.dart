@@ -465,8 +465,19 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () =>
-                                dashBoardProvider.selectDate(context, true),
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: dashBoardProvider.fromDate ??
+                                    DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101),
+                              );
+                              if (pickedDate != null) {
+                                dashBoardProvider.setFromDate(pickedDate);
+                                dashBoardProvider.setToDate(pickedDate);
+                              }
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
@@ -474,25 +485,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                               hintText: dashBoardProvider.fromDate != null
                                   ? '${dashBoardProvider.fromDate!.toLocal()}'
                                       .split(' ')[0]
-                                  : 'From',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () =>
-                                dashBoardProvider.selectDate(context, false),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: dashBoardProvider.toDate != null
-                                  ? '${dashBoardProvider.toDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'To',
+                                  : 'Select Date',
                               suffixIcon: const Icon(Icons.calendar_month),
                             ),
                           ),
@@ -699,8 +692,10 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     const Text('Follow-Up Date: All'),
                   if (dashBoardProvider.fromDate != null &&
                       dashBoardProvider.toDate != null)
-                    Text(
-                        'Date : ${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}'),
+                    Text(dashBoardProvider.formattedFromDate ==
+                            dashBoardProvider.formattedToDate
+                        ? 'Date : ${dashBoardProvider.formattedFromDate}'
+                        : 'Date : ${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}'),
                   const SizedBox(
                     width: 10,
                   ),
