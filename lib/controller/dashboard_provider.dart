@@ -804,6 +804,10 @@ class DashboardProvider extends ChangeNotifier {
     _fromDate = date;
     _selectedDateFilterIndex = -1;
     formatDate();
+    isLeadLoaded = false;
+    isWorkLoaded = false;
+    isDashboardCountLoaded = false;
+    isWorkDashboardCountLoaded = false;
     notifyListeners();
   }
 
@@ -811,6 +815,10 @@ class DashboardProvider extends ChangeNotifier {
     _toDate = date;
     _selectedDateFilterIndex = -1;
     formatDate();
+    isLeadLoaded = false;
+    isWorkLoaded = false;
+    isDashboardCountLoaded = false;
+    isWorkDashboardCountLoaded = false;
     notifyListeners();
   }
 
