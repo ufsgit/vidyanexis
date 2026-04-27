@@ -15,6 +15,9 @@ import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_enquiry_for_widget.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_new_enquiry_widget.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_new_status_widget.dart';
 
 import '../../../constants/enums.dart';
 
@@ -757,7 +760,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
+                                  padding: const EdgeInsets.only(right: 4.0),
                                   child: CommonDropdown<int>(
                                     hintText: 'Enquiry Source',
                                     items: dropDownProvider.enquiryData
@@ -787,6 +790,31 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         .selectedEnquirySourceId,
                                   ),
                                 ),
+                              ),
+                              IconButton(
+                                tooltip: "Add Enquiry Source",
+                                icon: Icon(Icons.add_circle,
+                                    color: AppColors.primaryViolet),
+                                onPressed: () {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const AddEnquirySource(
+                                        editId: '0',
+                                        isEdit: false,
+                                        // sourceId: '0',
+                                        // sourceName: '',
+                                        status: '',
+                                      );
+                                    },
+                                  ).then((value) {
+                                    if (context.mounted) {
+                                      dropDownProvider
+                                          .getEnquirySource(context);
+                                    }
+                                  });
+                                },
                               ),
                               Expanded(
                                 child: Padding(
@@ -833,6 +861,37 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         dropDownProvider.selectedEnquiryForId,
                                   ),
                                 ),
+                              ),
+                              IconButton(
+                                tooltip: "Add Enquiry For",
+                                icon: Icon(Icons.add_circle,
+                                    color: AppColors.primaryViolet),
+                                onPressed: () {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const AddEnquiryFor(
+                                        editId: '0',
+                                        isEdit: false,
+                                        sourceId: '0',
+                                        sourceName: '',
+                                        status: '',
+                                        data: null,
+                                      );
+                                    },
+                                  ).then((value) async {
+                                    if (context.mounted) {
+                                      await dropDownProvider
+                                          .getEnquiryFor(context);
+                                      dropDownProvider
+                                          .filterEnquiryForByCategory(
+                                              dropDownProvider
+                                                      .selectedSourceId ??
+                                                  0);
+                                    }
+                                  });
+                                },
                               ),
                               Expanded(
                                 child: Padding(
@@ -1779,6 +1838,32 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               .selectedFollowUpId,
                                         ),
                                       ),
+                                    ),
+                                    IconButton(
+                                      tooltip: "Add Followup Status",
+                                      icon: Icon(Icons.add_circle,
+                                          color: AppColors.primaryViolet),
+                                      onPressed: () {
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AddNewStatusWidget(
+                                              editId: '0',
+                                              followUp: '',
+                                              isEdit: false,
+                                              status: '',
+                                              isRegister: '',
+                                              colorCode: '',
+                                            );
+                                          },
+                                        ).then((value) {
+                                          if (context.mounted) {
+                                            dropDownProvider.getFollowUpStatus(
+                                                context, "1");
+                                          }
+                                        });
+                                      },
                                     ),
                                   ],
                                 ),

@@ -25,6 +25,9 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_enquiry_for_widget.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_new_enquiry_widget.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_new_status_widget.dart';
 
 class NewLeadDrawerMobileWidget extends StatefulWidget {
   final bool isEdit;
@@ -922,28 +925,59 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             SizedBox(
               height: 10,
             ),
-            CommonDropdown<int>(
-              hintText: 'Follow-up Status*',
-              items: dropDownProvider.followUpData
-                  .map((status) => DropdownItem<int>(
-                        id: status.statusId ?? 0,
-                        name: status.statusName ?? '',
-                      ))
-                  .toList(),
-              controller: leadProvider.followUpStatusController,
-              onItemSelected: (selectedId) {
-                dropDownProvider.setSelectedFollowUPId(selectedId);
-                // Update the controller text
-                leadProvider.customFieldList.clear();
-                leadProvider.getCustomFieldsByStatusId(context,
-                    leadId: widget.isEdit ? leadProvider.customerId : 0,
-                    statusId: selectedId);
-                final selectedStatus = dropDownProvider.followUpData
-                    .firstWhere((status) => status.statusId == selectedId);
-                leadProvider.followUpStatusController.text =
-                    selectedStatus.statusName ?? '';
-              },
-              selectedValue: dropDownProvider.selectedFollowUpId,
+            Row(
+              children: [
+                Expanded(
+                  child: CommonDropdown<int>(
+                    hintText: 'Follow-up Status*',
+                    items: dropDownProvider.followUpData
+                        .map((status) => DropdownItem<int>(
+                              id: status.statusId ?? 0,
+                              name: status.statusName ?? '',
+                            ))
+                        .toList(),
+                    controller: leadProvider.followUpStatusController,
+                    onItemSelected: (selectedId) {
+                      dropDownProvider.setSelectedFollowUPId(selectedId);
+                      // Update the controller text
+                      leadProvider.customFieldList.clear();
+                      leadProvider.getCustomFieldsByStatusId(context,
+                          leadId: widget.isEdit ? leadProvider.customerId : 0,
+                          statusId: selectedId);
+                      final selectedStatus = dropDownProvider.followUpData
+                          .firstWhere(
+                              (status) => status.statusId == selectedId);
+                      leadProvider.followUpStatusController.text =
+                          selectedStatus.statusName ?? '';
+                    },
+                    selectedValue: dropDownProvider.selectedFollowUpId,
+                  ),
+                ),
+                IconButton(
+                  tooltip: "Add Followup Status",
+                  icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+                  onPressed: () {
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AddNewStatusWidget(
+                          editId: '0',
+                          followUp: '',
+                          isEdit: false,
+                          status: '',
+                          isRegister: '',
+                          colorCode: '',
+                        );
+                      },
+                    ).then((value) {
+                      if (context.mounted) {
+                        dropDownProvider.getFollowUpStatus(context, "1");
+                      }
+                    });
+                  },
+                ),
+              ],
             ),
             SizedBox(
               height: 10,
@@ -1798,7 +1832,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   final selectedItem =
                       leadProvider.leadDropdownData!.costIncludes.firstWhere(
                     (status) =>
-                        status.costIncludesId == selectedTaskType.costIncludesId,
+                        status.costIncludesId ==
+                        selectedTaskType.costIncludesId,
                   );
                   leadProvider.costIncludesController.text =
                       selectedItem.costIncludesName;
@@ -2249,24 +2284,54 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
         if (dropDownProvider.selectedSourceId != null &&
             dropDownProvider.selectedSourceId! > 0)
-          CommonDropdown<int>(
-            hintText: 'Enquiry Source',
-            items: dropDownProvider.enquiryData
-                .map((source) => DropdownItem<int>(
-                      id: source.enquirySourceId,
-                      name: source.enquirySourceName ?? '',
-                    ))
-                .toList(),
-            controller: leadProvider.enquirySourceController,
-            onItemSelected: (selectedId) {
-              dropDownProvider.setSelectedEnquirySourceId(selectedId);
-              final selectedItem = dropDownProvider.enquiryData
-                  .firstWhere((source) => source.enquirySourceId == selectedId);
+          Row(
+            children: [
+              Expanded(
+                child: CommonDropdown<int>(
+                  hintText: 'Enquiry Source',
+                  items: dropDownProvider.enquiryData
+                      .map((source) => DropdownItem<int>(
+                            id: source.enquirySourceId,
+                            name: source.enquirySourceName ?? '',
+                          ))
+                      .toList(),
+                  controller: leadProvider.enquirySourceController,
+                  onItemSelected: (selectedId) {
+                    dropDownProvider.setSelectedEnquirySourceId(selectedId);
+                    final selectedItem = dropDownProvider.enquiryData
+                        .firstWhere(
+                            (source) => source.enquirySourceId == selectedId);
 
-              leadProvider.enquirySourceController.text =
-                  selectedItem.enquirySourceName ?? '';
-            },
-            selectedValue: dropDownProvider.selectedEnquirySourceId,
+                    leadProvider.enquirySourceController.text =
+                        selectedItem.enquirySourceName ?? '';
+                  },
+                  selectedValue: dropDownProvider.selectedEnquirySourceId,
+                ),
+              ),
+              IconButton(
+                tooltip: "Add Enquiry Source",
+                icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+                onPressed: () {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const AddEnquirySource(
+                        editId: '0',
+                        isEdit: false,
+                        // sourceId: '0',
+                        // sourceName: '',
+                        status: '',
+                      );
+                    },
+                  ).then((value) {
+                    if (context.mounted) {
+                      dropDownProvider.getEnquirySource(context);
+                    }
+                  });
+                },
+              ),
+            ],
           ),
 
         const SizedBox(
@@ -2323,31 +2388,64 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
         const SizedBox(height: 10),
 
-        CommonDropdown<int>(
-          hintText: 'Enquiry For',
-          enabled: dropDownProvider.selectedSourceId != null,
-          items: dropDownProvider.filteredEnquiryForData
-              .map((status) => DropdownItem<int>(
-                    id: status.enquiryForId,
-                    name: status.enquiryForName,
-                  ))
-              .toList(),
-          controller: leadProvider.enquiryForController,
-          onItemSelected: (int? newValue) {
-            if (newValue != null) {
-              final selectedEnquiryFor = dropDownProvider.filteredEnquiryForData
-                  .firstWhere((task) => task.enquiryForId == newValue);
-              dropDownProvider.updateEnquiryForName(
-                  newValue, selectedEnquiryFor.enquiryForName);
-              leadProvider.customFieldEnquiryFor.clear();
-              leadProvider.getCustomFieldsByEnquiryForId(
-                context,
-                leadId: widget.isEdit ? leadProvider.customerId : 0,
-                enquiryForId: newValue,
-              );
-            }
-          },
-          selectedValue: dropDownProvider.selectedEnquiryForId,
+        Row(
+          children: [
+            Expanded(
+              child: CommonDropdown<int>(
+                hintText: 'Enquiry For',
+                enabled: dropDownProvider.selectedSourceId != null,
+                items: dropDownProvider.filteredEnquiryForData
+                    .map((status) => DropdownItem<int>(
+                          id: status.enquiryForId,
+                          name: status.enquiryForName,
+                        ))
+                    .toList(),
+                controller: leadProvider.enquiryForController,
+                onItemSelected: (int? newValue) {
+                  if (newValue != null) {
+                    final selectedEnquiryFor = dropDownProvider
+                        .filteredEnquiryForData
+                        .firstWhere((task) => task.enquiryForId == newValue);
+                    dropDownProvider.updateEnquiryForName(
+                        newValue, selectedEnquiryFor.enquiryForName);
+                    leadProvider.customFieldEnquiryFor.clear();
+                    leadProvider.getCustomFieldsByEnquiryForId(
+                      context,
+                      leadId: widget.isEdit ? leadProvider.customerId : 0,
+                      enquiryForId: newValue,
+                    );
+                  }
+                },
+                selectedValue: dropDownProvider.selectedEnquiryForId,
+              ),
+            ),
+            IconButton(
+              tooltip: "Add Enquiry For",
+              icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+              onPressed: () {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const AddEnquiryFor(
+                      editId: '0',
+                      isEdit: false,
+                      sourceId: '0',
+                      sourceName: '',
+                      status: '',
+                      data: null,
+                    );
+                  },
+                ).then((value) async {
+                  if (context.mounted) {
+                    await dropDownProvider.getEnquiryFor(context);
+                    dropDownProvider.filterEnquiryForByCategory(
+                        dropDownProvider.selectedSourceId ?? 0);
+                  }
+                });
+              },
+            ),
+          ],
         ),
         const SizedBox(
           height: 10,
