@@ -324,11 +324,11 @@ class _LeadsPageState extends State<LeadPage> {
                     child: TextField(
                       controller: searchController,
                       textAlignVertical: TextAlignVertical.center,
-                      onChanged: _onSearchChanged,
+                      // onChanged: _onSearchChanged,
                       onSubmitted: (query) {
                         if (_debounce?.isActive ?? false) _debounce!.cancel();
-                        leadProvider.setSearchCriteria(query,
-                            leadProvider.fromDateS, leadProvider.toDateS,
+                        leadProvider.setSearchCriteria(
+                            query, leadProvider.fromDateS, leadProvider.toDateS,
                             leadId: leadIdController.text);
                         leadProvider.getSearchLeads(context);
                       },
@@ -998,7 +998,6 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     ],
                                                                   ),
                                                                 ),
-
                                                         ],
                                                       ),
                                                     ],
@@ -1012,7 +1011,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                       vertical: 4.0,
                                                       horizontal: 12.0),
                                                   data: Tooltip(
-                                                    message: lead.displayAddress,
+                                                    message:
+                                                        lead.displayAddress,
                                                     child: Text(
                                                       lead.displayAddress,
                                                       maxLines: 1,
@@ -1655,7 +1655,7 @@ class _LeadsPageState extends State<LeadPage> {
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
                           leadProvider.setSearchCriteria(
-                              leadProvider.search, fromDate, toDate);
+                              searchController.text, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1688,7 +1688,7 @@ class _LeadsPageState extends State<LeadPage> {
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
                           leadProvider.setSearchCriteria(
-                              leadProvider.search, fromDate, toDate);
+                              searchController.text, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1825,7 +1825,7 @@ class _LeadsPageState extends State<LeadPage> {
         textAlignVertical: TextAlignVertical.center,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        onChanged: (v) => _onSearchChanged(searchController.text),
+        // onChanged: (v) => _onSearchChanged(searchController.text),
         onSubmitted: (v) {
           if (_debounce?.isActive ?? false) _debounce!.cancel();
           leadProvider.setSearchCriteria(searchController.text,
@@ -1931,7 +1931,7 @@ class _LeadsPageState extends State<LeadPage> {
                         print(
                             'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
                         leadProvider.setSearchCriteria(
-                            leadProvider.search, fromDate, toDate);
+                            searchController.text, fromDate, toDate);
                         leadProvider.getSearchLeads(context);
                       }
                     : null,
@@ -2002,7 +2002,7 @@ class _LeadsPageState extends State<LeadPage> {
                   String fromDate = leadProvider.formattedFromDate;
                   String toDate = leadProvider.formattedToDate;
                   leadProvider.setSearchCriteria(
-                      leadProvider.search, fromDate, toDate);
+                      searchController.text, fromDate, toDate);
                   leadProvider.getSearchLeads(context);
                 },
                 underline: Container(),
@@ -2068,7 +2068,7 @@ class _LeadsPageState extends State<LeadPage> {
                   String fromDate = leadProvider.formattedFromDate;
                   String toDate = leadProvider.formattedToDate;
                   leadProvider.setSearchCriteria(
-                      leadProvider.search, fromDate, toDate);
+                      searchController.text, fromDate, toDate);
                   leadProvider.getSearchLeads(context);
                 },
                 underline: Container(),
@@ -2257,7 +2257,7 @@ class _LeadsPageState extends State<LeadPage> {
                         }
                       }
                       leadsProvider.setSearchCriteria(
-                        leadsProvider.search,
+                        searchController.text,
                         leadsProvider.fromDateS,
                         leadsProvider.toDateS,
                       );
@@ -2298,7 +2298,7 @@ class _LeadsPageState extends State<LeadPage> {
               onTap: () {
                 leadsProvider.toggleStatus(0); // Reset to All
                 leadsProvider.setSearchCriteria(
-                  leadsProvider.search,
+                  searchController.text,
                   leadsProvider.fromDateS,
                   leadsProvider.toDateS,
                 );
