@@ -8,6 +8,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 
 class CustomerOutstandingReportPage extends StatefulWidget {
   static String route = '/customer_outstanding_report';
@@ -26,6 +27,7 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<CustomerOutstandingReportProvider>(context, listen: false);
       provider.getReport(context);
+      Provider.of<DropDownProvider>(context, listen: false).getEnquirySource(context);
     });
   }
 
@@ -159,6 +161,8 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                         formattedToDate: provider.formattedToDate,
                         onTap: () => _onClickDateRange(context),
                       ),
+                      const SizedBox(width: 16),
+                      _buildEnquirySourceDropdown(context, provider),
                       const Spacer(),
                       CommonReportResetButton(
                         onReset: () => provider.resetFilters(context),
@@ -193,7 +197,8 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                         child: Row(
                           children: [
                             _buildTableHeader('No.', flex: 1),
-                            _buildTableHeader('Customer Name', flex: 5),
+                            _buildTableHeader('Customer Name', flex: 3),
+                            _buildTableHeader('Enquiry Source', flex: 2),
                             _buildTableHeader('Phone no', flex: 3),
                             _buildTableHeader('Project Cost', flex: 3),
                             _buildTableHeader('Received', flex: 3),
@@ -216,7 +221,7 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                                       children: [
                                         Expanded(flex: 1, child: Text('${index + 1}', style: const TextStyle(fontSize: 13))),
                                         Expanded(
-                                          flex: 5,
+                                          flex: 3,
                                           child: InkWell(
                                             onTap: () {
                                               Navigator.push(
@@ -255,6 +260,7 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                                             ),
                                           ),
                                         ),
+                                        Expanded(flex: 2, child: Text(item.enquirySource, style: const TextStyle(fontSize: 13))),
                                         Expanded(flex: 3, child: Text(item.phone, style: const TextStyle(fontSize: 13))),
                                         Expanded(flex: 3, child: Text('₹${item.projectCost}', style: const TextStyle(fontSize: 13))),
                                         Expanded(flex: 3, child: Text('₹${item.received}', style: const TextStyle(fontSize: 13, color: Colors.green))),
@@ -321,6 +327,52 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
             width: width,
             child: center ? Center(child: child) : child,
           );
+  }
+
+  Widget _buildEnquirySourceDropdown(BuildContext context, CustomerOutstandingReportProvider provider) {
+    return Consumer<DropDownProvider>(
+      builder: (context, dropDownProvider, child) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: provider.selectedEnquirySourceId != null ? AppColors.primaryBlue : Colors.grey[300]!,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Source: ', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+              DropdownButton<int>(
+                value: provider.selectedEnquirySourceId,
+                hint: const Text('All', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                underline: const SizedBox(),
+                items: [
+                  const DropdownMenuItem<int>(
+                    value: null,
+                    child: Text('All', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                  ),
+                  ...dropDownProvider.enquiryData.map((source) {
+                    return DropdownMenuItem<int>(
+                      value: source.enquirySourceId,
+                      child: Text(source.enquirySourceName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    );
+                  }),
+                ],
+                onChanged: (value) {
+                  provider.setEnquirySource(value);
+                  provider.getReport(context);
+                },
+                icon: const Icon(Icons.arrow_drop_down_outlined, color: Colors.black45, size: 20),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildFilterItem(BuildContext context, String label, String value, {VoidCallback? onTap}) {

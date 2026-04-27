@@ -23,6 +23,10 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
   String _search = '';
   String get search => _search;
 
+  int? _selectedEnquirySourceId;
+  int? get selectedEnquirySourceId => _selectedEnquirySourceId;
+
+
   DateTime? _fromDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
   DateTime? _toDate = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
   
@@ -44,6 +48,12 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
     _search = value;
     notifyListeners();
   }
+
+  void setEnquirySource(int? id) {
+    _selectedEnquirySourceId = id;
+    notifyListeners();
+  }
+
 
   void selectDateFilterOption(int? index) {
     if (index == null) {
@@ -106,6 +116,7 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
 
   void resetFilters(BuildContext context) {
     _search = '';
+    _selectedEnquirySourceId = null;
     _selectedDateFilterIndex = -1;
     final now = DateTime.now();
     _fromDate = DateTime(now.year, now.month, 1);
@@ -118,7 +129,7 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
       Loader.showLoader(context);
       
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.customerOutstandingReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Customer_Name=$_search',
+          endPoint: '${HttpUrls.customerOutstandingReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Customer_Name=$_search&Enquiry_Source_Id=${_selectedEnquirySourceId ?? 0}',
           bodyData: {});
 
       if (response.statusCode == 200) {

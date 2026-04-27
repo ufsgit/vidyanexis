@@ -5,7 +5,8 @@ import 'package:vidyanexis/controller/customer_outstanding_report_provider.dart'
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
-
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 class CustomerOutstandingReportMobile extends StatefulWidget {
   const CustomerOutstandingReportMobile({super.key});
 
@@ -30,6 +31,7 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<CustomerOutstandingReportProvider>(context, listen: false);
       provider.getReport(context);
+      Provider.of<DropDownProvider>(context, listen: false).getEnquirySource(context);
     });
   }
 
@@ -84,18 +86,22 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                 children: [
                   Row(
                     children: [
-                    CommonReportDateFilter(
-                      fromDate: provider.fromDate?.toString(),
-                      toDate: provider.toDate?.toString(),
-                      formattedFromDate: provider.formattedFromDate,
-                      formattedToDate: provider.formattedToDate,
-                      onTap: () => _showDateFilterDialog(context),
-                    ),
-                    const SizedBox(width: 8),
-                    CommonReportResetButton(
-                      onReset: () => provider.resetFilters(context),
-                      label: 'Reset',
-                    ),
+                      Expanded(
+                        child: CommonReportDateFilter(
+                          fromDate: provider.fromDate?.toString(),
+                          toDate: provider.toDate?.toString(),
+                          formattedFromDate: provider.formattedFromDate,
+                          formattedToDate: provider.formattedToDate,
+                          onTap: () => _showDateFilterDialog(context),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(child: _buildEnquirySourceDropdown(context, provider)),
+                      const SizedBox(width: 8),
+                      CommonReportResetButton(
+                        onReset: () => provider.resetFilters(context),
+                        label: 'Reset',
+                      ),
                     ],
                   ),
                 ],
@@ -301,4 +307,47 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
       ),
     );
   }
+
+  Widget _buildEnquirySourceDropdown(BuildContext context, CustomerOutstandingReportProvider provider) {
+    return Consumer<DropDownProvider>(
+      builder: (context, dropDownProvider, child) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+          height: 35,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: provider.selectedEnquirySourceId != null ? AppColors.primaryBlue : Colors.grey[300]!,
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: provider.selectedEnquirySourceId,
+              hint: const Text('Source', style: TextStyle(fontSize: 12)),
+              isExpanded: true,
+              items: [
+                const DropdownMenuItem<int>(
+                  value: null,
+                  child: Text('All Sources', style: TextStyle(fontSize: 12)),
+                ),
+                ...dropDownProvider.enquiryData.map((source) {
+                  return DropdownMenuItem<int>(
+                    value: source.enquirySourceId,
+                    child: Text(source.enquirySourceName, style: const TextStyle(fontSize: 12)),
+                  );
+                }),
+              ],
+              onChanged: (value) {
+                provider.setEnquirySource(value);
+                provider.getReport(context);
+              },
+              icon: const Icon(Icons.arrow_drop_down_outlined, color: Colors.black45, size: 20),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
+
