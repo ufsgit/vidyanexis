@@ -234,7 +234,7 @@ class ExpenseProvider extends ChangeNotifier {
 
 //sales-----------------
   final TextEditingController addressSalesController = TextEditingController();
-  final TextEditingController invoiceNOSalesControler = TextEditingController();
+  final TextEditingController invoiceNOSalesControler = TextEditingController(text: '0');
   final TextEditingController invoiceDateSalesController =
       TextEditingController();
   final TextEditingController categorySalesController = TextEditingController();
@@ -390,7 +390,7 @@ class ExpenseProvider extends ChangeNotifier {
 
   void resetSalesValues() {
     addressSalesController.clear();
-    invoiceNOSalesControler.clear();
+    invoiceNOSalesControler.text = '0';
     invoiceDateSalesController.clear();
     descriptionSalesController.clear();
     resetSalesEditState();
@@ -2512,6 +2512,7 @@ class ExpenseProvider extends ChangeNotifier {
             content: Text('Sales saved successfully'),
           ),
         );
+        getSalesMaster(context);
       } else {
         Loader.stopLoader(context);
         print('Save sales failed with status: ${response?.statusCode}');

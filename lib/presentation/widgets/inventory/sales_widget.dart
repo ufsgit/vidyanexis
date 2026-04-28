@@ -168,6 +168,7 @@ class _SalesWidgetState extends State<SalesWidget> {
         expenseProvider.resetSalesEditState();
         expenseProvider.resetSalesItems();
         expenseProvider.resetSalesValues();
+        expenseProvider.invoiceDateSalesController.text = DateFormat('dd MMM yyyy').format(DateTime.now());
       }
     });
   }
@@ -323,6 +324,7 @@ class _SalesWidgetState extends State<SalesWidget> {
                     height: 54,
                     hintText: 'Invoice No*',
                     labelText: '',
+                    readOnly: true,
                   ),
                 ),
               ],
