@@ -50,6 +50,7 @@ import 'package:vidyanexis/presentation/pages/reports/commission_report_page.dar
 import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
 
 class HomePage extends StatefulWidget {
   static String route = '/home';
@@ -253,6 +254,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Stock Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: StockReport()),
+        ),
+      if (settingsProvider.menuIsViewMap[80].toString() == '1')
+        SidebarOption(
+          title: 'Stock Use Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: StockUseReport()),
         ),
 
       if (settingsProvider.menuIsViewMap[24].toString() == '1')

@@ -46,6 +46,7 @@ import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_mobile
 import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
 
 class SidebarDrawer extends StatefulWidget {
   const SidebarDrawer({super.key});
@@ -168,6 +169,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[80].toString() == '1')
         {'title': 'Stock Reports', 'page': const StockReport()},
+      if (settingsProvider.menuIsViewMap[80].toString() == '1')
+        {'title': 'Stock Use Reports', 'page': const StockUseReport()},
       if (settingsProvider.menuIsViewMap[113].toString() == '1')
         {'title': 'Commission Reports', 'page': const CommissionReportMobile()},
       if (settingsProvider.menuIsViewMap[114].toString() == '1')
