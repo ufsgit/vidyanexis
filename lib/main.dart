@@ -46,6 +46,8 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/controller/time_track_report_provider.dart';
+import 'package:vidyanexis/controller/stock_use_report_provider.dart';
+import 'package:vidyanexis/controller/stock_return_report_provider.dart';
 import 'package:vidyanexis/controller/work_report_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/controller/stock_report_provider.dart';
@@ -155,6 +157,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) => CustomerLeadSearchProvider()),
         ChangeNotifierProvider(create: (context) => StockUseReportProvider()),
+        ChangeNotifierProvider(create: (context) => StockReturnReportProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {

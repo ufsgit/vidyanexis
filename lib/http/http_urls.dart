@@ -359,5 +359,6 @@ class HttpUrls {
   static String checkLeadContactExists = "lead/Check_Lead_Contact_Exists";
   static String searchLeadByContact = "lead/Search_Lead_By_Contact";
   static String searchStockUseReport = "item/Search_Stock_Use_Report";
+  static String searchStockReturnReport = "item/Search_Stock_Return_Report";
   static String getStockDetails = "item/Get_Stock_Details";
 }

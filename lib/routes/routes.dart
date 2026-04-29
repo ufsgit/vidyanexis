@@ -19,6 +19,7 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 
 final GoRouter appRouter = GoRouter(
   debugLogDiagnostics: true, // Helpful for debugging
@@ -171,6 +172,12 @@ final GoRouter appRouter = GoRouter(
       path: StockUseReport.route,
       pageBuilder: (context, state) {
         return fadeTransition(const StockUseReport());
+      },
+    ),
+    GoRoute(
+      path: StockReturnReport.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const StockReturnReport());
       },
     ),
   ],

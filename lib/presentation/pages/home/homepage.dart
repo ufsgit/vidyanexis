@@ -30,6 +30,7 @@ import 'package:vidyanexis/presentation/pages/reports/amc_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/conversion_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
@@ -255,11 +256,17 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: StockReport()),
         ),
-      if (settingsProvider.menuIsViewMap[80].toString() == '1')
+      if (settingsProvider.menuIsViewMap[121].toString() == '1')
         SidebarOption(
           title: 'Stock Use Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: StockUseReport()),
+        ),
+      if (settingsProvider.menuIsViewMap[122].toString() == '1')
+        SidebarOption(
+          title: 'Stock Return Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: StockReturnReport()),
         ),
 
       if (settingsProvider.menuIsViewMap[24].toString() == '1')

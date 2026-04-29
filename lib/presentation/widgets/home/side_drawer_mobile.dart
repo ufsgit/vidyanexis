@@ -22,6 +22,7 @@ import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/periodic_service_report_page_mobile.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
@@ -169,8 +170,10 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[80].toString() == '1')
         {'title': 'Stock Reports', 'page': const StockReport()},
-      if (settingsProvider.menuIsViewMap[80].toString() == '1')
+      if (settingsProvider.menuIsViewMap[121].toString() == '1')
         {'title': 'Stock Use Reports', 'page': const StockUseReport()},
+      if (settingsProvider.menuIsViewMap[122].toString() == '1')
+        {'title': 'Stock Return Reports', 'page': const StockReturnReport()},
       if (settingsProvider.menuIsViewMap[113].toString() == '1')
         {'title': 'Commission Reports', 'page': const CommissionReportMobile()},
       if (settingsProvider.menuIsViewMap[114].toString() == '1')
