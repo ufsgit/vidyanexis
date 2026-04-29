@@ -422,7 +422,19 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                               flex: 1,
                                               title: item.contactNumber),
                                           TableWidget(
-                                              flex: 2, title: item.address1),
+                                            flex: 2,
+                                            data: Tooltip(
+                                              message: item.address1,
+                                              child: Text(
+                                                item.address1,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                           TableWidget(
                                               flex: 1, title: item.district),
                                           TableWidget(

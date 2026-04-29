@@ -673,7 +673,19 @@ class _EnquirySourceReportsScreenState
                                       ),
                                       TableWidget(flex: 1, title: task.mobile),
                                       TableWidget(
-                                          flex: 2, title: task.address1),
+                                        flex: 2,
+                                        data: Tooltip(
+                                          message: task.address1,
+                                          child: Text(
+                                            task.address1,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                       TableWidget(
                                           flex: 1, title: task.followUpBy),
                                       TableWidget(flex: 3, title: task.remark),

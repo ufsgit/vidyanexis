@@ -954,7 +954,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                             fontSize: 14,
                                             color: Color(0xFF607185)),
                                         TableWidget(
-                                            flex: 4,
+                                            flex: 2,
                                             title: 'Address',
                                             fontSize: 14,
                                             color: Color(0xFF607185)),
@@ -1082,10 +1082,20 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                    flex: 4,
-                                                    title: task.address1,
-                                                    color: const Color(
-                                                        0xFF607185)),
+                                                  flex: 2,
+                                                  data: Tooltip(
+                                                    message: task.address1,
+                                                    child: Text(
+                                                      task.address1,
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        color: Color(0xFF607185),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                                 TableWidget(
                                                     flex: 3,
                                                     title: task.mobile,

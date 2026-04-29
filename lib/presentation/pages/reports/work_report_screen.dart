@@ -754,9 +754,19 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                                           fontSize: 12,
                                           title: task.mobile),
                                       TableWidget(
-                                          flex: 2,
-                                          fontSize: 12,
-                                          title: task.address1),
+                                        flex: 2,
+                                        data: Tooltip(
+                                          message: task.address1,
+                                          child: Text(
+                                            task.address1,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                       TableWidget(
                                           flex: 1,
                                           fontSize: 12,

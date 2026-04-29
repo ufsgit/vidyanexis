@@ -567,7 +567,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                   fontSize: 14,
                                                   color: Color(0xFF607185))))),
                                   SizedBox(
-                                      width: 200,
+                                      width: 150,
                                       child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 12.0, horizontal: 8.0),
@@ -728,13 +728,16 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                             ),
                                           ),
                                           SizedBox(
-                                            width: 200,
-                                            child: Text(
-                                              '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
-                                              style: const TextStyle(
-                                                fontSize: 14,
+                                            width: 150,
+                                            child: Tooltip(
+                                              message: '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                                              child: Text(
+                                                '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                           SizedBox(

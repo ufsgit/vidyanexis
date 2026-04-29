@@ -345,8 +345,11 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                   flex: 2),
               TableWidget(data: Text(item.phone), width: 130),
               TableWidget(
-                  data: Text(item.address,
-                      maxLines: 2, overflow: TextOverflow.ellipsis),
+                  data: Tooltip(
+                    message: item.address,
+                    child: Text(item.address,
+                        maxLines: 2, overflow: TextOverflow.ellipsis),
+                  ),
                   flex: 3),
               TableWidget(
                   data:
