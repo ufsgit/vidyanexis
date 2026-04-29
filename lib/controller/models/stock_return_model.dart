@@ -56,6 +56,7 @@ class StockReturnItems {
   double quantity;
   double unitPrice;
   double amount;
+  bool isChecked;
 
   StockReturnItems({
     this.stockReturnId,
@@ -66,6 +67,7 @@ class StockReturnItems {
     required this.quantity,
     required this.unitPrice,
     required this.amount,
+    this.isChecked = false,
   });
 
   // Optional: for JSON serialization if needed
@@ -76,9 +78,16 @@ class StockReturnItems {
       itemName: json['Item_Name'] ?? '',
       categoryId: json['Category_Id'] ?? 0,
       categoryName: json['Category_Name'] ?? '',
-      quantity: json['Quantity'] ?? 0,
-      unitPrice: json['Unit_Price'] ?? 0.0,
-      amount: json['Amount'] ?? 0.0,
+      quantity: double.tryParse(json['Quantity']?.toString() ??
+              json['Qauntity']?.toString() ??
+              '0') ??
+          0.0,
+      unitPrice: double.tryParse(json['Unit_Price']?.toString() ?? '0') ?? 0.0,
+      amount: double.tryParse(json['Amount']?.toString() ?? '0') ?? 0.0,
+      isChecked: json['Is_Checked'] == 1 ||
+          json['Is_Checked'] == true ||
+          json['isChecked'] == 1 ||
+          json['isChecked'] == true,
     );
   }
 
@@ -92,6 +101,7 @@ class StockReturnItems {
       'Quantity': quantity,
       'Unit_Price': unitPrice,
       'Amount': amount,
+      'Is_Checked': isChecked ? 1 : 0,
     };
   }
 }

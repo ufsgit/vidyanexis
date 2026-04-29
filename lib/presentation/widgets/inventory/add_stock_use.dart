@@ -4,9 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/stock_use_provider.dart';
-import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
-import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
-
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
 import '../../../controller/models/stock_model.dart';
@@ -34,8 +31,8 @@ class AddStockUseWidget extends StatefulWidget {
 class _AddStockUseWidgetState extends State<AddStockUseWidget> {
   String? validateInputs(
       BuildContext context, StockUseProvider expenseProvider) {
-    if (expenseProvider.stockUseItems.isEmpty) {
-      return 'Please Add Item';
+    if (!expenseProvider.stockUseItems.any((item) => item.isChecked)) {
+      return 'Please select at least one item';
     }
     return null;
   }
@@ -106,20 +103,6 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
         // Set the stock status from the existing data
         customerDetailsProvider
             .updateStockStatus(widget.stockUse!.stockStatus ?? 'Pending');
-
-        print(
-            "Loaded ${customerDetailsProvider.billOfMaterialsItems.length} BOM items for editing");
-        print("Stock Status: ${widget.stockUse!.stockStatus}");
-      } else {
-        // Clear everything for new entry
-        expenseProvider.suDateController.clear();
-        expenseProvider.suDescriptionController.clear();
-        expenseProvider.stockUseItems.clear();
-        expenseProvider.resetStockUseForm();
-
-        // Clear BOM items
-        customerDetailsProvider.billOfMaterialsItems.clear();
-        customerDetailsProvider.clearBOMFields();
 
         // Reset stock status to default for new entry
         customerDetailsProvider.updateStockStatus('Pending');
@@ -248,7 +231,8 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
               ),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                initialValue: customerDetailsProvider.selectedStockStatus ?? 'Pending',
+                initialValue:
+                    customerDetailsProvider.selectedStockStatus ?? 'Pending',
                 items: const [
                   DropdownMenuItem<String>(
                     value: 'Pending',
@@ -327,352 +311,141 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                 iconSize: 18,
               ),
               const SizedBox(height: 10),
+              // Header for Grid
               Container(
-                padding: const EdgeInsets.all(15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFF2F5),
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.appViolet,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(8)),
                 ),
-                child: Column(
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CommonDropdown(
-                            hintText: "Item*",
-                            items: expenseProvider.itemListStock
-                                .map((status) => DropdownItem<int>(
-                                      id: status.itemId,
-                                      name: status.itemName,
-                                    ))
-                                .toList(),
-                            controller: expenseProvider.suItemNameController,
-                            onItemSelected: (selectedItem) {
-                              // Find the selected item from the itemListStock
-                              final selectedData =
-                                  expenseProvider.itemListStock.firstWhere(
-                                (item) => item.itemId == selectedItem,
-                              );
-                              expenseProvider
-                                  .setSelectedStockUseItemId(selectedItem);
-                              expenseProvider.suItemNameController.text =
-                                  selectedData.itemName;
-                              expenseProvider.suStockIdController.text =
-                                  selectedData.stockId.toString();
-                              expenseProvider.suUnitPriceController.text =
-                                  selectedData.unitPrice;
-                              expenseProvider.categoryPurchaseController.text =
-                                  selectedData.categoryName.toString();
-                              expenseProvider.selectedCategoryId =
-                                  selectedData.categoryId;
-                            },
-                            selectedValue:
-                                expenseProvider.selectedItemStockUseId,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                expenseProvider.categoryPurchaseController,
-                            hintText: 'Category',
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                          ),
-                        ),
-                      ],
+                    const SizedBox(
+                        width: 40, child: Text('')), // Checkbox column
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        'Item Name',
+                        style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                      ),
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: expenseProvider.suQuantityController,
-                            hintText: 'Quantity*',
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}')),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: expenseProvider.suUnitPriceController,
-                            hintText: 'Sale Rate',
-                            labelText: '',
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}')),
-                            ],
-                          ),
-                        ),
-                        // Expanded(
-                        //   child: CustomTextField(
-                        //     readOnly: false,
-                        //     height: 54,
-                        //     controller: expenseProvider.suUnitPriceController,
-                        //     hintText: 'Sale Rate',
-                        //     labelText: '',
-                        //     keyboardType: TextInputType.number,
-                        //     inputFormatters: [
-                        //       FilteringTextInputFormatter.digitsOnly
-                        //     ],
-                        //   ),
-                        // ),
-                      ],
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'Qty',
+                        style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            expenseProvider.addOrEditStockUseItem(context);
-                            print(expenseProvider.stockUseItems
-                                .map((e) => e.toJson())
-                                .toList());
-                          },
-                          icon: const Icon(Icons.add),
-                          label: const Text('Add item'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors
-                                .primaryBlue, // Change foreground color
-                            backgroundColor:
-                                Colors.white, // Change background color
-                            side: BorderSide(
-                                color: AppColors
-                                    .primaryBlue), // Change border color
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 0,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(8), // Add border radius
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: expenseProvider.stockUseItems.length,
-                      itemBuilder: (context, index) {
-                        final item = expenseProvider.stockUseItems[index];
-                        return Container(
-                          padding: const EdgeInsets.all(5),
-                          margin: const EdgeInsets.only(bottom: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                "${item.itemName} (${item.categoryName})",
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Qty: ${item.quantity.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Sale Rate: ₹${item.unitPrice.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Amount: ₹${item.amount.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              TextButton(
-                                onPressed: () {
-                                  expenseProvider
-                                      .populateStockUseFieldsForEditing(index);
-                                },
-                                child: const Text(
-                                  'Edit',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  expenseProvider.deleteStockUseItem(index);
-                                },
-                                child: const Text(
-                                  'Delete',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    )
+                    const SizedBox(
+                        width: 40,
+                        child: Text(
+                          'Act',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        )),
                   ],
                 ),
               ),
-              ExpansionTile(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-                title: Text(
-                  'Bill of Materials',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textGrey1,
-                  ),
-                ),
-                tilePadding: EdgeInsets.zero,
-                // Expand automatically if there are BOM items (edit mode)
-                initiallyExpanded:
-                    customerDetailsProvider.billOfMaterialsItems.isNotEmpty,
-                children: [
-                  const SizedBox(height: 5),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF6F7F9),
-                          borderRadius: BorderRadius.circular(10),
+              // Grid Items
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: expenseProvider.stockUseItems.length,
+                separatorBuilder: (context, index) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final item = expenseProvider.stockUseItems[index];
+                  return Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          child: Checkbox(
+                            value: item.isChecked,
+                            onChanged: (value) {
+                              expenseProvider.toggleItemCheck(
+                                  index, value ?? false);
+                            },
+                            activeColor: AppColors.appViolet,
+                          ),
                         ),
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: OutlinedButton.icon(
-                                onPressed: () {
-                                  customerDetailsProvider.clearBOMFields();
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        const EditBomItemDialog(
-                                      index: -1,
-                                      isEdit: false,
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.add),
-                                label: const Text('Add Material'),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: AppColors.primaryBlue,
-                                  backgroundColor: Colors.white,
-                                  side:
-                                      BorderSide(color: AppColors.primaryBlue),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                        Expanded(
+                          flex: 3,
+                          child: InkWell(
+                            onTap: () {
+                              expenseProvider
+                                  .populateStockUseFieldsForEditing(index);
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.itemName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  item.categoryName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 10,
+                                    color: Colors.grey,
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            if (customerDetailsProvider
-                                .billOfMaterialsItems.isNotEmpty)
-                              ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: customerDetailsProvider
-                                    .billOfMaterialsItems.length,
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(height: 10),
-                                itemBuilder: (context, index) {
-                                  final item = customerDetailsProvider
-                                      .billOfMaterialsItems[index];
-
-                                  return BomItemCard(
-                                    item: item,
-                                    onDelete: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (_) => AlertDialog(
-                                          title: const Text("Delete Material"),
-                                          content: const Text(
-                                              "Are you sure you want to delete this item?"),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text("Cancel"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                customerDetailsProvider
-                                                    .deleteBillOfMaterialsItem(
-                                                        index);
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text("Delete",
-                                                  style: TextStyle(
-                                                      color: Colors.red)),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    onEdit: () {
-                                      customerDetailsProvider
-                                          .populateBOMFieldsForEditing(index);
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => EditBomItemDialog(
-                                          index: index,
-                                          isEdit: true,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            height: 35,
+                            child: TextFormField(
+                              initialValue: item.quantity.toString(),
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 12),
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 5),
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                expenseProvider.updateItemQuantity(
+                                    index, value);
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 40,
+                          child: IconButton(
+                            icon: const Icon(Icons.delete_outline,
+                                color: Colors.red, size: 20),
+                            onPressed: () {
+                              expenseProvider.deleteStockUseItem(index);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           ),

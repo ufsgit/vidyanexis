@@ -33,8 +33,8 @@ class AddStockReturnPage extends StatefulWidget {
 class _AddStockReturnPageState extends State<AddStockReturnPage> {
   String? validateInputs(
       BuildContext context, StockreturnProvider expenseProvider) {
-    if (expenseProvider.stockReturnItems.isEmpty) {
-      return 'Please Add Item';
+    if (!expenseProvider.stockReturnItems.any((item) => item.isChecked)) {
+      return 'Please select at least one item';
     }
     return null;
   }
@@ -187,232 +187,136 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
                 keyboardType: TextInputType.multiline,
               ),
               const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEFF2F5),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CommonDropdown(
-                            hintText: "Item*",
-                            items: expenseProvider.itemListStock
-                                .where(
-                                  (element) => element.primaryCheckBox == 0,
-                                )
-                                .map((status) => DropdownItem<int>(
-                                      id: status.itemId,
-                                      name: status.itemName,
-                                    ))
-                                .toList(),
-                            controller: expenseProvider.returnItemController,
-                            onItemSelected: (selectedItem) {
-                              // Find the selected item from the itemListStock
-                              final selectedData =
-                                  expenseProvider.itemListStock.firstWhere(
-                                (item) => item.itemId == selectedItem,
-                              );
-                              expenseProvider
-                                  .setSelectedStockReturnItemId(selectedItem);
-                              expenseProvider.returnItemController.text =
-                                  selectedData.itemName;
-                              expenseProvider.returnStockIdController.text =
-                                  selectedData.stockId.toString();
-                              expenseProvider.returnSaleRateController.text =
-                                  selectedData.unitPrice;
-                              expenseProvider.returnCategoryController.text =
-                                  selectedData.categoryName.toString();
-                              expenseProvider.selectedCategoryId =
-                                  selectedData.categoryId;
-                            },
-                            selectedValue: expenseProvider.selectedItemReturnId,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                expenseProvider.returnQuantityController,
-                            hintText: 'Quantity*',
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}')),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                expenseProvider.returnCategoryController,
-                            hintText: 'Category',
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}')),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                expenseProvider.returnSaleRateController,
-                            hintText: 'Sale Rate',
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            expenseProvider.addOrEditStockReturnItem(context);
-                            print(expenseProvider.stockReturnItems
-                                .map((e) => e.toJson())
-                                .toList());
-                          },
-                          icon: const Icon(Icons.add),
-                          label: const Text('Add item'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors
-                                .primaryBlue, // Change foreground color
-                            backgroundColor:
-                                Colors.white, // Change background color
-                            side: BorderSide(
-                                color: AppColors
-                                    .primaryBlue), // Change border color
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 0,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(8), // Add border radius
+                    // Header for Grid
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                      decoration: BoxDecoration(
+                        color: AppColors.appViolet,
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 40, child: Text('')), // Checkbox column
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              'Item Name',
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
                             ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              'Qty',
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 40,
+                            child: Text(
+                              'Act',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            )
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 10),
-                    ListView.builder(
+                    // Grid Items
+                    ListView.separated(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: expenseProvider.stockReturnItems.length,
+                      separatorBuilder: (context, index) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final item = expenseProvider.stockReturnItems[index];
                         return Container(
-                          padding: const EdgeInsets.all(5),
-                          margin: const EdgeInsets.only(bottom: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                          color: Colors.white,
+                          child: Row(
                             children: [
-                              Text(
-                                "${item.itemName} (${item.categoryName})",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+                              SizedBox(
+                                width: 40,
+                                child: Checkbox(
+                                  value: item.isChecked,
+                                  onChanged: (value) {
+                                    expenseProvider.toggleItemCheck(index, value ?? false);
+                                  },
+                                  activeColor: AppColors.appViolet,
                                 ),
-                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: InkWell(
+                                  onTap: () {
+                                    expenseProvider.populateStockReturnForm(index);
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.itemName,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        item.categoryName,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  height: 35,
+                                  child: TextFormField(
+                                    initialValue: item.quantity.toString(),
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 12),
+                                    decoration: const InputDecoration(
+                                      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    onChanged: (value) {
+                                      expenseProvider.updateItemQuantity(index, value);
+                                    },
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                                    ],
+                                  ),
+                                ),
                               ),
                               SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Return Qty: ${item.quantity.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Sale Rate: ₹${item.unitPrice.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Amount: ₹${item.amount.toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  expenseProvider
-                                      .populateStockReturnForm(index);
-                                },
-                                child: const Text(
-                                  'Edit',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  expenseProvider.deleteStockReturnItem(index);
-                                },
-                                child: const Text(
-                                  'Delete',
-                                  style: TextStyle(color: Colors.red),
+                                width: 40,
+                                child: IconButton(
+                                  icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                                  onPressed: () {
+                                    expenseProvider.deleteStockReturnItem(index);
+                                  },
                                 ),
                               ),
                             ],
                           ),
                         );
                       },
-                    )
+                    ),
                   ],
-                ),
               ),
-            ],
+            ),
           ),
-        ),
-      ),
       actions: [
         CustomElevatedButton(
           buttonText: 'Cancel',

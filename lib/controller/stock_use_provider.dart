@@ -1013,6 +1013,22 @@ class StockUseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleItemCheck(int index, bool isChecked) {
+    if (index >= 0 && index < stockUseItems.length) {
+      stockUseItems[index].isChecked = isChecked;
+      notifyListeners();
+    }
+  }
+
+  void updateItemQuantity(int index, String quantityStr) {
+    if (index >= 0 && index < stockUseItems.length) {
+      final quantity = double.tryParse(quantityStr) ?? 1.0;
+      stockUseItems[index].quantity = quantity;
+      stockUseItems[index].amount = stockUseItems[index].unitPrice * quantity;
+      notifyListeners();
+    }
+  }
+
   void deleteStockUseItem(int index) {
     if (index >= 0 && index < stockUseItems.length) {
       stockUseItems.removeAt(index);
@@ -1092,6 +1108,24 @@ class StockUseProvider extends ChangeNotifier {
           _itemListStock = (dataitem as List<dynamic>)
               .map((item) => ItemListStock.fromJson(item))
               .toList();
+
+          // Pre-populate stockUseItems if empty (for new entries)
+          if (_stockUseItems.isEmpty) {
+            _stockUseItems = _itemListStock.map((stockItem) {
+              return StockUseItems(
+                stockId: stockItem.stockId,
+                itemId: stockItem.itemId,
+                itemName: stockItem.itemName,
+                categoryId: stockItem.categoryId,
+                categoryName: stockItem.categoryName,
+                quantity: 1.0, // Default quantity
+                unitPrice: double.tryParse(stockItem.unitPrice) ?? 0.0,
+                amount: double.tryParse(stockItem.unitPrice) ?? 0.0,
+                isChecked: false,
+              );
+            }).toList();
+          }
+
           notifyListeners();
         }
       } else {
@@ -1849,12 +1883,36 @@ class StockUseProvider extends ChangeNotifier {
 
         if (data != null) {
           final dataitem = data['data'][0][0]['stock_use_details'] ?? [];
-
-          print("--------- $dataitem");
-
-          _stockUseItems = (dataitem as List<dynamic>)
+          final List<StockUseItems> savedItems = (dataitem as List<dynamic>)
               .map((item) => StockUseItems.fromJson(item))
               .toList();
+
+          // Merge saved items into the full list (_stockUseItems already has all stock items from searchItemListStock)
+          for (var i = 0; i < _stockUseItems.length; i++) {
+            final matchingSavedItem = savedItems.firstWhere(
+              (item) => item.itemId == _stockUseItems[i].itemId,
+              orElse: () => StockUseItems(
+                itemId: -1,
+                itemName: '',
+                categoryId: 0,
+                categoryName: '',
+                quantity: 0,
+                unitPrice: 0,
+                amount: 0,
+              ),
+            );
+
+            if (matchingSavedItem.itemId != -1) {
+              _stockUseItems[i].isChecked = matchingSavedItem.isChecked;
+              _stockUseItems[i].quantity = matchingSavedItem.quantity;
+              _stockUseItems[i].amount = matchingSavedItem.amount;
+              // Also update other fields if needed, like unitPrice
+              _stockUseItems[i].unitPrice = matchingSavedItem.unitPrice;
+              _stockUseItems[i].stockId = matchingSavedItem.stockId;
+            } else {
+              _stockUseItems[i].isChecked = false;
+            }
+          }
 
           notifyListeners();
         }
@@ -1895,12 +1953,35 @@ class StockUseProvider extends ChangeNotifier {
 
         if (data != null) {
           final dataitem = data['data'][0][0]['stock_return_details'] ?? [];
-
-          print("--------- $dataitem");
-
-          _stockReturnItems = (dataitem as List<dynamic>)
+          final List<StockReturnItems> savedItems = (dataitem as List<dynamic>)
               .map((item) => StockReturnItems.fromJson(item))
               .toList();
+
+          // Merge saved items into the full list (_stockReturnItems already has all stock items from searchItemListStock)
+          for (var i = 0; i < _stockReturnItems.length; i++) {
+            final matchingSavedItem = savedItems.firstWhere(
+              (item) => item.itemId == _stockReturnItems[i].itemId,
+              orElse: () => StockReturnItems(
+                itemId: -1,
+                itemName: '',
+                categoryId: 0,
+                categoryName: '',
+                quantity: 0,
+                unitPrice: 0,
+                amount: 0,
+              ),
+            );
+
+            if (matchingSavedItem.itemId != -1) {
+              _stockReturnItems[i].isChecked = matchingSavedItem.isChecked;
+              _stockReturnItems[i].quantity = matchingSavedItem.quantity;
+              _stockReturnItems[i].amount = matchingSavedItem.amount;
+              _stockReturnItems[i].unitPrice = matchingSavedItem.unitPrice;
+              _stockReturnItems[i].stockReturnId = matchingSavedItem.stockReturnId;
+            } else {
+              _stockReturnItems[i].isChecked = false;
+            }
+          }
 
           notifyListeners();
         }
