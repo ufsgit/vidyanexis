@@ -88,8 +88,6 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
 
-      expenseProvider.searchItemListStock(context);
-
       if (widget.isEdit) {
         // Load stock use details including technical specification
         await expenseProvider.getStockUseDetails(
@@ -99,14 +97,16 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
         expenseProvider.suDateController.text = widget.stockUse!.date;
         expenseProvider.suDescriptionController.text =
             widget.stockUse!.description;
-
+        
         // Set the stock status from the existing data
         customerDetailsProvider
             .updateStockStatus(widget.stockUse!.stockStatus ?? 'Pending');
-
-        // Reset stock status to default for new entry
+      } else {
+        expenseProvider.clearStockUseForm();
         customerDetailsProvider.updateStockStatus('Pending');
       }
+
+      expenseProvider.searchItemListStock(context);
     });
   }
 

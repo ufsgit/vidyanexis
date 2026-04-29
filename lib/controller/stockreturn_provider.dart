@@ -997,9 +997,8 @@ class StockreturnProvider extends ChangeNotifier {
               .map((item) => ItemListStock.fromJson(item))
               .toList();
 
-          // Pre-populate stockReturnItems if empty
-          if (_stockReturnItems.isEmpty) {
-            _stockReturnItems = _itemListStock.map((stockItem) {
+          // Reset and Pre-populate stockReturnItems
+          _stockReturnItems = _itemListStock.map((stockItem) {
               return StockReturnItems(
                 stockReturnId: stockItem.stockId,
                 itemId: stockItem.itemId,
@@ -1012,7 +1011,6 @@ class StockreturnProvider extends ChangeNotifier {
                 isChecked: false,
               );
             }).toList();
-          }
 
           notifyListeners();
         }
@@ -1296,6 +1294,13 @@ class StockreturnProvider extends ChangeNotifier {
 
   void removePdf(Uint8List pdf) {
     _pdfs.remove(pdf);
+    notifyListeners();
+  }
+
+  void clearStockReturnForm() {
+    returnDateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    returnDescriptionController.clear();
+    _stockReturnItems = [];
     notifyListeners();
   }
 

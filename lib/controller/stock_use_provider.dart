@@ -494,7 +494,8 @@ class StockUseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchPurchaseDetails(String purchaseMasterId, BuildContext context) async {
+  Future<void> searchPurchaseDetails(
+      String purchaseMasterId, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1109,22 +1110,20 @@ class StockUseProvider extends ChangeNotifier {
               .map((item) => ItemListStock.fromJson(item))
               .toList();
 
-          // Pre-populate stockUseItems if empty (for new entries)
-          if (_stockUseItems.isEmpty) {
-            _stockUseItems = _itemListStock.map((stockItem) {
-              return StockUseItems(
-                stockId: stockItem.stockId,
-                itemId: stockItem.itemId,
-                itemName: stockItem.itemName,
-                categoryId: stockItem.categoryId,
-                categoryName: stockItem.categoryName,
-                quantity: 1.0, // Default quantity
-                unitPrice: double.tryParse(stockItem.unitPrice) ?? 0.0,
-                amount: double.tryParse(stockItem.unitPrice) ?? 0.0,
-                isChecked: false,
-              );
-            }).toList();
-          }
+          // Reset and Pre-populate stockUseItems
+          _stockUseItems = _itemListStock.map((stockItem) {
+            return StockUseItems(
+              stockId: stockItem.stockId,
+              itemId: stockItem.itemId,
+              itemName: stockItem.itemName,
+              categoryId: stockItem.categoryId,
+              categoryName: stockItem.categoryName,
+              quantity: 1.0, // Default quantity
+              unitPrice: double.tryParse(stockItem.unitPrice) ?? 0.0,
+              amount: double.tryParse(stockItem.unitPrice) ?? 0.0,
+              isChecked: false,
+            );
+          }).toList();
 
           notifyListeners();
         }
@@ -1446,6 +1445,16 @@ class StockUseProvider extends ChangeNotifier {
     _totalStockAmount = '';
   }
 
+  void clearStockUseForm() {
+    suDateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    suDescriptionController.clear();
+    suAmountController.clear();
+    suInvoiceNoController.clear();
+    suTaxAmountController.clear();
+    _stockUseItems = []; // Clear items so searchItemListStock refreshes them
+    notifyListeners();
+  }
+
   // Upload images to AWS
   Future<void> uploadImagesToAws(String taskId, BuildContext context) async {
     await _uploadFilesToAws(_images, 'image/jpeg', taskId, context);
@@ -1679,7 +1688,8 @@ class StockUseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteStockUse(BuildContext context, int userId, int customerId) async {
+  Future<void> deleteStockUse(
+      BuildContext context, int userId, int customerId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpDeleteRequest(
@@ -1715,7 +1725,8 @@ class StockUseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteStockReturn(BuildContext context, int userId, int customerId) async {
+  Future<void> deleteStockReturn(
+      BuildContext context, int userId, int customerId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpDeleteRequest(
@@ -1977,7 +1988,8 @@ class StockUseProvider extends ChangeNotifier {
               _stockReturnItems[i].quantity = matchingSavedItem.quantity;
               _stockReturnItems[i].amount = matchingSavedItem.amount;
               _stockReturnItems[i].unitPrice = matchingSavedItem.unitPrice;
-              _stockReturnItems[i].stockReturnId = matchingSavedItem.stockReturnId;
+              _stockReturnItems[i].stockReturnId =
+                  matchingSavedItem.stockReturnId;
             } else {
               _stockReturnItems[i].isChecked = false;
             }

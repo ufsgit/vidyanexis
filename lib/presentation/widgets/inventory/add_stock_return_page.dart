@@ -84,24 +84,21 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final expenseProvider =
           Provider.of<StockreturnProvider>(context, listen: false);
-      expenseProvider.searchItemListStock(context);
+
       if (widget.isEdit) {
+        await expenseProvider.getStockReturnDetails(
+            context: context, masterId: widget.editId.toString());
         expenseProvider.returnDateController.text = widget.stockUse!.returnDate;
         expenseProvider.returnDescriptionController.text =
             widget.stockUse!.description;
-        expenseProvider.stockReturnItems = widget.stockUse!.items;
       } else {
-        expenseProvider.returnDateController.text =
-            DateFormat('dd MMM yyyy').format(DateTime.now());
-
-        expenseProvider.returnDescriptionController.clear();
-        expenseProvider.returnDateController.clear();
-        expenseProvider.stockReturnItems.clear();
-        expenseProvider.resetStockReturnForm();
+        expenseProvider.clearStockReturnForm();
       }
+
+      expenseProvider.searchItemListStock(context);
     });
   }
 
