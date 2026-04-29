@@ -64,15 +64,20 @@ class StockUseItems {
   // Optional: for JSON serialization if needed
   factory StockUseItems.fromJson(Map<String, dynamic> json) {
     return StockUseItems(
-      stockId: json['Stock_Id'] ?? 0,
-      itemId: json['Item_Id'] ?? 0,
+      stockId: int.tryParse(json['Stock_Id']?.toString() ?? '0') ?? 0,
+      itemId: int.tryParse(json['Item_Id']?.toString() ?? '0') ?? 0,
       itemName: json['Item_Name'] ?? '',
       categoryId: json['Category_Id'] ?? 0,
       categoryName: json['Category_Name'] ?? '',
       quantity: double.tryParse(json['Qauntity']?.toString() ?? '0') ?? 0.0,
       unitPrice: double.tryParse(json['Unit_Price']?.toString() ?? '0') ?? 0.0,
       amount: double.tryParse(json['Amount']?.toString() ?? '0') ?? 0.0,
-      isChecked: json['Is_Checked'] == 1 || json['Is_Checked'] == true || json['isChecked'] == 1 || json['isChecked'] == true,
+      isChecked: json['Is_Checked']?.toString() == '1' ||
+          json['Is_Checked']?.toString() == 'true' ||
+          json['isChecked']?.toString() == '1' ||
+          json['isChecked']?.toString() == 'true' ||
+          json['ischecked']?.toString() == '1' ||
+          json['ischecked']?.toString() == 'true',
     );
   }
 
@@ -87,6 +92,7 @@ class StockUseItems {
       'Unit_Price': unitPrice,
       'Amount': amount,
       'Is_Checked': isChecked ? 1 : 0,
+      'ischecked': isChecked ? 1 : 0,
     };
   }
 }

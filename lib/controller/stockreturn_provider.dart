@@ -993,6 +993,7 @@ class StockreturnProvider extends ChangeNotifier {
 
         if (data != null) {
           final dataitem = data['data'];
+          print('---- ITEM LIST STOCK FROM BACKEND: $dataitem');
           _itemListStock = (dataitem as List<dynamic>)
               .map((item) => ItemListStock.fromJson(item))
               .toList();
@@ -1300,7 +1301,6 @@ class StockreturnProvider extends ChangeNotifier {
   void clearStockReturnForm() {
     returnDateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
     returnDescriptionController.clear();
-    _stockReturnItems = [];
     notifyListeners();
   }
 
@@ -1835,6 +1835,7 @@ class StockreturnProvider extends ChangeNotifier {
 
         if (data != null) {
           final dataitem = data['data'][0][0]['stock_return_details'] ?? [];
+          print('---- STOCK RETURN DETAILS FROM BACKEND: $dataitem');
           final List<StockReturnItems> savedItems = (dataitem as List<dynamic>)
               .map((item) => StockReturnItems.fromJson(item))
               .toList();
@@ -1855,6 +1856,8 @@ class StockreturnProvider extends ChangeNotifier {
             );
 
             if (matchingSavedItem.itemId != -1) {
+              print(
+                  '---- MATCH FOUND for Item ID: ${matchingSavedItem.itemId}, isChecked: ${matchingSavedItem.isChecked}');
               _stockReturnItems[i].isChecked = matchingSavedItem.isChecked;
               _stockReturnItems[i].quantity = matchingSavedItem.quantity;
               _stockReturnItems[i].amount = matchingSavedItem.amount;

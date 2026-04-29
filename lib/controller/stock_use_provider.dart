@@ -1106,6 +1106,7 @@ class StockUseProvider extends ChangeNotifier {
 
         if (data != null) {
           final dataitem = data['data'];
+          print('---- ITEM LIST STOCK FROM BACKEND: $dataitem');
           _itemListStock = (dataitem as List<dynamic>)
               .map((item) => ItemListStock.fromJson(item))
               .toList();
@@ -1451,7 +1452,6 @@ class StockUseProvider extends ChangeNotifier {
     suAmountController.clear();
     suInvoiceNoController.clear();
     suTaxAmountController.clear();
-    _stockUseItems = []; // Clear items so searchItemListStock refreshes them
     notifyListeners();
   }
 
@@ -1894,6 +1894,7 @@ class StockUseProvider extends ChangeNotifier {
 
         if (data != null) {
           final dataitem = data['data'][0][0]['stock_use_details'] ?? [];
+          print('---- STOCK USE DETAILS FROM BACKEND: $dataitem');
           final List<StockUseItems> savedItems = (dataitem as List<dynamic>)
               .map((item) => StockUseItems.fromJson(item))
               .toList();
@@ -1914,6 +1915,8 @@ class StockUseProvider extends ChangeNotifier {
             );
 
             if (matchingSavedItem.itemId != -1) {
+              print(
+                  '---- MATCH FOUND for Item ID: ${matchingSavedItem.itemId}, isChecked: ${matchingSavedItem.isChecked}');
               _stockUseItems[i].isChecked = matchingSavedItem.isChecked;
               _stockUseItems[i].quantity = matchingSavedItem.quantity;
               _stockUseItems[i].amount = matchingSavedItem.amount;

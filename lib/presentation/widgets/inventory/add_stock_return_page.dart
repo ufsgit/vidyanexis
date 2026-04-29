@@ -88,7 +88,11 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
       final expenseProvider =
           Provider.of<StockreturnProvider>(context, listen: false);
 
+      // Load ALL items first
+      await expenseProvider.searchItemListStock(context);
+
       if (widget.isEdit) {
+        // Load specific details and merge with ALL items
         await expenseProvider.getStockReturnDetails(
             context: context, masterId: widget.editId.toString());
         expenseProvider.returnDateController.text = widget.stockUse!.returnDate;
@@ -97,8 +101,6 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
       } else {
         expenseProvider.clearStockReturnForm();
       }
-
-      expenseProvider.searchItemListStock(context);
     });
   }
 
