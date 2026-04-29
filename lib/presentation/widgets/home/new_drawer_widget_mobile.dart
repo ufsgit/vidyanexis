@@ -482,7 +482,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           fontWeight: FontWeight.w500,
         ),
       ),
-      if (settingsProvider.menuIsViewMap[33] == 1)
+      if (false) // settingsProvider.menuIsViewMap[33] == 1
         Text(
           'Inverter and Panel Details',
           style: GoogleFonts.plusJakartaSans(
@@ -757,7 +757,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (settingsProvider.menuIsViewMap[33] == 1)
+                      if (false) // settingsProvider.menuIsViewMap[33] == 1
                         Text(
                           'Inverter and Panel Details',
                           style: GoogleFonts.plusJakartaSans(
@@ -803,7 +803,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                     childrens: [
                       buildBasicDetails(),
                       buildAddressDetails(),
-                      if (settingsProvider.menuIsViewMap[33] == 1)
+                      if (false) // settingsProvider.menuIsViewMap[33] == 1
                         buildInverterAndPanelDetails(),
                       // buildCostDetails(),
                       // buildDocumentsDetails(),

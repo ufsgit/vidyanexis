@@ -510,7 +510,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
-                                      flex: 4,
+                                      flex: 2,
                                       title: 'Address',
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
@@ -846,7 +846,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 ),
                                               ),
                                               TableWidget(
-                                                flex: 4,
+                                                flex: 2,
                                                 fontSize: 12,
                                                 padding: const EdgeInsets
                                                     .symmetric(

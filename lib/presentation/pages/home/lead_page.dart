@@ -527,7 +527,7 @@ class _LeadsPageState extends State<LeadPage> {
                   children: [
                     // Fixed columns section
                     SizedBox(
-                      width: 850,
+                      width: 700,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -584,7 +584,7 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                                 TableWidget(
-                                  flex: 4,
+                                  flex: 2,
                                   padding: EdgeInsets.symmetric(
                                       vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.centerLeft,
@@ -1004,7 +1004,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 4,
+                                                  flex: 2,
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   padding: EdgeInsets.symmetric(

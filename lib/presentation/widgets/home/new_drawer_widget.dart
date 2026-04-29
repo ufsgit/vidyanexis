@@ -1346,7 +1346,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                       ),
 
                       //invertor and panel
-                      if (settingsProvider.menuIsViewMap[33] == 1)
+                      if (false) // settingsProvider.menuIsViewMap[33] == 1
                         ExpansionTile(
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero,

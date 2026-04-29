@@ -1277,8 +1277,19 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                   flex: 1,
                                                   title: invoice.contactNumber),
                                               TableWidget(
-                                                  flex: 2,
-                                                  title: invoice.address1),
+                                                flex: 2,
+                                                data: Tooltip(
+                                                  message: invoice.address1,
+                                                  child: Text(
+                                                    invoice.address1,
+                                                    maxLines: 1,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                               TableWidget(
                                                   flex: 1,
                                                   title: invoice.invoiceNo
