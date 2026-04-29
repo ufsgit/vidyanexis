@@ -12,11 +12,17 @@ class StockUseReportModel {
   });
 
   factory StockUseReportModel.fromJson(Map<String, dynamic> json) {
+    String rawQuantity = json['Quantity']?.toString() ?? '0';
+    // Remove trailing zeros and decimal point (e.g., "1.000" -> "1")
+    if (rawQuantity.contains('.')) {
+      rawQuantity = rawQuantity.replaceAll(RegExp(r'0*$'), '').replaceAll(RegExp(r'\.$'), '');
+    }
+
     return StockUseReportModel(
       customerName: json['Customer_Name']?.toString() ?? '',
       entryDate: json['EntryDate']?.toString() ?? '',
       itemName: json['Item_Name']?.toString() ?? '',
-      quantity: json['Quantity']?.toString() ?? '0.00',
+      quantity: rawQuantity.isEmpty ? '0' : rawQuantity,
     );
   }
 
