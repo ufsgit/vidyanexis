@@ -58,6 +58,7 @@ import 'package:vidyanexis/presentation/widgets/customer/forms_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/utils/file_share_function.dart';
+import 'package:vidyanexis/utils/file_downloader.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
@@ -3631,38 +3632,75 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                                if (settingsprovider.menuIsDeleteMap[19] == 1)
-                                                                                  Positioned(
-                                                                                    top: 5,
-                                                                                    right: 5,
-                                                                                    child: GestureDetector(
-                                                                                      onTap: () {
-                                                                                        showConfirmationDialog(
-                                                                                          isLoading: customerDetailsProvider.isDeleteLoading,
-                                                                                          context: context,
-                                                                                          title: 'Confirm Deletion',
-                                                                                          content: 'Are you sure you want to delete this file?',
-                                                                                          onCancel: () {
-                                                                                            Navigator.of(context).pop();
-                                                                                          },
-                                                                                          onConfirm: () {
-                                                                                            customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
-                                                                                            Navigator.of(context).pop();
-                                                                                          },
-                                                                                          confirmButtonText: 'Delete',
-                                                                                        );
-                                                                                      },
-                                                                                      child: const CircleAvatar(
-                                                                                        radius: 15,
-                                                                                        backgroundColor: Colors.grey,
-                                                                                        child: Icon(
-                                                                                          Icons.delete,
-                                                                                          size: 18,
-                                                                                          color: Colors.white,
+                                                                                Positioned(
+                                                                                  top: 5,
+                                                                                  right: 5,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                    children: [
+                                                                                      GestureDetector(
+                                                                                        onTap: () async {
+                                                                                          try {
+                                                                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                                                              const SnackBar(content: Text('Downloading file...')),
+                                                                                            );
+                                                                                            final downloadedPath = await FileDownloader.download(image.filePath);
+                                                                                            if (context.mounted) {
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                                                SnackBar(content: Text('Downloaded to $downloadedPath')),
+                                                                                              );
+                                                                                            }
+                                                                                          } catch (e) {
+                                                                                            if (context.mounted) {
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                                                const SnackBar(content: Text('Failed to download file')),
+                                                                                              );
+                                                                                            }
+                                                                                          }
+                                                                                        },
+                                                                                        child: const CircleAvatar(
+                                                                                          radius: 15,
+                                                                                          backgroundColor: AppColors.primaryBlue,
+                                                                                          child: Icon(
+                                                                                            Icons.download,
+                                                                                            size: 18,
+                                                                                            color: Colors.white,
+                                                                                          ),
                                                                                         ),
                                                                                       ),
-                                                                                    ),
+                                                                                      if (settingsprovider.menuIsDeleteMap[19] == 1) ...[
+                                                                                        const SizedBox(width: 8),
+                                                                                        GestureDetector(
+                                                                                          onTap: () {
+                                                                                            showConfirmationDialog(
+                                                                                              isLoading: customerDetailsProvider.isDeleteLoading,
+                                                                                              context: context,
+                                                                                              title: 'Confirm Deletion',
+                                                                                              content: 'Are you sure you want to delete this file?',
+                                                                                              onCancel: () {
+                                                                                                Navigator.of(context).pop();
+                                                                                              },
+                                                                                              onConfirm: () {
+                                                                                                customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
+                                                                                                Navigator.of(context).pop();
+                                                                                              },
+                                                                                              confirmButtonText: 'Delete',
+                                                                                            );
+                                                                                          },
+                                                                                          child: const CircleAvatar(
+                                                                                            radius: 15,
+                                                                                            backgroundColor: Colors.grey,
+                                                                                            child: Icon(
+                                                                                              Icons.delete,
+                                                                                              size: 18,
+                                                                                              color: Colors.white,
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ],
                                                                                   ),
+                                                                                ),
                                                                               ],
                                                                             ),
                                                                             const SizedBox(height: 2),
