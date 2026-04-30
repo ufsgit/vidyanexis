@@ -426,7 +426,6 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                                     ),
                                   ],
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 8),
                               if (lead.remark.isNotEmpty)
@@ -434,9 +433,7 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                                   width: MediaQuery.sizeOf(context).width - 100,
                                   child: Text(
                                     lead.remark,
-                                    overflow: TextOverflow.ellipsis,
                                     softWrap: true,
-                                    maxLines: 4,
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
@@ -466,7 +463,6 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                                     ),
                                   ],
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               )
                             ],
                           ),
