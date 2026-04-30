@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/check_in_out_provider.dart';
@@ -27,8 +28,7 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<CheckInOutProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria(
-          '', '', '', '', '', '');
+      reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
       reportsProvider.getSearchTaskReport(context);
 
       final provider = Provider.of<DropDownProvider>(context, listen: false);
@@ -159,33 +159,12 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                         //   ),
                         // ),
                         // const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                             print(reportsProvider.isFilter);
                           },
-                          icon: const Icon(Icons.filter_list),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
-                            backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         // ElevatedButton.icon(
@@ -331,31 +310,12 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                             ),
                           ),
                         ),
-                        OutlinedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                             print(reportsProvider.isFilter);
                           },
-                          icon: const Icon(Icons.filter_list),
-                          label: Text('Filter'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
-                            backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 0,
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         // ElevatedButton.icon(
@@ -425,7 +385,8 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -549,22 +510,22 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                           // const SizedBox(
                           //   width: 10,
                           // ),
-                            CommonReportResetButton(
-                              onReset: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider.getSearchTaskReport(context);
-                              },
-                            ),
+                          CommonReportResetButton(
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                              );
+                              reportsProvider.getSearchTaskReport(context);
+                            },
+                          ),
                         ],
                       ),
                     )
@@ -582,7 +543,8 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -676,433 +638,409 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                           // const SizedBox(
                           //   width: 10,
                           // ),
-                            CommonReportResetButton(
-                              onReset: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider.getSearchTaskReport(context);
-                              },
-                            ),
+                          CommonReportResetButton(
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                              );
+                              reportsProvider.getSearchTaskReport(context);
+                            },
+                          ),
                         ],
                       ),
                     ),
             reportsProvider.taskReport.isEmpty
-                    ? Expanded(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.search_off,
-                                  size: 80, color: Colors.grey[300]),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No attendance reports found for the selected criteria',
-                                style: TextStyle(
-                                    color: Colors.grey[600], fontSize: 16),
-                              ),
-                            ],
+                ? Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off,
+                              size: 80, color: Colors.grey[300]),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No attendance reports found for the selected criteria',
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 16),
                           ),
-                        ),
-                      )
-                    : AppStyles.isWebScreen(context)
-                        ? Expanded(
+                        ],
+                      ),
+                    ),
+                  )
+                : AppStyles.isWebScreen(context)
+                    ? Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      // Header Row (Table Column Titles)
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFEFF2F5),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  // Header Row (Table Column Titles)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFEFF2F5),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 80,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal: 25.0),
+                                            child: Text('No.',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xFF607185))),
+                                          ),
                                         ),
-                                        child: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 12.0,
-                                                    horizontal: 25.0),
-                                                child: Text('No.',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xFF607185))),
-                                              ),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Name',
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Date',
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Check In Time',
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Check Out Time',
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Location',
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Photo',
+                                            color: Color(0xFF607185)),
+                                      ],
+                                    ),
+                                  ),
+                                  // Data Rows
+                                  Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap:
+                                          true, // To avoid scrolling issues when inside a parent widget
+                                      physics:
+                                          const AlwaysScrollableScrollPhysics(),
+                                      itemCount: reportsProvider
+                                          .taskReport.length, // Number of tasks
+                                      itemBuilder: (context, index) {
+                                        var task =
+                                            reportsProvider.taskReport[index];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            // context.go(
+                                            //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: index % 2 == 0
+                                                  ? Colors.white
+                                                  : const Color(0xFFF6F7F9),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Name',
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Date',
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Check In Time',
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Check Out Time',
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Location',
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Photo',
-                                                color: Color(0xFF607185)),
-                                          ],
-                                        ),
-                                      ),
-                                      // Data Rows
-                                      Expanded(
-                                        child: ListView.builder(
-                                          shrinkWrap:
-                                              true, // To avoid scrolling issues when inside a parent widget
-                                          physics:
-                                              const AlwaysScrollableScrollPhysics(),
-                                          itemCount: reportsProvider
-                                              .taskReport.length, // Number of tasks
-                                          itemBuilder: (context, index) {
-                                            var task = reportsProvider
-                                                .taskReport[index];
-                                            return GestureDetector(
-                                              onTap: () {
-                                                // context.go(
-                                                //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: index % 2 == 0
-                                                      ? Colors.white
-                                                      : const Color(0xFFF6F7F9),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            // Alternate row colors
+                                            child: Row(
+                                              // mainAxisAlignment: MainAxisAlignment.start,
+                                              children: [
+                                                // Padding(
+                                                //   padding: const EdgeInsets.symmetric(
+                                                //       vertical: 12.0, horizontal: 25.0),
+                                                //   child: Text(task.customerId.toString(),
+                                                //       style: const TextStyle(
+                                                //         fontWeight: FontWeight.bold,
+                                                //       )),
+                                                // ),
+                                                SizedBox(
+                                                  width: 80,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 12.0,
+                                                        horizontal: 25.0),
+                                                    child: Text(
+                                                        (index + 1).toString(),
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        )),
+                                                  ),
                                                 ),
-                                                // Alternate row colors
-                                                child: Row(
-                                                  // mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    // Padding(
-                                                    //   padding: const EdgeInsets.symmetric(
-                                                    //       vertical: 12.0, horizontal: 25.0),
-                                                    //   child: Text(task.customerId.toString(),
-                                                    //       style: const TextStyle(
-                                                    //         fontWeight: FontWeight.bold,
-                                                    //       )),
-                                                    // ),
-                                                    SizedBox(
-                                                      width: 80,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 12.0,
-                                                                horizontal:
-                                                                    25.0),
-                                                        child: Text(
-                                                            (index + 1)
-                                                                .toString(),
-                                                            style:
-                                                                const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            )),
+                                                // TableWidget(title: task.orderNo),
+                                                TableWidget(
+                                                  flex: 1,
+                                                  data: GestureDetector(
+                                                    // onTap: () async {
+                                                    //   await reportsProvider
+                                                    //       .getAttendanceDetails(
+                                                    //           task.attendanceMasterId
+                                                    //               .toString(),
+                                                    //           context);
+                                                    //   showDialog(
+                                                    //     barrierDismissible: false,
+                                                    //     context: context,
+                                                    //     builder:
+                                                    //         (BuildContext context) {
+                                                    //       return AddCheckInOutWidget(
+                                                    //         editId: task
+                                                    //             .attendanceMasterId
+                                                    //             .toString(),
+                                                    //         isEdit: true,
+                                                    //       );
+                                                    //     },
+                                                    //   );
+                                                    //   // context.push(
+                                                    //   //     '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                    // },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFFE9EDF1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50),
                                                       ),
-                                                    ),
-                                                    // TableWidget(title: task.orderNo),
-                                                    TableWidget(
-                                                      flex: 1,
-                                                      data: GestureDetector(
-                                                        // onTap: () async {
-                                                        //   await reportsProvider
-                                                        //       .getAttendanceDetails(
-                                                        //           task.attendanceMasterId
-                                                        //               .toString(),
-                                                        //           context);
-                                                        //   showDialog(
-                                                        //     barrierDismissible: false,
-                                                        //     context: context,
-                                                        //     builder:
-                                                        //         (BuildContext context) {
-                                                        //       return AddCheckInOutWidget(
-                                                        //         editId: task
-                                                        //             .attendanceMasterId
-                                                        //             .toString(),
-                                                        //         isEdit: true,
-                                                        //       );
-                                                        //     },
-                                                        //   );
-                                                        //   // context.push(
-                                                        //   //     '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                        // },
-                                                        child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal: 8,
-                                                                  vertical: 4),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: const Color(
-                                                                0xFFE9EDF1),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        50),
-                                                          ),
-                                                          child: Text(
-                                                            task.userDetailsName,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
+                                                      child: Text(
+                                                        task.userDetailsName,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
                                                         ),
                                                       ),
                                                     ),
-
-                                                    TableWidget(
-                                                        flex: 1,
-                                                        title: formatDate(
-                                                            task.checkInDate)),
-                                                    TableWidget(
-                                                        flex: 1,
-                                                        title: formatTime(task
-                                                            .checkInTimeOnly)),
-                                                    TableWidget(
-                                                        flex: 1,
-                                                        title: formatTime(task
-                                                            .checkOutTimeOnly)),
-                                                    TableWidget(
-                                                        flex: 1,
-                                                        title: task.location),
-                                                    task.photo.isNotEmpty
-                                                        ? TableWidget(
-                                                            flex: 1,
-                                                            data:
-                                                                CustomOutlinedSvgButton(
-                                                              showIcon: false,
-                                                              onPressed:
-                                                                  () async {
-                                                                showImageDialog(
-                                                                    context,
-                                                                    HttpUrls
-                                                                            .imgBaseUrl +
-                                                                        task.photo);
-                                                              },
-                                                              svgPath:
-                                                                  'assets/images/Print.svg',
-                                                              label:
-                                                                  'View Photo',
-                                                              breakpoint: 860,
-                                                              foregroundColor:
-                                                                  AppColors
-                                                                      .primaryBlue,
-                                                              backgroundColor:
-                                                                  Colors.white,
-                                                              borderSide: BorderSide(
-                                                                  color: AppColors
-                                                                      .primaryBlue),
-                                                            ),
-                                                          )
-                                                        : TableWidget(
-                                                            flex: 1,
-                                                            data: Container(),
-                                                          ),
-                                                  ],
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          },
-                                        ),
+
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: formatDate(
+                                                        task.checkInDate)),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: formatTime(
+                                                        task.checkInTimeOnly)),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: formatTime(
+                                                        task.checkOutTimeOnly)),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: task.location),
+                                                task.photo.isNotEmpty
+                                                    ? TableWidget(
+                                                        flex: 1,
+                                                        data:
+                                                            CustomOutlinedSvgButton(
+                                                          showIcon: false,
+                                                          onPressed: () async {
+                                                            showImageDialog(
+                                                                context,
+                                                                HttpUrls.imgBaseUrl +
+                                                                    task.photo);
+                                                          },
+                                                          svgPath:
+                                                              'assets/images/Print.svg',
+                                                          label: 'View Photo',
+                                                          breakpoint: 860,
+                                                          foregroundColor:
+                                                              AppColors
+                                                                  .primaryBlue,
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          borderSide: BorderSide(
+                                                              color: AppColors
+                                                                  .primaryBlue),
+                                                        ),
+                                                      )
+                                                    : TableWidget(
+                                                        flex: 1,
+                                                        data: Container(),
+                                                      ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: ListView.builder(
+                            itemCount: reportsProvider.taskReport.length,
+                            itemBuilder: (context, index) {
+                              var task = reportsProvider.taskReport[index];
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.all(12.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      /// Row 1: Serial No. and Name
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'No. ${index + 1}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF607185),
+                                            ),
+                                          ),
+                                          // GestureDetector(
+                                          //   onTap: () async {
+                                          //     await reportsProvider
+                                          //         .getAttendanceDetails(
+                                          //             task.attendanceMasterId
+                                          //                 .toString(),
+                                          //             context);
+                                          //     showDialog(
+                                          //       barrierDismissible: false,
+                                          //       context: context,
+                                          //       builder: (_) => AddCheckInOutWidget(
+                                          //         editId: task.attendanceMasterId
+                                          //             .toString(),
+                                          //         isEdit: true,
+                                          //       ),
+                                          //     );
+                                          //   },
+                                          //   child: Container(
+                                          //     padding: const EdgeInsets.symmetric(
+                                          //         horizontal: 10, vertical: 5),
+                                          //     decoration: BoxDecoration(
+                                          //       color: const Color(0xFFE9EDF1),
+                                          //       borderRadius:
+                                          //           BorderRadius.circular(30),
+                                          //     ),
+                                          //     child: Text(
+                                          //       task.userDetailsName,
+                                          //       style: const TextStyle(
+                                          //         fontWeight: FontWeight.bold,
+                                          //         fontSize: 14,
+                                          //       ),
+                                          //       overflow: TextOverflow.ellipsis,
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                        ],
                                       ),
+                                      const SizedBox(height: 10),
+
+                                      /// Row 2: Dates and Times
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _labelValue('Date',
+                                              formatDate(task.checkInDate)),
+                                          _labelValue('Check-In',
+                                              formatTime(task.checkInTimeOnly)),
+                                          _labelValue(
+                                              'Check-Out',
+                                              formatTime(
+                                                  task.checkOutTimeOnly)),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _labelValue('Staff Name',
+                                              task.userDetailsName),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+
+                                      /// Row 3: Location
+                                      _labelValue('Location', task.location),
+
+                                      /// Row 4: Photo Button
+                                      if (task.photo.isNotEmpty)
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: CustomOutlinedSvgButton(
+                                            showIcon: false,
+                                            onPressed: () {
+                                              showImageDialog(
+                                                  context,
+                                                  HttpUrls.imgBaseUrl +
+                                                      task.photo);
+                                            },
+                                            svgPath: 'assets/images/Print.svg',
+                                            label: 'View Photo',
+                                            breakpoint: 860,
+                                            foregroundColor:
+                                                AppColors.primaryBlue,
+                                            backgroundColor: Colors.white,
+                                            borderSide: BorderSide(
+                                                color: AppColors.primaryBlue),
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            ),
-                          )
-                        : Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: ListView.builder(
-                                itemCount: reportsProvider.taskReport.length,
-                                itemBuilder: (context, index) {
-                                  var task = reportsProvider.taskReport[index];
-                                  return Container(
-                                    margin:
-                                        const EdgeInsets.symmetric(vertical: 8),
-                                    padding: const EdgeInsets.all(12.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.05),
-                                          blurRadius: 6,
-                                          offset: const Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(12.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          /// Row 1: Serial No. and Name
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'No. ${index + 1}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF607185),
-                                                ),
-                                              ),
-                                              // GestureDetector(
-                                              //   onTap: () async {
-                                              //     await reportsProvider
-                                              //         .getAttendanceDetails(
-                                              //             task.attendanceMasterId
-                                              //                 .toString(),
-                                              //             context);
-                                              //     showDialog(
-                                              //       barrierDismissible: false,
-                                              //       context: context,
-                                              //       builder: (_) => AddCheckInOutWidget(
-                                              //         editId: task.attendanceMasterId
-                                              //             .toString(),
-                                              //         isEdit: true,
-                                              //       ),
-                                              //     );
-                                              //   },
-                                              //   child: Container(
-                                              //     padding: const EdgeInsets.symmetric(
-                                              //         horizontal: 10, vertical: 5),
-                                              //     decoration: BoxDecoration(
-                                              //       color: const Color(0xFFE9EDF1),
-                                              //       borderRadius:
-                                              //           BorderRadius.circular(30),
-                                              //     ),
-                                              //     child: Text(
-                                              //       task.userDetailsName,
-                                              //       style: const TextStyle(
-                                              //         fontWeight: FontWeight.bold,
-                                              //         fontSize: 14,
-                                              //       ),
-                                              //       overflow: TextOverflow.ellipsis,
-                                              //     ),
-                                              //   ),
-                                              // ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-
-                                          /// Row 2: Dates and Times
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              _labelValue('Date',
-                                                  formatDate(task.checkInDate)),
-                                              _labelValue(
-                                                  'Check-In',
-                                                  formatTime(
-                                                      task.checkInTimeOnly)),
-                                              _labelValue(
-                                                  'Check-Out',
-                                                  formatTime(
-                                                      task.checkOutTimeOnly)),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              _labelValue('Staff Name',
-                                                  task.userDetailsName),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-
-                                          /// Row 3: Location
-                                          _labelValue(
-                                              'Location', task.location),
-
-                                          /// Row 4: Photo Button
-                                          if (task.photo.isNotEmpty)
-                                            Align(
-                                              alignment: Alignment.centerRight,
-                                              child: CustomOutlinedSvgButton(
-                                                showIcon: false,
-                                                onPressed: () {
-                                                  showImageDialog(
-                                                      context,
-                                                      HttpUrls.imgBaseUrl +
-                                                          task.photo);
-                                                },
-                                                svgPath:
-                                                    'assets/images/Print.svg',
-                                                label: 'View Photo',
-                                                breakpoint: 860,
-                                                foregroundColor:
-                                                    AppColors.primaryBlue,
-                                                backgroundColor: Colors.white,
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColors.primaryBlue),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          )
+                              );
+                            },
+                          ),
+                        ),
+                      )
           ],
         ),
       ),

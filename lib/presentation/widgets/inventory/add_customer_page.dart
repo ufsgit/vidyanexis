@@ -30,7 +30,9 @@ class _AddCustomerState extends State<AddCustomer> {
     if (settingsProvider.inventoryCustomerNameController.text.trim().isEmpty) {
       return 'Please enter Customer Name';
     }
-    if (settingsProvider.inventoryCustomerAddressController.text.trim().isEmpty) {
+    if (settingsProvider.inventoryCustomerAddressController.text
+        .trim()
+        .isEmpty) {
       return 'Please enter Customer Address';
     }
     return null;
@@ -39,13 +41,13 @@ class _AddCustomerState extends State<AddCustomer> {
   @override
   void initState() {
     super.initState();
-    
+
     // Debug: Print widget parameters
     print('=== AddCustomer initState ===');
     print('isEdit: ${widget.isEdit}');
     print('editId: ${widget.editId}');
     print('data is null: ${widget.data == null}');
-    
+
     if (widget.data != null) {
       print('--- Customer Data ---');
       print('customerName: ${widget.data!.customerName}');
@@ -60,55 +62,65 @@ class _AddCustomerState extends State<AddCustomer> {
       print('openingBalance: ${widget.data!.openingBalance}');
       print('--- End Customer Data ---');
     }
-    
+
     // Initialize immediately in initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
-      
+
       if (widget.isEdit && widget.data != null) {
         print('>>> Setting controller values <<<');
         // For edit mode, populate all fields
         settingsProvider.inventoryCustomerNameController.text =
             widget.data!.customerName ?? '';
-        print('Name controller set to: ${settingsProvider.inventoryCustomerNameController.text}');
-        
+        print(
+            'Name controller set to: ${settingsProvider.inventoryCustomerNameController.text}');
+
         settingsProvider.inventoryCustomerAddressController.text =
             widget.data!.address ?? '';
-        print('Address controller set to: ${settingsProvider.inventoryCustomerAddressController.text}');
-        
+        print(
+            'Address controller set to: ${settingsProvider.inventoryCustomerAddressController.text}');
+
         settingsProvider.inventoryCustomerAddress1Controller.text =
             widget.data!.address1 ?? '';
-        print('Address1 controller set to: ${settingsProvider.inventoryCustomerAddress1Controller.text}');
-        
+        print(
+            'Address1 controller set to: ${settingsProvider.inventoryCustomerAddress1Controller.text}');
+
         settingsProvider.inventoryCustomerAddress2Controller.text =
             widget.data!.address2 ?? '';
-        print('Address2 controller set to: ${settingsProvider.inventoryCustomerAddress2Controller.text}');
-        
+        print(
+            'Address2 controller set to: ${settingsProvider.inventoryCustomerAddress2Controller.text}');
+
         settingsProvider.inventoryCustomerAddress3Controller.text =
             widget.data!.address3 ?? '';
-        print('Address3 controller set to: ${settingsProvider.inventoryCustomerAddress3Controller.text}');
-        
+        print(
+            'Address3 controller set to: ${settingsProvider.inventoryCustomerAddress3Controller.text}');
+
         settingsProvider.inventoryCustomerPhoneController.text =
             widget.data!.phoneNo ?? '';
-        print('Phone controller set to: ${settingsProvider.inventoryCustomerPhoneController.text}');
-        
+        print(
+            'Phone controller set to: ${settingsProvider.inventoryCustomerPhoneController.text}');
+
         settingsProvider.inventoryCustomerMobileController.text =
             widget.data!.mobileNo ?? '';
-        print('Mobile controller set to: ${settingsProvider.inventoryCustomerMobileController.text}');
-        
+        print(
+            'Mobile controller set to: ${settingsProvider.inventoryCustomerMobileController.text}');
+
         settingsProvider.inventoryCustomerEmailController.text =
             widget.data!.email ?? '';
-        print('Email controller set to: ${settingsProvider.inventoryCustomerEmailController.text}');
-        
+        print(
+            'Email controller set to: ${settingsProvider.inventoryCustomerEmailController.text}');
+
         settingsProvider.inventoryCustomerGstNoController.text =
             widget.data!.gstNo ?? '';
-        print('GstNo controller set to: ${settingsProvider.inventoryCustomerGstNoController.text}');
-        
+        print(
+            'GstNo controller set to: ${settingsProvider.inventoryCustomerGstNoController.text}');
+
         settingsProvider.inventoryCustomerOpeningBalanceController.text =
             widget.data!.openingBalance.toString() ?? '';
-        print('OpeningBalance controller set to: ${settingsProvider.inventoryCustomerOpeningBalanceController.text}');
-        
+        print(
+            'OpeningBalance controller set to: ${settingsProvider.inventoryCustomerOpeningBalanceController.text}');
+
         print('>>> All controllers set <<<');
       } else {
         print('>>> Clearing controllers (Add mode) <<<');
@@ -161,7 +173,8 @@ class _AddCustomerState extends State<AddCustomer> {
   @override
   Widget build(BuildContext context) {
     // Use listen: false to prevent rebuilds from clearing the data
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
 
     return AlertDialog(
       scrollable: true,
@@ -200,7 +213,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerNameController,
+                      controller:
+                          settingsProvider.inventoryCustomerNameController,
                       hintText: 'Customer Name*',
                       labelText: '',
                     ),
@@ -214,7 +228,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerAddressController,
+                      controller:
+                          settingsProvider.inventoryCustomerAddressController,
                       hintText: 'Address*',
                       labelText: '',
                     ),
@@ -224,7 +239,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerAddress1Controller,
+                      controller:
+                          settingsProvider.inventoryCustomerAddress1Controller,
                       hintText: 'Address 1',
                       labelText: '',
                     ),
@@ -238,7 +254,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerAddress2Controller,
+                      controller:
+                          settingsProvider.inventoryCustomerAddress2Controller,
                       hintText: 'Address 2',
                       labelText: '',
                     ),
@@ -248,7 +265,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerAddress3Controller,
+                      controller:
+                          settingsProvider.inventoryCustomerAddress3Controller,
                       hintText: 'Address 3',
                       labelText: '',
                     ),
@@ -262,7 +280,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerPhoneController,
+                      controller:
+                          settingsProvider.inventoryCustomerPhoneController,
                       hintText: 'Phone',
                       labelText: '',
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -273,7 +292,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerMobileController,
+                      controller:
+                          settingsProvider.inventoryCustomerMobileController,
                       hintText: 'Mobile',
                       labelText: '',
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -288,7 +308,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerEmailController,
+                      controller:
+                          settingsProvider.inventoryCustomerEmailController,
                       hintText: 'Email',
                       labelText: '',
                     ),
@@ -298,7 +319,8 @@ class _AddCustomerState extends State<AddCustomer> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
-                      controller: settingsProvider.inventoryCustomerGstNoController,
+                      controller:
+                          settingsProvider.inventoryCustomerGstNoController,
                       hintText: 'GST No',
                       labelText: '',
                     ),
@@ -309,7 +331,8 @@ class _AddCustomerState extends State<AddCustomer> {
               CustomTextField(
                 readOnly: false,
                 height: 54,
-                controller: settingsProvider.inventoryCustomerOpeningBalanceController,
+                controller:
+                    settingsProvider.inventoryCustomerOpeningBalanceController,
                 hintText: 'Opening Balance',
                 labelText: '',
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -653,5 +676,3 @@ class _AddCustomerState extends State<AddCustomer> {
 //     );
 //   }
 // }
-
-

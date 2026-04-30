@@ -65,11 +65,12 @@ class QuotationItemCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               // Details
               _buildDetailRow('Quantity', '${item.Quantity} ${item.Unit}'),
               const SizedBox(height: 8),
-              _buildDetailRow('Unit Price', '₹${item.UnitPrice.toStringAsFixed(2)}'),
+              _buildDetailRow(
+                  'Unit Price', '₹${item.UnitPrice.toStringAsFixed(2)}'),
               const SizedBox(height: 8),
               _buildDetailRow('GST', '₹${item.GST.toStringAsFixed(2)}'),
               const SizedBox(height: 8),

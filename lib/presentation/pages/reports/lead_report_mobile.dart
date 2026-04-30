@@ -21,7 +21,6 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
-
 class LeadReportMobile extends StatefulWidget {
   const LeadReportMobile(this.fromDashBoard, {super.key});
 
@@ -161,7 +160,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
         onTransferTap: () {
           _showTransferDialog(context);
         },
-
         onExcelTap: () async {
           final allLeads =
               await leadReportProvider.fetchAllLeadsForExport(context);
@@ -480,11 +478,9 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                         leadReportProvider.selectedUser != 0) ||
                                     (leadReportProvider.selectedEnquiryFor !=
                                             null &&
-                                        leadReportProvider
-                                                .selectedEnquiryFor !=
+                                        leadReportProvider.selectedEnquiryFor !=
                                             0) ||
-                                    (leadReportProvider
-                                                .selectedEnquirySource !=
+                                    (leadReportProvider.selectedEnquirySource !=
                                             null &&
                                         leadReportProvider
                                                 .selectedEnquirySource !=
@@ -525,8 +521,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                   child: Row(
                                     children: [
                                       Checkbox(
-                                        value:
-                                            leadReportProvider.areAllLeadsSelected,
+                                        value: leadReportProvider
+                                            .areAllLeadsSelected,
                                         onChanged: (value) {
                                           leadReportProvider
                                               .toggleAllLeadsSelection(
@@ -549,7 +545,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                     ],
                                   ),
                                 ),
-
                                 ListView.separated(
                                   separatorBuilder: (context, index) {
                                     return Divider(
@@ -589,7 +584,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                     activeColor:
                                                         AppColors.primaryBlue,
                                                   ),
-
                                                   Container(
                                                       height: 42,
                                                       width: 3,
@@ -614,11 +608,13 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    CustomerDetailPageMobile(
+                                                                builder:
+                                                                    (context) =>
+                                                                        CustomerDetailPageMobile(
                                                                   customerId: lead
                                                                       .customerId,
-                                                                  fromLead: false,
+                                                                  fromLead:
+                                                                      false,
                                                                 ),
                                                               ),
                                                             );
@@ -629,13 +625,15 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                                 .plusJakartaSans(
                                                               fontSize: 16,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                               color: AppColors
                                                                   .textBlack,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                         Text(
@@ -652,7 +650,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                       ],
                                                     ),
                                                   ),
-
                                                 ],
                                               ),
                                             ],
@@ -884,7 +881,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
           return AlertDialog(
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            insetPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -947,15 +945,16 @@ class _leadReportMobile extends State<LeadReportMobile> {
                             settingsProvider.selectedBranchId = selectedId;
                             final selectedBranch = settingsProvider.branchModel
                                 .firstWhere((b) => b.branchId == selectedId);
-                            branchController.text = selectedBranch.branchName ?? '';
-                            
+                            branchController.text =
+                                selectedBranch.branchName ?? '';
+
                             // Reset department and staff
                             settingsProvider.selectedDepartmentId = null;
                             departmentController.clear();
                             dropDownProvider.filteredStaffData = [];
                             assignments.clear();
                             assignmentControllers.clear();
-                            
+
                             settingsProvider.searchDepartment(
                               selectedId.toString(),
                               context,
@@ -977,9 +976,11 @@ class _leadReportMobile extends State<LeadReportMobile> {
                           controller: departmentController,
                           onItemSelected: (selectedId) {
                             settingsProvider.selectedDepartmentId = selectedId;
-                            final selectedDept = settingsProvider.departmentModel
-                                .firstWhere((d) => d.departmentId == selectedId);
-                            departmentController.text = selectedDept.departmentName;
+                            final selectedDept =
+                                settingsProvider.departmentModel.firstWhere(
+                                    (d) => d.departmentId == selectedId);
+                            departmentController.text =
+                                selectedDept.departmentName;
 
                             setState(() {
                               assignments.clear();
@@ -1017,8 +1018,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                           Container(
                             height: 180,
                             decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.grey.shade300),
+                                border: Border.all(color: Colors.grey.shade300),
                                 borderRadius: BorderRadius.circular(8)),
                             child: ListView.separated(
                               shrinkWrap: true,
@@ -1045,7 +1045,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                       Expanded(
                                           flex: 3,
                                           child: Text(staff.userDetailsName,
-                                              style: const TextStyle(fontSize: 13))),
+                                              style: const TextStyle(
+                                                  fontSize: 13))),
                                       Expanded(
                                           flex: 1,
                                           child: SizedBox(
@@ -1055,7 +1056,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                   assignmentControllers[userId],
                                               keyboardType:
                                                   TextInputType.number,
-                                              style: const TextStyle(fontSize: 13),
+                                              style:
+                                                  const TextStyle(fontSize: 13),
                                               decoration: const InputDecoration(
                                                 border: OutlineInputBorder(),
                                                 contentPadding:
@@ -1084,7 +1086,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                               padding: EdgeInsets.all(8.0),
                               child: Text(
                                 "Select Branch/Dept to see staff",
-                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                             ),
                           ),
@@ -1109,7 +1112,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                           children: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                              child: const Text('Cancel',
+                                  style: TextStyle(color: Colors.grey)),
                             ),
                             const SizedBox(width: 8),
                             ElevatedButton(
@@ -1129,8 +1133,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                   ScaffoldMessenger.of(dialogContext)
                                       .showSnackBar(
                                     const SnackBar(
-                                        content: Text(
-                                            'Please assign leads')),
+                                        content: Text('Please assign leads')),
                                   );
                                   return;
                                 }
@@ -1161,7 +1164,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                   assignments: assignments,
                                   userNames: userNames,
                                   remark: remarkController.text,
-                                  nextFollowUpDate: "0", // Pass "0" as requested
+                                  nextFollowUpDate:
+                                      "0", // Pass "0" as requested
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -1183,7 +1187,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
       },
     );
   }
-
 
   List<String> dateButtonTitles = [
     'Yesterday',

@@ -421,9 +421,12 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   ),
                                 );
                               }
-                              final forms = formProvider.customerForms.where((f) => 
-                                f.id.isNotEmpty && f.id != "0" && f.name.isNotEmpty
-                              ).toList();
+                              final forms = formProvider.customerForms
+                                  .where((f) =>
+                                      f.id.isNotEmpty &&
+                                      f.id != "0" &&
+                                      f.name.isNotEmpty)
+                                  .toList();
 
                               if (forms.isEmpty) {
                                 return const Padding(
@@ -450,7 +453,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   uniqueForms[f.id] = f;
                                 } else {
                                   // If we already have one, prefer the definition (null instanceId)
-                                  if (f.instanceId == null && 
+                                  if (f.instanceId == null &&
                                       uniqueForms[f.id]!.instanceId != null) {
                                     uniqueForms[f.id] = f;
                                   }

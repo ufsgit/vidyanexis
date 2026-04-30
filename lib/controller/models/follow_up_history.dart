@@ -41,9 +41,8 @@ class FollowUpHistory {
       actualFollowUpDate: json['Actual_FollowUp_Date'] ?? '',
       colorCode: json["Color_Code"] ?? "Color(0xff34c759)",
       audios: (json['Audio_Files'] != null && json['Audio_Files'] is List)
-          ? List<FollowUpAudio>.from(
-              (json['Audio_Files'] as List)
-                  .map((audio) => FollowUpAudio.fromJson(audio)))
+          ? List<FollowUpAudio>.from((json['Audio_Files'] as List)
+              .map((audio) => FollowUpAudio.fromJson(audio)))
           : <FollowUpAudio>[],
     );
   }

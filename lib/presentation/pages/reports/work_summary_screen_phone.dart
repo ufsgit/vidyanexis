@@ -233,22 +233,22 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                       (reportsProvider.selectedUser != null &&
                           reportsProvider.selectedUser != 0) ||
                       reportsProvider.Search.isNotEmpty)
-                  CommonReportResetButton(
-                    onReset: () {
-                      reportsProvider.selectDateFilterOption(null);
-                      reportsProvider.removeStatus();
-                      searchController.clear();
-                      reportsProvider.setTaskSearchCriteria(
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                      );
-                      reportsProvider.getSearchWorkSummary(context);
-                    },
-                    label: 'Reset',
-                  ),
+                    CommonReportResetButton(
+                      onReset: () {
+                        reportsProvider.selectDateFilterOption(null);
+                        reportsProvider.removeStatus();
+                        searchController.clear();
+                        reportsProvider.setTaskSearchCriteria(
+                          '',
+                          '',
+                          '',
+                          '',
+                          '',
+                        );
+                        reportsProvider.getSearchWorkSummary(context);
+                      },
+                      label: 'Reset',
+                    ),
                 ],
               ),
             ),

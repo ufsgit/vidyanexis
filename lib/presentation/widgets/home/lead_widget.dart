@@ -165,8 +165,7 @@ class _LeadCardState extends State<LeadCard> {
                 onTap: widget.onTap,
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                  padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
                   child: IntrinsicHeight(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -179,126 +178,131 @@ class _LeadCardState extends State<LeadCard> {
                                 .withOpacity(.4),
                           ),
                         ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: widget.lead.customerName,
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.textBlack),
-                                        ),
-                                        if (widget.lead.displayAddress.isNotEmpty) ...[
-                                          TextSpan(
-                                            text: ' , ${widget.lead.displayAddress}',
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400,
-                                                color: AppColors.textGrey3),
-                                          ),
-                                        ]
-                                      ],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'ID ${widget.lead.customerId}',
-                                  style: TextStyle(
-                                    color: AppColors.textGrey3,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text.rich(
-                              TextSpan(
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 children: [
-                                  TextSpan(
-                                    text: widget.lead.statusName,
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.parseColor(
-                                            widget.lead.colorCode)),
+                                  Flexible(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: widget.lead.customerName,
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.textBlack),
+                                          ),
+                                          if (widget.lead.displayAddress
+                                              .isNotEmpty) ...[
+                                            TextSpan(
+                                              text:
+                                                  ' , ${widget.lead.displayAddress}',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color:
+                                                          AppColors.textGrey3),
+                                            ),
+                                          ]
+                                        ],
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                  TextSpan(
-                                    text:
-                                        ' , Assigned to ${widget.lead.toUserName}',
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.textBlack),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'ID ${widget.lead.customerId}',
+                                    style: TextStyle(
+                                      color: AppColors.textGrey3,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                  if (widget.lead.createdByName.isNotEmpty)
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: widget.lead.statusName,
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.parseColor(
+                                              widget.lead.colorCode)),
+                                    ),
                                     TextSpan(
                                       text:
-                                          ' , Created By ${widget.lead.createdByName}',
+                                          ' , Assigned to ${widget.lead.toUserName}',
                                       style: GoogleFonts.plusJakartaSans(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           color: AppColors.textBlack),
                                     ),
-                                ],
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                            if (widget.lead.remark.isNotEmpty) ...[
-                              const SizedBox(height: 2),
-                              Text(
-                                widget.lead.remark,
-                                maxLines: 1,
+                                    if (widget.lead.createdByName.isNotEmpty)
+                                      TextSpan(
+                                        text:
+                                            ' , Created By ${widget.lead.createdByName}',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.textBlack),
+                                      ),
+                                  ],
+                                ),
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.textGrey4),
+                                maxLines: 2,
                               ),
-                            ]
+                              if (widget.lead.remark.isNotEmpty) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  widget.lead.remark,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textGrey4),
+                                ),
+                              ]
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              widget.lead.nextFollowUpDate.toFormattedDate(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: widget.lead.lateFollowUp == 0
+                                    ? AppColors.statusGreen
+                                    : AppColors.btnRed,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Icon(
+                              widget.isExpanded
+                                  ? Icons.keyboard_arrow_up_outlined
+                                  : Icons.keyboard_arrow_down_outlined,
+                              color: AppColors.textGrey3,
+                            ),
                           ],
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            widget.lead.nextFollowUpDate.toFormattedDate(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: widget.lead.lateFollowUp == 0
-                                  ? AppColors.statusGreen
-                                  : AppColors.btnRed,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Icon(
-                            widget.isExpanded
-                                ? Icons.keyboard_arrow_up_outlined
-                                : Icons.keyboard_arrow_down_outlined,
-                            color: AppColors.textGrey3,
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
 
               // Expanded Content
               if (widget.isExpanded)

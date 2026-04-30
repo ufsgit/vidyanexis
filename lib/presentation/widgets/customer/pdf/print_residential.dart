@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
@@ -154,8 +153,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             pw.Text('Date: ',
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text(
-                                quotation?.entryDate.toDDMMYYYY() ?? '',
+                            pw.Text(quotation?.entryDate.toDDMMYYYY() ?? '',
                                 style: pw.TextStyle(font: font, fontSize: 11)),
                           ],
                         ),

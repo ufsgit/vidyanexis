@@ -186,136 +186,151 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
                 keyboardType: TextInputType.multiline,
               ),
               const SizedBox(height: 10),
-                    // Header for Grid
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                      decoration: BoxDecoration(
-                        color: AppColors.appViolet,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                      ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 40, child: Text('')), // Checkbox column
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              'Item Name',
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              'Qty',
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 40,
-                            child: Text(
-                              'Act',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
-                              textAlign: TextAlign.center,
-                            )
-                          ),
-                        ],
+              // Header for Grid
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.appViolet,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(8)),
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                        width: 40, child: Text('')), // Checkbox column
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        'Item Name',
+                        style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Colors.white),
                       ),
                     ),
-                    // Grid Items
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: expenseProvider.stockReturnItems.length,
-                      separatorBuilder: (context, index) => const Divider(height: 1),
-                      itemBuilder: (context, index) {
-                        final item = expenseProvider.stockReturnItems[index];
-                        return Container(
-                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                          color: Colors.white,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 40,
-                                child: Checkbox(
-                                  value: item.isChecked,
-                                  onChanged: (value) {
-                                    expenseProvider.toggleItemCheck(index, value ?? false);
-                                  },
-                                  activeColor: AppColors.appViolet,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: InkWell(
-                                  onTap: () {
-                                    expenseProvider.populateStockReturnForm(index);
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.itemName,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        item.categoryName,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 10,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  height: 35,
-                                  child: TextFormField(
-                                    initialValue: item.quantity.toString(),
-                                    keyboardType: TextInputType.number,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 12),
-                                    decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    onChanged: (value) {
-                                      expenseProvider.updateItemQuantity(index, value);
-                                    },
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 40,
-                                child: IconButton(
-                                  icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
-                                  onPressed: () {
-                                    expenseProvider.deleteStockReturnItem(index);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'Qty',
+                        style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
+                    const SizedBox(
+                        width: 40,
+                        child: Text(
+                          'Act',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Colors.white),
+                          textAlign: TextAlign.center,
+                        )),
                   ],
+                ),
               ),
-            ),
+              // Grid Items
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: expenseProvider.stockReturnItems.length,
+                separatorBuilder: (context, index) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final item = expenseProvider.stockReturnItems[index];
+                  return Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          child: Checkbox(
+                            value: item.isChecked,
+                            onChanged: (value) {
+                              expenseProvider.toggleItemCheck(
+                                  index, value ?? false);
+                            },
+                            activeColor: AppColors.appViolet,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: InkWell(
+                            onTap: () {
+                              expenseProvider.populateStockReturnForm(index);
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.itemName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  item.categoryName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            height: 35,
+                            child: TextFormField(
+                              initialValue: item.quantity.toString(),
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 12),
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 5),
+                                border: OutlineInputBorder(),
+                              ),
+                              onChanged: (value) {
+                                expenseProvider.updateItemQuantity(
+                                    index, value);
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 40,
+                          child: IconButton(
+                            icon: const Icon(Icons.delete_outline,
+                                color: Colors.red, size: 20),
+                            onPressed: () {
+                              expenseProvider.deleteStockReturnItem(index);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
+        ),
+      ),
       actions: [
         CustomElevatedButton(
           buttonText: 'Cancel',

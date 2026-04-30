@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -158,31 +159,11 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
-                                : Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: AppColors.primaryBlue),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                       ],
                     ),
@@ -283,33 +264,11 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                ElevatedButton.icon(
+                                CustomFilterButton(
                                   onPressed: () {
                                     reportsProvider.toggleFilter();
                                   },
-                                  icon: const Icon(Icons.filter_list, size: 18),
-                                  label: Text(
-                                      MediaQuery.of(context).size.width > 860
-                                          ? 'Filter'
-                                          : ''),
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: reportsProvider.isFilter
-                                        ? Colors.white
-                                        : AppColors.primaryBlue,
-                                    backgroundColor: reportsProvider.isFilter
-                                        ? AppColors.primaryBlue
-                                        : Colors.white,
-                                    elevation: 0,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 0,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                      side: BorderSide(
-                                          color: AppColors.primaryBlue),
-                                    ),
-                                  ),
+                                  isFilter: reportsProvider.isFilter,
                                 ),
                                 const SizedBox(width: 16),
                               ],
@@ -334,7 +293,8 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -482,7 +442,8 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -702,115 +663,122 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                                     )
                                   : Expanded(
                                       child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .amcReport.length, // Number of Services
-                                  itemBuilder: (context, index) {
-                                    var amc = reportsProvider.amcReport[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        // Alternate row colors
-                                        child: Row(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(Service.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                child:
-                                                    Text((index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )),
+                                        shrinkWrap:
+                                            true, // To avoid scrolling issues when inside a parent widget
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        itemCount: reportsProvider.amcReport
+                                            .length, // Number of Services
+                                        itemBuilder: (context, index) {
+                                          var amc =
+                                              reportsProvider.amcReport[index];
+                                          return GestureDetector(
+                                            onTap: () {
+                                              // context.go(
+                                              //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: index % 2 == 0
+                                                    ? Colors.white
+                                                    : const Color(0xFFF6F7F9),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
-                                            ),
-                                            // TableWidget(title: Service.orderNo),
-                                            TableWidget(
-                                              flex: 1,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${amc.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: Text(
-                                                    amc.customerName,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 14,
+                                              // Alternate row colors
+                                              child: Row(
+                                                // mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  // Padding(
+                                                  //   padding: const EdgeInsets.symmetric(
+                                                  //       vertical: 12.0, horizontal: 25.0),
+                                                  //   child: Text(Service.customerId.toString(),
+                                                  //       style: const TextStyle(
+                                                  //         fontWeight: FontWeight.bold,
+                                                  //       )),
+                                                  // ),
+                                                  SizedBox(
+                                                    width: 80,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 12.0,
+                                                          horizontal: 25.0),
+                                                      child: Text(
+                                                          (index + 1)
+                                                              .toString(),
+                                                          style:
+                                                              const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          )),
                                                     ),
                                                   ),
-                                                ),
+                                                  // TableWidget(title: Service.orderNo),
+                                                  TableWidget(
+                                                    flex: 1,
+                                                    data: InkWell(
+                                                      onTap: () {
+                                                        context.push(
+                                                            '${CustomerDetailsScreen.route}${amc.customerId.toString()}/${'true'}');
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 4),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xFFE9EDF1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(50),
+                                                        ),
+                                                        child: Text(
+                                                          amc.customerName,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: amc.feedbackDate
+                                                          .toDayMonthYearFormat()),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: amc.taskTypeName
+                                                          .toString()),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: amc.taskDescription
+                                                          .toString()),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: amc.userName
+                                                          .toString()),
+                                                  TableWidget(
+                                                      flex: 2,
+                                                      title: amc.feedbackText
+                                                          .toString()),
+                                                ],
                                               ),
                                             ),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: amc.feedbackDate
-                                                    .toDayMonthYearFormat()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: amc.taskTypeName
-                                                    .toString()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: amc.taskDescription
-                                                    .toString()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: amc.userName.toString()),
-                                            TableWidget(
-                                                flex: 2,
-                                                title: amc.feedbackText
-                                                    .toString()),
-                                          ],
-                                        ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
+                                    ),
                             ],
                           ),
                         ),
@@ -856,154 +824,163 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                                     )
                                   : Expanded(
                                       child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .amcReport.length, // Number of Services
-                                  itemBuilder: (context, index) {
-                                    var amc = reportsProvider.amcReport[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        // Alternate row colors
-                                        child: Wrap(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(Service.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            // TableWidget(title: Service.orderNo),
-                                            TableWidget(
-                                              width: 150,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${amc.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          1700
-                                                      ? Row(
-                                                          mainAxisSize: MainAxisSize
-                                                              .min, // Ensures the Row takes only as much space as needed
-                                                          children: [
-                                                            // Front image (before text)
-                                                            Icon(
-                                                              Icons
-                                                                  .account_circle,
-                                                              size: 15,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the image and text
-                                                            Text(
-                                                              amc.customerName
-                                                                          .length >
-                                                                      20
-                                                                  ? '${amc.customerName.substring(0, 20)}...'
-                                                                  : amc
-                                                                      .customerName,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the text and back image
-                                                            // Back image (after text)
-                                                            Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                              size: 12,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Text(
-                                                          amc.customerName,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
+                                        shrinkWrap:
+                                            true, // To avoid scrolling issues when inside a parent widget
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        itemCount: reportsProvider.amcReport
+                                            .length, // Number of Services
+                                        itemBuilder: (context, index) {
+                                          var amc =
+                                              reportsProvider.amcReport[index];
+                                          return GestureDetector(
+                                            onTap: () {
+                                              // context.go(
+                                              //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: index % 2 == 0
+                                                    ? Colors.white
+                                                    : const Color(0xFFF6F7F9),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              // Alternate row colors
+                                              child: Wrap(
+                                                // mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  // Padding(
+                                                  //   padding: const EdgeInsets.symmetric(
+                                                  //       vertical: 12.0, horizontal: 25.0),
+                                                  //   child: Text(Service.customerId.toString(),
+                                                  //       style: const TextStyle(
+                                                  //         fontWeight: FontWeight.bold,
+                                                  //       )),
+                                                  // ),
+                                                  // TableWidget(title: Service.orderNo),
+                                                  TableWidget(
+                                                    width: 150,
+                                                    data: InkWell(
+                                                      onTap: () {
+                                                        context.push(
+                                                            '${CustomerDetailsScreen.route}${amc.customerId.toString()}/${'true'}');
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 4),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xFFE9EDF1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(50),
                                                         ),
-                                                ),
+                                                        child: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width >
+                                                                1700
+                                                            ? Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min, // Ensures the Row takes only as much space as needed
+                                                                children: [
+                                                                  // Front image (before text)
+                                                                  Icon(
+                                                                    Icons
+                                                                        .account_circle,
+                                                                    size: 15,
+                                                                    color: Color(
+                                                                        0xFF152D70),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          8), // Space between the image and text
+                                                                  Text(
+                                                                    amc.customerName.length >
+                                                                            20
+                                                                        ? '${amc.customerName.substring(0, 20)}...'
+                                                                        : amc
+                                                                            .customerName,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          8), // Space between the text and back image
+                                                                  // Back image (after text)
+                                                                  Icon(
+                                                                    Icons
+                                                                        .arrow_forward_ios,
+                                                                    size: 12,
+                                                                    color: Color(
+                                                                        0xFF152D70),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            : Text(
+                                                                amc.customerName,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 14,
+                                                                ),
+                                                              ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: amc.feedbackDate
+                                                          .toDayMonthYearFormat()),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: amc.taskTypeName
+                                                          .toString()),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: amc.taskDescription
+                                                          .toString()),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      title: amc.userName
+                                                          .toString()),
+                                                  TableWidget(
+                                                      flex: 2,
+                                                      title: amc.feedbackText
+                                                          .toString()),
+                                                ],
                                               ),
                                             ),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: amc.feedbackDate
-                                                    .toDayMonthYearFormat()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: amc.taskTypeName
-                                                    .toString()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: amc.taskDescription
-                                                    .toString()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: amc.userName.toString()),
-                                            TableWidget(
-                                                flex: 2,
-                                                title: amc.feedbackText
-                                                    .toString()),
-                                          ],
-                                        ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
+                                    ),
                             ],
                           ),
                         ),

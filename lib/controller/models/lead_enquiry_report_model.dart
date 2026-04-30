@@ -15,7 +15,8 @@ class LeadEnquiryReportModel {
 
   factory LeadEnquiryReportModel.fromJson(Map<String, dynamic> json) {
     return LeadEnquiryReportModel(
-      enquiryForId: int.tryParse(json["Enquiry_For_Id"]?.toString() ?? "0") ?? 0,
+      enquiryForId:
+          int.tryParse(json["Enquiry_For_Id"]?.toString() ?? "0") ?? 0,
       enquiryForName: json["Enquiry_For_Name"]?.toString() ?? "",
       // Convert int color code to string for the UI components
       colorCode: json["Color_Code"]?.toString() ?? "",

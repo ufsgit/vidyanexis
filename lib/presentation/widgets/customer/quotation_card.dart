@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -139,31 +138,32 @@ class QuotationCard extends StatelessWidget {
                       children: [
                         // Print Quotation 1 - ID 32
                         if (settingsprovider.menuIsViewMap[32] == 1)
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          tooltip: 'Print Quotation 1',
-                          icon: const Icon(Icons.print,
-                              size: 22, color: Colors.blue),
-                          onPressed: () async {
-                            await Loader.showLoader(context);
-                            await customerDetailsProvider.getQuotationMasterPdf(
-                                quotation!.quotationMasterId.toString(),
-                                context);
-                            Loader.stopLoader(context);
-                          },
-                        ),
-                      const SizedBox(width: 8),
-                      // Print Commercial/Residential - ID 55
-                      if (settingsprovider.menuIsViewMap[55] == 1)
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          tooltip: quotation?.quotationTypeId == 2
-                              ? 'Print Commercial'
-                              : 'Print Residential',
-                          icon: const Icon(Icons.print_outlined,
-                              size: 22, color: Colors.blue),
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            tooltip: 'Print Quotation 1',
+                            icon: const Icon(Icons.print,
+                                size: 22, color: Colors.blue),
+                            onPressed: () async {
+                              await Loader.showLoader(context);
+                              await customerDetailsProvider
+                                  .getQuotationMasterPdf(
+                                      quotation!.quotationMasterId.toString(),
+                                      context);
+                              Loader.stopLoader(context);
+                            },
+                          ),
+                        const SizedBox(width: 8),
+                        // Print Commercial/Residential - ID 55
+                        if (settingsprovider.menuIsViewMap[55] == 1)
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            tooltip: quotation?.quotationTypeId == 2
+                                ? 'Print Commercial'
+                                : 'Print Residential',
+                            icon: const Icon(Icons.print_outlined,
+                                size: 22, color: Colors.blue),
                             onPressed: () async {
                               await Loader.showLoader(context);
                               await customerDetailsProvider
@@ -208,9 +208,9 @@ class QuotationCard extends StatelessWidget {
                               }
                               Loader.stopLoader(context);
                             },
-                        ),
-                    ],
-                  ),
+                          ),
+                      ],
+                    ),
                 ],
               ),
               const SizedBox(height: 12.0),
@@ -412,12 +412,10 @@ class QuotationCard extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (BuildContext context) {
                               return EditQuotationScreen(
-                                  quotationId: taskId,
-                                  customerId: customerId);
+                                  quotationId: taskId, customerId: customerId);
                             },
                           ),
                         );
-
                       },
                       svgPath: 'assets/images/Edit.svg',
                       label: 'Edit',

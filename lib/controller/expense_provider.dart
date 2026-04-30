@@ -234,7 +234,8 @@ class ExpenseProvider extends ChangeNotifier {
 
 //sales-----------------
   final TextEditingController addressSalesController = TextEditingController();
-  final TextEditingController invoiceNOSalesControler = TextEditingController(text: '0');
+  final TextEditingController invoiceNOSalesControler =
+      TextEditingController(text: '0');
   final TextEditingController invoiceDateSalesController =
       TextEditingController();
   final TextEditingController categorySalesController = TextEditingController();

@@ -84,10 +84,9 @@ class FormProvider extends ChangeNotifier {
           customers = list
               .map((item) => {
                     'id': item['Customer_Id'] ?? item['customer_id'],
-                    'name': (item['Customer_Name'] ??
-                            item['customer_name'] ??
-                            '')
-                        .toString()
+                    'name':
+                        (item['Customer_Name'] ?? item['customer_name'] ?? '')
+                            .toString()
                   })
               .toList();
         }
@@ -125,10 +124,11 @@ class FormProvider extends ChangeNotifier {
   Future<void>? _activeFieldsFetch;
 
   Future<void> fetchAvailableFields([BuildContext? context]) async {
-    if (isLoadingFields || (availableFields.isNotEmpty && _activeFieldsFetch == null)) {
+    if (isLoadingFields ||
+        (availableFields.isNotEmpty && _activeFieldsFetch == null)) {
       return _activeFieldsFetch;
     }
-    
+
     _activeFieldsFetch = _performFieldsFetch();
     return _activeFieldsFetch;
   }
@@ -225,64 +225,72 @@ class FormProvider extends ChangeNotifier {
             }
           }
 
-          _forms = formsList.map((item) {
-            List<FieldModel> parsedFields = [];
-            if (item['Custom_Fields'] != null &&
-                item['Custom_Fields'] is List) {
-              parsedFields = (item['Custom_Fields'] as List).map((f) {
-                final cfId = (f['Custom_Field_Id'] ?? f['custom_field_id'])
-                        ?.toString() ??
-                    '0';
-                final cfName =
-                    (f['Custom_Field_Name'] ?? f['custom_field_name'])
-                        ?.toString();
-                final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
+          _forms = formsList
+              .map((item) {
+                List<FieldModel> parsedFields = [];
+                if (item['Custom_Fields'] != null &&
+                    item['Custom_Fields'] is List) {
+                  parsedFields = (item['Custom_Fields'] as List).map((f) {
+                    final cfId = (f['Custom_Field_Id'] ?? f['custom_field_id'])
+                            ?.toString() ??
+                        '0';
+                    final cfName =
+                        (f['Custom_Field_Name'] ?? f['custom_field_name'])
+                            ?.toString();
+                    final isMandatoryValue =
+                        f['Is_Mandatory'] ?? f['isMandatory'];
 
-                final orderBy = f['Order_By'] ?? f['order_by'] ?? 0;
+                    final orderBy = f['Order_By'] ?? f['order_by'] ?? 0;
 
-                // Match by ID first, then by Label as a fallback to "repair" corrupted IDs
-                final availableField = availableFields.firstWhere(
-                  (a) => a.id == cfId,
-                  orElse: () => availableFields.firstWhere(
-                    (a) =>
-                        cfName != null &&
-                        a.label.toLowerCase() == cfName.toLowerCase(),
-                    orElse: () => FieldModel(
-                      id: cfId,
-                      label: cfName ?? 'Field $cfId',
-                      type: FieldType.text,
-                    ),
-                  ),
+                    // Match by ID first, then by Label as a fallback to "repair" corrupted IDs
+                    final availableField = availableFields.firstWhere(
+                      (a) => a.id == cfId,
+                      orElse: () => availableFields.firstWhere(
+                        (a) =>
+                            cfName != null &&
+                            a.label.toLowerCase() == cfName.toLowerCase(),
+                        orElse: () => FieldModel(
+                          id: cfId,
+                          label: cfName ?? 'Field $cfId',
+                          type: FieldType.text,
+                        ),
+                      ),
+                    );
+                    return FieldModel(
+                      id: availableField.id,
+                      label: availableField.label.isEmpty ||
+                              availableField.label == "null"
+                          ? (cfName ?? "Field $cfId")
+                          : availableField.label,
+                      type: availableField.type,
+                      options: availableField.options,
+                      isMandatory: (isMandatoryValue == 1 ||
+                          isMandatoryValue == true ||
+                          isMandatoryValue == "1"),
+                      orderBy: int.tryParse(orderBy.toString()) ?? 0,
+                    );
+                  }).toList();
+                }
+
+                return FormModel(
+                  id: item['Form_Id']?.toString() ?? '',
+                  name: item['Form_Name']?.toString() ?? '',
+                  department: item['Department_Name']?.toString() ?? '',
+                  departmentId: item['Department_Id'],
+                  taskType: item['Task_Type_Name']?.toString() ?? '',
+                  taskTypeId: item['Task_Type_Id'],
+                  customerId: item['Customer_Id'],
+                  fields: parsedFields,
+                  taskId: item['Task_Id'] ?? item['task_id'],
+                  deletedStatus: int.tryParse((item['Deleted_Status'] ??
+                              item['deleted_status'] ??
+                              0)
+                          .toString()) ??
+                      0,
                 );
-                return FieldModel(
-                  id: availableField.id,
-                  label: availableField.label.isEmpty ||
-                          availableField.label == "null"
-                      ? (cfName ?? "Field $cfId")
-                      : availableField.label,
-                  type: availableField.type,
-                  options: availableField.options,
-                  isMandatory: (isMandatoryValue == 1 ||
-                      isMandatoryValue == true ||
-                      isMandatoryValue == "1"),
-                  orderBy: int.tryParse(orderBy.toString()) ?? 0,
-                );
-              }).toList();
-            }
-
-            return FormModel(
-              id: item['Form_Id']?.toString() ?? '',
-              name: item['Form_Name']?.toString() ?? '',
-              department: item['Department_Name']?.toString() ?? '',
-              departmentId: item['Department_Id'],
-              taskType: item['Task_Type_Name']?.toString() ?? '',
-              taskTypeId: item['Task_Type_Id'],
-              customerId: item['Customer_Id'],
-              fields: parsedFields,
-              taskId: item['Task_Id'] ?? item['task_id'],
-              deletedStatus: int.tryParse((item['Deleted_Status'] ?? item['deleted_status'] ?? 0).toString()) ?? 0,
-            );
-          }).where((f) => f.deletedStatus != 1).toList();
+              })
+              .where((f) => f.deletedStatus != 1)
+              .toList();
           notifyListeners();
         }
       }
@@ -429,7 +437,7 @@ class FormProvider extends ChangeNotifier {
     _currentFetchId++;
     final int fetchId = _currentFetchId;
 
-    // Only clear and show spinner if we have no forms yet to prevent flicker 
+    // Only clear and show spinner if we have no forms yet to prevent flicker
     // when data arrives from parallel sources like fetchTaskTypes.
     if (_customerForms.isEmpty) {
       _customerForms = [];
@@ -482,7 +490,9 @@ class FormProvider extends ChangeNotifier {
         if (data != null) {
           // If response is { "success": true, "data": { ... } } or { "success": true, "data": [ ... ] }
           // Only unwrap if the current map doesn't already contain the target form keys ('forms' or 'form_data')
-          if (data is Map && !data.containsKey('forms') && !data.containsKey('form_data')) {
+          if (data is Map &&
+              !data.containsKey('forms') &&
+              !data.containsKey('form_data')) {
             if (data.containsKey('data') && data['data'] != null) {
               data = data['data'];
             } else if (data.containsKey('Data') && data['Data'] != null) {
@@ -532,14 +542,18 @@ class FormProvider extends ChangeNotifier {
     if (data == null) return [];
     try {
       debugPrint("DEBUG: _processCustomerFormsData received data: $data");
-      
+
       // Secondary check if data is wrapped here as well
       var processedData = data;
       // Only unwrap if the current map doesn't already contain the target form keys ('forms' or 'form_data')
-      if (processedData is Map && !processedData.containsKey('forms') && !processedData.containsKey('form_data')) {
-        if (processedData.containsKey('data') && processedData['data'] != null) {
+      if (processedData is Map &&
+          !processedData.containsKey('forms') &&
+          !processedData.containsKey('form_data')) {
+        if (processedData.containsKey('data') &&
+            processedData['data'] != null) {
           processedData = processedData['data'];
-        } else if (processedData.containsKey('Data') && processedData['Data'] != null) {
+        } else if (processedData.containsKey('Data') &&
+            processedData['Data'] != null) {
           processedData = processedData['Data'];
         }
       }
@@ -556,57 +570,91 @@ class FormProvider extends ChangeNotifier {
         formsList = processedData;
       }
 
-      return formsList.map((item) {
-        List<FieldModel> parsedFields = [];
-        
-        if (item['Custom_Fields'] != null && item['Custom_Fields'] is List) {
-          parsedFields = (item['Custom_Fields'] as List).map((f) {
-            final cfId = (f['Custom_Field_Id'] ?? f['custom_field_id'])?.toString() ?? '0';
-            final cfName = (f['Custom_Field_Name'] ?? f['custom_field_name'])?.toString();
-            final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
+      return formsList
+          .map((item) {
+            List<FieldModel> parsedFields = [];
 
-            final availableField = availableFields.firstWhere(
-              (a) => a.id == cfId,
-              orElse: () => availableFields.firstWhere(
-                (a) => cfName != null && a.label.toLowerCase() == cfName.toLowerCase(),
-                orElse: () => FieldModel(
-                  id: cfId,
-                  label: cfName ?? 'Field $cfId',
-                  type: FieldType.text,
-                ),
-              ),
+            if (item['Custom_Fields'] != null &&
+                item['Custom_Fields'] is List) {
+              parsedFields = (item['Custom_Fields'] as List).map((f) {
+                final cfId = (f['Custom_Field_Id'] ?? f['custom_field_id'])
+                        ?.toString() ??
+                    '0';
+                final cfName =
+                    (f['Custom_Field_Name'] ?? f['custom_field_name'])
+                        ?.toString();
+                final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
+
+                final availableField = availableFields.firstWhere(
+                  (a) => a.id == cfId,
+                  orElse: () => availableFields.firstWhere(
+                    (a) =>
+                        cfName != null &&
+                        a.label.toLowerCase() == cfName.toLowerCase(),
+                    orElse: () => FieldModel(
+                      id: cfId,
+                      label: cfName ?? 'Field $cfId',
+                      type: FieldType.text,
+                    ),
+                  ),
+                );
+
+                final dataValue =
+                    f['datavalue'] ?? f['DataValue'] ?? f['value'];
+                final orderBy = f['Order_By'] ?? f['order_by'] ?? 0;
+
+                return FieldModel(
+                  id: availableField.id,
+                  label: availableField.label.isEmpty ||
+                          availableField.label == "null"
+                      ? (cfName ?? 'Field $cfId')
+                      : availableField.label,
+                  type: availableField.type,
+                  options: availableField.options,
+                  value: dataValue?.toString(),
+                  isMandatory: (isMandatoryValue == 1 ||
+                      isMandatoryValue == true ||
+                      isMandatoryValue == "1"),
+                  orderBy: int.tryParse(orderBy.toString()) ?? 0,
+                );
+              }).toList();
+            }
+
+            return FormModel(
+              id: (item['Form_Id'] ?? item['form_id'] ?? '').toString(),
+              name: (item['Form_Name'] ?? item['form_name'] ?? '').toString(),
+              department:
+                  (item['Department_Name'] ?? item['department_name'] ?? '')
+                      .toString(),
+              taskType: (item['Task_Type_Name'] ?? item['task_type_name'] ?? '')
+                  .toString(),
+              fields: parsedFields,
+              instanceId:
+                  item['Form_Data_Details_Id'] ?? item['form_data_details_id'],
+              createdDate: (item['Created_Date'] ??
+                      item['created_at'] ??
+                      item['created_date'] ??
+                      item['entry_date'] ??
+                      item['Entry_Date'])
+                  ?.toString(),
+              createdUser: (item['created_user_name'] ??
+                      item['Created_User_Name'] ??
+                      item['created_by_name'] ??
+                      item['Created_By_Name'] ??
+                      item['user_name'])
+                  ?.toString(),
+              taskId: item['Task_Id'] ?? item['task_id'],
+              deletedStatus: int.tryParse((item['Deleted_Status'] ??
+                          item['deleted_status'] ??
+                          item['Is_Delete'] ??
+                          item['is_delete'] ??
+                          0)
+                      .toString()) ??
+                  0,
             );
-            
-            final dataValue = f['datavalue'] ?? f['DataValue'] ?? f['value'];
-            final orderBy = f['Order_By'] ?? f['order_by'] ?? 0;
-
-            return FieldModel(
-              id: availableField.id,
-              label: availableField.label.isEmpty || availableField.label == "null"
-                       ? (cfName ?? 'Field $cfId')
-                       : availableField.label,
-              type: availableField.type,
-              options: availableField.options,
-              value: dataValue?.toString(),
-              isMandatory: (isMandatoryValue == 1 || isMandatoryValue == true || isMandatoryValue == "1"),
-              orderBy: int.tryParse(orderBy.toString()) ?? 0,
-            );
-          }).toList();
-        }
-
-        return FormModel(
-          id: (item['Form_Id'] ?? item['form_id'] ?? '').toString(),
-          name: (item['Form_Name'] ?? item['form_name'] ?? '').toString(),
-          department: (item['Department_Name'] ?? item['department_name'] ?? '').toString(),
-          taskType: (item['Task_Type_Name'] ?? item['task_type_name'] ?? '').toString(),
-          fields: parsedFields,
-          instanceId: item['Form_Data_Details_Id'] ?? item['form_data_details_id'],
-          createdDate: (item['Created_Date'] ?? item['created_at'] ?? item['created_date'] ?? item['entry_date'] ?? item['Entry_Date'])?.toString(),
-          createdUser: (item['created_user_name'] ?? item['Created_User_Name'] ?? item['created_by_name'] ?? item['Created_By_Name'] ?? item['user_name'])?.toString(),
-          taskId: item['Task_Id'] ?? item['task_id'],
-          deletedStatus: int.tryParse((item['Deleted_Status'] ?? item['deleted_status'] ?? item['Is_Delete'] ?? item['is_delete'] ?? 0).toString()) ?? 0,
-        );
-      }).where((f) => f.deletedStatus != 1).toList();
+          })
+          .where((f) => f.deletedStatus != 1)
+          .toList();
     } catch (e) {
       debugPrint('Error in _processCustomerFormsData: $e');
       return [];
@@ -645,20 +693,20 @@ class FormProvider extends ChangeNotifier {
         int? resultId;
         if (response.data is Map) {
           debugPrint("DEBUG: Save status 200, response data: ${response.data}");
-          
+
           final dataMap = response.data as Map;
-          
+
           int? findIdFromMap(Map map) {
             Object? id = map['Form_Data_Details_Id'] ??
-                         map['itemID'] ??
-                         map['item_id'] ??
-                         map['Form_Data_Details_ID'] ??
-                         map['Form_data_details_id'];
+                map['itemID'] ??
+                map['item_id'] ??
+                map['Form_Data_Details_ID'] ??
+                map['Form_data_details_id'];
             return id != null ? int.tryParse(id.toString()) : null;
           }
 
           resultId = findIdFromMap(dataMap);
-          
+
           // Check for nested data fields if not found at top level
           if (resultId == null) {
             Object? nestedData = dataMap['data'] ?? dataMap['Data'];
@@ -675,8 +723,9 @@ class FormProvider extends ChangeNotifier {
             taskTypeId: taskTypeId,
             enquiryForId: enquiryForId?.toString(),
             taskId: taskId.toString());
-        
-        debugPrint("DEBUG: Determined resultId: $resultId (Original formDataDetailsId: $formDataDetailsId)");
+
+        debugPrint(
+            "DEBUG: Determined resultId: $resultId (Original formDataDetailsId: $formDataDetailsId)");
         return resultId ?? (formDataDetailsId != 0 ? formDataDetailsId : null);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -699,7 +748,8 @@ class FormProvider extends ChangeNotifier {
     required int formDataDetailsId,
     int? taskId,
   }) async {
-    debugPrint("DEBUG: fetchAndPrintFormPdf called for customer: $customerId, FormDataDetailsId: $formDataDetailsId, taskId: $taskId");
+    debugPrint(
+        "DEBUG: fetchAndPrintFormPdf called for customer: $customerId, FormDataDetailsId: $formDataDetailsId, taskId: $taskId");
     isPrinting = true;
     notifyListeners();
     try {
@@ -712,15 +762,17 @@ class FormProvider extends ChangeNotifier {
         returnBytes: true,
       );
 
-      debugPrint("DEBUG: fetchAndPrintFormPdf response status: ${response.statusCode}");
-      debugPrint("DEBUG: fetchAndPrintFormPdf data type: ${response.data.runtimeType}");
+      debugPrint(
+          "DEBUG: fetchAndPrintFormPdf response status: ${response.statusCode}");
+      debugPrint(
+          "DEBUG: fetchAndPrintFormPdf data type: ${response.data.runtimeType}");
 
       if (response.statusCode == 200) {
-        final Uint8List pdfBytes = response.data is Uint8List 
-            ? response.data 
+        final Uint8List pdfBytes = response.data is Uint8List
+            ? response.data
             : Uint8List.fromList(response.data.toString().codeUnits);
         debugPrint("DEBUG: fetchAndPrintFormPdf got ${pdfBytes.length} bytes");
-        
+
         if (pdfBytes.isEmpty) {
           debugPrint("DEBUG: PDF bytes are empty!");
           if (context.mounted) {

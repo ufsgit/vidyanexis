@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -87,7 +88,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
                     //     ),
                     //   ),
                     // ),
-                    OutlinedButton.icon(
+                    CustomFilterButton(
                       onPressed: () {
                         expenseProvider.toggleFilter();
                         // expenseProvider.selectDateFilterOption(null);
@@ -95,24 +96,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
                         // expenseProvider.searchStockUseList('', '', '', '', context);
                         print(expenseProvider.isFilter);
                       },
-                      icon: const Icon(Icons.filter_list),
-                      label: const Text('Filter'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: expenseProvider.isFilter
-                            ? Colors.white
-                            : AppColors.primaryBlue, // Change foreground color
-                        backgroundColor: expenseProvider.isFilter
-                            ? const Color(0xFF5499D9)
-                            : Colors.white, // Change background color
-                        side: BorderSide(
-                            color: expenseProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : AppColors.primaryBlue), // Change border color
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
+                      isFilter: expenseProvider.isFilter,
                     ),
                     const SizedBox(width: 16),
                     if (settingsProvider.menuIsSaveMap[79] == 1)
@@ -261,14 +245,13 @@ class _StockReturnPageState extends State<StockReturnPage> {
                                   height: 20,
                                   decoration: BoxDecoration(
                                       color: AppColors.surfaceGrey,
-                                      borderRadius:
-                                          BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(12)),
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         left: 8, right: 8),
                                     child: Text(
-                                      expenseProvider.stockReturnList[index]
-                                          .description,
+                                      expenseProvider
+                                          .stockReturnList[index].description,
                                       style: GoogleFonts.plusJakartaSans(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
@@ -330,7 +313,8 @@ class _StockReturnPageState extends State<StockReturnPage> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                              title: const Text('Confirm Delete'),
+                                              title:
+                                                  const Text('Confirm Delete'),
                                               content: const Text(
                                                   'Are you sure you want to delete this item?'),
                                               actions: [

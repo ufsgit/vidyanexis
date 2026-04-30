@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -149,31 +150,11 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
-                                : Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: AppColors.primaryBlue),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         CustomElevatedButton(
@@ -234,7 +215,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -355,103 +337,110 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                         ),
                                       )
                                     : ListView.builder(
-                                  shrinkWrap: true,
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .outOfWarrentyReport.length,
-                                  itemBuilder: (context, index) {
-                                    var item = reportsProvider
-                                        .outOfWarrentyReport[index];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: index % 2 == 0
-                                            ? Colors.white
-                                            : const Color(0xFFF6F7F9),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 60,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 12.0,
-                                                      horizontal: 15.0),
-                                              child: Text(
-                                                  (index + 1).toString(),
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  )),
+                                        shrinkWrap: true,
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        itemCount: reportsProvider
+                                            .outOfWarrentyReport.length,
+                                        itemBuilder: (context, index) {
+                                          var item = reportsProvider
+                                              .outOfWarrentyReport[index];
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              color: index % 2 == 0
+                                                  ? Colors.white
+                                                  : const Color(0xFFF6F7F9),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                          ),
-                                          TableWidget(
-                                            flex: 2,
-                                            data: InkWell(
-                                              onTap: () {
-                                                context.push(
-                                                    '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xFFE9EDF1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                child: Text(
-                                                  item.customerName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 60,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 12.0,
+                                                        horizontal: 15.0),
+                                                    child: Text(
+                                                        (index + 1).toString(),
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        )),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                          TableWidget(
-                                              flex: 1,
-                                              title: item.contactNumber),
-                                          TableWidget(
-                                            flex: 2,
-                                            data: Tooltip(
-                                              message: item.address1,
-                                              child: Text(
-                                                item.address1,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 14,
+                                                TableWidget(
+                                                  flex: 2,
+                                                  data: InkWell(
+                                                    onTap: () {
+                                                      context.push(
+                                                          '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFFE9EDF1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50),
+                                                      ),
+                                                      child: Text(
+                                                        item.customerName,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: item.contactNumber),
+                                                TableWidget(
+                                                  flex: 2,
+                                                  data: Tooltip(
+                                                    message: item.address1,
+                                                    child: Text(
+                                                      item.address1,
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: item.district),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: item.company),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: item.installationDate
+                                                        .toDayMonthYearFormat()),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: item.expiryDate
+                                                        .toDayMonthYearFormat()),
+                                              ],
                                             ),
-                                          ),
-                                          TableWidget(
-                                              flex: 1, title: item.district),
-                                          TableWidget(
-                                              flex: 1, title: item.company),
-                                          TableWidget(
-                                              flex: 1,
-                                              title: item.installationDate
-                                                  .toDayMonthYearFormat()),
-                                          TableWidget(
-                                              flex: 1,
-                                              title: item.expiryDate
-                                                  .toDayMonthYearFormat()),
-                                        ],
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
                               ),
                             ],
                           ),

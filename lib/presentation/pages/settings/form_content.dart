@@ -56,8 +56,7 @@ class _FormContentState extends State<FormContent> {
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.textBlue800),
                             ),
-                            if (settingsProvider.menuIsSaveMap[85]
-                                    .toString() ==
+                            if (settingsProvider.menuIsSaveMap[85].toString() ==
                                 '1')
                               _buildNewFormButton(context),
                           ],
@@ -126,8 +125,8 @@ class _FormContentState extends State<FormContent> {
                           return _buildMobileRow(context, formModel,
                               formProvider, settingsProvider);
                         }
-                        return _buildDesktopRow(context, formModel,
-                            formProvider, settingsProvider);
+                        return _buildDesktopRow(
+                            context, formModel, formProvider, settingsProvider);
                       },
                     )
                 ],
@@ -159,9 +158,8 @@ class _FormContentState extends State<FormContent> {
   Widget _buildSearchBar(BuildContext context, FormProvider formProvider,
       {required bool isMobile}) {
     return Container(
-      width: isMobile
-          ? double.infinity
-          : MediaQuery.of(context).size.width / 3.5,
+      width:
+          isMobile ? double.infinity : MediaQuery.of(context).size.width / 3.5,
       height: 40,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -423,8 +421,8 @@ class _FormContentState extends State<FormContent> {
     );
   }
 
-  void _showDeleteDialog(BuildContext context, FormModel formModel,
-      FormProvider formProvider) {
+  void _showDeleteDialog(
+      BuildContext context, FormModel formModel, FormProvider formProvider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

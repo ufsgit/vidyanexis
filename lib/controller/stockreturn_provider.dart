@@ -461,7 +461,8 @@ class StockreturnProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchPurchaseDetails(String purchaseMasterId, BuildContext context) async {
+  Future<void> searchPurchaseDetails(
+      String purchaseMasterId, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -906,8 +907,6 @@ class StockreturnProvider extends ChangeNotifier {
     }
   }
 
-
-
   void toggleItemCheck(int index, bool isChecked) {
     if (index >= 0 && index < stockReturnItems.length) {
       stockReturnItems[index].isChecked = isChecked;
@@ -919,7 +918,8 @@ class StockreturnProvider extends ChangeNotifier {
     if (index >= 0 && index < stockReturnItems.length) {
       final quantity = double.tryParse(quantityStr) ?? 1.0;
       stockReturnItems[index].quantity = quantity;
-      stockReturnItems[index].amount = stockReturnItems[index].unitPrice * quantity;
+      stockReturnItems[index].amount =
+          stockReturnItems[index].unitPrice * quantity;
       notifyListeners();
     }
   }
@@ -1000,18 +1000,18 @@ class StockreturnProvider extends ChangeNotifier {
 
           // Reset and Pre-populate stockReturnItems
           _stockReturnItems = _itemListStock.map((stockItem) {
-              return StockReturnItems(
-                stockReturnId: stockItem.stockId,
-                itemId: stockItem.itemId,
-                itemName: stockItem.itemName,
-                categoryId: stockItem.categoryId,
-                categoryName: stockItem.categoryName,
-                quantity: 1.0,
-                unitPrice: double.tryParse(stockItem.unitPrice) ?? 0.0,
-                amount: double.tryParse(stockItem.unitPrice) ?? 0.0,
-                isChecked: false,
-              );
-            }).toList();
+            return StockReturnItems(
+              stockReturnId: stockItem.stockId,
+              itemId: stockItem.itemId,
+              itemName: stockItem.itemName,
+              categoryId: stockItem.categoryId,
+              categoryName: stockItem.categoryName,
+              quantity: 1.0,
+              unitPrice: double.tryParse(stockItem.unitPrice) ?? 0.0,
+              amount: double.tryParse(stockItem.unitPrice) ?? 0.0,
+              isChecked: false,
+            );
+          }).toList();
 
           notifyListeners();
         }
@@ -1378,8 +1378,6 @@ class StockreturnProvider extends ChangeNotifier {
     }
   }
 
-  
-
   Future<void> getExpenseType(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -1548,8 +1546,6 @@ class StockreturnProvider extends ChangeNotifier {
     }
   }
 
-  
-
   void deleteItemApi(BuildContext context, int userId) async {
     try {
       Loader.showLoader(context);
@@ -1586,9 +1582,8 @@ class StockreturnProvider extends ChangeNotifier {
     }
   }
 
-  
-
-  Future<void> deleteStockUse(BuildContext context, int userId, int customerId) async {
+  Future<void> deleteStockUse(
+      BuildContext context, int userId, int customerId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpDeleteRequest(
@@ -1624,7 +1619,8 @@ class StockreturnProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteStockReturn(BuildContext context, int userId, int customerId) async {
+  Future<void> deleteStockReturn(
+      BuildContext context, int userId, int customerId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpDeleteRequest(
@@ -1862,7 +1858,8 @@ class StockreturnProvider extends ChangeNotifier {
               _stockReturnItems[i].quantity = matchingSavedItem.quantity;
               _stockReturnItems[i].amount = matchingSavedItem.amount;
               _stockReturnItems[i].unitPrice = matchingSavedItem.unitPrice;
-              _stockReturnItems[i].stockReturnId = matchingSavedItem.stockReturnId;
+              _stockReturnItems[i].stockReturnId =
+                  matchingSavedItem.stockReturnId;
             } else {
               _stockReturnItems[i].isChecked = false;
             }

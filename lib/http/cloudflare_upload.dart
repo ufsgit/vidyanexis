@@ -312,33 +312,31 @@ class CloudflareUpload {
 //   }
 }
 
-  
-  // static Future<File> compressImage(Uint8List bytes) async {
-  //   final tempFile = File('${Directory.systemTemp.path}/temp_image.jpg');
+// static Future<File> compressImage(Uint8List bytes) async {
+//   final tempFile = File('${Directory.systemTemp.path}/temp_image.jpg');
 
-  //   // Write the image bytes to the temporary file
-  //   await tempFile.writeAsBytes(bytes);
+//   // Write the image bytes to the temporary file
+//   await tempFile.writeAsBytes(bytes);
 
-  //   // Compress the image using FlutterImageCompress
-  //   var result = await FlutterImageCompress.compressAndGetFile(
-  //     tempFile.absolute.path, // The file path to the image
-  //     tempFile.absolute.path, // The output path
-  //     quality: 70,
-  //     minWidth: 1024,
-  //     minHeight: 1024,
-  //   );
+//   // Compress the image using FlutterImageCompress
+//   var result = await FlutterImageCompress.compressAndGetFile(
+//     tempFile.absolute.path, // The file path to the image
+//     tempFile.absolute.path, // The output path
+//     quality: 70,
+//     minWidth: 1024,
+//     minHeight: 1024,
+//   );
 
-  //   if (result != null) {
-  //     return File(result.path); // Convert XFile to File
-  //   } else {
-  //     throw Exception("Image compression failed.");
-  //   }
-  // }
+//   if (result != null) {
+//     return File(result.path); // Convert XFile to File
+//   } else {
+//     throw Exception("Image compression failed.");
+//   }
+// }
 
-  // static String _formatFileSize(int bytes) {
-  //   if (bytes <= 0) return "0 B";
-  //   const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-  //   var i = (log(bytes) / log(1024)).floor();
-  //   return ((bytes / pow(1024, i)).toStringAsFixed(1)) + ' ' + suffixes[i];
-  // }
-
+// static String _formatFileSize(int bytes) {
+//   if (bytes <= 0) return "0 B";
+//   const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+//   var i = (log(bytes) / log(1024)).floor();
+//   return ((bytes / pow(1024, i)).toStringAsFixed(1)) + ' ' + suffixes[i];
+// }

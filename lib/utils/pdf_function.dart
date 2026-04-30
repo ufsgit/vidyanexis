@@ -43,7 +43,8 @@ Future<void> exportToPDF({
               children: [
                 pw.Text(
                   fileName.replaceAll('_', ' '),
-                  style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
                 ),
                 pw.Text(
                   'Date: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
@@ -55,13 +56,19 @@ Future<void> exportToPDF({
           pw.SizedBox(height: 10),
           pw.TableHelper.fromTextArray(
             headers: headers,
-            data: data.map((row) => headers.map((header) => row[header]?.toString() ?? '').toList()).toList(),
-            headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: fontSize),
+            data: data
+                .map((row) => headers
+                    .map((header) => row[header]?.toString() ?? '')
+                    .toList())
+                .toList(),
+            headerStyle: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold, fontSize: fontSize),
             cellStyle: pw.TextStyle(fontSize: fontSize),
             headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
             cellHeight: 20,
             cellAlignments: {
-              for (var i = 0; i < headers.length; i++) i: pw.Alignment.centerLeft,
+              for (var i = 0; i < headers.length; i++)
+                i: pw.Alignment.centerLeft,
             },
             columnWidths: {
               // Optionally adjust column widths if needed, but fromTextArray usually does a decent job

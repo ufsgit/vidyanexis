@@ -68,8 +68,10 @@ class _CustomerPageState extends State<CustomerPage> {
                         // Refresh the list after dialog closes
                         if (mounted) {
                           final settingsProvider =
-                              Provider.of<SettingsProvider>(context, listen: false);
-                          settingsProvider.searchInventoryCustomerApi('', context);
+                              Provider.of<SettingsProvider>(context,
+                                  listen: false);
+                          settingsProvider.searchInventoryCustomerApi(
+                              '', context);
                         }
                       },
                       svgPath: 'assets/images/Plus.svg',
@@ -101,7 +103,8 @@ class _CustomerPageState extends State<CustomerPage> {
                       },
                       shrinkWrap: true,
                       physics: const ClampingScrollPhysics(),
-                      itemCount: settingsProvider.searchInventoryCustomer.length,
+                      itemCount:
+                          settingsProvider.searchInventoryCustomer.length,
                       itemBuilder: (context, index) {
                         return Container(
                           height: 40,
@@ -123,7 +126,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                           left: 8, right: 8),
                                       child: Text(
                                         settingsProvider
-                                            .searchInventoryCustomer[index].customerName,
+                                            .searchInventoryCustomer[index]
+                                            .customerName,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
@@ -153,8 +157,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                       // Refresh the list after dialog closes
                                       if (mounted) {
                                         final settingsProvider =
-                                            Provider.of<SettingsProvider>(context, listen: false);
-                                        settingsProvider.searchInventoryCustomerApi('', context);
+                                            Provider.of<SettingsProvider>(
+                                                context,
+                                                listen: false);
+                                        settingsProvider
+                                            .searchInventoryCustomerApi(
+                                                '', context);
                                       }
                                     },
                                     child: Text(
@@ -224,5 +232,3 @@ class _CustomerPageState extends State<CustomerPage> {
     );
   }
 }
-
-

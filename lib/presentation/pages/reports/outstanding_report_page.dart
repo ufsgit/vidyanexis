@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -116,27 +117,11 @@ class _OutstandingReportPageState extends State<OutstandingReportPage> {
                   color: AppColors.textBlack,
                 ),
               ),
-              ElevatedButton.icon(
+              CustomFilterButton(
                 onPressed: () {
                   provider.toggleFilter();
                 },
-                icon: const Icon(Icons.filter_list, size: 18),
-                label: const Text('Filter'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: provider.isFilter
-                      ? Colors.white
-                      : AppColors.primaryBlue,
-                  backgroundColor: provider.isFilter
-                      ? AppColors.primaryBlue
-                      : Colors.white,
-                  elevation: 0,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    side: BorderSide(color: AppColors.primaryBlue),
-                  ),
-                ),
+                isFilter: provider.isFilter,
               ),
             ],
           ),
@@ -243,8 +228,7 @@ class _OutstandingReportPageState extends State<OutstandingReportPage> {
                                       style: const TextStyle(fontSize: 14),
                                     ),
                                   ),
-                                ))
-                            ,
+                                )),
                       ],
                       onChanged: (int? newValue) {
                         if (newValue == 0 || newValue == null) {

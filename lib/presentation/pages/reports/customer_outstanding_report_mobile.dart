@@ -7,14 +7,17 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+
 class CustomerOutstandingReportMobile extends StatefulWidget {
   const CustomerOutstandingReportMobile({super.key});
 
   @override
-  State<CustomerOutstandingReportMobile> createState() => _CustomerOutstandingReportMobileState();
+  State<CustomerOutstandingReportMobile> createState() =>
+      _CustomerOutstandingReportMobileState();
 }
 
-class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingReportMobile> {
+class _CustomerOutstandingReportMobileState
+    extends State<CustomerOutstandingReportMobile> {
   final TextEditingController searchController = TextEditingController();
 
   final List<String> dateButtonTitles = [
@@ -29,9 +32,11 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<CustomerOutstandingReportProvider>(context, listen: false);
+      final provider = Provider.of<CustomerOutstandingReportProvider>(context,
+          listen: false);
       provider.getReport(context);
-      Provider.of<DropDownProvider>(context, listen: false).getEnquirySource(context);
+      Provider.of<DropDownProvider>(context, listen: false)
+          .getEnquirySource(context);
     });
   }
 
@@ -96,7 +101,9 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Expanded(child: _buildEnquirySourceDropdown(context, provider)),
+                      Expanded(
+                          child:
+                              _buildEnquirySourceDropdown(context, provider)),
                       const SizedBox(width: 8),
                       CommonReportResetButton(
                         onReset: () => provider.resetFilters(context),
@@ -118,7 +125,8 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                           itemBuilder: (context, index) {
                             final item = provider.reportData[index];
                             return Card(
-                              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -130,7 +138,8 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
                                           child: Text(
@@ -141,41 +150,70 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                                             ),
                                           ),
                                         ),
-                                        const Icon(Icons.chevron_right, size: 16, color: Colors.grey),
+                                        const Icon(Icons.chevron_right,
+                                            size: 16, color: Colors.grey),
                                       ],
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       item.phone,
-                                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                                      style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12),
                                     ),
                                     const Divider(height: 20),
                                     Row(
                                       children: [
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Text('Project Cost', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                              Text('₹${item.projectCost}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                                              Text('Project Cost',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text('₹${item.projectCost}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13)),
                                             ],
                                           ),
                                         ),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
-                                              Text('Received', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                              Text('₹${item.received}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 13)),
+                                              Text('Received',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text('₹${item.received}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green,
+                                                      fontSize: 13)),
                                             ],
                                           ),
                                         ),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
                                             children: [
-                                              Text('Balance', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                              Text('₹${item.balance}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 13)),
+                                              Text('Balance',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text('₹${item.balance}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.red,
+                                                      fontSize: 13)),
                                             ],
                                           ),
                                         ),
@@ -209,24 +247,41 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text('Total Cost', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                    Text('₹${provider.totalProjectCost}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                                    const Text('Total Cost',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey)),
+                                    Text('₹${provider.totalProjectCost}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14)),
                                   ],
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text('Total Received', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                    Text('₹${provider.totalReceived}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.green)),
+                                    const Text('Total Received',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey)),
+                                    Text('₹${provider.totalReceived}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.green)),
                                   ],
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Text('Total Balance', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                    Text('₹${provider.totalBalance}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.red)),
+                                    const Text('Total Balance',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey)),
+                                    Text('₹${provider.totalBalance}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.red)),
                                   ],
                                 ),
                               ],
@@ -272,8 +327,12 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                         onTap: () => provider.selectDate(context, true),
                         child: Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(8)),
-                          child: Text(provider.fromDate != null ? provider.formattedFromDate : 'From'),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(provider.fromDate != null
+                              ? provider.formattedFromDate
+                              : 'From'),
                         ),
                       ),
                     ),
@@ -283,8 +342,12 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                         onTap: () => provider.selectDate(context, false),
                         child: Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(8)),
-                          child: Text(provider.toDate != null ? provider.formattedToDate : 'To'),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(provider.toDate != null
+                              ? provider.formattedToDate
+                              : 'To'),
                         ),
                       ),
                     ),
@@ -293,7 +356,9 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close')),
               ElevatedButton(
                 onPressed: () {
                   provider.getReport(context);
@@ -308,7 +373,8 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
     );
   }
 
-  Widget _buildEnquirySourceDropdown(BuildContext context, CustomerOutstandingReportProvider provider) {
+  Widget _buildEnquirySourceDropdown(
+      BuildContext context, CustomerOutstandingReportProvider provider) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
         return Container(
@@ -318,7 +384,9 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: provider.selectedEnquirySourceId != null ? AppColors.primaryBlue : Colors.grey[300]!,
+              color: provider.selectedEnquirySourceId != null
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
             ),
           ),
           child: DropdownButtonHideUnderline(
@@ -334,7 +402,8 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                 ...dropDownProvider.enquiryData.map((source) {
                   return DropdownMenuItem<int>(
                     value: source.enquirySourceId,
-                    child: Text(source.enquirySourceName, style: const TextStyle(fontSize: 12)),
+                    child: Text(source.enquirySourceName,
+                        style: const TextStyle(fontSize: 12)),
                   );
                 }),
               ],
@@ -342,7 +411,8 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                 provider.setEnquirySource(value);
                 provider.getReport(context);
               },
-              icon: const Icon(Icons.arrow_drop_down_outlined, color: Colors.black45, size: 20),
+              icon: const Icon(Icons.arrow_drop_down_outlined,
+                  color: Colors.black45, size: 20),
             ),
           ),
         );
@@ -350,4 +420,3 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
     );
   }
 }
-

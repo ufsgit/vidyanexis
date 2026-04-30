@@ -68,7 +68,8 @@ class ServiceCreationWidget extends StatelessWidget {
             const SizedBox(height: 16.0),
             if (isEdit)
               DropdownButtonFormField<int>(
-                initialValue: customerDetailsProvider.selectedServiceStatus ?? 1,
+                initialValue:
+                    customerDetailsProvider.selectedServiceStatus ?? 1,
                 items: const [
                   DropdownMenuItem<int>(
                     value: 1,

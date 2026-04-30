@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -143,7 +144,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            OutlinedButton.icon(
+                            CustomFilterButton(
                               onPressed: () {
                                 expenseProvider.toggleFilter();
                                 // expenseProvider.selectDateFilterOption(null);
@@ -151,54 +152,35 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 // expenseProvider.getPurchaseDataMaster('', '', '', '', context);
                                 print(expenseProvider.isFilter);
                               },
-                              icon: const Icon(Icons.filter_list),
-                              label: const Text('Filter '),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: expenseProvider.isFilter
-                                    ? Colors.white
-                                    : AppColors
-                                        .primaryBlue, // Change foreground color
-                                backgroundColor: expenseProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : Colors.white, // Change background color
-                                side: BorderSide(
-                                    color: expenseProvider.isFilter
-                                        ? const Color(0xFF5499D9)
-                                        : AppColors
-                                            .primaryBlue), // Change border color
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
+                              isFilter: expenseProvider.isFilter,
                             ),
                             const SizedBox(width: 16),
                             // New Lead Button
                             if (settingsProvider.menuIsSaveMap[44] == 1)
-                            CustomOutlinedSvgButton(
-                              onPressed: () async {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return PurchaseWidget(
-                                      editId: '0',
-                                      isEdit: false,
-                                    );
-                                  },
-                                );
-                              },
-                              svgPath: 'assets/images/Plus.svg',
-                              label: 'New Purchase',
-                              breakpoint: 860,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                              CustomOutlinedSvgButton(
+                                onPressed: () async {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return PurchaseWidget(
+                                        editId: '0',
+                                        isEdit: false,
+                                      );
+                                    },
+                                  );
+                                },
+                                svgPath: 'assets/images/Plus.svg',
+                                label: 'New Purchase',
+                                breakpoint: 860,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                foregroundColor: Colors.white,
+                                backgroundColor: AppColors.primaryBlue,
+                                borderSide:
+                                    BorderSide(color: AppColors.primaryBlue),
                               ),
-                              foregroundColor: Colors.white,
-                              backgroundColor: AppColors.primaryBlue,
-                              borderSide:
-                                  BorderSide(color: AppColors.primaryBlue),
-                            ),
                             const SizedBox(width: 16),
                           ],
                         ),
@@ -223,34 +205,35 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 const Spacer(),
                                 // New Purchase Button - Always visible on mobile
                                 if (settingsProvider.menuIsSaveMap[44] == 1)
-                                SizedBox(
-                                  height: 40,
-                                  child: ElevatedButton.icon(
-                                    onPressed: () async {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return PurchaseWidget(
-                                            editId: '0',
-                                            isEdit: false,
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add, size: 18),
-                                    label: const Text('New'),
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: AppColors.primaryBlue,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                                  SizedBox(
+                                    height: 40,
+                                    child: ElevatedButton.icon(
+                                      onPressed: () async {
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return PurchaseWidget(
+                                              editId: '0',
+                                              isEdit: false,
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: const Icon(Icons.add, size: 18),
+                                      label: const Text('New'),
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor: AppColors.primaryBlue,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
                               ],
                             ),
                             const SizedBox(height: 16),
@@ -848,94 +831,96 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                             if (settingsProvider
                                                     .menuIsEditMap[44] ==
                                                 1)
-                                            TextButton(
-                                              onPressed: () async {
-                                                await expenseProvider
-                                                    .searchPurchaseDetails(
-                                                        purchase
+                                              TextButton(
+                                                onPressed: () async {
+                                                  await expenseProvider
+                                                      .searchPurchaseDetails(
+                                                          purchase
+                                                              .purchaseMasterId
+                                                              .toString(),
+                                                          context);
+                                                  showDialog(
+                                                    barrierDismissible: false,
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return PurchaseWidget(
+                                                        editId: purchase
                                                             .purchaseMasterId
                                                             .toString(),
-                                                        context);
-                                                showDialog(
-                                                  barrierDismissible: false,
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return PurchaseWidget(
-                                                      editId: purchase
-                                                          .purchaseMasterId
-                                                          .toString(),
-                                                      isEdit: true,
-                                                      data: purchase,
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              child: Text(
-                                                'Edit',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColors.primaryBlue,
+                                                        isEdit: true,
+                                                        data: purchase,
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Text(
+                                                  'Edit',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color:
+                                                        AppColors.primaryBlue,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
                                             if (settingsProvider
                                                     .menuIsDeleteMap[44] ==
                                                 1)
-                                            TextButton(
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                          'Confirm Delete'),
-                                                      content: const Text(
-                                                        'Are you sure you want to delete this item?',
-                                                      ),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  context),
-                                                          child: const Text(
-                                                              'Cancel'),
+                                              TextButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Confirm Delete'),
+                                                        content: const Text(
+                                                          'Are you sure you want to delete this item?',
                                                         ),
-                                                        TextButton(
-                                                          onPressed: () async {
-                                                            await expenseProvider
-                                                                .deletePurchaseItem(
-                                                                    context,
-                                                                    purchase
-                                                                        .purchaseMasterId);
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: const Text(
-                                                            ' Delete ',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.red),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            child: const Text(
+                                                                'Cancel'),
                                                           ),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              child: Text(
-                                                'Delete',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColors.textRed,
+                                                          TextButton(
+                                                            onPressed:
+                                                                () async {
+                                                              await expenseProvider
+                                                                  .deletePurchaseItem(
+                                                                      context,
+                                                                      purchase
+                                                                          .purchaseMasterId);
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                              ' Delete ',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Text(
+                                                  'Delete',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppColors.textRed,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
                                           ],
                                         ),
                                       ),
@@ -1117,105 +1102,109 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: [
-                                          if (settingsProvider.menuIsEditMap[44] == 1)
-                                          TextButton.icon(
-                                            onPressed: () async {
-                                              await expenseProvider
-                                                  .searchPurchaseDetails(
-                                                purchase.purchaseMasterId
-                                                    .toString(),
-                                                context,
-                                              );
-                                              showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return PurchaseWidget(
-                                                    editId: purchase
-                                                        .purchaseMasterId
-                                                        .toString(),
-                                                    isEdit: true,
-                                                    data: purchase,
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            icon: Icon(
-                                              Icons.edit,
-                                              size: 16,
-                                              color: AppColors.primaryBlue,
-                                            ),
-                                            label: Text(
-                                              'Edit',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
+                                          if (settingsProvider
+                                                  .menuIsEditMap[44] ==
+                                              1)
+                                            TextButton.icon(
+                                              onPressed: () async {
+                                                await expenseProvider
+                                                    .searchPurchaseDetails(
+                                                  purchase.purchaseMasterId
+                                                      .toString(),
+                                                  context,
+                                                );
+                                                showDialog(
+                                                  barrierDismissible: false,
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return PurchaseWidget(
+                                                      editId: purchase
+                                                          .purchaseMasterId
+                                                          .toString(),
+                                                      isEdit: true,
+                                                      data: purchase,
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              icon: Icon(
+                                                Icons.edit,
+                                                size: 16,
                                                 color: AppColors.primaryBlue,
                                               ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          if (settingsProvider.menuIsDeleteMap[44] == 1)
-                                          TextButton.icon(
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: const Text(
-                                                        'Confirm Delete'),
-                                                    content: const Text(
-                                                      'Are you sure you want to delete this invoice?',
-                                                    ),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                context),
-                                                        child: const Text(
-                                                            'Cancel'),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          await expenseProvider
-                                                              .deletePurchaseItem(
-                                                            context,
-                                                            purchase
-                                                                .purchaseMasterId,
-                                                          );
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                          'Delete ',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.red),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            icon: Icon(
-                                              Icons.delete,
-                                              size: 16,
-                                              color: AppColors.textRed,
-                                            ),
-                                            label: Text(
-                                              '  Delete ',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.textRed,
+                                              label: Text(
+                                                'Edit',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.primaryBlue,
+                                                ),
                                               ),
                                             ),
-                                          ),
+                                          const SizedBox(width: 8),
+                                          if (settingsProvider
+                                                  .menuIsDeleteMap[44] ==
+                                              1)
+                                            TextButton.icon(
+                                              onPressed: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Confirm Delete'),
+                                                      content: const Text(
+                                                        'Are you sure you want to delete this invoice?',
+                                                      ),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  context),
+                                                          child: const Text(
+                                                              'Cancel'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            await expenseProvider
+                                                                .deletePurchaseItem(
+                                                              context,
+                                                              purchase
+                                                                  .purchaseMasterId,
+                                                            );
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                            'Delete ',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              icon: Icon(
+                                                Icons.delete,
+                                                size: 16,
+                                                color: AppColors.textRed,
+                                              ),
+                                              label: Text(
+                                                '  Delete ',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.textRed,
+                                                ),
+                                              ),
+                                            ),
                                         ],
                                       ),
                                     ],

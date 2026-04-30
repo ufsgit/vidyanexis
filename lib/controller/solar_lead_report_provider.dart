@@ -16,7 +16,7 @@ class SolarLeadReportProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   List<SearchLeadModel> _allLeads = [];
-  
+
   List<ChartData> _leadsCreatedPerDay = [];
   List<ChartData> _conversionsPerDay = [];
   List<ChartData> _projectCostPerDay = [];
@@ -29,7 +29,7 @@ class SolarLeadReportProvider extends ChangeNotifier {
   DateTime? _toDate;
   String _formattedFromDate = '';
   String _formattedToDate = '';
-  
+
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
   String get formattedFromDate => _formattedFromDate;
@@ -203,8 +203,8 @@ class SolarLeadReportProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSolarLeadReport(BuildContext context, String search, String fromDate, String toDate,
-      String status, String assignedTo) async {
+  Future<void> getSolarLeadReport(BuildContext context, String search,
+      String fromDate, String toDate, String status, String assignedTo) async {
     setTaskSearchCriteria(search, fromDate, toDate, status, assignedTo);
     _isLoading = true;
     notifyListeners();
@@ -212,18 +212,17 @@ class SolarLeadReportProvider extends ChangeNotifier {
     try {
       const int poolLimit = 2000;
       final response = await HttpRequest.httpGetRequest(
-        endPoint: '${HttpUrls.searchLead}?lead_Name=&Is_Date=0&Fromdate=&Todate=&Page_Index1=1&Page_Index2=$poolLimit'
-      );
+          endPoint:
+              '${HttpUrls.searchLead}?lead_Name=&Is_Date=0&Fromdate=&Todate=&Page_Index1=1&Page_Index2=$poolLimit');
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null && data is List) {
-          _allLeads = data
-              .map((item) => SearchLeadModel.fromJson(item))
-              .toList();
-          
+          _allLeads =
+              data.map((item) => SearchLeadModel.fromJson(item)).toList();
+
           if (_allLeads.isNotEmpty && _allLeads.last.customerId == 0) {
-             _allLeads.removeLast();
+            _allLeads.removeLast();
           }
 
           debugPrint("Total leads fetched for processing: ${_allLeads.length}");
@@ -260,10 +259,11 @@ class SolarLeadReportProvider extends ChangeNotifier {
     Map<String, double> projectCostGrouped = {};
 
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    
+
     DateTime rangeStart = _fromDate ?? DateTime(2000);
     DateTime rangeEnd = _toDate ?? DateTime.now().add(const Duration(days: 1));
-    rangeEnd = DateTime(rangeEnd.year, rangeEnd.month, rangeEnd.day, 23, 59, 59);
+    rangeEnd =
+        DateTime(rangeEnd.year, rangeEnd.month, rangeEnd.day, 23, 59, 59);
 
     for (var lead in _allLeads) {
       // Apply Search Filter locally
@@ -289,7 +289,8 @@ class SolarLeadReportProvider extends ChangeNotifier {
 
       DateTime? createdDate = _parseDate(lead.entryDate);
       if (createdDate != null) {
-        if (createdDate.isAfter(rangeStart.subtract(const Duration(seconds: 1))) && 
+        if (createdDate
+                .isAfter(rangeStart.subtract(const Duration(seconds: 1))) &&
             createdDate.isBefore(rangeEnd.add(const Duration(seconds: 1)))) {
           String key = formatter.format(createdDate);
           leadsCreatedGrouped[key] = (leadsCreatedGrouped[key] ?? 0) + 1;
@@ -298,12 +299,14 @@ class SolarLeadReportProvider extends ChangeNotifier {
 
       DateTime? conversionDate = _parseDate(lead.registeredDate);
       if (conversionDate != null) {
-        if (conversionDate.isAfter(rangeStart.subtract(const Duration(seconds: 1))) && 
+        if (conversionDate
+                .isAfter(rangeStart.subtract(const Duration(seconds: 1))) &&
             conversionDate.isBefore(rangeEnd.add(const Duration(seconds: 1)))) {
           String key = formatter.format(conversionDate);
           conversionsGrouped[key] = (conversionsGrouped[key] ?? 0) + 1;
-          
-          String cleanCost = lead.totalProjectCost.replaceAll(RegExp(r'[^0-9.]'), '');
+
+          String cleanCost =
+              lead.totalProjectCost.replaceAll(RegExp(r'[^0-9.]'), '');
           double cost = double.tryParse(cleanCost) ?? 0.0;
           projectCostGrouped[key] = (projectCostGrouped[key] ?? 0.0) + cost;
         }
@@ -329,4 +332,3 @@ class SolarLeadReportProvider extends ChangeNotifier {
     debugPrint("Project cost chart data points: ${_projectCostPerDay.length}");
   }
 }
-

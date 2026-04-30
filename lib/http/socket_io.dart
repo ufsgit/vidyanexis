@@ -132,7 +132,8 @@ class MicrotecSocket {
             log('📋 Transformed Results count: ${transformedResults?.length ?? 0}');
 
             if (transformedResults != null) {
-              print('🔔 [user_notification] ALL NOTIFICATIONS FROM SOCKET: $transformedResults');
+              print(
+                  '🔔 [user_notification] ALL NOTIFICATIONS FROM SOCKET: $transformedResults');
               final notifications = transformedResults.map((item) {
                 log('📄 Processing notification item: $item');
                 return NotificationModel.fromJson(item, {});

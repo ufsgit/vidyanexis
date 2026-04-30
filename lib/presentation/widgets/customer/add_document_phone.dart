@@ -10,7 +10,6 @@ import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
-
 class AddDocumentPhone extends StatefulWidget {
   String customerId;
 
@@ -22,7 +21,6 @@ class AddDocumentPhone extends StatefulWidget {
 
 class _AddDocumentPhoneState extends State<AddDocumentPhone> {
   late FocusNode complaintNode;
-
 
   @override
   void initState() {

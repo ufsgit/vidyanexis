@@ -601,7 +601,8 @@ class CustomFieldWidgetBuilder {
                       border: Border.all(
                         color: AppColors.bluebutton.withOpacity(0.3),
                         width: 1.5,
-                        style: BorderStyle.solid, // Note: standard border, dashed is hard with core BoxDecoration
+                        style: BorderStyle
+                            .solid, // Note: standard border, dashed is hard with core BoxDecoration
                       ),
                       borderRadius: BorderRadius.circular(12),
                       color: AppColors.bluebutton.withOpacity(0.02),
@@ -818,7 +819,8 @@ class CustomFieldWidgetBuilder {
                                   'Pending save',
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: AppColors.bluebutton.withOpacity(0.7),
+                                    color:
+                                        AppColors.bluebutton.withOpacity(0.7),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -907,7 +909,8 @@ class CustomFieldWidgetBuilder {
         Future<void> captureSignature() async {
           final Uint8List? result = await showDialog<Uint8List>(
             context: context,
-            builder: (context) => SignatureCaptureDialog(title: 'Capture $fieldName'),
+            builder: (context) =>
+                SignatureCaptureDialog(title: 'Capture $fieldName'),
           );
 
           if (result != null) {
@@ -1005,7 +1008,8 @@ class CustomFieldWidgetBuilder {
                               ),
                   ),
                 ),
-                if (hasPending || (uploadedUrl != null && uploadedUrl!.isNotEmpty))
+                if (hasPending ||
+                    (uploadedUrl != null && uploadedUrl!.isNotEmpty))
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Row(
@@ -1016,7 +1020,8 @@ class CustomFieldWidgetBuilder {
                             onPressed: () {
                               _setFieldValue(field.customFieldId!, "");
                               _pendingFileBytes.remove(field.customFieldId!);
-                              _pendingFileContentType.remove(field.customFieldId!);
+                              _pendingFileContentType
+                                  .remove(field.customFieldId!);
                               setState(() {
                                 uploadedUrl = null;
                                 hasPending = false;
@@ -1026,7 +1031,8 @@ class CustomFieldWidgetBuilder {
                             },
                             icon: const Icon(Icons.delete_outline, size: 18),
                             label: const Text('Clear Signature'),
-                            style: TextButton.styleFrom(foregroundColor: Colors.red),
+                            style: TextButton.styleFrom(
+                                foregroundColor: Colors.red),
                           ),
                       ],
                     ),

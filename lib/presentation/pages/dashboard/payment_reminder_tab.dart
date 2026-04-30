@@ -84,7 +84,8 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                                 onTap: () {
                                   provider.selectDateFilterOption(
                                       null); // Clear dates
-                                  provider.getPaymentReminders(context, isFilter: true);
+                                  provider.getPaymentReminders(context,
+                                      isFilter: true);
                                 },
                                 child: const Icon(Icons.close,
                                     size: 16, color: Colors.red),

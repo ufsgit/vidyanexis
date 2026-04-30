@@ -51,7 +51,7 @@ class LeadCheckInReportProvider extends ChangeNotifier {
     final userNameStr = prefs.getString('userName');
     _userType = prefs.getString('userType');
     _loginUserId = userIdStr;
-    
+
     if (userIdStr != null) {
       _selectedUserId = int.tryParse(userIdStr);
       _selectedUserName = userNameStr;
@@ -194,9 +194,7 @@ class LeadCheckInReportProvider extends ChangeNotifier {
         final data = response.data;
         if (data != null) {
           if (data is List) {
-            _reports = data
-                .map((item) => LeadCheckIn.fromJson(item))
-                .toList();
+            _reports = data.map((item) => LeadCheckIn.fromJson(item)).toList();
           } else {
             final leadResponse = LeadCheckInResponse.fromJson(data);
             _reports = leadResponse.data ?? [];

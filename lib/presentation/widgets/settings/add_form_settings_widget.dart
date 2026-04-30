@@ -156,8 +156,8 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                       itemCount: provider.availableFields.length,
                       itemBuilder: (context, index) {
                         final field = provider.availableFields[index];
-                        final selectedIndex = tempSelected
-                            .indexWhere((f) => f.id == field.id);
+                        final selectedIndex =
+                            tempSelected.indexWhere((f) => f.id == field.id);
                         final isSelected = selectedIndex != -1;
 
                         return Container(
@@ -216,7 +216,8 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                               ),
                               if (isSelected)
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(16, 0, 16, 12),
                                   child: Row(
                                     children: [
                                       // Mandatory Toggle
@@ -267,18 +268,22 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                             height: 32,
                                             child: TextField(
                                               controller: TextEditingController(
-                                                  text: tempSelected[selectedIndex]
+                                                  text: tempSelected[
+                                                          selectedIndex]
                                                       .orderBy
                                                       .toString()),
-                                              keyboardType: TextInputType.number,
-                                              style: const TextStyle(fontSize: 13),
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              style:
+                                                  const TextStyle(fontSize: 13),
                                               textAlign: TextAlign.center,
                                               decoration: InputDecoration(
                                                 hintText: '0',
                                                 isDense: true,
                                                 contentPadding:
                                                     const EdgeInsets.symmetric(
-                                                        horizontal: 8, vertical: 6),
+                                                        horizontal: 8,
+                                                        vertical: 6),
                                                 border: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(6),
@@ -424,25 +429,25 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                 builder: (context, provider, child) {
                   return provider.isLoadingDepartments
                       ? const Center(child: CircularProgressIndicator())
-                        : CommonDropdown<int>(
-                            hintText: 'Department*',
-                            selectedValue: _selectedDepartmentId,
-                            items: provider.departments
-                                .map((dept) => DropdownItem<int>(
-                                      id: dept['id'],
-                                      name: dept['name'],
-                                    ))
-                                .toList(),
-                            controller: _departmentController,
-                            onItemSelected: (selectedId) {
-                              setState(() {
-                                _selectedDepartmentId = selectedId;
-                                _selectedDepartment = provider.departments
-                                    .firstWhere(
-                                        (d) => d['id'] == selectedId)['name'];
-                              });
-                            },
-                          );
+                      : CommonDropdown<int>(
+                          hintText: 'Department*',
+                          selectedValue: _selectedDepartmentId,
+                          items: provider.departments
+                              .map((dept) => DropdownItem<int>(
+                                    id: dept['id'],
+                                    name: dept['name'],
+                                  ))
+                              .toList(),
+                          controller: _departmentController,
+                          onItemSelected: (selectedId) {
+                            setState(() {
+                              _selectedDepartmentId = selectedId;
+                              _selectedDepartment = provider.departments
+                                  .firstWhere(
+                                      (d) => d['id'] == selectedId)['name'];
+                            });
+                          },
+                        );
                 },
               ),
               const SizedBox(height: 16),
@@ -452,25 +457,24 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                 builder: (context, provider, child) {
                   return provider.isLoadingTaskTypes
                       ? const Center(child: CircularProgressIndicator())
-                        : CommonDropdown<int>(
-                            hintText: 'Task Type*',
-                            selectedValue: _selectedTaskTypeId,
-                            items: provider.taskTypes
-                                .map((type) => DropdownItem<int>(
-                                      id: type['id'],
-                                      name: type['name'],
-                                    ))
-                                .toList(),
-                            controller: _taskTypeController,
-                            onItemSelected: (selectedId) {
-                              setState(() {
-                                _selectedTaskTypeId = selectedId;
-                                _selectedTaskType = provider.taskTypes
-                                    .firstWhere(
-                                        (t) => t['id'] == selectedId)['name'];
-                              });
-                            },
-                          );
+                      : CommonDropdown<int>(
+                          hintText: 'Task Type*',
+                          selectedValue: _selectedTaskTypeId,
+                          items: provider.taskTypes
+                              .map((type) => DropdownItem<int>(
+                                    id: type['id'],
+                                    name: type['name'],
+                                  ))
+                              .toList(),
+                          controller: _taskTypeController,
+                          onItemSelected: (selectedId) {
+                            setState(() {
+                              _selectedTaskTypeId = selectedId;
+                              _selectedTaskType = provider.taskTypes.firstWhere(
+                                  (t) => t['id'] == selectedId)['name'];
+                            });
+                          },
+                        );
                 },
               ),
               const SizedBox(height: 16),

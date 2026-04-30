@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -211,20 +212,9 @@ class _StockReturnReportState extends State<StockReturnReport> {
             ),
           ),
           const SizedBox(width: 16),
-          ElevatedButton.icon(
+          CustomFilterButton(
             onPressed: () => provider.toggleFilter(),
-            icon: const Icon(Icons.filter_list, size: 18),
-            label: const Text('Filter'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  provider.isFilter ? AppColors.primaryBlue : Colors.white,
-              foregroundColor:
-                  provider.isFilter ? Colors.white : AppColors.primaryBlue,
-              side: BorderSide(color: AppColors.primaryBlue),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
+            isFilter: provider.isFilter,
           ),
           const SizedBox(width: 16),
           ElevatedButton.icon(

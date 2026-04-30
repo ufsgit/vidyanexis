@@ -807,8 +807,7 @@ class DropDownProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.searchTaskType,
-          bodyData: {'Task_Type_Name': ''});
+          endPoint: HttpUrls.searchTaskType, bodyData: {'Task_Type_Name': ''});
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -929,8 +928,7 @@ class DropDownProvider extends ChangeNotifier {
   void getLocations(BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getLocation,
-          bodyData: {'Location_Name': ''});
+          endPoint: HttpUrls.getLocation, bodyData: {'Location_Name': ''});
 
       if (response.statusCode == 200) {
         final data = response.data;

@@ -360,16 +360,22 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
           CommonReportDateFilter(
             fromDate: provider.fromDate?.toString(),
             toDate: provider.toDate?.toString(),
-            formattedFromDate: provider.fromDate != null ? DateFormat('dd MMM yyyy').format(provider.fromDate!) : '',
-            formattedToDate: provider.toDate != null ? DateFormat('dd MMM yyyy').format(provider.toDate!) : '',
+            formattedFromDate: provider.fromDate != null
+                ? DateFormat('dd MMM yyyy').format(provider.fromDate!)
+                : '',
+            formattedToDate: provider.toDate != null
+                ? DateFormat('dd MMM yyyy').format(provider.toDate!)
+                : '',
             onTap: () async {
               final picked = await showDateRangePicker(
                 context: context,
                 firstDate: DateTime(2020),
                 lastDate: DateTime.now(),
-                initialDateRange: provider.fromDate != null && provider.toDate != null
-                    ? DateTimeRange(start: provider.fromDate!, end: provider.toDate!)
-                    : null,
+                initialDateRange:
+                    provider.fromDate != null && provider.toDate != null
+                        ? DateTimeRange(
+                            start: provider.fromDate!, end: provider.toDate!)
+                        : null,
               );
               if (picked != null) {
                 provider.setDates(picked.start, picked.end);

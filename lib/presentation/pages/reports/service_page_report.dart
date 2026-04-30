@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -176,30 +177,11 @@ class _ServicesPageReportState extends State<ServicePageReport> {
           const SizedBox(height: 8),
           Row(
             children: [
-              ElevatedButton.icon(
+              CustomFilterButton(
                 onPressed: () {
                   reportsProvider.toggleFilter();
                 },
-                icon: const Icon(Icons.filter_list, size: 18),
-                label: Text(
-                    MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: reportsProvider.isFilter
-                      ? Colors.white
-                      : AppColors.primaryBlue,
-                  backgroundColor: reportsProvider.isFilter
-                      ? AppColors.primaryBlue
-                      : Colors.white,
-                  elevation: 0,
-                  side: BorderSide(color: AppColors.primaryBlue),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
+                isFilter: reportsProvider.isFilter,
               ),
               const SizedBox(width: 8),
               ElevatedButton.icon(

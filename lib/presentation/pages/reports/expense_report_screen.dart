@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -99,7 +100,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         padding: const EdgeInsets.all(4.0),
                         child: ElevatedButton(
                           onPressed: () {
-                            if (provider.searchExpenseController.text.isNotEmpty) {
+                            if (provider
+                                .searchExpenseController.text.isNotEmpty) {
                               provider.searchExpenseController.clear();
                               provider.searchExpense('', context);
                             } else {
@@ -134,38 +136,19 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                ElevatedButton.icon(
+                CustomFilterButton(
                   onPressed: () {
                     provider.toggleFilter();
                   },
-                  icon: const Icon(Icons.filter_list, size: 18),
-                  label: Text(MediaQuery.of(context).size.width > 860
-                      ? 'Filter'
-                      : ''),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: provider.isFilter
-                        ? Colors.white
-                        : AppColors.primaryBlue,
-                    backgroundColor: provider.isFilter
-                        ? AppColors.primaryBlue
-                        : Colors.white,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: AppColors.primaryBlue),
-                    ),
-                  ),
+                  isFilter: provider.isFilter,
                 ),
                 const SizedBox(width: 16),
                 _buildExportButton(provider),
               ],
             ),
           ),
-          if (provider.isFilter) _buildFilters(context, provider, isSmallScreen),
+          if (provider.isFilter)
+            _buildFilters(context, provider, isSmallScreen),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -454,8 +437,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       child: isSmallScreen
           ? Column(
               children: [
-                _buildSummaryItem(
-                    'Received Amount', provider.correlationbox.receivedAmount, isSmallScreen),
+                _buildSummaryItem('Received Amount',
+                    provider.correlationbox.receivedAmount, isSmallScreen),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(color: Colors.white24, height: 1),
@@ -466,23 +449,23 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(color: Colors.white24, height: 1),
                 ),
-                _buildSummaryItem(
-                    'Total Balance', provider.correlationbox.totalBalance, isSmallScreen),
+                _buildSummaryItem('Total Balance',
+                    provider.correlationbox.totalBalance, isSmallScreen),
               ],
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildSummaryItem(
-                    'Received Amount', provider.correlationbox.receivedAmount, isSmallScreen,
+                _buildSummaryItem('Received Amount',
+                    provider.correlationbox.receivedAmount, isSmallScreen,
                     expand: true),
                 Container(width: 1, height: 60, color: Colors.white30),
                 _buildSummaryItem('Total Expense Amount',
                     provider.correlationbox.totalExpenseAmount, isSmallScreen,
                     expand: true),
                 Container(width: 1, height: 60, color: Colors.white30),
-                _buildSummaryItem(
-                    'Total Balance', provider.correlationbox.totalBalance, isSmallScreen,
+                _buildSummaryItem('Total Balance',
+                    provider.correlationbox.totalBalance, isSmallScreen,
                     expand: true),
               ],
             ),
@@ -492,7 +475,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
   Widget _buildSummaryItem(String label, double? amount, bool isSmallScreen,
       {bool expand = false}) {
     final content = Column(
-      crossAxisAlignment: isSmallScreen ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment:
+          isSmallScreen ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         Text(
           label.toUpperCase(),
@@ -530,8 +514,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 80),
-            Icon(Icons.search_off_outlined,
-                size: 80, color: Colors.grey[300]),
+            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
             const SizedBox(height: 16),
             Text(
               'No records found for the selected range',
@@ -624,7 +607,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                       child: Row(
                         children: [
                           _buildTableDataCell('${index + 1}', width: 60),
-                          _buildTableDataCell(item.userName ?? '-', width: 160, isBlue: true),
+                          _buildTableDataCell(item.userName ?? '-',
+                              width: 160, isBlue: true),
                           _buildTableDataCell(item.entryDate ?? '-',
                               width: 130),
                           _buildTableDataCell(item.expenseHead ?? '-',
@@ -700,7 +684,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     );
   }
 
-  Widget _buildTableDataCell(String text, {double? width, bool isBlue = false, bool isBold = false}) {
+  Widget _buildTableDataCell(String text,
+      {double? width, bool isBlue = false, bool isBold = false}) {
     return SizedBox(
       width: width,
       child: Padding(

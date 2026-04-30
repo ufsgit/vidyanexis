@@ -192,10 +192,18 @@ class LeadReportModel {
           contactNumber: (json["Phone_Number"]?.toString() ?? '').trim(),
           contactPerson: json["Contact_Person"]?.toString() ?? '',
           email: json["Email"]?.toString() ?? '',
-          address1: (json["Address1"]?.toString() ?? '').trim() == '0' ? '' : (json["Address1"]?.toString() ?? ''),
-          address2: (json["Address2"]?.toString() ?? '').trim() == '0' ? '' : (json["Address2"]?.toString() ?? ''),
-          address3: (json["Address3"]?.toString() ?? '').trim() == '0' ? '' : (json["Address3"]?.toString() ?? ''),
-          address4: (json["Address4"]?.toString() ?? '').trim() == '0' ? '' : (json["Address4"]?.toString() ?? ''),
+          address1: (json["Address1"]?.toString() ?? '').trim() == '0'
+              ? ''
+              : (json["Address1"]?.toString() ?? ''),
+          address2: (json["Address2"]?.toString() ?? '').trim() == '0'
+              ? ''
+              : (json["Address2"]?.toString() ?? ''),
+          address3: (json["Address3"]?.toString() ?? '').trim() == '0'
+              ? ''
+              : (json["Address3"]?.toString() ?? ''),
+          address4: (json["Address4"]?.toString() ?? '').trim() == '0'
+              ? ''
+              : (json["Address4"]?.toString() ?? ''),
           followUpId: json["FollowUp_Id"]?.toString() ?? '0',
           nextFollowUpDate: json["Next_FollowUp_date"]?.toString() ?? '',
           toUserId: json["To_User_Id"]?.toString() ?? '0',

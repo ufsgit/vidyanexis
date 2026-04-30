@@ -61,7 +61,7 @@ class LeadCheckInProvider extends ChangeNotifier {
       return _localCheckedInStatus[customerId] ?? false;
     }
     final lastRecord = history.first;
-    
+
     // Check both status string and checkoutData flag
     final status = lastRecord.checkinStatus?.toLowerCase() ?? "";
     final isStatusIn = status.contains("checked in") || status == "check in";
@@ -69,9 +69,11 @@ class LeadCheckInProvider extends ChangeNotifier {
         lastRecord.checkoutData == 1 || lastRecord.checkoutData == "1";
 
     // IMPORTANT: Check date-based status as seen in real API responses
-    final hasCheckInDate = lastRecord.checkinDate != null && lastRecord.checkinDate!.isNotEmpty;
-    final hasCheckOutDate = lastRecord.checkoutDate != null && lastRecord.checkoutDate!.isNotEmpty;
-    
+    final hasCheckInDate =
+        lastRecord.checkinDate != null && lastRecord.checkinDate!.isNotEmpty;
+    final hasCheckOutDate =
+        lastRecord.checkoutDate != null && lastRecord.checkoutDate!.isNotEmpty;
+
     // If we have a check-in date but no check-out date, the user is checked in
     final isDateCheckedIn = hasCheckInDate && !hasCheckOutDate;
 
@@ -82,7 +84,6 @@ class LeadCheckInProvider extends ChangeNotifier {
 
     return result;
   }
-
 
   Future<void> fetchLeadCheckInReports(BuildContext context, String customerId,
       {String? fromDate, String? toDate}) async {
@@ -104,9 +105,8 @@ class LeadCheckInProvider extends ChangeNotifier {
         if (data != null) {
           List<LeadCheckIn> allReports = [];
           if (data is List) {
-            allReports = data
-                .map((item) => LeadCheckIn.fromJson(item))
-                .toList();
+            allReports =
+                data.map((item) => LeadCheckIn.fromJson(item)).toList();
           } else {
             final leadResponse = LeadCheckInResponse.fromJson(data);
             allReports = leadResponse.data ?? [];
@@ -114,10 +114,11 @@ class LeadCheckInProvider extends ChangeNotifier {
 
           // FILTER for the specific customerId
           // The API returns Lead_Id in the LeadCheckIn model
-          _customerCheckInHistory[int.parse(customerId)] = allReports.where((record) {
+          _customerCheckInHistory[int.parse(customerId)] =
+              allReports.where((record) {
             // Check both customerId and leadId as consistency varies in API
-            return record.customerId?.toString() == customerId || 
-                   record.leadId?.toString() == customerId;
+            return record.customerId?.toString() == customerId ||
+                record.leadId?.toString() == customerId;
           }).toList();
         }
       }
@@ -128,6 +129,7 @@ class LeadCheckInProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> saveLeadCheckIn({
     required BuildContext context,
     required int customerId,
@@ -164,8 +166,18 @@ class LeadCheckInProvider extends ChangeNotifier {
       } catch (e) {
         log('Timeout or error getting current position: $e');
         // Fallback to last known position
-        position = await Geolocator.getLastKnownPosition() ?? 
-                  Position(longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0);
+        position = await Geolocator.getLastKnownPosition() ??
+            Position(
+                longitude: 0,
+                latitude: 0,
+                timestamp: DateTime.now(),
+                accuracy: 0,
+                altitude: 0,
+                heading: 0,
+                speed: 0,
+                speedAccuracy: 0,
+                altitudeAccuracy: 0,
+                headingAccuracy: 0);
       }
 
       double lat = position.latitude;

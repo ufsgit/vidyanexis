@@ -30,8 +30,7 @@ Future<void> invoiceSinglePDFPrint({
     // Use the passed invoice details directly
     customer = customerDetails;
     invoice = invoiceDetails;
-    final logoImageBytes =
-        await rootBundle.load(AppStyles.logo());
+    final logoImageBytes = await rootBundle.load(AppStyles.logo());
     final logoImage = pw.MemoryImage(logoImageBytes.buffer.asUint8List());
 
     final sealBytes = await rootBundle.load(AppStyles.logo());

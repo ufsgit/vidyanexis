@@ -30,9 +30,11 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<CommissionReportProvider>(context, listen: false);
-      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
-      
+      final provider =
+          Provider.of<CommissionReportProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+
       dropDownProvider.getEnquirySource(context);
       dropDownProvider.getEnquiryFor(context);
       provider.getCommissionReport(context);
@@ -98,31 +100,31 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                 children: [
                   Row(
                     children: [
-                    CommonReportDateFilter(
-                      fromDate: provider.fromDate?.toString(),
-                      toDate: provider.toDate?.toString(),
-                      formattedFromDate: provider.formattedFromDate,
-                      formattedToDate: provider.formattedToDate,
-                      onTap: () => _showDateFilterDialog(context),
-                    ),
-                    const SizedBox(width: 8),
-                    CommonReportResetButton(
-                      onReset: () => provider.resetFilters(context),
-                      label: 'Reset',
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: AppColors.textRed,
-                        elevation: 0,
-                        side: BorderSide(color: AppColors.textRed),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                      CommonReportDateFilter(
+                        fromDate: provider.fromDate?.toString(),
+                        toDate: provider.toDate?.toString(),
+                        formattedFromDate: provider.formattedFromDate,
+                        formattedToDate: provider.formattedToDate,
+                        onTap: () => _showDateFilterDialog(context),
+                      ),
+                      const SizedBox(width: 8),
+                      CommonReportResetButton(
+                        onReset: () => provider.resetFilters(context),
+                        label: 'Reset',
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.textRed,
+                          elevation: 0,
+                          side: BorderSide(color: AppColors.textRed),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
                       ),
-                    ),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -136,15 +138,21 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: DropdownButton<int>(
-                            value: dropDownProvider.enquiryData.any((e) => e.enquirySourceId == provider.selectedEnquirySource) ? provider.selectedEnquirySource : 0,
+                            value: dropDownProvider.enquiryData.any((e) =>
+                                    e.enquirySourceId ==
+                                    provider.selectedEnquirySource)
+                                ? provider.selectedEnquirySource
+                                : 0,
                             isExpanded: true,
                             underline: const SizedBox(),
                             items: [
-                              const DropdownMenuItem(value: 0, child: Text('All Sources')),
-                              ...dropDownProvider.enquiryData.map((e) => DropdownMenuItem(
-                                value: e.enquirySourceId,
-                                child: Text(e.enquirySourceName),
-                              )),
+                              const DropdownMenuItem(
+                                  value: 0, child: Text('All Sources')),
+                              ...dropDownProvider.enquiryData
+                                  .map((e) => DropdownMenuItem(
+                                        value: e.enquirySourceId,
+                                        child: Text(e.enquirySourceName),
+                                      )),
                             ],
                             onChanged: (val) {
                               provider.setEnquirySourceFilter(val);
@@ -162,15 +170,21 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: DropdownButton<int>(
-                            value: dropDownProvider.enquiryForList.any((e) => e.enquiryForId == provider.selectedEnquiryFor) ? provider.selectedEnquiryFor : 0,
+                            value: dropDownProvider.enquiryForList.any((e) =>
+                                    e.enquiryForId ==
+                                    provider.selectedEnquiryFor)
+                                ? provider.selectedEnquiryFor
+                                : 0,
                             isExpanded: true,
                             underline: const SizedBox(),
                             items: [
-                              const DropdownMenuItem(value: 0, child: Text('All Enquiry For')),
-                              ...dropDownProvider.enquiryForList.map((e) => DropdownMenuItem(
-                                value: e.enquiryForId,
-                                child: Text(e.enquiryForName),
-                              )),
+                              const DropdownMenuItem(
+                                  value: 0, child: Text('All Enquiry For')),
+                              ...dropDownProvider.enquiryForList
+                                  .map((e) => DropdownMenuItem(
+                                        value: e.enquiryForId,
+                                        child: Text(e.enquiryForName),
+                                      )),
                             ],
                             onChanged: (val) {
                               provider.setEnquiryForFilter(val);
@@ -213,72 +227,97 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                           itemBuilder: (context, index) {
                             final item = provider.commissionReport[index];
                             return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: Colors.grey[200]!),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      item.customerName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    item.entryDate,
-                                    style: TextStyle(color: Colors.grey[500], fontSize: 11),
-                                  ),
-                                ],
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.grey[200]!),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                item.contactNumber,
-                                style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Source: ${item.enquirySourceName}',
-                                style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                              ),
-                              const Divider(height: 20),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('Project Cost', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                        Text('₹${item.totalProjectCost}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                                        Expanded(
+                                          child: Text(
+                                            item.customerName,
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          item.entryDate,
+                                          style: TextStyle(
+                                              color: Colors.grey[500],
+                                              fontSize: 11),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      item.contactNumber,
+                                      style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Source: ${item.enquirySourceName}',
+                                      style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 12),
+                                    ),
+                                    const Divider(height: 20),
+                                    Row(
                                       children: [
-                                        Text('Commission', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                        Text('₹${item.commission}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 13)),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Project Cost',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text('₹${item.totalProjectCost}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13)),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text('Commission',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text('₹${item.commission}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green,
+                                                      fontSize: 13)),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
+                            );
                           },
                         ),
                       ),
@@ -301,16 +340,27 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('Total Cost', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                Text('₹${provider.totalProjectCost}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                const Text('Total Cost',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey)),
+                                Text('₹${provider.totalProjectCost}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
                               ],
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('Total Commission', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                Text('₹${provider.totalCommission}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green)),
+                                const Text('Total Commission',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey)),
+                                Text('₹${provider.totalCommission}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Colors.green)),
                               ],
                             ),
                           ],
@@ -354,8 +404,12 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                         onTap: () => provider.selectDate(context, true),
                         child: Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(8)),
-                          child: Text(provider.fromDate != null ? provider.formattedFromDate : 'From'),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(provider.fromDate != null
+                              ? provider.formattedFromDate
+                              : 'From'),
                         ),
                       ),
                     ),
@@ -365,8 +419,12 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                         onTap: () => provider.selectDate(context, false),
                         child: Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(8)),
-                          child: Text(provider.toDate != null ? provider.formattedToDate : 'To'),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(provider.toDate != null
+                              ? provider.formattedToDate
+                              : 'To'),
                         ),
                       ),
                     ),
@@ -375,7 +433,9 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close')),
               ElevatedButton(
                 onPressed: () {
                   provider.getCommissionReport(context);

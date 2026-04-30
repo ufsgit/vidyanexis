@@ -11,7 +11,8 @@ class SubContractReportMobile extends StatefulWidget {
   const SubContractReportMobile({super.key});
 
   @override
-  State<SubContractReportMobile> createState() => _SubContractReportMobileState();
+  State<SubContractReportMobile> createState() =>
+      _SubContractReportMobileState();
 }
 
 class _SubContractReportMobileState extends State<SubContractReportMobile> {
@@ -29,8 +30,10 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<SubContractReportProvider>(context, listen: false);
-      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+      final provider =
+          Provider.of<SubContractReportProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
       dropDownProvider.getUserDetails(context);
       dropDownProvider.getEnquiryFor(context);
       provider.getSubContractReport(context);
@@ -112,15 +115,32 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: DropdownButton<int>(
-                            value: provider.selectedUserId == 0 ? 0 : (context.read<DropDownProvider>().searchUserDetails.any((u) => u.userDetailsId == provider.selectedUserId) ? provider.selectedUserId : 0),
+                            value: provider.selectedUserId == 0
+                                ? 0
+                                : (context
+                                        .read<DropDownProvider>()
+                                        .searchUserDetails
+                                        .any((u) =>
+                                            u.userDetailsId ==
+                                            provider.selectedUserId)
+                                    ? provider.selectedUserId
+                                    : 0),
                             isExpanded: true,
                             underline: const SizedBox(),
                             items: [
-                              const DropdownMenuItem(value: 0, child: Text('All Staff', style: TextStyle(fontSize: 12))),
-                              ...context.read<DropDownProvider>().searchUserDetails.map((u) => DropdownMenuItem(
-                                value: u.userDetailsId,
-                                child: Text(u.userDetailsName, style: const TextStyle(fontSize: 12)),
-                              )),
+                              const DropdownMenuItem(
+                                  value: 0,
+                                  child: Text('All Staff',
+                                      style: TextStyle(fontSize: 12))),
+                              ...context
+                                  .read<DropDownProvider>()
+                                  .searchUserDetails
+                                  .map((u) => DropdownMenuItem(
+                                        value: u.userDetailsId,
+                                        child: Text(u.userDetailsName,
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                      )),
                             ],
                             onChanged: (val) {
                               provider.setUserId(val!);
@@ -138,15 +158,32 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: DropdownButton<int>(
-                            value: provider.selectedEnquiryForId == 0 ? 0 : (context.read<DropDownProvider>().enquiryForList.any((e) => e.enquiryForId == provider.selectedEnquiryForId) ? provider.selectedEnquiryForId : 0),
+                            value: provider.selectedEnquiryForId == 0
+                                ? 0
+                                : (context
+                                        .read<DropDownProvider>()
+                                        .enquiryForList
+                                        .any((e) =>
+                                            e.enquiryForId ==
+                                            provider.selectedEnquiryForId)
+                                    ? provider.selectedEnquiryForId
+                                    : 0),
                             isExpanded: true,
                             underline: const SizedBox(),
                             items: [
-                              const DropdownMenuItem(value: 0, child: Text('All Enquiry For', style: TextStyle(fontSize: 12))),
-                              ...context.read<DropDownProvider>().enquiryForList.map((e) => DropdownMenuItem(
-                                value: e.enquiryForId,
-                                child: Text(e.enquiryForName, style: const TextStyle(fontSize: 12)),
-                              )),
+                              const DropdownMenuItem(
+                                  value: 0,
+                                  child: Text('All Enquiry For',
+                                      style: TextStyle(fontSize: 12))),
+                              ...context
+                                  .read<DropDownProvider>()
+                                  .enquiryForList
+                                  .map((e) => DropdownMenuItem(
+                                        value: e.enquiryForId,
+                                        child: Text(e.enquiryForName,
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                      )),
                             ],
                             onChanged: (val) {
                               provider.setEnquiryForId(val!);
@@ -189,86 +226,126 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                           itemBuilder: (context, index) {
                             final item = provider.subContractReport[index];
                             return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: Colors.grey[200]!),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      item.customerName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    item.entryDate,
-                                    style: TextStyle(color: Colors.grey[500], fontSize: 11),
-                                  ),
-                                ],
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(color: Colors.grey[200]!),
                               ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('Task Type', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                        Text(item.taskTypeName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                                        Expanded(
+                                          child: Text(
+                                            item.customerName,
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          item.entryDate,
+                                          style: TextStyle(
+                                              color: Colors.grey[500],
+                                              fontSize: 11),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                    const SizedBox(height: 8),
+                                    Row(
                                       children: [
-                                        Text('Status', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                        Text(item.taskStatusName.isEmpty ? 'Pending' : item.taskStatusName, 
-                                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Colors.blue)),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('Task Type',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text(item.taskTypeName,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 12)),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text('Status',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text(
+                                                  item.taskStatusName.isEmpty
+                                                      ? 'Pending'
+                                                      : item.taskStatusName,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 12,
+                                                      color: Colors.blue)),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('To User',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text(item.toUserName,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 12)),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text('Commission',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10)),
+                                              Text('₹${item.commission}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green,
+                                                      fontSize: 13)),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('To User', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                        Text(item.toUserName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        Text('Commission', style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                                        Text('₹${item.commission}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 13)),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
+                            );
                           },
                         ),
                       ),
@@ -287,8 +364,14 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Total Commission', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                            Text('₹${provider.totalCommission}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.green)),
+                            const Text('Total Commission',
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w600)),
+                            Text('₹${provider.totalCommission}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.green)),
                           ],
                         ),
                       ),
@@ -330,8 +413,12 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                         onTap: () => provider.selectDate(context, true),
                         child: Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(8)),
-                          child: Text(provider.fromDate != null ? provider.formattedFromDate : 'From'),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(provider.fromDate != null
+                              ? provider.formattedFromDate
+                              : 'From'),
                         ),
                       ),
                     ),
@@ -341,8 +428,12 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                         onTap: () => provider.selectDate(context, false),
                         child: Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!), borderRadius: BorderRadius.circular(8)),
-                          child: Text(provider.toDate != null ? provider.formattedToDate : 'To'),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(provider.toDate != null
+                              ? provider.formattedToDate
+                              : 'To'),
                         ),
                       ),
                     ),
@@ -351,7 +442,9 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close')),
               ElevatedButton(
                 onPressed: () {
                   provider.getSubContractReport(context);

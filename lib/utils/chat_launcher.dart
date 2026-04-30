@@ -44,7 +44,8 @@ class ChatLauncher {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               title: const Text('Open with'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -90,16 +91,21 @@ class ChatLauncher {
                     Navigator.pop(dialogContext);
                     _launchSelectedApp(context, selectedApp, formatted);
                   },
-                  child: Text('Just once', style: TextStyle(color: AppColors.textGrey3)),
+                  child: Text('Just once',
+                      style: TextStyle(color: AppColors.textGrey3)),
                 ),
                 TextButton(
                   onPressed: () async {
                     Navigator.pop(dialogContext);
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
                     await prefs.setString('whatsapp_preference', selectedApp);
                     _launchSelectedApp(context, selectedApp, formatted);
                   },
-                  child: Text('Always', style: TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+                  child: Text('Always',
+                      style: TextStyle(
+                          color: AppColors.primaryBlue,
+                          fontWeight: FontWeight.bold)),
                 ),
               ],
             );
@@ -109,15 +115,18 @@ class ChatLauncher {
     );
   }
 
-  static Future<bool> _launchSelectedApp(BuildContext context, String appType, String formatted) async {
+  static Future<bool> _launchSelectedApp(
+      BuildContext context, String appType, String formatted) async {
     if (appType == 'WhatsApp') {
       if (Theme.of(context).platform == TargetPlatform.iOS) {
-        final Uri whatsappUriIos = Uri.parse('whatsapp://send?phone=$formatted');
+        final Uri whatsappUriIos =
+            Uri.parse('whatsapp://send?phone=$formatted');
         if (await canLaunchUrl(whatsappUriIos)) {
           await launchUrl(whatsappUriIos, mode: LaunchMode.externalApplication);
           return true;
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp is not installed.')));
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('WhatsApp is not installed.')));
           return false;
         }
       } else {
@@ -133,25 +142,30 @@ class ChatLauncher {
             return true;
           } else {
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp is not installed.')));
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('WhatsApp is not installed.')));
             }
             return false;
           }
         } catch (e) {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp is not installed.')));
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('WhatsApp is not installed.')));
           }
           return false;
         }
       }
     } else if (appType == 'WhatsApp Business') {
       if (Theme.of(context).platform == TargetPlatform.iOS) {
-        final Uri businessWhatsappUriIos = Uri.parse('whatsapp-business://send?phone=$formatted');
+        final Uri businessWhatsappUriIos =
+            Uri.parse('whatsapp-business://send?phone=$formatted');
         if (await canLaunchUrl(businessWhatsappUriIos)) {
-          await launchUrl(businessWhatsappUriIos, mode: LaunchMode.externalApplication);
+          await launchUrl(businessWhatsappUriIos,
+              mode: LaunchMode.externalApplication);
           return true;
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp Business is not installed.')));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('WhatsApp Business is not installed.')));
           return false;
         }
       } else {
@@ -167,13 +181,15 @@ class ChatLauncher {
             return true;
           } else {
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp Business is not installed.')));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('WhatsApp Business is not installed.')));
             }
             return false;
           }
         } catch (e) {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp Business is not installed.')));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('WhatsApp Business is not installed.')));
           }
           return false;
         }

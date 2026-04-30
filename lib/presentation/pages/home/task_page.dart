@@ -1,4 +1,5 @@
 // Check line 1776
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -462,39 +463,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                             Row(
                                               children: [
                                                 // FILTER BUTTON
-                                                OutlinedButton.icon(
+                                                CustomFilterButton(
                                                   onPressed: () {
                                                     reportsProvider
                                                         .toggleFilter();
                                                   },
-                                                  icon: const Icon(
-                                                      Icons.filter_list),
-                                                  label: const Text('Filter'),
-                                                  style:
-                                                      OutlinedButton.styleFrom(
-                                                    foregroundColor:
-                                                        reportsProvider.isFilter
-                                                            ? Colors.white
-                                                            : AppColors
-                                                                .primaryBlue,
-                                                    backgroundColor:
-                                                        reportsProvider.isFilter
-                                                            ? const Color(
-                                                                0xFF5499D9)
-                                                            : Colors.white,
-                                                    side: BorderSide(
-                                                        color: reportsProvider
-                                                                .isFilter
-                                                            ? const Color(
-                                                                0xFF5499D9)
-                                                            : AppColors
-                                                                .primaryBlue),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 12,
-                                                    ),
-                                                  ),
+                                                  isFilter:
+                                                      reportsProvider.isFilter,
                                                 ),
 
                                                 const SizedBox(width: 16),
@@ -1392,350 +1367,374 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           ),
                                                         ),
                                                       ),
-                                                        _HoverMenuAnchor(
-                                                          builder: (context,
-                                                              controller,
-                                                              onHover,
-                                                              child) {
-                                                            return InkWell(
-                                                              onTap: () {
-                                                                if (controller
-                                                                    .isOpen) {
-                                                                  controller
-                                                                      .close();
-                                                                } else {
-                                                                  controller
-                                                                      .open();
-                                                                }
-                                                              },
-                                                              onHover: onHover,
-                                                              child: Container(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(4),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color:
-                                                                      Colors.transparent,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                ),
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .keyboard_arrow_down_rounded,
-                                                                  size: 20,
-                                                                  color: Colors
-                                                                      .grey[500],
-                                                                ),
+                                                      _HoverMenuAnchor(
+                                                        builder: (context,
+                                                            controller,
+                                                            onHover,
+                                                            child) {
+                                                          return InkWell(
+                                                            onTap: () {
+                                                              if (controller
+                                                                  .isOpen) {
+                                                                controller
+                                                                    .close();
+                                                              } else {
+                                                                controller
+                                                                    .open();
+                                                              }
+                                                            },
+                                                            onHover: onHover,
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(4),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .transparent,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
                                                               ),
-                                                            );
-                                                          },
-                                                          menuChildren: [
-                                                            if (settingsProvider
-                                                                        .menuIsSaveMap[
-                                                                    13] ==
-                                                                1)
-                                                              (onHover) =>
-                                                                  MultiLevelHoverMenu(
-                                                                    isSubMenu:
-                                                                        false,
-                                                                    title:
-                                                                        'Create Task',
-                                                                    onHoverChange:
-                                                                        (hovering) {
-                                                                      onHover(
-                                                                          hovering);
-                                                                    },
-                                                                    leadingIcon: const Icon(
-                                                                        Icons
-                                                                            .add_task,
-                                                                        size: 18,
-                                                                        color: Colors
-                                                                            .teal),
-                                                                    children:
-                                                                        provider
-                                                                            .taskType
-                                                                            .map((taskType) {
-                                                                      final users =
-                                                                          provider
-                                                                              .searchUserDetails
-                                                                              .where((user) {
-                                                                        return user
-                                                                                .departmentId
-                                                                                .toString() ==
-                                                                            taskType
-                                                                                .departmentIds
-                                                                                .toString();
-                                                                      }).toList();
+                                                              child: Icon(
+                                                                Icons
+                                                                    .keyboard_arrow_down_rounded,
+                                                                size: 20,
+                                                                color: Colors
+                                                                    .grey[500],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        menuChildren: [
+                                                          if (settingsProvider
+                                                                      .menuIsSaveMap[
+                                                                  13] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MultiLevelHoverMenu(
+                                                                  isSubMenu:
+                                                                      false,
+                                                                  title:
+                                                                      'Create Task',
+                                                                  onHoverChange:
+                                                                      (hovering) {
+                                                                    onHover(
+                                                                        hovering);
+                                                                  },
+                                                                  leadingIcon: const Icon(
+                                                                      Icons
+                                                                          .add_task,
+                                                                      size: 18,
+                                                                      color: Colors
+                                                                          .teal),
+                                                                  children: provider
+                                                                      .taskType
+                                                                      .map(
+                                                                          (taskType) {
+                                                                    final users = provider
+                                                                        .searchUserDetails
+                                                                        .where(
+                                                                            (user) {
+                                                                      return user
+                                                                              .departmentId
+                                                                              .toString() ==
+                                                                          taskType
+                                                                              .departmentIds
+                                                                              .toString();
+                                                                    }).toList();
 
-                                                                      if (users
-                                                                          .isEmpty) {
+                                                                    if (users
+                                                                        .isEmpty) {
+                                                                      return MenuItemButton(
+                                                                        onPressed:
+                                                                            null,
+                                                                        child: Text(
+                                                                            taskType.taskTypeName),
+                                                                      );
+                                                                    }
+
+                                                                    return MultiLevelHoverMenu(
+                                                                      title: taskType
+                                                                          .taskTypeName,
+                                                                      children:
+                                                                          users.map(
+                                                                              (user) {
                                                                         return MenuItemButton(
                                                                           onPressed:
-                                                                              null,
-                                                                          child: Text(
-                                                                              taskType
-                                                                                  .taskTypeName),
+                                                                              () {
+                                                                            _openTaskDialog(
+                                                                                task,
+                                                                                taskType,
+                                                                                user);
+                                                                          },
+                                                                          child:
+                                                                              Text(user.userDetailsName),
                                                                         );
-                                                                      }
+                                                                      }).toList(),
+                                                                    );
+                                                                  }).toList(),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsEditMap[
+                                                                  13] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed:
+                                                                      () async {
+                                                                    showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      barrierDismissible:
+                                                                          false,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return const Center(
+                                                                          child:
+                                                                              CircularProgressIndicator(),
+                                                                        );
+                                                                      },
+                                                                    );
 
-                                                                      return MultiLevelHoverMenu(
-                                                                        title: taskType
-                                                                            .taskTypeName,
-                                                                        children:
-                                                                            users.map((user) {
-                                                                          return MenuItemButton(
-                                                                            onPressed:
-                                                                                () {
-                                                                              _openTaskDialog(task, taskType, user);
-                                                                            },
-                                                                            child: Text(
-                                                                                user.userDetailsName),
-                                                                          );
-                                                                        }).toList(),
-                                                                      );
-                                                                    }).toList(),
-                                                                  ),
-                                                            if (settingsProvider
-                                                                        .menuIsEditMap[
-                                                                    13] ==
-                                                                1)
-                                                              (onHover) =>
-                                                                  MenuItemButton(
-                                                                    onPressed:
-                                                                        () async {
+                                                                    final leadDetailsProvider = Provider.of<
+                                                                            LeadDetailsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                    await leadDetailsProvider.fetchLeadDetails(
+                                                                        task.customerId
+                                                                            .toString(),
+                                                                        context);
+
+                                                                    final leadsProvider = Provider.of<
+                                                                            LeadsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                    leadsProvider
+                                                                        .setCutomerId(
+                                                                            task.customerId);
+                                                                    final dropDownProvider = Provider.of<
+                                                                            DropDownProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                    final leadDetails =
+                                                                        leadDetailsProvider
+                                                                            .leadDetails![0];
+                                                                    leadsProvider
+                                                                            .enquirySourceController
+                                                                            .text =
+                                                                        leadDetails
+                                                                            .enquirySourceName
+                                                                            .toString();
+
+                                                                    dropDownProvider
+                                                                            .selectedEnquirySourceId =
+                                                                        leadDetails
+                                                                            .enquirySourceId;
+                                                                    await leadsProvider
+                                                                        .getLeadDropdowns(
+                                                                            context);
+                                                                    if (context
+                                                                        .mounted) {
+                                                                      Navigator.pop(
+                                                                          context); // Close loading dialog
+                                                                    }
+
+                                                                    if (context
+                                                                        .mounted) {
                                                                       showDialog(
                                                                         context:
                                                                             context,
-                                                                        barrierDismissible:
-                                                                            false,
-                                                                        builder: (BuildContext
+                                                                        builder:
+                                                                            (BuildContext
                                                                                 context) {
-                                                                          return const Center(
-                                                                            child:
-                                                                                CircularProgressIndicator(),
+                                                                          return const NewLeadDrawerWidget(
+                                                                            isEdit:
+                                                                                true,
                                                                           );
                                                                         },
                                                                       );
-
-                                                                      final leadDetailsProvider =
-                                                                          Provider.of<LeadDetailsProvider>(context, listen: false);
-                                                                      await leadDetailsProvider.fetchLeadDetails(
-                                                                          task.customerId
+                                                                    }
+                                                                  },
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .edit,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.blue),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      const Text(
+                                                                          'Edit'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsEditMap[
+                                                                  94] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    final leadsProvider = Provider.of<
+                                                                            LeadsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                    leadsProvider.convertLead(
+                                                                        context,
+                                                                        task.customerId
+                                                                            .toString());
+                                                                  },
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .sync,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.green),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      const Text(
+                                                                          'Convert'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsSaveMap[
+                                                                  16] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    final customerDetailsProvider = Provider.of<
+                                                                            CustomerDetailsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                    customerDetailsProvider
+                                                                        .clearQuotationDetails();
+                                                                    Navigator
+                                                                        .push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder:
+                                                                            (BuildContext context) =>
+                                                                                QuotationCreationWidget(
+                                                                          quotationId:
+                                                                              '0',
+                                                                          isEdit:
+                                                                              false,
+                                                                          customerId: task
+                                                                              .customerId
                                                                               .toString(),
-                                                                          context);
-
-                                                                      final leadsProvider =
-                                                                          Provider.of<LeadsProvider>(context, listen: false);
-                                                                      leadsProvider.setCutomerId(
-                                                                          task.customerId);
-                                                                      final dropDownProvider =
-                                                                          Provider.of<DropDownProvider>(context, listen: false);
-                                                                      final leadDetails =
-                                                                          leadDetailsProvider.leadDetails![0];
-                                                                      leadsProvider
-                                                                              .enquirySourceController
-                                                                              .text =
-                                                                          leadDetails
-                                                                              .enquirySourceName
-                                                                              .toString();
-
-                                                                      dropDownProvider
-                                                                              .selectedEnquirySourceId =
-                                                                          leadDetails
-                                                                              .enquirySourceId;
-                                                                      await leadsProvider
-                                                                          .getLeadDropdowns(
-                                                                              context);
-                                                                      if (context
-                                                                          .mounted) {
-                                                                        Navigator.pop(
-                                                                            context); // Close loading dialog
-                                                                      }
-
-                                                                      if (context
-                                                                          .mounted) {
-                                                                        showDialog(
-                                                                          context:
-                                                                              context,
-                                                                          builder: (BuildContext
-                                                                                  context) {
-                                                                            return const NewLeadDrawerWidget(
-                                                                              isEdit:
-                                                                                  true,
-                                                                            );
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .request_quote,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.orange),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      const Text(
+                                                                          'Quotation'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsSaveMap[
+                                                                  19] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder: (BuildContext
+                                                                              context) =>
+                                                                          ImageUploadAlert(
+                                                                        customerId: task
+                                                                            .customerId
+                                                                            .toString(),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .description,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.purple),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      const Text(
+                                                                          'Document'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsDeleteMap[
+                                                                  13] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return ConfirmationDialog(
+                                                                          title:
+                                                                              'Delete Task',
+                                                                          content:
+                                                                              'Are you sure you want to delete this task?',
+                                                                          onCancel: () =>
+                                                                              Navigator.pop(context),
+                                                                          onConfirm:
+                                                                              () async {
+                                                                            final customerDetailsProvider =
+                                                                                Provider.of<CustomerDetailsProvider>(context, listen: false);
+                                                                            await customerDetailsProvider.deleteTask(
+                                                                                task.taskId.toString(),
+                                                                                task.customerId.toString(),
+                                                                                context);
                                                                           },
                                                                         );
-                                                                      }
-                                                                    },
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                            Icons
-                                                                                .edit,
-                                                                            size:
-                                                                                18,
-                                                                            color: Colors
-                                                                                .blue),
-                                                                        const SizedBox(
-                                                                            width:
-                                                                                8),
-                                                                        const Text(
-                                                                            'Edit'),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                            if (settingsProvider
-                                                                        .menuIsEditMap[
-                                                                    94] ==
-                                                                1)
-                                                              (onHover) =>
-                                                                  MenuItemButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      final leadsProvider =
-                                                                          Provider.of<LeadsProvider>(context, listen: false);
-                                                                      leadsProvider.convertLead(
-                                                                          context,
-                                                                          task.customerId
-                                                                              .toString());
-                                                                    },
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                            Icons
-                                                                                .sync,
-                                                                            size:
-                                                                                18,
-                                                                            color: Colors
-                                                                                .green),
-                                                                        const SizedBox(
-                                                                            width:
-                                                                                8),
-                                                                        const Text(
-                                                                            'Convert'),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                            if (settingsProvider
-                                                                        .menuIsSaveMap[
-                                                                    16] ==
-                                                                1)
-                                                              (onHover) =>
-                                                                  MenuItemButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      final customerDetailsProvider =
-                                                                          Provider.of<CustomerDetailsProvider>(context, listen: false);
-                                                                      customerDetailsProvider
-                                                                          .clearQuotationDetails();
-                                                                      Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                          builder: (BuildContext
-                                                                                  context) =>
-                                                                              QuotationCreationWidget(
-                                                                            quotationId:
-                                                                                '0',
-                                                                            isEdit:
-                                                                                false,
-                                                                            customerId: task.customerId.toString(),
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                            Icons
-                                                                                .request_quote,
-                                                                            size:
-                                                                                18,
-                                                                            color: Colors
-                                                                                .orange),
-                                                                        const SizedBox(
-                                                                            width:
-                                                                                8),
-                                                                        const Text(
-                                                                            'Quotation'),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                            if (settingsProvider
-                                                                        .menuIsSaveMap[
-                                                                    19] ==
-                                                                1)
-                                                              (onHover) =>
-                                                                  MenuItemButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder: (BuildContext
-                                                                                context) =>
-                                                                            ImageUploadAlert(
-                                                                          customerId: task.customerId.toString(),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                            Icons
-                                                                                .description,
-                                                                            size:
-                                                                                18,
-                                                                            color: Colors
-                                                                                .purple),
-                                                                        const SizedBox(
-                                                                            width:
-                                                                                8),
-                                                                        const Text(
-                                                                            'Document'),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                            if (settingsProvider
-                                                                        .menuIsDeleteMap[
-                                                                    13] ==
-                                                                1)
-                                                              (onHover) =>
-                                                                  MenuItemButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder: (BuildContext
-                                                                                context) {
-                                                                          return ConfirmationDialog(
-                                                                            title:
-                                                                                'Delete Task',
-
-                                                                      content:
-                                                                          'Are you sure you want to delete this task?',
-                                                                      onCancel: () =>
-                                                                          Navigator.pop(
-                                                                              context),
-                                                                      onConfirm:
-                                                                          () async {
-                                                                        final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(
-                                                                            context,
-                                                                            listen:
-                                                                                false);
-                                                                        await customerDetailsProvider.deleteTask(
-                                                                            task.taskId.toString(),
-                                                                            task.customerId.toString(),
-                                                                            context);
                                                                       },
                                                                     );
                                                                   },
-                                                                );
-                                                              },
-                                                            ),
+                                                                ),
                                                         ],
                                                       ),
                                                     ],
@@ -3213,12 +3212,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                   for (var f in rawForms) {
                                     if (!uniqueForms.containsKey(f.id)) {
                                       uniqueForms[f.id] = f;
-                                    } else if (f.instanceId == null && 
-                                               uniqueForms[f.id]!.instanceId != null) {
+                                    } else if (f.instanceId == null &&
+                                        uniqueForms[f.id]!.instanceId != null) {
                                       uniqueForms[f.id] = f;
                                     }
                                   }
-                                  final validForms = uniqueForms.values.toList();
+                                  final validForms =
+                                      uniqueForms.values.toList();
 
                                   if (validForms.isEmpty) {
                                     return const SizedBox.shrink();
@@ -4166,4 +4166,3 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
     );
   }
 }
-

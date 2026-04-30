@@ -1211,7 +1211,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
         double.tryParse(shippingChargesController.text) ?? 0.0;
 
     if (subtotal != null) {
-      total = subtotal + shippingCharges - (_isSubsidyChecked ? subsidy : 0) - discount;
+      total = subtotal +
+          shippingCharges -
+          (_isSubsidyChecked ? subsidy : 0) -
+          discount;
     } else {
       print("Invalid input for price or quantity");
     }

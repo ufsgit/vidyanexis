@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
@@ -135,33 +136,11 @@ class _EnquirySourceSummaryReportScreenState
                             : SizedBox(),
                         Flexible(child: Container()),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
-                          label: Text(
-                            MediaQuery.of(context).size.width > 860
-                                ? 'Filter'
-                                : '',
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
-                                : Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: AppColors.primaryBlue),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                       ],
@@ -284,8 +263,7 @@ class _EnquirySourceSummaryReportScreenState
                                   children: [
                                     const SizedBox(height: 80),
                                     Icon(Icons.search_off_outlined,
-                                        size: 80,
-                                        color: Colors.grey[300]),
+                                        size: 80, color: Colors.grey[300]),
                                     const SizedBox(height: 16),
                                     Text(
                                       'No enquiry summary reports found',
@@ -299,112 +277,117 @@ class _EnquirySourceSummaryReportScreenState
                                 ),
                               )
                             : ListView.builder(
-                          itemCount: reportsProvider.enquiryReport.length,
-                          itemBuilder: (context, index) {
-                            final item = reportsProvider.enquiryReport[index];
+                                itemCount: reportsProvider.enquiryReport.length,
+                                itemBuilder: (context, index) {
+                                  final item =
+                                      reportsProvider.enquiryReport[index];
 
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 16),
-                              decoration: BoxDecoration(
-                                color: index % 2 == 0
-                                    ? Colors.white
-                                    : Colors.grey[50],
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.grey[200]!,
-                                    width: 1,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Source column
-                                  Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                      item.enquirySourceName ?? '',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Count column
-                                  Expanded(
-                                    flex: 2,
-                                    child: Center(
-                                      child: Text(
-                                        '${item.totalLeads}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      color: index % 2 == 0
+                                          ? Colors.white
+                                          : Colors.grey[50],
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: Colors.grey[200]!,
+                                          width: 1,
                                         ),
                                       ),
                                     ),
-                                  ),
-
-                                  // Details column with status counts
-                                  Expanded(
-                                    flex: 4,
-                                    child: Wrap(
-                                      spacing: 16,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        if (item.summaryStatus != null)
-                                          ...item.summaryStatus!.map((status) {
-                                            // Choose color based on status
-                                            Color statusColor =
-                                                Colors.blue; // Default color
+                                        // Source column
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            item.enquirySourceName ?? '',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
 
-                                            if (status.statusName
-                                                    ?.toLowerCase() ==
-                                                'converted') {
-                                              statusColor = Colors.green;
-                                            } else if (status.statusName
-                                                    ?.toLowerCase() ==
-                                                'not responding') {
-                                              statusColor = Colors.orange;
-                                            } else if (status.statusName
-                                                    ?.toLowerCase() ==
-                                                'closed') {
-                                              statusColor = Colors.red;
-                                            } else if (status.statusName
-                                                    ?.toLowerCase() ==
-                                                'switch off') {
-                                              statusColor = Colors.purple;
-                                            }
+                                        // Count column
+                                        Expanded(
+                                          flex: 2,
+                                          child: Center(
+                                            child: Text(
+                                              '${item.totalLeads}',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
 
-                                            return Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  '${status.statusName} ',
-                                                  style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 5,
-                                                ),
-                                                Text(
-                                                  '${status.count}',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: statusColor,
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          }),
+                                        // Details column with status counts
+                                        Expanded(
+                                          flex: 4,
+                                          child: Wrap(
+                                            spacing: 16,
+                                            children: [
+                                              if (item.summaryStatus != null)
+                                                ...item.summaryStatus!
+                                                    .map((status) {
+                                                  // Choose color based on status
+                                                  Color statusColor = Colors
+                                                      .blue; // Default color
+
+                                                  if (status.statusName
+                                                          ?.toLowerCase() ==
+                                                      'converted') {
+                                                    statusColor = Colors.green;
+                                                  } else if (status.statusName
+                                                          ?.toLowerCase() ==
+                                                      'not responding') {
+                                                    statusColor = Colors.orange;
+                                                  } else if (status.statusName
+                                                          ?.toLowerCase() ==
+                                                      'closed') {
+                                                    statusColor = Colors.red;
+                                                  } else if (status.statusName
+                                                          ?.toLowerCase() ==
+                                                      'switch off') {
+                                                    statusColor = Colors.purple;
+                                                  }
+
+                                                  return Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        '${status.statusName} ',
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(
+                                                        '${status.count}',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: statusColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
                       ),
 
                       // Summary Footer with total counts

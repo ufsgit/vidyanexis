@@ -188,28 +188,28 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
             },
           );
         }),
-        floatingActionButton: Provider.of<SettingsProvider>(context,
-                        listen: false)
-                    .menuIsSaveMap[15] ==
-                1
-            ? CustomElevatedButton(
-                prefixIcon: Icons.add,
-                radius: 32,
-                buttonText: 'Add Periodic service',
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (c) => AddPeriodicServiceMobile(
-                        amcId: '0',
-                        customerId: widget.customerId,
-                        isEdit: false),
-                  ),
-                ),
-                backgroundColor: AppColors.bluebutton,
-                borderColor: AppColors.bluebutton,
-                textColor: AppColors.whiteColor,
-              )
-            : null);
+        floatingActionButton:
+            Provider.of<SettingsProvider>(context, listen: false)
+                        .menuIsSaveMap[15] ==
+                    1
+                ? CustomElevatedButton(
+                    prefixIcon: Icons.add,
+                    radius: 32,
+                    buttonText: 'Add Periodic service',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (c) => AddPeriodicServiceMobile(
+                            amcId: '0',
+                            customerId: widget.customerId,
+                            isEdit: false),
+                      ),
+                    ),
+                    backgroundColor: AppColors.bluebutton,
+                    borderColor: AppColors.bluebutton,
+                    textColor: AppColors.whiteColor,
+                  )
+                : null);
   }
 
   String timeAgo(DateTime date) {

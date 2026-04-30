@@ -379,7 +379,8 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSearchCustomers(BuildContext context, {bool isSilent = false}) async {
+  Future<void> getSearchCustomers(BuildContext context,
+      {bool isSilent = false}) async {
     try {
       _isLoading = true;
       _status = _selectedStatusIds.join(',');

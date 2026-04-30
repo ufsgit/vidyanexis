@@ -36,7 +36,8 @@ void showToastInDialog(String message, BuildContext context) {
   });
 }
 
-void showFriendlySnackBar(BuildContext context, String message, {bool isError = false}) {
+void showFriendlySnackBar(BuildContext context, String message,
+    {bool isError = false}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Row(
@@ -64,8 +65,12 @@ void showFriendlySnackBar(BuildContext context, String message, {bool isError = 
       ),
       margin: EdgeInsets.only(
         bottom: 20,
-        right: AppStyles.isWebScreen(context) ? MediaQuery.of(context).size.width / 3 : 20,
-        left: AppStyles.isWebScreen(context) ? MediaQuery.of(context).size.width / 3 : 20,
+        right: AppStyles.isWebScreen(context)
+            ? MediaQuery.of(context).size.width / 3
+            : 20,
+        left: AppStyles.isWebScreen(context)
+            ? MediaQuery.of(context).size.width / 3
+            : 20,
       ),
       duration: const Duration(seconds: 3),
     ),

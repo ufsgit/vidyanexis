@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
@@ -138,31 +139,11 @@ class _FollowupReports extends State<FollowupReports> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
-                                : Colors.white,
-                            elevation: 0,
-                            side: BorderSide(color: AppColors.primaryBlue),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton.icon(
@@ -280,75 +261,57 @@ class _FollowupReports extends State<FollowupReports> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      reportsProvider.toggleFilter();
-                                    },
-                                    icon:
-                                        const Icon(Icons.filter_list, size: 18),
-                                    label: const Text('Filter'),
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: reportsProvider.isFilter
-                                          ? Colors.white
-                                          : AppColors.primaryBlue,
-                                      backgroundColor: reportsProvider.isFilter
-                                          ? AppColors.primaryBlue
-                                          : Colors.white,
-                                      elevation: 0,
-                                      side: BorderSide(
-                                          color: AppColors.primaryBlue),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
+                                CustomFilterButton(
+                                  onPressed: () {
+                                    reportsProvider.toggleFilter();
+                                  },
+                                  isFilter: reportsProvider.isFilter,
+                                ),
+                                const SizedBox(width: 10),
+                                const SizedBox(width: 8),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    exportToExcel(
+                                      headers: [
+                                        'Customer Name',
+                                        'Email',
+                                        'Assigned To',
+                                        'Description',
+                                        'Date',
+                                        'Status'
+                                      ],
+                                      data: reportsProvider.pendingFolloWuP
+                                          .map((task) {
+                                        return {
+                                          'Customer Name': task.customerName,
+                                          'Email': task.email,
+                                          'Assigned To': task.toUserName,
+                                          'Description': task.remark,
+                                          'Date': task
+                                                  .nextFollowUpDate!.isNotEmpty
+                                              ? DateFormat('dd MMM yyyy')
+                                                  .format(DateTime.parse(
+                                                      task.nextFollowUpDate!))
+                                              : '',
+                                          'Status': task.statusName,
+                                        };
+                                      }).toList(),
+                                      fileName: 'Followup_Report',
+                                    );
+                                  },
+                                  icon: const Icon(Icons.download, size: 18),
+                                  label: const Text('Export'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryBlue,
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
-                                const SizedBox(width: 10),
-                                  const SizedBox(width: 8),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      exportToExcel(
-                                        headers: [
-                                          'Customer Name',
-                                          'Email',
-                                          'Assigned To',
-                                          'Description',
-                                          'Date',
-                                          'Status'
-                                        ],
-                                        data: reportsProvider.pendingFolloWuP
-                                            .map((task) {
-                                          return {
-                                            'Customer Name': task.customerName,
-                                            'Email': task.email,
-                                            'Assigned To': task.toUserName,
-                                            'Description': task.remark,
-                                            'Date': task.nextFollowUpDate!
-                                                    .isNotEmpty
-                                                ? DateFormat('dd MMM yyyy')
-                                                    .format(DateTime.parse(
-                                                        task.nextFollowUpDate!))
-                                                : '',
-                                            'Status': task.statusName,
-                                          };
-                                        }).toList(),
-                                        fileName: 'Followup_Report',
-                                      );
-                                    },
-                                    icon: const Icon(Icons.download, size: 18),
-                                    label: const Text('Export'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      elevation: 0,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                  )
+                                )
                               ],
                             ),
                           ],
@@ -447,7 +410,8 @@ class _FollowupReports extends State<FollowupReports> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -683,7 +647,8 @@ class _FollowupReports extends State<FollowupReports> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),

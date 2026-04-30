@@ -39,8 +39,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
       imageProvider.clearFiles();
 
       if (widget.initialDocumentTypeId != null) {
-        imageProvider.updateDocumentType(
-            widget.initialDocumentTypeId!, widget.initialDocumentTypeName ?? "");
+        imageProvider.updateDocumentType(widget.initialDocumentTypeId!,
+            widget.initialDocumentTypeName ?? "");
       }
     });
   }
@@ -95,8 +95,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: dropDownProvider.documentType.length,
-                        separatorBuilder: (context, index) =>
-                            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+                        separatorBuilder: (context, index) => Divider(
+                            color: Colors.grey.withOpacity(0.2), height: 1),
                         itemBuilder: (context, index) {
                           final docType = dropDownProvider.documentType[index];
                           final selectedCount = provider.fileInfoList
@@ -127,7 +127,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                       ),
                                       if (selectedCount > 0)
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 2),
+                                          padding:
+                                              const EdgeInsets.only(top: 2),
                                           child: CustomText(
                                             '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
                                             fontSize: 11,
@@ -329,7 +330,8 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                       await provider.uploadAllDocumentsGrouped(context);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Pick at least one document')),
+                        const SnackBar(
+                            content: Text('Pick at least one document')),
                       );
                     }
                   },

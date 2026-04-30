@@ -1,4 +1,3 @@
-
 class SearchLeadModel {
   // ─────────────────── Core Fields ───────────────────
   final int customerId;

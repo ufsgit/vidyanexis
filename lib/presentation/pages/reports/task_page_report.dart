@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -202,31 +203,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  ElevatedButton.icon(
+                  CustomFilterButton(
                     onPressed: () {
                       reportsProvider.toggleFilter();
                     },
-                    icon: const Icon(Icons.filter_list, size: 18),
-                    label: Text(MediaQuery.of(context).size.width > 860
-                        ? 'Filter'
-                        : ''),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: reportsProvider.isFilter
-                          ? Colors.white
-                          : AppColors.primaryBlue,
-                      backgroundColor: reportsProvider.isFilter
-                          ? AppColors.primaryBlue
-                          : Colors.white,
-                      elevation: 0,
-                      side: BorderSide(color: AppColors.primaryBlue),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
+                    isFilter: reportsProvider.isFilter,
                   ),
                   const SizedBox(width: 16),
                   ElevatedButton.icon(
@@ -477,36 +458,36 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         (reportsProvider.selectedTaskType != null &&
                             reportsProvider.selectedTaskType != 0) ||
                         reportsProvider.Search.isNotEmpty)
-                    CommonReportResetButton(
-                      onReset: () {
-                        reportsProvider.selectDateFilterOption(null);
-                        reportsProvider.toggleStatus(0); // Reset to All
-                        searchController.clear();
-                        reportsProvider.setTaskSearchCriteria(
-                          '',
-                          '',
-                          '',
-                          '0',
-                          '',
-                          '',
-                        );
-                        reportsProvider.getSearchTaskReport(context,
-                            resetPage: true);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: AppColors.textRed,
-                        elevation: 0,
-                        side: BorderSide(color: AppColors.textRed),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                      CommonReportResetButton(
+                        onReset: () {
+                          reportsProvider.selectDateFilterOption(null);
+                          reportsProvider.toggleStatus(0); // Reset to All
+                          searchController.clear();
+                          reportsProvider.setTaskSearchCriteria(
+                            '',
+                            '',
+                            '',
+                            '0',
+                            '',
+                            '',
+                          );
+                          reportsProvider.getSearchTaskReport(context,
+                              resetPage: true);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.textRed,
+                          elevation: 0,
+                          side: BorderSide(color: AppColors.textRed),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -672,209 +653,216 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                   )
                                 : Column(
                                     children: List.generate(
-                                      reportsProvider.taskReport.length,
-                                      (index) {
-                                    var task =
-                                        reportsProvider.taskReport[index];
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 12),
-                                      decoration: BoxDecoration(
-                                        color: index % 2 == 0
-                                            ? Colors.white
-                                            : const Color(0xFFF6F7F9),
-                                        border: Border(
-                                          bottom: BorderSide(
-                                              color: Colors.grey.shade300),
+                                        reportsProvider.taskReport.length,
+                                        (index) {
+                                      var task =
+                                          reportsProvider.taskReport[index];
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 12),
+                                        decoration: BoxDecoration(
+                                          color: index % 2 == 0
+                                              ? Colors.white
+                                              : const Color(0xFFF6F7F9),
+                                          border: Border(
+                                            bottom: BorderSide(
+                                                color: Colors.grey.shade300),
+                                          ),
                                         ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                              width: 60,
-                                              child: Text(
-                                                  ((reportsProvider.pageIndex -
-                                                                  1) *
-                                                              reportsProvider
-                                                                  .pageSize +
-                                                          index +
-                                                          1)
-                                                      .toString())),
-                                          SizedBox(
-                                            width: 180,
-                                            child: InkWell(
-                                              onTap: () {
-                                                context.push(
-                                                    '${CustomerDetailsScreen.route}${task.customerId.toString()}/true');
-                                              },
-                                              child: Text(
-                                                task.customerName,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.blue),
-                                                overflow: TextOverflow.ellipsis,
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                                width: 60,
+                                                child: Text(((reportsProvider
+                                                                    .pageIndex -
+                                                                1) *
+                                                            reportsProvider
+                                                                .pageSize +
+                                                        index +
+                                                        1)
+                                                    .toString())),
+                                            SizedBox(
+                                              width: 180,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  context.push(
+                                                      '${CustomerDetailsScreen.route}${task.customerId.toString()}/true');
+                                                },
+                                                child: Text(
+                                                  task.customerName,
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Colors.blue),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 140,
-                                            child: Text(
-                                              task.mobile,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 150,
-                                            child: Tooltip(
-                                              message: '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                                            SizedBox(
+                                              width: 140,
                                               child: Text(
-                                                '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                                                task.mobile,
                                                 style: const TextStyle(
                                                   fontSize: 14,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                              width: 160,
-                                              child: Text(task.taskTypeName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis)),
-                                          SizedBox(
-                                              width: 140,
-                                              child: Text(task.enquiryForName,
-                                                  maxLines: 1,
+                                            SizedBox(
+                                              width: 150,
+                                              child: Tooltip(
+                                                message:
+                                                    '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                                                child: Text(
+                                                  '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
                                                   style: const TextStyle(
                                                     fontSize: 14,
                                                   ),
                                                   overflow:
-                                                      TextOverflow.ellipsis)),
-                                          SizedBox(
-                                              width: 140,
-                                              child: Text(task.toUserName,
-                                                  maxLines: 1,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis)),
-                                          Expanded(
-                                            child: Text(
-                                              task.description,
-                                              maxLines: 1,
-                                              style: const TextStyle(
-                                                fontSize: 14,
+                                                      TextOverflow.ellipsis,
+                                                ),
                                               ),
-                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 130,
-                                            child: Text(
-                                                (task.entryDate.isNotEmpty)
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.entryDate))
-                                                    : ''),
-                                          ),
-                                          SizedBox(
-                                            width: 100,
-                                            child: Center(
-                                              child: SizedBox(
-                                                height: 28,
-                                                child: Container(
-                                                  padding: task.taskStatusName
-                                                          .isNotEmpty
-                                                      ? const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4)
-                                                      : EdgeInsets.zero,
-                                                  decoration: BoxDecoration(
-                                                    color: StatusUtils
-                                                        .getTaskColor(
-                                                            task.taskStatusId),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    border: Border.all(
-                                                        color: Colors.black45,
-                                                        width: 0.1),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      task.taskStatusName,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: TextStyle(
-                                                          color: StatusUtils
-                                                              .getTaskTextColor(
-                                                                  task.taskStatusId),
-                                                          fontSize: 12),
+                                            SizedBox(
+                                                width: 160,
+                                                child: Text(task.taskTypeName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis)),
+                                            SizedBox(
+                                                width: 140,
+                                                child: Text(task.enquiryForName,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis)),
+                                            SizedBox(
+                                                width: 140,
+                                                child: Text(task.toUserName,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis)),
+                                            Expanded(
+                                              child: Text(
+                                                task.description,
+                                                maxLines: 1,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 130,
+                                              child: Text((task
+                                                      .entryDate.isNotEmpty)
+                                                  ? DateFormat('dd MMM yyyy')
+                                                      .format(DateTime.parse(
+                                                          task.entryDate))
+                                                  : ''),
+                                            ),
+                                            SizedBox(
+                                              width: 100,
+                                              child: Center(
+                                                child: SizedBox(
+                                                  height: 28,
+                                                  child: Container(
+                                                    padding: task.taskStatusName
+                                                            .isNotEmpty
+                                                        ? const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4)
+                                                        : EdgeInsets.zero,
+                                                    decoration: BoxDecoration(
+                                                      color: StatusUtils
+                                                          .getTaskColor(task
+                                                              .taskStatusId),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                      border: Border.all(
+                                                          color: Colors.black45,
+                                                          width: 0.1),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        task.taskStatusName,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                            color: StatusUtils
+                                                                .getTaskTextColor(
+                                                                    task.taskStatusId),
+                                                            fontSize: 12),
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 100,
-                                            child: Center(
-                                              child: SizedBox(
-                                                height: 32,
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      backgroundColor:
-                                                          AppColors.primaryBlue,
-                                                      foregroundColor:
-                                                          Colors.white,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 6),
-                                                      minimumSize:
-                                                          const Size(80, 32),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          4))),
-                                                  onPressed: () async {
-                                                    String taskId = task
-                                                        .taskMasterId
-                                                        .toString();
-                                                    String customerId = task
-                                                        .customerId
-                                                        .toString();
-                                                    customerDetailsProvider
-                                                        .getTaskDetails(
-                                                            taskId, context);
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return TaskDetailsWidget(
-                                                              taskId: taskId,
-                                                              customerId:
-                                                                  customerId,
-                                                              showEdit: false);
-                                                        });
-                                                  },
-                                                  child: const Text('Details'),
+                                            SizedBox(
+                                              width: 100,
+                                              child: Center(
+                                                child: SizedBox(
+                                                  height: 32,
+                                                  child: ElevatedButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            AppColors
+                                                                .primaryBlue,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 6),
+                                                        minimumSize:
+                                                            const Size(80, 32),
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4))),
+                                                    onPressed: () async {
+                                                      String taskId = task
+                                                          .taskMasterId
+                                                          .toString();
+                                                      String customerId = task
+                                                          .customerId
+                                                          .toString();
+                                                      customerDetailsProvider
+                                                          .getTaskDetails(
+                                                              taskId, context);
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return TaskDetailsWidget(
+                                                                taskId: taskId,
+                                                                customerId:
+                                                                    customerId,
+                                                                showEdit:
+                                                                    false);
+                                                          });
+                                                    },
+                                                    child:
+                                                        const Text('Details'),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
+                                          ],
+                                        ),
+                                      );
                                     }),
                                   ),
                           ],

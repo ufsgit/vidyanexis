@@ -376,7 +376,8 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                               top: 5,
                               right: 5,
                               child: GestureDetector(
-                                onTap: () => settingsProvider.removeImage(image),
+                                onTap: () =>
+                                    settingsProvider.removeImage(image),
                                 child: const CircleAvatar(
                                   radius: 15,
                                   backgroundColor: Colors.grey,
@@ -421,12 +422,13 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                             showErrorDialog(context, validationError);
                             return;
                           }
-                          await settingsProvider.uploadImagesToAws('1', context);
-                            await settingsProvider.saveCompanyDetails(
-                              context: context,
-                              companyId: widget.companyId,
-                            );
-                          },
+                          await settingsProvider.uploadImagesToAws(
+                              '1', context);
+                          await settingsProvider.saveCompanyDetails(
+                            context: context,
+                            companyId: widget.companyId,
+                          );
+                        },
                         backgroundColor: AppColors.appViolet,
                         borderColor: AppColors.appViolet,
                         textColor: AppColors.whiteColor,

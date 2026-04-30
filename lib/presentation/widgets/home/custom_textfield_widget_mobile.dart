@@ -386,7 +386,9 @@ class _CustomTextfieldWidgetMobileState
                                     fontFamily: "Inter",
                                   ),
                                   filled: false,
-                                  hintText: (widget.showAsUpperLabel ?? true) ? null : widget.labelText,
+                                  hintText: (widget.showAsUpperLabel ?? true)
+                                      ? null
+                                      : widget.labelText,
                                   counterText: widget.counterText,
                                   fillColor: widget.fillColor ??
                                       (isDarkMode(context)

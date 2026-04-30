@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -194,31 +195,11 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  ElevatedButton.icon(
+                  CustomFilterButton(
                     onPressed: () {
                       reportsProvider.toggleFilter();
                     },
-                    icon: const Icon(Icons.filter_list, size: 18),
-                    label: Text(MediaQuery.of(context).size.width > 860
-                        ? 'Filter'
-                        : ''),
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: reportsProvider.isFilter
-                          ? Colors.white
-                          : AppColors.primaryBlue,
-                      backgroundColor: reportsProvider.isFilter
-                          ? AppColors.primaryBlue
-                          : Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(color: AppColors.primaryBlue),
-                      ),
-                    ),
+                    isFilter: reportsProvider.isFilter,
                   ),
                   const SizedBox(width: 16),
                   CustomElevatedButton(
@@ -347,11 +328,11 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : AppColors.primaryBlue),
+                          border: Border.all(
+                              color: reportsProvider.fromDate != null ||
+                                      reportsProvider.toDate != null
+                                  ? AppColors.primaryBlue
+                                  : AppColors.primaryBlue),
                         ),
                         child: Row(
                           children: [
@@ -628,277 +609,302 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                               )
                             : Expanded(
                                 child: ListView.builder(
-                            shrinkWrap:
-                                true, // To avoid scrolling issues when inside a parent widget
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemCount: reportsProvider
-                                .taskReport.length, // Number of tasks
-                            itemBuilder: (context, index) {
-                              var task = reportsProvider.taskReport[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  // context.go(
-                                  //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: index % 2 == 0
-                                        ? Colors.white
-                                        : const Color(0xFFF6F7F9),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  // Alternate row colors
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      // Padding(
-                                      //   padding: const EdgeInsets.symmetric(
-                                      //       vertical: 12.0, horizontal: 25.0),
-                                      //   child: Text(task.customerId.toString(),
-                                      //       style: const TextStyle(
-                                      //         fontWeight: FontWeight.bold,
-                                      //       )),
-                                      // ),
-                                      SizedBox(
-                                        width: 80,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12.0, horizontal: 25.0),
-                                          child: Text((index + 1).toString(),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12,
-                                              )),
+                                  shrinkWrap:
+                                      true, // To avoid scrolling issues when inside a parent widget
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  itemCount: reportsProvider
+                                      .taskReport.length, // Number of tasks
+                                  itemBuilder: (context, index) {
+                                    var task =
+                                        reportsProvider.taskReport[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // context.go(
+                                        //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: index % 2 == 0
+                                              ? Colors.white
+                                              : const Color(0xFFF6F7F9),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
-                                      ),
-                                      // TableWidget(title: task.orderNo),
-                                      TableWidget(
-                                        flex: 2,
-                                        data: InkWell(
-                                          onTap: () {
-                                            context.push(
-                                                '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFFE9EDF1),
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            ),
-                                            child: MediaQuery.of(context)
-                                                        .size
-                                                        .width >
-                                                    1700
-                                                ? Row(
-                                                    mainAxisSize: MainAxisSize
-                                                        .min, // Ensures the Row takes only as much space as needed
-                                                    children: [
-                                                      // Front image (before text)
-                                                      Image.asset(
-                                                        'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                        width:
-                                                            15, // You can adjust the size of the image
-                                                        height:
-                                                            15, // You can adjust the size of the image
-                                                      ),
-                                                      const SizedBox(
-                                                          width:
-                                                              8), // Space between the image and text
-                                                      Text(
-                                                        task.customer.length >
-                                                                20
-                                                            ? '${task.customer.substring(0, 20)}...'
-                                                            : task.customer,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
+                                        // Alternate row colors
+                                        child: Row(
+                                          // mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            // Padding(
+                                            //   padding: const EdgeInsets.symmetric(
+                                            //       vertical: 12.0, horizontal: 25.0),
+                                            //   child: Text(task.customerId.toString(),
+                                            //       style: const TextStyle(
+                                            //         fontWeight: FontWeight.bold,
+                                            //       )),
+                                            // ),
+                                            SizedBox(
+                                              width: 80,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12.0,
+                                                        horizontal: 25.0),
+                                                child:
+                                                    Text((index + 1).toString(),
                                                         style: const TextStyle(
-                                                          color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 12,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          width:
-                                                              8), // Space between the text and back image
-                                                      // Back image (after text)
-                                                      Image.asset(
-                                                        'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                        width:
-                                                            12, // Adjust the size of the image
-                                                        height:
-                                                            12, // Adjust the size of the image
-                                                      ),
-                                                    ],
-                                                  )
-                                                : Text(
-                                                    task.customer,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 12,
-                                                    ),
+                                                        )),
+                                              ),
+                                            ),
+                                            // TableWidget(title: task.orderNo),
+                                            TableWidget(
+                                              flex: 2,
+                                              data: InkWell(
+                                                onTap: () {
+                                                  context.push(
+                                                      '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        const Color(0xFFE9EDF1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
                                                   ),
-                                          ),
-                                        ),
-                                      ),
-                                      TableWidget(
-                                          flex: 1,
-                                          fontSize: 12,
-                                          title: task.mobile),
-                                      TableWidget(
-                                        flex: 2,
-                                        data: Tooltip(
-                                          message: task.address1,
-                                          child: Text(
-                                            task.address1,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 12,
+                                                  child: MediaQuery.of(context)
+                                                              .size
+                                                              .width >
+                                                          1700
+                                                      ? Row(
+                                                          mainAxisSize: MainAxisSize
+                                                              .min, // Ensures the Row takes only as much space as needed
+                                                          children: [
+                                                            // Front image (before text)
+                                                            Image.asset(
+                                                              'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
+                                                              width:
+                                                                  15, // You can adjust the size of the image
+                                                              height:
+                                                                  15, // You can adjust the size of the image
+                                                            ),
+                                                            const SizedBox(
+                                                                width:
+                                                                    8), // Space between the image and text
+                                                            Text(
+                                                              task.customer
+                                                                          .length >
+                                                                      20
+                                                                  ? '${task.customer.substring(0, 20)}...'
+                                                                  : task
+                                                                      .customer,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                width:
+                                                                    8), // Space between the text and back image
+                                                            // Back image (after text)
+                                                            Image.asset(
+                                                              'assets/images/forward.png', // Replace with your image asset or NetworkImage
+                                                              width:
+                                                                  12, // Adjust the size of the image
+                                                              height:
+                                                                  12, // Adjust the size of the image
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Text(
+                                                          task.customer,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      ),
-                                      TableWidget(
-                                          flex: 1,
-                                          fontSize: 12,
-                                          title: task.followUpBy),
-                                      TableWidget(
-                                          flex: 3,
-                                          fontSize: 12,
-                                          title: task.remark),
-                                      TableWidget(
-                                        flex: 1,
-                                        fontSize: 12,
-                                        title: task.entryDate,
-                                      ),
-                                      TableWidget(
-                                        flex: 1,
-                                        fontSize: 12,
-                                        title: task.followUp,
-                                      ),
-                                      // TableWidget(
-                                      //   flex: 1,
-                                      //   data: Container(
-                                      //     padding:
-                                      //         task.taskStatusName.isNotEmpty
-                                      //             ? const EdgeInsets.symmetric(
-                                      //                 horizontal: 8,
-                                      //                 vertical: 2)
-                                      //             : const EdgeInsets.all(0),
-                                      //     decoration: BoxDecoration(
-                                      //       color: StatusUtils.getTaskColor(
-                                      //           task.taskStatusId),
-                                      //       borderRadius:
-                                      //           BorderRadius.circular(6),
-                                      //       border: Border.all(
-                                      //           color: Colors.black45,
-                                      //           width: 0.1),
-                                      //     ),
-                                      //     child: Text(
-                                      //       task.taskStatusName,
-                                      //       overflow: TextOverflow.ellipsis,
-                                      //       maxLines: 1,
-                                      //       style: TextStyle(
-                                      //         color:
-                                      //             StatusUtils.getTaskTextColor(
-                                      //                 task.taskStatusId),
-                                      //         fontSize: 13,
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                      // Expanded(
-                                      //   child: CustomOutlinedSvgButton(
-                                      //     showIcon: false,
-                                      //     onPressed: () async {
-                                      //       String taskId =
-                                      //           task.taskId.toString();
-                                      //       String customerId =
-                                      //           task.customerId.toString();
-                                      //       print('Task ID: $taskId');
-                                      //       customerDetailsProvider
-                                      //           .getTaskDetails(
-                                      //               taskId.toString(), context);
+                                            TableWidget(
+                                                flex: 1,
+                                                fontSize: 12,
+                                                title: task.mobile),
+                                            TableWidget(
+                                              flex: 2,
+                                              data: Tooltip(
+                                                message: task.address1,
+                                                child: Text(
+                                                  task.address1,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                                flex: 1,
+                                                fontSize: 12,
+                                                title: task.followUpBy),
+                                            TableWidget(
+                                                flex: 3,
+                                                fontSize: 12,
+                                                title: task.remark),
+                                            TableWidget(
+                                              flex: 1,
+                                              fontSize: 12,
+                                              title: task.entryDate,
+                                            ),
+                                            TableWidget(
+                                              flex: 1,
+                                              fontSize: 12,
+                                              title: task.followUp,
+                                            ),
+                                            // TableWidget(
+                                            //   flex: 1,
+                                            //   data: Container(
+                                            //     padding:
+                                            //         task.taskStatusName.isNotEmpty
+                                            //             ? const EdgeInsets.symmetric(
+                                            //                 horizontal: 8,
+                                            //                 vertical: 2)
+                                            //             : const EdgeInsets.all(0),
+                                            //     decoration: BoxDecoration(
+                                            //       color: StatusUtils.getTaskColor(
+                                            //           task.taskStatusId),
+                                            //       borderRadius:
+                                            //           BorderRadius.circular(6),
+                                            //       border: Border.all(
+                                            //           color: Colors.black45,
+                                            //           width: 0.1),
+                                            //     ),
+                                            //     child: Text(
+                                            //       task.taskStatusName,
+                                            //       overflow: TextOverflow.ellipsis,
+                                            //       maxLines: 1,
+                                            //       style: TextStyle(
+                                            //         color:
+                                            //             StatusUtils.getTaskTextColor(
+                                            //                 task.taskStatusId),
+                                            //         fontSize: 13,
+                                            //       ),
+                                            //     ),
+                                            //   ),
+                                            // ),
+                                            // Expanded(
+                                            //   child: CustomOutlinedSvgButton(
+                                            //     showIcon: false,
+                                            //     onPressed: () async {
+                                            //       String taskId =
+                                            //           task.taskId.toString();
+                                            //       String customerId =
+                                            //           task.customerId.toString();
+                                            //       print('Task ID: $taskId');
+                                            //       customerDetailsProvider
+                                            //           .getTaskDetails(
+                                            //               taskId.toString(), context);
 
-                                      //       showDialog(
-                                      //         context: context,
-                                      //         builder: (BuildContext context) {
-                                      //           return TaskDetailsWidget(
-                                      //             taskId: taskId.toString(),
-                                      //             customerId:
-                                      //                 customerId.toString(),
-                                      //             showEdit: false,
-                                      //           );
-                                      //         },
-                                      //       );
-                                      //     },
-                                      //     svgPath: 'assets/images/Print.svg',
-                                      //     label: 'View Details',
-                                      //     breakpoint: 860,
-                                      //     foregroundColor:
-                                      //         AppColors.primaryBlue,
-                                      //     backgroundColor: Colors.white,
-                                      //     borderSide: BorderSide(
-                                      //         color: AppColors.primaryBlue),
-                                      //   ),
-                                      // ),
-                                      TableWidget(
-                                        // width: 200,
-                                        flex: 1,
-                                        data: Container(
-                                          padding: task.statusName.isNotEmpty
-                                              ? const EdgeInsets.symmetric(
-                                                  horizontal: 8, vertical: 4)
-                                              : const EdgeInsets.all(0),
-                                          decoration: BoxDecoration(
-                                            // color: StatusUtils.getStatusColor(
-                                            //     int.parse(lead.statusId)),
-                                            color: parseColor(task.colorCode)
-                                                .withOpacity(0.1)
-                                                .withAlpha(30),
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                            border: Border.all(
-                                                color: Colors.black45,
-                                                width: 0.1),
-                                          ),
-                                          child: Text(
-                                            task.statusName,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              color: parseColor(task.colorCode),
-                                              fontWeight: FontWeight.w600,
-                                              // color:
-                                              //     StatusUtils.getStatusTextColor(
-                                              //         int.parse(lead.statusId)),
-                                              fontSize: 12,
+                                            //       showDialog(
+                                            //         context: context,
+                                            //         builder: (BuildContext context) {
+                                            //           return TaskDetailsWidget(
+                                            //             taskId: taskId.toString(),
+                                            //             customerId:
+                                            //                 customerId.toString(),
+                                            //             showEdit: false,
+                                            //           );
+                                            //         },
+                                            //       );
+                                            //     },
+                                            //     svgPath: 'assets/images/Print.svg',
+                                            //     label: 'View Details',
+                                            //     breakpoint: 860,
+                                            //     foregroundColor:
+                                            //         AppColors.primaryBlue,
+                                            //     backgroundColor: Colors.white,
+                                            //     borderSide: BorderSide(
+                                            //         color: AppColors.primaryBlue),
+                                            //   ),
+                                            // ),
+                                            TableWidget(
+                                              // width: 200,
+                                              flex: 1,
+                                              data: Container(
+                                                padding: task
+                                                        .statusName.isNotEmpty
+                                                    ? const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4)
+                                                    : const EdgeInsets.all(0),
+                                                decoration: BoxDecoration(
+                                                  // color: StatusUtils.getStatusColor(
+                                                  //     int.parse(lead.statusId)),
+                                                  color:
+                                                      parseColor(task.colorCode)
+                                                          .withOpacity(0.1)
+                                                          .withAlpha(30),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  border: Border.all(
+                                                      color: Colors.black45,
+                                                      width: 0.1),
+                                                ),
+                                                child: Text(
+                                                  task.statusName,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: TextStyle(
+                                                    color: parseColor(
+                                                        task.colorCode),
+                                                    fontWeight: FontWeight.w600,
+                                                    // color:
+                                                    //     StatusUtils.getStatusTextColor(
+                                                    //         int.parse(lead.statusId)),
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-          ],
-        ),
-      ),
+                              ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
           ],
         ),
       ),

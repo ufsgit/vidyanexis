@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -200,31 +201,11 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
-                                : Colors.white,
-                            elevation: 0,
-                            side: BorderSide(color: AppColors.primaryBlue),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton.icon(
@@ -331,13 +312,15 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                   ),
-                                  suffixIcon: searchController.text.isNotEmpty ||
+                                  suffixIcon: searchController
+                                              .text.isNotEmpty ||
                                           reportsProvider.Search.isNotEmpty
                                       ? IconButton(
                                           icon: const Icon(Icons.close),
                                           onPressed: () {
                                             searchController.clear();
-                                            reportsProvider.setTaskSearchCriteria(
+                                            reportsProvider
+                                                .setTaskSearchCriteria(
                                               '',
                                               reportsProvider.fromDateS,
                                               reportsProvider.toDateS,
@@ -357,33 +340,12 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                             ElevatedButton.icon(
-                                onPressed: () {
-                                  reportsProvider.toggleFilter();
-                                },
-                                icon: const Icon(Icons.filter_list, size: 18),
-                                label: Text(
-                                    MediaQuery.of(context).size.width > 860
-                                        ? 'Filter'
-                                        : ''),
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: reportsProvider.isFilter
-                                      ? Colors.white
-                                      : AppColors.primaryBlue,
-                                  backgroundColor: reportsProvider.isFilter
-                                      ? AppColors.primaryBlue
-                                      : Colors.white,
-                                  elevation: 0,
-                                  side: BorderSide(color: AppColors.primaryBlue),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                              ),
+                            CustomFilterButton(
+                              onPressed: () {
+                                reportsProvider.toggleFilter();
+                              },
+                              isFilter: reportsProvider.isFilter,
+                            ),
                             const SizedBox(width: 16),
                             ElevatedButton.icon(
                               onPressed: () {
@@ -543,7 +505,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -886,21 +849,21 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           // const SizedBox(
                           //   width: 10,
                           // ),
-                            CommonReportResetButton(
-                              onReset: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider.getSearchAmcReport(context);
-                              },
-                            ),
+                          CommonReportResetButton(
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                              );
+                              reportsProvider.getSearchAmcReport(context);
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -1088,10 +1051,12 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                     child: Text(
                                                       task.address1,
                                                       maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                       style: const TextStyle(
                                                         fontSize: 13,
-                                                        color: Color(0xFF607185),
+                                                        color:
+                                                            Color(0xFF607185),
                                                       ),
                                                     ),
                                                   ),
@@ -1145,47 +1110,47 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                     title: task.serviceName,
                                                     color: const Color(
                                                         0xFF607185)),
-                                              TableWidget(
-                                                flex: 2,
-                                                data: Center(
-                                                  child: IconButton(
-                                                    onPressed: () {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (context) =>
-                                                            PeriodicServiceDetailsPage(
-                                                          customerId: task
-                                                              .customerId
-                                                              .toString(),
-                                                          amcReportModeld:
-                                                              task,
-                                                          showEdit: false,
-                                                        ),
-                                                      );
-                                                    },
-                                                    icon: Icon(
-                                                        Icons
-                                                            .arrow_forward_ios,
-                                                        size: 16,
-                                                        color: AppColors
-                                                            .primaryBlue),
+                                                TableWidget(
+                                                  flex: 2,
+                                                  data: Center(
+                                                    child: IconButton(
+                                                      onPressed: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              PeriodicServiceDetailsPage(
+                                                            customerId: task
+                                                                .customerId
+                                                                .toString(),
+                                                            amcReportModeld:
+                                                                task,
+                                                            showEdit: false,
+                                                          ),
+                                                        );
+                                                      },
+                                                      icon: Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          size: 16,
+                                                          color: AppColors
+                                                              .primaryBlue),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  )
+                    )
                   : SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: SizedBox(
@@ -1205,8 +1170,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                 children: [
                                   // Table Header
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 4),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFF1F4F9),
                                       borderRadius: BorderRadius.circular(8),
@@ -1348,7 +1313,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                       child: Text(
                                                         task.customerName
                                                                     .length >
-                                                                 30
+                                                                30
                                                             ? '${task.customerName.substring(0, 30)}...'
                                                             : task.customerName,
                                                         overflow: TextOverflow
@@ -1539,13 +1504,13 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     ),
                                   ),
                                 ],
-                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
+            ),
           ],
         ),
       ),

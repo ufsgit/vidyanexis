@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/commission_report_provider.dart';
@@ -24,9 +25,11 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<CommissionReportProvider>(context, listen: false);
-      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
-      
+      final provider =
+          Provider.of<CommissionReportProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+
       dropDownProvider.getEnquirySource(context);
       dropDownProvider.getEnquiryFor(context);
       provider.getCommissionReport(context);
@@ -77,16 +80,19 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       child: Row(
                         children: [
                           const SizedBox(width: 15),
-                          const Icon(Icons.search, color: Colors.grey, size: 20),
+                          const Icon(Icons.search,
+                              color: Colors.grey, size: 20),
                           Expanded(
                             child: TextField(
                               controller: searchController,
                               decoration: const InputDecoration(
                                 hintText: 'Search here....',
                                 border: InputBorder.none,
-                                hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
+                                hintStyle:
+                                    TextStyle(color: Colors.grey, fontSize: 13),
                               ),
-                              onSubmitted: (val) => provider.getCommissionReport(context),
+                              onSubmitted: (val) =>
+                                  provider.getCommissionReport(context),
                             ),
                           ),
                           Container(
@@ -111,25 +117,9 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    ElevatedButton.icon(
+                    CustomFilterButton(
                       onPressed: () => provider.toggleFilter(),
-                      icon: const Icon(Icons.filter_list, size: 18),
-                      label: const Text('Filter'),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: provider.isFilter
-                            ? Colors.white
-                            : AppColors.primaryBlue,
-                        backgroundColor: provider.isFilter
-                            ? AppColors.primaryBlue
-                            : Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          side: BorderSide(color: AppColors.primaryBlue),
-                        ),
-                      ),
+                      isFilter: provider.isFilter,
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton.icon(
@@ -185,13 +175,19 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       const SizedBox(width: 16),
                       _buildDropdownFilter(
                         'Enquiry Source',
-                        (dropDownProvider.enquiryData.any((e) => e.enquirySourceId == provider.selectedEnquirySource) ? provider.selectedEnquirySource : 0) as int,
+                        (dropDownProvider.enquiryData.any((e) =>
+                                e.enquirySourceId ==
+                                provider.selectedEnquirySource)
+                            ? provider.selectedEnquirySource
+                            : 0) as int,
                         [
-                          const DropdownMenuItem(value: 0, child: Text('All Sources')),
-                          ...dropDownProvider.enquiryData.map((e) => DropdownMenuItem(
-                            value: e.enquirySourceId,
-                            child: Text(e.enquirySourceName),
-                          )),
+                          const DropdownMenuItem(
+                              value: 0, child: Text('All Sources')),
+                          ...dropDownProvider.enquiryData
+                              .map((e) => DropdownMenuItem(
+                                    value: e.enquirySourceId,
+                                    child: Text(e.enquirySourceName),
+                                  )),
                         ],
                         (val) {
                           provider.setEnquirySourceFilter(val);
@@ -201,13 +197,18 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       const SizedBox(width: 16),
                       _buildDropdownFilter(
                         'Enquiry For',
-                        (dropDownProvider.enquiryForList.any((e) => e.enquiryForId == provider.selectedEnquiryFor) ? provider.selectedEnquiryFor : 0) as int,
+                        (dropDownProvider.enquiryForList.any((e) =>
+                                e.enquiryForId == provider.selectedEnquiryFor)
+                            ? provider.selectedEnquiryFor
+                            : 0) as int,
                         [
-                          const DropdownMenuItem(value: 0, child: Text('All Enquiry For')),
-                          ...dropDownProvider.enquiryForList.map((e) => DropdownMenuItem(
-                            value: e.enquiryForId,
-                            child: Text(e.enquiryForName),
-                          )),
+                          const DropdownMenuItem(
+                              value: 0, child: Text('All Enquiry For')),
+                          ...dropDownProvider.enquiryForList
+                              .map((e) => DropdownMenuItem(
+                                    value: e.enquiryForId,
+                                    child: Text(e.enquiryForName),
+                                  )),
                         ],
                         (val) {
                           provider.setEnquiryForFilter(val);
@@ -230,14 +231,16 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: ConstrainedBox(
-                constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+                constraints:
+                    BoxConstraints(minWidth: MediaQuery.of(context).size.width),
                 child: SizedBox(
                   width: 1500,
                   child: Column(
                     children: [
                       // Table Header
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 24),
                         decoration: const BoxDecoration(
                           color: Color(0xFFF8FAFC),
                           borderRadius: BorderRadius.only(
@@ -253,7 +256,8 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                             _buildTableHeader('Reg. Date', width: 180),
                             _buildTableHeader('Enquiry For', width: 240),
                             _buildTableHeader('Source', width: 160),
-                            _buildTableHeader('Status', width: 140, center: true),
+                            _buildTableHeader('Status',
+                                width: 140, center: true),
                             _buildTableHeader('Total Cost', width: 140),
                             _buildTableHeader('Commission', width: 140),
                           ],
@@ -283,14 +287,20 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                               )
                             : ListView.separated(
                                 itemCount: provider.commissionReport.length,
-                                separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[100]),
+                                separatorBuilder: (context, index) =>
+                                    Divider(height: 1, color: Colors.grey[100]),
                                 itemBuilder: (context, index) {
                                   final item = provider.commissionReport[index];
                                   return Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12, horizontal: 24),
                                     child: Row(
                                       children: [
-                                        SizedBox(width: 60, child: Text('${index + 1}', style: const TextStyle(fontSize: 13))),
+                                        SizedBox(
+                                            width: 60,
+                                            child: Text('${index + 1}',
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
                                         SizedBox(
                                           width: 280,
                                           child: InkWell(
@@ -298,8 +308,10 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => CustomerDetailsScreen(
-                                                    customerId: item.customerId.toString(),
+                                                  builder: (context) =>
+                                                      CustomerDetailsScreen(
+                                                    customerId: item.customerId
+                                                        .toString(),
                                                     report: 'true',
                                                   ),
                                                 ),
@@ -314,50 +326,104 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                                               children: [
                                                 CircleAvatar(
                                                   radius: 14,
-                                                  backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-                                                  child: Icon(Icons.person, size: 16, color: AppColors.primaryBlue),
+                                                  backgroundColor: AppColors
+                                                      .primaryBlue
+                                                      .withOpacity(0.1),
+                                                  child: Icon(Icons.person,
+                                                      size: 16,
+                                                      color: AppColors
+                                                          .primaryBlue),
                                                 ),
                                                 const SizedBox(width: 10),
                                                 Flexible(
                                                   child: Text(
                                                     item.customerName,
-                                                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                                                    overflow: TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 13),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
                                                 const SizedBox(width: 6),
-                                                Icon(Icons.chevron_right, size: 18, color: AppColors.primaryBlue),
+                                                Icon(Icons.chevron_right,
+                                                    size: 18,
+                                                    color:
+                                                        AppColors.primaryBlue),
                                               ],
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 160, child: Text(item.contactNumber, style: const TextStyle(fontSize: 13))),
-                                        SizedBox(width: 180, child: Text(item.entryDate, style: const TextStyle(fontSize: 13))),
-                                        SizedBox(width: 240, child: Text(item.enquiryFor.isEmpty ? '-' : item.enquiryFor, style: const TextStyle(fontSize: 13))),
-                                        SizedBox(width: 160, child: Text(item.enquirySourceName.isEmpty ? '-' : item.enquirySourceName, style: const TextStyle(fontSize: 13))),
+                                        SizedBox(
+                                            width: 160,
+                                            child: Text(item.contactNumber,
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        SizedBox(
+                                            width: 180,
+                                            child: Text(item.entryDate,
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        SizedBox(
+                                            width: 240,
+                                            child: Text(
+                                                item.enquiryFor.isEmpty
+                                                    ? '-'
+                                                    : item.enquiryFor,
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        SizedBox(
+                                            width: 160,
+                                            child: Text(
+                                                item.enquirySourceName.isEmpty
+                                                    ? '-'
+                                                    : item.enquirySourceName,
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
                                         SizedBox(
                                           width: 140,
                                           child: Center(
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 6),
                                               decoration: BoxDecoration(
-                                                color: AppColors.primaryBlue.withOpacity(0.1),
-                                                borderRadius: BorderRadius.circular(20),
+                                                color: AppColors.primaryBlue
+                                                    .withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
                                               ),
                                               child: Text(
-                                                item.statusName.isEmpty ? 'Pending' : item.statusName,
-                                                style: TextStyle(color: AppColors.primaryBlue, fontSize: 11, fontWeight: FontWeight.bold),
+                                                item.statusName.isEmpty
+                                                    ? 'Pending'
+                                                    : item.statusName,
+                                                style: TextStyle(
+                                                    color:
+                                                        AppColors.primaryBlue,
+                                                    fontSize: 11,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 140, child: Text('₹${item.totalProjectCost}', style: const TextStyle(fontSize: 13))),
+                                        SizedBox(
+                                            width: 140,
+                                            child: Text(
+                                                '₹${item.totalProjectCost}',
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
                                         SizedBox(
                                           width: 140,
                                           child: Text(
                                             '₹${item.commission}',
-                                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 13),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green,
+                                                fontSize: 13),
                                           ),
                                         ),
                                       ],
@@ -368,10 +434,12 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       ),
                       // Table Footer
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 24),
                         decoration: const BoxDecoration(
                           color: Color(0xFFF8FAFC),
-                          border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+                          border:
+                              Border(top: BorderSide(color: Color(0xFFE2E8F0))),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8),
                             bottomRight: Radius.circular(8),
@@ -380,14 +448,27 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                         child: Row(
                           children: [
                             const SizedBox(width: 60),
-                            const SizedBox(width: 280, child: Text('TOTAL', style: TextStyle(fontWeight: FontWeight.bold))),
+                            const SizedBox(
+                                width: 280,
+                                child: Text('TOTAL',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
                             const SizedBox(width: 160), // Phone spacing
                             const SizedBox(width: 180), // Date spacing
                             const SizedBox(width: 240), // Enquiry For spacing
                             const SizedBox(width: 160), // Source spacing
                             const SizedBox(width: 140), // Status spacing
-                            SizedBox(width: 140, child: Text('₹${provider.totalProjectCost}', style: const TextStyle(fontWeight: FontWeight.bold))),
-                            SizedBox(width: 140, child: Text('₹${provider.totalCommission}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
+                            SizedBox(
+                                width: 140,
+                                child: Text('₹${provider.totalProjectCost}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                            SizedBox(
+                                width: 140,
+                                child: Text('₹${provider.totalCommission}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green))),
                           ],
                         ),
                       ),
@@ -402,7 +483,8 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
     );
   }
 
-  Widget _buildTableHeader(String title, {int? flex, double? width, bool center = false}) {
+  Widget _buildTableHeader(String title,
+      {int? flex, double? width, bool center = false}) {
     final child = Text(
       title.toUpperCase(),
       textAlign: center ? TextAlign.center : TextAlign.start,
@@ -421,7 +503,8 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
           );
   }
 
-  Widget _buildFilterItem(BuildContext context, String label, String value, {VoidCallback? onTap}) {
+  Widget _buildFilterItem(BuildContext context, String label, String value,
+      {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -432,8 +515,11 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
         ),
         child: Row(
           children: [
-            Text('$label: ', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-            Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+            Text('$label: ',
+                style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+            Text(value,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
             const SizedBox(width: 8),
             const Icon(Icons.arrow_drop_down, size: 20),
           ],
@@ -442,7 +528,8 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
     );
   }
 
-  Widget _buildDropdownFilter(String label, int value, List<DropdownMenuItem<int>> items, Function(int?) onChanged) {
+  Widget _buildDropdownFilter(String label, int value,
+      List<DropdownMenuItem<int>> items, Function(int?) onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       height: 40,
@@ -452,13 +539,15 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
       ),
       child: Row(
         children: [
-          Text('$label: ', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+          Text('$label: ',
+              style: TextStyle(color: Colors.grey[600], fontSize: 13)),
           DropdownButton<int>(
             value: value,
             underline: const SizedBox(),
             items: items,
             onChanged: onChanged,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black),
+            style: const TextStyle(
+                fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black),
           ),
         ],
       ),
@@ -480,10 +569,21 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                   children: [
                     for (int i = 0; i < 5; i++)
                       ActionChip(
-                        label: Text(['Yesterday', 'Today', 'Tomorrow', 'This Week', 'This Month'][i]),
+                        label: Text([
+                          'Yesterday',
+                          'Today',
+                          'Tomorrow',
+                          'This Week',
+                          'This Month'
+                        ][i]),
                         onPressed: () => provider.selectDateFilterOption(i),
-                        backgroundColor: provider.selectedDateFilterIndex == i ? AppColors.primaryBlue : null,
-                        labelStyle: TextStyle(color: provider.selectedDateFilterIndex == i ? Colors.white : null),
+                        backgroundColor: provider.selectedDateFilterIndex == i
+                            ? AppColors.primaryBlue
+                            : null,
+                        labelStyle: TextStyle(
+                            color: provider.selectedDateFilterIndex == i
+                                ? Colors.white
+                                : null),
                       ),
                   ],
                 ),
@@ -494,7 +594,9 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       child: OutlinedButton.icon(
                         onPressed: () => provider.selectDate(context, true),
                         icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(provider.fromDate != null ? provider.formattedFromDate : 'From Date'),
+                        label: Text(provider.fromDate != null
+                            ? provider.formattedFromDate
+                            : 'From Date'),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -502,7 +604,9 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       child: OutlinedButton.icon(
                         onPressed: () => provider.selectDate(context, false),
                         icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(provider.toDate != null ? provider.formattedToDate : 'To Date'),
+                        label: Text(provider.toDate != null
+                            ? provider.formattedToDate
+                            : 'To Date'),
                       ),
                     ),
                   ],
@@ -510,7 +614,9 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel')),
               ElevatedButton(
                 onPressed: () {
                   provider.getCommissionReport(context);

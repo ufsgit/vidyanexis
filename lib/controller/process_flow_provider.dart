@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/controller/models/branch_model.dart';
 import 'package:vidyanexis/controller/models/department_model.dart';

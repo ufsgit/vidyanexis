@@ -77,11 +77,13 @@ class BomItemCardWidget extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                _buildInfoRow('Quantity', '$quantity ${uom.isNotEmpty ? uom : ''}'),
+                _buildInfoRow(
+                    'Quantity', '$quantity ${uom.isNotEmpty ? uom : ''}'),
                 const SizedBox(height: 8),
                 _buildInfoRow('Make', make.isNotEmpty ? make : '-'),
                 const SizedBox(height: 8),
-                _buildInfoRow('Distributor', distributor.isNotEmpty ? distributor : '-'),
+                _buildInfoRow(
+                    'Distributor', distributor.isNotEmpty ? distributor : '-'),
                 const SizedBox(height: 8),
                 _buildInfoRow('Comments', comments.isNotEmpty ? comments : '-'),
               ],

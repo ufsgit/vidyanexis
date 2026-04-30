@@ -155,7 +155,7 @@ class CommissionReportProvider extends ChangeNotifier {
 
   void setEnquiryForFilter(int? value) {
     _selectedEnquiryFor = value;
-    _isDateCheck = true; // Trigger date check if filter applied? Or maybe not. 
+    _isDateCheck = true; // Trigger date check if filter applied? Or maybe not.
     // Usually reports show data for the selected period.
     notifyListeners();
   }
@@ -180,10 +180,11 @@ class CommissionReportProvider extends ChangeNotifier {
   Future<void> getCommissionReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
-      
+
       // Use the exact parameters from the snippet for testing
       final response = await HttpRequest.httpGetRequest(
-          endPoint: 'lead/Get_Commission_Report?From_Date=2025-01-01&To_Date=2025-12-31&Is_Date_Check=0&Enquiry_Source_Id&Enquiry_For_Id=10',
+          endPoint:
+              'lead/Get_Commission_Report?From_Date=2025-01-01&To_Date=2025-12-31&Is_Date_Check=0&Enquiry_Source_Id&Enquiry_For_Id=10',
           bodyData: {});
 
       if (response.statusCode == 200) {
@@ -198,10 +199,11 @@ class CommissionReportProvider extends ChangeNotifier {
 
           final totals = rawResponse['totals'];
           if (totals != null && totals is Map<String, dynamic>) {
-            _totalProjectCost = totals['Total_Project_Cost']?.toString() ?? '0.00';
+            _totalProjectCost =
+                totals['Total_Project_Cost']?.toString() ?? '0.00';
             _totalCommission = totals['Total_Commission']?.toString() ?? '0.00';
           }
-          
+
           if (context.mounted) Loader.stopLoader(context);
           notifyListeners();
         } else {
@@ -213,7 +215,9 @@ class CommissionReportProvider extends ChangeNotifier {
       } else {
         if (context.mounted) Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Server Error: ${response.statusCode} - ${response.statusMessage}')),
+          SnackBar(
+              content: Text(
+                  'Server Error: ${response.statusCode} - ${response.statusMessage}')),
         );
       }
     } catch (e) {

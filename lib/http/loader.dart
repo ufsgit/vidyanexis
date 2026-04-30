@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 
 class Loader {
-  static Future<void> showLoader(BuildContext context, {String? message}) async {
+  static Future<void> showLoader(BuildContext context,
+      {String? message}) async {
     showDialog(
       barrierDismissible: false,
       barrierColor: Colors.black.withOpacity(0.1),
@@ -35,7 +36,8 @@ class Loader {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.bluebutton),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.bluebutton),
                     ),
                   ),
                   if (message != null && message.isNotEmpty) ...[

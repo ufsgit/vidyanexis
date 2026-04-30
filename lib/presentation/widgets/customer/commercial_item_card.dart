@@ -65,7 +65,7 @@ class CommercialItemCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               // Details
               _buildDetailRow('Quantity', item.unitPrice ?? '-'),
               const SizedBox(height: 8),

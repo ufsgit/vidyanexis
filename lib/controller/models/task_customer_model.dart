@@ -48,8 +48,9 @@ class TaskCustomerModel {
       taskId: json['Task_Id'] ?? 0, // default value 0 if null
       taskMasterId: json['Task_Master_Id'] ?? 0, // default value 0 if null
       description: json['Description'] ?? '', // default value '' if null
-      entryDate:
-          json['Entry_Date'] != null ? DateTime.tryParse(json['Entry_Date']) : null,
+      entryDate: json['Entry_Date'] != null
+          ? DateTime.tryParse(json['Entry_Date'])
+          : null,
       taskStatusId: json['Task_Status_Id'] ?? 0,
       taskStatusName: json['Task_Status_Name'] ?? '',
       toUsername: json['To_User_Name'] ?? '',
@@ -62,7 +63,8 @@ class TaskCustomerModel {
       taskTime: json['Task_Time'] ?? '',
       taskDate: DateTime.tryParse(json['Task_Date'] ?? '') ?? DateTime.now(),
       deleteStatus: json['DeleteStatus'] ?? 0,
-      commissionNumber: int.tryParse(json['Commission_Number']?.toString() ?? '0') ?? 0,
+      commissionNumber:
+          int.tryParse(json['Commission_Number']?.toString() ?? '0') ?? 0,
       taskUser: (json['Task_user'] as List<dynamic>?)
               ?.map((item) => TaskUser.fromJson(item))
               .toList() ??

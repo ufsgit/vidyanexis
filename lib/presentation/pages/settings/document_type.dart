@@ -56,7 +56,7 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Search and New Button
                 Row(
                   children: [
@@ -69,7 +69,8 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                           border: Border.all(color: Colors.grey[200]!),
                         ),
                         child: TextField(
-                          controller: settingsProvider.searchDocumentTypeController,
+                          controller:
+                              settingsProvider.searchDocumentTypeController,
                           onChanged: (query) {
                             settingsProvider.searchDocumentType(query, context);
                           },
@@ -79,9 +80,11 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                               color: Colors.grey[400],
                               fontSize: 14,
                             ),
-                            prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey[500]),
+                            prefixIcon: Icon(Icons.search,
+                                size: 20, color: Colors.grey[500]),
                             border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 0),
                           ),
                         ),
                       ),
@@ -152,7 +155,8 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                           children: [
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
                                     borderRadius: BorderRadius.circular(12)),
@@ -165,7 +169,8 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                                 ),
                               ),
                             ),
-                            _buildActionButtons(context, settingsProvider, index),
+                            _buildActionButtons(
+                                context, settingsProvider, index),
                           ],
                         ),
                       );
@@ -179,10 +184,10 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
         );
       },
     );
-
   }
 
-  Widget _buildActionButtons(BuildContext context, SettingsProvider settingsProvider, int index) {
+  Widget _buildActionButtons(
+      BuildContext context, SettingsProvider settingsProvider, int index) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -194,15 +199,19 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                 context: context,
                 builder: (BuildContext context) {
                   return AddDocumentType(
-                    editId: settingsProvider.documentType[index].documentTypeId.toString(),
-                    status: settingsProvider.documentType[index].documentTypeName,
+                    editId: settingsProvider.documentType[index].documentTypeId
+                        .toString(),
+                    status:
+                        settingsProvider.documentType[index].documentTypeName,
                     isEdit: true,
-                    isMandatory: settingsProvider.documentType[index].isMandatory,
+                    isMandatory:
+                        settingsProvider.documentType[index].isMandatory,
                   );
                 },
               );
             },
-            icon: Icon(Icons.edit_outlined, color: AppColors.primaryBlue, size: 20),
+            icon: Icon(Icons.edit_outlined,
+                color: AppColors.primaryBlue, size: 20),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             visualDensity: VisualDensity.compact,
@@ -241,7 +250,8 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                 },
               );
             },
-            icon: Icon(Icons.delete_outline, color: AppColors.textRed, size: 20),
+            icon:
+                Icon(Icons.delete_outline, color: AppColors.textRed, size: 20),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             visualDensity: VisualDensity.compact,

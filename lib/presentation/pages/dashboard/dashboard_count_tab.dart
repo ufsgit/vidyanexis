@@ -24,7 +24,8 @@ class DashboardCountTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (dashBoardProvider.isDashBoardLoading && dashBoardProvider.leadCountMap.isEmpty) {
+    if (dashBoardProvider.isDashBoardLoading &&
+        dashBoardProvider.leadCountMap.isEmpty) {
       return _buildSkeleton(context);
     }
 
@@ -228,23 +229,23 @@ class DashboardCountTab extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Container(
-                     height: 12,
-                     width: 80,
-                     decoration: BoxDecoration(
-                       color: Colors.grey.shade300,
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                   ),
-                   const SizedBox(height: 10),
-                   Container(
-                     height: 24,
-                     width: 40,
-                     decoration: BoxDecoration(
-                       color: Colors.grey.shade300,
-                       borderRadius: BorderRadius.circular(4),
-                     ),
-                   ),
+                  Container(
+                    height: 12,
+                    width: 80,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 24,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
                 ],
               ),
             ),

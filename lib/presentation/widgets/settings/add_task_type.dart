@@ -1116,85 +1116,74 @@ class _AddTaskTypeState extends State<AddTaskType> {
   }
 }
 
+// Checkboxes for Feedback & OTP
+// Row(
+//   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//   children: [
+//     // Feedback Checkbox
+//     Expanded(
+//       child: GestureDetector(
+//         onTap: () => settingsProvider.toggleFeedbackCheckbox(
+//             settingsProvider.isFeedbackChecked != 1),
+//         child: Container(
+//           padding: const EdgeInsets.symmetric(
+//               vertical: 8, horizontal: 12),
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(10),
+//             border: Border.all(color: Colors.grey[300]!),
+//           ),
+//           child: Row(
+//             children: [
+//               Checkbox(
+//                 value: settingsProvider.isFeedbackChecked == 1,
+//                 onChanged: (bool? value) {
+//                   settingsProvider
+//                       .toggleFeedbackCheckbox(value ?? false);
+//                 },
+//               ),
+//               const SizedBox(width: 5),
+//               const Text(
+//                 "Enable Feedback",
+//                 style: TextStyle(fontSize: 16),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ),
 
+//     const SizedBox(width: 10),
 
-
-
-
-
-
-
-
-
-
-      // Checkboxes for Feedback & OTP
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     // Feedback Checkbox
-            //     Expanded(
-            //       child: GestureDetector(
-            //         onTap: () => settingsProvider.toggleFeedbackCheckbox(
-            //             settingsProvider.isFeedbackChecked != 1),
-            //         child: Container(
-            //           padding: const EdgeInsets.symmetric(
-            //               vertical: 8, horizontal: 12),
-            //           decoration: BoxDecoration(
-            //             borderRadius: BorderRadius.circular(10),
-            //             border: Border.all(color: Colors.grey[300]!),
-            //           ),
-            //           child: Row(
-            //             children: [
-            //               Checkbox(
-            //                 value: settingsProvider.isFeedbackChecked == 1,
-            //                 onChanged: (bool? value) {
-            //                   settingsProvider
-            //                       .toggleFeedbackCheckbox(value ?? false);
-            //                 },
-            //               ),
-            //               const SizedBox(width: 5),
-            //               const Text(
-            //                 "Enable Feedback",
-            //                 style: TextStyle(fontSize: 16),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-
-            //     const SizedBox(width: 10),
-
-            //     // OTP Checkbox
-            //     Expanded(
-            //       child: GestureDetector(
-            //         onTap: () => settingsProvider
-            //             .toggleOTPCheckbox(settingsProvider.isOTPChecked != 1),
-            //         child: Container(
-            //           padding: const EdgeInsets.symmetric(
-            //               vertical: 8, horizontal: 12),
-            //           decoration: BoxDecoration(
-            //             borderRadius: BorderRadius.circular(10),
-            //             border: Border.all(color: Colors.grey[300]!),
-            //           ),
-            //           child: Row(
-            //             children: [
-            //               Checkbox(
-            //                 value: settingsProvider.isOTPChecked == 1,
-            //                 onChanged: (bool? value) {
-            //                   settingsProvider
-            //                       .toggleOTPCheckbox(value ?? false);
-            //                 },
-            //               ),
-            //               const SizedBox(width: 5),
-            //               const Text(
-            //                 "Enable OTP",
-            //                 style: TextStyle(fontSize: 16),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
+//     // OTP Checkbox
+//     Expanded(
+//       child: GestureDetector(
+//         onTap: () => settingsProvider
+//             .toggleOTPCheckbox(settingsProvider.isOTPChecked != 1),
+//         child: Container(
+//           padding: const EdgeInsets.symmetric(
+//               vertical: 8, horizontal: 12),
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(10),
+//             border: Border.all(color: Colors.grey[300]!),
+//           ),
+//           child: Row(
+//             children: [
+//               Checkbox(
+//                 value: settingsProvider.isOTPChecked == 1,
+//                 onChanged: (bool? value) {
+//                   settingsProvider
+//                       .toggleOTPCheckbox(value ?? false);
+//                 },
+//               ),
+//               const SizedBox(width: 5),
+//               const Text(
+//                 "Enable OTP",
+//                 style: TextStyle(fontSize: 16),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ),
+//   ],
+// ),

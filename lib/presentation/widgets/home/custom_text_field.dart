@@ -27,7 +27,6 @@ class CustomTextField extends StatelessWidget {
   final Color? borderColor;
   final Color? focusedBorderColor;
 
-
   const CustomTextField({
     super.key,
     required this.controller,
@@ -52,7 +51,6 @@ class CustomTextField extends StatelessWidget {
     this.borderColor,
     this.focusedBorderColor,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -120,25 +118,30 @@ class CustomTextField extends StatelessWidget {
                 color: AppColors.textGrey4,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(borderRadius ?? 10), // Rounded corners
+                borderRadius: BorderRadius.circular(
+                    borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
                   color: borderColor ?? AppColors.textGrey2, // Border color
                   width: 1, // Border width
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(borderRadius ?? 10), // Rounded corners
+                borderRadius: BorderRadius.circular(
+                    borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
-                  color: focusedBorderColor ?? AppColors.textGrey2, // Border color
+                  color:
+                      focusedBorderColor ?? AppColors.textGrey2, // Border color
                   width: 1, // Border width
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(borderRadius ?? 10), // Rounded corners
+                borderRadius: BorderRadius.circular(
+                    borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
-                  color: borderColor ?? (AppStyles.isWebScreen(context)
-                      ? AppColors.textGrey2
-                      : AppColors.grey), // Border color
+                  color: borderColor ??
+                      (AppStyles.isWebScreen(context)
+                          ? AppColors.textGrey2
+                          : AppColors.grey), // Border color
                   width: 1, // Border width
                 ),
               ),

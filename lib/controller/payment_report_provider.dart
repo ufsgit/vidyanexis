@@ -167,7 +167,6 @@ class PaymentReportProvider with ChangeNotifier {
 
     String isDate = "1";
 
-
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint:
@@ -350,7 +349,7 @@ class PaymentReportProvider with ChangeNotifier {
       } else {
         toDate = picked;
       }
-        notifyListeners();
+      notifyListeners();
     }
   }
 
@@ -363,7 +362,6 @@ class PaymentReportProvider with ChangeNotifier {
     }
     notifyListeners();
   }
-
 
   void setDateFilter(String title) {
     final now = DateTime.now();

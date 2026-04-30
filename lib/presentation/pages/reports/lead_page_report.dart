@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -218,34 +219,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            OutlinedButton.icon(
+                            CustomFilterButton(
                               onPressed: () {
                                 leadReportProvider.toggleFilter();
                               },
-                              icon: const Icon(Icons.filter_list),
-                              label: Text(
-                                  MediaQuery.of(context).size.width > 860
-                                      ? 'Filter'
-                                      : ''),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: leadReportProvider.isFilter
-                                    ? Colors.white
-                                    : AppColors.primaryBlue,
-                                backgroundColor: leadReportProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : Colors.white,
-                                side: BorderSide(
-                                    color: leadReportProvider.isFilter
-                                        ? const Color(0xFF5499D9)
-                                        : AppColors.primaryBlue),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
+                              isFilter: leadReportProvider.isFilter,
                             ),
                             const SizedBox(width: 8),
                             ElevatedButton.icon(

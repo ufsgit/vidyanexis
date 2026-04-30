@@ -26,15 +26,17 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
   int? _selectedEnquirySourceId;
   int? get selectedEnquirySourceId => _selectedEnquirySourceId;
 
-
   DateTime? _fromDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
-  DateTime? _toDate = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
-  
+  DateTime? _toDate =
+      DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
+
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
 
-  String get formattedFromDate => _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : '';
-  String get formattedToDate => _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : '';
+  String get formattedFromDate =>
+      _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : '';
+  String get formattedToDate =>
+      _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : '';
 
   int? _selectedDateFilterIndex = -1;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
@@ -53,7 +55,6 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
     _selectedEnquirySourceId = id;
     notifyListeners();
   }
-
 
   void selectDateFilterOption(int? index) {
     if (index == null) {
@@ -127,9 +128,10 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
   Future<void> getReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
-      
+
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.customerOutstandingReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Customer_Name=$_search&Enquiry_Source_Id=${_selectedEnquirySourceId ?? 0}',
+          endPoint:
+              '${HttpUrls.customerOutstandingReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Customer_Name=$_search&Enquiry_Source_Id=${_selectedEnquirySourceId ?? 0}',
           bodyData: {});
 
       if (response.statusCode == 200) {
@@ -141,7 +143,8 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
               _reportData = data
                   .map((item) => CustomerOutstandingReportModel.fromJson(item))
                   .toList();
-            } else if (rawResponse['list'] != null && rawResponse['list'] is List) {
+            } else if (rawResponse['list'] != null &&
+                rawResponse['list'] is List) {
               _reportData = (rawResponse['list'] as List)
                   .map((item) => CustomerOutstandingReportModel.fromJson(item))
                   .toList();
@@ -151,7 +154,7 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
                 .map((item) => CustomerOutstandingReportModel.fromJson(item))
                 .toList();
           }
-          
+
           _calculateTotals();
           if (context.mounted) Loader.stopLoader(context);
           notifyListeners();
@@ -163,7 +166,9 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
       } else {
         if (context.mounted) Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Server Error: ${response.statusCode} - ${response.statusMessage}')),
+          SnackBar(
+              content: Text(
+                  'Server Error: ${response.statusCode} - ${response.statusMessage}')),
         );
       }
     } catch (e) {
@@ -183,7 +188,8 @@ class CustomerOutstandingReportProvider extends ChangeNotifier {
 
     for (var item in _reportData) {
       totalCost += double.tryParse(item.projectCost.replaceAll(',', '')) ?? 0.0;
-      totalReceived += double.tryParse(item.received.replaceAll(',', '')) ?? 0.0;
+      totalReceived +=
+          double.tryParse(item.received.replaceAll(',', '')) ?? 0.0;
       totalBalance += double.tryParse(item.balance.replaceAll(',', '')) ?? 0.0;
     }
 

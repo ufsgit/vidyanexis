@@ -117,7 +117,7 @@ class BomItemCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               // Details
               _buildDetailRow(
                 provider.getQuotationFieldName(12, 'Quantity'),
@@ -131,7 +131,9 @@ class BomItemCard extends StatelessWidget {
               const SizedBox(height: 8),
               _buildDetailRow(
                 provider.getQuotationFieldName(13, 'Manufacturer'),
-                (item.distributor?.isNotEmpty ?? false) ? item.distributor! : '-',
+                (item.distributor?.isNotEmpty ?? false)
+                    ? item.distributor!
+                    : '-',
               ),
               const SizedBox(height: 8),
               _buildDetailRow(

@@ -39,7 +39,8 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
 
-    leadProvider.messageController.clear(); // Clear remarks textfield by default
+    leadProvider.messageController
+        .clear(); // Clear remarks textfield by default
 
     _leadNameFocusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -372,14 +373,11 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
               children: [
                 const Text('Please upload the following mandatory documents:'),
                 const SizedBox(height: 10),
-                ...missingDocs
-                    .map((doc) => Padding(
-                          padding: const EdgeInsets.only(bottom: 4.0),
-                          child: Text('• $doc',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w500)),
-                        ))
-                    ,
+                ...missingDocs.map((doc) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: Text('• $doc',
+                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                    )),
               ],
             ),
           ),

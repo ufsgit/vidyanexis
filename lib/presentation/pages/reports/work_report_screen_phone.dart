@@ -453,8 +453,8 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                                                 horizontal: 8, vertical: 0),
                                             child: Text(
                                               service.statusName,
-                                              style: GoogleFonts
-                                                  .plusJakartaSans(
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
                                                       fontSize: 10,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -499,8 +499,8 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                                                       fontWeight:
                                                           FontWeight.w600),
                                                 ),
-                                                if (service.remark
-                                                    .isNotEmpty) ...[
+                                                if (service
+                                                    .remark.isNotEmpty) ...[
                                                   const TextSpan(text: ' , '),
                                                   TextSpan(
                                                       text: service.remark),

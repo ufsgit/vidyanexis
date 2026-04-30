@@ -960,9 +960,8 @@ class LeadReportProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null && data is List) {
-          List<LeadReportModel> allLeads = data
-              .map((item) => LeadReportModel.fromJson(item))
-              .toList();
+          List<LeadReportModel> allLeads =
+              data.map((item) => LeadReportModel.fromJson(item)).toList();
 
           if (allLeads.isNotEmpty) {
             // Remove the metadata row (last item) if it contains total counts

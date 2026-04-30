@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -24,8 +25,10 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<SubContractReportProvider>(context, listen: false);
-      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+      final provider =
+          Provider.of<SubContractReportProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
       dropDownProvider.getUserDetails(context);
       dropDownProvider.getEnquiryFor(context);
       provider.getSubContractReport(context);
@@ -41,7 +44,8 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
     final provider = Provider.of<SubContractReportProvider>(context);
 
     return Scaffold(
-      backgroundColor: AppStyles.isWebScreen(context) ? null : AppColors.whiteColor,
+      backgroundColor:
+          AppStyles.isWebScreen(context) ? null : AppColors.whiteColor,
       body: Container(
         color: AppStyles.isWebScreen(context)
             ? Colors.grey[50]
@@ -100,25 +104,9 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      ElevatedButton.icon(
+                      CustomFilterButton(
                         onPressed: () => provider.toggleFilter(),
-                        icon: const Icon(Icons.filter_list, size: 18),
-                        label: const Text('Filter'),
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: provider.isFilter
-                              ? Colors.white
-                              : AppColors.primaryBlue,
-                          backgroundColor: provider.isFilter
-                              ? AppColors.primaryBlue
-                              : Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            side: BorderSide(color: AppColors.primaryBlue),
-                          ),
-                        ),
+                        isFilter: provider.isFilter,
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton.icon(
@@ -186,7 +174,10 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                             context
                                 .read<DropDownProvider>()
                                 .searchUserDetails
-                                .map((u) => {'id': u.userDetailsId, 'name': u.userDetailsName})
+                                .map((u) => {
+                                      'id': u.userDetailsId,
+                                      'name': u.userDetailsName
+                                    })
                                 .toList(),
                             provider.selectedUserId,
                             (val) {
@@ -200,7 +191,10 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                             context
                                 .read<DropDownProvider>()
                                 .enquiryForList
-                                .map((e) => {'id': e.enquiryForId, 'name': e.enquiryForName})
+                                .map((e) => {
+                                      'id': e.enquiryForId,
+                                      'name': e.enquiryForName
+                                    })
                                 .toList(),
                             provider.selectedEnquiryForId,
                             (val) {
@@ -238,7 +232,8 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
             Expanded(
               child: Padding(
                 padding: AppStyles.isWebScreen(context)
-                    ? const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 4.0)
+                    ? const EdgeInsets.only(
+                        left: 16.0, right: 16.0, bottom: 4.0)
                     : EdgeInsets.zero,
                 child: Container(
                   decoration: BoxDecoration(
@@ -258,13 +253,17 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                             scrollDirection: Axis.horizontal,
                             child: ConstrainedBox(
                               constraints: BoxConstraints(
-                                  minWidth: MediaQuery.of(context).size.width - (AppStyles.isWebScreen(context) ? 48 : 0)),
+                                  minWidth: MediaQuery.of(context).size.width -
+                                      (AppStyles.isWebScreen(context)
+                                          ? 48
+                                          : 0)),
                               child: SizedBox(
                                 width: 1200,
                                 child: Column(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 16),
                                       decoration: const BoxDecoration(
                                         color: Color(0xFFF8FAFC),
                                         borderRadius: BorderRadius.only(
@@ -275,10 +274,14 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                       child: Row(
                                         children: [
                                           _buildTableHeader('No.', flex: 1),
-                                          _buildTableHeader('Lead Name', flex: 4),
-                                          _buildTableHeader('Task Type', flex: 3),
-                                          _buildTableHeader('Task Status', flex: 2, center: true),
-                                          _buildTableHeader('To User Name', flex: 3),
+                                          _buildTableHeader('Lead Name',
+                                              flex: 4),
+                                          _buildTableHeader('Task Type',
+                                              flex: 3),
+                                          _buildTableHeader('Task Status',
+                                              flex: 2, center: true),
+                                          _buildTableHeader('To User Name',
+                                              flex: 3),
                                           _buildTableHeader('Date', flex: 3),
                                           _buildTableHeader('Amount', flex: 2),
                                         ],
@@ -310,19 +313,40 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                               ),
                                             )
                                           : ListView.separated(
-                                              itemCount: provider.subContractReport.length,
-                                              separatorBuilder: (context, index) => const Divider(height: 0, color: Colors.transparent),
+                                              itemCount: provider
+                                                  .subContractReport.length,
+                                              separatorBuilder: (context,
+                                                      index) =>
+                                                  const Divider(
+                                                      height: 0,
+                                                      color:
+                                                          Colors.transparent),
                                               itemBuilder: (context, index) {
-                                                final item = provider.subContractReport[index];
+                                                final item = provider
+                                                    .subContractReport[index];
                                                 final isEven = index % 2 == 0;
                                                 return Container(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 10,
+                                                      horizontal: 16),
                                                   decoration: BoxDecoration(
-                                                    color: isEven ? Colors.white : const Color(0xFFF8FAFC),
+                                                    color: isEven
+                                                        ? Colors.white
+                                                        : const Color(
+                                                            0xFFF8FAFC),
                                                   ),
                                                   child: Row(
                                                     children: [
-                                                      Expanded(flex: 1, child: Text('${index + 1}', style: TextStyle(fontSize: 13, color: Colors.grey[700]))),
+                                                      Expanded(
+                                                          flex: 1,
+                                                          child: Text(
+                                                              '${index + 1}',
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      700]))),
                                                       Expanded(
                                                         flex: 4,
                                                         child: InkWell(
@@ -330,65 +354,159 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
-                                                                builder: (context) => CustomerDetailsScreen(
-                                                                  customerId: item.customerId.toString(),
-                                                                  report: 'true',
+                                                                builder:
+                                                                    (context) =>
+                                                                        CustomerDetailsScreen(
+                                                                  customerId: item
+                                                                      .customerId
+                                                                      .toString(),
+                                                                  report:
+                                                                      'true',
                                                                 ),
                                                               ),
                                                             );
                                                           },
-                                                          focusColor: Colors.transparent,
-                                                          hoverColor: Colors.transparent,
-                                                          splashColor: Colors.transparent,
-                                                          highlightColor: Colors.transparent,
+                                                          focusColor: Colors
+                                                              .transparent,
+                                                          hoverColor: Colors
+                                                              .transparent,
+                                                          splashColor: Colors
+                                                              .transparent,
+                                                          highlightColor: Colors
+                                                              .transparent,
                                                           child: Row(
-                                                            mainAxisSize: MainAxisSize.min,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
                                                             children: [
                                                               CircleAvatar(
                                                                 radius: 12,
-                                                                backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-                                                                child: Icon(Icons.person, size: 14, color: AppColors.primaryBlue),
+                                                                backgroundColor:
+                                                                    AppColors
+                                                                        .primaryBlue
+                                                                        .withOpacity(
+                                                                            0.1),
+                                                                child: Icon(
+                                                                    Icons
+                                                                        .person,
+                                                                    size: 14,
+                                                                    color: AppColors
+                                                                        .primaryBlue),
                                                               ),
-                                                              const SizedBox(width: 8),
+                                                              const SizedBox(
+                                                                  width: 8),
                                                               Flexible(
                                                                 child: Text(
                                                                   item.customerName,
-                                                                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13, color: Colors.grey[800]),
-                                                                  overflow: TextOverflow.ellipsis,
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          800]),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
                                                                 ),
                                                               ),
-                                                              const SizedBox(width: 4),
-                                                              Icon(Icons.chevron_right, size: 16, color: Colors.grey[400]),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              Icon(
+                                                                  Icons
+                                                                      .chevron_right,
+                                                                  size: 16,
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      400]),
                                                             ],
                                                           ),
                                                         ),
                                                       ),
-                                                      Expanded(flex: 3, child: Text(item.taskTypeName, style: TextStyle(fontSize: 13, color: Colors.grey[700]))),
+                                                      Expanded(
+                                                          flex: 3,
+                                                          child: Text(
+                                                              item.taskTypeName,
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      700]))),
                                                       Expanded(
                                                         flex: 2,
                                                         child: Center(
                                                           child: Container(
-                                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                            decoration: BoxDecoration(
-                                                              color: const Color(0xFFE0F2F1),
-                                                              borderRadius: BorderRadius.circular(12),
-                                                              border: Border.all(color: const Color(0xFFB2DFDB)),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        4),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: const Color(
+                                                                  0xFFE0F2F1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
+                                                              border: Border.all(
+                                                                  color: const Color(
+                                                                      0xFFB2DFDB)),
                                                             ),
                                                             child: Text(
-                                                              item.taskStatusName.isEmpty ? 'Pending' : item.taskStatusName,
-                                                              style: const TextStyle(color: Color(0xFF00897B), fontSize: 10, fontWeight: FontWeight.w500),
-                                                              textAlign: TextAlign.center,
+                                                              item.taskStatusName
+                                                                      .isEmpty
+                                                                  ? 'Pending'
+                                                                  : item
+                                                                      .taskStatusName,
+                                                              style: const TextStyle(
+                                                                  color: Color(
+                                                                      0xFF00897B),
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      Expanded(flex: 3, child: Text(item.toUserName, style: TextStyle(fontSize: 13, color: Colors.grey[700]))),
-                                                      Expanded(flex: 3, child: Text(item.entryDate, style: TextStyle(fontSize: 13, color: Colors.grey[700]))),
+                                                      Expanded(
+                                                          flex: 3,
+                                                          child: Text(
+                                                              item.toUserName,
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      700]))),
+                                                      Expanded(
+                                                          flex: 3,
+                                                          child: Text(
+                                                              item.entryDate,
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      700]))),
                                                       Expanded(
                                                         flex: 2,
                                                         child: Text(
                                                           '₹${item.commission}',
-                                                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 13),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .green,
+                                                                  fontSize: 13),
                                                         ),
                                                       ),
                                                     ],
@@ -398,10 +516,13 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                             ),
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 14, horizontal: 16),
                                       decoration: const BoxDecoration(
                                         color: Color(0xFFF8FAFC),
-                                        border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+                                        border: Border(
+                                            top: BorderSide(
+                                                color: Color(0xFFE2E8F0))),
                                         borderRadius: BorderRadius.only(
                                           bottomLeft: Radius.circular(8),
                                           bottomRight: Radius.circular(8),
@@ -409,13 +530,30 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                       ),
                                       child: Row(
                                         children: [
-                                          const Expanded(flex: 1, child: SizedBox()),
-                                          const Expanded(flex: 4, child: Text('TOTAL', style: TextStyle(fontWeight: FontWeight.bold))),
-                                          const Expanded(flex: 3, child: SizedBox()),
-                                          const Expanded(flex: 2, child: SizedBox()),
-                                          const Expanded(flex: 3, child: SizedBox()),
-                                          const Expanded(flex: 3, child: SizedBox()),
-                                          Expanded(flex: 2, child: Text('₹${provider.totalCommission}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
+                                          const Expanded(
+                                              flex: 1, child: SizedBox()),
+                                          const Expanded(
+                                              flex: 4,
+                                              child: Text('TOTAL',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold))),
+                                          const Expanded(
+                                              flex: 3, child: SizedBox()),
+                                          const Expanded(
+                                              flex: 2, child: SizedBox()),
+                                          const Expanded(
+                                              flex: 3, child: SizedBox()),
+                                          const Expanded(
+                                              flex: 3, child: SizedBox()),
+                                          Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                  '₹${provider.totalCommission}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green))),
                                         ],
                                       ),
                                     ),
@@ -437,7 +575,8 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
     );
   }
 
-  Widget _buildTableHeader(String title, {int? flex, double? width, bool center = false}) {
+  Widget _buildTableHeader(String title,
+      {int? flex, double? width, bool center = false}) {
     final child = Text(
       title.toUpperCase(),
       textAlign: center ? TextAlign.center : TextAlign.start,
@@ -456,7 +595,8 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
           );
   }
 
-  Widget _buildFilterItem(BuildContext context, String label, String value, {VoidCallback? onTap}) {
+  Widget _buildFilterItem(BuildContext context, String label, String value,
+      {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -467,8 +607,11 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
         ),
         child: Row(
           children: [
-            Text('$label: ', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-            Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+            Text('$label: ',
+                style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+            Text(value,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
             const SizedBox(width: 8),
             const Icon(Icons.arrow_drop_down, size: 20),
           ],
@@ -477,7 +620,12 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
     );
   }
 
-  Widget _buildDropDownFilter(BuildContext context, String label, List<Map<String, dynamic>> items, int selectedValue, Function(int?) onChanged) {
+  Widget _buildDropDownFilter(
+      BuildContext context,
+      String label,
+      List<Map<String, dynamic>> items,
+      int selectedValue,
+      Function(int?) onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -490,15 +638,21 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
               style: TextStyle(color: Colors.grey[600], fontSize: 13)),
           const SizedBox(width: 4),
           DropdownButton<int>(
-            value: selectedValue == 0 ? null : (items.any((i) => i['id'] == selectedValue) ? selectedValue : null),
+            value: selectedValue == 0
+                ? null
+                : (items.any((i) => i['id'] == selectedValue)
+                    ? selectedValue
+                    : null),
             hint: const Text('All', style: TextStyle(fontSize: 13)),
             underline: const SizedBox(),
             onChanged: onChanged,
             items: [
-              const DropdownMenuItem(value: 0, child: Text('All', style: TextStyle(fontSize: 13))),
+              const DropdownMenuItem(
+                  value: 0, child: Text('All', style: TextStyle(fontSize: 13))),
               ...items.map((i) => DropdownMenuItem(
                     value: i['id'],
-                    child: Text(i['name'], style: const TextStyle(fontSize: 13)),
+                    child:
+                        Text(i['name'], style: const TextStyle(fontSize: 13)),
                   )),
             ],
           ),
@@ -522,12 +676,23 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                   children: [
                     for (int i = 0; i < 5; i++)
                       ActionChip(
-                        label: Text(['Yesterday', 'Today', 'Tomorrow', 'This Week', 'This Month'][i]),
+                        label: Text([
+                          'Yesterday',
+                          'Today',
+                          'Tomorrow',
+                          'This Week',
+                          'This Month'
+                        ][i]),
                         onPressed: () {
-                           provider.selectDateFilterOption(i);
+                          provider.selectDateFilterOption(i);
                         },
-                        backgroundColor: provider.selectedDateFilterIndex == i ? AppColors.primaryBlue : null,
-                        labelStyle: TextStyle(color: provider.selectedDateFilterIndex == i ? Colors.white : null),
+                        backgroundColor: provider.selectedDateFilterIndex == i
+                            ? AppColors.primaryBlue
+                            : null,
+                        labelStyle: TextStyle(
+                            color: provider.selectedDateFilterIndex == i
+                                ? Colors.white
+                                : null),
                       ),
                   ],
                 ),
@@ -538,7 +703,9 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                       child: OutlinedButton.icon(
                         onPressed: () => provider.selectDate(context, true),
                         icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(provider.fromDate != null ? provider.formattedFromDate : 'From Date'),
+                        label: Text(provider.fromDate != null
+                            ? provider.formattedFromDate
+                            : 'From Date'),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -546,7 +713,9 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                       child: OutlinedButton.icon(
                         onPressed: () => provider.selectDate(context, false),
                         icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(provider.toDate != null ? provider.formattedToDate : 'To Date'),
+                        label: Text(provider.toDate != null
+                            ? provider.formattedToDate
+                            : 'To Date'),
                       ),
                     ),
                   ],
@@ -554,7 +723,9 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel')),
               ElevatedButton(
                 onPressed: () {
                   provider.getSubContractReport(context);

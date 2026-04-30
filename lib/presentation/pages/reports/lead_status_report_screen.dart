@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -177,28 +178,11 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    OutlinedButton.icon(
+                    CustomFilterButton(
                       onPressed: () {
                         provider.toggleFilter();
                       },
-                      icon: const Icon(Icons.filter_list),
-                      label: Text(MediaQuery.of(context).size.width > 860
-                          ? 'Filter'
-                          : ''),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: provider.isFilter
-                            ? Colors.white
-                            : AppColors.primaryBlue,
-                        backgroundColor: provider.isFilter
-                            ? const Color(0xFF5499D9)
-                            : Colors.white,
-                        side: BorderSide(
-                            color: provider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : AppColors.primaryBlue),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                      ),
+                      isFilter: provider.isFilter,
                     ),
                     const SizedBox(width: 16),
                     CustomElevatedButton(

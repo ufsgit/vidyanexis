@@ -369,7 +369,8 @@ class TaskPageProvider extends ChangeNotifier {
         _selectedStatusIds = [0];
       }
     }
-    _selectedStatus = _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
+    _selectedStatus =
+        _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
     notifyListeners();
   }
 
@@ -405,8 +406,9 @@ class TaskPageProvider extends ChangeNotifier {
         _selectedTaskTypeFilterIds = [0];
       }
     }
-    _selectedTaskType =
-        _selectedTaskTypeFilterIds.isNotEmpty ? _selectedTaskTypeFilterIds.first : null;
+    _selectedTaskType = _selectedTaskTypeFilterIds.isNotEmpty
+        ? _selectedTaskTypeFilterIds.first
+        : null;
     notifyListeners();
   }
 
@@ -525,9 +527,11 @@ class TaskPageProvider extends ChangeNotifier {
 
           // Convert new data to TaskReportModel list
           if (newData.isNotEmpty) {
-            print("================ DEBUG TASK JSON (searchTaskByCustomer) ================");
+            print(
+                "================ DEBUG TASK JSON (searchTaskByCustomer) ================");
             print(newData[0]);
-            print("=========================================================================");
+            print(
+                "=========================================================================");
           }
           final newTasks = (newData as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
@@ -568,7 +572,7 @@ class TaskPageProvider extends ChangeNotifier {
   Future<void> fetchTasksForExport(BuildContext context) async {
     try {
       Loader.showLoader(context);
-      
+
       if (_Status.isEmpty || _Status == 'null') _Status = '0';
       String isDate = "0";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
@@ -576,7 +580,7 @@ class TaskPageProvider extends ChangeNotifier {
       } else {
         isDate = "1";
       }
-      
+
       String toUserId = _selectedUserIds.join(',');
       _Status = _selectedStatusIds.join(',');
       _TaskType = _selectedTaskTypeFilterIds.join(',');
@@ -592,14 +596,15 @@ class TaskPageProvider extends ChangeNotifier {
           returnBytes: true);
 
       Loader.stopLoader(context);
-      
+
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null && data is List<int>) {
           await saveBytesAsExcel(bytes: data, fileName: 'Task');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to load format or empty bytes')),
+            const SnackBar(
+                content: Text('Failed to load format or empty bytes')),
           );
         }
       } else {
@@ -754,12 +759,13 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchTaskHistory(int userDetailsId,int taskId) async {
+  Future<void> fetchTaskHistory(int userDetailsId, int taskId) async {
     try {
       _isHistoryLoading = true;
       notifyListeners();
 
-      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      String isDate =
+          (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
 
       final response = await HttpRequest.httpGetRequest(
         endPoint:
@@ -925,7 +931,8 @@ class TaskPageProvider extends ChangeNotifier {
           final statusData = data['mandatory_status'] ?? [];
           final formsData = data['forms'] ?? [];
 
-          debugPrint("DEBUG: fetchTaskTypes received ${formsData.length} forms");
+          debugPrint(
+              "DEBUG: fetchTaskTypes received ${formsData.length} forms");
 
           _taskTypeModel = (newData as List<dynamic>)
               .map((item) => TaskTypeModel.fromJson(item))

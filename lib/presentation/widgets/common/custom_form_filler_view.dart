@@ -297,7 +297,7 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
         return _buildTextField(field);
       case FieldType.text:
         return _buildTextField(field);
-      }
+    }
   }
 
   Widget _buildTextField(FieldModel field) {

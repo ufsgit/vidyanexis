@@ -285,7 +285,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                             if (context.mounted) {
                               Navigator.pop(context); // close dialog
                               Navigator.pop(context); // close details page
-                              
+
                               // Refresh the list silently on the previous page
                               Provider.of<CustomerProvider>(context,
                                       listen: false)

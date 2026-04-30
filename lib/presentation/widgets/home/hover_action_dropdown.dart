@@ -75,7 +75,8 @@ class _HoverActionDropdownState extends State<HoverActionDropdown> {
         controller: _controller,
         alignmentOffset: const Offset(0, 0),
         style: MenuStyle(
-          padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 8)),
+          padding:
+              WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 8)),
           backgroundColor: WidgetStateProperty.all(Colors.white),
           elevation: WidgetStateProperty.all(8),
           shadowColor: WidgetStateProperty.all(Colors.black.withOpacity(0.3)),
@@ -93,7 +94,8 @@ class _HoverActionDropdownState extends State<HoverActionDropdown> {
                 item.onTap();
               },
               style: MenuItemButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 surfaceTintColor: Colors.transparent,
                 overlayColor: Colors.grey.withOpacity(0.05),
               ),

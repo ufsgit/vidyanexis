@@ -355,8 +355,18 @@ class AttendanceReportProvider extends ChangeNotifier {
         } catch (e) {
           log('Timeout or error getting current position: $e');
           // Fallback to last known position
-          position = await Geolocator.getLastKnownPosition() ?? 
-                    Position(longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0);
+          position = await Geolocator.getLastKnownPosition() ??
+              Position(
+                  longitude: 0,
+                  latitude: 0,
+                  timestamp: DateTime.now(),
+                  accuracy: 0,
+                  altitude: 0,
+                  heading: 0,
+                  speed: 0,
+                  speedAccuracy: 0,
+                  altitudeAccuracy: 0,
+                  headingAccuracy: 0);
         }
 
         double latVal = position.latitude;

@@ -89,7 +89,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
             childrenPadding: const EdgeInsets.only(left: 20),
             expandedCrossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               widget.items[0].filePath.isNotEmpty
                   ? MouseRegion(
                       cursor: SystemMouseCursors.click,
@@ -206,7 +205,6 @@ class _UserInfoCardState extends State<UserInfoCard> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-
               if (settingsprovider.menuIsViewMap[31] == 1)
                 ElevatedButton(
                   onPressed: () async {

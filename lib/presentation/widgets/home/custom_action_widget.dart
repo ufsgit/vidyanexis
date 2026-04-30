@@ -24,7 +24,6 @@ class CustomActionButton extends StatelessWidget {
     this.textColor,
     this.height = 34,
     this.iconSize = 16,
-
   });
 
   @override
@@ -40,7 +39,6 @@ class CustomActionButton extends StatelessWidget {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -55,7 +53,6 @@ class CustomActionButton extends StatelessWidget {
                         size: iconSize,
                         color: imageColor ?? AppColors.textGrey3,
                       ),
-
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
@@ -68,7 +65,6 @@ class CustomActionButton extends StatelessWidget {
                         color: AppColors.textBlack),
                   ),
                 ),
-
               ],
             ),
           ),

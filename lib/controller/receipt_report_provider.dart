@@ -50,7 +50,7 @@ class ReceiptReportProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print('Receipt Report Response: $data');
-        
+
         List<dynamic> listData = [];
         if (data is List) {
           listData = data;
@@ -58,13 +58,14 @@ class ReceiptReportProvider with ChangeNotifier {
           if (data['list'] is List) {
             listData = data['list'];
           } else if (data['total'] is Map) {
-             listData = [data['total']];
+            listData = [data['total']];
           } else if (data['data'] is List) {
             listData = data['data'];
           }
         }
 
-        receiptReportList = listData.map((e) => ReceiptReportModel.fromJson(e)).toList();
+        receiptReportList =
+            listData.map((e) => ReceiptReportModel.fromJson(e)).toList();
       } else {
         receiptReportList = [];
         print('Failed to load receipt report: ${response.statusCode}');
@@ -116,7 +117,7 @@ class ReceiptReportProvider with ChangeNotifier {
       } else {
         toDate = picked;
       }
-        notifyListeners();
+      notifyListeners();
     }
   }
 
@@ -126,11 +127,9 @@ class ReceiptReportProvider with ChangeNotifier {
       selectedDateFilterIndex = 1; // Default to Today
       fromDate = DateTime.now();
       toDate = DateTime.now();
-      } else {
-      }
+    } else {}
     notifyListeners();
   }
-
 
   void setDateFilter(String title) {
     final now = DateTime.now();

@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -133,28 +134,11 @@ class _AttendanceReportState extends State<AttendanceReport> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  ElevatedButton.icon(
+                  CustomFilterButton(
                     onPressed: () {
                       reportsProvider.toggleFilter();
                     },
-                    icon: const Icon(Icons.filter_list, size: 18),
-                    label: const Text('Filter'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: reportsProvider.isFilter
-                          ? AppColors.primaryBlue
-                          : Colors.white,
-                      foregroundColor: reportsProvider.isFilter
-                          ? Colors.white
-                          : AppColors.primaryBlue,
-                      side: BorderSide(color: AppColors.primaryBlue),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
+                    isFilter: reportsProvider.isFilter,
                   ),
                 ],
               ),
@@ -183,7 +167,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                            color: reportsProvider.AssignedTo != '0' && reportsProvider.AssignedTo != ''
+                            color: reportsProvider.AssignedTo != '0' &&
+                                    reportsProvider.AssignedTo != ''
                                 ? AppColors.primaryBlue
                                 : Colors.grey[300]!),
                       ),
@@ -191,7 +176,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                         children: [
                           const Text('Staff Name: '),
                           DropdownButton<int>(
-                            value: int.tryParse(reportsProvider.AssignedTo) ?? 0,
+                            value:
+                                int.tryParse(reportsProvider.AssignedTo) ?? 0,
                             hint: const Text('All'),
                             items: [
                                   const DropdownMenuItem<int>(
@@ -211,7 +197,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                             child: Text(
                                               user.userDetailsName ?? '',
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(fontSize: 14),
+                                              style:
+                                                  const TextStyle(fontSize: 14),
                                             ),
                                           ),
                                         ))
@@ -331,7 +318,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                               : ListView.builder(
                                   itemCount: reportsProvider.taskReport.length,
                                   itemBuilder: (context, index) {
-                                    var task = reportsProvider.taskReport[index];
+                                    var task =
+                                        reportsProvider.taskReport[index];
                                     return Container(
                                       decoration: BoxDecoration(
                                         color: index % 2 == 0
@@ -344,9 +332,12 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                           SizedBox(
                                             width: 80,
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 12.0, horizontal: 25.0),
-                                              child: Text((index + 1).toString(),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12.0,
+                                                      horizontal: 25.0),
+                                              child: Text(
+                                                  (index + 1).toString(),
                                                   style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                   )),
@@ -355,8 +346,10 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                           TableWidget(
                                             flex: 1,
                                             data: Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 8, vertical: 4),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
                                               decoration: BoxDecoration(
                                                 color: const Color(0xFFE9EDF1),
                                                 borderRadius:
@@ -377,7 +370,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                           TableWidget(
                                               flex: 1, title: task.checkInDate),
                                           TableWidget(
-                                              flex: 1, title: task.checkInTimeOnly),
+                                              flex: 1,
+                                              title: task.checkInTimeOnly),
                                           TableWidget(
                                               flex: 1, title: task.location),
                                         ],

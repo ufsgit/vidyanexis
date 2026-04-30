@@ -55,7 +55,6 @@ class QuotationDetailsWidget extends StatelessWidget {
                 Loader.stopLoader(context);
               },
               icon: Icon(Icons.print, color: AppColors.primaryBlue),
-
               tooltip: 'Print Quotation 1',
             ),
           if (settingsprovider.menuIsEditMap[16] == 1)
@@ -82,12 +81,12 @@ class QuotationDetailsWidget extends StatelessWidget {
                     quotation.warranty;
                 customerDetailsProvider.qtermsConditionsController.text =
                     quotation.termsAndConditions;
-                customerDetailsProvider.quotationDescriptionController
-                    .text = quotation.description;
-                customerDetailsProvider.quotationDescription2Controller
-                    .text = quotation.description2;
-                customerDetailsProvider.quotationDescription3Controller
-                    .text = quotation.description3;
+                customerDetailsProvider.quotationDescriptionController.text =
+                    quotation.description;
+                customerDetailsProvider.quotationDescription2Controller.text =
+                    quotation.description2;
+                customerDetailsProvider.quotationDescription3Controller.text =
+                    quotation.description3;
 
                 // ---- STATUS ----
                 customerDetailsProvider.selectedQuotationStatus =
@@ -119,8 +118,7 @@ class QuotationDetailsWidget extends StatelessWidget {
                 );
 
                 // ---- GST ----
-                final taxable =
-                    double.tryParse(quotation.taxableAmount) ?? 0;
+                final taxable = double.tryParse(quotation.taxableAmount) ?? 0;
                 final gst = double.tryParse(quotation.gstAmount) ?? 0;
                 final gstPer = double.tryParse(quotation.gstPer) ?? 0;
 
@@ -156,8 +154,8 @@ class QuotationDetailsWidget extends StatelessWidget {
                     quotation.cableStructure;
                 customerDetailsProvider.cableTypeController.text =
                     quotation.cableType;
-                customerDetailsProvider.cableShortCircuitTempController
-                    .text = quotation.cableShortCircuitTemp;
+                customerDetailsProvider.cableShortCircuitTempController.text =
+                    quotation.cableShortCircuitTemp;
                 customerDetailsProvider.cableStandardController.text =
                     quotation.cableStandard;
                 customerDetailsProvider.cableConductorClassController.text =
@@ -168,16 +166,15 @@ class QuotationDetailsWidget extends StatelessWidget {
                     quotation.cableProtection;
                 customerDetailsProvider.cableWarrantyController.text =
                     quotation.cableWarranty;
-                customerDetailsProvider.cableTensileStrengthController
-                    .text = quotation.cableTensileStrength;
+                customerDetailsProvider.cableTensileStrengthController.text =
+                    quotation.cableTensileStrength;
 
                 // ---- OTHER DETAILS ----
                 customerDetailsProvider.plantCapacityController.text =
                     quotation.plantCapacity;
                 customerDetailsProvider.moduleTechnologiesController.text =
                     quotation.moduleTechnologies;
-                customerDetailsProvider
-                    .mountingStructureTechnologiesController
+                customerDetailsProvider.mountingStructureTechnologiesController
                     .text = quotation.mountingStructureTechnologies;
                 customerDetailsProvider.projectSchemeController.text =
                     quotation.projectScheme;
@@ -216,14 +213,12 @@ class QuotationDetailsWidget extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (BuildContext context) {
                       return EditQuotationScreen(
-                          quotationId: serviceId,
-                          customerId: customerId);
+                          quotationId: serviceId, customerId: customerId);
                     },
                   ),
                 );
               },
               icon: Icon(Icons.edit, color: AppColors.primaryBlue),
-
               tooltip: 'Edit',
             ),
         ],

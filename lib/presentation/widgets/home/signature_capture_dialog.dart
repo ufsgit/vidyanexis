@@ -94,11 +94,12 @@ class _SignatureCaptureDialogState extends State<SignatureCaptureDialog> {
                     onPressed: () async {
                       if (_controller.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please provide a signature')),
+                          const SnackBar(
+                              content: Text('Please provide a signature')),
                         );
                         return;
                       }
-                      
+
                       final Uint8List? data = await _controller.toPngBytes();
                       if (data != null && mounted) {
                         Navigator.pop(context, data);

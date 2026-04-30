@@ -34,10 +34,9 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-                
-                //   image: DecorationImage(
-                //       image: AssetImage('assets/images/On boarding.png'),
-                //       fit: BoxFit.cover)),
+              //   image: DecorationImage(
+              //       image: AssetImage('assets/images/On boarding.png'),
+              //       fit: BoxFit.cover)),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -91,7 +90,7 @@ class SignUpForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final displayLogo = settingsProvider.displayLogo;
-    
+
     return Form(
       child: Padding(
         padding: const EdgeInsets.all(16.0),

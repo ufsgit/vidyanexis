@@ -44,7 +44,6 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool showTransfer;
   final void Function()? onTransferTap;
 
-
   final bool showLogo;
   final bool showUserName;
 
@@ -85,7 +84,6 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showPdf = false,
     this.showTransfer = false,
     this.onTransferTap,
-
   }) : assert(title != null || customTitle != null,
             'Either title or customTitle must be provided');
 
@@ -126,8 +124,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
       title: searchProvider.isSearching
           ? _buildSearchField(searchProvider)
           : widget.customTitle ?? _defaultTitle(),
-      actions: _buildActions(searchProvider, widget.onFilterTap,
-          widget.onClearTap, widget.onSearchTap, widget.onExcelTap, widget.onPdfTap),
+      actions: _buildActions(
+          searchProvider,
+          widget.onFilterTap,
+          widget.onClearTap,
+          widget.onSearchTap,
+          widget.onExcelTap,
+          widget.onPdfTap),
     );
   }
 
@@ -256,7 +259,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 onPressed: widget.onTransferTap,
               ),
-
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -152,31 +153,11 @@ class _UpcomingWarrentyReportScreen
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
-                                : Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: AppColors.primaryBlue),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         CustomElevatedButton(
@@ -298,32 +279,11 @@ class _UpcomingWarrentyReportScreen
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            ElevatedButton.icon(
+                            CustomFilterButton(
                               onPressed: () {
                                 reportsProvider.toggleFilter();
                               },
-                              icon: const Icon(Icons.filter_list, size: 18),
-                              label: Text(
-                                  MediaQuery.of(context).size.width > 860
-                                      ? 'Filter'
-                                      : ''),
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: reportsProvider.isFilter
-                                    ? Colors.white
-                                    : AppColors.primaryBlue,
-                                backgroundColor: reportsProvider.isFilter
-                                    ? AppColors.primaryBlue
-                                    : Colors.white,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: BorderSide(color: AppColors.primaryBlue),
-                                ),
-                              ),
+                              isFilter: reportsProvider.isFilter,
                             ),
                             const SizedBox(width: 16),
                             CustomElevatedButton(
@@ -610,82 +570,88 @@ class _UpcomingWarrentyReportScreen
                                         ),
                                       )
                                     : ListView.builder(
-                                  shrinkWrap: true,
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .upcomingWarrantyReport.length,
-                                  itemBuilder: (context, index) {
-                                    var item = reportsProvider
-                                        .upcomingWarrantyReport[index];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: index % 2 == 0
-                                            ? Colors.white
-                                            : const Color(0xFFF6F7F9),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 60,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 12.0,
-                                                      horizontal: 15.0),
-                                              child: Text(
-                                                  (index + 1).toString(),
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  )),
+                                        shrinkWrap: true,
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        itemCount: reportsProvider
+                                            .upcomingWarrantyReport.length,
+                                        itemBuilder: (context, index) {
+                                          var item = reportsProvider
+                                              .upcomingWarrantyReport[index];
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              color: index % 2 == 0
+                                                  ? Colors.white
+                                                  : const Color(0xFFF6F7F9),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                          ),
-                                          TableWidget(
-                                            flex: 2,
-                                            data: InkWell(
-                                              onTap: () {
-                                                context.push(
-                                                    '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xFFE9EDF1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                child: Text(
-                                                  item.customerName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 60,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 12.0,
+                                                        horizontal: 15.0),
+                                                    child: Text(
+                                                        (index + 1).toString(),
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        )),
                                                   ),
                                                 ),
-                                              ),
+                                                TableWidget(
+                                                  flex: 2,
+                                                  data: InkWell(
+                                                    onTap: () {
+                                                      context.push(
+                                                          '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFFE9EDF1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50),
+                                                      ),
+                                                      child: Text(
+                                                        item.customerName,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                    flex: 2,
+                                                    title: item.projectName),
+                                                TableWidget(
+                                                    flex: 2,
+                                                    title: item.serviceName),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    title: item.expiryDate
+                                                        .toDayMonthYearFormat()),
+                                              ],
                                             ),
-                                          ),
-                                          TableWidget(
-                                              flex: 2, title: item.projectName),
-                                          TableWidget(
-                                              flex: 2, title: item.serviceName),
-                                          TableWidget(
-                                              flex: 1,
-                                              title: item.expiryDate
-                                                  .toDayMonthYearFormat()),
-                                        ],
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
                               ),
                             ],
                           ),
@@ -715,28 +681,29 @@ class _UpcomingWarrentyReportScreen
                             ),
                           )
                         : ListView.separated(
-                      separatorBuilder: (context, index) =>
-                          Divider(height: 2, color: AppColors.grey),
-                      itemCount: reportsProvider.upcomingWarrantyReport.length,
-                      itemBuilder: (context, index) {
-                        var item =
-                            reportsProvider.upcomingWarrantyReport[index];
-                        return ReportListItem(
-                          title: item.projectName,
-                          subtitle: '${item.customerName} >',
-                          onSubtitleTap: () {
-                            context.push(
-                                '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
-                          },
-                          status:
-                              'Ends: ${item.expiryDate.toDayMonthYearFormat()}',
-                          statusColor: AppColors.appViolet,
-                          description: item.serviceName,
-                          bottomLeftIcon: Icons.medical_services_outlined,
-                          bottomLeftText: 'Warranty',
-                        );
-                      },
-                    ),
+                            separatorBuilder: (context, index) =>
+                                Divider(height: 2, color: AppColors.grey),
+                            itemCount:
+                                reportsProvider.upcomingWarrantyReport.length,
+                            itemBuilder: (context, index) {
+                              var item =
+                                  reportsProvider.upcomingWarrantyReport[index];
+                              return ReportListItem(
+                                title: item.projectName,
+                                subtitle: '${item.customerName} >',
+                                onSubtitleTap: () {
+                                  context.push(
+                                      '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
+                                },
+                                status:
+                                    'Ends: ${item.expiryDate.toDayMonthYearFormat()}',
+                                statusColor: AppColors.appViolet,
+                                description: item.serviceName,
+                                bottomLeftIcon: Icons.medical_services_outlined,
+                                bottomLeftText: 'Warranty',
+                              );
+                            },
+                          ),
                   ),
           ],
         ),

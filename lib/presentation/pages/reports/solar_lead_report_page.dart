@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -194,28 +195,11 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
             ),
           ),
           const SizedBox(width: 16),
-          ElevatedButton.icon(
+          CustomFilterButton(
             onPressed: () {
               provider.toggleFilter();
             },
-            icon: const Icon(Icons.filter_list, size: 18),
-            label:
-                Text(MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
-            style: ElevatedButton.styleFrom(
-              foregroundColor:
-                  provider.isFilter ? Colors.white : AppColors.primaryBlue,
-              backgroundColor:
-                  provider.isFilter ? AppColors.primaryBlue : Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(color: AppColors.primaryBlue),
-              ),
-            ),
+            isFilter: provider.isFilter,
           ),
         ],
       ),
@@ -599,8 +583,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
             Center(
               child: Column(
                 children: [
-                   const SizedBox(height: 20),
-                   Icon(Icons.search_off_outlined,
+                  const SizedBox(height: 20),
+                  Icon(Icons.search_off_outlined,
                       size: 48, color: Colors.grey[300]),
                   const SizedBox(height: 12),
                   Text(

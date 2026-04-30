@@ -139,14 +139,16 @@ class _CampaignContentState extends State<CampaignContent> {
                                     Text(
                                       'ID: ${campaign.campaignIdString}',
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12, color: Colors.grey[600]),
+                                          fontSize: 12,
+                                          color: Colors.grey[600]),
                                     ),
                                     const SizedBox(width: 12),
                                     if (campaign.createdDate.isNotEmpty)
                                       Text(
                                         'Created: ${campaign.createdDate.split('T').first}',
                                         style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12, color: Colors.grey[600]),
+                                            fontSize: 12,
+                                            color: Colors.grey[600]),
                                       ),
                                   ],
                                 ),
@@ -156,7 +158,8 @@ class _CampaignContentState extends State<CampaignContent> {
                             if (campaign.userIds.isNotEmpty)
                               Text(
                                 'Users: ${campaign.userIds.split(',').where((s) => s.isNotEmpty).length}',
-                                style: GoogleFonts.plusJakartaSans(fontSize: 12),
+                                style:
+                                    GoogleFonts.plusJakartaSans(fontSize: 12),
                               ),
                             const SizedBox(width: 24),
                             TextButton(

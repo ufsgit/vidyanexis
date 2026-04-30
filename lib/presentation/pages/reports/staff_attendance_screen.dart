@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -160,31 +161,11 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
-                                : Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: AppColors.primaryBlue),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton.icon(
@@ -334,29 +315,11 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             ),
                           ),
                         ),
-                        ElevatedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list, size: 18),
-                          label: const Text('Filter'),
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? AppColors.primaryBlue
-                                : Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 0,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              side: BorderSide(color: AppColors.primaryBlue),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton.icon(
@@ -435,7 +398,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -600,7 +564,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
                             toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
                             formattedToDate: reportsProvider.formattedToDate,
                             onTap: () => onClickTopButton(context),
                           ),
@@ -757,170 +722,159 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
                                 children: [
-                                      // Header Row (Table Column Titles)
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFEFF2F5),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                  // Header Row (Table Column Titles)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFEFF2F5),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 80,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal: 25.0),
+                                            child: Text('No.',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                    color: Color(0xFF607185))),
+                                          ),
                                         ),
-                                        child: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 12.0,
-                                                    horizontal: 25.0),
-                                                child: Text('No.',
-                                                    style: TextStyle(
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Name',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Check In Date',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Check In Time',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Check Out Date',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Check Out Time',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                      ],
+                                    ),
+                                  ),
+                                  // Data Rows
+                                  Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const AlwaysScrollableScrollPhysics(),
+                                      itemCount:
+                                          reportsProvider.taskReport.length,
+                                      itemBuilder: (context, index) {
+                                        var task =
+                                            reportsProvider.taskReport[index];
+                                        return GestureDetector(
+                                          onTap: () {},
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: index % 2 == 0
+                                                  ? Colors.white
+                                                  : const Color(0xFFF6F7F9),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 80,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 12.0,
+                                                        horizontal: 25.0),
+                                                    child: Text(
+                                                        (index + 1).toString(),
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12,
+                                                        )),
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                  flex: 1,
+                                                  data: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0xFFE9EDF1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                    ),
+                                                    child: Text(
+                                                      task.userDetailsName,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: 14,
-                                                        color:
-                                                            Color(0xFF607185))),
-                                              ),
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    fontSize: 12,
+                                                    title: formatDate(
+                                                        task.checkInDate)),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    fontSize: 12,
+                                                    title: formatTime(
+                                                        task.checkInTimeOnly)),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    fontSize: 12,
+                                                    title: formatDate(
+                                                        task.checkOutDate)),
+                                                TableWidget(
+                                                    flex: 1,
+                                                    fontSize: 12,
+                                                    title: formatTime(
+                                                        task.checkOutTimeOnly)),
+                                              ],
                                             ),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Name',
-                                                fontSize: 14,
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Check In Date',
-                                                fontSize: 14,
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Check In Time',
-                                                fontSize: 14,
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Check Out Date',
-                                                fontSize: 14,
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: 'Check Out Time',
-                                                fontSize: 14,
-                                                color: Color(0xFF607185)),
-                                          ],
-                                        ),
-                                      ),
-                                      // Data Rows
-                                      Expanded(
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              const AlwaysScrollableScrollPhysics(),
-                                          itemCount:
-                                              reportsProvider.taskReport.length,
-                                          itemBuilder: (context, index) {
-                                            var task = reportsProvider
-                                                .taskReport[index];
-                                            return GestureDetector(
-                                              onTap: () {},
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: index % 2 == 0
-                                                      ? Colors.white
-                                                      : const Color(0xFFF6F7F9),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 80,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 12.0,
-                                                                horizontal:
-                                                                    25.0),
-                                                        child: Text(
-                                                            (index + 1)
-                                                                .toString(),
-                                                            style:
-                                                                const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 12,
-                                                            )),
-                                                      ),
-                                                    ),
-                                                    TableWidget(
-                                                      flex: 1,
-                                                      data: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 4),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: const Color(
-                                                              0xFFE9EDF1),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
-                                                        child: Text(
-                                                          task.userDetailsName,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TableWidget(
-                                                        flex: 1,
-                                                        fontSize: 12,
-                                                        title: formatDate(
-                                                            task.checkInDate)),
-                                                    TableWidget(
-                                                        flex: 1,
-                                                        fontSize: 12,
-                                                        title: formatTime(task
-                                                            .checkInTimeOnly)),
-                                                    TableWidget(
-                                                        flex: 1,
-                                                        fontSize: 12,
-                                                        title: formatDate(
-                                                            task.checkOutDate)),
-                                                    TableWidget(
-                                                        flex: 1,
-                                                        fontSize: 12,
-                                                        title: formatTime(task
-                                                            .checkOutTimeOnly)),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
-                          ))
+                          ),
+                        ),
+                      ))
                 : (!reportsProvider.hasFetched
                     ? Expanded(
                         child: Center(

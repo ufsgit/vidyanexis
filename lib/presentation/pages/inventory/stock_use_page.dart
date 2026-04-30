@@ -1,4 +1,4 @@
-
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +83,7 @@ class _StockUsePageState extends State<StockUsePage> {
                   //     ),
                   //   ),
                   // ),
-                  OutlinedButton.icon(
+                  CustomFilterButton(
                     onPressed: () {
                       stockuseprovider.toggleFilter();
                       // stockuseprovider.selectDateFilterOption(null);
@@ -91,24 +91,7 @@ class _StockUsePageState extends State<StockUsePage> {
                       // stockuseprovider.searchStockUseList('', '', '', '', context);
                       print(stockuseprovider.isFilter);
                     },
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text('Filter'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: stockuseprovider.isFilter
-                          ? Colors.white
-                          : AppColors.primaryBlue, // Change foreground color
-                      backgroundColor: stockuseprovider.isFilter
-                          ? const Color(0xFF5499D9)
-                          : Colors.white, // Change background color
-                      side: BorderSide(
-                          color: stockuseprovider.isFilter
-                              ? const Color(0xFF5499D9)
-                              : AppColors.primaryBlue), // Change border color
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
+                    isFilter: stockuseprovider.isFilter,
                   ),
                   const SizedBox(width: 16),
                   if (settingsProvider.menuIsSaveMap[78] == 1)
@@ -141,191 +124,193 @@ class _StockUsePageState extends State<StockUsePage> {
             ),
             const SizedBox(height: 12),
             if (stockuseprovider.isFilter)
-              AppStyles.isWebScreen(context)?
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Row(
-                      children: [
-                        // DATE FILTER
-                        GestureDetector(
-                          onTap: () {
-                            onClickTopButton(context);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 1.5),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: stockuseprovider.fromDate != null ||
-                                        stockuseprovider.toDate != null
-                                    ? AppColors.primaryBlue
-                                    : Colors.grey[300]!,
+              AppStyles.isWebScreen(context)
+                  ? Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          Row(
+                            children: [
+                              // DATE FILTER
+                              GestureDetector(
+                                onTap: () {
+                                  onClickTopButton(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 1.5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: stockuseprovider.fromDate !=
+                                                  null ||
+                                              stockuseprovider.toDate != null
+                                          ? AppColors.primaryBlue
+                                          : Colors.grey[300]!,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      if (stockuseprovider.fromDate == null &&
+                                          stockuseprovider.toDate == null)
+                                        const Text('Date: All'),
+                                      if (stockuseprovider.fromDate != null &&
+                                          stockuseprovider.toDate != null)
+                                        Text(
+                                            'Date : ${stockuseprovider.formattedFromDate} - ${stockuseprovider.formattedToDate}'),
+                                      const SizedBox(width: 10),
+                                      const Icon(
+                                        Icons.arrow_drop_down_outlined,
+                                        color: Colors.black45,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+
+                          // RESET BUTTON BELOW
+
+                          if (stockuseprovider.fromDate != null ||
+                              stockuseprovider.toDate != null ||
+                              (stockuseprovider.selectedSupplier != null &&
+                                  stockuseprovider.selectedSupplier != 0) ||
+                              stockuseprovider.search.isNotEmpty)
+                            ElevatedButton(
+                              onPressed: () {
+                                stockuseprovider.selectDateFilterOption(null);
+                                stockuseprovider.removeSupplier();
+                                // searchController.clear();
+                                stockuseprovider.setSearchCriteria(
+                                  '',
+                                  '',
+                                  '',
+                                  '',
+                                  '',
+                                );
+                                stockuseprovider.searchStockUseList(
+                                  context: context,
+                                  customerId: widget.customerId.toString(),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppColors.textRed,
+                                side: BorderSide(color: AppColors.textRed),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                              ),
+                              child: const Text('Reset'),
+                            ),
+                        ],
+                      ),
+                    )
+                  : Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              // DATE FILTER
+                              GestureDetector(
+                                onTap: () {
+                                  onClickTopButton(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 1.5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: stockuseprovider.fromDate !=
+                                                  null ||
+                                              stockuseprovider.toDate != null
+                                          ? AppColors.primaryBlue
+                                          : Colors.grey[300]!,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      if (stockuseprovider.fromDate == null &&
+                                          stockuseprovider.toDate == null)
+                                        const Text('Date: All'),
+                                      if (stockuseprovider.fromDate != null &&
+                                          stockuseprovider.toDate != null)
+                                        Text(
+                                            'Date : ${stockuseprovider.formattedFromDate} - ${stockuseprovider.formattedToDate}'),
+                                      const SizedBox(width: 10),
+                                      const Icon(
+                                        Icons.arrow_drop_down_outlined,
+                                        color: Colors.black45,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const Spacer(),
+                            ],
+                          ),
+
+                          // RESET BUTTON BELOW
+
+                          if (stockuseprovider.fromDate != null ||
+                              stockuseprovider.toDate != null ||
+                              (stockuseprovider.selectedSupplier != null &&
+                                  stockuseprovider.selectedSupplier != 0) ||
+                              stockuseprovider.search.isNotEmpty)
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    stockuseprovider
+                                        .selectDateFilterOption(null);
+                                    stockuseprovider.removeSupplier();
+                                    // searchController.clear();
+                                    stockuseprovider.setSearchCriteria(
+                                      '',
+                                      '',
+                                      '',
+                                      '',
+                                      '',
+                                    );
+                                    stockuseprovider.searchStockUseList(
+                                      context: context,
+                                      customerId: widget.customerId.toString(),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: AppColors.textRed,
+                                    side: BorderSide(color: AppColors.textRed),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12),
+                                  ),
+                                  child: const Text('Reset'),
+                                ),
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                if (stockuseprovider.fromDate == null &&
-                                    stockuseprovider.toDate == null)
-                                  const Text('Date: All'),
-                                if (stockuseprovider.fromDate != null &&
-                                    stockuseprovider.toDate != null)
-                                  Text(
-                                      'Date : ${stockuseprovider.formattedFromDate} - ${stockuseprovider.formattedToDate}'),
-                                const SizedBox(width: 10),
-                                const Icon(
-                                  Icons.arrow_drop_down_outlined,
-                                  color: Colors.black45,
-                                  size: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        
-                      ],
-                    ),
-                    Spacer(),
-
-                    // RESET BUTTON BELOW
-                    
-                    if (stockuseprovider.fromDate != null ||
-                        stockuseprovider.toDate != null ||
-                        (stockuseprovider.selectedSupplier != null &&
-                            stockuseprovider.selectedSupplier != 0) ||
-                        stockuseprovider.search.isNotEmpty)
-                      ElevatedButton(
-                        onPressed: () {
-                          stockuseprovider.selectDateFilterOption(null);
-                          stockuseprovider.removeSupplier();
-                          // searchController.clear();
-                          stockuseprovider.setSearchCriteria(
-                            '',
-                            '',
-                            '',
-                            '',
-                            '',
-                          );
-                          stockuseprovider.searchStockUseList(
-                            context: context,
-                            customerId: widget.customerId.toString(),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                        ),
-                        child: const Text('Reset'),
+                        ],
                       ),
-                  ],
-                ),
-              ):
-               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        // DATE FILTER
-                        GestureDetector(
-                          onTap: () {
-                            onClickTopButton(context);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 1.5),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: stockuseprovider.fromDate != null ||
-                                        stockuseprovider.toDate != null
-                                    ? AppColors.primaryBlue
-                                    : Colors.grey[300]!,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                if (stockuseprovider.fromDate == null &&
-                                    stockuseprovider.toDate == null)
-                                  const Text('Date: All'),
-                                if (stockuseprovider.fromDate != null &&
-                                    stockuseprovider.toDate != null)
-                                  Text(
-                                      'Date : ${stockuseprovider.formattedFromDate} - ${stockuseprovider.formattedToDate}'),
-                                const SizedBox(width: 10),
-                                const Icon(
-                                  Icons.arrow_drop_down_outlined,
-                                  color: Colors.black45,
-                                  size: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const Spacer(),
-                      ],
                     ),
-
-                    // RESET BUTTON BELOW
-                    
-                    if (stockuseprovider.fromDate != null ||
-                        stockuseprovider.toDate != null ||
-                        (stockuseprovider.selectedSupplier != null &&
-                            stockuseprovider.selectedSupplier != 0) ||
-                        stockuseprovider.search.isNotEmpty)
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              stockuseprovider.selectDateFilterOption(null);
-                              stockuseprovider.removeSupplier();
-                              // searchController.clear();
-                              stockuseprovider.setSearchCriteria(
-                                '',
-                                '',
-                                '',
-                                '',
-                                '',
-                              );
-                              stockuseprovider.searchStockUseList(
-                                context: context,
-                                customerId: widget.customerId.toString(),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: AppColors.textRed,
-                              side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                            ),
-                            child: const Text('Reset'),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
 
             const SizedBox(height: 12),
             Container(
@@ -388,83 +373,86 @@ class _StockUsePageState extends State<StockUsePage> {
                                 width: 20,
                               ),
                               if (settingsProvider.menuIsEditMap[78] == 1)
-                              TextButton(
-                                  onPressed: () async {
-                                    // stockuseprovider.getStockUseDetails(
-                                    //     stockuseprovider
-                                    //         .stockUseList[index].stockUseId,
-                                    //     context: context);
+                                TextButton(
+                                    onPressed: () async {
+                                      // stockuseprovider.getStockUseDetails(
+                                      //     stockuseprovider
+                                      //         .stockUseList[index].stockUseId,
+                                      //     context: context);
 
-                                    stockuseprovider.getStockUseDetails(
+                                      stockuseprovider.getStockUseDetails(
+                                          context: context,
+                                          masterId: stockuseprovider
+                                              .stockUseList[index].stockUseId
+                                              .toString());
+                                      showDialog(
+                                        barrierDismissible: false,
                                         context: context,
-                                        masterId: stockuseprovider
-                                            .stockUseList[index].stockUseId
-                                            .toString());
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AddStockUseWidget(
-                                            customerId: widget.customerId,
-                                            isEdit: true,
-                                            editId: stockuseprovider
-                                                .stockUseList[index].stockUseId,
-                                            stockUse: stockuseprovider
-                                                .stockUseList[index]);
-                                      },
-                                    );
-                                  },
-                                  child: Text(
-                                    'Edit',
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.primaryBlue),
-                                  )),
+                                        builder: (BuildContext context) {
+                                          return AddStockUseWidget(
+                                              customerId: widget.customerId,
+                                              isEdit: true,
+                                              editId: stockuseprovider
+                                                  .stockUseList[index]
+                                                  .stockUseId,
+                                              stockUse: stockuseprovider
+                                                  .stockUseList[index]);
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      'Edit',
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.primaryBlue),
+                                    )),
                               if (settingsProvider.menuIsDeleteMap[78] == 1)
-                              TextButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Confirm Delete'),
-                                          content: const Text(
-                                              'Are you sure you want to delete this item?'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text('Cancel'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                stockuseprovider.deleteStockUse(
-                                                    context,
-                                                    stockuseprovider
-                                                        .stockUseList[index]
-                                                        .stockUseId,
-                                                    widget.customerId);
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text(
-                                                'Delete',
-                                                style: TextStyle(
-                                                    color: Colors.red),
+                                TextButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Confirm Delete'),
+                                            content: const Text(
+                                                'Are you sure you want to delete this item?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: const Text('Cancel'),
                                               ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Text(
-                                    'Delete',
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textRed),
-                                  ))
+                                              TextButton(
+                                                onPressed: () async {
+                                                  stockuseprovider
+                                                      .deleteStockUse(
+                                                          context,
+                                                          stockuseprovider
+                                                              .stockUseList[
+                                                                  index]
+                                                              .stockUseId,
+                                                          widget.customerId);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      'Delete',
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textRed),
+                                    ))
                             ],
                           ),
                         ),

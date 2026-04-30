@@ -220,8 +220,8 @@ class ReportsProvider extends ChangeNotifier {
   }
 
 //task report
-  Future<void> getSearchTaskReport(String search, String fromDate, String toDate,
-      String status, BuildContext context) async {
+  Future<void> getSearchTaskReport(String search, String fromDate,
+      String toDate, String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (status.isEmpty || status == 'null') {
@@ -248,9 +248,11 @@ class ReportsProvider extends ChangeNotifier {
           // log(data.toString());
 
           if (data is List && data.isNotEmpty) {
-            print("================ DEBUG TASK JSON (ReportsProvider) ================");
+            print(
+                "================ DEBUG TASK JSON (ReportsProvider) ================");
             print(data[0]);
-            print("===================================================================");
+            print(
+                "===================================================================");
           }
           _taskReport = (data as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
@@ -275,8 +277,8 @@ class ReportsProvider extends ChangeNotifier {
   }
 
 //service
-  Future<void> getSearchServiceReport(String search, String fromDate, String toDate,
-      String status, BuildContext context) async {
+  Future<void> getSearchServiceReport(String search, String fromDate,
+      String toDate, String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (status.isEmpty || status == 'null') {
@@ -331,8 +333,13 @@ class ReportsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getSearchConversionReport(String fromDate, String toDate, String enquiryId,
-      String registeredBy, String status, BuildContext context) async {
+  Future<void> getSearchConversionReport(
+      String fromDate,
+      String toDate,
+      String enquiryId,
+      String registeredBy,
+      String status,
+      BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (status.isEmpty || status == 'null') {

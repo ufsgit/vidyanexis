@@ -97,8 +97,8 @@ class _CustomFieldState extends State<CustomField> {
                               },
                               decoration: const InputDecoration(
                                 hintText: 'Search fields...',
-                                hintStyle: TextStyle(
-                                    fontSize: 14, color: Colors.grey),
+                                hintStyle:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
                                 prefixIcon: Icon(Icons.search,
                                     color: Colors.grey, size: 20),
                                 border: InputBorder.none,

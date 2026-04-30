@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -311,32 +312,11 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             ),
           ),
           const SizedBox(width: 16),
-          OutlinedButton.icon(
+          CustomFilterButton(
             onPressed: () {
               reportProvider.toggleFilter();
             },
-            icon: const Icon(Icons.filter_list),
-            label:
-                Text(MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: reportProvider.isFilter
-                  ? Colors.white
-                  : AppColors.primaryBlue,
-              backgroundColor: reportProvider.isFilter
-                  ? const Color(0xFF5499D9)
-                  : Colors.white,
-              side: BorderSide(
-                  color: reportProvider.isFilter
-                      ? const Color(0xFF5499D9)
-                      : AppColors.primaryBlue),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 0,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
+            isFilter: reportProvider.isFilter,
           ),
           const SizedBox(width: 8),
           CustomElevatedButton(

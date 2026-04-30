@@ -85,7 +85,7 @@ class LeadEnquiryForReportCard extends StatelessWidget {
                             int userId = int.tryParse(
                                     preferences.getString('userId') ?? "0") ??
                                 0;
-                                
+
                             leadReportProvider.setStatus(0);
                             leadReportProvider.setUserFilterStatus(
                                 dashboardProvider.selectedUser);

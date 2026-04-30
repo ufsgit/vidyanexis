@@ -460,7 +460,8 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        quotation.customerName ??
+                                                        quotation
+                                                                .customerName ??
                                                             '',
                                                         style: GoogleFonts
                                                             .plusJakartaSans(

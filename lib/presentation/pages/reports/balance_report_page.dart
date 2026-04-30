@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -175,35 +176,19 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                         vertical: 0,
                       ),
                     ),
-                    child: Text(provider.search.isNotEmpty ? 'Cancel' : 'Search'),
+                    child:
+                        Text(provider.search.isNotEmpty ? 'Cancel' : 'Search'),
                   ),
                 ),
               ),
             ),
           ),
           const SizedBox(width: 16),
-          ElevatedButton.icon(
+          CustomFilterButton(
             onPressed: () {
               provider.toggleFilter();
             },
-            icon: const Icon(Icons.filter_list, size: 18),
-            label:
-                Text(MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
-            style: ElevatedButton.styleFrom(
-              foregroundColor:
-                  provider.isFilter ? Colors.white : AppColors.primaryBlue,
-              backgroundColor:
-                  provider.isFilter ? AppColors.primaryBlue : Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(color: AppColors.primaryBlue),
-              ),
-            ),
+            isFilter: provider.isFilter,
           ),
           const SizedBox(width: 16),
           ElevatedButton.icon(
@@ -236,7 +221,8 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
         child: Row(
           children: [
             CommonReportDateFilter(
-              fromDate: provider.formattedDate, // provider uses a single date here
+              fromDate:
+                  provider.formattedDate, // provider uses a single date here
               toDate: null,
               formattedFromDate: provider.formattedDate,
               formattedToDate: '',

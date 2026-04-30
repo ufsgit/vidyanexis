@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
 import 'dart:typed_data';
 
@@ -119,8 +120,7 @@ class _CustomerPageState extends State<CustomerPage> {
     if (AppStyles.isWebScreen(context)) {
       sideProvider.replaceWidgetCustomer(false, customerId.toString());
     } else {
-      context.push(
-          '${CustomerDetailsScreen.route}$customerId/${'true'}');
+      context.push('${CustomerDetailsScreen.route}$customerId/${'true'}');
     }
   }
 
@@ -229,7 +229,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                   customerProvider.fromDateS,
                                   customerProvider.toDateS,
                                 );
-                                customerProvider.getSearchCustomers(context, isSilent: true);
+                                customerProvider.getSearchCustomers(context,
+                                    isSilent: true);
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search here....',
@@ -246,8 +247,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                       customerProvider.fromDateS,
                                       customerProvider.toDateS,
                                     );
-                                    customerProvider
-                                        .getSearchCustomers(context, isSilent: true);
+                                    customerProvider.getSearchCustomers(context,
+                                        isSilent: true);
                                   },
                                   child: const Icon(Icons.search,
                                       color: Colors.black),
@@ -256,33 +257,12 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          OutlinedButton.icon(
+                          CustomFilterButton(
                             onPressed: () {
                               customerProvider.toggleFilter();
                               print(customerProvider.isFilter);
                             },
-                            icon: const Icon(Icons.filter_list),
-                            label: Text(MediaQuery.of(context).size.width > 860
-                                ? 'Filter'
-                                : ''),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: customerProvider.isFilter
-                                  ? Colors.white
-                                  : AppColors
-                                      .primaryBlue, // Change foreground color
-                              backgroundColor: customerProvider.isFilter
-                                  ? const Color(0xFF5499D9)
-                                  : Colors.white, // Change background color
-                              side: BorderSide(
-                                  color: customerProvider.isFilter
-                                      ? const Color(0xFF5499D9)
-                                      : AppColors
-                                          .primaryBlue), // Change border color
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                            ),
+                            isFilter: customerProvider.isFilter,
                           ),
                           const SizedBox(width: 16),
                         ],
@@ -327,7 +307,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                   customerProvider.fromDateS,
                                   customerProvider.toDateS,
                                 );
-                                customerProvider.getSearchCustomers(context, isSilent: true);
+                                customerProvider.getSearchCustomers(context,
+                                    isSilent: true);
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search here....',
@@ -344,8 +325,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                       customerProvider.fromDateS,
                                       customerProvider.toDateS,
                                     );
-                                    customerProvider
-                                        .getSearchCustomers(context, isSilent: true);
+                                    customerProvider.getSearchCustomers(context,
+                                        isSilent: true);
                                   },
                                   child: const Icon(Icons.search,
                                       color: Colors.black),
@@ -354,31 +335,12 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                           ),
                           // const SizedBox(width: 16),
-                          OutlinedButton.icon(
+                          CustomFilterButton(
                             onPressed: () {
                               customerProvider.toggleFilter();
                               print(customerProvider.isFilter);
                             },
-                            icon: const Icon(Icons.filter_list),
-                            label: const Text('Filter'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: customerProvider.isFilter
-                                  ? Colors.white
-                                  : AppColors
-                                      .primaryBlue, // Change foreground color
-                              backgroundColor: customerProvider.isFilter
-                                  ? const Color(0xFF5499D9)
-                                  : Colors.white, // Change background color
-                              side: BorderSide(
-                                  color: customerProvider.isFilter
-                                      ? const Color(0xFF5499D9)
-                                      : AppColors
-                                          .primaryBlue), // Change border color
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 0,
-                              ),
-                            ),
+                            isFilter: customerProvider.isFilter,
                           ),
                           const SizedBox(width: 16),
                         ],
@@ -456,7 +418,8 @@ class _CustomerPageState extends State<CustomerPage> {
                             customerProvider.removeStatus();
                             searchController.clear();
                             customerProvider.setSearchCriteria('', '', '');
-                            customerProvider.getSearchCustomers(context, isSilent: true);
+                            customerProvider.getSearchCustomers(context,
+                                isSilent: true);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -839,7 +802,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                   ],
                                                                 ),
                                                               ),
-
                                                       ],
                                                     ),
                                                   ],
@@ -848,10 +810,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                 flex: 2,
                                                 fontSize: 12,
-                                                padding: const EdgeInsets
-                                                    .symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
                                                 data: Tooltip(
                                                   message: lead.displayAddress,
                                                   child: Text(
@@ -979,7 +941,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     children: [
                                                       Expanded(
                                                         child: InkWell(
-                                                          onTap: () => onItemClick(lead.customerId),
+                                                          onTap: () =>
+                                                              onItemClick(lead
+                                                                  .customerId),
                                                           child: Text(
                                                             lead.customerName,
                                                             style: const TextStyle(
@@ -987,8 +951,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold),
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                       ),
@@ -1256,7 +1221,8 @@ class _CustomerPageState extends State<CustomerPage> {
                             fromDate,
                             toDate,
                           );
-                          customerProvider.getSearchCustomers(context, isSilent: true);
+                          customerProvider.getSearchCustomers(context,
+                              isSilent: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -1290,7 +1256,8 @@ class _CustomerPageState extends State<CustomerPage> {
                             fromDate,
                             toDate,
                           );
-                          customerProvider.getSearchCustomers(context, isSilent: true);
+                          customerProvider.getSearchCustomers(context,
+                              isSilent: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
@@ -1443,8 +1410,6 @@ class _CustomerPageState extends State<CustomerPage> {
     }
   }
 
-
-
   void _onStatusClick(BuildContext context, SearchLeadModel lead) {
     try {
       final dropDownProvider =
@@ -1551,7 +1516,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         customerProvider.formattedFromDate,
                         customerProvider.formattedToDate,
                       );
-                      customerProvider.getSearchCustomers(context, isSilent: true);
+                      customerProvider.getSearchCustomers(context,
+                          isSilent: true);
                     },
                   );
                 },
@@ -1685,7 +1651,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         if (newValue != null) {
                           customerProvider.setUserFilterStatus(newValue);
                         }
-                        customerProvider.getSearchCustomers(context, isSilent: true);
+                        customerProvider.getSearchCustomers(context,
+                            isSilent: true);
                       }
                     : null,
                 underline: Container(),

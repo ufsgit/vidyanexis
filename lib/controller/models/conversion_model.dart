@@ -74,10 +74,18 @@ class ConversionModel {
       colorCode: json["Color_Code"] ?? '',
       customerId: json["Customer_Id"] ?? 0,
       mobile: (json['Contact_Number']?.toString() ?? '').trim(),
-      address1: (json['Address1']?.toString() ?? '').trim() == '0' ? '' : (json['Address1']?.toString() ?? ''),
-      address2: (json['Address2']?.toString() ?? '').trim() == '0' ? '' : (json['Address2']?.toString() ?? ''),
-      address3: (json['Address3']?.toString() ?? '').trim() == '0' ? '' : (json['Address3']?.toString() ?? ''),
-      address4: (json['Address4']?.toString() ?? '').trim() == '0' ? '' : (json['Address4']?.toString() ?? ''),
+      address1: (json['Address1']?.toString() ?? '').trim() == '0'
+          ? ''
+          : (json['Address1']?.toString() ?? ''),
+      address2: (json['Address2']?.toString() ?? '').trim() == '0'
+          ? ''
+          : (json['Address2']?.toString() ?? ''),
+      address3: (json['Address3']?.toString() ?? '').trim() == '0'
+          ? ''
+          : (json['Address3']?.toString() ?? ''),
+      address4: (json['Address4']?.toString() ?? '').trim() == '0'
+          ? ''
+          : (json['Address4']?.toString() ?? ''),
       enquirySourceName: json['Enquiry_Source_Name'] ?? '',
       byUserName: json['By_User_Name'] ?? '',
       toUserName: json['To_User_Name'] ?? '',
@@ -107,5 +115,3 @@ class ConversionModel {
         'remark': remark,
       };
 }
-
-

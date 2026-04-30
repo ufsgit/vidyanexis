@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -158,8 +159,8 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                       reportsProvider.Status,
                                       reportsProvider.AssignedTo,
                                     );
-                                    reportsProvider.getSearchConversionReport(
-                                        context);
+                                    reportsProvider
+                                        .getSearchConversionReport(context);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF6C7C93),
@@ -184,33 +185,11 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white,
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors.primaryBlue),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 0,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 8),
                         CustomElevatedButton(
@@ -316,7 +295,6 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           borderColor: AppColors.primaryBlue,
                           backgroundColor: AppColors.primaryBlue,
                         ),
-
                       ],
                     ),
                   )
@@ -399,32 +377,11 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 ),
                               ),
                             ),
-                            ElevatedButton.icon(
+                            CustomFilterButton(
                               onPressed: () {
                                 reportsProvider.toggleFilter();
                               },
-                              icon: const Icon(Icons.filter_list, size: 18),
-                              label: Text(
-                                  MediaQuery.of(context).size.width > 860
-                                      ? 'Filter'
-                                      : ''),
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: reportsProvider.isFilter
-                                    ? Colors.white
-                                    : AppColors.primaryBlue,
-                                backgroundColor: reportsProvider.isFilter
-                                    ? AppColors.primaryBlue
-                                    : Colors.white,
-                                elevation: 0,
-                                side: BorderSide(color: AppColors.primaryBlue),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
+                              isFilter: reportsProvider.isFilter,
                             ),
                             ElevatedButton.icon(
                               onPressed: () {
@@ -1081,30 +1038,30 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                   reportsProvider.selectedFollowUpStatusId !=
                                       0) ||
                               reportsProvider.Search.isNotEmpty)
-                          CommonReportResetButton(
-                            onReset: () {
-                              reportsProvider.selectDateFilterOption(null);
-                              reportsProvider.removeStatus();
-                              searchController.clear();
-                              reportsProvider.setTaskSearchCriteria(
-                                  '', '', '', '', '');
-                              reportsProvider
-                                  .getSearchConversionReport(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: AppColors.textRed,
-                              elevation: 0,
-                              side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                            CommonReportResetButton(
+                              onReset: () {
+                                reportsProvider.selectDateFilterOption(null);
+                                reportsProvider.removeStatus();
+                                searchController.clear();
+                                reportsProvider.setTaskSearchCriteria(
+                                    '', '', '', '', '');
+                                reportsProvider
+                                    .getSearchConversionReport(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppColors.textRed,
+                                elevation: 0,
+                                side: BorderSide(color: AppColors.textRed),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ),

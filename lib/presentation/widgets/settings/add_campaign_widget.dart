@@ -37,7 +37,8 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
         Provider.of<SettingsProvider>(context, listen: false);
     if (widget.isEdit) {
       settingsProvider.campaignNameController.text = widget.campaignName;
-      settingsProvider.campaignIdStringController.text = widget.campaignIdString;
+      settingsProvider.campaignIdStringController.text =
+          widget.campaignIdString;
       // Always fetch from server to get accurate pre-checked users
       _fetchCampaignDetails();
     } else {
@@ -87,7 +88,8 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
                 itemCount: settingsProvider.searchUserDetails.length,
                 itemBuilder: (context, index) {
                   final user = settingsProvider.searchUserDetails[index];
-                  final isSelected = selectedUserIds.contains(user.userDetailsId);
+                  final isSelected =
+                      selectedUserIds.contains(user.userDetailsId);
                   return CheckboxListTile(
                     title: Text(user.userDetailsName),
                     value: isSelected,
@@ -169,8 +171,8 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
                       .indexWhere((u) => u.userDetailsId == id);
                   String displayName = 'User $id';
                   if (userIndex != -1) {
-                    displayName =
-                        settingsProvider.searchUserDetails[userIndex].userDetailsName;
+                    displayName = settingsProvider
+                        .searchUserDetails[userIndex].userDetailsName;
                   }
                   return Container(
                     padding:
@@ -197,7 +199,8 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
             InkWell(
               onTap: _showUserSelectionDialog,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey[300]!),
                   borderRadius: BorderRadius.circular(8),
@@ -232,7 +235,8 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
                   onPressed: () {
                     if (settingsProvider.campaignNameController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please enter campaign name')),
+                        const SnackBar(
+                            content: Text('Please enter campaign name')),
                       );
                       return;
                     }

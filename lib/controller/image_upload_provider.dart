@@ -480,7 +480,8 @@ class ImageUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> uploadAllDocumentsGrouped(BuildContext context, {bool shouldPop = true}) async {
+  Future<void> uploadAllDocumentsGrouped(BuildContext context,
+      {bool shouldPop = true}) async {
     try {
       if (_fileInfoList.isEmpty) return;
 

@@ -236,7 +236,6 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                     ),
                   ),
                   const SizedBox(width: 10),
-
                   Expanded(
                     child: CustomTextField(
                       readOnly: false,

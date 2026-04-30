@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -105,78 +104,78 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
               showEdit: settingsprovider.menuIsEditMap[13] == 1,
               showDelete: settingsprovider.menuIsDeleteMap[13] == 1,
               onOptionSelected: (PopupMenuOptions option) async {
-              switch (option) {
-                case PopupMenuOptions.edit:
-                  if (customerDetailsProvider.taskDetails.isEmpty) break;
+                switch (option) {
+                  case PopupMenuOptions.edit:
+                    if (customerDetailsProvider.taskDetails.isEmpty) break;
 
-                  customerDetailsProvider.customerId = customerDetailsProvider
-                      .taskDetails[0].customerId
-                      .toString();
-                  await customerDetailsProvider.getTaskUsers(
-                      customerDetailsProvider.taskDetails[0].taskMasterId);
-                  customerDetailsProvider.setTaskEditDropDown(
-                      customerDetailsProvider.taskDetails[0].taskTypeId,
-                      customerDetailsProvider.taskDetails[0].taskTypeName,
-                      customerDetailsProvider.taskDetails[0].toUserId,
-                      customerDetailsProvider.taskDetails[0].toUserName,
-                      customerDetailsProvider.taskDetails[0].taskStatusId,
-                      customerDetailsProvider.taskDetails[0].taskStatusName);
-                  customerDetailsProvider.taskDescriptionController.text =
-                      customerDetailsProvider.taskDetails[0].description
-                          .toString();
-                  customerDetailsProvider.taskChoosedateController.text =
-                      customerDetailsProvider.taskDetails[0].taskDate
-                                      .toString() !=
-                                  'null' &&
-                              customerDetailsProvider.taskDetails[0].taskDate
-                                  .toString()
-                                  .isNotEmpty
-                          ? DateFormat('dd MMM yyyy').format(DateTime.parse(
-                              customerDetailsProvider.taskDetails[0].taskDate
-                                  .toString()))
-                          : '';
-                  customerDetailsProvider.taskChoosetimeController.text =
-                      customerDetailsProvider.taskDetails[0].taskTime
-                          .toString();
-                  customerDetailsProvider.taskTypeController.text =
-                      customerDetailsProvider.taskDetails[0].taskTypeName;
-                  customerDetailsProvider.amcStatusNameController.text =
-                      customerDetailsProvider.taskDetails[0].taskStatusName;
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return AddTaskMobile(
-                        isEdit: true,
-                        taskId: customerDetailsProvider
-                            .taskDetails[0].taskMasterId
-                            .toString(),
-                        task: customerDetailsProvider.taskDetails[0],
-                      );
-                    },
-                  ));
-                  break;
-                case PopupMenuOptions.delete:
-                  showConfirmationDialog(
-                    isLoading: customerDetailsProvider.isDeleteLoading,
-                    context: context,
-                    title: 'Confirm Deletion',
-                    content: 'Are you sure you want to delete this task?',
-                    onCancel: () {
-                      Navigator.of(context).pop();
-                    },
-                    onConfirm: () async {
-                      await customerDetailsProvider.deleteTask(
-                          widget.taskId, widget.customerId, context);
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    },
-                    confirmButtonText: 'Delete',
-                    confirmButtonColor: Colors.red,
-                  );
+                    customerDetailsProvider.customerId = customerDetailsProvider
+                        .taskDetails[0].customerId
+                        .toString();
+                    await customerDetailsProvider.getTaskUsers(
+                        customerDetailsProvider.taskDetails[0].taskMasterId);
+                    customerDetailsProvider.setTaskEditDropDown(
+                        customerDetailsProvider.taskDetails[0].taskTypeId,
+                        customerDetailsProvider.taskDetails[0].taskTypeName,
+                        customerDetailsProvider.taskDetails[0].toUserId,
+                        customerDetailsProvider.taskDetails[0].toUserName,
+                        customerDetailsProvider.taskDetails[0].taskStatusId,
+                        customerDetailsProvider.taskDetails[0].taskStatusName);
+                    customerDetailsProvider.taskDescriptionController.text =
+                        customerDetailsProvider.taskDetails[0].description
+                            .toString();
+                    customerDetailsProvider.taskChoosedateController.text =
+                        customerDetailsProvider.taskDetails[0].taskDate
+                                        .toString() !=
+                                    'null' &&
+                                customerDetailsProvider.taskDetails[0].taskDate
+                                    .toString()
+                                    .isNotEmpty
+                            ? DateFormat('dd MMM yyyy').format(DateTime.parse(
+                                customerDetailsProvider.taskDetails[0].taskDate
+                                    .toString()))
+                            : '';
+                    customerDetailsProvider.taskChoosetimeController.text =
+                        customerDetailsProvider.taskDetails[0].taskTime
+                            .toString();
+                    customerDetailsProvider.taskTypeController.text =
+                        customerDetailsProvider.taskDetails[0].taskTypeName;
+                    customerDetailsProvider.amcStatusNameController.text =
+                        customerDetailsProvider.taskDetails[0].taskStatusName;
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return AddTaskMobile(
+                          isEdit: true,
+                          taskId: customerDetailsProvider
+                              .taskDetails[0].taskMasterId
+                              .toString(),
+                          task: customerDetailsProvider.taskDetails[0],
+                        );
+                      },
+                    ));
+                    break;
+                  case PopupMenuOptions.delete:
+                    showConfirmationDialog(
+                      isLoading: customerDetailsProvider.isDeleteLoading,
+                      context: context,
+                      title: 'Confirm Deletion',
+                      content: 'Are you sure you want to delete this task?',
+                      onCancel: () {
+                        Navigator.of(context).pop();
+                      },
+                      onConfirm: () async {
+                        await customerDetailsProvider.deleteTask(
+                            widget.taskId, widget.customerId, context);
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
+                      confirmButtonText: 'Delete',
+                      confirmButtonColor: Colors.red,
+                    );
 
-                  break;
-              }
-            },
-          ),
+                    break;
+                }
+              },
+            ),
         ],
       ),
       body: customerDetailsProvider.isLoadingDetails ||

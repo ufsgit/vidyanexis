@@ -95,11 +95,11 @@ class _HomePageMobileState extends State<HomePageMobile> {
       }
     }
 
-    addPage(12, 'assets/images/home-11.png', 'Home', const DashBoardPage());
-    addPage(3, 'assets/images/user-story.png', 'Leads', const LeadPagePhone());
-    addPage(4, 'assets/images/user_grouped.png', 'Customers',
+    addPage(12, 'assets/images/home-page.png', 'Home', const DashBoardPage());
+    addPage(3, 'assets/images/leader.png', 'Leads', const LeadPagePhone());
+    addPage(4, 'assets/images/consumer.png', 'Customers',
         const CustomerPagePhone());
-    addPage(35, 'assets/images/task-02.png', 'Tasks', const TaskPage());
+    addPage(35, 'assets/images/checklist.png', 'Tasks', const TaskPage());
 
     return Scaffold(
       drawer: const SidebarDrawer(),
@@ -114,8 +114,8 @@ class _HomePageMobileState extends State<HomePageMobile> {
               iconSize: 20,
               backgroundColor: AppColors.whiteColor,
               elevation: 1,
-              selectedItemColor: AppColors.primaryBlue,
-              unselectedItemColor: AppColors.textGrey4,
+              selectedItemColor: Colors.black,
+              unselectedItemColor: Colors.black54,
               selectedLabelStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,

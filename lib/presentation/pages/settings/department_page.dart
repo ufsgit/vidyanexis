@@ -64,7 +64,8 @@ class _DepartmentPageState extends State<DepartmentPage> {
                           border: Border.all(color: Colors.grey[200]!),
                         ),
                         child: TextField(
-                          controller: settingsProvider.searchDepartmentController,
+                          controller:
+                              settingsProvider.searchDepartmentController,
                           onChanged: (query) {
                             settingsProvider.searchDepartment(query, context);
                           },
@@ -74,9 +75,11 @@ class _DepartmentPageState extends State<DepartmentPage> {
                               color: Colors.grey[400],
                               fontSize: 14,
                             ),
-                            prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey[500]),
+                            prefixIcon: Icon(Icons.search,
+                                size: 20, color: Colors.grey[500]),
                             border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 0),
                           ),
                         ),
                       ),
@@ -145,7 +148,8 @@ class _DepartmentPageState extends State<DepartmentPage> {
                           children: [
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
                                     borderRadius: BorderRadius.circular(12)),
@@ -158,7 +162,8 @@ class _DepartmentPageState extends State<DepartmentPage> {
                                 ),
                               ),
                             ),
-                            _buildActionButtons(context, settingsProvider, index),
+                            _buildActionButtons(
+                                context, settingsProvider, index),
                           ],
                         ),
                       );
@@ -172,10 +177,10 @@ class _DepartmentPageState extends State<DepartmentPage> {
         );
       },
     );
-
   }
 
-  Widget _buildActionButtons(BuildContext context, SettingsProvider settingsProvider, int index) {
+  Widget _buildActionButtons(
+      BuildContext context, SettingsProvider settingsProvider, int index) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -187,14 +192,17 @@ class _DepartmentPageState extends State<DepartmentPage> {
                 context: context,
                 builder: (BuildContext context) {
                   return AddDepartment(
-                    editId: settingsProvider.departmentModel[index].departmentId.toString(),
-                    department: settingsProvider.departmentModel[index].departmentName,
+                    editId: settingsProvider.departmentModel[index].departmentId
+                        .toString(),
+                    department:
+                        settingsProvider.departmentModel[index].departmentName,
                     isEdit: true,
                   );
                 },
               );
             },
-            icon: Icon(Icons.edit_outlined, color: AppColors.primaryBlue, size: 20),
+            icon: Icon(Icons.edit_outlined,
+                color: AppColors.primaryBlue, size: 20),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             visualDensity: VisualDensity.compact,
@@ -219,7 +227,8 @@ class _DepartmentPageState extends State<DepartmentPage> {
                         onPressed: () async {
                           await settingsProvider.deleteDepartment(
                             context,
-                            settingsProvider.departmentModel[index].departmentId,
+                            settingsProvider
+                                .departmentModel[index].departmentId,
                           );
                           Navigator.pop(context);
                         },
@@ -233,7 +242,8 @@ class _DepartmentPageState extends State<DepartmentPage> {
                 },
               );
             },
-            icon: Icon(Icons.delete_outline, color: AppColors.textRed, size: 20),
+            icon:
+                Icon(Icons.delete_outline, color: AppColors.textRed, size: 20),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             visualDensity: VisualDensity.compact,

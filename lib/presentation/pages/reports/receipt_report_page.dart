@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -111,21 +112,11 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                   color: AppColors.textBlack,
                 ),
               ),
-              ElevatedButton.icon(
+              CustomFilterButton(
                 onPressed: () {
                   provider.toggleFilter();
                 },
-                icon: const Icon(Icons.filter_list, size: 18),
-                label: const Text('Filter'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
+                isFilter: false,
               ),
             ],
           ),
@@ -221,8 +212,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                                       style: const TextStyle(fontSize: 14),
                                     ),
                                   ),
-                                ))
-                            ,
+                                )),
                       ],
                       onChanged: (int? newValue) {
                         if (newValue == 0 || newValue == null) {
@@ -291,14 +281,33 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                       fontWeight: FontWeight.bold, color: Color(0xFF607185))),
             ),
           ),
-          TableWidget(title: 'Entry Date', flex: 2, color: Color(0xFF607185), maxLines: 1),
           TableWidget(
-              title: 'Receipt No', flex: 1, color: Color(0xFF607185), maxLines: 1),
-          TableWidget(title: 'Customer Name', flex: 3, color: Color(0xFF607185), maxLines: 1),
-          TableWidget(title: 'Description', flex: 3, color: Color(0xFF607185), maxLines: 1),
+              title: 'Entry Date',
+              flex: 2,
+              color: Color(0xFF607185),
+              maxLines: 1),
           TableWidget(
-              title: 'Collected By', flex: 2, color: Color(0xFF607185), maxLines: 1),
-          TableWidget(title: 'Amount', flex: 1, color: Color(0xFF607185), maxLines: 1),
+              title: 'Receipt No',
+              flex: 1,
+              color: Color(0xFF607185),
+              maxLines: 1),
+          TableWidget(
+              title: 'Customer Name',
+              flex: 3,
+              color: Color(0xFF607185),
+              maxLines: 1),
+          TableWidget(
+              title: 'Description',
+              flex: 3,
+              color: Color(0xFF607185),
+              maxLines: 1),
+          TableWidget(
+              title: 'Collected By',
+              flex: 2,
+              color: Color(0xFF607185),
+              maxLines: 1),
+          TableWidget(
+              title: 'Amount', flex: 1, color: Color(0xFF607185), maxLines: 1),
         ],
       ),
     );
@@ -320,20 +329,33 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                   style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
-          TableWidget(data: Text(item.entryDate, maxLines: 1, overflow: TextOverflow.ellipsis), flex: 2),
-          TableWidget(data: Text(item.receiptNo, maxLines: 1, overflow: TextOverflow.ellipsis), flex: 1),
+          TableWidget(
+              data: Text(item.entryDate,
+                  maxLines: 1, overflow: TextOverflow.ellipsis),
+              flex: 2),
+          TableWidget(
+              data: Text(item.receiptNo,
+                  maxLines: 1, overflow: TextOverflow.ellipsis),
+              flex: 1),
           TableWidget(
               data: Text(item.customerName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontWeight: FontWeight.w500)),
               flex: 3),
-          TableWidget(data: Text(item.description, maxLines: 1, overflow: TextOverflow.ellipsis), flex: 3),
-          TableWidget(data: Text(item.byUserName, maxLines: 1, overflow: TextOverflow.ellipsis), flex: 2),
+          TableWidget(
+              data: Text(item.description,
+                  maxLines: 1, overflow: TextOverflow.ellipsis),
+              flex: 3),
+          TableWidget(
+              data: Text(item.byUserName,
+                  maxLines: 1, overflow: TextOverflow.ellipsis),
+              flex: 2),
           TableWidget(
               data: Align(
                 alignment: Alignment.centerRight,
-                child: Text('₹ ${item.amount.toStringAsFixed(2)}', maxLines: 1, overflow: TextOverflow.ellipsis),
+                child: Text('₹ ${item.amount.toStringAsFixed(2)}',
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
               flex: 1),
         ],
@@ -441,14 +463,14 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
               ],
             ),
             const SizedBox(height: 8),
-             Text(
-                'Receipt No: ${item.receiptNo}',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textGrey3,
-                ),
+            Text(
+              'Receipt No: ${item.receiptNo}',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textGrey3,
               ),
+            ),
             const SizedBox(height: 4),
             const SizedBox(height: 4),
             Row(

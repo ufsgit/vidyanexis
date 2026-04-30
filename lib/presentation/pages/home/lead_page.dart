@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
 import 'dart:typed_data';
 
@@ -356,7 +357,7 @@ class _LeadsPageState extends State<LeadPage> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  OutlinedButton.icon(
+                  CustomFilterButton(
                     onPressed: () {
                       leadProvider.toggleFilter();
                       // leadProvider.selectDateFilterOption(null);
@@ -364,24 +365,7 @@ class _LeadsPageState extends State<LeadPage> {
                       // leadProvider.getSearchLeads('', '', '', '', context);
                       print(leadProvider.isFilter);
                     },
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text('Filter'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: leadProvider.isFilter
-                          ? Colors.white
-                          : AppColors.primaryBlue, // Change foreground color
-                      backgroundColor: leadProvider.isFilter
-                          ? const Color(0xFF5499D9)
-                          : Colors.white, // Change background color
-                      side: BorderSide(
-                          color: leadProvider.isFilter
-                              ? const Color(0xFF5499D9)
-                              : AppColors.primaryBlue), // Change border color
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                    ),
+                    isFilter: leadProvider.isFilter,
                   ),
                   const SizedBox(width: 16),
                   // New Lead Button

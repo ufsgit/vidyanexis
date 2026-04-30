@@ -22,7 +22,7 @@ class CommonReportDateFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool hasDates = fromDate != null || toDate != null;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(

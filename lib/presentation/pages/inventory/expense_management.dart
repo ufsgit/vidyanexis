@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -215,22 +216,9 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
   }
 
   Widget _buildFilterButton() {
-    return OutlinedButton.icon(
+    return CustomFilterButton(
       onPressed: () => expenseProvider.toggleFilter(),
-      icon: const Icon(Icons.filter_list),
-      label: Text(AppStyles.isWebScreen(context) ? 'Filter' : ''),
-      style: OutlinedButton.styleFrom(
-        foregroundColor:
-            expenseProvider.isFilter ? Colors.white : AppColors.primaryBlue,
-        backgroundColor:
-            expenseProvider.isFilter ? const Color(0xFF5499D9) : Colors.white,
-        side: BorderSide(
-          color: expenseProvider.isFilter
-              ? const Color(0xFF5499D9)
-              : AppColors.primaryBlue,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      ),
+      isFilter: expenseProvider.isFilter,
     );
   }
 
@@ -408,8 +396,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                               style: const TextStyle(fontSize: 14),
                             ),
                           ),
-                        ))
-                    ,
+                        )),
               ];
               // For admin, use the selected value from provider
               dropdownValue = expenseProvider.selectedUser ?? 0;

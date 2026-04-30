@@ -102,12 +102,14 @@ class StockReturnReportProvider extends ChangeNotifier {
         final data = response.data;
         if (data != null && data is List) {
           _reportList = data
-              .map((item) => StockUseReportModel.fromJson(item as Map<String, dynamic>))
+              .map((item) =>
+                  StockUseReportModel.fromJson(item as Map<String, dynamic>))
               .toList();
         } else if (data != null && data is Map && data['data'] != null) {
           final list = data['data'] as List;
           _reportList = list
-              .map((item) => StockUseReportModel.fromJson(item as Map<String, dynamic>))
+              .map((item) =>
+                  StockUseReportModel.fromJson(item as Map<String, dynamic>))
               .toList();
         } else {
           _reportList = [];

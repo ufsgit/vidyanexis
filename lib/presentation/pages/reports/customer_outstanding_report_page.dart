@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_outstanding_report_provider.dart';
@@ -15,19 +16,23 @@ class CustomerOutstandingReportPage extends StatefulWidget {
   const CustomerOutstandingReportPage({super.key});
 
   @override
-  State<CustomerOutstandingReportPage> createState() => _CustomerOutstandingReportPageState();
+  State<CustomerOutstandingReportPage> createState() =>
+      _CustomerOutstandingReportPageState();
 }
 
-class _CustomerOutstandingReportPageState extends State<CustomerOutstandingReportPage> {
+class _CustomerOutstandingReportPageState
+    extends State<CustomerOutstandingReportPage> {
   final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<CustomerOutstandingReportProvider>(context, listen: false);
+      final provider = Provider.of<CustomerOutstandingReportProvider>(context,
+          listen: false);
       provider.getReport(context);
-      Provider.of<DropDownProvider>(context, listen: false).getEnquirySource(context);
+      Provider.of<DropDownProvider>(context, listen: false)
+          .getEnquirySource(context);
     });
   }
 
@@ -74,14 +79,16 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                       child: Row(
                         children: [
                           const SizedBox(width: 15),
-                          const Icon(Icons.search, color: Colors.grey, size: 20),
+                          const Icon(Icons.search,
+                              color: Colors.grey, size: 20),
                           Expanded(
                             child: TextField(
                               controller: searchController,
                               decoration: const InputDecoration(
                                 hintText: 'Search here....',
                                 border: InputBorder.none,
-                                hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
+                                hintStyle:
+                                    TextStyle(color: Colors.grey, fontSize: 13),
                               ),
                               onChanged: (val) => provider.setSearch(val),
                               onSubmitted: (val) => provider.getReport(context),
@@ -92,29 +99,25 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF7F8C8D),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
                                 elevation: 0,
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
                               ),
                               onPressed: () => provider.getReport(context),
-                              child: const Text('Search', style: TextStyle(color: Colors.white, fontSize: 12)),
+                              child: const Text('Search',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 12)),
                             ),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 16),
-                    OutlinedButton.icon(
+                    CustomFilterButton(
                       onPressed: () => provider.toggleFilter(),
-                      icon: const Icon(Icons.filter_list, size: 18),
-                      label: const Text('Filter'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: provider.isFilter ? Colors.white : const Color(0xFFF1C40F),
-                        backgroundColor: provider.isFilter ? const Color(0xFFF1C40F) : Colors.white,
-                        side: const BorderSide(color: Color(0xFFF1C40F)),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                      ),
+                      isFilter: provider.isFilter,
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton(
@@ -143,10 +146,13 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                         backgroundColor: const Color(0xFFF1C40F),
                         foregroundColor: Colors.white,
                         elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25)),
                       ),
-                      child: const Text('Export to Excel', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text('Export to Excel',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
@@ -179,14 +185,18 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: ConstrainedBox(
-                constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
-              child: Container(
-                width: MediaQuery.of(context).size.width > 1200 ? MediaQuery.of(context).size.width : 1200,
-                child: Column(
+                constraints:
+                    BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+                child: Container(
+                  width: MediaQuery.of(context).size.width > 1200
+                      ? MediaQuery.of(context).size.width
+                      : 1200,
+                  child: Column(
                     children: [
                       // Table Header
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 24),
                         decoration: const BoxDecoration(
                           color: Color(0xFFF8FAFC),
                           borderRadius: BorderRadius.only(
@@ -212,14 +222,20 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                             ? const Center(child: Text('No data found'))
                             : ListView.separated(
                                 itemCount: provider.reportData.length,
-                                separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[100]),
+                                separatorBuilder: (context, index) =>
+                                    Divider(height: 1, color: Colors.grey[100]),
                                 itemBuilder: (context, index) {
                                   final item = provider.reportData[index];
                                   return Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12, horizontal: 24),
                                     child: Row(
                                       children: [
-                                        Expanded(flex: 1, child: Text('${index + 1}', style: const TextStyle(fontSize: 13))),
+                                        Expanded(
+                                            flex: 1,
+                                            child: Text('${index + 1}',
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
                                         Expanded(
                                           flex: 3,
                                           child: InkWell(
@@ -227,8 +243,10 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) => CustomerDetailsScreen(
-                                                    customerId: item.customerId.toString(),
+                                                  builder: (context) =>
+                                                      CustomerDetailsScreen(
+                                                    customerId: item.customerId
+                                                        .toString(),
                                                     report: 'true',
                                                   ),
                                                 ),
@@ -243,32 +261,64 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                                               children: [
                                                 CircleAvatar(
                                                   radius: 14,
-                                                  backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-                                                  child: Icon(Icons.person, size: 16, color: AppColors.primaryBlue),
+                                                  backgroundColor: AppColors
+                                                      .primaryBlue
+                                                      .withOpacity(0.1),
+                                                  child: Icon(Icons.person,
+                                                      size: 16,
+                                                      color: AppColors
+                                                          .primaryBlue),
                                                 ),
                                                 const SizedBox(width: 10),
                                                 Flexible(
                                                   child: Text(
                                                     item.customerName,
-                                                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                                                    overflow: TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 13),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                 ),
                                                 const SizedBox(width: 6),
-                                                Icon(Icons.chevron_right, size: 18, color: AppColors.primaryBlue),
+                                                Icon(Icons.chevron_right,
+                                                    size: 18,
+                                                    color:
+                                                        AppColors.primaryBlue),
                                               ],
                                             ),
                                           ),
                                         ),
-                                        Expanded(flex: 2, child: Text(item.enquirySource, style: const TextStyle(fontSize: 13))),
-                                        Expanded(flex: 3, child: Text(item.phone, style: const TextStyle(fontSize: 13))),
-                                        Expanded(flex: 3, child: Text('₹${item.projectCost}', style: const TextStyle(fontSize: 13))),
-                                        Expanded(flex: 3, child: Text('₹${item.received}', style: const TextStyle(fontSize: 13, color: Colors.green))),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text(item.enquirySource,
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        Expanded(
+                                            flex: 3,
+                                            child: Text(item.phone,
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        Expanded(
+                                            flex: 3,
+                                            child: Text('₹${item.projectCost}',
+                                                style: const TextStyle(
+                                                    fontSize: 13))),
+                                        Expanded(
+                                            flex: 3,
+                                            child: Text('₹${item.received}',
+                                                style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.green))),
                                         Expanded(
                                           flex: 3,
                                           child: Text(
                                             '₹${item.balance}',
-                                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 13),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.red,
+                                                fontSize: 13),
                                           ),
                                         ),
                                       ],
@@ -279,10 +329,12 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                       ),
                       // Table Footer
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 24),
                         decoration: const BoxDecoration(
                           color: Color(0xFFF8FAFC),
-                          border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+                          border:
+                              Border(top: BorderSide(color: Color(0xFFE2E8F0))),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8),
                             bottomRight: Radius.circular(8),
@@ -291,11 +343,29 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                         child: Row(
                           children: [
                             const Expanded(flex: 1, child: SizedBox()),
-                            const Expanded(flex: 5, child: Text('TOTAL', style: TextStyle(fontWeight: FontWeight.bold))),
+                            const Expanded(
+                                flex: 5,
+                                child: Text('TOTAL',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold))),
                             const Expanded(flex: 3, child: SizedBox()),
-                            Expanded(flex: 3, child: Text('₹${provider.totalProjectCost}', style: const TextStyle(fontWeight: FontWeight.bold))),
-                            Expanded(flex: 3, child: Text('₹${provider.totalReceived}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
-                            Expanded(flex: 3, child: Text('₹${provider.totalBalance}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red))),
+                            Expanded(
+                                flex: 3,
+                                child: Text('₹${provider.totalProjectCost}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold))),
+                            Expanded(
+                                flex: 3,
+                                child: Text('₹${provider.totalReceived}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green))),
+                            Expanded(
+                                flex: 3,
+                                child: Text('₹${provider.totalBalance}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red))),
                           ],
                         ),
                       ),
@@ -310,7 +380,8 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
     );
   }
 
-  Widget _buildTableHeader(String title, {int? flex, double? width, bool center = false}) {
+  Widget _buildTableHeader(String title,
+      {int? flex, double? width, bool center = false}) {
     final child = Text(
       title.toUpperCase(),
       textAlign: center ? TextAlign.center : TextAlign.start,
@@ -329,7 +400,8 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
           );
   }
 
-  Widget _buildEnquirySourceDropdown(BuildContext context, CustomerOutstandingReportProvider provider) {
+  Widget _buildEnquirySourceDropdown(
+      BuildContext context, CustomerOutstandingReportProvider provider) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
         return Container(
@@ -339,26 +411,35 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: provider.selectedEnquirySourceId != null ? AppColors.primaryBlue : Colors.grey[300]!,
+              color: provider.selectedEnquirySourceId != null
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
             ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Source: ', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+              Text('Source: ',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 13)),
               DropdownButton<int>(
                 value: provider.selectedEnquirySourceId,
-                hint: const Text('All', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                hint: const Text('All',
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                 underline: const SizedBox(),
                 items: [
                   const DropdownMenuItem<int>(
                     value: null,
-                    child: Text('All', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    child: Text('All',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 13)),
                   ),
                   ...dropDownProvider.enquiryData.map((source) {
                     return DropdownMenuItem<int>(
                       value: source.enquirySourceId,
-                      child: Text(source.enquirySourceName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                      child: Text(source.enquirySourceName,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 13)),
                     );
                   }),
                 ],
@@ -366,7 +447,8 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                   provider.setEnquirySource(value);
                   provider.getReport(context);
                 },
-                icon: const Icon(Icons.arrow_drop_down_outlined, color: Colors.black45, size: 20),
+                icon: const Icon(Icons.arrow_drop_down_outlined,
+                    color: Colors.black45, size: 20),
               ),
             ],
           ),
@@ -375,7 +457,8 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
     );
   }
 
-  Widget _buildFilterItem(BuildContext context, String label, String value, {VoidCallback? onTap}) {
+  Widget _buildFilterItem(BuildContext context, String label, String value,
+      {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -386,8 +469,11 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
         ),
         child: Row(
           children: [
-            Text('$label: ', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-            Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+            Text('$label: ',
+                style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+            Text(value,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
             const SizedBox(width: 8),
             const Icon(Icons.arrow_drop_down, size: 20),
           ],
@@ -411,10 +497,21 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                   children: [
                     for (int i = 0; i < 5; i++)
                       ActionChip(
-                        label: Text(['Yesterday', 'Today', 'Tomorrow', 'This Week', 'This Month'][i]),
+                        label: Text([
+                          'Yesterday',
+                          'Today',
+                          'Tomorrow',
+                          'This Week',
+                          'This Month'
+                        ][i]),
                         onPressed: () => provider.selectDateFilterOption(i),
-                        backgroundColor: provider.selectedDateFilterIndex == i ? AppColors.primaryBlue : null,
-                        labelStyle: TextStyle(color: provider.selectedDateFilterIndex == i ? Colors.white : null),
+                        backgroundColor: provider.selectedDateFilterIndex == i
+                            ? AppColors.primaryBlue
+                            : null,
+                        labelStyle: TextStyle(
+                            color: provider.selectedDateFilterIndex == i
+                                ? Colors.white
+                                : null),
                       ),
                   ],
                 ),
@@ -425,7 +522,9 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                       child: OutlinedButton.icon(
                         onPressed: () => provider.selectDate(context, true),
                         icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(provider.fromDate != null ? provider.formattedFromDate : 'From Date'),
+                        label: Text(provider.fromDate != null
+                            ? provider.formattedFromDate
+                            : 'From Date'),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -433,7 +532,9 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                       child: OutlinedButton.icon(
                         onPressed: () => provider.selectDate(context, false),
                         icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(provider.toDate != null ? provider.formattedToDate : 'To Date'),
+                        label: Text(provider.toDate != null
+                            ? provider.formattedToDate
+                            : 'To Date'),
                       ),
                     ),
                   ],
@@ -441,7 +542,9 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel')),
               ElevatedButton(
                 onPressed: () {
                   provider.getReport(context);

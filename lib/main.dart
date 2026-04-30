@@ -157,7 +157,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) => CustomerLeadSearchProvider()),
         ChangeNotifierProvider(create: (context) => StockUseReportProvider()),
-        ChangeNotifierProvider(create: (context) => StockReturnReportProvider()),
+        ChangeNotifierProvider(
+            create: (context) => StockReturnReportProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {

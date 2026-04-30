@@ -89,26 +89,40 @@ class LeadDetailsProvider with ChangeNotifier {
             leadProvider.consumerNoController.text = leadData.consumerNumber;
             leadProvider.electricalSectionController.text =
                 leadData.electricalSection ?? '';
-            leadProvider.invertorCapacityController.text = leadData.inverterCapacity == 0
-                ? ""
-                : leadData.inverterCapacity.toString().replaceAll(RegExp(r'\.0$'), '');
+            leadProvider.invertorCapacityController.text =
+                leadData.inverterCapacity == 0
+                    ? ""
+                    : leadData.inverterCapacity
+                        .toString()
+                        .replaceAll(RegExp(r'\.0$'), '');
             leadProvider.projectCostController.text = leadData.projectCost == 0
                 ? ""
-                : leadData.projectCost.toString().replaceAll(RegExp(r'\.0$'), '');
-            leadProvider.panelCapacityController.text = leadData.panelCapacity == 0
-                ? ""
-                : leadData.panelCapacity.toString().replaceAll(RegExp(r'\.0$'), '');
+                : leadData.projectCost
+                    .toString()
+                    .replaceAll(RegExp(r'\.0$'), '');
+            leadProvider.panelCapacityController.text =
+                leadData.panelCapacity == 0
+                    ? ""
+                    : leadData.panelCapacity
+                        .toString()
+                        .replaceAll(RegExp(r'\.0$'), '');
             leadProvider.additionalCostControler.text =
                 leadData.additionalCost == 0
                     ? ""
-                    : leadData.additionalCost.toString().replaceAll(RegExp(r'\.0$'), '');
+                    : leadData.additionalCost
+                        .toString()
+                        .replaceAll(RegExp(r'\.0$'), '');
             leadProvider.advanceAmountController.text =
                 leadData.advanceAmount == 0
                     ? ""
-                    : leadData.advanceAmount.toString().replaceAll(RegExp(r'\.0$'), '');
+                    : leadData.advanceAmount
+                        .toString()
+                        .replaceAll(RegExp(r'\.0$'), '');
             leadProvider.commissionController.text = leadData.commission == 0
                 ? ""
-                : leadData.commission.toString().replaceAll(RegExp(r'\.0$'), '');
+                : leadData.commission
+                    .toString()
+                    .replaceAll(RegExp(r'\.0$'), '');
             leadProvider.repController.text = leadData.rep ?? '';
             leadProvider.leadByController.text = leadData.leadBy ?? '';
             leadProvider.additionalCommentscONTROLLER.text =
@@ -122,9 +136,12 @@ class LeadDetailsProvider with ChangeNotifier {
             leadProvider.referenceNameController.text =
                 leadData.referenceName ?? '';
             leadProvider.districtController.text = leadData.districtName ?? '';
-            leadProvider.connectedLoadController.text = leadData.connectedLoad == 0
-                ? ""
-                : leadData.connectedLoad.toString().replaceAll(RegExp(r'\.0$'), '');
+            leadProvider.connectedLoadController.text =
+                leadData.connectedLoad == 0
+                    ? ""
+                    : leadData.connectedLoad
+                        .toString()
+                        .replaceAll(RegExp(r'\.0$'), '');
             leadProvider.aadharImage = leadData.adhaarCardBack ?? '';
             leadProvider.passportImage = leadData.passportSizePhoto ?? '';
             leadProvider.upiImage = leadData.upiTransferPhoto ?? '';
@@ -164,10 +181,11 @@ class LeadDetailsProvider with ChangeNotifier {
             leadProvider.creController.text = leadData.creName;
             leadProvider.peController.text = leadData.peName;
             leadProvider.leadtypeController.text = leadData.leadTypeName;
-            
+
             // Set IDs in dropdown provider to ensure they are available for saving
             dropDownProvider.setSelectedFollowUPId(leadData.statusId);
-            dropDownProvider.setSelectedEnquirySourceId(leadData.enquirySourceId);
+            dropDownProvider
+                .setSelectedEnquirySourceId(leadData.enquirySourceId);
             dropDownProvider.setSelectedUserId(leadData.toUserId);
 
             if (leadData.nextFollowUpDate.isNotEmpty) {

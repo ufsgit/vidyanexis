@@ -85,4 +85,3 @@ class TableWidget extends StatelessWidget {
     }
   }
 }
-

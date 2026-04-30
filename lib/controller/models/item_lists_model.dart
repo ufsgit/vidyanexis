@@ -9,12 +9,12 @@ class ItemListStock {
 
   ItemListStock(
       {required this.stockId,
-        required this.itemId,
-        required this.itemName,
-        required this.categoryId,
-        required this.categoryName,
-        required this.unitPrice,
-        required this.primaryCheckBox});
+      required this.itemId,
+      required this.itemName,
+      required this.categoryId,
+      required this.categoryName,
+      required this.unitPrice,
+      required this.primaryCheckBox});
 
   factory ItemListStock.fromJson(Map<String, dynamic> json) {
     return ItemListStock(

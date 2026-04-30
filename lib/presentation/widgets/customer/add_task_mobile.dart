@@ -365,8 +365,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                       ),
                     ),
                   ),
-                  if (_showMore)
-                    const SizedBox(height: 12),
+                  if (_showMore) const SizedBox(height: 12),
                   if (_showMore)
                     Container(
                       width: double.infinity,
@@ -424,8 +423,8 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                    color: AppColors.bluebutton
-                                        .withOpacity(0.5)),
+                                    color:
+                                        AppColors.bluebutton.withOpacity(0.5)),
                               ),
                               contentPadding: const EdgeInsets.all(12),
                             ),
@@ -499,8 +498,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         ],
                       ),
                     ),
-                  if (_showMore)
-                    const SizedBox(height: 12),
+                  if (_showMore) const SizedBox(height: 12),
                   if (_showMore)
                     Container(
                       width: double.infinity,

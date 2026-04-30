@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -170,33 +171,12 @@ class _QuotationReport extends State<QuotationReport> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                             print(reportsProvider.isFilter);
                           },
-                          icon: const Icon(Icons.filter_list),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
-                            backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
+                          isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
                         CustomElevatedButton(
@@ -302,26 +282,11 @@ class _QuotationReport extends State<QuotationReport> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                OutlinedButton.icon(
+                                CustomFilterButton(
                                   onPressed: () {
                                     reportsProvider.toggleFilter();
                                   },
-                                  icon: const Icon(Icons.filter_list),
-                                  label: const Text(''),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: reportsProvider.isFilter
-                                        ? Colors.white
-                                        : AppColors.primaryBlue,
-                                    backgroundColor: reportsProvider.isFilter
-                                        ? const Color(0xFF5499D9)
-                                        : Colors.white,
-                                    side: BorderSide(
-                                      color: reportsProvider.isFilter
-                                          ? const Color(0xFF5499D9)
-                                          : AppColors.primaryBlue,
-                                    ),
-                                    padding: const EdgeInsets.all(10),
-                                  ),
+                                  isFilter: reportsProvider.isFilter,
                                 ),
                                 const SizedBox(width: 10),
                                 CustomElevatedButton(
@@ -895,9 +860,8 @@ class _QuotationReport extends State<QuotationReport> {
                                                                         4),
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color:
-                                                                  const Color(
-                                                                      0xFFE9EDF1),
+                                                              color: const Color(
+                                                                  0xFFE9EDF1),
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
@@ -926,15 +890,12 @@ class _QuotationReport extends State<QuotationReport> {
                                                                           width:
                                                                               8), // Space between the image and text
                                                                       Text(
-                                                                        task.customerName!
-                                                                                    .length >
+                                                                        task.customerName!.length >
                                                                                 20
                                                                             ? '${task.customerName!.substring(0, 20)}...'
-                                                                            : task
-                                                                                .customerName!,
+                                                                            : task.customerName!,
                                                                         overflow:
-                                                                            TextOverflow
-                                                                                .ellipsis,
+                                                                            TextOverflow.ellipsis,
                                                                         maxLines:
                                                                             1,
                                                                         style:
@@ -985,12 +946,14 @@ class _QuotationReport extends State<QuotationReport> {
 
                                                       TableWidget(
                                                           flex: 1,
-                                                          title: task.productName ??
-                                                              ''),
+                                                          title:
+                                                              task.productName ??
+                                                                  ''),
                                                       TableWidget(
                                                           flex: 1,
-                                                          title: task.phoneNumber ??
-                                                              ''),
+                                                          title:
+                                                              task.phoneNumber ??
+                                                                  ''),
                                                       TableWidget(
                                                           flex: 1,
                                                           title: (task
@@ -998,15 +961,16 @@ class _QuotationReport extends State<QuotationReport> {
                                                                   .isNotEmpty)
                                                               ? DateFormat(
                                                                       'dd MMM yyyy')
-                                                                  .format(DateTime.parse(
-                                                                      task.entryDate ??
+                                                                  .format(DateTime
+                                                                      .parse(task
+                                                                              .entryDate ??
                                                                           ''))
                                                               : ''),
                                                       TableWidget(
                                                           flex: 1,
-                                                          title: task
-                                                                  .quotationStatusName ??
-                                                              ''),
+                                                          title:
+                                                              task.quotationStatusName ??
+                                                                  ''),
                                                     ],
                                                   ),
                                                 ),
@@ -1045,7 +1009,8 @@ class _QuotationReport extends State<QuotationReport> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 24, vertical: 12),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12)),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
                                   ),
                                 ),
                               ],
@@ -1130,9 +1095,8 @@ class _QuotationReport extends State<QuotationReport> {
                                                                         4),
                                                                 decoration:
                                                                     BoxDecoration(
-                                                                  color:
-                                                                      const Color(
-                                                                          0xFFE9EDF1),
+                                                                  color: const Color(
+                                                                      0xFFE9EDF1),
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
@@ -1183,9 +1147,9 @@ class _QuotationReport extends State<QuotationReport> {
                                                           TableWidget(
                                                               flex: 1,
                                                               // width: 150,
-                                                              title: task
-                                                                      .phoneNumber ??
-                                                                  ''),
+                                                              title:
+                                                                  task.phoneNumber ??
+                                                                      ''),
                                                         ],
                                                       ),
                                                       TableWidget(
@@ -1195,14 +1159,15 @@ class _QuotationReport extends State<QuotationReport> {
                                                                   .isNotEmpty)
                                                               ? DateFormat(
                                                                       'dd MMM yyyy')
-                                                                  .format(DateTime.parse(
-                                                                      task.entryDate!))
+                                                                  .format(DateTime
+                                                                      .parse(task
+                                                                          .entryDate!))
                                                               : ''),
                                                       TableWidget(
                                                           width: 150,
-                                                          title: task
-                                                                  .quotationStatusName ??
-                                                              ''),
+                                                          title:
+                                                              task.quotationStatusName ??
+                                                                  ''),
                                                     ],
                                                   ),
                                                 ),
@@ -1241,7 +1206,8 @@ class _QuotationReport extends State<QuotationReport> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 24, vertical: 12),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12)),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
                                   ),
                                 ),
                               ],

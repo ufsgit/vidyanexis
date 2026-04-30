@@ -37,7 +37,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    
+
     // Filter menus based on search query
     final filteredMenus = settingsProvider.getMenu.where((item) {
       return item.menuName.toLowerCase().contains(_searchQuery.toLowerCase());
@@ -199,7 +199,9 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
     );
   }
 
-  Widget _buildWebTable(BuildContext context, List<GetMenuPermissionModel> menus,
+  Widget _buildWebTable(
+      BuildContext context,
+      List<GetMenuPermissionModel> menus,
       Function(int, String, bool) updatePermission) {
     if (menus.isEmpty) return const SizedBox();
 
@@ -243,7 +245,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
               ),
             ),
           ),
-          
+
           Expanded(
             child: SingleChildScrollView(
               child: IntrinsicHeight(
@@ -252,7 +254,9 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                   children: [
                     // First Column
                     Expanded(
-                      child: _buildPermissionColumn(context, firstHalf, updatePermission, startIndex: 1),
+                      child: _buildPermissionColumn(
+                          context, firstHalf, updatePermission,
+                          startIndex: 1),
                     ),
                     // Subtle Divider
                     Container(
@@ -261,7 +265,9 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                     ),
                     // Second Column
                     Expanded(
-                      child: _buildPermissionColumn(context, secondHalf, updatePermission, startIndex: half + 1),
+                      child: _buildPermissionColumn(
+                          context, secondHalf, updatePermission,
+                          startIndex: half + 1),
                     ),
                   ],
                 ),
@@ -273,11 +279,13 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
     );
   }
 
-  Widget _buildPermissionColumn(BuildContext context, List<GetMenuPermissionModel> menus,
+  Widget _buildPermissionColumn(
+      BuildContext context,
+      List<GetMenuPermissionModel> menus,
       Function(int, String, bool) updatePermission,
       {required int startIndex}) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    
+
     return Column(
       children: [
         // Column Header
@@ -299,11 +307,10 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
               Expanded(
                 child: Text('Menu Name', style: _headerStyle),
               ),
-              ...['View', 'Save', 'Edit', 'Delete']
-                  .map((label) => SizedBox(
-                        width: 60,
-                        child: Center(child: Text(label, style: _headerStyle)),
-                      )),
+              ...['View', 'Save', 'Edit', 'Delete'].map((label) => SizedBox(
+                    width: 60,
+                    child: Center(child: Text(label, style: _headerStyle)),
+                  )),
             ],
           ),
         ),
@@ -340,22 +347,26 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                 _buildCheckboxCell(
                   settingsProvider.showView[item.menuId] == 1,
                   item.isView == 1,
-                  (value) => updatePermission(item.menuId, 'isView', value ?? false),
+                  (value) =>
+                      updatePermission(item.menuId, 'isView', value ?? false),
                 ),
                 _buildCheckboxCell(
                   settingsProvider.showSave[item.menuId] == 1,
                   item.isSave == 1,
-                  (value) => updatePermission(item.menuId, 'isSave', value ?? false),
+                  (value) =>
+                      updatePermission(item.menuId, 'isSave', value ?? false),
                 ),
                 _buildCheckboxCell(
                   settingsProvider.showEdit[item.menuId] == 1,
                   item.isEdit == 1,
-                  (value) => updatePermission(item.menuId, 'isEdit', value ?? false),
+                  (value) =>
+                      updatePermission(item.menuId, 'isEdit', value ?? false),
                 ),
                 _buildCheckboxCell(
                   settingsProvider.showDelete[item.menuId] == 1,
                   item.isDelete == 1,
-                  (value) => updatePermission(item.menuId, 'isDelete', value ?? false),
+                  (value) =>
+                      updatePermission(item.menuId, 'isDelete', value ?? false),
                 ),
               ],
             ),
@@ -390,7 +401,8 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4),
             ),
-            activeColor: const Color(0xFFF6AD55), // Match the orange/yellow color in screenshot
+            activeColor: const Color(
+                0xFFF6AD55), // Match the orange/yellow color in screenshot
             value: value,
             onChanged: onChanged,
           ),
@@ -399,7 +411,9 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
     );
   }
 
-  Widget _buildMobileCards(BuildContext context, List<GetMenuPermissionModel> menus,
+  Widget _buildMobileCards(
+      BuildContext context,
+      List<GetMenuPermissionModel> menus,
       Function(int, String, bool) updatePermission) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
@@ -474,17 +488,29 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                   runSpacing: 12,
                   children: [
                     if (settingsProvider.showView[item.menuId] == 1)
-                      _buildMobileCheckbox('View', item.isView == 1,
-                          (v) => updatePermission(item.menuId, 'isView', v ?? false)),
+                      _buildMobileCheckbox(
+                          'View',
+                          item.isView == 1,
+                          (v) => updatePermission(
+                              item.menuId, 'isView', v ?? false)),
                     if (settingsProvider.showSave[item.menuId] == 1)
-                      _buildMobileCheckbox('Save', item.isSave == 1,
-                          (v) => updatePermission(item.menuId, 'isSave', v ?? false)),
+                      _buildMobileCheckbox(
+                          'Save',
+                          item.isSave == 1,
+                          (v) => updatePermission(
+                              item.menuId, 'isSave', v ?? false)),
                     if (settingsProvider.showEdit[item.menuId] == 1)
-                      _buildMobileCheckbox('Edit', item.isEdit == 1,
-                          (v) => updatePermission(item.menuId, 'isEdit', v ?? false)),
+                      _buildMobileCheckbox(
+                          'Edit',
+                          item.isEdit == 1,
+                          (v) => updatePermission(
+                              item.menuId, 'isEdit', v ?? false)),
                     if (settingsProvider.showDelete[item.menuId] == 1)
-                      _buildMobileCheckbox('Delete', item.isDelete == 1,
-                          (v) => updatePermission(item.menuId, 'isDelete', v ?? false)),
+                      _buildMobileCheckbox(
+                          'Delete',
+                          item.isDelete == 1,
+                          (v) => updatePermission(
+                              item.menuId, 'isDelete', v ?? false)),
                   ],
                 ),
               ],

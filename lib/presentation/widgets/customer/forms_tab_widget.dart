@@ -86,11 +86,11 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
   Widget _buildFormCard(FormModel form, int serialNum) {
     final formProvider = Provider.of<FormProvider>(context);
     final settingsprovider = Provider.of<SettingsProvider>(context);
-    
+
     // Format date string safely
     String dateStr = "N/A";
     if (form.createdDate != null) {
-        dateStr = form.createdDate!.split('T')[0];
+      dateStr = form.createdDate!.split('T')[0];
     }
 
     return Container(
@@ -147,7 +147,8 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.person_outline, size: 14, color: Color(0xFF64748B)),
+                      const Icon(Icons.person_outline,
+                          size: 14, color: Color(0xFF64748B)),
                       const SizedBox(width: 4),
                       Text(
                         "User: ${form.createdUser ?? "N/A"}",
@@ -157,7 +158,8 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      const Icon(Icons.calendar_today_outlined, size: 14, color: Color(0xFF64748B)),
+                      const Icon(Icons.calendar_today_outlined,
+                          size: 14, color: Color(0xFF64748B)),
                       const SizedBox(width: 4),
                       Text(
                         dateStr,
@@ -189,7 +191,8 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Icon(Icons.print_outlined, color: Color(0xFFF59E0B)),
+                      : const Icon(Icons.print_outlined,
+                          color: Color(0xFFF59E0B)),
                   onPressed: () {
                     if (form.instanceId != null) {
                       formProvider.fetchAndPrintFormPdf(
@@ -200,7 +203,9 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Print not available for this record')),
+                        const SnackBar(
+                            content:
+                                Text('Print not available for this record')),
                       );
                     }
                   },
@@ -240,7 +245,8 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
     return Expanded(flex: flex, child: child);
   }
 
-  Widget _buildDataCell(String text, {int flex = 1, bool isBold = false, double? width}) {
+  Widget _buildDataCell(String text,
+      {int flex = 1, bool isBold = false, double? width}) {
     const borderColor = Color(0xFFE9EDF1);
     Widget child = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -269,7 +275,8 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
     return Expanded(flex: flex, child: child);
   }
 
-  Widget _buildWidgetCell({required Widget child, int flex = 1, double? width}) {
+  Widget _buildWidgetCell(
+      {required Widget child, int flex = 1, double? width}) {
     const borderColor = Color(0xFFE9EDF1);
     Widget cellChild = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -310,4 +317,3 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
     );
   }
 }
-

@@ -550,15 +550,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           // Optimistic removal from lists
                                           leadProvider.removeLeadFromList(
                                               widget.customerId);
-                                          customerProvider.removeCustomerFromList(
-                                              widget.customerId);
+                                          customerProvider
+                                              .removeCustomerFromList(
+                                                  widget.customerId);
 
                                           // Now go back from details page
                                           if (Navigator.of(context).canPop()) {
                                             Navigator.of(context).pop();
                                           } else {
                                             // Fallback for embedded views (Web logic)
-                                            sideprovider.replaceWidget(true, '');
+                                            sideprovider.replaceWidget(
+                                                true, '');
                                             sideprovider.replaceWidgetCustomer(
                                                 true, '');
                                           }
@@ -584,32 +586,33 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                 ),
                               Expanded(
                                 child: NotificationListener<Notification>(
-                                onNotification: (notification) {
-                                  if (notification is ScrollNotification ||
-                                      notification is ScrollMetricsNotification) {
-                                    final metrics = notification
-                                            is ScrollNotification
-                                        ? notification.metrics
-                                        : (notification
-                                                as ScrollMetricsNotification)
-                                            .metrics;
-                                    if (metrics.maxScrollExtent > 0) {
-                                      setState(() {
-                                        _canScrollLeft = metrics.pixels > 5;
-                                        _canScrollRight = metrics.pixels <
-                                            metrics.maxScrollExtent - 5;
-                                      });
-                                    } else {
-                                      if (_canScrollLeft || _canScrollRight) {
+                                  onNotification: (notification) {
+                                    if (notification is ScrollNotification ||
+                                        notification
+                                            is ScrollMetricsNotification) {
+                                      final metrics = notification
+                                              is ScrollNotification
+                                          ? notification.metrics
+                                          : (notification
+                                                  as ScrollMetricsNotification)
+                                              .metrics;
+                                      if (metrics.maxScrollExtent > 0) {
                                         setState(() {
-                                          _canScrollLeft = false;
-                                          _canScrollRight = false;
+                                          _canScrollLeft = metrics.pixels > 5;
+                                          _canScrollRight = metrics.pixels <
+                                              metrics.maxScrollExtent - 5;
                                         });
+                                      } else {
+                                        if (_canScrollLeft || _canScrollRight) {
+                                          setState(() {
+                                            _canScrollLeft = false;
+                                            _canScrollRight = false;
+                                          });
+                                        }
                                       }
                                     }
-                                  }
-                                  return false;
-                                },
+                                    return false;
+                                  },
                                   child: TabBar(
                                     controller: _tabController,
                                     labelColor: AppColors.primaryBlue,
@@ -1778,7 +1781,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       label:
                                                                           "Total project cost",
                                                                       value: customerDetailsProvider
-                                                                          .leadDetails![0]
+                                                                          .leadDetails![
+                                                                              0]
                                                                           .displayProjectCost,
                                                                     ),
                                                                     const SizedBox(
@@ -1788,7 +1792,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       label:
                                                                           "Sub Source",
                                                                       value: customerDetailsProvider
-                                                                          .leadDetails![0]
+                                                                          .leadDetails![
+                                                                              0]
                                                                           .referenceName,
                                                                     ),
                                                                   ],
@@ -2096,8 +2101,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[105] == 1 &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if (settingsprovider.menuIsViewMap[105] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
@@ -2115,8 +2122,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[106] == 1 &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if (settingsprovider.menuIsViewMap[106] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
@@ -2134,8 +2143,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[107] == 1 &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if (settingsprovider.menuIsViewMap[107] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
@@ -2153,8 +2164,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[108] == 1 &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if (settingsprovider.menuIsViewMap[108] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
@@ -2172,8 +2185,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                      if (settingsprovider.menuIsViewMap[109] == 1 &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if (settingsprovider.menuIsViewMap[109] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
@@ -2191,8 +2206,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[110] == 1 &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if (settingsprovider.menuIsViewMap[110] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
@@ -2210,8 +2227,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[111] == 1 &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if (settingsprovider.menuIsViewMap[111] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
@@ -2229,8 +2248,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[112] == 1 &&
-                                                                        sideprovider.name != 'Lead /')
+                                                                    if (settingsprovider.menuIsViewMap[112] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
                                                                       CustomElevatedButton(
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
@@ -2238,8 +2259,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             AppColors.bluebutton,
                                                                         textColor:
                                                                             AppColors.bluebutton,
-                                                                        buttonText: 'Warranty',
-                                                                        onPressed: () async {
+                                                                        buttonText:
+                                                                            'Warranty',
+                                                                        onPressed:
+                                                                            () async {
                                                                           await customerDetailsProvider.getAnnexurePdf(
                                                                               '${HttpUrls.getPdfWarranty}${widget.customerId}',
                                                                               'Warranty',
@@ -2865,15 +2888,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         context);
                                                                   },
                                                                 ),
-                                                              if (settingsprovider.menuIsViewMap[105] == 1 &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          105] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   backgroundColor:
-                                                                      AppColors.whiteColor,
+                                                                      AppColors
+                                                                          .whiteColor,
                                                                   borderColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   textColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   buttonText:
                                                                       'Net meter Agreement',
                                                                   onPressed:
@@ -2884,15 +2915,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         context);
                                                                   },
                                                                 ),
-                                                              if (settingsprovider.menuIsViewMap[106] == 1 &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          106] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   backgroundColor:
-                                                                      AppColors.whiteColor,
+                                                                      AppColors
+                                                                          .whiteColor,
                                                                   borderColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   textColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   buttonText:
                                                                       'MNRE Agreement',
                                                                   onPressed:
@@ -2903,15 +2942,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         context);
                                                                   },
                                                                 ),
-                                                              if (settingsprovider.menuIsViewMap[107] == 1 &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          107] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   backgroundColor:
-                                                                      AppColors.whiteColor,
+                                                                      AppColors
+                                                                          .whiteColor,
                                                                   borderColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   textColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   buttonText:
                                                                       'Loan Agreement',
                                                                   onPressed:
@@ -2922,15 +2969,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         context);
                                                                   },
                                                                 ),
-                                                              if (settingsprovider.menuIsViewMap[108] == 1 &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          108] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   backgroundColor:
-                                                                      AppColors.whiteColor,
+                                                                      AppColors
+                                                                          .whiteColor,
                                                                   borderColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   textColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   buttonText:
                                                                       'Schedule',
                                                                   onPressed:
@@ -2941,15 +2996,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         context);
                                                                   },
                                                                 ),
-                                                              if (settingsprovider.menuIsViewMap[109] == 1 &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          109] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   backgroundColor:
-                                                                      AppColors.whiteColor,
+                                                                      AppColors
+                                                                          .whiteColor,
                                                                   borderColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   textColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   buttonText:
                                                                       'Completion Report',
                                                                   onPressed:
@@ -2960,15 +3023,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         context);
                                                                   },
                                                                 ),
-                                                              if (settingsprovider.menuIsViewMap[110] == 1 &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          110] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   backgroundColor:
-                                                                      AppColors.whiteColor,
+                                                                      AppColors
+                                                                          .whiteColor,
                                                                   borderColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   textColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   buttonText:
                                                                       'KSEB Net Meter',
                                                                   onPressed:
@@ -2979,15 +3050,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         context);
                                                                   },
                                                                 ),
-                                                              if (settingsprovider.menuIsViewMap[111] == 1 &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          111] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   backgroundColor:
-                                                                      AppColors.whiteColor,
+                                                                      AppColors
+                                                                          .whiteColor,
                                                                   borderColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   textColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   buttonText:
                                                                       'Vendor Agreement A3s',
                                                                   onPressed:
@@ -2998,17 +3077,27 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         context);
                                                                   },
                                                                 ),
-                                                              if (settingsprovider.menuIsViewMap[112] == 1 &&
-                                                                  sideprovider.name != 'Lead /')
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          112] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
                                                                 CustomElevatedButton(
                                                                   backgroundColor:
-                                                                      AppColors.whiteColor,
+                                                                      AppColors
+                                                                          .whiteColor,
                                                                   borderColor:
-                                                                      AppColors.bluebutton,
+                                                                      AppColors
+                                                                          .bluebutton,
                                                                   textColor:
-                                                                      AppColors.bluebutton,
-                                                                  buttonText: 'Warranty',
-                                                                  onPressed: () async {
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Warranty',
+                                                                  onPressed:
+                                                                      () async {
                                                                     await customerDetailsProvider.getAnnexurePdf(
                                                                         '${HttpUrls.getPdfWarranty}${widget.customerId}',
                                                                         'Warranty',
@@ -3607,8 +3696,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               FormsTabWidget(
                                                   customerId:
                                                       widget.customerId),
-
-
 
                                             // Complaints Tab (can be customized as needed)
                                             if (settingsprovider

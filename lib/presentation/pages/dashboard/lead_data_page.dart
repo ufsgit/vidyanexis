@@ -287,11 +287,12 @@ class _LeadDataPageState extends State<LeadDataPage> {
       if (response.statusCode == 200) {
         final data = response.data;
         List<SearchLeadModel> newLeads = [];
-        
+
         if (data is Map) {
           final List<dynamic> leadsData = data['Data'] ?? [];
           newLeads = leadsData.map((e) => SearchLeadModel.fromJson(e)).toList();
-          _totalCount = int.tryParse(data['Total_Count']?.toString() ?? '0') ?? 0;
+          _totalCount =
+              int.tryParse(data['Total_Count']?.toString() ?? '0') ?? 0;
         } else if (data is List) {
           final List<SearchLeadModel> allItems =
               data.map((e) => SearchLeadModel.fromJson(e)).toList();
@@ -343,22 +344,23 @@ class _LeadDataPageState extends State<LeadDataPage> {
               _totalCount = maxRow > 0 ? maxRow : newLeads.last.customerId;
             }
           }
-          
+
           // Consistency check: totalCount shouldn't be less than what we just received
           if (newLeads.length > _totalCount) {
-             _totalCount = newLeads.length;
+            _totalCount = newLeads.length;
           }
         }
 
         if (newLeads.isNotEmpty || _totalCount >= 0) {
           // Extra safety check for empty lead rows that might still be in newLeads
-          newLeads.removeWhere((lead) => lead.customerName.isEmpty && lead.tp != 1);
+          newLeads
+              .removeWhere((lead) => lead.customerName.isEmpty && lead.tp != 1);
 
           if (newLeads.isEmpty && _totalCount > 0) {
-             // If we have total count but No leads in this page, maybe it's the end
-             if (isPagination) _hasMoreData = false;
+            // If we have total count but No leads in this page, maybe it's the end
+            if (isPagination) _hasMoreData = false;
           } else if (newLeads.isEmpty && _totalCount == 0) {
-             _hasMoreData = false;
+            _hasMoreData = false;
           } else {
             if (!isPagination) {
               _leads = newLeads;
@@ -369,7 +371,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                 _leads = newLeads;
               }
             }
-            
+
             // Update hasMoreData for mobile/lazy loading
             if (_leads.length >= _totalCount) {
               _hasMoreData = false;
@@ -420,12 +422,12 @@ class _LeadDataPageState extends State<LeadDataPage> {
     });
     await _fetchLeads(isPagination: true);
   }
-    
+
   Widget _buildPaginationControls() {
     // Calculate the actual range based on server-provided row numbers if available
     int startItem = 0;
     int endItem = 0;
-    
+
     if (_filteredLeads.isNotEmpty) {
       if (_filteredLeads.first.rowNo > 0) {
         startItem = _filteredLeads.first.rowNo;
@@ -464,7 +466,6 @@ class _LeadDataPageState extends State<LeadDataPage> {
         ],
       ),
     );
-
   }
 
   @override
@@ -839,15 +840,11 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         MainAxisAlignment
                                                                             .center,
                                                                     children: [
-                                                                       Text(
-                                                                           (lead.rowNo > 0)
-                                                                               ? lead.rowNo.toString()
-                                                                               : ((index + 1) +
-                                                                                       (_currentPage - 1) *
-                                                                                           _pageSize)
-                                                                                   .toString(),
-                                                                          style:
-                                                                              const TextStyle(fontSize: 13)),
+                                                                      Text(
+                                                                          (lead.rowNo > 0)
+                                                                              ? lead.rowNo.toString()
+                                                                              : ((index + 1) + (_currentPage - 1) * _pageSize).toString(),
+                                                                          style: const TextStyle(fontSize: 13)),
                                                                       if (lead.leadTypeId ==
                                                                           UserStatusType
                                                                               .hotLead

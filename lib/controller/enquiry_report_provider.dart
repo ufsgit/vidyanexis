@@ -175,7 +175,8 @@ class EnquiryReportProvider extends ChangeNotifier {
   }
 
   //task report
-  Future<void> getSearchTaskReport(String byUserId, BuildContext context) async {
+  Future<void> getSearchTaskReport(
+      String byUserId, BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {

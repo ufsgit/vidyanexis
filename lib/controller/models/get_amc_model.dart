@@ -48,9 +48,10 @@ class GetAmcModel {
         amount: json["Amount"],
         createdBy: json["Created_By"],
         customerId: json["Customer_Id"],
-        fromDate: json["From_Date"] != null && json["From_Date"].toString().isNotEmpty
-            ? DateTime.parse(json["From_Date"])
-            : null,
+        fromDate:
+            json["From_Date"] != null && json["From_Date"].toString().isNotEmpty
+                ? DateTime.parse(json["From_Date"])
+                : null,
         toDate: json["To_Date"] != null && json["To_Date"].toString().isNotEmpty
             ? DateTime.parse(json["To_Date"])
             : null,

@@ -15,7 +15,9 @@ class StockUseReportModel {
     String rawQuantity = json['Quantity']?.toString() ?? '0';
     // Remove trailing zeros and decimal point (e.g., "1.000" -> "1")
     if (rawQuantity.contains('.')) {
-      rawQuantity = rawQuantity.replaceAll(RegExp(r'0*$'), '').replaceAll(RegExp(r'\.$'), '');
+      rawQuantity = rawQuantity
+          .replaceAll(RegExp(r'0*$'), '')
+          .replaceAll(RegExp(r'\.$'), '');
     }
 
     return StockUseReportModel(

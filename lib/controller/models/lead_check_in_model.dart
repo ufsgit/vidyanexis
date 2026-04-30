@@ -54,10 +54,14 @@ class LeadCheckIn {
       checkoutData: json['CheckoutData'],
       latitude: json['latitude'] != null
           ? double.tryParse(json['latitude'].toString())
-          : (json['Latitude'] != null ? double.tryParse(json['Latitude'].toString()) : null),
+          : (json['Latitude'] != null
+              ? double.tryParse(json['Latitude'].toString())
+              : null),
       longitude: json['longitude'] != null
           ? double.tryParse(json['longitude'].toString())
-          : (json['Longitude'] != null ? double.tryParse(json['Longitude'].toString()) : null),
+          : (json['Longitude'] != null
+              ? double.tryParse(json['Longitude'].toString())
+              : null),
       timeDifference: json['time_difference'],
     );
   }

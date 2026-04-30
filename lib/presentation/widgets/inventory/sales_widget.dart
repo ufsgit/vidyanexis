@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vidyanexis/controller/models/Sales_model.dart';
@@ -22,19 +21,14 @@ class SalesWidget extends StatefulWidget {
   final String editId;
   final SalesModel? data;
 
-  const SalesWidget({
-    super.key,
-    required this.isEdit,
-    required this.editId,
-    this.data
-  });
+  const SalesWidget(
+      {super.key, required this.isEdit, required this.editId, this.data});
 
   @override
   State<SalesWidget> createState() => _SalesWidgetState();
 }
 
 class _SalesWidgetState extends State<SalesWidget> {
-
   void showErrorDialog(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -82,11 +76,11 @@ class _SalesWidgetState extends State<SalesWidget> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final settingsProvider =
-      Provider.of<SettingsProvider>(listen: false, context);
+          Provider.of<SettingsProvider>(listen: false, context);
       await settingsProvider.searchInventoryCustomerApi('', context);
 
       final expenseProvider =
-      Provider.of<ExpenseProvider>(listen: false, context);
+          Provider.of<ExpenseProvider>(listen: false, context);
       await expenseProvider.searchItemListPurchase(context);
 
       if (widget.isEdit && widget.data != null) {
@@ -108,20 +102,21 @@ class _SalesWidgetState extends State<SalesWidget> {
         expenseProvider.setSelectedSalesCustomerId(widget.data!.customerId);
         int customerId = widget.data?.customerId ?? 0;
 
-        final selectedCustomer = settingsProvider.searchInventoryCustomer.firstWhere(
-              (item) => item.customerId == customerId,
+        final selectedCustomer =
+            settingsProvider.searchInventoryCustomer.firstWhere(
+          (item) => item.customerId == customerId,
         );
 
         expenseProvider.addressSalesController.text = selectedCustomer.address;
         expenseProvider.invoiceNOSalesControler.text = widget.data!.invoiceNo;
         expenseProvider.invoiceDateSalesController.text =
             formatPurchaseDate(widget.data!.salesDate);
-        expenseProvider.descriptionSalesController.text = widget.data!.description;
+        expenseProvider.descriptionSalesController.text =
+            widget.data!.description;
 
         // Load sales items from salesDetails
         if (expenseProvider.salesDetails.isNotEmpty) {
-          expenseProvider.salesItems = expenseProvider.salesDetails
-              .map((item) {
+          expenseProvider.salesItems = expenseProvider.salesDetails.map((item) {
             print('Mapping item: ${item.itemName}');
             return SalesItemModel(
               itemId: item.itemId,
@@ -149,7 +144,8 @@ class _SalesWidgetState extends State<SalesWidget> {
             );
           }).toList();
 
-          print('Sales Items Count after mapping: ${expenseProvider.salesItems.length}');
+          print(
+              'Sales Items Count after mapping: ${expenseProvider.salesItems.length}');
 
           // Calculate totals after loading items
           expenseProvider.calculateSalesGrandTotal();
@@ -158,7 +154,6 @@ class _SalesWidgetState extends State<SalesWidget> {
         } else {
           print('WARNING: salesDetails is empty!');
         }
-
       } else {
         print('=== ADD MODE ===');
         // Clear everything for new entry
@@ -168,7 +163,8 @@ class _SalesWidgetState extends State<SalesWidget> {
         expenseProvider.resetSalesEditState();
         expenseProvider.resetSalesItems();
         expenseProvider.resetSalesValues();
-        expenseProvider.invoiceDateSalesController.text = DateFormat('dd MMM yyyy').format(DateTime.now());
+        expenseProvider.invoiceDateSalesController.text =
+            DateFormat('dd MMM yyyy').format(DateTime.now());
       }
     });
   }
@@ -300,15 +296,15 @@ class _SalesWidgetState extends State<SalesWidget> {
                     hintText: 'Select Customer*',
                     items: settingsProvider.searchInventoryCustomer
                         .map((status) => DropdownItem<int>(
-                      id: status.customerId,
-                      name: status.customerName,
-                    ))
+                              id: status.customerId,
+                              name: status.customerName,
+                            ))
                         .toList(),
                     controller: TextEditingController(),
                     onItemSelected: (selectedId) {
                       final selectedPerson =
-                      settingsProvider.searchInventoryCustomer.firstWhere(
-                            (item) => item.customerId == selectedId,
+                          settingsProvider.searchInventoryCustomer.firstWhere(
+                        (item) => item.customerId == selectedId,
                       );
                       expenseProvider.addressSalesController.text =
                           selectedPerson.address;
@@ -420,22 +416,29 @@ class _SalesWidgetState extends State<SalesWidget> {
                   buttonText: 'Save',
                   onPressed: () async {
                     // Debug: Print current state
-                    print('Sales Items count: ${expenseProvider.salesItems.length}');
-                    print('Customer ID: ${expenseProvider.selectedSalesCustomerId}');
-                    print('Invoice No: ${expenseProvider.invoiceNOSalesControler.text}');
-                    print('Invoice Date: ${expenseProvider.invoiceDateSalesController.text}');
+                    print(
+                        'Sales Items count: ${expenseProvider.salesItems.length}');
+                    print(
+                        'Customer ID: ${expenseProvider.selectedSalesCustomerId}');
+                    print(
+                        'Invoice No: ${expenseProvider.invoiceNOSalesControler.text}');
+                    print(
+                        'Invoice Date: ${expenseProvider.invoiceDateSalesController.text}');
 
                     // Validate input
                     if (expenseProvider.invoiceNOSalesControler.text.isEmpty ||
-                        expenseProvider.invoiceDateSalesController.text.isEmpty ||
+                        expenseProvider
+                            .invoiceDateSalesController.text.isEmpty ||
                         expenseProvider.selectedSalesCustomerId == null ||
                         expenseProvider.salesItems.isEmpty) {
-
-                      String errorMessage = 'Please fill all required fields and add at least one item\n\n';
-                      if (expenseProvider.invoiceNOSalesControler.text.isEmpty) {
+                      String errorMessage =
+                          'Please fill all required fields and add at least one item\n\n';
+                      if (expenseProvider
+                          .invoiceNOSalesControler.text.isEmpty) {
                         errorMessage += '• Invoice No is required\n';
                       }
-                      if (expenseProvider.invoiceDateSalesController.text.isEmpty) {
+                      if (expenseProvider
+                          .invoiceDateSalesController.text.isEmpty) {
                         errorMessage += '• Invoice Date is required\n';
                       }
                       if (expenseProvider.selectedSalesCustomerId == null) {
@@ -456,24 +459,23 @@ class _SalesWidgetState extends State<SalesWidget> {
                           .toyyyymmdd(),
                       "Customer_Id": expenseProvider.selectedSalesCustomerId,
                       "Invoice_No":
-                      expenseProvider.invoiceNOSalesControler.text,
+                          expenseProvider.invoiceNOSalesControler.text,
                       "TotalAmount":
-                      expenseProvider.grandTotal.toStringAsFixed(2),
-                      "TaxableAmount": expenseProvider.totalTaxableAmount
-                          .toStringAsFixed(2),
+                          expenseProvider.grandTotal.toStringAsFixed(2),
+                      "TaxableAmount":
+                          expenseProvider.totalTaxableAmount.toStringAsFixed(2),
                       "Total_CGST":
-                      expenseProvider.totalCGST.toStringAsFixed(2),
+                          expenseProvider.totalCGST.toStringAsFixed(2),
                       "Total_SGST":
-                      expenseProvider.totalSGST.toStringAsFixed(2),
+                          expenseProvider.totalSGST.toStringAsFixed(2),
                       "Total_IGST": 0,
-                      "Total_GST":
-                      expenseProvider.totalGST.toStringAsFixed(2),
+                      "Total_GST": expenseProvider.totalGST.toStringAsFixed(2),
                       "TotalDiscount":
-                      expenseProvider.totalDiscount.toStringAsFixed(2),
+                          expenseProvider.totalDiscount.toStringAsFixed(2),
                       "NetTotal":
-                      expenseProvider.finalGrandTotal.toStringAsFixed(2),
+                          expenseProvider.finalGrandTotal.toStringAsFixed(2),
                       "Description":
-                      expenseProvider.descriptionSalesController.text,
+                          expenseProvider.descriptionSalesController.text,
                       "sales_details": expenseProvider.salesItems
                           .map((item) => item.toJson())
                           .toList(),
@@ -521,105 +523,108 @@ class _SalesWidgetState extends State<SalesWidget> {
           // First Row - Item, Category, Unit, HSN (for web) or Item, Category (for mobile)
           AppStyles.isWebScreen(context)
               ? Row(
-            children: [
-              Expanded(child: _buildItemDropdown(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildCategoryField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildUnitField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildHSNField(expenseProvider)),
-            ],
-          )
+                  children: [
+                    Expanded(child: _buildItemDropdown(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(child: _buildCategoryField(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(child: _buildUnitField(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(child: _buildHSNField(expenseProvider)),
+                  ],
+                )
               : Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(child: _buildItemDropdown(expenseProvider)),
-                  const SizedBox(width: 16),
-                  Expanded(child: _buildCategoryField(expenseProvider)),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(child: _buildUnitField(expenseProvider)),
-                  const SizedBox(width: 16),
-                  Expanded(child: _buildHSNField(expenseProvider)),
-                ],
-              ),
-            ],
-          ),
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: _buildItemDropdown(expenseProvider)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildCategoryField(expenseProvider)),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(child: _buildUnitField(expenseProvider)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildHSNField(expenseProvider)),
+                      ],
+                    ),
+                  ],
+                ),
 
           const SizedBox(height: 16),
 
           // Second Row - Price, Amount, Discount%, Discount Amount
           AppStyles.isWebScreen(context)
               ? Row(
-            children: [
-              Expanded(child: _buildPriceField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildAmountField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildDiscountPercentField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildDiscountAmountField(expenseProvider)),
-            ],
-          )
+                  children: [
+                    Expanded(child: _buildPriceField(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(child: _buildAmountField(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(
+                        child: _buildDiscountPercentField(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(child: _buildDiscountAmountField(expenseProvider)),
+                  ],
+                )
               : Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(child: _buildPriceField(expenseProvider)),
-                  const SizedBox(width: 16),
-                  Expanded(child: _buildAmountField(expenseProvider)),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(child: _buildDiscountPercentField(expenseProvider)),
-                  const SizedBox(width: 16),
-                  Expanded(child: _buildDiscountAmountField(expenseProvider)),
-                ],
-              ),
-            ],
-          ),
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: _buildPriceField(expenseProvider)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildAmountField(expenseProvider)),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: _buildDiscountPercentField(expenseProvider)),
+                        const SizedBox(width: 16),
+                        Expanded(
+                            child: _buildDiscountAmountField(expenseProvider)),
+                      ],
+                    ),
+                  ],
+                ),
 
           const SizedBox(height: 16),
 
           // Third Row - Net Value, CGST, SGST, GST
           AppStyles.isWebScreen(context)
               ? Row(
-            children: [
-              Expanded(child: _buildNetValueField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildCGSTField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildSGSTField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildGSTField(expenseProvider)),
-            ],
-          )
+                  children: [
+                    Expanded(child: _buildNetValueField(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(child: _buildCGSTField(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(child: _buildSGSTField(expenseProvider)),
+                    const SizedBox(width: 16),
+                    Expanded(child: _buildGSTField(expenseProvider)),
+                  ],
+                )
               : Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(child: _buildNetValueField(expenseProvider)),
-                  const SizedBox(width: 16),
-                  Expanded(child: _buildCGSTField(expenseProvider)),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(child: _buildSGSTField(expenseProvider)),
-                  const SizedBox(width: 16),
-                  Expanded(child: _buildGSTField(expenseProvider)),
-                ],
-              ),
-            ],
-          ),
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: _buildNetValueField(expenseProvider)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildCGSTField(expenseProvider)),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(child: _buildSGSTField(expenseProvider)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildGSTField(expenseProvider)),
+                      ],
+                    ),
+                  ],
+                ),
 
           const SizedBox(height: 16),
 
@@ -656,9 +661,9 @@ class _SalesWidgetState extends State<SalesWidget> {
       items: expenseProvider.itemListPurchase
           .where((element) => element.primaryCheckBox == 0)
           .map((status) => DropdownItem<int>(
-        id: status.itemId,
-        name: status.itemName,
-      ))
+                id: status.itemId,
+                name: status.itemName,
+              ))
           .toList(),
       controller: expenseProvider.itemNameSalesController,
       onItemSelected: (selectedItem) {
@@ -864,25 +869,37 @@ class _SalesWidgetState extends State<SalesWidget> {
       categoryName: expenseProvider.categorySalesController.text,
       unitId: expenseProvider.selectedUnitId.toString(),
       unitName: expenseProvider.unitSalesController.text,
-      quantity: double.tryParse(expenseProvider.quantitySalesController.text) ?? 0.0,
+      quantity:
+          double.tryParse(expenseProvider.quantitySalesController.text) ?? 0.0,
       price: double.tryParse(expenseProvider.priceSalesController.text) ?? 0.0,
-      amount: double.tryParse(expenseProvider.amountSalesController.text) ?? 0.0,
-      discount: double.tryParse(expenseProvider.discountAmountSalesController.text.isEmpty
-          ? '0'
-          : expenseProvider.discountAmountSalesController.text) ?? 0.0,
-      discountPercentage: double.tryParse(expenseProvider.discountSalesController.text.isEmpty
-          ? '0'
-          : expenseProvider.discountSalesController.text) ?? 0.0,
-      netValue: double.tryParse(expenseProvider.netValueSalesController.text) ?? 0.0,
+      amount:
+          double.tryParse(expenseProvider.amountSalesController.text) ?? 0.0,
+      discount: double.tryParse(
+              expenseProvider.discountAmountSalesController.text.isEmpty
+                  ? '0'
+                  : expenseProvider.discountAmountSalesController.text) ??
+          0.0,
+      discountPercentage: double.tryParse(
+              expenseProvider.discountSalesController.text.isEmpty
+                  ? '0'
+                  : expenseProvider.discountSalesController.text) ??
+          0.0,
+      netValue:
+          double.tryParse(expenseProvider.netValueSalesController.text) ?? 0.0,
       cgst: double.tryParse(expenseProvider.cgstPerSalesController.text) ?? 0.0,
       sgst: double.tryParse(expenseProvider.sgstPerSalesController.text) ?? 0.0,
       gst: double.tryParse(expenseProvider.gstPerSalesController.text) ?? 0.0,
       igst: double.tryParse(expenseProvider.igstPerSalesController.text) ?? 0.0,
-      gstAmount: double.tryParse(expenseProvider.gstSalesController.text) ?? 0.0,
-      cgstAmount: double.tryParse(expenseProvider.cgstSalesController.text) ?? 0.0,
-      sgstAmount: double.tryParse(expenseProvider.sgstSalesController.text) ?? 0.0,
+      gstAmount:
+          double.tryParse(expenseProvider.gstSalesController.text) ?? 0.0,
+      cgstAmount:
+          double.tryParse(expenseProvider.cgstSalesController.text) ?? 0.0,
+      sgstAmount:
+          double.tryParse(expenseProvider.sgstSalesController.text) ?? 0.0,
       igstAmount: 0.0,
-      totalAmount: double.tryParse(expenseProvider.totalAmountSalesController.text) ?? 0.0,
+      totalAmount:
+          double.tryParse(expenseProvider.totalAmountSalesController.text) ??
+              0.0,
       hsnCode: expenseProvider.hsnSalesController.text,
     );
 
@@ -922,7 +939,8 @@ class _SalesWidgetState extends State<SalesWidget> {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.appViolet.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -990,7 +1008,8 @@ class _SalesWidgetState extends State<SalesWidget> {
                       ),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(4),
@@ -1088,7 +1107,8 @@ class _SalesWidgetState extends State<SalesWidget> {
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(4),
@@ -1173,11 +1193,13 @@ class _SalesWidgetState extends State<SalesWidget> {
                   ),
                   _SummaryItem(
                     label: 'Total Discount',
-                    value: '- ₹${expenseProvider.totalDiscount.toStringAsFixed(2)}',
+                    value:
+                        '- ₹${expenseProvider.totalDiscount.toStringAsFixed(2)}',
                   ),
                   _SummaryItem(
                     label: 'Total Taxable Amount',
-                    value: '₹${expenseProvider.totalTaxableAmount.toStringAsFixed(2)}',
+                    value:
+                        '₹${expenseProvider.totalTaxableAmount.toStringAsFixed(2)}',
                   ),
                   _SummaryItem(
                     label: 'Total GST',
@@ -1259,4 +1281,5 @@ class _SummaryItem extends StatelessWidget {
         ),
       ],
     );
-  }}
+  }
+}

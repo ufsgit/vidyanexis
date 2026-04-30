@@ -330,7 +330,9 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                       child: Text(
                         'Item Name',
                         style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Colors.white),
                       ),
                     ),
                     Expanded(
@@ -338,7 +340,9 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                       child: Text(
                         'Qty',
                         style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                            color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -347,7 +351,9 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         child: Text(
                           'Act',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Colors.white),
                           textAlign: TextAlign.center,
                         )),
                   ],

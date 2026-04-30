@@ -36,22 +36,25 @@ class TaskSummaryProvider extends ChangeNotifier {
   Future<void> getTaskSummary(BuildContext context) async {
     try {
       Loader.showLoader(context);
-      
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      String fromDateStr = _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : '';
-      String toDateStr = _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : '';
+      String fromDateStr =
+          _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : '';
+      String toDateStr =
+          _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : '';
       int isDateCheckInt = _isDateCheck ? 1 : 0;
 
       final response = await HttpRequest.httpGetRequest(
-        endPoint: '${HttpUrls.taskSummary}?Fromdate_=$fromDateStr&Todate_=$toDateStr&Is_Date_Check_=$isDateCheckInt&Login_User_Id_=$userId'
-      );
+          endPoint:
+              '${HttpUrls.taskSummary}?Fromdate_=$fromDateStr&Todate_=$toDateStr&Is_Date_Check_=$isDateCheckInt&Login_User_Id_=$userId');
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null && data is List) {
-          _taskSummaries = data.map((json) => TaskSummaryModel.fromJson(json)).toList();
+          _taskSummaries =
+              data.map((json) => TaskSummaryModel.fromJson(json)).toList();
         } else {
           _taskSummaries = [];
         }
@@ -64,7 +67,8 @@ class TaskSummaryProvider extends ChangeNotifier {
     } catch (e) {
       print('Error fetching task summary: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred while fetching task summary')),
+        const SnackBar(
+            content: Text('An error occurred while fetching task summary')),
       );
     } finally {
       Loader.stopLoader(context);

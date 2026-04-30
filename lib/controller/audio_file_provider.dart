@@ -124,7 +124,7 @@ class AudioFileProvider extends ChangeNotifier {
         // FIXED: Use helper function instead of direct call
         stopMediaStreamHelper(stream);
         return true;
-            } catch (e) {
+      } catch (e) {
         print('ERROR: Web microphone permission check failed: $e');
         return false;
       }

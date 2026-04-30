@@ -18,7 +18,8 @@ class AddCommercialItemDialog extends StatefulWidget {
   });
 
   @override
-  State<AddCommercialItemDialog> createState() => _AddCommercialItemDialogState();
+  State<AddCommercialItemDialog> createState() =>
+      _AddCommercialItemDialogState();
 }
 
 class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
@@ -40,7 +41,9 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.isEdit ? 'Edit Commercial Item' : 'Add Commercial Item',
+                    widget.isEdit
+                        ? 'Edit Commercial Item'
+                        : 'Add Commercial Item',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -107,7 +110,8 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                       focusedBorderColor: AppColors.bluebutton,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d{0,2}')),
                       ],
                     ),
                   ),
@@ -123,7 +127,8 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                       focusedBorderColor: AppColors.bluebutton,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d{0,2}')),
                       ],
                     ),
                   ),

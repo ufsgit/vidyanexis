@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -155,8 +154,10 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: settingsProvider.departmentModel.map((dept) {
-                    bool isSelected = settingsProvider.selectedTransferDepartments
-                        .any((element) => element.departmentId == dept.departmentId);
+                    bool isSelected = settingsProvider
+                        .selectedTransferDepartments
+                        .any((element) =>
+                            element.departmentId == dept.departmentId);
                     return CheckboxListTile(
                       title: Text(dept.departmentName),
                       value: isSelected,
@@ -212,7 +213,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     color: AppColors.textGrey3,
                   ),
                 ),
-                Icon(Icons.add_circle_outline, color: AppColors.appViolet, size: 20),
+                Icon(Icons.add_circle_outline,
+                    color: AppColors.appViolet, size: 20),
               ],
             ),
           ),
@@ -377,8 +379,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 const SizedBox(height: 16),
                 CommonDropdown<int>(
                   hintText: 'User Type *',
-                  selectedValue:
-                      widget.isEdit ? settingsProvider.selectedUserTypeId : null,
+                  selectedValue: widget.isEdit
+                      ? settingsProvider.selectedUserTypeId
+                      : null,
                   items: settingsProvider.searchUserType
                       .map((source) => DropdownItem<int>(
                             id: source.userTypeId,
@@ -399,7 +402,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                           : Icons.visibility_off_outlined,
                       color: AppColors.textGrey3,
                     ),
-                    onPressed: () => settingsProvider.toggleNewPasswordVisibility(),
+                    onPressed: () =>
+                        settingsProvider.toggleNewPasswordVisibility(),
                   ),
                   readOnly: false,
                   height: 54,
@@ -417,7 +421,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                           : Icons.visibility_off_outlined,
                       color: AppColors.textGrey3,
                     ),
-                    onPressed: () => settingsProvider.togglePasswordVisibility(),
+                    onPressed: () =>
+                        settingsProvider.togglePasswordVisibility(),
                   ),
                   readOnly: false,
                   height: 54,
@@ -462,8 +467,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 const SizedBox(height: 16),
                 CommonDropdown<int>(
                   hintText: 'Department*',
-                  selectedValue:
-                      widget.isEdit ? settingsProvider.selectedDepartmentId : null,
+                  selectedValue: widget.isEdit
+                      ? settingsProvider.selectedDepartmentId
+                      : null,
                   items: settingsProvider.departmentModel
                       .map((source) => DropdownItem<int>(
                             id: source.departmentId,
@@ -816,8 +822,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                       activeTrackColor: AppColors.primaryBlue,
                       inactiveThumbColor: AppColors.textGrey1,
                       inactiveTrackColor: AppColors.whiteColor,
-                      materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ),
                 ],
@@ -842,8 +847,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: CustomElevatedButton(
-                        buttonText:
-                            settingsProvider.isAddingUser ? 'Saving...' : 'Save',
+                        buttonText: settingsProvider.isAddingUser
+                            ? 'Saving...'
+                            : 'Save',
                         onPressed: settingsProvider.isAddingUser
                             ? null
                             : () async {
@@ -881,8 +887,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                                       branchId: settingsProvider
                                           .selectedBranchId
                                           .toString(),
-                                      branchName:
-                                          settingsProvider.branchController.text);
+                                      branchName: settingsProvider
+                                          .branchController.text);
 
                                   settingsProvider.resetStates();
                                   Navigator.pop(context);
@@ -972,11 +978,13 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     await settingsProvider.addUser(
                         context: context,
                         userDetailsId: widget.userId.toString(),
-                        userDetailsName: settingsProvider.userNameController.text,
+                        userDetailsName:
+                            settingsProvider.userNameController.text,
                         password: settingsProvider.passWordController.text,
                         workingStatus:
                             settingsProvider.selectedWorkingStatusId.toString(),
-                        userType: settingsProvider.selectedUserTypeId.toString(),
+                        userType:
+                            settingsProvider.selectedUserTypeId.toString(),
                         addressName1: '',
                         addressName2: '',
                         addressName3: '',

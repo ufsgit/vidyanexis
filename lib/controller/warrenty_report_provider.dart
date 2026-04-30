@@ -397,7 +397,8 @@ class WarrentyReportProvider extends ChangeNotifier {
           } else {
             final newData = data['data'];
             if (newData != null) {
-              _upcomingWarrantyReport = await compute(_parseWarrenty, newData as List<dynamic>);
+              _upcomingWarrantyReport =
+                  await compute(_parseWarrenty, newData as List<dynamic>);
             } else {
               _upcomingWarrantyReport = [];
             }
@@ -428,7 +429,8 @@ class WarrentyReportProvider extends ChangeNotifier {
   bool isAmcLoaded = false;
   bool isPaymentLoaded = false;
 
-  Future<void> getAmcNotification(BuildContext context, {bool isFilter = false, bool shouldNotify = true}) async {
+  Future<void> getAmcNotification(BuildContext context,
+      {bool isFilter = false, bool shouldNotify = true}) async {
     if (isAmcLoaded && !isFilter) return;
     isAmcNotificationLoading = true;
     if (shouldNotify) notifyListeners();
@@ -455,7 +457,8 @@ class WarrentyReportProvider extends ChangeNotifier {
 
         if (data != null && data['list'] != null) {
           if (data['list'] is List) {
-            _amcNotificationList = await compute(_parseAmcNotification, data['list'] as List<dynamic>);
+            _amcNotificationList = await compute(
+                _parseAmcNotification, data['list'] as List<dynamic>);
           } else {
             _amcNotificationList = [];
           }
@@ -481,7 +484,8 @@ class WarrentyReportProvider extends ChangeNotifier {
   List<PaymentReminderModel> get paymentReminderList => _paymentReminderList;
   bool isPaymentReminderLoading = false;
 
-  Future<void> getPaymentReminders(BuildContext context, {bool isFilter = false, bool shouldNotify = true}) async {
+  Future<void> getPaymentReminders(BuildContext context,
+      {bool isFilter = false, bool shouldNotify = true}) async {
     if (isPaymentLoaded && !isFilter) return;
     isPaymentReminderLoading = true;
     if (shouldNotify) notifyListeners();
@@ -507,7 +511,8 @@ class WarrentyReportProvider extends ChangeNotifier {
 
         if (data != null && data['data'] != null) {
           if (data['data'] is List) {
-            _paymentReminderList = await compute(_parsePaymentReminder, data['data'] as List<dynamic>);
+            _paymentReminderList = await compute(
+                _parsePaymentReminder, data['data'] as List<dynamic>);
           } else {
             _paymentReminderList = [];
           }

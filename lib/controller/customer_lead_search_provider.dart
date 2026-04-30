@@ -24,7 +24,8 @@ class CustomerLeadSearchProvider extends ChangeNotifier {
 
     try {
       final response = await HttpRequest.httpGetRequest(
-        endPoint: "${HttpUrls.searchLeadByContact}?Contact_No=${contactNoController.text}",
+        endPoint:
+            "${HttpUrls.searchLeadByContact}?Contact_No=${contactNoController.text}",
       );
 
       if (response.statusCode == 200) {

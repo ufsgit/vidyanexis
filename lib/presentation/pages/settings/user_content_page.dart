@@ -496,28 +496,29 @@ class _UsersContentState extends State<UsersContent> {
                                                     builder:
                                                         (BuildContext context) {
                                                       return SettingsAddUserWidget(
-                                                          appLogin: settingsProvider
-                                                                      .searchUserDetails[
-                                                                          index]
-                                                                      .allowAppLogin ==
+                                                          appLogin:
+                                                              settingsProvider.searchUserDetails[index].allowAppLogin ==
                                                                   '1',
-                                                          userType: settingsProvider
-                                                              .searchUserDetails[
-                                                                  index]
-                                                              .userType
-                                                              .toString(),
+                                                          userType:
+                                                              settingsProvider.searchUserDetails[index].userType
+                                                                  .toString(),
                                                           userStatusId:
-                                                              settingsProvider
-                                                                  .searchUserDetails[
-                                                                      index]
-                                                                  .workingStatus
+                                                              settingsProvider.searchUserDetails[index].workingStatus
                                                                   .toString(),
                                                           departmentId: int.parse(
                                                               settingsProvider
-                                                                  .searchUserDetails[index]
+                                                                  .searchUserDetails[
+                                                                      index]
                                                                   .departmentId),
-                                                          branchId: int.parse(settingsProvider.searchUserDetails[index].branchId),
-                                                          userId: settingsProvider.searchUserDetails[index].userDetailsId.toString(),
+                                                          branchId: int.parse(
+                                                              settingsProvider
+                                                                  .searchUserDetails[
+                                                                      index]
+                                                                  .branchId),
+                                                          userId: settingsProvider
+                                                              .searchUserDetails[index]
+                                                              .userDetailsId
+                                                              .toString(),
                                                           email: settingsProvider.searchUserDetails[index].email,
                                                           userName: settingsProvider.searchUserDetails[index].userDetailsName,
                                                           password: settingsProvider.searchUserDetails[index].password,
@@ -885,11 +886,9 @@ class _UsersContentState extends State<UsersContent> {
                                                           .toString());
 
                                                       return SettingsAddUserWidget(
-                                                          appLogin: settingsProvider.searchUserDetails[index].allowAppLogin == '1',
-                                                          userType: settingsProvider
-                                                              .searchUserDetails[
-                                                                  index]
-                                                              .userType
+                                                          appLogin: settingsProvider.searchUserDetails[index].allowAppLogin ==
+                                                              '1',
+                                                          userType: settingsProvider.searchUserDetails[index].userType
                                                               .toString(),
                                                           departmentId: int.parse(
                                                               settingsProvider
@@ -902,10 +901,14 @@ class _UsersContentState extends State<UsersContent> {
                                                                       index]
                                                                   .branchId),
                                                           userStatusId: settingsProvider
-                                                              .searchUserDetails[index]
+                                                              .searchUserDetails[
+                                                                  index]
                                                               .workingStatus
                                                               .toString(),
-                                                          userId: settingsProvider.searchUserDetails[index].userDetailsId.toString(),
+                                                          userId: settingsProvider
+                                                              .searchUserDetails[index]
+                                                              .userDetailsId
+                                                              .toString(),
                                                           email: settingsProvider.searchUserDetails[index].email,
                                                           userName: settingsProvider.searchUserDetails[index].userDetailsName,
                                                           password: settingsProvider.searchUserDetails[index].password,

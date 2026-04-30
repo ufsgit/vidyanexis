@@ -89,29 +89,29 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                         width: 10,
                       ),
                       if (settingsProvider.menuIsSaveMap[21] == 1)
-                      CustomOutlinedSvgButton(
-                        onPressed: () async {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AddInvoiceTab(
-                                  editId: '0',
-                                  isEdit: false,
-                                  customerId: widget.customerId);
-                            },
-                          );
-                        },
-                        svgPath: 'assets/images/Plus.svg',
-                        label: 'Add Invoice ',
-                        breakpoint: 860,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                        CustomOutlinedSvgButton(
+                          onPressed: () async {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AddInvoiceTab(
+                                    editId: '0',
+                                    isEdit: false,
+                                    customerId: widget.customerId);
+                              },
+                            );
+                          },
+                          svgPath: 'assets/images/Plus.svg',
+                          label: 'Add Invoice ',
+                          breakpoint: 860,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          foregroundColor: Colors.white,
+                          backgroundColor: AppColors.primaryBlue,
+                          borderSide: BorderSide(color: AppColors.primaryBlue),
                         ),
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryBlue,
-                        borderSide: BorderSide(color: AppColors.primaryBlue),
-                      ),
                     ],
                   )
                 : Row(
@@ -240,47 +240,47 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                                     BorderSide(color: AppColors.primaryBlue),
                               ),
                               if (settingsProvider.menuIsEditMap[21] == 1)
-                              IconButton(
-                                onPressed: () async {
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (BuildContext context) {
-                                      return AddInvoiceTab(
-                                          isEdit: true,
-                                          editId: invoice.invoiceMasterId,
-                                          customerId: widget.customerId);
-                                    },
-                                  );
-                                },
-                                icon: const Icon(Icons.edit_outlined),
-                              ),
-                              if (settingsProvider.menuIsDeleteMap[21] == 1)
-                              IconButton(
-                                  onPressed: () {
-                                    showConfirmationDialog(
+                                IconButton(
+                                  onPressed: () async {
+                                    showDialog(
                                       context: context,
-                                      title: 'Confirm Deletion',
-                                      content:
-                                          'Are you sure you want to delete this Invoice?',
-                                      onCancel: () {
-                                        Navigator.of(context).pop();
+                                      barrierDismissible: false,
+                                      builder: (BuildContext context) {
+                                        return AddInvoiceTab(
+                                            isEdit: true,
+                                            editId: invoice.invoiceMasterId,
+                                            customerId: widget.customerId);
                                       },
-                                      onConfirm: () {
-                                        invoiceProvider.deleteInvoice(
-                                            invoice.invoiceMasterId,
-                                            widget.customerId,
-                                            context);
-                                        Navigator.of(context).pop();
-                                      },
-                                      confirmButtonText: 'Delete',
-                                      confirmButtonColor: Colors.red,
                                     );
                                   },
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: AppColors.textRed,
-                                  )),
+                                  icon: const Icon(Icons.edit_outlined),
+                                ),
+                              if (settingsProvider.menuIsDeleteMap[21] == 1)
+                                IconButton(
+                                    onPressed: () {
+                                      showConfirmationDialog(
+                                        context: context,
+                                        title: 'Confirm Deletion',
+                                        content:
+                                            'Are you sure you want to delete this Invoice?',
+                                        onCancel: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        onConfirm: () {
+                                          invoiceProvider.deleteInvoice(
+                                              invoice.invoiceMasterId,
+                                              widget.customerId,
+                                              context);
+                                          Navigator.of(context).pop();
+                                        },
+                                        confirmButtonText: 'Delete',
+                                        confirmButtonColor: Colors.red,
+                                      );
+                                    },
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: AppColors.textRed,
+                                    )),
                             ],
                           ),
                         ],

@@ -87,17 +87,23 @@ class SalesItemModel {
       price: double.tryParse(json['Price']?.toString() ?? '0') ?? 0.0,
       amount: double.tryParse(json['Amount']?.toString() ?? '0') ?? 0.0,
       discount: double.tryParse(json['Discount']?.toString() ?? '0') ?? 0.0,
-      discountPercentage: double.tryParse(json['Discount_Percentage']?.toString() ?? '0') ?? 0.0,
+      discountPercentage:
+          double.tryParse(json['Discount_Percentage']?.toString() ?? '0') ??
+              0.0,
       netValue: double.tryParse(json['Netvalue']?.toString() ?? '0') ?? 0.0,
       cgst: double.tryParse(json['CGST']?.toString() ?? '0') ?? 0.0,
       sgst: double.tryParse(json['SGST']?.toString() ?? '0') ?? 0.0,
       gst: double.tryParse(json['GST']?.toString() ?? '0') ?? 0.0,
       igst: double.tryParse(json['IGST']?.toString() ?? '0') ?? 0.0,
       gstAmount: double.tryParse(json['GST_Amount']?.toString() ?? '0') ?? 0.0,
-      cgstAmount: double.tryParse(json['CGST_Amount']?.toString() ?? '0') ?? 0.0,
-      sgstAmount: double.tryParse(json['SGST_Amount']?.toString() ?? '0') ?? 0.0,
-      igstAmount: double.tryParse(json['IGST_Amount']?.toString() ?? '0') ?? 0.0,
-      totalAmount: double.tryParse(json['Total_Amount']?.toString() ?? '0') ?? 0.0,
+      cgstAmount:
+          double.tryParse(json['CGST_Amount']?.toString() ?? '0') ?? 0.0,
+      sgstAmount:
+          double.tryParse(json['SGST_Amount']?.toString() ?? '0') ?? 0.0,
+      igstAmount:
+          double.tryParse(json['IGST_Amount']?.toString() ?? '0') ?? 0.0,
+      totalAmount:
+          double.tryParse(json['Total_Amount']?.toString() ?? '0') ?? 0.0,
       hsnCode: json['HSNCode']?.toString() ?? '',
     );
   }

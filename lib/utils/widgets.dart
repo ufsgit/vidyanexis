@@ -8,4 +8,3 @@ Future<void> hideKeyboard() async {
 bool isDarkMode(BuildContext context) {
   return Theme.of(context).brightness == Brightness.dark;
 }
-

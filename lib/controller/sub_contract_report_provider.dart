@@ -159,22 +159,24 @@ class SubContractReportProvider extends ChangeNotifier {
   Future<void> getSubContractReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
-      
-      final String url = "${HttpUrls.subContractsReport}?From_Date=$_formattedFromDate&To_Date=$_formattedToDate&Is_Date_Check=${_isDateCheck ? 1 : 0}&Search=$_search&User_Id=$_selectedUserId&Enquiry_For_Id=$_selectedEnquiryForId";
-      
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: url,
-          bodyData: {});
+
+      final String url =
+          "${HttpUrls.subContractsReport}?From_Date=$_formattedFromDate&To_Date=$_formattedToDate&Is_Date_Check=${_isDateCheck ? 1 : 0}&Search=$_search&User_Id=$_selectedUserId&Enquiry_For_Id=$_selectedEnquiryForId";
+
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: url, bodyData: {});
 
       if (response.statusCode == 200) {
         final rawResponse = response.data;
-        if (rawResponse != null && rawResponse is List && rawResponse.isNotEmpty) {
+        if (rawResponse != null &&
+            rawResponse is List &&
+            rawResponse.isNotEmpty) {
           final data = rawResponse[0];
           if (data != null && data is List) {
             _subContractReport = data
                 .map((item) => SubContractReportModel.fromJson(item))
                 .toList();
-            
+
             // Calculate total commission manually as backend doesn't provide it in this structure
             double total = 0;
             for (var item in _subContractReport) {
@@ -185,7 +187,7 @@ class SubContractReportProvider extends ChangeNotifier {
             _subContractReport = [];
             _totalCommission = '0.00';
           }
-          
+
           if (context.mounted) Loader.stopLoader(context);
           notifyListeners();
         } else if (rawResponse != null && rawResponse is Map<String, dynamic>) {
@@ -203,13 +205,13 @@ class SubContractReportProvider extends ChangeNotifier {
           if (totals != null && totals is Map<String, dynamic>) {
             _totalCommission = totals['Total_Commission']?.toString() ?? '0.00';
           } else if (_subContractReport.isNotEmpty) {
-             double total = 0;
-             for (var item in _subContractReport) {
-               total += double.tryParse(item.commission) ?? 0;
-             }
-             _totalCommission = total.toStringAsFixed(2);
+            double total = 0;
+            for (var item in _subContractReport) {
+              total += double.tryParse(item.commission) ?? 0;
+            }
+            _totalCommission = total.toStringAsFixed(2);
           }
-          
+
           if (context.mounted) Loader.stopLoader(context);
           notifyListeners();
         } else {

@@ -168,8 +168,9 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                                     item.quotationMasterId.toString(),
                                     context,
                                   );
-                                  await customerDetailsProvider.fetchLeadDetails(
-                                      widget.customerId, context);
+                                  await customerDetailsProvider
+                                      .fetchLeadDetails(
+                                          widget.customerId, context);
                                   await settingsProvider.getCompanyDetails();
 
                                   if (settingsProvider
@@ -182,8 +183,8 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                                     if (item.quotationTypeId == 2) {
                                       printCommercialPDFs(
                                         context: context,
-                                        companyDetails: settingsProvider
-                                            .companyDetails[0],
+                                        companyDetails:
+                                            settingsProvider.companyDetails[0],
                                         customerDetails: customerDetailsProvider
                                             .leadDetails![0],
                                         quotationData: customerDetailsProvider
@@ -192,8 +193,8 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                                     } else {
                                       printResidentialPDFs(
                                         context: context,
-                                        companyDetails: settingsProvider
-                                            .companyDetails[0],
+                                        companyDetails:
+                                            settingsProvider.companyDetails[0],
                                         customerDetails: customerDetailsProvider
                                             .leadDetails![0],
                                         quotationData: customerDetailsProvider

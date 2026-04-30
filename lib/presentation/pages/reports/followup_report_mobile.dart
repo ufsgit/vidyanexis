@@ -229,7 +229,8 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                     CommonReportDateFilter(
                       fromDate: followUpReportsProvider.fromDate?.toString(),
                       toDate: followUpReportsProvider.toDate?.toString(),
-                      formattedFromDate: followUpReportsProvider.formattedFromDate,
+                      formattedFromDate:
+                          followUpReportsProvider.formattedFromDate,
                       formattedToDate: followUpReportsProvider.formattedToDate,
                       onTap: () => onClickTopButton(context),
                     ),
