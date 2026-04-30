@@ -140,24 +140,25 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
         leadId: '0',
       );
       leadProvider.getSearchLeads(context);
-      leadProvider.initializeScroll(context);
     });
+    Provider.of<LeadsProvider>(context, listen: false)
+        .scrollController
+        .addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (mounted) {
+      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      leadProvider.scrollListener(context);
+    }
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      try {
-        final searchProvider =
-            Provider.of<SidebarProvider>(context, listen: false);
-        final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
-
-        searchProvider.stopSearch();
-      } catch (e) {
-        print('Error resetting search state: $e');
-      }
-    });
-
+    _debounce?.cancel();
+    Provider.of<LeadsProvider>(context, listen: false)
+        .scrollController
+        .removeListener(_scrollListener);
     super.dispose();
   }
 
@@ -512,6 +513,30 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                       child: CustomScrollView(
                         controller: leadProvider.scrollController,
                         slivers: [
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CustomText(
+                                    'Total Leads: ${leadProvider.totalCount}',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textBlack,
+                                  ),
+                                  CustomText(
+                                    'Showing: ${leadProvider.leadData.length}',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.textGrey3,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                           SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
@@ -527,6 +552,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                 }
                                 var lead = leadProvider.leadData[index];
                                 return Column(
+                                  key: ValueKey(lead.customerId),
                                   children: [
                                     Divider(
                                       height: 1,

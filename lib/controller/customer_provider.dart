@@ -112,8 +112,8 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _startLimit += 20;
-      _endLimit += 20;
+      _startLimit += 10000;
+      _endLimit += 10000;
 
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
@@ -176,7 +176,7 @@ class CustomerProvider extends ChangeNotifier {
     _toDateS = toDate;
     _status = _selectedStatusIds.join(',');
     _startLimit = 1;
-    _endLimit = 20;
+    _endLimit = 10000;
     currentPage = 1;
     hasMoreData = true;
     notifyListeners(); // Notify listeners so that UI can rebuild
@@ -270,7 +270,7 @@ class CustomerProvider extends ChangeNotifier {
 
   void setLimit() {
     _startLimit = 1;
-    _endLimit = 20;
+    _endLimit = 10000;
     notifyListeners(); // Notify listeners about the change
   }
 
@@ -382,9 +382,11 @@ class CustomerProvider extends ChangeNotifier {
   Future<void> getSearchCustomers(BuildContext context,
       {bool isSilent = false}) async {
     try {
-      _isLoading = true;
+      if (!isSilent) {
+        _isLoading = true;
+        notifyListeners();
+      }
       _status = _selectedStatusIds.join(',');
-      // notifyListeners(); // Could clear here but replacing is smoother in UI
 
       // Fetch statuses if missing, don't block
       if (_statusData.isEmpty) {
@@ -464,7 +466,7 @@ class CustomerProvider extends ChangeNotifier {
   //no context only for back in customer detail
   Future<void> getSearchCustomersNoContext() async {
     _startLimit = 1;
-    _endLimit = 20;
+    _endLimit = 10000;
 
     try {
       _isLoading = true;

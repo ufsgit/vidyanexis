@@ -128,7 +128,7 @@ class LeadsProvider extends ChangeNotifier {
   int currentPage = 1;
   bool isLoadingMore = false;
   bool hasMoreData = true;
-  final int pageSize = 20;
+  final int pageSize = 10000;
 
 //cost
   final TextEditingController projectCostController = TextEditingController();
@@ -604,42 +604,25 @@ class LeadsProvider extends ChangeNotifier {
 
   bool _isScrollInitialized = false;
 
-  void initializeScroll(BuildContext context) {
-    if (!_isScrollInitialized) {
-      scrollController.addListener(() {
-        scrollListener(context);
-      });
-      _isScrollInitialized = true;
-    }
-  }
-
   void scrollListener(BuildContext context) {
-    if (scrollController.hasClients) {
-      print("Scroll position: ${scrollController.position.pixels}");
-      print("Max scroll: ${scrollController.position.maxScrollExtent}");
-
-      if (scrollController.position.pixels >=
-              scrollController.position.maxScrollExtent - 200 &&
-          !isLoadingMore &&
-          hasMoreData) {
-        loadMoreLeads(context);
-      }
-    }
+    // Pagination disabled per user request to show all data at once
   }
 
   Future<void> loadMoreLeads(BuildContext context) async {
-    if (isLoadingMore) return;
+    if (isLoadingMore || !hasMoreData) return;
 
-    isLoadingMore = true;
-    currentPage++;
-    print("Loading page: $currentPage");
+    try {
+      isLoadingMore = true;
+      currentPage++;
+      notifyListeners();
 
-    notifyListeners();
-
-    await getSearchLeads(context, isPagination: true);
-
-    isLoadingMore = false;
-    notifyListeners();
+      await getSearchLeads(context, isPagination: true);
+    } catch (e) {
+      log('Error loading more leads: $e');
+    } finally {
+      isLoadingMore = false;
+      notifyListeners();
+    }
   }
 
 //........................................................................
@@ -909,12 +892,17 @@ class LeadsProvider extends ChangeNotifier {
       bool isWebPagination = false,
       bool isSilent = false}) async {
     try {
-      _isLoading = true;
       if (!isPagination && !isWebPagination) {
+        if (!isSilent) {
+          _isLoading = true;
+          notifyListeners();
+        }
         currentPage = 1;
         hasMoreData = true;
         _leadData.clear();
-        // notifyListeners();
+        if (scrollController.hasClients) {
+          scrollController.jumpTo(0);
+        }
       }
 
       if (isWebPagination) {
@@ -970,19 +958,24 @@ class LeadsProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          _tempData = (data as List<dynamic>)
+          List<SearchLeadModel> allItems = (data as List<dynamic>)
               .map((item) => SearchLeadModel.fromJson(item))
               .toList();
 
-          if (_tempData.isNotEmpty) {
-            _totalCount = _tempData.last.customerId;
-            _tempData.removeLast();
+          // Extract real data (tp == 1)
+          List<SearchLeadModel> newItems =
+              allItems.where((item) => item.tp == 1).toList();
 
-            if (_tempData.isNotEmpty) {
-              _leadData.addAll(_tempData);
-            } else {
-              hasMoreData = false;
+          if (newItems.isNotEmpty) {
+            _leadData.addAll(newItems);
+
+            // Find metadata (tp == 2) safely
+            int metadataIndex = allItems.indexWhere((item) => item.tp == 2);
+            if (metadataIndex != -1) {
+              _totalCount = allItems[metadataIndex].customerId;
             }
+
+            hasMoreData = _leadData.length < _totalCount;
           } else {
             hasMoreData = false;
           }
@@ -1134,20 +1127,18 @@ class LeadsProvider extends ChangeNotifier {
         if (data != null) {
           // log(data.toString());
 
-          _tempData = (data as List<dynamic>)
+          List<SearchLeadModel> allItems = (data as List<dynamic>)
               .map((item) => SearchLeadModel.fromJson(item))
               .toList();
 
-          // Remove the last item from _tempData and print its customerId
+          _leadData = allItems.where((item) => item.tp == 1).toList();
 
-          _totalCount = _tempData.last.customerId;
-          print("Last customer's ID: $_totalCount");
+          int metadataIndex = allItems.indexWhere((item) => item.tp == 2);
+          if (metadataIndex != -1) {
+            _totalCount = allItems[metadataIndex].customerId;
+          }
 
-          // Remove the last item from _tempData
-          _tempData.removeLast();
-
-          // Pass the remaining items in _tempData to _leadData
-          _leadData = List.from(_tempData);
+          hasMoreData = _leadData.length < _totalCount;
 
           notifyListeners();
         }

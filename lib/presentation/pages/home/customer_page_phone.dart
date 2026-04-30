@@ -324,6 +324,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                 var customer =
                                     customerProvider.customerData[index];
                                 return Column(
+                                  key: ValueKey(customer.customerId),
                                   children: [
                                     Divider(
                                       height: 1,
