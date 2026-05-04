@@ -58,6 +58,7 @@ import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_task_model.dart';
+import 'package:vidyanexis/controller/models/task_history_model.dart';
 
 class CustomerDetailsProvider extends ChangeNotifier {
   AddTaskModel addTaskModel = AddTaskModel();
@@ -151,6 +152,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<PaymentModel> get paymentList => _paymentList;
   bool _isPaymentListLoading = false;
   bool get isPaymentListLoading => _isPaymentListLoading;
+
+  List<TaskHistoryModel> _taskHistoryList = [];
+  List<TaskHistoryModel> get taskHistoryList => _taskHistoryList;
+  bool _isHistoryLoading = false;
+  bool get isHistoryLoading => _isHistoryLoading;
 
   Future<void> getPaymentListApi(
       String customerId, BuildContext context) async {
@@ -739,6 +745,34 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _customerTaskOverviewTasks = [];
     } finally {
       _isTaskOverviewLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchTaskHistory(String taskId) async {
+    try {
+      _isHistoryLoading = true;
+      _taskHistoryList = [];
+      notifyListeners();
+
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.getTaskHistory}?Task_Id=$taskId&Is_Date=0',
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        final list = data['data'] ?? [];
+
+        _taskHistoryList =
+            (list as List).map((e) => TaskHistoryModel.fromJson(e)).toList();
+      } else {
+        _taskHistoryList = [];
+      }
+    } catch (e) {
+      print('Error fetching task history: $e');
+      _taskHistoryList = [];
+    } finally {
+      _isHistoryLoading = false;
       notifyListeners();
     }
   }
