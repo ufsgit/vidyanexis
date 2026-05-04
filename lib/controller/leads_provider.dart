@@ -128,7 +128,7 @@ class LeadsProvider extends ChangeNotifier {
   int currentPage = 1;
   bool isLoadingMore = false;
   bool hasMoreData = true;
-  final int pageSize = 10000;
+  int pageSize = 20;
 
 //cost
   final TextEditingController projectCostController = TextEditingController();
@@ -908,6 +908,8 @@ class LeadsProvider extends ChangeNotifier {
       if (isWebPagination) {
         _leadData.clear();
       }
+      pageSize =
+          AppStyles.isWebScreen(context) ? 20 : 10000; //web 20 and mobile 10000
 
       _startLimit = ((currentPage - 1) * pageSize) + 1;
       _endLimit = currentPage * pageSize;
