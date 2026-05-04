@@ -19,6 +19,9 @@ class DashboardCountTab extends StatelessWidget {
     if (t.contains('transferred')) return const Color(0xFF9ABDE2);
     if (t.contains('missed')) return const Color(0xFFDEB0B9);
     if (t.contains('interested')) return const Color(0xFFE5D1B0);
+    if (t.contains('fresh_leads')) return const Color(0xFFB4E4D7);
+    if (t.contains('total_leads')) return const Color(0xFFC5BAE0);
+    if (t.contains('upcoming_followup')) return const Color(0xFFF5D6B3);
     return Colors.grey.shade300;
   }
 
@@ -40,6 +43,9 @@ class DashboardCountTab extends StatelessWidget {
 
     // Only render the required keys if they exist in the map
     final allowedKeys = [
+      'Total_Leads',
+      'Fresh_Leads',
+      'Upcoming_Followup',
       'New_Leads',
       'Missed_Leads',
       'Followup_Leads',
