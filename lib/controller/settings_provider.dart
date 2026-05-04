@@ -690,6 +690,8 @@ class SettingsProvider extends ChangeNotifier {
     required BuildContext context,
     required String campaignId,
     required String userIds,
+    required int enquirySourceId,
+    required String enquirySourceName,
   }) async {
     try {
       Loader.showLoader(context);
@@ -700,6 +702,8 @@ class SettingsProvider extends ChangeNotifier {
             "Campaign_Name": campaignNameController.text,
             "Campaign_Id_String": campaignIdStringController.text,
             "User_Ids": userIds,
+            "Enquiry_Source_Id": enquirySourceId,
+            "Enquiry_Source_Name": enquirySourceName,
           });
 
       if (response != null && response.statusCode == 200) {
