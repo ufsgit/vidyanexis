@@ -52,6 +52,7 @@ import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_page.d
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
 
 class HomePage extends StatefulWidget {
   static String route = '/home';
@@ -205,6 +206,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Task Summary Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: TaskSummaryReportScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[123].toString() == '1')
+        SidebarOption(
+          title: 'Customer Task Month Report',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: CustomerTaskMonthReportScreen()),
         ),
 
       if (settingsProvider.menuIsViewMap[8].toString() == '1')

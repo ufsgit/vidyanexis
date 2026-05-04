@@ -370,4 +370,5 @@ class HttpUrls {
   static String searchStockUseReport = "item/Search_Stock_Use_Report";
   static String searchStockReturnReport = "item/Search_Stock_Return_Report";
   static String getStockDetails = "item/Get_Stock_Details";
+  static String getCustomerTaskMonth = "task/Get_Customer_Task_Month";
 }
