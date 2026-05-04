@@ -233,6 +233,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
   bool _validateForm(
       LeadsProvider leadProvider, DropDownProvider dropDownProvider) {
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
     String? errorMessage;
     final validation = customFieldLeadStatusKey.currentState?.validateForm();
     final validation2 =
@@ -255,6 +257,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     } else if (leadProvider.searchUserController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please Assign Staff';
+    } else if (settingsProvider.enquiryForMandatory == 1 &&
+        (dropDownProvider.selectedEnquiryForId == null ||
+            dropDownProvider.selectedEnquiryForId == 0) &&
+        widget.isEdit == false) {
+      errorMessage = 'Please select Enquiry For';
     } else if (dropDownProvider.isFollowupRequired() &&
         leadProvider.followUpDateController.text.isEmpty &&
         widget.isEdit == false) {
@@ -356,6 +363,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
 
+      settingsProvider.getCompanyDetails();
       await leadProvider.loadLoginDetails();
 
       if (widget.isEdit) {
@@ -2392,7 +2400,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           children: [
             Expanded(
               child: CommonDropdown<int>(
-                hintText: 'Enquiry For',
+                hintText:
+                    'Enquiry For${settingsProvider.enquiryForMandatory == 1 ? '*' : ''}',
                 enabled: dropDownProvider.selectedSourceId != null,
                 items: dropDownProvider.filteredEnquiryForData
                     .map((status) => DropdownItem<int>(

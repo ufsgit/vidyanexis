@@ -435,9 +435,11 @@ class SettingsProvider extends ChangeNotifier {
   String uploadedFilePath = '';
 
   int _toggleValue = 0;
+  int _enquiryForMandatory = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
+  int get enquiryForMandatory => _enquiryForMandatory;
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
 
@@ -937,6 +939,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setToggleValue(int value) {
     _toggleValue = value;
+    notifyListeners();
+  }
+
+  void setEnquiryForMandatory(int value) {
+    _enquiryForMandatory = value;
     notifyListeners();
   }
 
@@ -3052,6 +3059,9 @@ class SettingsProvider extends ChangeNotifier {
           try {
             _companyDetails =
                 data.map((item) => Company.fromJson(item)).toList();
+            if (_companyDetails.isNotEmpty) {
+              _enquiryForMandatory = _companyDetails[0].enquiryForMandatory;
+            }
           } catch (e) {
             print(
                 'SettingsProvider.getCompanyDetails: Failed to parse Company format - $e');
@@ -3095,6 +3105,7 @@ class SettingsProvider extends ChangeNotifier {
           String newLogo = data['company_logo'] ?? data['Logo'] ?? '';
           String newTitle = data['company_name'] ?? data['Company_Name'] ?? '';
           String newNotificationTopic = data['notification_topic'] ?? '';
+          _enquiryForMandatory = data['Enquiry_For_Mandatory'] ?? 0;
 
           if (newLogo != logo ||
               newTitle != title ||
@@ -3161,7 +3172,8 @@ class SettingsProvider extends ChangeNotifier {
             "Gst_No": cgstNoController.text.toString(),
             "Pan_No": cpanNoController.text.toString(),
             "Cin_No": ccinNoController.text.toString(),
-            "Is_Location": _toggleValue
+            "Is_Location": _toggleValue,
+            "Enquiry_For_Mandatory": _enquiryForMandatory
           });
 
       if (response!.statusCode == 200) {
@@ -3279,6 +3291,8 @@ class SettingsProvider extends ChangeNotifier {
     cpanNoController.clear();
     ccinNoController.clear();
     uploadedFilePath = '';
+    _toggleValue = 0;
+    _enquiryForMandatory = 0;
   }
 
   Future<void> searchPermission(BuildContext context) async {

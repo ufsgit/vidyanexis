@@ -91,6 +91,8 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                             settingsProvider.companyDetails[0].logo.toString());
                         settingsProvider.setToggleValue(
                             settingsProvider.companyDetails[0].isLocation);
+                        settingsProvider.setEnquiryForMandatory(settingsProvider
+                            .companyDetails[0].enquiryForMandatory);
                         showDialog(
                           barrierDismissible: false,
                           context: context,
@@ -170,6 +172,15 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                         Icons.location_on_sharp,
                         "Location",
                         settingsProvider.companyDetails[0].isLocation == 1
+                            ? 'Enabled'
+                            : 'Disabled',
+                      ),
+                      // Enquiry For Mandatory
+                      _buildInfoTile(
+                        Icons.check_box,
+                        "Enquiry For Mandatory",
+                        settingsProvider.companyDetails[0].enquiryForMandatory ==
+                                1
                             ? 'Enabled'
                             : 'Disabled',
                       ),

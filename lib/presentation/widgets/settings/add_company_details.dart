@@ -339,6 +339,23 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                 ],
               ),
               const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Enquiry For Mandatory:   ${settingsProvider.enquiryForMandatory == 1 ? "On" : "Off"}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 10),
+                  Switch(
+                    value: settingsProvider.enquiryForMandatory == 1,
+                    onChanged: (bool value) {
+                      settingsProvider.setEnquiryForMandatory(value ? 1 : 0);
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
               CustomElevatedButton(
                 buttonText: 'Upload Image',
                 onPressed: () async {
