@@ -59,98 +59,295 @@ class _CustomerTaskMonthReportScreenState
     final customers = groupedData.keys.toList();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        centerTitle: false,
         title: Text(
-          'Customer Task Month Report',
+          'Customer Task Report',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF152D70),
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF1A1C1E),
           ),
         ),
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_month, color: Color(0xFF152D70)),
             onPressed: () => _onClickTopButton(context, provider),
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primaryBlue.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.tune_rounded,
+                  color: AppColors.primaryBlue, size: 20),
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Center(
-              child: Text(
-                '${DateFormat('dd MMM').format(fromDate)} - ${DateFormat('dd MMM yyyy').format(toDate)}',
-                style: GoogleFonts.plusJakartaSans(
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF152D70),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isMobile = constraints.maxWidth < 700;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Date Range Indicator
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryBlue.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: AppColors.primaryBlue.withOpacity(0.1)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.calendar_today_rounded,
+                          size: 14, color: AppColors.primaryBlue),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${DateFormat('dd MMM').format(fromDate)} - ${DateFormat('dd MMM yyyy').format(toDate)}',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryBlue,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+
+              if (!isMobile) _buildGridHeader(datesInRange),
+
+              Expanded(
+                child: provider.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : customers.isEmpty
+                        ? _buildEmptyState()
+                        : isMobile
+                            ? _buildMobileListView(
+                                customers, datesInRange, groupedData)
+                            : SingleChildScrollView(
+                                controller: _verticalScrollController,
+                                child: _buildWebGridView(
+                                    customers, datesInRange, groupedData),
+                              ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.assignment_late_rounded,
+                size: 48, color: Colors.grey[400]),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No reports found',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try adjusting your date filters',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14,
+              color: Colors.grey[500],
             ),
           ),
         ],
       ),
-      body: Container(
-        color: Colors.grey[50],
-        child: Column(
-          children: [
-            // Header Row (Fixed Top)
-            _buildGridHeader(datesInRange),
+    );
+  }
 
-            // Main Content Area
-            Expanded(
-              child: provider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : customers.isEmpty
-                      ? const Center(
-                          child: Text('No data found for this range'))
-                      : Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Fixed Left Column (Customer Names)
-                            _buildCustomerColumn(customers),
+  Widget _buildMobileListView(
+    List<String> customers,
+    List<DateTime> dates,
+    Map<String, Map<String, List<CustomerTaskMonthModel>>> groupedData,
+  ) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: customers.length,
+      itemBuilder: (context, index) {
+        final customerName = customers[index];
+        final customerTasks = groupedData[customerName] ?? {};
+        int totalTasks = 0;
+        customerTasks.forEach((key, value) => totalTasks += value.length);
 
-                            // Scrollable Grid Area
-                            Expanded(
-                              child: SingleChildScrollView(
-                                controller: _horizontalScrollController,
-                                scrollDirection: Axis.horizontal,
-                                child: _buildTaskGrid(
-                                    customers, datesInRange, groupedData),
-                              ),
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey[200]!),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              initiallyExpanded: false,
+              title: Text(
+                customerName,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A1C1E),
+                ),
+              ),
+              subtitle: Text(
+                '$totalTasks total tasks in this period',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              children: [
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: dates.map((date) {
+                      final dateStr = DateFormat('yyyy-MM-dd').format(date);
+                      final tasks = customerTasks[dateStr] ?? [];
+
+                      if (tasks.isEmpty) return const SizedBox.shrink();
+
+                      return InkWell(
+                        onTap: () => _showTaskDetails(context, tasks),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(tasks.first.taskStatusName)
+                                .withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: _getStatusColor(tasks.first.taskStatusName)
+                                  .withOpacity(0.2),
                             ),
-                          ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '${date.day}',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: _getStatusColor(
+                                      tasks.first.taskStatusName),
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: _getStatusColor(
+                                      tasks.first.taskStatusName),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  '${tasks.length}',
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildWebGridView(
+    List<String> customers,
+    List<DateTime> dates,
+    Map<String, Map<String, List<CustomerTaskMonthModel>>> groupedData,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Fixed Left Column (Customer Names)
+        _buildCustomerColumn(customers),
+
+        // Scrollable Grid Area
+        Expanded(
+          child: SingleChildScrollView(
+            controller: _horizontalScrollController,
+            scrollDirection: Axis.horizontal,
+            child: _buildTaskGrid(customers, dates, groupedData),
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildGridHeader(List<DateTime> dates) {
     return Container(
-      height: 40,
+      height: 48,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.darkGreen,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: const Color(0xFFF8F9FA),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        border: Border.all(color: Colors.grey[200]!),
       ),
       child: Row(
         children: [
           Container(
             width: 150,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.centerLeft,
-            child: const Text(
+            child: Text(
               'Customer Name',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.plusJakartaSans(
+                color: const Color(0xFF495057),
+                fontWeight: FontWeight.w700,
                 fontSize: 12,
               ),
             ),
@@ -159,8 +356,7 @@ class _CustomerTaskMonthReportScreenState
             child: SingleChildScrollView(
               controller: _horizontalScrollController,
               scrollDirection: Axis.horizontal,
-              physics:
-                  const NeverScrollableScrollPhysics(), // Sync with main grid
+              physics: const NeverScrollableScrollPhysics(),
               child: Row(
                 children: List.generate(dates.length, (index) {
                   return Container(
@@ -168,14 +364,14 @@ class _CustomerTaskMonthReportScreenState
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       border: Border(
-                        left: BorderSide(color: Colors.white.withOpacity(0.2)),
+                        left: BorderSide(color: Colors.grey[200]!),
                       ),
                     ),
                     child: Text(
                       '${dates[index].day}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: const Color(0xFF495057),
+                        fontWeight: FontWeight.w700,
                         fontSize: 12,
                       ),
                     ),
@@ -192,17 +388,19 @@ class _CustomerTaskMonthReportScreenState
   Widget _buildCustomerColumn(List<String> customers) {
     return Container(
       width: 150,
+      margin: const EdgeInsets.only(left: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(right: BorderSide(color: Colors.grey[300]!)),
+        border: Border(
+          left: BorderSide(color: Colors.grey[200]!),
+          right: BorderSide(color: Colors.grey[200]!),
+        ),
       ),
-      child: ListView.builder(
-        controller: _verticalScrollController,
-        itemCount: customers.length,
-        itemBuilder: (context, index) {
+      child: Column(
+        children: List.generate(customers.length, (index) {
           return Container(
             height: 60,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
               border: Border(bottom: BorderSide(color: Colors.grey[100]!)),
@@ -212,12 +410,13 @@ class _CustomerTaskMonthReportScreenState
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
+                color: const Color(0xFF1A1C1E),
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           );
-        },
+        }),
       ),
     );
   }
@@ -227,12 +426,13 @@ class _CustomerTaskMonthReportScreenState
     List<DateTime> dates,
     Map<String, Map<String, List<CustomerTaskMonthModel>>> groupedData,
   ) {
-    return SizedBox(
+    return Container(
       width: (dates.length * 50).toDouble(),
-      child: ListView.builder(
-        controller: _verticalScrollController,
-        itemCount: customers.length,
-        itemBuilder: (context, rowIndex) {
+      decoration: BoxDecoration(
+        border: Border(right: BorderSide(color: Colors.grey[200]!)),
+      ),
+      child: Column(
+        children: List.generate(customers.length, (rowIndex) {
           final customerName = customers[rowIndex];
           return Container(
             height: 60,
@@ -257,31 +457,34 @@ class _CustomerTaskMonthReportScreenState
                           Border(left: BorderSide(color: Colors.grey[100]!)),
                       color: tasks.isNotEmpty
                           ? _getStatusColor(tasks.first.taskStatusName)
-                              .withOpacity(0.2)
+                              .withOpacity(0.08)
                           : Colors.transparent,
                     ),
                     child: tasks.isEmpty
                         ? null
                         : Center(
-                            child: Tooltip(
-                              message: tasks
-                                  .map((t) =>
-                                      '${t.taskTypeName}: ${t.taskStatusName}')
-                                  .join('\n'),
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color: _getStatusColor(
-                                      tasks.first.taskStatusName),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Text(
-                                  '${tasks.length}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color:
+                                    _getStatusColor(tasks.first.taskStatusName),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: _getStatusColor(
+                                            tasks.first.taskStatusName)
+                                        .withOpacity(0.3),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
                                   ),
+                                ],
+                              ),
+                              child: Text(
+                                '${tasks.length}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
                             ),
@@ -291,7 +494,7 @@ class _CustomerTaskMonthReportScreenState
               }),
             ),
           );
-        },
+        }),
       ),
     );
   }
@@ -489,6 +692,8 @@ class _CustomerTaskMonthReportScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Status: ${task.taskStatusName ?? 'N/A'}'),
+                    if (task.staffName != null)
+                      Text('Assigned To: ${task.staffName}'),
                     if (task.projectWing != null)
                       Text('Project Wing: ${task.projectWing}'),
                   ],

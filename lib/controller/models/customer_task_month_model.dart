@@ -5,6 +5,7 @@ class CustomerTaskMonthModel {
   String? taskTypeName;
   String? taskStatusName;
   String? projectWing;
+  String? staffName;
 
   CustomerTaskMonthModel({
     this.customerId,
@@ -13,6 +14,7 @@ class CustomerTaskMonthModel {
     this.taskTypeName,
     this.taskStatusName,
     this.projectWing,
+    this.staffName,
   });
 
   CustomerTaskMonthModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class CustomerTaskMonthModel {
     taskTypeName = json['Task_Type_Name'];
     taskStatusName = json['Task_Status_Name'];
     projectWing = json['Project_Wing'];
+    staffName = json['Staff_Name'];
   }
 
   Map<String, dynamic> toJson() {
@@ -32,6 +35,7 @@ class CustomerTaskMonthModel {
     data['Task_Type_Name'] = taskTypeName;
     data['Task_Status_Name'] = taskStatusName;
     data['Project_Wing'] = projectWing;
+    data['Staff_Name'] = staffName;
     return data;
   }
 }
