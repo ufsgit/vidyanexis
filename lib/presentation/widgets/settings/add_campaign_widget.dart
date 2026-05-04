@@ -6,6 +6,8 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 
 class AddCampaignWidget extends StatefulWidget {
   final bool isEdit;
@@ -13,6 +15,7 @@ class AddCampaignWidget extends StatefulWidget {
   final String campaignName;
   final String campaignIdString;
   final String userIds;
+  final int enquirySourceId;
 
   const AddCampaignWidget({
     super.key,
@@ -21,6 +24,7 @@ class AddCampaignWidget extends StatefulWidget {
     this.campaignName = '',
     this.campaignIdString = '',
     this.userIds = '',
+    this.enquirySourceId = 0,
   });
 
   @override
@@ -29,22 +33,32 @@ class AddCampaignWidget extends StatefulWidget {
 
 class _AddCampaignWidgetState extends State<AddCampaignWidget> {
   List<int> selectedUserIds = [];
+  int? selectedEnquirySourceId;
 
   @override
   void initState() {
     super.initState();
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+
+    // Fetch Enquiry Sources
+    dropDownProvider.getEnquirySource(context);
+
     if (widget.isEdit) {
       settingsProvider.campaignNameController.text = widget.campaignName;
       settingsProvider.campaignIdStringController.text =
           widget.campaignIdString;
+      selectedEnquirySourceId =
+          widget.enquirySourceId != 0 ? widget.enquirySourceId : null;
       // Always fetch from server to get accurate pre-checked users
       _fetchCampaignDetails();
     } else {
       settingsProvider.campaignNameController.clear();
       settingsProvider.campaignIdStringController.clear();
       selectedUserIds = [];
+      selectedEnquirySourceId = null;
     }
   }
 
@@ -53,14 +67,19 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
         Provider.of<SettingsProvider>(context, listen: false);
     final campaign = await settingsProvider.getCampaignById(
         context, widget.campaignId.toString());
-    if (campaign != null && campaign.userIds.isNotEmpty) {
+    if (campaign != null) {
       if (mounted) {
         setState(() {
-          selectedUserIds = campaign.userIds
-              .split(',')
-              .where((s) => s.isNotEmpty)
-              .map((s) => int.parse(s))
-              .toList();
+          if (campaign.userIds.isNotEmpty) {
+            selectedUserIds = campaign.userIds
+                .split(',')
+                .where((s) => s.isNotEmpty)
+                .map((s) => int.parse(s))
+                .toList();
+          }
+          if (campaign.enquirySourceId != 0) {
+            selectedEnquirySourceId = campaign.enquirySourceId;
+          }
         });
       }
     }
@@ -154,6 +173,26 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
               readOnly: false,
             ),
             const SizedBox(height: 16),
+            Consumer<DropDownProvider>(
+              builder: (context, dropDownProvider, child) {
+                return CommonDropdown<int>(
+                  hintText: 'Enquiry Source',
+                  items: dropDownProvider.enquiryData
+                      .map((source) => DropdownItem<int>(
+                            id: source.enquirySourceId,
+                            name: source.enquirySourceName,
+                          ))
+                      .toList(),
+                  onItemSelected: (selectedId) {
+                    setState(() {
+                      selectedEnquirySourceId = selectedId;
+                    });
+                  },
+                  selectedValue: selectedEnquirySourceId,
+                );
+              },
+            ),
+            const SizedBox(height: 16),
             Text(
               'Selected Users: ${selectedUserIds.length}',
               style: GoogleFonts.plusJakartaSans(
@@ -240,10 +279,26 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
                       );
                       return;
                     }
+                    if (selectedEnquirySourceId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Please select enquiry source')),
+                      );
+                      return;
+                    }
+
+                    final dropDownProvider =
+                        Provider.of<DropDownProvider>(context, listen: false);
+                    final selectedSource = dropDownProvider.enquiryData
+                        .firstWhere((element) =>
+                            element.enquirySourceId == selectedEnquirySourceId);
+
                     settingsProvider.saveCampaign(
                       context: context,
                       campaignId: widget.campaignId.toString(),
                       userIds: selectedUserIds.join(','),
+                      enquirySourceId: selectedEnquirySourceId!,
+                      enquirySourceName: selectedSource.enquirySourceName,
                     );
                   },
                   buttonText: widget.isEdit ? 'Update' : 'Save',
