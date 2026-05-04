@@ -264,6 +264,7 @@ class FormProvider extends ChangeNotifier {
                           : availableField.label,
                       type: availableField.type,
                       options: availableField.options,
+                      checkBoxOptions: availableField.checkBoxOptions,
                       isMandatory: (isMandatoryValue == 1 ||
                           isMandatoryValue == true ||
                           isMandatoryValue == "1"),
@@ -611,6 +612,7 @@ class FormProvider extends ChangeNotifier {
                       : availableField.label,
                   type: availableField.type,
                   options: availableField.options,
+                  checkBoxOptions: availableField.checkBoxOptions,
                   value: dataValue?.toString(),
                   isMandatory: (isMandatoryValue == 1 ||
                       isMandatoryValue == true ||
