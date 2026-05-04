@@ -80,7 +80,7 @@ class _TaskCardState extends State<TaskCard> {
             decoration: BoxDecoration(
               color: AppColors.whiteColor,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

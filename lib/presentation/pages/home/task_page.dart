@@ -56,7 +56,6 @@ class TaskPage extends StatefulWidget {
 }
 
 class _tasksPageReportState extends State<TaskPage> {
-  static const double rowHeight = 60.0;
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   DropDownProvider provider = DropDownProvider();
@@ -209,6 +208,7 @@ class _tasksPageReportState extends State<TaskPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final double rowHeight = AppStyles.isWebScreen(context) ? 60.0 : 80.0;
     // Removed unused leadProvider
 
     final reportsProvider = Provider.of<TaskPageProvider>(context);
@@ -473,34 +473,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 ),
 
                                                 const SizedBox(width: 16),
-
-                                                // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW TASK BUTTON (ADDED IN BETWEEN FILTER & EXPORT)
-                                                // ElevatedButton.icon(
-                                                //   onPressed: () {
-                                                //     showDialog(
-                                                //       context: context,
-                                                //       builder: (_) =>
-                                                //           const AddTaskWidget(
-                                                //         taskId: 0,
-                                                //       ),
-                                                //     );
-                                                //   },
-                                                //   icon: const Icon(Icons.add),
-                                                //   label: const Text('New Task'),
-                                                //   style:
-                                                //       ElevatedButton.styleFrom(
-                                                //     backgroundColor:
-                                                //         const Color(0xFFEAB308),
-                                                //     foregroundColor:
-                                                //         Colors.white,
-                                                //     padding: const EdgeInsets
-                                                //         .symmetric(
-                                                //       horizontal: 16,
-                                                //       vertical: 12,
-                                                //     ),
-                                                //   ),
-                                                // ),
-                                                // const SizedBox(width: 16),
 
                                                 // Export button
                                                 if (!isMobile ||
@@ -1286,11 +1258,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           },
                                           hoverColor: const Color(0xFFF8FAFC),
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 2),
-                                            constraints: const BoxConstraints(
-                                              minHeight: 15,
-                                            ),
+                                            height: rowHeight,
                                             decoration: BoxDecoration(
                                               color: index % 2 == 0
                                                   ? Colors.white
@@ -1340,7 +1308,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               const EdgeInsets
                                                                   .symmetric(
                                                             horizontal: 10,
-                                                            vertical: 2,
+                                                            vertical: 6,
                                                           ),
                                                           child: InkWell(
                                                             onTap: () {
@@ -1913,7 +1881,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       }
                                                     },
                                                     child: Container(
-                                                      height: 22,
+                                                      height: 30,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -1930,7 +1898,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   .symmetric(
                                                                   horizontal:
                                                                       10,
-                                                                  vertical: 2),
+                                                                  vertical: 6),
                                                           child: Text(
                                                             task.taskStatusName,
                                                             overflow:

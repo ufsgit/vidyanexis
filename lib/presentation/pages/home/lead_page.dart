@@ -276,7 +276,7 @@ class _LeadsPageState extends State<LeadPage> {
         paddingSafety;
 
     // Calculate exact row height for 20 rows
-    final double rowHeight = 36;
+    final double rowHeight = AppStyles.isWebScreen(context) ? 36.0 : 48.0;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -744,10 +744,11 @@ class _LeadsPageState extends State<LeadPage> {
                                                                       horizontal:
                                                                           10,
                                                                       vertical:
-                                                                          2),
-                                                              minimumSize:
-                                                                  const Size(
-                                                                      0, 0),
+                                                                          6),
+                                                              fixedSize:
+                                                                  const Size
+                                                                      .fromHeight(
+                                                                      32),
                                                               tapTargetSize:
                                                                   MaterialTapTargetSize
                                                                       .shrinkWrap,
@@ -1287,9 +1288,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                             const EdgeInsets
                                                                 .symmetric(
                                                                 horizontal: 10,
-                                                                vertical: 2),
-                                                        minimumSize:
-                                                            const Size(0, 0),
+                                                                vertical: 6),
+                                                        fixedSize: const Size
+                                                            .fromHeight(32),
                                                         tapTargetSize:
                                                             MaterialTapTargetSize
                                                                 .shrinkWrap,

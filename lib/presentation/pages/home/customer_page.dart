@@ -181,7 +181,7 @@ class _CustomerPageState extends State<CustomerPage> {
         paginationHeight -
         tableHeaderHeight -
         40;
-    const double rowHeight = 36.0;
+    final double rowHeight = AppStyles.isWebScreen(context) ? 36.0 : 48.0;
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -526,9 +526,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                     //     '${CustomerDetailsScreen.route}${lead.customerId.toString()}');
                                   },
                                   child: Container(
-                                    height: AppStyles.isWebScreen(context)
-                                        ? rowHeight
-                                        : null,
+                                    height: rowHeight,
                                     decoration: BoxDecoration(
                                       color: index % 2 == 0
                                           ? Colors.white
@@ -566,7 +564,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 flex: 2,
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        vertical: 4.0,
+                                                        vertical: 10.0,
                                                         horizontal: 8.0),
                                                 data: Row(
                                                   children: [
@@ -866,7 +864,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         ? const EdgeInsets
                                                             .symmetric(
                                                             horizontal: 8,
-                                                            vertical: 4)
+                                                            vertical: 8)
                                                         : EdgeInsets.zero,
                                                     decoration: BoxDecoration(
                                                       color: parseColor(
@@ -1006,7 +1004,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                   .symmetric(
                                                                   horizontal:
                                                                       10,
-                                                                  vertical: 5),
+                                                                  vertical: 8),
                                                           decoration:
                                                               BoxDecoration(
                                                             color: parseColor(lead
