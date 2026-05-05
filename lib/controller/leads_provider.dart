@@ -37,6 +37,7 @@ class LeadsProvider extends ChangeNotifier {
   //controllers for add lead
   final TextEditingController leadNameController = TextEditingController();
   final TextEditingController leadAgeController = TextEditingController();
+  final TextEditingController consumerNameController = TextEditingController();
   final TextEditingController enquiryForController = TextEditingController();
 
   final TextEditingController enquirySourceController = TextEditingController();
@@ -44,6 +45,8 @@ class LeadsProvider extends ChangeNotifier {
       TextEditingController();
 
   final TextEditingController contactNoController = TextEditingController();
+  final TextEditingController consumerContactNoController =
+      TextEditingController();
   final TextEditingController referenceNameController = TextEditingController();
 
   final TextEditingController emailIdController = TextEditingController();
@@ -578,6 +581,8 @@ class LeadsProvider extends ChangeNotifier {
     peController.clear();
     creController.clear();
     leadtypeController.clear();
+    consumerNameController.clear();
+    consumerContactNoController.clear();
     aadharImage = '';
     electricityBillImage = '';
     passportImage = '';
@@ -1316,6 +1321,8 @@ class LeadsProvider extends ChangeNotifier {
           "Phone_Number": contactNoController.text,
           "Reference_Name": referenceNameController.text,
           "Location": mapLinkController.text,
+          "Consumer_Name": consumerNameController.text,
+          "Contact_No": consumerContactNoController.text,
           "Consumer_Number": consumerNoController.text,
           "Electrical_Section": electricalSectionController.text,
           "Inverter_Capacity":

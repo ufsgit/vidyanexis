@@ -436,10 +436,15 @@ class SettingsProvider extends ChangeNotifier {
 
   int _toggleValue = 0;
   int _enquiryForMandatory = 0;
+  int _consumerNameMandatory = 0;
+  int _consumerContactNoMandatory = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
   int get enquiryForMandatory => _enquiryForMandatory;
+  int get consumerNameMandatory => _consumerNameMandatory;
+  int get consumerContactNoMandatory => _consumerContactNoMandatory;
+
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
 
@@ -944,6 +949,16 @@ class SettingsProvider extends ChangeNotifier {
 
   void setEnquiryForMandatory(int value) {
     _enquiryForMandatory = value;
+    notifyListeners();
+  }
+
+  void setConsumerNameMandatory(int value) {
+    _consumerNameMandatory = value;
+    notifyListeners();
+  }
+
+  void setConsumerContactNoMandatory(int value) {
+    _consumerContactNoMandatory = value;
     notifyListeners();
   }
 
@@ -3061,6 +3076,9 @@ class SettingsProvider extends ChangeNotifier {
                 data.map((item) => Company.fromJson(item)).toList();
             if (_companyDetails.isNotEmpty) {
               _enquiryForMandatory = _companyDetails[0].enquiryForMandatory;
+              _consumerNameMandatory = _companyDetails[0].consumerNameMandatory;
+              _consumerContactNoMandatory =
+                  _companyDetails[0].consumerContactNoMandatory;
             }
           } catch (e) {
             print(
@@ -3106,6 +3124,9 @@ class SettingsProvider extends ChangeNotifier {
           String newTitle = data['company_name'] ?? data['Company_Name'] ?? '';
           String newNotificationTopic = data['notification_topic'] ?? '';
           _enquiryForMandatory = data['Enquiry_For_Mandatory'] ?? 0;
+          _consumerNameMandatory = data['Consumer_Name_Mandatory'] ?? 0;
+          _consumerContactNoMandatory =
+              data['Contact_Number_Mandatory'] ?? 0;
 
           if (newLogo != logo ||
               newTitle != title ||
@@ -3173,7 +3194,9 @@ class SettingsProvider extends ChangeNotifier {
             "Pan_No": cpanNoController.text.toString(),
             "Cin_No": ccinNoController.text.toString(),
             "Is_Location": _toggleValue,
-            "Enquiry_For_Mandatory": _enquiryForMandatory
+            "Enquiry_For_Mandatory": _enquiryForMandatory,
+            "Consumer_Name_Mandatory": _consumerNameMandatory,
+            "Contact_Number_Mandatory": _consumerContactNoMandatory,
           });
 
       if (response!.statusCode == 200) {
