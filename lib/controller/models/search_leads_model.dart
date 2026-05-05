@@ -45,6 +45,8 @@ class SearchLeadModel {
   final String enquirySourceName;
   final String totalProjectCost;
   final String commission;
+  final String consumerName;
+  final String contactNo;
 
   // ─────────────────── Additional Fields ───────────────────
   final int tp;
@@ -183,6 +185,8 @@ class SearchLeadModel {
     this.locationName,
     required this.totalProjectCost,
     required this.commission,
+    required this.consumerName,
+    required this.contactNo,
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -286,6 +290,8 @@ class SearchLeadModel {
           : [],
       totalProjectCost: parseString(json['Total_Project_Cost']),
       commission: parseString(json['Commission']),
+      consumerName: parseString(json['Consumer_Name']),
+      contactNo: parseString(json['Contact_No']),
     );
   }
 
@@ -374,6 +380,8 @@ class SearchLeadModel {
       "Location_Name": locationName,
       "Total_Project_Cost": totalProjectCost,
       "Commission": commission,
+      "Consumer_Name": consumerName,
+      "Contact_No": contactNo,
     };
   }
 
@@ -461,6 +469,8 @@ class SearchLeadModel {
     String? locationName,
     String? totalProjectCost,
     String? commission,
+    String? consumerName,
+    String? contactNo,
     List<AudioFileLead>? audioFiles,
   }) {
     return SearchLeadModel(
@@ -549,6 +559,8 @@ class SearchLeadModel {
       locationName: locationName ?? this.locationName,
       totalProjectCost: totalProjectCost ?? this.totalProjectCost,
       commission: commission ?? this.commission,
+      consumerName: consumerName ?? this.consumerName,
+      contactNo: contactNo ?? this.contactNo,
     );
   }
 

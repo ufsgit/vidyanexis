@@ -181,6 +181,9 @@ class LeadDetailsProvider with ChangeNotifier {
             leadProvider.creController.text = leadData.creName;
             leadProvider.peController.text = leadData.peName;
             leadProvider.leadtypeController.text = leadData.leadTypeName;
+            leadProvider.consumerNameController.text = leadData.consumerName;
+            leadProvider.consumerContactNoController.text =
+                leadData.consumerContactNo;
 
             // Set IDs in dropdown provider to ensure they are available for saving
             dropDownProvider.setSelectedFollowUPId(leadData.statusId);

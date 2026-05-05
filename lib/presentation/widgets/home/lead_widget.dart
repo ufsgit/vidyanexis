@@ -272,7 +272,16 @@ class _LeadCardState extends State<LeadCard> {
                                       fontWeight: FontWeight.w400,
                                       color: AppColors.textGrey4),
                                 ),
-                              ]
+                              ],
+                              Text(
+                                'Location : ${widget.lead.locationName ?? ''}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.textGrey4),
+                              ),
                             ],
                           ),
                         ),

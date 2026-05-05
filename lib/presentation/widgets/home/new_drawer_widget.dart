@@ -964,6 +964,44 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ],
                           ),
                           const SizedBox(height: 8),
+                          ResponsiveRow(
+                            children: [
+                              if (settingsProvider.consumerNameMandatory == 1)
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller:
+                                          leadProvider.consumerNameController,
+                                      hintText: 'Consumer Name',
+                                      labelText: '',
+                                    ),
+                                  ),
+                                ),
+                              if (settingsProvider.consumerContactNoMandatory ==
+                                  1)
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller: leadProvider
+                                          .consumerContactNoController,
+                                      hintText: 'Contact No',
+                                      labelText: '',
+                                      keyboardType: TextInputType.phone,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              const Spacer(),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
                           // // Row 3: PE, CRE, Lead Type
                           // Row(
                           //   children: [
