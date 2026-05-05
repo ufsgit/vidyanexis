@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'dart:developer';
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:universal_html/html.dart' as html;
@@ -59,6 +60,7 @@ import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_task_model.dart';
 import 'package:vidyanexis/controller/models/task_history_model.dart';
+import 'package:vidyanexis/controller/models/structure_material_model.dart';
 
 class CustomerDetailsProvider extends ChangeNotifier {
   AddTaskModel addTaskModel = AddTaskModel();
@@ -448,6 +450,17 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController quotationDescription3Controller =
       TextEditingController();
 
+  final TextEditingController structureItemsController =
+      TextEditingController();
+  final TextEditingController structureQtyController = TextEditingController();
+  final TextEditingController structureBrandController =
+      TextEditingController();
+  List<StructureMaterialItem> _structureMaterialsItems = [];
+  List<StructureMaterialItem> get structureMaterialsItems =>
+      _structureMaterialsItems;
+  int? _editStructureMaterialsIndex;
+  int? get editStructureMaterialsIndex => _editStructureMaterialsIndex;
+
   int? _selectedBranchId;
   int? get selectedBranchId => _selectedBranchId;
   set selectedBranchId(int? value) {
@@ -580,6 +593,15 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void setBillOfMaterialIndex(int? index) {
     _editBillOfMaterialsIndex = index;
+    notifyListeners();
+  }
+
+  void setStructureMaterialsIndex(int? index) {
+    _editStructureMaterialsMaterialsIndex(index);
+  }
+
+  void _editStructureMaterialsMaterialsIndex(int? index) {
+    _editStructureMaterialsIndex = index;
     notifyListeners();
   }
 
@@ -1458,6 +1480,80 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  void addOrEditStructureMaterial() {
+    if (structureItemsController.text.isEmpty ||
+        structureQtyController.text.isEmpty ||
+        structureBrandController.text.isEmpty) {
+      return;
+    }
+
+    final newItem = StructureMaterialItem(
+      items: structureItemsController.text,
+      qty: structureQtyController.text,
+      brand: structureBrandController.text,
+    );
+
+    if (editStructureMaterialsIndex != null &&
+        editStructureMaterialsIndex! >= 0 &&
+        editStructureMaterialsIndex! < _structureMaterialsItems.length) {
+      _structureMaterialsItems[editStructureMaterialsIndex!] = newItem;
+    } else {
+      _structureMaterialsItems.add(newItem);
+    }
+
+    _editStructureMaterialsIndex = null;
+    clearStructureFields();
+    notifyListeners();
+  }
+
+  void clearStructureFields() {
+    structureItemsController.clear();
+    structureQtyController.clear();
+    structureBrandController.clear();
+    _editStructureMaterialsIndex = null;
+    notifyListeners();
+  }
+
+  void populateStructureFieldsForEditing(int index) {
+    if (index >= 0 && index < _structureMaterialsItems.length) {
+      final itemToEdit = _structureMaterialsItems[index];
+      structureItemsController.text = itemToEdit.items;
+      structureQtyController.text = itemToEdit.qty;
+      structureBrandController.text = itemToEdit.brand;
+      setStructureMaterialsIndex(index);
+      notifyListeners();
+    }
+  }
+
+  void deleteStructureMaterial(int index) {
+    if (index >= 0 && index < _structureMaterialsItems.length) {
+      _structureMaterialsItems.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  Future<void> saveStructureMaterials(
+      String quotationId, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveStructureMaterials,
+        bodyData: {
+          "Quotation_Master_Id": quotationId,
+          "structure_materials": jsonEncode(
+              _structureMaterialsItems.map((e) => e.toJson()).toList()),
+        },
+      );
+
+      if (response?.statusCode == 200) {
+        log('Structure materials saved successfully');
+      } else {
+        log('Failed to save structure materials');
+      }
+    } catch (e) {
+      log('Error saving structure materials: $e');
+    }
+  }
+
   //
 
   void clearAmcControllers() {
@@ -2318,6 +2414,24 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
         Loader.stopLoader(context);
         print(data);
+
+        // Save structure materials if any
+        if (_structureMaterialsItems.isNotEmpty) {
+          String masterId = '';
+          if (data is Map && data.containsKey('Quotation_Master_Id')) {
+            masterId = data['Quotation_Master_Id'].toString();
+          } else if (data is List &&
+              data.isNotEmpty &&
+              data[0] is Map &&
+              data[0].containsKey('Quotation_Master_Id')) {
+            masterId = data[0]['Quotation_Master_Id'].toString();
+          }
+
+          if (masterId.isNotEmpty && masterId != '0') {
+            await saveStructureMaterials(masterId, context);
+          }
+        }
+
         return data;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -2413,6 +2527,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _items = [];
     _billOfMaterialsItems = [];
     _productionItems = [];
+    _structureMaterialsItems = [];
+    structureItemsController.clear();
+    structureQtyController.clear();
+    structureBrandController.clear();
     _selectedQuotationStatus = null;
     _selectedQuotationStatusName = null;
     gstTaxableAmountController.clear();
@@ -2546,7 +2664,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void updateItemsFromQuotationDetailsNew(
       List<ql.QuotationDetail> quotationDetails,
       List<ql.BillOfMaterial> billOfMaterials,
-      List<ProductionChartModel> productionChart) {
+      List<ProductionChartModel> productionChart,
+      List<ql.StructureMaterial> structureMaterials) {
     //items
     _items = List.generate(
       quotationDetails.length,
@@ -2614,6 +2733,26 @@ class CustomerDetailsProvider extends ChangeNotifier {
     // Final debug print to confirm the updates
     print(
         "Final Bill List: ${billOfMaterialsItems.map((e) => e.toJson()).toList()}");
+
+    //structure materials
+    _structureMaterialsItems = List.generate(
+      structureMaterials.length,
+      (index) => StructureMaterialItem(
+        items: '',
+        qty: '0',
+        brand: '',
+      ),
+    );
+
+    print("Structure Materials Length: ${structureMaterials.length}");
+
+    for (int i = 0; i < structureMaterials.length; i++) {
+      _structureMaterialsItems[i].items = structureMaterials[i].items;
+      _structureMaterialsItems[i].qty = structureMaterials[i].qty;
+      _structureMaterialsItems[i].brand = structureMaterials[i].brand;
+    }
+
+    notifyListeners();
   }
 
   void updateProfile(String customerId, BuildContext context) async {
@@ -4052,6 +4191,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       quotation.quotationDetails,
       quotation.billOfMaterials,
       quotation.productionChart,
+      quotation.structureMaterials,
     );
 
     // ---- GST ----

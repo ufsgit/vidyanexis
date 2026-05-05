@@ -237,6 +237,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                     quotation.quotationDetails,
                     quotation.billOfMaterials,
                     quotation.productionChart,
+                    quotation.structureMaterials,
                   );
 
                   // ---- GST ----

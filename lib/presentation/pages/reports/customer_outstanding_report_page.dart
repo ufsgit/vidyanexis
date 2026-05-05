@@ -125,6 +125,7 @@ class _CustomerOutstandingReportPageState
                         exportToExcel(
                           headers: [
                             'Customer Name',
+                            'Enquiry Source',
                             'Phone no',
                             'Project Cost',
                             'Received',
@@ -133,6 +134,7 @@ class _CustomerOutstandingReportPageState
                           data: provider.reportData.map((item) {
                             return {
                               'Customer Name': item.customerName,
+                              'Enquiry Source': item.enquirySource,
                               'Phone no': item.phone,
                               'Project Cost': item.projectCost,
                               'Received': item.received,

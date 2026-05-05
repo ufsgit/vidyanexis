@@ -307,6 +307,7 @@ class QuotationCard extends StatelessWidget {
                           quotaion.quotationDetails,
                           quotaion.billOfMaterials,
                           quotaion.productionChart,
+                          quotaion.structureMaterials,
                         );
 
                         // ---- GST ----

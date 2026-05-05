@@ -5082,6 +5082,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       quotation.quotationDetails,
       quotation.billOfMaterials,
       quotation.productionChart,
+      quotation.structureMaterials,
     );
 
     // ---- GST ----

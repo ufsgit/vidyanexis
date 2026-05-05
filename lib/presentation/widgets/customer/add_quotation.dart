@@ -19,6 +19,8 @@ import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.da
 import 'package:vidyanexis/presentation/widgets/customer/quotation_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/commercial_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/scope_of_work_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/structure_material_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_structure_material_dialog.dart';
 import 'package:vidyanexis/http/loader.dart';
 
 class QuotationCreationWidget extends StatefulWidget {
@@ -1161,6 +1163,24 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     initiallyExpanded: false,
                     children: [
                       billofMaterialsWidget(context),
+                    ],
+                  ),
+                  ExpansionTile(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    title: Text(
+                      'Structure Materials',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey1,
+                      ),
+                    ),
+                    tilePadding: EdgeInsets.zero,
+                    initiallyExpanded: false,
+                    children: [
+                      structureMaterialsWidget(context),
                     ],
                   ),
                 ],
@@ -2313,6 +2333,97 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       showDialog(
                         context: context,
                         builder: (context) => EditBomItemDialog(
+                          index: index,
+                          isEdit: true,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget structureMaterialsWidget(BuildContext context) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: 'Structure Materials ',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textGrey1,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: OutlinedButton.icon(
+            onPressed: () {
+              customerDetailsProvider.clearStructureFields();
+              showDialog(
+                context: context,
+                builder: (context) => const AddStructureMaterialDialog(
+                  index: -1,
+                  isEdit: false,
+                ),
+              );
+            },
+            icon: const Icon(Icons.add),
+            label: const Text('Add Structure Material'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primaryBlue,
+              backgroundColor: Colors.white,
+              side: BorderSide(color: AppColors.primaryBlue),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        if (customerDetailsProvider.structureMaterialsItems.isNotEmpty)
+          Container(
+            decoration: BoxDecoration(
+                color: const Color(0xffF8FAFC),
+                borderRadius: BorderRadius.circular(8)),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount:
+                    customerDetailsProvider.structureMaterialsItems.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final item =
+                      customerDetailsProvider.structureMaterialsItems[index];
+
+                  return StructureMaterialCard(
+                    item: item,
+                    onDelete: () {
+                      customerDetailsProvider.deleteStructureMaterial(index);
+                    },
+                    onEdit: () {
+                      customerDetailsProvider
+                          .populateStructureFieldsForEditing(index);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AddStructureMaterialDialog(
                           index: index,
                           isEdit: true,
                         ),

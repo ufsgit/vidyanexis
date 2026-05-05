@@ -86,6 +86,7 @@ class GetQuotationbyMasterIdmodel {
   final String description2;
   final String description3;
   final List<Map<String, dynamic>> quotationCustomFields;
+  final List<StructureMaterial> structureMaterials;
   final int branchId;
   final String leadBranchName;
   final BranchDetails? branchDetails;
@@ -162,6 +163,7 @@ class GetQuotationbyMasterIdmodel {
     required this.description2,
     required this.description3,
     required this.quotationCustomFields,
+    required this.structureMaterials,
     required this.branchId,
     required this.leadBranchName,
     this.branchDetails,
@@ -252,6 +254,9 @@ class GetQuotationbyMasterIdmodel {
       description3: toStr(json['Description_3']),
       quotationCustomFields: (json['quotation_custom_fields'] as List? ?? [])
           .map((e) => e as Map<String, dynamic>)
+          .toList(),
+      structureMaterials: (json['structure_materials'] as List? ?? [])
+          .map((e) => StructureMaterial.fromJson(e))
           .toList(),
       branchId: toInt(json['Branch_Id']),
       leadBranchName: toStr(json['LeadBranchName']),
@@ -390,6 +395,29 @@ class BillOfMaterial {
       billOfMaterialsId: toInt(json['Bill_Of_Materials_Id']),
       itemsAndDescription: toStr(json['Items_And_Description']),
       uom: toStr(json['UOM']),
+    );
+  }
+}
+
+class StructureMaterial {
+  final int id;
+  final String items;
+  final String qty;
+  final String brand;
+
+  StructureMaterial({
+    required this.id,
+    required this.items,
+    required this.qty,
+    required this.brand,
+  });
+
+  factory StructureMaterial.fromJson(Map<String, dynamic> json) {
+    return StructureMaterial(
+      id: toInt(json['id']),
+      items: toStr(json['Items']),
+      qty: toStr(json['Qty']),
+      brand: toStr(json['Brand']),
     );
   }
 }

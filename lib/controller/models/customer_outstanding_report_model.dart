@@ -22,7 +22,9 @@ class CustomerOutstandingReportModel {
       customerId: int.tryParse(json["Customer_Id"]?.toString() ?? "0") ?? 0,
       customerName: json["Customer_Name"]?.toString() ?? '',
       phone: json["Phone_Number"]?.toString() ?? '',
-      enquirySource: json["Enquiry_Source_Name"]?.toString() ?? '',
+      enquirySource: json["Enquiry_Source_Name"]?.toString() ??
+          json["Enquiry_Source"]?.toString() ??
+          '',
       projectCost: json["Project_Cost"]?.toString() ?? '0.00',
       received: json["Total_Received"]?.toString() ?? '0.00',
       balance: json["Balance"]?.toString() ?? '0.00',
@@ -33,6 +35,7 @@ class CustomerOutstandingReportModel {
         "Customer_Id": customerId,
         "Customer_Name": customerName,
         "Phone": phone,
+        "Enquiry_Source": enquirySource,
         "Enquiry_Source_Name": enquirySource,
         "Project_Cost": projectCost,
         "Received": received,

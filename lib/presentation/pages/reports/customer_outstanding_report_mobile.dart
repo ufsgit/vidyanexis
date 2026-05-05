@@ -63,6 +63,7 @@ class _CustomerOutstandingReportMobileState
           exportToExcel(
             headers: [
               'Customer Name',
+              'Enquiry Source',
               'Phone no',
               'Project Cost',
               'Received',
@@ -71,6 +72,7 @@ class _CustomerOutstandingReportMobileState
             data: provider.reportData.map((item) {
               return {
                 'Customer Name': item.customerName,
+                'Enquiry Source': item.enquirySource,
                 'Phone no': item.phone,
                 'Project Cost': item.projectCost,
                 'Received': item.received,
@@ -155,11 +157,36 @@ class _CustomerOutstandingReportMobileState
                                       ],
                                     ),
                                     const SizedBox(height: 4),
-                                    Text(
-                                      item.phone,
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 12),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          item.phone,
+                                          style: TextStyle(
+                                              color: Colors.grey[600],
+                                              fontSize: 12),
+                                        ),
+                                        if (item.enquirySource.isNotEmpty)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.primaryBlue
+                                                  .withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              item.enquirySource,
+                                              style: TextStyle(
+                                                color: AppColors.primaryBlue,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                     const Divider(height: 20),
                                     Row(

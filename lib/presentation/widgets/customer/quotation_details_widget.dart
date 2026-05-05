@@ -115,6 +115,7 @@ class QuotationDetailsWidget extends StatelessWidget {
                   quotation.quotationDetails,
                   quotation.billOfMaterials,
                   quotation.productionChart,
+                  quotation.structureMaterials,
                 );
 
                 // ---- GST ----
