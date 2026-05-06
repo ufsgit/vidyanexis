@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_data_page.dart';
+import 'package:provider/provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class DashboardCountTab extends StatelessWidget {
   final DashboardProvider dashBoardProvider;
@@ -41,17 +43,19 @@ class DashboardCountTab extends StatelessWidget {
       );
     }
 
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+
     // Only render the required keys if they exist in the map
     final allowedKeys = [
-      'Total_Leads',
-      'Fresh_Leads',
-      'Upcoming_Followup',
-      'New_Leads',
-      'Missed_Leads',
-      'Followup_Leads',
-      'Not_Interested',
-      'Transferred_Leads',
-      'Closed_Leads'
+      if (settingsProvider.menuIsViewMap[130] == 1) 'Total_Leads',
+      if (settingsProvider.menuIsViewMap[131] == 1) 'Fresh_Leads',
+      if (settingsProvider.menuIsViewMap[132] == 1) 'Upcoming_Followup',
+      if (settingsProvider.menuIsViewMap[124] == 1) 'New_Leads',
+      if (settingsProvider.menuIsViewMap[125] == 1) 'Missed_Leads',
+      if (settingsProvider.menuIsViewMap[126] == 1) 'Followup_Leads',
+      if (settingsProvider.menuIsViewMap[127] == 1) 'Not_Interested',
+      if (settingsProvider.menuIsViewMap[128] == 1) 'Transferred_Leads',
+      if (settingsProvider.menuIsViewMap[129] == 1) 'Closed_Leads',
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))
