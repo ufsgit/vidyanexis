@@ -381,6 +381,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   final TextEditingController itemNameController = TextEditingController();
+  final TextEditingController itemHsnController = TextEditingController();
   final TextEditingController itemPriceController = TextEditingController();
   final TextEditingController itemMrpController = TextEditingController();
   final TextEditingController itemTotalController = TextEditingController();
@@ -449,6 +450,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController quotationDescription3Controller =
       TextEditingController();
+  final TextEditingController qEntryDateController = TextEditingController();
 
   final TextEditingController structureItemsController =
       TextEditingController();
@@ -1192,6 +1194,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     final newItem = Item(
       ItemName: itemNameController.text,
+      Hsn: itemHsnController.text,
       UnitPrice: unitPrice,
       Quantity: quantity,
       MRP: mrp,
@@ -1304,6 +1307,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     itemGstPercentController.text = '18';
     itemAdCessController.clear();
     itemUnitController.clear();
+    itemHsnController.clear();
     _totalAmount = 0;
     notifyListeners();
   }
@@ -1320,6 +1324,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       itemGstPercentController.text = itemToEdit.GSTPercent.toString();
       itemAdCessController.text = itemToEdit.AdCESS.toString();
       itemUnitController.text = itemToEdit.Unit;
+      itemHsnController.text = itemToEdit.Hsn;
       itemGstController.text = itemToEdit.GST.toString();
 
       calculateTotalAmount();
@@ -2337,6 +2342,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Quotation_Status_Id": _selectedQuotationStatus ?? 1,
         "Quotation_Status_Name": _selectedQuotationStatusName ?? "Pending",
         "Created_By": userId,
+        "EntryDate": qEntryDateController.text,
         "Description": quotationDescriptionController.text.toString(),
         'items': _items.map((item) => item.toJson()).toList(),
         'bill_of_materials':
@@ -2510,6 +2516,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     itemGstPercentController.text = '18';
     itemAdCessController.clear();
     itemUnitController.clear();
+    itemHsnController.clear();
     billmakeController.clear();
     billquantityController.clear();
     billdistributorController.clear();
@@ -2578,6 +2585,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     quotationDescriptionController.clear();
     quotationDescription2Controller.clear();
     quotationDescription3Controller.clear();
+    qEntryDateController.clear();
     _selectedBranchId = null;
   }
 
@@ -2671,6 +2679,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       quotationDetails.length,
       (index) => Item(
           ItemName: '',
+          Hsn: '',
           UnitPrice: 0,
           Quantity: 0,
           MRP: "",
@@ -2694,6 +2703,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       items[i].GSTPercent = quotationDetails[i].GSTPercent.toDouble();
       items[i].AdCESS = quotationDetails[i].AdCESS.toDouble();
       items[i].Unit = quotationDetails[i].Unit;
+      items[i].Hsn = quotationDetails[i].hsn;
     }
 
     // Notify listeners about the change
@@ -4158,6 +4168,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // ---- BASIC DETAILS ----
     qproductnameController.text = quotation.productName;
+    qEntryDateController.text = quotation.entryDate;
     selectedBranchId = quotation.branchId;
     advanceController.text = quotation.advancePercentage;
     deliveryController.text = quotation.onDeliveryPercentage;

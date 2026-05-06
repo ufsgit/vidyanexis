@@ -70,6 +70,18 @@ class _AddItemDialogState extends State<AddItemDialog> {
               ),
               const SizedBox(height: 16),
 
+              // HSN
+              CustomTextField(
+                controller: provider.itemHsnController,
+                labelText: 'HSN',
+                hintText: 'HSN',
+                height: 54,
+                borderRadius: 12,
+                borderColor: const Color(0xFFD0D5DD),
+                focusedBorderColor: AppColors.bluebutton,
+              ),
+              const SizedBox(height: 16),
+
               // As Per Standard Warranty (MRP)
               CustomTextField(
                 controller: provider.itemMrpController,

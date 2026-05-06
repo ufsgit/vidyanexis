@@ -1,5 +1,6 @@
 class Item {
   String ItemName;
+  String Hsn;
   double UnitPrice;
   int Quantity;
   double Amount;
@@ -11,6 +12,7 @@ class Item {
 
   Item({
     required this.ItemName,
+    required this.Hsn,
     required this.UnitPrice,
     required this.Quantity,
     required this.MRP,
@@ -24,6 +26,7 @@ class Item {
   Map<String, dynamic> toJson() {
     return {
       'ItemName': ItemName,
+      'HSN': Hsn,
       'UnitPrice': UnitPrice,
       'Quantity': Quantity,
       'MRP': MRP,
@@ -38,6 +41,7 @@ class Item {
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       ItemName: json['ItemName'],
+      Hsn: json['HSN']?.toString() ?? '',
       MRP: json['MRP']?.toString() ?? '',
       UnitPrice: json['UnitPrice'].toDouble(),
       Quantity: json['Quantity'],
@@ -48,4 +52,6 @@ class Item {
       Amount: json['Amount'],
     );
   }
+
 }
+

@@ -335,6 +335,7 @@ class QuotationDetail {
   double GSTPercent;
   double AdCESS;
   String Unit;
+  String hsn;
 
   QuotationDetail({
     required this.amount,
@@ -348,6 +349,7 @@ class QuotationDetail {
     required this.GSTPercent,
     required this.AdCESS,
     required this.Unit,
+    required this.hsn,
   });
 
   factory QuotationDetail.fromJson(Map<String, dynamic> json) {
@@ -363,9 +365,11 @@ class QuotationDetail {
       GSTPercent: toDouble(json['GSTPercent']),
       AdCESS: toDouble(json['AdCESS']),
       Unit: toStr(json['Unit']),
+      hsn: toStr(json['HSN']),
     );
   }
 }
+
 
 class BillOfMaterial {
   String make;

@@ -170,6 +170,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       CustomTextField(
                         readOnly: false,
                         height: 54,
+                        controller: customerDetailsProvider.qEntryDateController,
+                        hintText: 'Entry Date',
+                        labelText: '',
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
                         controller:
                             customerDetailsProvider.qproductnameController,
                         hintText: 'Product name*',
