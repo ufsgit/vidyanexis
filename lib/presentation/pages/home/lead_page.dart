@@ -1210,7 +1210,7 @@ class _LeadsPageState extends State<LeadPage> {
                                             vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
                                         data: Text(
-                                          'Consumer No',
+                                          'Consumer Name',
                                           style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
