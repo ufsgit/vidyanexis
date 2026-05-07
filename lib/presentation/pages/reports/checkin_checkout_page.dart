@@ -12,6 +12,10 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:go_router/go_router.dart';
 
 class CheckInOutScreen extends StatefulWidget {
   const CheckInOutScreen({super.key});
@@ -34,1019 +38,203 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
       reportsProvider.getSearchTaskReport(context);
 
       final provider = Provider.of<DropDownProvider>(context, listen: false);
-      // provider.getAMCStatus(context);
       provider.getUserDetails(context);
-      // provider.getTaskType(context);
-
-      //search
-      // searchController.addListener(() {
-      //   reportsProvider.selectDateFilterOption(null);
-      //   reportsProvider.removeStatus();
-      //   String query = searchController.text;
-      //   print(query);
-      //   reportsProvider.getSearchCustomers(query, '', '', '', context);
-      // });
     });
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final reportsProvider = Provider.of<CheckInOutProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
 
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
-        title: Text(
-          'Attendance',
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+      backgroundColor: AppColors.scaffoldColor,
+      appBar: CustomAppBar(
+        title: 'Attendance Report',
+        titleStyle: GoogleFonts.plusJakartaSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textBlack),
+        leadingWidget: IconButton(
+          onPressed: () => context.pop(),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
+          iconSize: 24,
         ),
+        onFilterTap: () => reportsProvider.toggleFilter(),
+        showSearch: true,
+        onSearch: (query) {
+          reportsProvider.setTaskSearchCriteria(
+            query,
+            reportsProvider.fromDateS,
+            reportsProvider.toDateS,
+            reportsProvider.Status,
+            reportsProvider.AssignedTo,
+            reportsProvider.TaskType,
+          );
+          reportsProvider.getSearchTaskReport(context);
+        },
+        searchController: searchController,
       ),
-      body: Container(
-        color: Colors.grey[50],
+      body: Column(
+        children: [
+          if (reportsProvider.isFilter)
+            _buildFilterPanel(context, reportsProvider, provider),
+          Expanded(
+            child: reportsProvider.taskReport.isEmpty
+                ? _buildEmptyState()
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: reportsProvider.taskReport.length,
+                    itemBuilder: (context, index) {
+                      final task = reportsProvider.taskReport[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: ReportListItem(
+                          title: task.userDetailsName,
+                          subtitle: task.checkInDate,
+                          description:
+                              'Check-In: ${task.checkInTimeOnly} • Check-Out: ${task.checkOutTimeOnly.isEmpty ? "-" : task.checkOutTimeOnly}',
+                          statusColor: AppColors.primaryBlue,
+                          bottomLeftIcon: Icons.location_on_outlined,
+                          bottomLeftText: task.location.isEmpty
+                              ? 'No Location'
+                              : task.location,
+                          bottomRightText: 'No. ${index + 1}',
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterPanel(BuildContext context,
+      CheckInOutProvider reportsProvider, DropDownProvider provider) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: AppColors.grey, width: 1)),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            AppStyles.isWebScreen(context)
-                ? Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        Flexible(child: Container()),
-                        // Container(
-                        //   width: MediaQuery.of(context).size.width / 4,
-                        //   height: 40,
-                        //   decoration: BoxDecoration(
-                        //     color: Colors.white,
-                        //     borderRadius: BorderRadius.circular(20),
-                        //     border: Border.all(color: Colors.grey[300]!),
-                        //   ),
-                        //   child: TextField(
-                        //     controller: searchController,
-                        //     onSubmitted: (query) {
-                        //       // reportsProvider.selectDateFilterOption(null);
-                        //       // reportsProvider.removeStatus();
-                        //       reportsProvider.setTaskSearchCriteria(
-                        //         query,
-                        //         reportsProvider.fromDateS,
-                        //         reportsProvider.toDateS,
-                        //         reportsProvider.Status,
-                        //         reportsProvider.AssignedTo,
-                        //         reportsProvider.TaskType,
-                        //       );
-                        //       reportsProvider.getSearchTaskReport(context);
-                        //     },
-                        //     decoration: InputDecoration(
-                        //       hintText: 'Search here....',
-                        //       prefixIcon: const Icon(Icons.search),
-                        //       border: InputBorder.none,
-                        //       contentPadding: const EdgeInsets.symmetric(
-                        //         horizontal: 16,
-                        //         vertical: 4,
-                        //       ),
-                        //       suffixIcon: Padding(
-                        //         padding: const EdgeInsets.all(4.0),
-                        //         child: ElevatedButton(
-                        //           onPressed: () {
-                        //             String query = searchController.text;
-                        //             // leadProvider.selectDateFilterOption(null);
-                        //             // leadProvider.removeStatus();
-                        //             print(query);
-                        //             if (reportsProvider.Search.isNotEmpty) {
-                        //               searchController.clear();
-                        //               reportsProvider.setTaskSearchCriteria(
-                        //                 '',
-                        //                 reportsProvider.fromDateS,
-                        //                 reportsProvider.toDateS,
-                        //                 reportsProvider.Status,
-                        //                 reportsProvider.AssignedTo,
-                        //                 reportsProvider.TaskType,
-                        //               );
-                        //               reportsProvider
-                        //                   .getSearchTaskReport(context);
-                        //             } else {
-                        //               reportsProvider.setTaskSearchCriteria(
-                        //                 query,
-                        //                 reportsProvider.fromDateS,
-                        //                 reportsProvider.toDateS,
-                        //                 reportsProvider.Status,
-                        //                 reportsProvider.AssignedTo,
-                        //                 reportsProvider.TaskType,
-                        //               );
-                        //               reportsProvider
-                        //                   .getSearchTaskReport(context);
-                        //             }
-                        //           },
-                        //           style: ElevatedButton.styleFrom(
-                        //             backgroundColor: AppColors.textGrey4,
-                        //             foregroundColor: Colors.white,
-                        //             padding: const EdgeInsets.symmetric(
-                        //               horizontal: 16,
-                        //               vertical: 12,
-                        //             ),
-                        //           ),
-                        //           child: Text(reportsProvider.Search.isNotEmpty
-                        //               ? 'Cancel'
-                        //               : 'Search'),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        // const SizedBox(width: 16),
-                        CustomFilterButton(
-                          onPressed: () {
-                            reportsProvider.toggleFilter();
-                            print(reportsProvider.isFilter);
-                          },
-                          isFilter: reportsProvider.isFilter,
-                        ),
-                        const SizedBox(width: 16),
-                        // ElevatedButton.icon(
-                        //   onPressed: () async {
-                        //     await reportsProvider.getAttendanceDetails(
-                        //         "0", context);
-                        //     showDialog(
-                        //       barrierDismissible: false,
-                        //       context: context,
-                        //       builder: (BuildContext context) {
-                        //         return const AddCheckInOutWidget(
-                        //           editId: '0',
-                        //           isEdit: false,
-                        //         );
-                        //       },
-                        //     );
-                        //   },
-                        //   icon: const Icon(Icons.add),
-                        //   label: const Text('Add Attendance'),
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: AppColors.primaryBlue,
-                        //     foregroundColor: Colors.white,
-                        //     padding: const EdgeInsets.symmetric(
-                        //       horizontal: 16,
-                        //       vertical: 12,
-                        //     ),
-                        //   ),
-                        // ),
-                        // const SizedBox(width: 16),
-                        // CustomElevatedButton(
-                        //   onPressed: () {
-                        //     exportToExcel(
-                        //       headers: ['Name', 'Date', 'Time', 'Location'],
-                        //       data: reportsProvider.taskReport.map((task) {
-                        //         return {
-                        //           'Name': task.userDetailsName,
-                        //           'Date': task.attendanceDate.isNotEmpty
-                        //               ? DateFormat('dd MMM yyyy').format(
-                        //                   DateTime.parse(task.attendanceDate))
-                        //               : '',
-                        //           'Time': task.attendanceTime,
-                        //           'Location': task.location,
-                        //         };
-                        //       }).toList(),
-                        //       fileName: 'Attendance_Report',
-                        //     );
-                        //   },
-                        //   buttonText: 'Export to Excel',
-                        //   textColor: AppColors.whiteColor,
-                        //   borderColor: AppColors.appViolet,
-                        //   backgroundColor: AppColors.appViolet,
-                        // ),
-                      ],
+            CustomText('Date Range',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            CommonReportDateFilter(
+              fromDate: reportsProvider.fromDate?.toString(),
+              toDate: reportsProvider.toDate?.toString(),
+              formattedFromDate: reportsProvider.formattedFromDate,
+              formattedToDate: reportsProvider.formattedToDate,
+              onTap: () => onClickTopButton(context),
+            ),
+            const SizedBox(height: 24),
+            CustomText('Staff',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: [
+                FilterChipWidget(
+                  label: 'All',
+                  isSelected: reportsProvider.selectedUser == 0 ||
+                      reportsProvider.selectedUser == null,
+                  onTap: () {
+                    reportsProvider.setUserFilterStatus(0);
+                    reportsProvider.getSearchTaskReport(context);
+                  },
+                ),
+                ...provider.searchUserDetails.map((u) {
+                  return FilterChipWidget(
+                    label: u.userDetailsName ?? 'Unknown',
+                    isSelected: reportsProvider.selectedUser == u.userDetailsId,
+                    onTap: () {
+                      reportsProvider.setUserFilterStatus(u.userDetailsId);
+                      reportsProvider.getSearchTaskReport(context);
+                    },
+                  );
+                }).toList(),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      reportsProvider.getSearchTaskReport(context);
+                      reportsProvider.toggleFilter();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
-                  )
-                //mobile design
-                : Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Wrap(
-                      runSpacing: 10,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          width: double.infinity,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            onSubmitted: (query) {
-                              // reportsProvider.selectDateFilterOption(null);
-                              // reportsProvider.removeStatus();
-                              reportsProvider.setTaskSearchCriteria(
-                                query,
-                                reportsProvider.fromDateS,
-                                reportsProvider.toDateS,
-                                reportsProvider.Status,
-                                reportsProvider.AssignedTo,
-                                reportsProvider.TaskType,
-                              );
-                              reportsProvider.getSearchTaskReport(context);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 0,
-                              ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    String query = searchController.text;
-                                    // leadProvider.selectDateFilterOption(null);
-                                    // leadProvider.removeStatus();
-                                    print(query);
-                                    if (reportsProvider.Search.isNotEmpty) {
-                                      searchController.clear();
-                                      reportsProvider.setTaskSearchCriteria(
-                                        '',
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                        reportsProvider.TaskType,
-                                      );
-                                      reportsProvider
-                                          .getSearchTaskReport(context);
-                                    } else {
-                                      reportsProvider.setTaskSearchCriteria(
-                                        query,
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                        reportsProvider.TaskType,
-                                      );
-                                      reportsProvider
-                                          .getSearchTaskReport(context);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 0,
-                                    ),
-                                  ),
-                                  child: Text(reportsProvider.Search.isNotEmpty
-                                      ? 'Cancel'
-                                      : 'Search'),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        CustomFilterButton(
-                          onPressed: () {
-                            reportsProvider.toggleFilter();
-                            print(reportsProvider.isFilter);
-                          },
-                          isFilter: reportsProvider.isFilter,
-                        ),
-                        const SizedBox(width: 16),
-                        // ElevatedButton.icon(
-                        //   onPressed: () async {
-                        //     await reportsProvider.getAttendanceDetails(
-                        //         "0", context);
-                        //     showDialog(
-                        //       barrierDismissible: false,
-                        //       context: context,
-                        //       builder: (BuildContext context) {
-                        //         return const AddCheckInOutWidget(
-                        //           editId: '0',
-                        //           isEdit: false,
-                        //         );
-                        //       },
-                        //     );
-                        //   },
-                        //   icon: const Icon(Icons.add),
-                        //   label: const Text('Add Attendance'),
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: AppColors.primaryBlue,
-                        //     foregroundColor: Colors.white,
-                        //     padding: const EdgeInsets.symmetric(
-                        //       horizontal: 16,
-                        //       vertical: 0,
-                        //     ),
-                        //   ),
-                        // ),
-                        // const SizedBox(width: 16),
-                        // CustomElevatedButton(
-                        //   onPressed: () {
-                        //     exportToExcel(
-                        //       headers: ['Name', 'Date', 'Time', 'Location'],
-                        //       data: reportsProvider.taskReport.map((task) {
-                        //         return {
-                        //           'Name': task.userDetailsName,
-                        //           'Date': task.attendanceDate.isNotEmpty
-                        //               ? DateFormat('dd MMM yyyy').format(
-                        //                   DateTime.parse(task.attendanceDate))
-                        //               : '',
-                        //           'Time': task.attendanceTime,
-                        //           'Location': task.location,
-                        //         };
-                        //       }).toList(),
-                        //       fileName: 'Attendance_Report',
-                        //     );
-                        //   },
-                        //   buttonText: 'Export to Excel',
-                        //   textColor: AppColors.whiteColor,
-                        //   borderColor: AppColors.appViolet,
-                        //   backgroundColor: AppColors.appViolet,
-                        // ),
-                      ],
-                    ),
+                    child: const Text('Apply Filters'),
                   ),
-            if (reportsProvider.isFilter)
-              AppStyles.isWebScreen(context)
-                  ? Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          CommonReportDateFilter(
-                            fromDate: reportsProvider.fromDate?.toString(),
-                            toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate:
-                                reportsProvider.formattedFromDate,
-                            formattedToDate: reportsProvider.formattedToDate,
-                            onTap: () => onClickTopButton(context),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedUser != null &&
-                                          reportsProvider.selectedUser != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Staff Name: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedUser,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      provider.searchUserDetails
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.userDetailsId,
-                                                    child: ConstrainedBox(
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxWidth: 150),
-                                                      child: Text(
-                                                        status.userDetailsName ??
-                                                            '',
-                                                        overflow: TextOverflow
-                                                            .ellipsis, // Adds ellipsis when the text is too long
-                                                        style: const TextStyle(
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setUserFilterStatus(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    String taskType = reportsProvider
-                                        .selectedTaskType
-                                        .toString();
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
-                                      reportsProvider.Search,
-                                      fromDate,
-                                      toDate,
-                                      status,
-                                      assignedTo,
-                                      taskType,
-                                    );
-                                    reportsProvider
-                                        .getSearchTaskReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const Spacer(),
-                          // ElevatedButton(
-                          //   onPressed: () {
-                          //     // Apply the selected filters (You can use values from the provider)
-                          //     String status =
-                          //         reportsProvider.selectedStatus.toString();
-                          //     String fromDate =
-                          //         reportsProvider.formattedFromDate;
-                          //     String toDate = reportsProvider.formattedToDate;
-                          //     print(
-                          //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          //     reportsProvider.setSearchCriteria(
-                          //       reportsProvider.search,
-                          //       fromDate,
-                          //       toDate,
-                          //       status,
-                          //     );
-                          //     reportsProvider.getSearchCustomers(context);
-                          //   },
-                          //   style: ElevatedButton.styleFrom(
-                          //     backgroundColor: Colors.white,
-                          //     foregroundColor: AppColors.primaryBlue,
-                          //     side: BorderSide(color: AppColors.primaryBlue),
-                          //     padding: const EdgeInsets.symmetric(
-                          //       horizontal: 16,
-                          //       vertical: 12,
-                          //     ),
-                          //   ),
-                          //   child: const Text('Apply'),
-                          // ),
-                          // const SizedBox(
-                          //   width: 10,
-                          // ),
-                          CommonReportResetButton(
-                            onReset: () {
-                              reportsProvider.selectDateFilterOption(null);
-                              reportsProvider.removeStatus();
-                              searchController.clear();
-                              reportsProvider.setTaskSearchCriteria(
-                                '',
-                                '',
-                                '',
-                                '',
-                                '',
-                                '',
-                              );
-                              reportsProvider.getSearchTaskReport(context);
-                            },
-                          ),
-                        ],
-                      ),
-                    )
-                  : Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            CustomText('Date Range',
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textBlack),
-                            const SizedBox(height: 8),
-                            CommonReportDateFilter(
-                              fromDate: reportsProvider.fromDate?.toString(),
-                              toDate: reportsProvider.toDate?.toString(),
-                              formattedFromDate:
-                                  reportsProvider.formattedFromDate,
-                              formattedToDate: reportsProvider.formattedToDate,
-                              onTap: () => onClickTopButton(context),
-                            ),
-                            const SizedBox(height: 16),
-                            CustomText('Staff',
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textBlack),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              children: [
-                                FilterChipWidget(
-                                  label: 'All',
-                                  isSelected:
-                                      reportsProvider.selectedUser == 0 ||
-                                          reportsProvider.selectedUser == null,
-                                  onTap: () {
-                                    reportsProvider.setUserFilterStatus(0);
-                                    reportsProvider
-                                        .getSearchTaskReport(context);
-                                  },
-                                ),
-                                ...provider.searchUserDetails
-                                    .map((u) => FilterChipWidget(
-                                          label: u.userDetailsName ?? 'Unknown',
-                                          isSelected:
-                                              reportsProvider.selectedUser ==
-                                                  u.userDetailsId,
-                                          onTap: () {
-                                            reportsProvider.setUserFilterStatus(
-                                                u.userDetailsId);
-                                            reportsProvider
-                                                .getSearchTaskReport(context);
-                                          },
-                                        )),
-                              ],
-                            ),
-                            const SizedBox(height: 24),
-                            if (reportsProvider.fromDate != null ||
-                                reportsProvider.toDate != null ||
-                                (reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0) ||
-                                (reportsProvider.selectedUser != null &&
-                                    reportsProvider.selectedUser != 0) ||
-                                reportsProvider.Search.isNotEmpty)
-                              SizedBox(
-                                width: double.infinity,
-                                child: CommonReportResetButton(
-                                  label: 'Reset All Filters',
-                                  onReset: () {
-                                    reportsProvider
-                                        .selectDateFilterOption(null);
-                                    reportsProvider.removeStatus();
-                                    searchController.clear();
-                                    reportsProvider.setTaskSearchCriteria(
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                      '',
-                                    );
-                                    reportsProvider
-                                        .getSearchTaskReport(context);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: AppColors.textRed,
-                                    elevation: 0,
-                                    side: BorderSide(color: AppColors.textRed),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-            reportsProvider.taskReport.isEmpty
-                ? Expanded(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.search_off,
-                              size: 80, color: Colors.grey[300]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No attendance reports found for the selected criteria',
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : AppStyles.isWebScreen(context)
-                    ? Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  // Header Row (Table Column Titles)
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFEFF2F5),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: 80,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 12.0,
-                                                horizontal: 25.0),
-                                            child: Text('No.',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xFF607185))),
-                                          ),
-                                        ),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Name',
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Date',
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Check In Time',
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Check Out Time',
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Location',
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Photo',
-                                            color: Color(0xFF607185)),
-                                      ],
-                                    ),
-                                  ),
-                                  // Data Rows
-                                  Expanded(
-                                    child: ListView.builder(
-                                      shrinkWrap:
-                                          true, // To avoid scrolling issues when inside a parent widget
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      itemCount: reportsProvider
-                                          .taskReport.length, // Number of tasks
-                                      itemBuilder: (context, index) {
-                                        var task =
-                                            reportsProvider.taskReport[index];
-                                        return GestureDetector(
-                                          onTap: () {
-                                            // context.go(
-                                            //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: index % 2 == 0
-                                                  ? Colors.white
-                                                  : const Color(0xFFF6F7F9),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            // Alternate row colors
-                                            child: Row(
-                                              // mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                // Padding(
-                                                //   padding: const EdgeInsets.symmetric(
-                                                //       vertical: 12.0, horizontal: 25.0),
-                                                //   child: Text(task.customerId.toString(),
-                                                //       style: const TextStyle(
-                                                //         fontWeight: FontWeight.bold,
-                                                //       )),
-                                                // ),
-                                                SizedBox(
-                                                  width: 80,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                    child: Text(
-                                                        (index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )),
-                                                  ),
-                                                ),
-                                                // TableWidget(title: task.orderNo),
-                                                TableWidget(
-                                                  flex: 1,
-                                                  data: GestureDetector(
-                                                    // onTap: () async {
-                                                    //   await reportsProvider
-                                                    //       .getAttendanceDetails(
-                                                    //           task.attendanceMasterId
-                                                    //               .toString(),
-                                                    //           context);
-                                                    //   showDialog(
-                                                    //     barrierDismissible: false,
-                                                    //     context: context,
-                                                    //     builder:
-                                                    //         (BuildContext context) {
-                                                    //       return AddCheckInOutWidget(
-                                                    //         editId: task
-                                                    //             .attendanceMasterId
-                                                    //             .toString(),
-                                                    //         isEdit: true,
-                                                    //       );
-                                                    //     },
-                                                    //   );
-                                                    //   // context.push(
-                                                    //   //     '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                    // },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFE9EDF1),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50),
-                                                      ),
-                                                      child: Text(
-                                                        task.userDetailsName,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                TableWidget(
-                                                    flex: 1,
-                                                    title: formatDate(
-                                                        task.checkInDate)),
-                                                TableWidget(
-                                                    flex: 1,
-                                                    title: formatTime(
-                                                        task.checkInTimeOnly)),
-                                                TableWidget(
-                                                    flex: 1,
-                                                    title: formatTime(
-                                                        task.checkOutTimeOnly)),
-                                                TableWidget(
-                                                    flex: 1,
-                                                    title: task.location),
-                                                task.photo.isNotEmpty
-                                                    ? TableWidget(
-                                                        flex: 1,
-                                                        data:
-                                                            CustomOutlinedSvgButton(
-                                                          showIcon: false,
-                                                          onPressed: () async {
-                                                            showImageDialog(
-                                                                context,
-                                                                HttpUrls.imgBaseUrl +
-                                                                    task.photo);
-                                                          },
-                                                          svgPath:
-                                                              'assets/images/Print.svg',
-                                                          label: 'View Photo',
-                                                          breakpoint: 860,
-                                                          foregroundColor:
-                                                              AppColors
-                                                                  .primaryBlue,
-                                                          backgroundColor:
-                                                              Colors.white,
-                                                          borderSide: BorderSide(
-                                                              color: AppColors
-                                                                  .primaryBlue),
-                                                        ),
-                                                      )
-                                                    : TableWidget(
-                                                        flex: 1,
-                                                        data: Container(),
-                                                      ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    : Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: ListView.builder(
-                            itemCount: reportsProvider.taskReport.length,
-                            itemBuilder: (context, index) {
-                              var task = reportsProvider.taskReport[index];
-                              return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                padding: const EdgeInsets.all(12.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      /// Row 1: Serial No. and Name
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'No. ${index + 1}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF607185),
-                                            ),
-                                          ),
-                                          // GestureDetector(
-                                          //   onTap: () async {
-                                          //     await reportsProvider
-                                          //         .getAttendanceDetails(
-                                          //             task.attendanceMasterId
-                                          //                 .toString(),
-                                          //             context);
-                                          //     showDialog(
-                                          //       barrierDismissible: false,
-                                          //       context: context,
-                                          //       builder: (_) => AddCheckInOutWidget(
-                                          //         editId: task.attendanceMasterId
-                                          //             .toString(),
-                                          //         isEdit: true,
-                                          //       ),
-                                          //     );
-                                          //   },
-                                          //   child: Container(
-                                          //     padding: const EdgeInsets.symmetric(
-                                          //         horizontal: 10, vertical: 5),
-                                          //     decoration: BoxDecoration(
-                                          //       color: const Color(0xFFE9EDF1),
-                                          //       borderRadius:
-                                          //           BorderRadius.circular(30),
-                                          //     ),
-                                          //     child: Text(
-                                          //       task.userDetailsName,
-                                          //       style: const TextStyle(
-                                          //         fontWeight: FontWeight.bold,
-                                          //         fontSize: 14,
-                                          //       ),
-                                          //       overflow: TextOverflow.ellipsis,
-                                          //     ),
-                                          //   ),
-                                          // ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-
-                                      /// Row 2: Dates and Times
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          _labelValue('Date',
-                                              formatDate(task.checkInDate)),
-                                          _labelValue('Check-In',
-                                              formatTime(task.checkInTimeOnly)),
-                                          _labelValue(
-                                              'Check-Out',
-                                              formatTime(
-                                                  task.checkOutTimeOnly)),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          _labelValue('Staff Name',
-                                              task.userDetailsName),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-
-                                      /// Row 3: Location
-                                      _labelValue('Location', task.location),
-
-                                      /// Row 4: Photo Button
-                                      if (task.photo.isNotEmpty)
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: CustomOutlinedSvgButton(
-                                            showIcon: false,
-                                            onPressed: () {
-                                              showImageDialog(
-                                                  context,
-                                                  HttpUrls.imgBaseUrl +
-                                                      task.photo);
-                                            },
-                                            svgPath: 'assets/images/Print.svg',
-                                            label: 'View Photo',
-                                            breakpoint: 860,
-                                            foregroundColor:
-                                                AppColors.primaryBlue,
-                                            backgroundColor: Colors.white,
-                                            borderSide: BorderSide(
-                                                color: AppColors.primaryBlue),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      )
+                ),
+                const SizedBox(width: 12),
+                CommonReportResetButton(
+                  onReset: () {
+                    reportsProvider.selectDateFilterOption(null);
+                    reportsProvider.removeStatus();
+                    searchController.clear();
+                    reportsProvider.setTaskSearchCriteria(
+                      '',
+                      '',
+                      '',
+                      '',
+                      '',
+                      '',
+                    );
+                    reportsProvider.getSearchTaskReport(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _labelValue(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
+          const SizedBox(height: 16),
+          Text(
+            'No attendance reports found',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   void onClickTopButton(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (contextx) => Consumer<CheckInOutProvider>(
-        builder: (contextx, reportsProvider, child) {
+      builder: (context) => Consumer<CheckInOutProvider>(
+        builder: (context, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
@@ -1148,86 +336,22 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-
                           reportsProvider.formatDate();
-
-                          print(reportsProvider.formattedFromDate);
-                          print(reportsProvider.formattedToDate);
-
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = reportsProvider.formattedFromDate;
-                          String toDate = reportsProvider.formattedToDate;
-                          String taskType =
-                              reportsProvider.selectedTaskType.toString();
-                          print(
-                              'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
                           reportsProvider.setTaskSearchCriteria(
                             reportsProvider.Search,
-                            fromDate,
-                            toDate,
-                            status,
-                            assignedTo,
-                            taskType,
+                            reportsProvider.formattedFromDate,
+                            reportsProvider.formattedToDate,
+                            reportsProvider.Status,
+                            reportsProvider.selectedUser.toString(),
+                            reportsProvider.selectedTaskType.toString(),
                           );
                           reportsProvider.getSearchTaskReport(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
                         ),
-                        child: const Text(
-                          'Apply',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          reportsProvider.selectDateFilterOption(null);
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = '';
-                          String toDate = '';
-                          String taskType =
-                              reportsProvider.selectedTaskType.toString();
-                          print(
-                              'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          reportsProvider.setTaskSearchCriteria(
-                            reportsProvider.Search,
-                            fromDate,
-                            toDate,
-                            status,
-                            assignedTo,
-                            taskType,
-                          );
-                          reportsProvider.getSearchTaskReport(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.textRed.withOpacity(0.1),
-                          foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Clear',
-                        ),
+                        child: const Text('Apply'),
                       ),
                     ),
                   ],
@@ -1238,82 +362,6 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
         },
       ),
     );
-  }
-
-  void showImageDialog(BuildContext context, String imageUrl) {
-    showDialog(
-      context: context,
-      barrierDismissible:
-          true, // Allows the dialog to be dismissed by tapping outside
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.black, // Set background color to black
-          child: Stack(
-            children: [
-              Center(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.contain, // Adjust image fit
-                  errorBuilder: (BuildContext context, Object error,
-                      StackTrace? stackTrace) {
-                    // Return a placeholder or error image in case of an error
-                    return Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey.withOpacity(0.2)),
-                      child: const Icon(
-                        Icons.hide_image_outlined,
-                        size: 50,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: IconButton(
-                  icon: const Icon(Icons.close,
-                      color: Colors.white), // Close icon button
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pop(); // Close the dialog when button is pressed
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  String formatDate(String date) {
-    if (date.isEmpty) return '';
-    try {
-      DateTime parsedDate;
-      if (date.contains('/')) {
-        // Handle dd/MM/yyyy format
-        parsedDate = DateFormat('dd/MM/yyyy').parse(date);
-      } else {
-        // Handle yyyy-MM-dd format
-        parsedDate = DateTime.parse(date);
-      }
-      return DateFormat('dd MMM yyyy').format(parsedDate);
-    } catch (e) {
-      return date; // In case of error, return the original string
-    }
-  }
-
-  String formatTime(String time) {
-    try {
-      DateTime parsedTime = DateFormat('HH:mm:ss').parse(time);
-      return DateFormat('hh:mm a').format(parsedTime); // Example: 12:26 PM
-    } catch (e) {
-      return time; // In case of error, return the original string
-    }
   }
 
   List<String> dateButtonTitles = [

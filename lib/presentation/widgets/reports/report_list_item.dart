@@ -76,13 +76,8 @@ class ReportListItem extends StatelessWidget {
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: onSubtitleTap != null
-                                  ? AppColors.bluebutton
-                                  : AppColors.textGrey3,
-                              decoration: onSubtitleTap != null
-                                  ? TextDecoration.underline
-                                  : TextDecoration.none,
-                              decorationColor: AppColors.bluebutton,
+                              color: AppColors.textGrey3,
+                              decoration: TextDecoration.none,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

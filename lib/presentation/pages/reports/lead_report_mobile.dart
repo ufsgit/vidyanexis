@@ -456,8 +456,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                         0) ||
                                 (leadReportProvider.selectedEnquirySource !=
                                         null &&
-                                    leadReportProvider
-                                            .selectedEnquirySource !=
+                                    leadReportProvider.selectedEnquirySource !=
                                         0))
                               SizedBox(
                                 width: double.infinity,
@@ -606,7 +605,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                         Expanded(
                                           child: ReportListItem(
                                             title: item.customerName,
-                                            subtitle: '${item.contactNumber} >',
+                                            subtitle: item.contactNumber,
                                             onSubtitleTap: () {
                                               Navigator.push(
                                                 context,

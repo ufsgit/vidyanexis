@@ -227,7 +227,7 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                 var lead = reportsProvider.taskReport[index];
                 return ReportListItem(
                   title: lead.toStaff,
-                  subtitle: '${lead.noOfFollowUp} Follow-Ups >',
+                  subtitle: '${lead.noOfFollowUp} Follow-Ups',
                   status: '',
                   statusColor: getAvatarColor(lead.toStaff),
                   bottomLeftIcon: Icons.person_outline,
