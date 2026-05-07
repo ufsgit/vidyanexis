@@ -129,6 +129,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
       settingsProvider.toggleConversionCheckbox(false);
       settingsProvider.toggleLocation(false);
       settingsProvider.toggleCommission(false);
+      settingsProvider.toggleManualCreation(false);
 
       settingsProvider.getSearchLeadStatus('', "3", context);
 
@@ -153,6 +154,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
         settingsProvider.toggleConversionCheckbox(isActive);
         settingsProvider.toggleLocation(isLocationTracking);
         settingsProvider.toggleCommission(isCommissionNumber);
+        bool isManualCreation = widget.taskType?.manualCreation != 0;
+        settingsProvider.toggleManualCreation(isManualCreation);
 
         // Prefill description
         settingsProvider.taskTypeDescriptionController.text =
@@ -506,6 +509,21 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                             ListTileControlAffinity.leading,
                                         contentPadding: EdgeInsets.zero,
                                       ),
+                                      const SizedBox(height: 10),
+                                      CheckboxListTile(
+                                        title: const Text(
+                                          "Manual creation",
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        value: settingsProvider.isManualCreation,
+                                        onChanged: (value) {
+                                          settingsProvider
+                                              .toggleManualCreation(value!);
+                                        },
+                                        controlAffinity:
+                                            ListTileControlAffinity.leading,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
                                       const SizedBox(height: 20),
                                       // Description field
                                       SizedBox(
@@ -830,6 +848,20 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       controlAffinity:
                                           ListTileControlAffinity.leading,
                                       contentPadding: EdgeInsets.zero),
+                                  const SizedBox(height: 10),
+                                  CheckboxListTile(
+                                      title: const Text(
+                                        "Manual creation",
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      value: settingsProvider.isManualCreation,
+                                      onChanged: (value) {
+                                        settingsProvider
+                                            .toggleManualCreation(value!);
+                                      },
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading,
+                                      contentPadding: EdgeInsets.zero),
                                   const SizedBox(height: 20),
                                   // Description field
                                   SizedBox(
@@ -1093,6 +1125,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
                               settingsProvider.isLocationTracking ? 1 : 0,
                           "Commission_Number":
                               settingsProvider.isCommissionChecked ? 1 : 0,
+                          "Manual_Creation":
+                              settingsProvider.isManualCreation ? 1 : 0,
                           "order_by": int.tryParse(
                                   settingsProvider.orderByController.text) ??
                               0,

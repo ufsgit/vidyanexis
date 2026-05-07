@@ -275,8 +275,14 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                             child: Wrap(
                               spacing: 10,
                               runSpacing: 10,
-                              children:
-                                  dropDownProvider.taskType.map((taskType) {
+                              children: dropDownProvider.taskType
+                                  .where((taskType) =>
+                                      taskType.manualCreation == 1 ||
+                                      (widget.isEdit &&
+                                          customerDetailsProvider
+                                                  .selectedTaskType ==
+                                              taskType.taskTypeId))
+                                  .map((taskType) {
                                 bool isSelected =
                                     customerDetailsProvider.selectedTaskType ==
                                         taskType.taskTypeId;

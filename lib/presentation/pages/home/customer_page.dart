@@ -646,6 +646,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                         .teal),
                                                                 children: provider
                                                                     .taskType
+                                                                    .where((taskType) =>
+                                                                        taskType.manualCreation ==
+                                                                        1)
                                                                     .map(
                                                                         (taskType) {
                                                                   final users = provider

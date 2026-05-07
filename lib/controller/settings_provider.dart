@@ -2955,6 +2955,8 @@ class SettingsProvider extends ChangeNotifier {
   bool _isCommissionChecked = false;
 
   bool get isCommissionChecked => _isCommissionChecked;
+  bool _isManualCreation = false;
+  bool get isManualCreation => _isManualCreation;
 
   bool _isQuotationCustom = false;
   bool get isQuotationCustom => _isQuotationCustom;
@@ -2979,6 +2981,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void toggleCommission(bool value) {
     _isCommissionChecked = value;
+    notifyListeners();
+  }
+
+  void toggleManualCreation(bool value) {
+    _isManualCreation = value;
     notifyListeners();
   }
 
@@ -3125,8 +3132,7 @@ class SettingsProvider extends ChangeNotifier {
           String newNotificationTopic = data['notification_topic'] ?? '';
           _enquiryForMandatory = data['Enquiry_For_Mandatory'] ?? 0;
           _consumerNameMandatory = data['Consumer_Name_Mandatory'] ?? 0;
-          _consumerContactNoMandatory =
-              data['Contact_Number_Mandatory'] ?? 0;
+          _consumerContactNoMandatory = data['Contact_Number_Mandatory'] ?? 0;
 
           if (newLogo != logo ||
               newTitle != title ||

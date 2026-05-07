@@ -24,6 +24,7 @@ class TaskTypeModel {
   int conversionTask;
   int locationTracking;
   int commissionNumber;
+  int manualCreation;
   int orderBy;
   String? description;
 
@@ -43,6 +44,7 @@ class TaskTypeModel {
       required this.conversionTask,
       required this.locationTracking,
       required this.commissionNumber,
+      required this.manualCreation,
       required this.orderBy,
       required this.statuses,
       required this.departmentName,
@@ -60,9 +62,7 @@ class TaskTypeModel {
       duration: json["Duration"] ?? 0,
       conversionTask: json["Is_Active"] is bool
           ? (json["Is_Active"] as bool ? 1 : 0)
-          : int.tryParse(json["Is_Active"]?.toString() ??
-                  json["is_active"]?.toString() ??
-                  '0') ??
+          : int.tryParse(json["Is_Active"]?.toString() ?? json["is_active"]?.toString() ?? '0') ??
               0,
       locationTracking: json["Location_Tracking"] is bool
           ? (json["Location_Tracking"] as bool ? 1 : 0)
@@ -81,6 +81,20 @@ class TaskTypeModel {
                       json["Commision_Number"]?.toString() ??
                       '0') ??
                   0,
+      manualCreation: (json["Manual_Creation"] == true ||
+              json["Manual_Creation"] == 1 ||
+              json["Manual_Creation"] == "1" ||
+              json["manual_creation"] == true ||
+              json["manual_creation"] == 1 ||
+              json["manual_creation"] == "1" ||
+              json["ManualCreation"] == true ||
+              json["ManualCreation"] == 1 ||
+              json["ManualCreation"] == "1" ||
+              json["manualCreation"] == true ||
+              json["manualCreation"] == 1 ||
+              json["manualCreation"] == "1")
+          ? 1
+          : 0,
       orderBy:
           int.tryParse(json["Order_By"]?.toString() ?? json["order_by"]?.toString() ?? '0') ??
               0,
@@ -105,6 +119,7 @@ class TaskTypeModel {
         "Is_Active": conversionTask,
         "Location_Tracking": locationTracking,
         "Commission_Number": commissionNumber,
+        "Manual_Creation": manualCreation,
         "Order_By": orderBy,
         "Statuses": List<dynamic>.from(statuses.map((x) => x.toJson())),
         "Department_Name": departmentName,
