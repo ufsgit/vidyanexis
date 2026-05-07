@@ -7,12 +7,14 @@ class ReportListItem extends StatelessWidget {
   final VoidCallback? onSubtitleTap;
   final String title;
   final String subtitle;
-  final String status;
+  final String? status;
   final Color statusColor;
   final String description;
   final String? bottomLeftText;
   final IconData? bottomLeftIcon;
   final String? bottomRightText;
+  final String? trailingText;
+  final VoidCallback? onDelete;
   final EdgeInsetsGeometry? padding;
 
   const ReportListItem({
@@ -21,12 +23,14 @@ class ReportListItem extends StatelessWidget {
     this.onSubtitleTap,
     required this.title,
     required this.subtitle,
-    required this.status,
+    this.status,
     required this.statusColor,
     required this.description,
     this.bottomLeftText,
     this.bottomLeftIcon,
     this.bottomRightText,
+    this.trailingText,
+    this.onDelete,
     this.padding,
   });
 
@@ -87,7 +91,7 @@ class ReportListItem extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (status.isNotEmpty)
+                  if (status != null && status!.isNotEmpty)
                     Container(
                       height: 22,
                       decoration: BoxDecoration(
@@ -99,7 +103,7 @@ class ReportListItem extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 2),
                           child: Text(
-                            status,
+                            status!,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -108,6 +112,22 @@ class ReportListItem extends StatelessWidget {
                           ),
                         ),
                       ),
+                    ),
+                  if (trailingText != null)
+                    Text(
+                      trailingText!,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: statusColor,
+                      ),
+                    ),
+                  if (onDelete != null)
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline,
+                          color: AppColors.textRed, size: 20),
+                      onPressed: onDelete,
+                      visualDensity: VisualDensity.compact,
                     ),
                 ],
               ),
