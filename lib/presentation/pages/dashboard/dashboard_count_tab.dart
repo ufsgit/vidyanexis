@@ -14,17 +14,31 @@ class DashboardCountTab extends StatelessWidget {
 
   Color _colorForTitle(String title) {
     final t = title.toLowerCase();
-    if (t.contains('new_leads')) return const Color(0xFFBAC5D0);
-    if (t.contains('followup')) return const Color(0xFF90A1D6);
-    if (t.contains('closed')) return const Color(0xFF9CC9BF);
-    if (t.contains('called')) return const Color(0xFF8699C9);
-    if (t.contains('transferred')) return const Color(0xFF9ABDE2);
-    if (t.contains('missed')) return const Color(0xFFDEB0B9);
-    if (t.contains('interested')) return const Color(0xFFE5D1B0);
-    if (t.contains('fresh_leads')) return const Color(0xFFB4E4D7);
-    if (t.contains('total_leads')) return const Color(0xFFC5BAE0);
-    if (t.contains('upcoming_followup')) return const Color(0xFFF5D6B3);
+    if (t.contains('new_leads')) return const Color(0xFF007AFF); // Blue
+    if (t.contains('followup')) return const Color(0xFFFF9500); // Orange
+    if (t.contains('closed')) return const Color(0xFF34C759); // Green
+    if (t.contains('called')) return const Color(0xFF5856D6); // Indigo
+    if (t.contains('transferred')) return const Color(0xFF8E8E93); // Grey
+    if (t.contains('missed')) return const Color(0xFFFF3B30); // Red
+    if (t.contains('interested')) return const Color(0xFF3A3A3C); // Dark Grey
+    if (t.contains('fresh_leads')) return const Color(0xFF5AC8FA); // Cyan
+    if (t.contains('total_leads')) return const Color(0xFF5856D6); // Indigo
+    if (t.contains('upcoming_followup')) return const Color(0xFFA2845E); // Brownish/Gold
     return Colors.grey.shade300;
+  }
+
+  IconData _iconForTitle(String title) {
+    final t = title.toLowerCase();
+    if (t.contains('total_leads')) return Icons.all_inbox_rounded;
+    if (t.contains('fresh_leads')) return Icons.new_releases_rounded;
+    if (t.contains('upcoming_followup')) return Icons.event_note_rounded;
+    if (t.contains('new_leads')) return Icons.star_rounded;
+    if (t.contains('missed_leads')) return Icons.call_missed_rounded;
+    if (t.contains('followup_leads')) return Icons.history_rounded;
+    if (t.contains('not_interested')) return Icons.thumb_down_rounded;
+    if (t.contains('transferred_leads')) return Icons.move_to_inbox_rounded;
+    if (t.contains('closed_leads')) return Icons.check_circle_rounded;
+    return Icons.dashboard_rounded;
   }
 
   @override
@@ -81,7 +95,7 @@ class DashboardCountTab extends StatelessWidget {
               constraints.maxWidth - (spacing * (crossAxisCount - 1));
           final double itemWidth = availableWidth / crossAxisCount;
           // Target height to prevent overflow while keeping the design clean
-          final double itemHeight = 140.0;
+          final double itemHeight = 100.0;
           final double aspectRatio = itemWidth / itemHeight;
 
           return GridView.builder(
@@ -104,6 +118,7 @@ class DashboardCountTab extends StatelessWidget {
                 keyword: keyword,
                 count: count,
                 color: color,
+                icon: _iconForTitle(keyword),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -140,7 +155,7 @@ class DashboardCountTab extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 2.0,
+          childAspectRatio: 1.5,
         ),
         itemBuilder: (context, index) {
           return Container(
@@ -153,18 +168,31 @@ class DashboardCountTab extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 32,
+                        width: 32,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Container(
+                        height: 24,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
                   Container(
                     height: 12,
                     width: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    height: 24,
-                    width: 40,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(4),
@@ -184,12 +212,14 @@ class _DashboardCard extends StatefulWidget {
   final String keyword;
   final int count;
   final Color color;
+  final IconData icon;
   final VoidCallback onTap;
 
   const _DashboardCard({
     required this.keyword,
     required this.count,
     required this.color,
+    required this.icon,
     required this.onTap,
   });
 
@@ -208,8 +238,10 @@ class _DashboardCardState extends State<_DashboardCard> {
         .map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w)
         .join(' ');
 
-    // More attractive hover color: slightly darker and richer
-    final Color hoverColor = Color.lerp(widget.color, Colors.black, 0.12)!;
+    // Text color: White for maximum visibility
+    final Color textColor = Colors.white;
+    final Color iconBackgroundColor = Colors.white.withValues(alpha: 0.25);
+    final Color hoverColor = Color.lerp(widget.color, Colors.black, 0.15)!;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -224,15 +256,15 @@ class _DashboardCardState extends State<_DashboardCard> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              color: _isHovered ? hoverColor : widget.color,
+              color: (_isHovered ? hoverColor : widget.color).withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(16),
               boxShadow: _isHovered
                   ? [
                       BoxShadow(
-                        color: widget.color.withValues(alpha: 0.4),
-                        blurRadius: 15,
+                        color: widget.color.withValues(alpha: 0.3),
+                        blurRadius: 12,
                         spreadRadius: 1,
-                        offset: const Offset(0, 8),
+                        offset: const Offset(0, 6),
                       )
                     ]
                   : [
@@ -243,77 +275,59 @@ class _DashboardCardState extends State<_DashboardCard> {
                       )
                     ],
             ),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        displayTitle,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
                     Container(
-                      margin: const EdgeInsets.only(left: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.5),
+                        color: iconBackgroundColor,
                         shape: BoxShape.circle,
                       ),
-                      padding: const EdgeInsets.all(4),
-                      child: const Icon(Icons.question_mark,
-                          size: 12, color: Colors.black87),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.count.toString(),
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "View Leads",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w600,
+                      padding: const EdgeInsets.all(6),
+                      child: Icon(
+                        widget.icon,
+                        size: 20,
+                        color: Colors.white,
                       ),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
+                    Text(
+                      widget.count.toString(),
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
                             blurRadius: 4,
-                            offset: Offset(0, 2),
+                            offset: Offset(0, 1),
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.all(4),
-                      child: Icon(Icons.analytics_outlined,
-                          size: 18, color: Colors.grey.shade700),
                     ),
                   ],
+                ),
+                const Spacer(),
+                Text(
+                  displayTitle,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold, // Increased from w600
+                    color: textColor,
+                    shadows: const [
+                      Shadow(
+                        color: Colors.black26,
+                        blurRadius: 2,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
