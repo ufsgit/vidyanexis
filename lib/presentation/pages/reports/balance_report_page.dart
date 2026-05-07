@@ -8,6 +8,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/balance_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
@@ -364,36 +365,89 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
   }
 
   Widget _buildMobileBody(BalanceReportProvider provider) {
-    if (provider.balanceReportList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'No balance reports found',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+    return Column(
+      children: [
+        if (provider.isFilter)
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  CustomText('Date Range',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack),
+                  const SizedBox(height: 8),
+                  CommonReportDateFilter(
+                    fromDate: provider.formattedDate,
+                    toDate: null,
+                    formattedFromDate: provider.formattedDate,
+                    formattedToDate: '',
+                    onTap: () => provider.selectDate(context),
+                  ),
+                  const SizedBox(height: 16),
+                  if (provider.search.isNotEmpty || provider.isFilter)
+                    SizedBox(
+                      width: double.infinity,
+                      child: CommonReportResetButton(
+                        label: 'Reset All Filters',
+                        onReset: () {
+                          provider.setSearch('');
+                          searchController.clear();
+                          provider.setDate(DateTime.now());
+                          provider.getBalanceReport(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.textRed,
+                          elevation: 0,
+                          side: BorderSide(color: AppColors.textRed),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-          ],
-        ),
-      );
-    }
-    return Container(
-      color: Colors.grey[50],
-      child: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: provider.balanceReportList.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final item = provider.balanceReportList[index];
-          return _buildMobileCard(item);
-        },
-      ),
+          ),
+        if (!provider.isFilter)
+          Expanded(
+            child: provider.balanceReportList.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.search_off_outlined,
+                            size: 80, color: Colors.grey[300]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No balance reports found',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: provider.balanceReportList.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final item = provider.balanceReportList[index];
+                      return _buildMobileCard(item);
+                    },
+                  ),
+          ),
+      ],
     );
   }
 

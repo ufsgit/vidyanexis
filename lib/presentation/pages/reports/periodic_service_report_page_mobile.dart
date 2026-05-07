@@ -13,6 +13,8 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:vidyanexis/presentation/widgets/customer/periodic_service_details_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class PeriodicServiceReportPageMobile extends StatefulWidget {
@@ -127,129 +129,98 @@ class _PeriodicServiceReportPageMobileState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── FILTER PANEL ────────────────────────────────────────────────
             if (reportsProvider.isFilter)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Wrap(
-                  runSpacing: 10,
-                  crossAxisAlignment: WrapCrossAlignment.start,
-                  alignment: WrapAlignment.start,
+              SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.white,
-                    //     borderRadius: BorderRadius.circular(20),
-                    //     border: Border.all(
-                    //         color: reportsProvider.selectedStatus != null &&
-                    //                 reportsProvider.selectedStatus != 0
-                    //             ? AppColors.primaryBlue
-                    //             : Colors.grey[300]!),
-                    //   ),
-                    //   child: Row(
-                    //     mainAxisSize: MainAxisSize.min,
-                    //     children: [
-                    //       const Text('Status: '),
-                    //       DropdownButton<int>(
-                    //         value: reportsProvider.selectedStatus,
-                    //         hint: const Text('All'),
-                    //         items: [
-                    //               const DropdownMenuItem<int>(
-                    //                 value:
-                    //                     0, // Use 0 or null to represent "All"
-                    //                 child: Text(
-                    //                   'All',
-                    //                   style: TextStyle(fontSize: 14),
-                    //                 ),
-                    //               ),
-                    //             ] +
-                    //             provider.amcStatus
-                    //                 .map((status) => DropdownMenuItem<int>(
-                    //                       value: status.amcStatusId,
-                    //                       child: Text(
-                    //                         status.amcStatusName ?? '',
-                    //                         style:
-                    //                             const TextStyle(fontSize: 14),
-                    //                       ),
-                    //                     ))
-                    //                 .toList(),
-                    //         onChanged: (int? newValue) {
-                    //           if (newValue != null) {
-                    //             reportsProvider.setStatus(
-                    //                 newValue); // Update the status in the provider
-                    //           }
-                    //           String status =
-                    //               reportsProvider.selectedStatus.toString();
-                    //           String assignedTo =
-                    //               reportsProvider.selectedUser.toString();
-                    //           String fromDate =
-                    //               reportsProvider.formattedFromDate;
-                    //           String toDate = reportsProvider.formattedToDate;
-                    //           print(
-                    //               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                    //           reportsProvider.setTaskSearchCriteria(
-                    //               reportsProvider.Search,
-                    //               fromDate,
-                    //               toDate,
-                    //               status,
-                    //               assignedTo);
-                    //           reportsProvider.getSearchAmcReport(context);
-                    //         },
-                    //         underline: Container(),
-                    //         isDense: true,
-                    //         iconSize: 18,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    const SizedBox(width: 10),
-                    // Fixed: Wrap the date container with Flexible or add mainAxisSize constraint
-                    GestureDetector(
-                      onTap: () {
-                        onClickTopButton(context);
+                    const SizedBox(height: 8),
+                    CustomText('Status',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Consumer<DropDownProvider>(
+                      builder: (context, dropDownProvider, child) {
+                        return Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          children: [
+                            FilterChipWidget(
+                              label: 'All',
+                              isSelected: reportsProvider.selectedStatus == 0 ||
+                                  reportsProvider.selectedStatus == null,
+                              onTap: () {
+                                reportsProvider.setStatus(0);
+                                reportsProvider.getSearchAmcReport(context);
+                              },
+                            ),
+                            ...dropDownProvider.amcStatus.map((s) =>
+                                FilterChipWidget(
+                                  label: s.amcStatusName ?? 'Unknown',
+                                  isSelected: reportsProvider.selectedStatus ==
+                                      s.amcStatusId,
+                                  onTap: () {
+                                    reportsProvider.setStatus(s.amcStatusId);
+                                    reportsProvider.getSearchAmcReport(context);
+                                  },
+                                )),
+                          ],
+                        );
                       },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 1.5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: reportsProvider.fromDate != null ||
-                                      reportsProvider.toDate != null
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
-                        ),
-                        child: IntrinsicWidth(
-                          // This makes the container only as wide as its content
-                          child: Row(
-                            mainAxisSize: MainAxisSize
-                                .min, // This constrains the row to minimum size
-                            children: [
-                              if (reportsProvider.fromDate == null &&
-                                  reportsProvider.toDate == null)
-                                const Text('Date: All'),
-                              if (reportsProvider.fromDate != null &&
-                                  reportsProvider.toDate != null)
-                                Text(
-                                    'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                              const SizedBox(width: 10),
-                              const Icon(
-                                Icons.arrow_drop_down_outlined,
-                                color: Colors.black45,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(height: 16),
+                    CustomText('Date Range',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    CommonReportDateFilter(
+                      fromDate: reportsProvider.fromDate?.toString(),
+                      toDate: reportsProvider.toDate?.toString(),
+                      formattedFromDate: reportsProvider.formattedFromDate,
+                      formattedToDate: reportsProvider.formattedToDate,
+                      onTap: () => onClickTopButton(context),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomText('Assigned Staff',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Consumer<DropDownProvider>(
+                      builder: (context, dropDownProvider, child) {
+                        return Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          children: [
+                            FilterChipWidget(
+                              label: 'All',
+                              isSelected: reportsProvider.selectedUser == 0 ||
+                                  reportsProvider.selectedUser == null,
+                              onTap: () {
+                                reportsProvider.setUserFilterStatus(0);
+                                reportsProvider.getSearchAmcReport(context);
+                              },
+                            ),
+                            ...dropDownProvider.searchUserDetails.map((u) =>
+                                FilterChipWidget(
+                                  label: u.userDetailsName ?? 'Unknown',
+                                  isSelected: reportsProvider.selectedUser ==
+                                      u.userDetailsId,
+                                  onTap: () {
+                                    reportsProvider
+                                        .setUserFilterStatus(u.userDetailsId);
+                                    reportsProvider.getSearchAmcReport(context);
+                                  },
+                                )),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
                     if (reportsProvider.fromDate != null ||
                         reportsProvider.toDate != null ||
                         (reportsProvider.selectedStatus != null &&
@@ -257,27 +228,36 @@ class _PeriodicServiceReportPageMobileState
                         (reportsProvider.selectedUser != null &&
                             reportsProvider.selectedUser != 0) ||
                         reportsProvider.Search.isNotEmpty)
-                      ElevatedButton(
-                        onPressed: () {
-                          reportsProvider.selectDateFilterOption(null);
-                          reportsProvider.removeStatus();
-                          searchController.clear();
-                          reportsProvider.setTaskSearchCriteria(
-                              '', '', '', '', '');
-                          reportsProvider.getSearchAmcReport(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 0),
+                      SizedBox(
+                        width: double.infinity,
+                        child: CommonReportResetButton(
+                          label: 'Reset All Filters',
+                          onReset: () {
+                            reportsProvider.selectDateFilterOption(null);
+                            reportsProvider.removeStatus();
+                            searchController.clear();
+                            reportsProvider.setTaskSearchCriteria(
+                                '', '', '', '', '');
+                            reportsProvider.getSearchAmcReport(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textRed,
+                            elevation: 0,
+                            side: BorderSide(color: AppColors.textRed),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
                         ),
-                        child: const Text('Reset'),
                       ),
                   ],
                 ),
               ),
+
+            // ── LIST ────────────────────────────────────────────────────────
+
             ListView.separated(
               separatorBuilder: (context, index) {
                 return Divider(
