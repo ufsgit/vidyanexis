@@ -227,12 +227,10 @@ class ServiceReportProvider extends ChangeNotifier {
               .map((item) => ServiceReportModel.fromJson(item))
               .toList();
 
-          Loader.stopLoader(context);
           _hasFetched = true;
           notifyListeners();
         }
       } else {
-        Loader.stopLoader(context);
         _hasFetched = true;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
