@@ -15,6 +15,7 @@ class ReportListItem extends StatelessWidget {
   final String? bottomRightText;
   final String? trailingText;
   final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
   final EdgeInsetsGeometry? padding;
 
   const ReportListItem({
@@ -31,6 +32,7 @@ class ReportListItem extends StatelessWidget {
     this.bottomRightText,
     this.trailingText,
     this.onDelete,
+    this.onEdit,
     this.padding,
   });
 
@@ -116,6 +118,13 @@ class ReportListItem extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         color: statusColor,
                       ),
+                    ),
+                  if (onEdit != null)
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined,
+                          color: AppColors.primaryBlue, size: 20),
+                      onPressed: onEdit,
+                      visualDensity: VisualDensity.compact,
                     ),
                   if (onDelete != null)
                     IconButton(
