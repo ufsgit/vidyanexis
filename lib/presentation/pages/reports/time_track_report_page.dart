@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/time_track_report_provider.dart';
 import 'package:vidyanexis/controller/models/time_track_chart_data.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TimeTrackReportPage extends StatefulWidget {
   const TimeTrackReportPage({super.key});
@@ -23,18 +29,11 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
       final providerTimeTrack =
           Provider.of<TimeTrackReportProvider>(context, listen: false);
 
-      // Clear previous filters
       providerTimeTrack.clearFilters();
-
-      // Initialize with logged-in user
       await providerTimeTrack.initializeWithLoggedInUser();
-
       providerTimeTrack.setFromDate(DateTime.now());
-
-      // Fetch data with logged-in user filter
       providerTimeTrack.getTimeTrackReport(context);
 
-      // Fetch user details for dropdown
       Provider.of<DropDownProvider>(context, listen: false)
           .getUserDetails(context);
     });
@@ -44,358 +43,248 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
   Widget build(BuildContext context) {
     final providerTimeTrack = Provider.of<TimeTrackReportProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
-    // ↑ listen:true only for filter row (lightweight) — chart uses its own Consumer below
 
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Match background style
-      appBar: AppBar(
-        surfaceTintColor: AppColors.scaffoldColor,
-        backgroundColor: AppColors.whiteColor,
-        title: const Text(
-          'Time Track Report',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        title: 'Time Track Report',
+        titleStyle: GoogleFonts.plusJakartaSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textBlack),
+        leadingWidget: IconButton(
+          onPressed: () {
+            context.pop();
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: AppColors.textGrey4,
           ),
+          iconSize: 24,
         ),
+        onFilterTap: () {
+          providerTimeTrack.toggleFilter();
+        },
+        showSearch: false,
+        onSearch: (q) {},
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Filter Section (At the top)
-              _buildFilterSection(context, providerTimeTrack, dropDownProvider),
-              const SizedBox(height: 16),
-
-              // Chart Section — scoped Consumer avoids full-page reload
-              Consumer<TimeTrackReportProvider>(
-                builder: (context, chartProvider, _) {
-                  return Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Time Tracking Summary',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF505050),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Text(
-                                (chartProvider.fromDate != null &&
-                                        chartProvider.toDate != null)
-                                    ? '${chartProvider.formattedFromDate} - ${chartProvider.formattedToDate}'
-                                    : DateTime.now().year.toString(),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
+      body: Column(
+        children: [
+          if (providerTimeTrack.isFilter)
+            _buildFilterPanel(context, providerTimeTrack, dropDownProvider),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Consumer<TimeTrackReportProvider>(
+                    builder: (context, chartProvider, _) {
+                      return Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(12),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
                             ),
                           ],
+                          border: Border.all(color: AppColors.grey),
                         ),
-                        const SizedBox(height: 20),
-                        // FIX: show inline loader — no blank full-screen
-                        if (chartProvider.isLoading)
-                          const SizedBox(
-                            height: 300,
-                            child: Center(child: CircularProgressIndicator()),
-                          )
-                        else
-                          SizedBox(
-                            height: 300,
-                            child: SfCartesianChart(
-                              margin: const EdgeInsets.all(0),
-                              isTransposed: false,
-                              primaryXAxis: CategoryAxis(
-                                title: AxisTitle(text: 'Time'),
-                                majorGridLines: const MajorGridLines(width: 0),
-                                labelStyle: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF606060),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Time Tracking Summary',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textBlack,
+                                  ),
                                 ),
-                              ),
-                              primaryYAxis: NumericAxis(
-                                title: AxisTitle(text: 'Count'),
-                                minimum: 0,
-                                // FIX: removed interval:1 — it caused thousands
-                                // of tick renders when count values are large
-                                // (e.g. 0,1,2,...7423 = 7423 render ops).
-                                // Auto-interval now picks ~5-8 readable ticks.
-                                majorGridLines: MajorGridLines(
-                                  width: 1,
-                                  color: Colors.grey.shade200,
-                                  dashArray: const <double>[5, 5],
-                                ),
-                                majorTickLines: const MajorTickLines(width: 0),
-                                labelStyle: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF606060),
-                                ),
-                              ),
-                              tooltipBehavior: TooltipBehavior(
-                                enable: true,
-                                color: Colors.white,
-                                borderColor: Colors.grey.shade300,
-                                borderWidth: 1,
-                                textStyle: const TextStyle(color: Colors.black),
-                              ),
-                              legend: Legend(
-                                isVisible: true,
-                                position: LegendPosition.bottom,
-                                alignment: ChartAlignment.center,
-                                legendItemBuilder: (String name, dynamic series,
-                                    dynamic point, int index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Container(
-                                          height: 10,
-                                          width: 10,
-                                          decoration: const BoxDecoration(
-                                            color: Colors.blue,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          name,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ],
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryBlue.withAlpha(25),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    (chartProvider.fromDate != null)
+                                        ? chartProvider.formattedFromDate
+                                        : 'Today',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryBlue,
                                     ),
-                                  );
-                                },
-                              ),
-                              series: <CartesianSeries<TimeTrackChartData,
-                                  String>>[
-                                SplineSeries<TimeTrackChartData, String>(
-                                  name: 'Follow Up',
-                                  // FIX: direct reference — no List.from() copy
-                                  dataSource: chartProvider.chartData,
-                                  xValueMapper: (TimeTrackChartData data, _) =>
-                                      data.x,
-                                  yValueMapper: (TimeTrackChartData data, _) =>
-                                      data.y1,
-                                  color: Colors.blue,
-                                  width: 2,
-                                  markerSettings:
-                                      const MarkerSettings(isVisible: false),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
+                            const SizedBox(height: 24),
+                            if (chartProvider.isLoading)
+                              const SizedBox(
+                                height: 300,
+                                child:
+                                    Center(child: CircularProgressIndicator()),
+                              )
+                            else
+                              SizedBox(
+                                height: 300,
+                                child: SfCartesianChart(
+                                  margin: const EdgeInsets.all(0),
+                                  primaryXAxis: CategoryAxis(
+                                    majorGridLines:
+                                        const MajorGridLines(width: 0),
+                                    labelStyle: GoogleFonts.plusJakartaSans(
+                                      fontSize: 11,
+                                      color: AppColors.textGrey4,
+                                    ),
+                                  ),
+                                  primaryYAxis: NumericAxis(
+                                    minimum: 0,
+                                    majorGridLines: MajorGridLines(
+                                      width: 1,
+                                      color: AppColors.grey.withAlpha(100),
+                                      dashArray: const <double>[5, 5],
+                                    ),
+                                    majorTickLines:
+                                        const MajorTickLines(width: 0),
+                                    labelStyle: GoogleFonts.plusJakartaSans(
+                                      fontSize: 11,
+                                      color: AppColors.textGrey4,
+                                    ),
+                                  ),
+                                  tooltipBehavior: TooltipBehavior(
+                                    enable: true,
+                                    color: AppColors.textBlack,
+                                    textStyle:
+                                        const TextStyle(color: Colors.white),
+                                  ),
+                                  series: <CartesianSeries<TimeTrackChartData,
+                                      String>>[
+                                    SplineAreaSeries<TimeTrackChartData,
+                                        String>(
+                                      name: 'Activity',
+                                      dataSource: chartProvider.chartData,
+                                      xValueMapper:
+                                          (TimeTrackChartData data, _) =>
+                                              data.x,
+                                      yValueMapper:
+                                          (TimeTrackChartData data, _) =>
+                                              data.y1,
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          AppColors.primaryBlue.withAlpha(100),
+                                          AppColors.primaryBlue.withAlpha(0),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                      borderColor: AppColors.primaryBlue,
+                                      borderWidth: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildFilterSection(
+  Widget _buildFilterPanel(
     BuildContext context,
     TimeTrackReportProvider provider,
     DropDownProvider dropDownProvider,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 3,
-          ),
-        ],
+        border: Border(
+          bottom: BorderSide(color: AppColors.grey, width: 1),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // DATE FILTER (FIXED SIZE)
-              SizedBox(
-                width: 360, // ✅ SAME WIDTH
-                child: GestureDetector(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText('Date Filter',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            CommonReportDateFilter(
+              fromDate: provider.fromDate?.toString(),
+              toDate: provider.toDate?.toString(),
+              formattedFromDate: provider.formattedFromDate,
+              formattedToDate: provider.formattedToDate,
+              label: 'Selected Date',
+              onTap: () => onClickTopButton(context),
+            ),
+            const SizedBox(height: 24),
+            CustomText('Filter by User',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilterChipWidget(
+                  label: 'All Users',
+                  isSelected: provider.selectedUser == null ||
+                      provider.selectedUser == 0,
                   onTap: () {
-                    onClickTopButton(context);
+                    provider.setUserFilter(0);
+                    provider.getTimeTrackReport(context);
                   },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: (provider.fromDate != null ||
-                                provider.toDate != null)
-                            ? AppColors.primaryBlue
-                            : Colors.grey[300]!,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            provider.fromDate == null && provider.toDate == null
-                                ? 'Date: All'
-                                : 'Date : ${provider.formattedFromDate}',
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        const Icon(
-                          Icons.arrow_drop_down_outlined,
-                          color: Colors.black45,
-                          size: 20,
-                        ),
-                      ],
-                    ),
+                ),
+                ...dropDownProvider.searchUserDetails.map(
+                  (user) => FilterChipWidget(
+                    label: user.userDetailsName ?? '',
+                    isSelected: provider.selectedUser == user.userDetailsId,
+                    onTap: () {
+                      provider.setUserFilter(user.userDetailsId);
+                      provider.getTimeTrackReport(context);
+                    },
                   ),
                 ),
-              ),
-
-              const SizedBox(width: 12),
-
-              // BY USER FILTER (FIXED SIZE)
+              ],
+            ),
+            const SizedBox(height: 24),
+            if (provider.fromDate != null ||
+                (provider.selectedUser != null && provider.selectedUser != 0))
               SizedBox(
-                width: 360, // ✅ SAME WIDTH
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: provider.selectedUser != null &&
-                              provider.selectedUser != 0
-                          ? AppColors.primaryBlue
-                          : Colors.grey[300]!,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Text('By User: '),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            value: provider.selectedUser,
-                            hint: const Text('User'),
-                            isExpanded: true,
-                            items: [
-                              const DropdownMenuItem<int>(
-                                value: 0,
-                                child: Text(
-                                  'All Users',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              ),
-                              ...dropDownProvider.searchUserDetails.map(
-                                (user) => DropdownMenuItem<int>(
-                                  value: user.userDetailsId,
-                                  child: Text(
-                                    user.userDetailsName ?? '',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                              ),
-                            ],
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                provider.setUserFilter(
-                                  newValue == 0 ? null : newValue,
-                                );
-                                provider.getTimeTrackReport(context);
-                              }
-                            },
-                            icon: const Icon(
-                              Icons.arrow_drop_down,
-                              size: 18,
-                            ),
-                            isDense: true,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                width: double.infinity,
+                child: CommonReportResetButton(
+                  onReset: () {
+                    provider.clearFilters();
+                    provider.getTimeTrackReport(context);
+                  },
+                  label: 'Reset All Filters',
                 ),
               ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-
-          // RESET BUTTON (UNCHANGED, COMMENTED AS YOU HAD)
-          // Align(
-          //   alignment: Alignment.bottomRight,
-          //   child: ((provider.fromDate != null ||
-          //           provider.toDate != null ||
-          //           (provider.selectedUser != null &&
-          //               provider.selectedUser != 0)))
-          //       ? ElevatedButton(
-          //           onPressed: () {
-          //             provider.clearFilters();
-          //             provider.getTimeTrackReport(context);
-          //           },
-          //           style: ElevatedButton.styleFrom(
-          //             backgroundColor: Colors.white,
-          //             foregroundColor: AppColors.textRed,
-          //             side: BorderSide(color: AppColors.textRed),
-          //             padding: const EdgeInsets.symmetric(
-          //               horizontal: 16,
-          //               vertical: 12,
-          //             ),
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(20),
-          //             ),
-          //           ),
-          //           child: const Text('Reset'),
-          //         )
-          //       : const SizedBox(),
-          // ),
-        ],
+          ],
+        ),
       ),
     );
   }

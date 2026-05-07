@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_outstanding_report_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
@@ -85,37 +87,92 @@ class _CustomerOutstandingReportMobileState
       ),
       body: Column(
         children: [
+          // ── FILTER PANEL ────────────────────────────────────────────────
           if (provider.isFilter)
-            Container(
-              padding: const EdgeInsets.all(12),
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CommonReportDateFilter(
-                          fromDate: provider.fromDate?.toString(),
-                          toDate: provider.toDate?.toString(),
-                          formattedFromDate: provider.formattedFromDate,
-                          formattedToDate: provider.formattedToDate,
-                          onTap: () => _showDateFilterDialog(context),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    CustomText('Date Range',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    CommonReportDateFilter(
+                      fromDate: provider.fromDate?.toString(),
+                      toDate: provider.toDate?.toString(),
+                      formattedFromDate: provider.formattedFromDate,
+                      formattedToDate: provider.formattedToDate,
+                      onTap: () => _showDateFilterDialog(context),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomText('Enquiry Source',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Consumer<DropDownProvider>(
+                      builder: (context, dropDownProvider, child) {
+                        return Wrap(
+                          spacing: 8.0,
+                          runSpacing: 8.0,
+                          children: [
+                            FilterChipWidget(
+                              label: 'All',
+                              isSelected:
+                                  provider.selectedEnquirySourceId == null,
+                              onTap: () {
+                                provider.setEnquirySource(null);
+                                provider.getReport(context);
+                              },
+                            ),
+                            ...dropDownProvider.enquiryData.map((e) =>
+                                FilterChipWidget(
+                                  label: e.enquirySourceName,
+                                  isSelected:
+                                      provider.selectedEnquirySourceId ==
+                                          e.enquirySourceId,
+                                  onTap: () {
+                                    provider.setEnquirySource(
+                                        e.enquirySourceId);
+                                    provider.getReport(context);
+                                  },
+                                )),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    if (provider.fromDate != null ||
+                        provider.toDate != null ||
+                        provider.selectedEnquirySourceId != null)
+                      SizedBox(
+                        width: double.infinity,
+                        child: CommonReportResetButton(
+                          label: 'Reset All Filters',
+                          onReset: () => provider.resetFilters(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textRed,
+                            elevation: 0,
+                            side: BorderSide(color: AppColors.textRed),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                          child:
-                              _buildEnquirySourceDropdown(context, provider)),
-                      const SizedBox(width: 8),
-                      CommonReportResetButton(
-                        onReset: () => provider.resetFilters(context),
-                        label: 'Reset',
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
+
+          // ── LIST ────────────────────────────────────────────────────────
+
           Expanded(
             child: provider.reportData.isEmpty
                 ? const Center(child: Text('No data found'))

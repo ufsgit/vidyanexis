@@ -14,6 +14,8 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
@@ -221,533 +223,144 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── FILTER PANEL ────────────────────────────────────────────────
             if (reportsProvider.isFilter)
-              AppStyles.isWebScreen(context)
-                  ? Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      CustomText('Status',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
                         children: [
-                          _buildStatusFilter(reportsProvider, provider),
-                          const SizedBox(
-                            width: 10,
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected: reportsProvider.selectedStatus == 0 ||
+                                reportsProvider.selectedStatus == null,
+                            onTap: () => reportsProvider.toggleStatus(0),
                           ),
-                          CommonReportDateFilter(
-                            fromDate: reportsProvider.fromDate?.toString(),
-                            toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate:
-                                reportsProvider.formattedFromDate,
-                            formattedToDate: reportsProvider.formattedToDate,
-                            onTap: () => onClickTopButton(context),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedUser != null &&
-                                          reportsProvider.selectedUser != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Assigned to: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedUser,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      provider.searchUserDetails
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.userDetailsId,
-                                                    child: ConstrainedBox(
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxWidth: 150),
-                                                      child: Text(
-                                                        status.userDetailsName ??
-                                                            '',
-                                                        overflow: TextOverflow
-                                                            .ellipsis, // Adds ellipsis when the text is too long
-                                                        style: const TextStyle(
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setUserFilterStatus(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    String taskType = reportsProvider
-                                        .selectedTaskType
-                                        .toString();
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
-                                      reportsProvider.Search,
-                                      fromDate,
-                                      toDate,
-                                      status,
-                                      assignedTo,
-                                      taskType,
-                                    );
-                                    reportsProvider
-                                        .getSearchTaskReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedTaskType !=
-                                              null &&
-                                          reportsProvider.selectedTaskType != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Task Type: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedTaskType,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      provider.taskType
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.taskTypeId,
-                                                    child: ConstrainedBox(
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxWidth: 150),
-                                                      child: Text(
-                                                        status.taskTypeName,
-                                                        overflow: TextOverflow
-                                                            .ellipsis, // Adds ellipsis when the text is too long
-                                                        style: const TextStyle(
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setTaskType(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    String tasktype = reportsProvider
-                                        .selectedTaskType
-                                        .toString();
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
-                                      reportsProvider.Search,
-                                      fromDate,
-                                      toDate,
-                                      status,
-                                      assignedTo,
-                                      tasktype,
-                                    );
-                                    reportsProvider
-                                        .getSearchTaskReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          // ElevatedButton(
-                          //   onPressed: () {
-                          //     // Apply the selected filters (You can use values from the provider)
-                          //     String status =
-                          //         reportsProvider.selectedStatus.toString();
-                          //     String fromDate =
-                          //         reportsProvider.formattedFromDate;
-                          //     String toDate = reportsProvider.formattedToDate;
-                          //     print(
-                          //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          //     reportsProvider.setSearchCriteria(
-                          //       reportsProvider.search,
-                          //       fromDate,
-                          //       toDate,
-                          //       status,
-                          //     );
-                          //     reportsProvider.getSearchCustomers(context);
-                          //   },
-                          //   style: ElevatedButton.styleFrom(
-                          //     backgroundColor: Colors.white,
-                          //     foregroundColor: AppColors.primaryBlue,
-                          //     side: BorderSide(color: AppColors.primaryBlue),
-                          //     padding: const EdgeInsets.symmetric(
-                          //       horizontal: 16,
-                          //       vertical: 12,
-                          //     ),
-                          //   ),
-                          //   child: const Text('Apply'),
-                          // ),
-                          // const SizedBox(
-                          //   width: 10,
-                          // ),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              (reportsProvider.selectedTaskType != null &&
-                                  reportsProvider.selectedTaskType != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            CommonReportResetButton(
-                              onReset: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.toggleStatus(0); // Reset to All
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '0',
-                                  '',
-                                  '',
-                                );
-                                _refreshData();
-                              },
-                            ),
+                          ...provider.followUpData.map((s) => FilterChipWidget(
+                                label: s.statusName ?? 'Unknown',
+                                isSelected: reportsProvider.selectedStatus ==
+                                    s.statusId,
+                                onTap: () => reportsProvider
+                                    .toggleStatus(s.statusId ?? 0),
+                              )),
                         ],
                       ),
-                    )
-                  // mobile
-                  : Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                      const SizedBox(height: 16),
+                      CustomText('Date Range',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack),
+                      const SizedBox(height: 8),
+                      CommonReportDateFilter(
+                        fromDate: reportsProvider.fromDate?.toString(),
+                        toDate: reportsProvider.toDate?.toString(),
+                        formattedFromDate: reportsProvider.formattedFromDate,
+                        formattedToDate: reportsProvider.formattedToDate,
+                        onTap: () => onClickTopButton(context),
                       ),
-                      child: Wrap(
-                        runSpacing: 10,
-                        crossAxisAlignment: WrapCrossAlignment.center,
+                      const SizedBox(height: 16),
+                      CustomText('Assigned Staff',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
                         children: [
-                          _buildStatusFilter(reportsProvider, provider),
-                          const SizedBox(
-                            width: 10,
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected: reportsProvider.selectedUser == 0 ||
+                                reportsProvider.selectedUser == null,
+                            onTap: () => reportsProvider.setUserFilterStatus(0),
                           ),
-                          CommonReportDateFilter(
-                            fromDate: reportsProvider.fromDate?.toString(),
-                            toDate: reportsProvider.toDate?.toString(),
-                            formattedFromDate:
-                                reportsProvider.formattedFromDate,
-                            formattedToDate: reportsProvider.formattedToDate,
-                            onTap: () => onClickTopButton(context),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedUser != null &&
-                                          reportsProvider.selectedUser != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('Assigned to: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedUser,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      provider.searchUserDetails
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.userDetailsId,
-                                                    child: ConstrainedBox(
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxWidth: 150),
-                                                      child: Text(
-                                                        status.userDetailsName ??
-                                                            '',
-                                                        overflow: TextOverflow
-                                                            .ellipsis, // Adds ellipsis when the text is too long
-                                                        style: const TextStyle(
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setUserFilterStatus(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    String taskType = reportsProvider
-                                        .selectedTaskType
-                                        .toString();
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
-                                      reportsProvider.Search,
-                                      fromDate,
-                                      toDate,
-                                      status,
-                                      assignedTo,
-                                      taskType,
-                                    );
-                                    reportsProvider
-                                        .getSearchTaskReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedTaskType !=
-                                              null &&
-                                          reportsProvider.selectedTaskType != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('Task Type: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedTaskType,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      provider.taskType
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.taskTypeId,
-                                                    child: ConstrainedBox(
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxWidth: 150),
-                                                      child: Text(
-                                                        status.taskTypeName,
-                                                        overflow: TextOverflow
-                                                            .ellipsis, // Adds ellipsis when the text is too long
-                                                        style: const TextStyle(
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setTaskType(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    String tasktype = reportsProvider
-                                        .selectedTaskType
-                                        .toString();
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
-                                      reportsProvider.Search,
-                                      fromDate,
-                                      toDate,
-                                      status,
-                                      assignedTo,
-                                      tasktype,
-                                    );
-                                    reportsProvider
-                                        .getSearchTaskReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          // ElevatedButton(
-                          //   onPressed: () {
-                          //     // Apply the selected filters (You can use values from the provider)
-                          //     String status =
-                          //         reportsProvider.selectedStatus.toString();
-                          //     String fromDate =
-                          //         reportsProvider.formattedFromDate;
-                          //     String toDate = reportsProvider.formattedToDate;
-                          //     print(
-                          //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          //     reportsProvider.setSearchCriteria(
-                          //       reportsProvider.search,
-                          //       fromDate,
-                          //       toDate,
-                          //       status,
-                          //     );
-                          //     reportsProvider.getSearchCustomers(context);
-                          //   },
-                          //   style: ElevatedButton.styleFrom(
-                          //     backgroundColor: Colors.white,
-                          //     foregroundColor: AppColors.primaryBlue,
-                          //     side: BorderSide(color: AppColors.primaryBlue),
-                          //     padding: const EdgeInsets.symmetric(
-                          //       horizontal: 16,
-                          //       vertical: 12,
-                          //     ),
-                          //   ),
-                          //   child: const Text('Apply'),
-                          // ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              (reportsProvider.selectedTaskType != null &&
-                                  reportsProvider.selectedTaskType != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            CommonReportResetButton(
-                              onReset: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                _refreshData();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                elevation: 0,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                            ),
+                          ...provider.searchUserDetails.map((u) =>
+                              FilterChipWidget(
+                                label: u.userDetailsName ?? 'Unknown',
+                                isSelected: reportsProvider.selectedUser ==
+                                    u.userDetailsId,
+                                onTap: () => reportsProvider
+                                    .setUserFilterStatus(u.userDetailsId ?? 0),
+                              )),
                         ],
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      CustomText('Task Type',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: [
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected: reportsProvider.selectedTaskType == 0 ||
+                                reportsProvider.selectedTaskType == null,
+                            onTap: () => reportsProvider.setTaskType(0),
+                          ),
+                          ...provider.taskType.map((t) => FilterChipWidget(
+                                label: t.taskTypeName,
+                                isSelected: reportsProvider.selectedTaskType ==
+                                    t.taskTypeId,
+                                onTap: () =>
+                                    reportsProvider.setTaskType(t.taskTypeId),
+                              )),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      if (reportsProvider.fromDate != null ||
+                          reportsProvider.toDate != null ||
+                          (reportsProvider.selectedStatus != null &&
+                              reportsProvider.selectedStatus != 0) ||
+                          (reportsProvider.selectedUser != null &&
+                              reportsProvider.selectedUser != 0) ||
+                          (reportsProvider.selectedTaskType != null &&
+                              reportsProvider.selectedTaskType != 0))
+                        SizedBox(
+                          width: double.infinity,
+                          child: CommonReportResetButton(
+                            label: 'Reset All Filters',
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                  '', '', '', '', '', '');
+                              _refreshData();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColors.textRed,
+                              elevation: 0,
+                              side: BorderSide(color: AppColors.textRed),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+              ),
+
+            // ── LIST ────────────────────────────────────────────────────────
+
             Expanded(
               child: reportsProvider.taskReport.isEmpty
                   ? Center(
@@ -820,7 +433,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                         Row(
                                           children: [
                                             Container(
-                                                height: 42,
+                                                height: 36,
                                                 width: 3,
                                                 decoration: BoxDecoration(
                                                     color: statusColor,

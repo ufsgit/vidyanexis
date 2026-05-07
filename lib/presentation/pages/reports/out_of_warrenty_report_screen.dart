@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -200,9 +201,143 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                       ],
                     ),
                   )
-                : Container(), // Mobile layout place holder
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: TextField(
+                            controller: searchController,
+                            onSubmitted: (query) {
+                              reportsProvider.setTaskSearchCriteria(
+                                query,
+                                reportsProvider.fromDateS,
+                                reportsProvider.toDateS,
+                                reportsProvider.Status,
+                                reportsProvider.AssignedTo,
+                              );
+                              reportsProvider
+                                  .getSearchOutOfWarrentyReport(context);
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search here....',
+                              prefixIcon: const Icon(Icons.search),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 0,
+                              ),
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    String query = searchController.text;
+                                    if (reportsProvider.Search.isNotEmpty) {
+                                      searchController.clear();
+                                      reportsProvider.setTaskSearchCriteria(
+                                        '',
+                                        reportsProvider.fromDateS,
+                                        reportsProvider.toDateS,
+                                        reportsProvider.Status,
+                                        reportsProvider.AssignedTo,
+                                      );
+                                      reportsProvider
+                                          .getSearchOutOfWarrentyReport(
+                                              context);
+                                    } else {
+                                      reportsProvider.setTaskSearchCriteria(
+                                        query,
+                                        reportsProvider.fromDateS,
+                                        reportsProvider.toDateS,
+                                        reportsProvider.Status,
+                                        reportsProvider.AssignedTo,
+                                      );
+                                      reportsProvider
+                                          .getSearchOutOfWarrentyReport(
+                                              context);
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.textGrey4,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 0,
+                                    ),
+                                  ),
+                                  child: Text(reportsProvider.Search.isNotEmpty
+                                      ? 'Cancel'
+                                      : 'Search'),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            CustomFilterButton(
+                              onPressed: () {
+                                reportsProvider.toggleFilter();
+                              },
+                              isFilter: reportsProvider.isFilter,
+                            ),
+                            const SizedBox(width: 16),
+                            CustomElevatedButton(
+                              onPressed: () {
+                                exportToExcel(
+                                  headers: [
+                                    'No',
+                                    'Customer Name',
+                                    'Contact No',
+                                    'Address',
+                                    'District',
+                                    'Company',
+                                    'From Date',
+                                    'To Date'
+                                  ],
+                                  data: reportsProvider.outOfWarrentyReport
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                    var index = entry.key;
+                                    var task = entry.value;
+                                    return {
+                                      'No': (index + 1).toString(),
+                                      'Customer Name': task.customerName,
+                                      'Contact No': task.contactNumber,
+                                      'Address': task.address1,
+                                      'District': task.district,
+                                      'Company': task.company,
+                                      'From Date': task.installationDate
+                                          .toDayMonthYearFormat(),
+                                      'To Date': task.expiryDate
+                                          .toDayMonthYearFormat(),
+                                    };
+                                  }).toList(),
+                                  fileName: 'Out_Of_Warranty_Report',
+                                );
+                              },
+                              buttonText: 'Export',
+                              textColor: AppColors.whiteColor,
+                              borderColor: AppColors.appViolet,
+                              backgroundColor: AppColors.appViolet,
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
             if (reportsProvider.isFilter)
-              AppStyles.isWebScreen(context)
+              !AppStyles.isWebScreen(context)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
@@ -210,7 +345,9 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Row(
+                      child: Wrap(
+                        runSpacing: 10,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           CommonReportDateFilter(
                             fromDate: reportsProvider.fromDate?.toString(),
@@ -223,32 +360,37 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           const SizedBox(
                             width: 10,
                           ),
-                          const Spacer(),
-                          CommonReportResetButton(
-                            onReset: () {
-                              reportsProvider.selectDateFilterOption(null);
-                              reportsProvider.removeStatus();
-                              searchController.clear();
-                              reportsProvider.setTaskSearchCriteria(
-                                '',
-                                '',
-                                '',
-                                '',
-                                '',
-                              );
-                              reportsProvider
-                                  .getSearchOutOfWarrentyReport(context);
-                            },
-                            label: 'Reset',
-                          ),
+                          if (reportsProvider.fromDate != null ||
+                              reportsProvider.toDate != null ||
+                              (reportsProvider.selectedStatus != null &&
+                                  reportsProvider.selectedStatus != 0) ||
+                              (reportsProvider.selectedUser != null &&
+                                  reportsProvider.selectedUser != 0) ||
+                              reportsProvider.Search.isNotEmpty)
+                            CommonReportResetButton(
+                              onReset: () {
+                                reportsProvider.selectDateFilterOption(null);
+                                reportsProvider.removeStatus();
+                                searchController.clear();
+                                reportsProvider.setTaskSearchCriteria(
+                                  '',
+                                  '',
+                                  '',
+                                  '',
+                                  '',
+                                );
+                                reportsProvider
+                                    .getSearchOutOfWarrentyReport(context);
+                              },
+                            ),
                         ],
                       ),
                     )
                   : Container(),
 
-            AppStyles.isWebScreen(context)
-                ? Expanded(
-                    child: Padding(
+            Expanded(
+              child: AppStyles.isWebScreen(context)
+                  ? Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Container(
                         decoration: BoxDecoration(
@@ -446,9 +588,53 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  )
-                : Container(), // Mobile layout placeholder
+                    )
+                  : reportsProvider.outOfWarrentyReport.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 80),
+                              Icon(Icons.search_off_outlined,
+                                  size: 80, color: Colors.grey[300]),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No out of warranty reports found',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 8),
+                          itemCount: reportsProvider.outOfWarrentyReport.length,
+                          itemBuilder: (context, index) {
+                            var item =
+                                reportsProvider.outOfWarrentyReport[index];
+                            return ReportListItem(
+                              title: item.customerName,
+                              subtitle: '${item.contactNumber} >',
+                              onSubtitleTap: () {
+                                context.push(
+                                    '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
+                              },
+                              status:
+                                  'Expired: ${item.expiryDate.toDayMonthYearFormat()}',
+                              statusColor: AppColors.textRed,
+                              description:
+                                  '${item.address1} ${item.district}'.trim(),
+                              bottomLeftIcon: Icons.medical_services_outlined,
+                              bottomLeftText: 'Warranty',
+                            );
+                          },
+                        ),
+            ),
           ],
         ),
       ),

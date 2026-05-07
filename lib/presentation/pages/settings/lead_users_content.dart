@@ -29,8 +29,8 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
 
-      settingsProvider.getSearchLeadStatus(
-          '', settingsProvider.viewInId.toString(), context);
+      settingsProvider.setViewInId(0);
+      settingsProvider.getSearchLeadStatus('', '0', context);
       settingsProvider.searchStatusController.clear();
     });
     super.initState();
@@ -129,7 +129,7 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
                   width: 250,
                   child: CommonDropdown<int>(
                     hintText: 'View',
-                    selectedValue: null,
+                    selectedValue: settingsProvider.viewInId,
                     items: viewInOptions,
                     onItemSelected: (selectedId) {
                       settingsProvider.setViewInId(selectedId);

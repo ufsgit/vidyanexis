@@ -10,7 +10,10 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_report_screen_phone.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class WorkSummaryPhone extends StatefulWidget {
   const WorkSummaryPhone({super.key});
@@ -126,19 +129,19 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── FILTER PANEL ────────────────────────────────────────────────
           if (reportsProvider.isFilter)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
-              padding: const EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Wrap(
-                spacing: 10, // horizontal spacing between elements
-                runSpacing: 10, // vertical spacing between lines
-                crossAxisAlignment: WrapCrossAlignment.center,
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 8),
+                  CustomText('Date Range',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack),
+                  const SizedBox(height: 8),
                   CommonReportDateFilter(
                     fromDate: reportsProvider.fromDate?.toString(),
                     toDate: reportsProvider.toDate?.toString(),
@@ -146,86 +149,38 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                     formattedToDate: reportsProvider.formattedToDate,
                     onTap: () => onClickTopButton(context),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: reportsProvider.selectedUser != null &&
-                                reportsProvider.selectedUser != 0
-                            ? AppColors.primaryBlue
-                            : Colors.grey[300]!,
+                  const SizedBox(height: 16),
+                  CustomText('Staff',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: [
+                      FilterChipWidget(
+                        label: 'All',
+                        isSelected: reportsProvider.selectedUser == 0 ||
+                            reportsProvider.selectedUser == null,
+                        onTap: () {
+                          reportsProvider.setUserFilterStatus(0);
+                          reportsProvider.getSearchWorkSummary(context);
+                        },
                       ),
-                    ),
-                    child: IntrinsicWidth(
-                      // Add this to ensure proper width calculation
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Select User: '),
-                          Flexible(
-                            // Add Flexible to allow dropdown to shrink
-                            child: DropdownButton<int>(
-                              value: reportsProvider.selectedUser,
-                              hint: const Text('All'),
-                              isExpanded: true, // Add this to prevent overflow
-                              items: [
-                                    const DropdownMenuItem<int>(
-                                      value: 0,
-                                      child: Text(
-                                        'All',
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                  ] +
-                                  provider.searchUserDetails
-                                      .map((status) => DropdownMenuItem<int>(
-                                            value: status.userDetailsId,
-                                            child: ConstrainedBox(
-                                              constraints: const BoxConstraints(
-                                                  maxWidth: 150),
-                                              child: Text(
-                                                status.userDetailsName ?? '',
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontSize: 14),
-                                              ),
-                                            ),
-                                          ))
-                                      .toList(),
-                              onChanged: (int? newValue) {
-                                if (newValue != null) {
-                                  reportsProvider.setUserFilterStatus(newValue);
-                                }
-                                String status =
-                                    reportsProvider.selectedStatus.toString();
-                                String assignedTo =
-                                    reportsProvider.selectedUser.toString();
-                                String fromDate =
-                                    reportsProvider.formattedFromDate;
-                                String toDate = reportsProvider.formattedToDate;
-                                print(
-                                    'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                reportsProvider.setTaskSearchCriteria(
-                                  reportsProvider.Search,
-                                  fromDate,
-                                  toDate,
-                                  status,
-                                  assignedTo,
-                                );
-                                reportsProvider.getSearchWorkSummary(context);
-                              },
-                              underline: Container(),
-                              isDense: true,
-                              iconSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                      ...provider.searchUserDetails.map((u) => FilterChipWidget(
+                            label: u.userDetailsName ?? 'Unknown',
+                            isSelected:
+                                reportsProvider.selectedUser == u.userDetailsId,
+                            onTap: () {
+                              reportsProvider
+                                  .setUserFilterStatus(u.userDetailsId);
+                              reportsProvider.getSearchWorkSummary(context);
+                            },
+                          )),
+                    ],
                   ),
+                  const SizedBox(height: 24),
                   if (reportsProvider.fromDate != null ||
                       reportsProvider.toDate != null ||
                       (reportsProvider.selectedStatus != null &&
@@ -233,25 +188,36 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                       (reportsProvider.selectedUser != null &&
                           reportsProvider.selectedUser != 0) ||
                       reportsProvider.Search.isNotEmpty)
-                    CommonReportResetButton(
-                      onReset: () {
-                        reportsProvider.selectDateFilterOption(null);
-                        reportsProvider.removeStatus();
-                        searchController.clear();
-                        reportsProvider.setTaskSearchCriteria(
-                          '',
-                          '',
-                          '',
-                          '',
-                          '',
-                        );
-                        reportsProvider.getSearchWorkSummary(context);
-                      },
-                      label: 'Reset',
+                    SizedBox(
+                      width: double.infinity,
+                      child: CommonReportResetButton(
+                        label: 'Reset All Filters',
+                        onReset: () {
+                          reportsProvider.selectDateFilterOption(null);
+                          reportsProvider.removeStatus();
+                          searchController.clear();
+                          reportsProvider.setTaskSearchCriteria(
+                              '', '', '', '', '');
+                          reportsProvider.getSearchWorkSummary(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.textRed,
+                          elevation: 0,
+                          side: BorderSide(color: AppColors.textRed),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                        ),
+                      ),
                     ),
                 ],
               ),
             ),
+
+          // ── LIST ────────────────────────────────────────────────────────
+
           Expanded(
             child: ListView.builder(
               physics:
@@ -259,97 +225,27 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
               itemCount: reportsProvider.taskReport.length,
               itemBuilder: (context, index) {
                 var lead = reportsProvider.taskReport[index];
-                return InkWell(
+                return ReportListItem(
+                  title: lead.toStaff,
+                  subtitle: '${lead.noOfFollowUp} Follow-Ups >',
+                  status: '',
+                  statusColor: getAvatarColor(lead.toStaff),
+                  bottomLeftIcon: Icons.person_outline,
+                  bottomLeftText: 'Staff Member',
+                  description:
+                      'View detailed work and follow-up reports for ${lead.toStaff}',
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return WorkReportPhone(
-                          userId: lead.userDetailsId.toString(),
-                          userName: lead.toStaff.toString(),
-                        );
-                        // return WorkReportDetailsScreenPhone(
-                        //   userId: lead.userDetailsId.toString(),
-                        //   userName: lead.toStaff.toString(),
-                        // );
-                      },
-                    ));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WorkReportPhone(
+                            userId: lead.userDetailsId.toString(),
+                            userName: lead.toStaff.toString(),
+                          ),
+                        ));
                   },
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: getAvatarColor(lead.toStaff),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  lead.toStaff.substring(0, 1).toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                lead.toStaff,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textBlack),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              lead.noOfFollowUp.toString(),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlack),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Follow-Ups",
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textGrey4),
-                            ),
-                            const SizedBox(width: 8),
-                            Transform.rotate(
-                              angle: 4.7,
-                              child: Image.asset(
-                                "assets/icons/arrow_down_icon.png",
-                                width: 22,
-                                height: 22,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 2,
-                        color: AppColors.grey,
-                      ),
-                    ],
-                  ),
                 );
               },
             ),

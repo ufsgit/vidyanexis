@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/commission_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
@@ -92,112 +94,121 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
       ),
       body: Column(
         children: [
+          // ── FILTER PANEL ────────────────────────────────────────────────
           if (provider.isFilter)
-            Container(
-              padding: const EdgeInsets.all(12),
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      CommonReportDateFilter(
-                        fromDate: provider.fromDate?.toString(),
-                        toDate: provider.toDate?.toString(),
-                        formattedFromDate: provider.formattedFromDate,
-                        formattedToDate: provider.formattedToDate,
-                        onTap: () => _showDateFilterDialog(context),
-                      ),
-                      const SizedBox(width: 8),
-                      CommonReportResetButton(
-                        onReset: () => provider.resetFilters(context),
-                        label: 'Reset',
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          elevation: 0,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    CustomText('Date Range',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    CommonReportDateFilter(
+                      fromDate: provider.fromDate?.toString(),
+                      toDate: provider.toDate?.toString(),
+                      formattedFromDate: provider.formattedFromDate,
+                      formattedToDate: provider.formattedToDate,
+                      onTap: () => _showDateFilterDialog(context),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomText('Enquiry Source',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: [
+                        FilterChipWidget(
+                          label: 'All',
+                          isSelected: provider.selectedEnquirySource == 0 ||
+                              provider.selectedEnquirySource == null,
+                          onTap: () {
+                            provider.setEnquirySourceFilter(0);
+                            provider.getCommissionReport(context);
+                          },
+                        ),
+                        ...dropDownProvider.enquiryData.map((e) =>
+                            FilterChipWidget(
+                              label: e.enquirySourceName,
+                              isSelected: provider.selectedEnquirySource ==
+                                  e.enquirySourceId,
+                              onTap: () {
+                                provider.setEnquirySourceFilter(
+                                    e.enquirySourceId);
+                                provider.getCommissionReport(context);
+                              },
+                            )),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    CustomText('Enquiry For',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: [
+                        FilterChipWidget(
+                          label: 'All',
+                          isSelected: provider.selectedEnquiryFor == 0 ||
+                              provider.selectedEnquiryFor == null,
+                          onTap: () {
+                            provider.setEnquiryForFilter(0);
+                            provider.getCommissionReport(context);
+                          },
+                        ),
+                        ...dropDownProvider.enquiryForList.map((e) =>
+                            FilterChipWidget(
+                              label: e.enquiryForName,
+                              isSelected: provider.selectedEnquiryFor ==
+                                  e.enquiryForId,
+                              onTap: () {
+                                provider.setEnquiryForFilter(e.enquiryForId);
+                                provider.getCommissionReport(context);
+                              },
+                            )),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    if (provider.fromDate != null ||
+                        provider.toDate != null ||
+                        (provider.selectedEnquirySource != null &&
+                            provider.selectedEnquirySource != 0) ||
+                        (provider.selectedEnquiryFor != null &&
+                            provider.selectedEnquiryFor != 0))
+                      SizedBox(
+                        width: double.infinity,
+                        child: CommonReportResetButton(
+                          label: 'Reset All Filters',
+                          onReset: () => provider.resetFilters(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textRed,
+                            elevation: 0,
+                            side: BorderSide(color: AppColors.textRed),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]!),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: DropdownButton<int>(
-                            value: dropDownProvider.enquiryData.any((e) =>
-                                    e.enquirySourceId ==
-                                    provider.selectedEnquirySource)
-                                ? provider.selectedEnquirySource
-                                : 0,
-                            isExpanded: true,
-                            underline: const SizedBox(),
-                            items: [
-                              const DropdownMenuItem(
-                                  value: 0, child: Text('All Sources')),
-                              ...dropDownProvider.enquiryData
-                                  .map((e) => DropdownMenuItem(
-                                        value: e.enquirySourceId,
-                                        child: Text(e.enquirySourceName),
-                                      )),
-                            ],
-                            onChanged: (val) {
-                              provider.setEnquirySourceFilter(val);
-                              provider.getCommissionReport(context);
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]!),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: DropdownButton<int>(
-                            value: dropDownProvider.enquiryForList.any((e) =>
-                                    e.enquiryForId ==
-                                    provider.selectedEnquiryFor)
-                                ? provider.selectedEnquiryFor
-                                : 0,
-                            isExpanded: true,
-                            underline: const SizedBox(),
-                            items: [
-                              const DropdownMenuItem(
-                                  value: 0, child: Text('All Enquiry For')),
-                              ...dropDownProvider.enquiryForList
-                                  .map((e) => DropdownMenuItem(
-                                        value: e.enquiryForId,
-                                        child: Text(e.enquiryForName),
-                                      )),
-                            ],
-                            onChanged: (val) {
-                              provider.setEnquiryForFilter(val);
-                              provider.getCommissionReport(context);
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
+
+          // ── LIST ────────────────────────────────────────────────────────
+
           Expanded(
             child: provider.commissionReport.isEmpty
                 ? Center(

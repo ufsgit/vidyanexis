@@ -11,6 +11,8 @@ import 'package:vidyanexis/controller/service_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
@@ -128,126 +130,98 @@ class _ComplaintPageReportsMobileState
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // ── FILTER PANEL ────────────────────────────────────────────────
             if (reportsProvider.isFilter)
               SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                  padding: const EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: reportsProvider.selectedStatus != null &&
-                                      reportsProvider.selectedStatus != 0
-                                  ? AppColors.primaryBlue
-                                  : AppColors.primaryBlue),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    CustomText('Status',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: [
+                        FilterChipWidget(
+                          label: 'All',
+                          isSelected: reportsProvider.selectedStatus == 0 ||
+                              reportsProvider.selectedStatus == null,
+                          onTap: () => reportsProvider.setStatus(0),
                         ),
-                        child: Row(
-                          children: [
-                            const Text('Status: '),
-                            DropdownButton<int>(
-                              value: reportsProvider.selectedStatus,
-                              hint: const Text('All'),
-                              items: [
-                                    const DropdownMenuItem<int>(
-                                      value:
-                                          0, // Use 0 or null to represent "All"
-                                      child: Text(
-                                        'All',
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                  ] +
-                                  const [
-                                    DropdownMenuItem<int>(
-                                      value: 1,
-                                      child: Text(
-                                        'Pending',
-                                        style: TextStyle(fontSize: 13),
-                                      ),
-                                    ),
-                                    DropdownMenuItem<int>(
-                                      value: 2,
-                                      child: Text(
-                                        'Completed',
-                                        style: TextStyle(fontSize: 13),
-                                      ),
-                                    ),
-                                  ],
-                              onChanged: (int? newValue) {
-                                if (newValue != null) {
-                                  reportsProvider.setStatus(
-                                      newValue); // Update the status in the provider
-                                }
-                                String status =
-                                    reportsProvider.selectedStatus.toString();
-                                String assignedTo =
-                                    reportsProvider.selectedUser.toString();
-                                String fromDate =
-                                    reportsProvider.formattedFromDate;
-                                String toDate = reportsProvider.formattedToDate;
-                                print(
-                                    'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                reportsProvider.setTaskSearchCriteria(
-                                    reportsProvider.Search,
-                                    fromDate,
-                                    toDate,
-                                    status,
-                                    assignedTo);
-                                reportsProvider.getSearchServiceReport(context);
-                              },
-                              underline: Container(),
-                              isDense: true,
-                              iconSize: 18,
-                            ),
-                          ],
+                        FilterChipWidget(
+                          label: 'Pending',
+                          isSelected: reportsProvider.selectedStatus == 1,
+                          onTap: () => reportsProvider.setStatus(1),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      CommonReportDateFilter(
-                        fromDate: reportsProvider.fromDate?.toString(),
-                        toDate: reportsProvider.toDate?.toString(),
-                        formattedFromDate: reportsProvider.formattedFromDate,
-                        formattedToDate: reportsProvider.formattedToDate,
-                        onTap: () => onClickTopButton(context),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      // Removed the Spacer() which can cause issues in a horizontal scroll
-                      const SizedBox(
-                        width: 20,
-                      ), // Fixed spacing instead of Spacer()
-                      if (reportsProvider.fromDate != null ||
-                          reportsProvider.toDate != null ||
-                          (reportsProvider.selectedStatus != null &&
-                              reportsProvider.selectedStatus != 0) ||
-                          (reportsProvider.selectedUser != null &&
-                              reportsProvider.selectedUser != 0) ||
-                          reportsProvider.Search.isNotEmpty)
-                        CommonReportResetButton(
+                        FilterChipWidget(
+                          label: 'Completed',
+                          isSelected: reportsProvider.selectedStatus == 2,
+                          onTap: () => reportsProvider.setStatus(2),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    CustomText('Date Range',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    CommonReportDateFilter(
+                      fromDate: reportsProvider.fromDate?.toString(),
+                      toDate: reportsProvider.toDate?.toString(),
+                      formattedFromDate: reportsProvider.formattedFromDate,
+                      formattedToDate: reportsProvider.formattedToDate,
+                      onTap: () => onClickTopButton(context),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomText('Assigned Staff',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: [
+                        FilterChipWidget(
+                          label: 'All',
+                          isSelected: reportsProvider.selectedUser == 0 ||
+                              reportsProvider.selectedUser == null,
+                          onTap: () => reportsProvider.setUserFilterStatus(0),
+                        ),
+                        ...provider.searchUserDetails.map((u) =>
+                            FilterChipWidget(
+                              label: u.userDetailsName ?? 'Unknown',
+                              isSelected: reportsProvider.selectedUser ==
+                                  u.userDetailsId,
+                              onTap: () => reportsProvider
+                                  .setUserFilterStatus(u.userDetailsId ?? 0),
+                            )),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    if (reportsProvider.fromDate != null ||
+                        reportsProvider.toDate != null ||
+                        (reportsProvider.selectedStatus != null &&
+                            reportsProvider.selectedStatus != 0) ||
+                        (reportsProvider.selectedUser != null &&
+                            reportsProvider.selectedUser != 0) ||
+                        reportsProvider.Search.isNotEmpty)
+                      SizedBox(
+                        width: double.infinity,
+                        child: CommonReportResetButton(
+                          label: 'Reset All Filters',
                           onReset: () {
                             reportsProvider.selectDateFilterOption(null);
                             reportsProvider.removeStatus();
                             searchController.clear();
                             reportsProvider.setTaskSearchCriteria(
-                              '',
-                              '',
-                              '',
-                              '',
-                              '',
-                            );
+                                '', '', '', '', '');
                             reportsProvider.getSearchServiceReport(context);
                           },
                           style: ElevatedButton.styleFrom(
@@ -256,18 +230,18 @@ class _ComplaintPageReportsMobileState
                             elevation: 0,
                             side: BorderSide(color: AppColors.textRed),
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
+                                horizontal: 16, vertical: 12),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                                borderRadius: BorderRadius.circular(20)),
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
               ),
+
+            // ── LIST ────────────────────────────────────────────────────────
+
             if (!reportsProvider.isLoading &&
                 reportsProvider.serviceReport.isEmpty)
               Padding(

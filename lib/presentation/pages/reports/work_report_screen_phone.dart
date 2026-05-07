@@ -11,6 +11,10 @@ import 'package:vidyanexis/controller/work_report_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class WorkReportPhone extends StatefulWidget {
@@ -154,164 +158,59 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── FILTER PANEL ────────────────────────────────────────────────
           if (reportsProvider.isFilter)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
-              padding: const EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
+            SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // First row with Status and Date filters
-                  Row(
+                  const SizedBox(height: 16),
+                  CustomText('Status',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
                     children: [
-                      // Status Filter - Make it flexible
-                      Flexible(
-                        flex: 2,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12), // Reduced padding
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                                color: reportsProvider.selectedStatus != null &&
-                                        reportsProvider.selectedStatus != 0
-                                    ? AppColors.primaryBlue
-                                    : Colors.grey[300]!),
-                          ),
-                          child: Row(
-                            mainAxisSize:
-                                MainAxisSize.min, // Important: minimize space
-                            children: [
-                              const Text('Status: ',
-                                  style:
-                                      TextStyle(fontSize: 12)), // Smaller text
-                              Expanded(
-                                // Use Expanded instead of Flexible
-                                child: DropdownButton<int>(
-                                  value: reportsProvider.selectedStatus,
-                                  hint: const Text('All',
-                                      style: TextStyle(fontSize: 12)),
-                                  isExpanded:
-                                      true, // Set to true to fill available space
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value: 0,
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: Text(
-                                              'All',
-                                              style: TextStyle(fontSize: 12),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      ] +
-                                      provider.followUpData
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.statusId,
-                                                    child: SizedBox(
-                                                      width: double.infinity,
-                                                      child: Text(
-                                                        status.statusName ?? '',
-                                                        style: const TextStyle(
-                                                            fontSize: 12),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setStatus(newValue);
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
-                                        reportsProvider.Search,
-                                        fromDate,
-                                        toDate,
-                                        status,
-                                        assignedTo);
-                                    reportsProvider.getSearchTaskReport(
-                                        widget.userId, context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 16, // Smaller icon
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      FilterChipWidget(
+                        label: 'All',
+                        isSelected: reportsProvider.selectedStatus == 0 ||
+                            reportsProvider.selectedStatus == null,
+                        onTap: () {
+                          reportsProvider.setStatus(0);
+                          reportsProvider.getSearchTaskReport(
+                              widget.userId, context);
+                        },
                       ),
-                      const SizedBox(width: 8), // Reduced spacing
-                      // Date Filter - Make it flexible
-                      Flexible(
-                        flex: 3,
-                        child: GestureDetector(
-                          onTap: () {
-                            onClickTopButton(context);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8), // Reduced padding
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.fromDate != null ||
-                                          reportsProvider.toDate != null
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  // Wrap text in Flexible
-                                  child: reportsProvider.fromDate == null &&
-                                          reportsProvider.toDate == null
-                                      ? const Text(
-                                          'Entry Date: All',
-                                          style: TextStyle(fontSize: 12),
-                                          overflow: TextOverflow.ellipsis,
-                                        )
-                                      : Text(
-                                          'Date: ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}',
-                                          style: const TextStyle(fontSize: 12),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Icon(
-                                  Icons.arrow_drop_down_outlined,
-                                  color: Colors.black45,
-                                  size: 18, // Smaller icon
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                      ...provider.followUpData.map((s) => FilterChipWidget(
+                            label: s.statusName ?? 'Unknown',
+                            isSelected:
+                                reportsProvider.selectedStatus == s.statusId,
+                            onTap: () {
+                              reportsProvider.setStatus(s.statusId ?? 0);
+                              reportsProvider.getSearchTaskReport(
+                                  widget.userId, context);
+                            },
+                          )),
                     ],
                   ),
-                  // Reset button on second row if filters are active
+                  const SizedBox(height: 16),
+                  CustomText('Date Range',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack),
+                  const SizedBox(height: 8),
+                  CommonReportDateFilter(
+                    fromDate: reportsProvider.fromDate?.toString(),
+                    toDate: reportsProvider.toDate?.toString(),
+                    formattedFromDate: reportsProvider.formattedFromDate,
+                    formattedToDate: reportsProvider.formattedToDate,
+                    onTap: () => onClickTopButton(context),
+                  ),
+                  const SizedBox(height: 16),
                   if (reportsProvider.fromDate != null ||
                       reportsProvider.toDate != null ||
                       (reportsProvider.selectedStatus != null &&
@@ -319,41 +218,37 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                       (reportsProvider.selectedUser != null &&
                           reportsProvider.selectedUser != 0) ||
                       reportsProvider.Search.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            reportsProvider.selectDateFilterOption(null);
-                            reportsProvider.removeStatus();
-                            searchController.clear();
-                            reportsProvider.setTaskSearchCriteria(
-                                '', '', '', '', '');
-                            reportsProvider.getSearchTaskReport(
-                                widget.userId, context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppColors.textRed,
-                            elevation: 0,
-                            side: BorderSide(color: AppColors.textRed),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          child: const Text('Reset',
-                              style: TextStyle(fontSize: 12)),
+                    SizedBox(
+                      width: double.infinity,
+                      child: CommonReportResetButton(
+                        label: 'Reset All Filters',
+                        onReset: () {
+                          reportsProvider.selectDateFilterOption(null);
+                          reportsProvider.removeStatus();
+                          searchController.clear();
+                          reportsProvider.setTaskSearchCriteria(
+                              '', '', '', '', '');
+                          reportsProvider.getSearchTaskReport(
+                              widget.userId, context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.textRed,
+                          elevation: 0,
+                          side: BorderSide(color: AppColors.textRed),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
                         ),
                       ),
                     ),
                 ],
               ),
             ),
+
+          // ── LIST ────────────────────────────────────────────────────────
+
           Expanded(
             child: reportsProvider.taskReport.isEmpty
                 ? Center(
@@ -393,7 +288,20 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                           : service.statusName == "In Progress"
                               ? Colors.orange
                               : Colors.red;
-                      return InkWell(
+                      return ReportListItem(
+                        title: service.customer,
+                        subtitle: service.statusName,
+                        status: service.statusName,
+                        statusColor: statusColor,
+                        description: service.remark.isEmpty
+                            ? 'No remark provided'
+                            : service.remark,
+                        bottomLeftIcon: Icons.person_outline,
+                        bottomLeftText: service.assignedTo,
+                        bottomRightText:
+                            service.entryDate.toDayMonthYearFormat(),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -405,118 +313,6 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                             ),
                           );
                         },
-                        child: Container(
-                          width: MediaQuery.sizeOf(context).width,
-                          decoration:
-                              BoxDecoration(color: AppColors.whiteColor),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                        height: 16,
-                                        width: 3,
-                                        decoration: BoxDecoration(
-                                            color: statusColor,
-                                            borderRadius:
-                                                BorderRadius.circular(16))),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        '${service.customer} , ${service.statusName}',
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.bluebutton),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Container(
-                                        height: 18,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          color: statusColor.withAlpha(26),
-                                        ),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 0),
-                                            child: Text(
-                                              service.statusName,
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: statusColor),
-                                            ),
-                                          ),
-                                        )),
-                                  ],
-                                ),
-                                const SizedBox(height: 2),
-                                Row(
-                                  children: [
-                                    const SizedBox(
-                                        width: 11), // Bar width + SizedBox
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          RichText(
-                                            text: TextSpan(
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400,
-                                                color: AppColors.textBlack
-                                                    .withAlpha(150),
-                                              ),
-                                              children: [
-                                                const TextSpan(text: 'To '),
-                                                TextSpan(
-                                                  text: service.assignedTo,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                const TextSpan(text: ' on '),
-                                                TextSpan(
-                                                  text: service.entryDate
-                                                      .toDayMonthYearFormat(),
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                if (service
-                                                    .remark.isNotEmpty) ...[
-                                                  const TextSpan(text: ' , '),
-                                                  TextSpan(
-                                                      text: service.remark),
-                                                ],
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                       );
                     },
                   ),

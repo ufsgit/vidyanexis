@@ -13,6 +13,7 @@ class ReportListItem extends StatelessWidget {
   final String? bottomLeftText;
   final IconData? bottomLeftIcon;
   final String? bottomRightText;
+  final EdgeInsetsGeometry? padding;
 
   const ReportListItem({
     super.key,
@@ -26,6 +27,7 @@ class ReportListItem extends StatelessWidget {
     this.bottomLeftText,
     this.bottomLeftIcon,
     this.bottomRightText,
+    this.padding,
   });
 
   @override
@@ -36,7 +38,8 @@ class ReportListItem extends StatelessWidget {
         width: MediaQuery.sizeOf(context).width,
         decoration: BoxDecoration(color: AppColors.whiteColor),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding:
+              padding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           child: Column(
             children: [
               Row(
@@ -108,7 +111,7 @@ class ReportListItem extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               Align(
                 alignment: Alignment.topLeft,
                 child: Text(
@@ -122,7 +125,7 @@ class ReportListItem extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   if (bottomLeftText != null && bottomLeftText!.isNotEmpty)

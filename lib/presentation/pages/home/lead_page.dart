@@ -829,6 +829,10 @@ class _LeadsPageState extends State<LeadPage> {
                                                                           .teal),
                                                                   children: provider
                                                                       .taskType
+                                                                      .where((taskType) =>
+                                                                          taskType
+                                                                              .manualCreation ==
+                                                                          1)
                                                                       .map(
                                                                           (taskType) {
                                                                     // Find users for this task type based on department

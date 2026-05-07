@@ -177,14 +177,14 @@ class InvoiceReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
-    _selectedDateFilterIndex = 1; // Default to Today
+    _selectedDateFilterIndex = null;
     _enquiryFor = '';
     _enquirySource = "";
-    _fromDate = DateTime.now();
-    _toDate = DateTime.now();
+    _fromDate = null;
+    _toDate = null;
     formatDate();
-    _fromDateS = _formattedFromDate;
-    _toDateS = _formattedToDate;
+    _fromDateS = '';
+    _toDateS = '';
     _hasFetched = false;
     notifyListeners();
   }
@@ -216,10 +216,13 @@ class InvoiceReportProvider extends ChangeNotifier {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      String isDate = "1";
+      String isDate = "0";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        isDate = "0";
+        _fromDateS = "";
+        _toDateS = "";
+      } else {
+        isDate = "1";
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
@@ -275,10 +278,13 @@ class InvoiceReportProvider extends ChangeNotifier {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      String isDate = "1";
+      String isDate = "0";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        isDate = "0";
+        _fromDateS = "";
+        _toDateS = "";
+      } else {
+        isDate = "1";
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String isCheck = _isChecked ? "1" : "0";
@@ -330,10 +336,13 @@ class InvoiceReportProvider extends ChangeNotifier {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      String isDate = "1";
+      String isDate = "0";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        isDate = "0";
+        _fromDateS = "";
+        _toDateS = "";
+      } else {
+        isDate = "1";
       }
       print(_fromDateS);
       print(_toDateS);

@@ -998,6 +998,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
+                                dropDownProvider.setSelectedEnquirySourceId(0);
+                                leadProvider.setEnquiryForFilter(0);
                                 reportsProvider.setTaskSearchCriteria(
                                     '', '', '', '', '', '', '');
                                 reportsProvider.getSearchTaskReport(context);

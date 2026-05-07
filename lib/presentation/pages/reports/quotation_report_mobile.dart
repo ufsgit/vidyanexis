@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -152,210 +154,109 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── FILTER PANEL ────────────────────────────────────────────────
             if (quotationProvider.isFilter)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Wrap(
-                  runSpacing: 10,
-                  crossAxisAlignment: WrapCrossAlignment.center,
+              SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: quotationProvider.selectedStatus != null &&
-                                    quotationProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Status: '),
-                          DropdownButton<int>(
-                            value: quotationProvider.selectedStatus,
-                            hint: const Text('All'),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value:
-                                        0, // Use 0 or null to represent "All"
-                                    child: Text(
-                                      'All',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ] +
-                                const [
-                                  DropdownMenuItem<int>(
-                                    value: 1,
-                                    child: Text('Pending'),
-                                  ),
-                                  DropdownMenuItem<int>(
-                                    value: 3,
-                                    child: Text('Rejected'),
-                                  ),
-                                  DropdownMenuItem<int>(
-                                    value: 2,
-                                    child: Text('Approved'),
-                                  ),
-                                ],
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                quotationProvider.setStatus(newValue);
-                              }
-                              String status =
-                                  quotationProvider.selectedStatus.toString();
-                              String fromDate =
-                                  quotationProvider.formattedFromDate;
-                              String toDate = quotationProvider.formattedToDate;
-                              print(
-                                  'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                              quotationProvider.setQuotationSearch(
-                                quotationProvider.Search,
-                                fromDate,
-                                toDate,
-                                status,
-                              );
-                              quotationProvider.getQuotationReports(context);
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        onClickTopButton(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 1.5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: quotationProvider.fromDate != null ||
-                                      quotationProvider.toDate != null
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
+                    const SizedBox(height: 8),
+                    const Text('Status',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: [
+                        FilterChipWidget(
+                          label: 'All',
+                          isSelected: quotationProvider.selectedStatus == 0 ||
+                              quotationProvider.selectedStatus == null,
+                          onTap: () {
+                            quotationProvider.setStatus(0);
+                            quotationProvider.getQuotationReports(context);
+                          },
                         ),
-                        child: Row(
-                          children: [
-                            if (quotationProvider.fromDate == null &&
-                                quotationProvider.toDate == null)
-                              const Text('Date: All'),
-                            if (quotationProvider.fromDate != null &&
-                                quotationProvider.toDate != null)
-                              Text(
-                                  'Date : ${quotationProvider.formattedFromDate} - ${quotationProvider.formattedToDate}'),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_outlined,
-                              color: Colors.black45,
-                              size: 20,
-                            ),
-                          ],
+                        FilterChipWidget(
+                          label: 'Pending',
+                          isSelected: quotationProvider.selectedStatus == 1,
+                          onTap: () {
+                            quotationProvider.setStatus(1);
+                            quotationProvider.getQuotationReports(context);
+                          },
                         ),
-                      ),
+                        FilterChipWidget(
+                          label: 'Approved',
+                          isSelected: quotationProvider.selectedStatus == 2,
+                          onTap: () {
+                            quotationProvider.setStatus(2);
+                            quotationProvider.getQuotationReports(context);
+                          },
+                        ),
+                        FilterChipWidget(
+                          label: 'Rejected',
+                          isSelected: quotationProvider.selectedStatus == 3,
+                          onTap: () {
+                            quotationProvider.setStatus(3);
+                            quotationProvider.getQuotationReports(context);
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: 10,
+                    const SizedBox(height: 16),
+                    const Text('Date Range',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                    const SizedBox(height: 8),
+                    CommonReportDateFilter(
+                      fromDate: quotationProvider.fromDate?.toString(),
+                      toDate: quotationProvider.toDate?.toString(),
+                      formattedFromDate: quotationProvider.formattedFromDate,
+                      formattedToDate: quotationProvider.formattedToDate,
+                      onTap: () => onClickTopButton(context),
                     ),
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.white,
-                    //     borderRadius: BorderRadius.circular(20),
-                    //     border: Border.all(
-                    //         color: quotationProvider.selectedUser != null
-                    //             ? AppColors.primaryBlue
-                    //             : Colors.grey[300]!),
-                    //   ),
-                    //   child: Row(
-                    //     children: [
-                    //       const Text('Assigned Staff: '),
-                    //       DropdownButton<int>(
-                    //         value: quotationProvider.selectedUser,
-                    //         hint: const Text('All'),
-                    //         items: provider.searchUserDetails
-                    //             .map((user) => DropdownMenuItem<int>(
-                    //                   value: user.userDetailsId!,
-                    //                   child: Text(
-                    //                     user.userDetailsName ?? '',
-                    //                     style: const TextStyle(fontSize: 14),
-                    //                   ),
-                    //                 ))
-                    //             .toList(),
-                    //         onChanged: (int? newValue) {
-                    //           if (newValue != null) {
-                    //             quotationProvider.setUserFilterStatus(
-                    //                 newValue); // Update the status in the provider
-                    //             String status =
-                    //                 quotationProvider.selectedStatus.toString();
-
-                    //             String fromDate =
-                    //                 quotationProvider.formattedFromDate;
-                    //             String toDate =
-                    //                 quotationProvider.formattedToDate;
-
-                    //             quotationProvider.setQuotationSearch(
-                    //               quotationProvider.Search,
-                    //               fromDate,
-                    //               toDate,
-                    //               status,
-                    //             );
-                    //             quotationProvider.getQuotationReports(context);
-                    //           }
-                    //         },
-                    //         underline: Container(),
-                    //         isDense: true,
-                    //         iconSize: 18,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    // const SizedBox(
-                    //   width: 10,
-                    // ),
+                    const SizedBox(height: 24),
                     if (quotationProvider.fromDate != null ||
                         quotationProvider.toDate != null ||
-                        quotationProvider.selectedStatus != null ||
-                        quotationProvider.selectedUser != null)
-                      ElevatedButton(
-                        onPressed: () {
-                          quotationProvider.selectDateFilterOption(null);
-                          quotationProvider.removeStatus();
-                          quotationProvider.setQuotationSearch('', '', '', '');
-                          quotationProvider.getQuotationReports(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                        (quotationProvider.selectedStatus != null &&
+                            quotationProvider.selectedStatus != 0) ||
+                        quotationProvider.Search.isNotEmpty)
+                      SizedBox(
+                        width: double.infinity,
+                        child: CommonReportResetButton(
+                          label: 'Reset All Filters',
+                          onReset: () {
+                            quotationProvider.selectDateFilterOption(null);
+                            quotationProvider.removeStatus();
+                            searchController.clear();
+                            quotationProvider.setQuotationSearch(
+                                '', '', '', '');
+                            quotationProvider.getQuotationReports(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textRed,
+                            elevation: 0,
+                            side: BorderSide(color: AppColors.textRed),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
                           ),
                         ),
-                        child: const Text('Reset'),
                       ),
                   ],
                 ),
               ),
+
+            // ── LIST ────────────────────────────────────────────────────────
+
             Expanded(
               child: !quotationProvider.hasFetched
                   ? Center(

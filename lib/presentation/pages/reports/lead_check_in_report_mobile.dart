@@ -7,6 +7,8 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_report_provider.dart';
 import 'package:vidyanexis/controller/models/lead_check_in_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
@@ -289,173 +291,109 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
 
   Widget _buildFilters(BuildContext context, LeadCheckInReportProvider provider,
       DropDownProvider dropdownProvider) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // _buildFilterLabel('Lead Name'),
-          // const SizedBox(height: 8),
-          // Container(
-          //   padding: const EdgeInsets.symmetric(horizontal: 12),
-          //   decoration: BoxDecoration(
-          //     border: Border.all(color: Colors.grey[300]!),
-          //     borderRadius: BorderRadius.circular(12),
-          //   ),
-          //   child: TextField(
-          //     onChanged: (val) => provider.setLeadSearch(val),
-          //     decoration: const InputDecoration(
-          //       hintText: 'Search leads...',
-          //       border: InputBorder.none,
-          //       icon: Icon(Icons.search, size: 20),
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(height: 16),
-          // _buildFilterLabel('Quick Select Date'),
-          // const SizedBox(height: 8),
-          // SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   child: Row(
-          //     children: List<Widget>.generate(provider.dateButtonTitles.length,
-          //         (index) {
-          //       String title = provider.dateButtonTitles[index];
-          //       bool isSelected = provider.selectedDateFilterIndex == index;
-          //       return Padding(
-          //         padding: const EdgeInsets.only(right: 8.0),
-          //         child: ActionChip(
-          //           onPressed: () {
-          //             provider.setDateFilter(title);
-          //             provider.selectDateFilterOption(index);
-          //           },
-          //           shape: RoundedRectangleBorder(
-          //             borderRadius: BorderRadius.circular(15),
-          //           ),
-          //           label: Text(title, style: const TextStyle(fontSize: 11)),
-          //           backgroundColor:
-          //               isSelected ? AppColors.primaryBlue : Colors.white,
-          //           labelStyle: TextStyle(
-          //             color: isSelected ? Colors.white : Colors.black,
-          //             fontWeight:
-          //                 isSelected ? FontWeight.bold : FontWeight.normal,
-          //           ),
-          //         ),
-          //       );
-          //     }),
-          //   ),
-          // ),
-          // const SizedBox(height: 16),
-          CommonReportDateFilter(
-            fromDate: provider.fromDate?.toString(),
-            toDate: provider.toDate?.toString(),
-            formattedFromDate: provider.fromDate != null
-                ? DateFormat('dd MMM yyyy').format(provider.fromDate!)
-                : '',
-            formattedToDate: provider.toDate != null
-                ? DateFormat('dd MMM yyyy').format(provider.toDate!)
-                : '',
-            onTap: () async {
-              final picked = await showDateRangePicker(
-                context: context,
-                firstDate: DateTime(2020),
-                lastDate: DateTime.now(),
-                initialDateRange:
-                    provider.fromDate != null && provider.toDate != null
-                        ? DateTimeRange(
-                            start: provider.fromDate!, end: provider.toDate!)
-                        : null,
-              );
-              if (picked != null) {
-                provider.setDates(picked.start, picked.end);
-                provider.selectDateFilterOption(null);
-              }
-            },
-          ),
-          const SizedBox(height: 16),
-          _buildFilterLabel('Staff'),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(12),
+    return Expanded(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            CustomText('Date Range',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 8),
+            CommonReportDateFilter(
+              fromDate: provider.fromDate?.toString(),
+              toDate: provider.toDate?.toString(),
+              formattedFromDate: provider.fromDate != null
+                  ? DateFormat('dd MMM yyyy').format(provider.fromDate!)
+                  : '',
+              formattedToDate: provider.toDate != null
+                  ? DateFormat('dd MMM yyyy').format(provider.toDate!)
+                  : '',
+              onTap: () async {
+                final picked = await showDateRangePicker(
+                  context: context,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime.now(),
+                  initialDateRange:
+                      provider.fromDate != null && provider.toDate != null
+                          ? DateTimeRange(
+                              start: provider.fromDate!, end: provider.toDate!)
+                          : null,
+                );
+                if (picked != null) {
+                  provider.setDates(picked.start, picked.end);
+                  provider.selectDateFilterOption(null);
+                }
+              },
             ),
-            child: DropdownButton<int>(
-              isExpanded: true,
-              underline: const SizedBox(),
-              value: provider.selectedUserId,
-              hint: const Text('All Staff'),
-              items: [
+            const SizedBox(height: 16),
+            CustomText('Staff',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: [
                 if (provider.userType != "1")
-                  const DropdownMenuItem<int>(
-                    value: null,
-                    child: Text('All Staff'),
+                  FilterChipWidget(
+                    label: 'All',
+                    isSelected: provider.selectedUserId == null,
+                    onTap: () => provider.setUserId(null, userName: null),
                   ),
                 ...dropdownProvider.searchUserDetails
                     .where((staff) =>
                         provider.userType != "1" ||
                         staff.userDetailsId == provider.selectedUserId)
-                    .map((staff) {
-                  return DropdownMenuItem<int>(
-                    value: staff.userDetailsId,
-                    child: Text(staff.userDetailsName),
-                  );
-                }),
+                    .map((staff) => FilterChipWidget(
+                          label: staff.userDetailsName ?? 'Unknown',
+                          isSelected:
+                              provider.selectedUserId == staff.userDetailsId,
+                          onTap: () => provider.setUserId(staff.userDetailsId,
+                              userName: staff.userDetailsName),
+                        )),
               ],
-              onChanged: (val) {
-                String? name;
-                if (val != null) {
-                  name = dropdownProvider.searchUserDetails
-                      .firstWhere((s) => s.userDetailsId == val)
-                      .userDetailsName;
-                }
-                provider.setUserId(val, userName: name);
-              },
             ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => provider.fetchReports(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      provider.fetchReports(context);
+                      provider.toggleFilter();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Apply Filters',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
-                  child: const Text('Show',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
-              ),
-              const SizedBox(width: 12),
-              CommonReportResetButton(
-                onReset: () {
-                  provider.clearFilters();
-                  provider.fetchReports(context);
-                },
-                label: 'Reset',
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 12),
+                CommonReportResetButton(
+                  label: 'Reset All',
+                  onReset: () {
+                    provider.clearFilters();
+                    provider.fetchReports(context);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _buildFilterLabel(String label) {
     return Text(
