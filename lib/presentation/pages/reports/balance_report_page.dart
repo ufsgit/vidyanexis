@@ -437,10 +437,11 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                     ),
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     itemCount: provider.balanceReportList.length,
                     separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                     itemBuilder: (context, index) {
                       final item = provider.balanceReportList[index];
                       return _buildMobileCard(item);
@@ -481,7 +482,8 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -547,7 +549,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                         ],
                       ),
                     ],
-                    const Divider(height: 20),
+                    const Divider(height: 8),
                     Row(
                       children: [
                         _buildMobileStat('Schedule', item.totalPaymentSchedule),

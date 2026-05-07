@@ -402,94 +402,54 @@ class _UpcomingWarrentyReportScreen
                         ],
                       ),
                     )
-                  : Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Wrap(
-                        runSpacing: 10,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
+                    : Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Wrap(
+                          runSpacing: 10,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            CommonReportDateFilter(
+                              fromDate: reportsProvider.fromDate?.toString(),
+                              toDate: reportsProvider.toDate?.toString(),
+                              formattedFromDate:
+                                  reportsProvider.formattedFromDate,
+                              formattedToDate: reportsProvider.formattedToDate,
+                              onTap: () => onClickTopButton(context),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider
-                                    .getSearchUpcomingWarrantyReport(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: const Text('Reset'),
+                            const SizedBox(
+                              width: 10,
                             ),
-                        ],
+                            if (reportsProvider.fromDate != null ||
+                                reportsProvider.toDate != null ||
+                                (reportsProvider.selectedStatus != null &&
+                                    reportsProvider.selectedStatus != 0) ||
+                                (reportsProvider.selectedUser != null &&
+                                    reportsProvider.selectedUser != 0) ||
+                                reportsProvider.Search.isNotEmpty)
+                              CommonReportResetButton(
+                                onReset: () {
+                                  reportsProvider.selectDateFilterOption(null);
+                                  reportsProvider.removeStatus();
+                                  searchController.clear();
+                                  reportsProvider.setTaskSearchCriteria(
+                                    '',
+                                    '',
+                                    '',
+                                    '',
+                                    '',
+                                  );
+                                  reportsProvider
+                                      .getSearchUpcomingWarrantyReport(context);
+                                },
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
 
             AppStyles.isWebScreen(context)
                 ? Expanded(
@@ -659,52 +619,55 @@ class _UpcomingWarrentyReportScreen
                       ),
                     ),
                   )
-                : Expanded(
-                    child: reportsProvider.upcomingWarrantyReport.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const SizedBox(height: 80),
-                                Icon(Icons.search_off_outlined,
-                                    size: 80, color: Colors.grey[300]),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No upcoming warranty reports found',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
+                  : Expanded(
+                      child: reportsProvider.upcomingWarrantyReport.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(height: 80),
+                                  Icon(Icons.search_off_outlined,
+                                      size: 80, color: Colors.grey[300]),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'No upcoming warranty reports found',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                            )
+                          : ListView.separated(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              separatorBuilder: (context, index) =>
+                                  Divider(height: 2, color: AppColors.grey),
+                              itemCount:
+                                  reportsProvider.upcomingWarrantyReport.length,
+                              itemBuilder: (context, index) {
+                                var item = reportsProvider
+                                    .upcomingWarrantyReport[index];
+                                return ReportListItem(
+                                  title: item.projectName,
+                                  subtitle: '${item.customerName} >',
+                                  onSubtitleTap: () {
+                                    context.push(
+                                        '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
+                                  },
+                                  status:
+                                      'Ends: ${item.expiryDate.toDayMonthYearFormat()}',
+                                  statusColor: AppColors.appViolet,
+                                  description: item.serviceName,
+                                  bottomLeftIcon:
+                                      Icons.medical_services_outlined,
+                                  bottomLeftText: 'Warranty',
+                                );
+                              },
                             ),
-                          )
-                        : ListView.separated(
-                            separatorBuilder: (context, index) =>
-                                Divider(height: 2, color: AppColors.grey),
-                            itemCount:
-                                reportsProvider.upcomingWarrantyReport.length,
-                            itemBuilder: (context, index) {
-                              var item =
-                                  reportsProvider.upcomingWarrantyReport[index];
-                              return ReportListItem(
-                                title: item.projectName,
-                                subtitle: '${item.customerName} >',
-                                onSubtitleTap: () {
-                                  context.push(
-                                      '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
-                                },
-                                status:
-                                    'Ends: ${item.expiryDate.toDayMonthYearFormat()}',
-                                statusColor: AppColors.appViolet,
-                                description: item.serviceName,
-                                bottomLeftIcon: Icons.medical_services_outlined,
-                                bottomLeftText: 'Warranty',
-                              );
-                            },
-                          ),
-                  ),
+                    ),
           ],
         ),
       ),

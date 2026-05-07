@@ -36,7 +36,7 @@ class ReportListItem extends StatelessWidget {
         width: MediaQuery.sizeOf(context).width,
         decoration: BoxDecoration(color: AppColors.whiteColor),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           child: Column(
             children: [
               Row(
@@ -108,7 +108,7 @@ class ReportListItem extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               Align(
                 alignment: Alignment.topLeft,
                 child: Text(
@@ -122,7 +122,7 @@ class ReportListItem extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   if (bottomLeftText != null && bottomLeftText!.isNotEmpty)

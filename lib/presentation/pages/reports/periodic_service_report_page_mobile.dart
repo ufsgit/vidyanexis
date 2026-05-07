@@ -289,13 +289,13 @@ class _PeriodicServiceReportPageMobileState
                     decoration: BoxDecoration(color: AppColors.whiteColor),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                          horizontal: 16, vertical: 6),
                       child: Column(
                         children: [
                           Row(
                             children: [
                               Container(
-                                  height: 44,
+                                  height: 36,
                                   width: 3,
                                   decoration: BoxDecoration(
                                       color: statusColor,
@@ -388,7 +388,7 @@ class _PeriodicServiceReportPageMobileState
                             ],
                           ),
                           const SizedBox(
-                            height: 12,
+                            height: 4,
                           ),
                           Align(
                             alignment: Alignment.topLeft,
@@ -403,7 +403,7 @@ class _PeriodicServiceReportPageMobileState
                             ),
                           ),
                           const SizedBox(
-                            height: 12,
+                            height: 4,
                           ),
                           Row(
                             children: [

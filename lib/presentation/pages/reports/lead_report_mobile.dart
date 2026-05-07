@@ -14,12 +14,14 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/pdf_function.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
 class LeadReportMobile extends StatefulWidget {
   const LeadReportMobile(this.fromDashBoard, {super.key});
@@ -122,11 +124,16 @@ class _leadReportMobile extends State<LeadReportMobile> {
         title: 'Leads Report',
         onSearchTap: () {
           searchProvider.startSearch();
-          leadReportProvider.toggleFilter();
-          // leadReportProvider.selectDateFilterOption(null);
-          // leadReportProvider.removeStatus();
-          leadReportProvider.getSearchLeadReports('', '', '', '', context);
-          print(leadReportProvider.isFilter);
+          if (!leadReportProvider.isFilter) {
+            leadReportProvider.toggleFilter();
+          }
+          leadReportProvider.getSearchLeadReports(
+            searchController.text,
+            leadReportProvider.fromDateS,
+            leadReportProvider.toDateS,
+            leadReportProvider.status,
+            context,
+          );
         },
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
@@ -415,30 +422,57 @@ class _leadReportMobile extends State<LeadReportMobile> {
                               leadReportProvider.selectedEnquiryFor != 0) ||
                           (leadReportProvider.selectedEnquirySource != null &&
                               leadReportProvider.selectedEnquirySource != 0))
-                        SizedBox(
-                          width: double.infinity,
-                          child: CommonReportResetButton(
-                            label: 'Reset All Filters',
-                            onReset: () {
-                              leadReportProvider.selectDateFilterOption(null);
-                              leadReportProvider.removeStatus();
-                              leadReportProvider.getSearchLeadReports(
-                                  '', '', '', '', context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: AppColors.textRed,
-                              elevation: 0,
-                              side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: CustomElevatedButton(
+                                buttonText: 'Apply Filters',
+                                onPressed: () {
+                                  leadReportProvider.getSearchLeadReports(
+                                    searchController.text,
+                                    leadReportProvider.fromDateS,
+                                    leadReportProvider.toDateS,
+                                    leadReportProvider.status,
+                                    context,
+                                  );
+                                  leadReportProvider.toggleFilter();
+                                },
+                                textColor: AppColors.whiteColor,
+                                borderColor: AppColors.primaryBlue,
+                                backgroundColor: AppColors.primaryBlue,
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 12),
+                            if (leadReportProvider.fromDate != null ||
+                                leadReportProvider.toDate != null ||
+                                (leadReportProvider.selectedStatus != null &&
+                                    leadReportProvider.selectedStatus != 0) ||
+                                (leadReportProvider.selectedUser != null &&
+                                    leadReportProvider.selectedUser != 0) ||
+                                (leadReportProvider.selectedEnquiryFor !=
+                                        null &&
+                                    leadReportProvider.selectedEnquiryFor !=
+                                        0) ||
+                                (leadReportProvider.selectedEnquirySource !=
+                                        null &&
+                                    leadReportProvider
+                                            .selectedEnquirySource !=
+                                        0))
+                              SizedBox(
+                                width: double.infinity,
+                                child: CommonReportResetButton(
+                                  label: 'Reset All Filters',
+                                  onReset: () {
+                                    leadReportProvider
+                                        .selectDateFilterOption(null);
+                                    leadReportProvider.removeStatus();
+                                    leadReportProvider.getSearchLeadReports(
+                                        '', '', '', '', context);
+                                  },
+                                ),
+                              ),
+                          ],
                         ),
                       const SizedBox(height: 12),
                       const SizedBox(height: 80),
@@ -546,116 +580,63 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                   ),
                                 ),
                                 ListView.separated(
-                                  separatorBuilder: (context, index) {
-                                    return Divider(
-                                      height: 2,
-                                      color: AppColors.grey,
-                                    );
-                                  },
+                                  separatorBuilder: (context, index) =>
+                                      Divider(height: 2, color: AppColors.grey),
                                   shrinkWrap: true,
                                   physics: const ClampingScrollPhysics(),
                                   itemCount:
                                       leadReportProvider.leadReportData.length,
                                   itemBuilder: (context, index) {
-                                    var lead = leadReportProvider
+                                    var item = leadReportProvider
                                         .leadReportData[index];
 
-                                    return InkWell(
-                                      child: Container(
-                                        width: MediaQuery.sizeOf(context).width,
-                                        decoration: BoxDecoration(
-                                            color: AppColors.whiteColor),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 12),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Checkbox(
-                                                    value: leadReportProvider
-                                                        .isLeadSelected(
-                                                            lead.customerId),
-                                                    onChanged: (value) {
-                                                      leadReportProvider
-                                                          .toggleLeadSelection(
-                                                              lead.customerId);
-                                                    },
-                                                    activeColor:
-                                                        AppColors.primaryBlue,
+                                    return Row(
+                                      children: [
+                                        const SizedBox(width: 8),
+                                        Checkbox(
+                                          value: leadReportProvider
+                                              .isLeadSelected(item.customerId),
+                                          onChanged: (value) {
+                                            leadReportProvider
+                                                .toggleLeadSelection(
+                                                    item.customerId);
+                                          },
+                                          activeColor: AppColors.primaryBlue,
+                                        ),
+                                        Expanded(
+                                          child: ReportListItem(
+                                            title: item.customerName,
+                                            subtitle: '${item.contactNumber} >',
+                                            onSubtitleTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CustomerDetailPageMobile(
+                                                    customerId: item.customerId,
+                                                    fromLead: false,
                                                   ),
-                                                  Container(
-                                                      height: 42,
-                                                      width: 3,
-                                                      decoration: BoxDecoration(
-                                                          color: getAvatarColor(
-                                                              lead.statusName),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      16))),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        InkWell(
-                                                          onTap: () {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        CustomerDetailPageMobile(
-                                                                  customerId: lead
-                                                                      .customerId,
-                                                                  fromLead:
-                                                                      false,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                          child: Text(
-                                                            lead.customerName,
-                                                            style: GoogleFonts
-                                                                .plusJakartaSans(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              color: AppColors
-                                                                  .textBlack,
-                                                            ),
-                                                            maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          lead.contactNumber,
-                                                          style: GoogleFonts
-                                                              .plusJakartaSans(
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: AppColors
-                                                                      .textGrey3),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                                ),
+                                              );
+                                            },
+                                            status: item.statusName,
+                                            statusColor:
+                                                getAvatarColor(item.statusName),
+                                            description: item.remark.isEmpty
+                                                ? 'No remark provided'
+                                                : item.remark,
+                                            bottomLeftIcon:
+                                                Icons.person_outline,
+                                            bottomLeftText: item.toUserName,
+                                            bottomRightText: item
+                                                    .nextFollowUpDate.isNotEmpty
+                                                ? DateFormat('dd MMM yyyy')
+                                                    .format(DateTime.parse(
+                                                        item.nextFollowUpDate))
+                                                : '',
                                           ),
                                         ),
-                                      ),
+                                      ],
                                     );
                                   },
                                 )
@@ -778,6 +759,13 @@ class _leadReportMobile extends State<LeadReportMobile> {
                             child: TextButton(
                               onPressed: () async {
                                 leadReportProvider.formatDate();
+                                leadReportProvider.getSearchLeadReports(
+                                  searchController.text,
+                                  leadReportProvider.formattedFromDate,
+                                  leadReportProvider.formattedToDate,
+                                  leadReportProvider.status,
+                                  context,
+                                );
                                 Navigator.pop(context);
                               },
                               style: ElevatedButton.styleFrom(

@@ -299,13 +299,13 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                                         color: AppColors.whiteColor),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
+                                          horizontal: 16, vertical: 6),
                                       child: Column(
                                         children: [
                                           Row(
                                             children: [
                                               Container(
-                                                  height: 42,
+                                                  height: 36,
                                                   width: 3,
                                                   decoration: BoxDecoration(
                                                       color: getAvatarColor(
@@ -404,7 +404,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                                                   )),
                                             ],
                                           ),
-                                          const SizedBox(height: 12),
+                                          const SizedBox(height: 4),
                                           Align(
                                             alignment: Alignment.topLeft,
                                             child: Text(
@@ -420,7 +420,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                                                           AppColors.textBlack),
                                             ),
                                           ),
-                                          const SizedBox(height: 12),
+                                          const SizedBox(height: 4),
                                           Row(
                                             children: [
                                               Container(

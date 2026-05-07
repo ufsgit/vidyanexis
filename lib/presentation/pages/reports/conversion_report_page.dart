@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/customer/conversion_details_page.dart';
 import 'package:provider/provider.dart';
@@ -823,10 +824,9 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               children: [
                                 FilterChipWidget(
                                   label: 'All',
-                                  isSelected:
-                                      reportsProvider.selectedStatus == 0 ||
-                                          reportsProvider.selectedStatus ==
-                                              null,
+                                  isSelected: reportsProvider.selectedStatus ==
+                                          0 ||
+                                      reportsProvider.selectedStatus == null,
                                   onTap: () {
                                     reportsProvider.setStatus(0);
                                     reportsProvider
@@ -840,8 +840,8 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                               reportsProvider.selectedStatus ==
                                                   e.enquiryForId,
                                           onTap: () {
-                                            reportsProvider.setStatus(
-                                                e.enquiryForId);
+                                            reportsProvider
+                                                .setStatus(e.enquiryForId);
                                             reportsProvider
                                                 .getSearchConversionReport(
                                                     context);
@@ -1377,181 +1377,44 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             );
                           }
 
-                          return ListView.builder(
+                          return ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                Divider(height: 2, color: AppColors.grey),
                             itemCount: reportsProvider.conversionReport.length,
                             itemBuilder: (context, index) {
-                              final conversion =
+                              final item =
                                   reportsProvider.conversionReport[index];
 
-                              return InkWell(
+                              return ReportListItem(
+                                title: item.customerName,
+                                subtitle: '${item.mobile} >',
+                                onSubtitleTap: () {
+                                  context.push(
+                                      '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
+                                },
+                                status: item.statusName,
+                                statusColor:
+                                    AppColors.parseColor(item.colorCode),
+                                description: item.remark.isEmpty
+                                    ? 'No remark provided'
+                                    : item.remark,
+                                bottomLeftIcon: Icons.person_outline,
+                                bottomLeftText: item.registerdBy,
+                                bottomRightText: item.creationDate
+                                    .toString()
+                                    .toDayMonthYearFormat(),
                                 onTap: () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return ConversionDetailsPage(
-                                        conversionModel: conversion,
-                                        customerId:
-                                            conversion.customerId.toString(),
+                                        conversionModel: item,
+                                        customerId: item.customerId.toString(),
                                         showEdit: false,
                                       );
                                     },
                                   );
                                 },
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  margin: const EdgeInsets.only(
-                                      bottom: 10, right: 5, left: 5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
-                                        blurRadius: 6,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 3,
-                                            height: 32,
-                                            color: AppColors.parseColor(
-                                                    conversion.colorCode)
-                                                .withOpacity(0.4),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  conversion.customerName,
-                                                  style: AppStyles
-                                                      .getBoldTextStyle(
-                                                          fontSize: 14),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                                Text(
-                                                  conversion.mobile,
-                                                  style: AppStyles
-                                                      .getRegularTextStyle(
-                                                    fontSize: 12,
-                                                    fontColor:
-                                                        Color(0xff7D8B9B),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 4,
-                                              horizontal: 8,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.parseColor(
-                                                      conversion.colorCode)
-                                                  .withOpacity(0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: Text(
-                                              conversion.statusName,
-                                              style: AppStyles.getBoldTextStyle(
-                                                fontSize: 12,
-                                                fontColor: AppColors.parseColor(
-                                                    conversion.colorCode),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        conversion.address1.isEmpty
-                                            ? 'No address provided'
-                                            : conversion.address1,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: AppStyles.getRegularTextStyle(
-                                          fontSize: 12,
-                                          fontColor: Colors.grey.shade700,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              'Conversion by: ${conversion.registerdBy}',
-                                              style:
-                                                  AppStyles.getRegularTextStyle(
-                                                fontSize: 12,
-                                                fontColor: Colors.grey.shade600,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            conversion.creationDate
-                                                .toString()
-                                                .toDayMonthYearFormat(),
-                                            style: AppStyles.getBoldTextStyle(
-                                              fontSize: 12,
-                                              fontColor: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 4,
-                                              horizontal: 8,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xffF6F7F9),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                            ),
-                                            child: Text(
-                                              conversion.enquiryForName,
-                                              style: AppStyles.getBoldTextStyle(
-                                                  fontSize: 12),
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          IconButton(
-                                            icon: Icon(Icons.arrow_forward_ios,
-                                                size: 16),
-                                            color: Colors.grey[500],
-                                            onPressed: () {
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(
-                                                builder: (context) {
-                                                  return CustomerDetailPageMobile(
-                                                      fromLead: false,
-                                                      customerId: conversion
-                                                          .customerId);
-                                                },
-                                              ));
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               );
                             },
                           );

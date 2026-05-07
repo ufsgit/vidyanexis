@@ -174,6 +174,10 @@ class WarrentyReportProvider extends ChangeNotifier {
     _selectedStatus = null;
     _selectedUser = null;
     _selectedDateFilterIndex = null;
+    _fromDate = null;
+    _toDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
     _fromDateS = '';
     _toDateS = '';
     notifyListeners();
@@ -329,24 +333,7 @@ class WarrentyReportProvider extends ChangeNotifier {
             }
           }
 
-          // Filter only expired warranty records (expiryDate < current_date)
-          final today = DateTime.now();
-          final currentDate = DateTime(today.year, today.month, today.day);
-
-          _outOfWarrentyReport = _outOfWarrentyReport.where((item) {
-            final universalDate = item.expiryDate.toUniversalYyyyMmDd();
-            if (universalDate.isEmpty) return false;
-            try {
-              final expiry = DateTime.parse(universalDate);
-              final expiryDateOnly =
-                  DateTime(expiry.year, expiry.month, expiry.day);
-              // Included ONLY IF: warranty_end_date < current_date
-              return expiryDateOnly.isBefore(currentDate);
-            } catch (e) {
-              return false;
-            }
-          }).toList();
-
+          // Removed redundant frontend filter to trust backend results
           Loader.stopLoader(context);
           notifyListeners();
         }

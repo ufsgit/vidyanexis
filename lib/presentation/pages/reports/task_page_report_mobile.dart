@@ -433,7 +433,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                         Row(
                                           children: [
                                             Container(
-                                                height: 42,
+                                                height: 36,
                                                 width: 3,
                                                 decoration: BoxDecoration(
                                                     color: statusColor,
