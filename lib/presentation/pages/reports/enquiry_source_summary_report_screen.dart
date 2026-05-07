@@ -9,6 +9,8 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/enquiry_source_provider.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class EnquirySourceSummaryReportScreen extends StatefulWidget {
   const EnquirySourceSummaryReportScreen({super.key});
@@ -35,24 +37,16 @@ class _EnquirySourceSummaryReportScreenState
     });
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
     final reportsProvider = Provider.of<EnquirySourceProvider>(context);
-    final provider = Provider.of<DropDownProvider>(context);
-    final customerDetailsProvider =
-        Provider.of<CustomerDetailsProvider>(context);
 
     // Calculate status totals
     Map<String, int> statusTotals = {};
     int totalLeads = 0;
 
-    // Iterate through all enquiry sources
     for (var item in reportsProvider.enquiryReport) {
-      // Add to total leads count
       if (item.totalLeads != null) {
-        // Handle string or num type for totalLeads
         if (item.totalLeads is String) {
           totalLeads += int.tryParse(item.totalLeads.toString()) ?? 0;
         } else if (item.totalLeads is num) {
@@ -60,14 +54,11 @@ class _EnquirySourceSummaryReportScreenState
         }
       }
 
-      // Process status summaries
       if (item.summaryStatus != null) {
         for (var status in item.summaryStatus!) {
           if (status.statusName != null) {
             final statusName = status.statusName!;
             int statusCount = 0;
-
-            // Handle string or num type for count
             if (status.count != null) {
               if (status.count is String) {
                 statusCount = int.tryParse(status.count.toString()) ?? 0;
@@ -75,8 +66,6 @@ class _EnquirySourceSummaryReportScreenState
                 statusCount = (status.count as num).toInt();
               }
             }
-
-            // Add to or update the total for this status
             statusTotals[statusName] =
                 (statusTotals[statusName] ?? 0) + statusCount;
           }
@@ -85,408 +74,393 @@ class _EnquirySourceSummaryReportScreenState
     }
 
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: !AppStyles.isWebScreen(context)
-          ? CustomAppBar(
-              showSearch: false,
-              onSearch: (p0) {},
-              leadingWidth: 40,
-              leadingWidget: Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 8),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.textGrey4,
-                  ),
-                  iconSize: 24,
-                ),
-              ),
-              title: 'Enquiry Source Summary',
-              titleStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlack),
-            )
-          : null,
-      body: Container(
-        color: Colors.grey[50],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
+      backgroundColor: AppColors.scaffoldColor,
+      appBar: CustomAppBar(
+        title: 'Enquiry Source Summary',
+        titleStyle: GoogleFonts.plusJakartaSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textBlack),
+        leadingWidget: IconButton(
+          onPressed: () => context.pop(),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
+          iconSize: 24,
+        ),
+        onFilterTap: () => reportsProvider.toggleFilter(),
+        showSearch: false,
+        onSearch: (p0) {},
+      ),
+      body: Column(
+        children: [
+          if (reportsProvider.isFilter)
+            _buildFilterPanel(context, reportsProvider),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        AppStyles.isWebScreen(context)
-                            ? const Text(
-                                'Enquiry Source Summary',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : SizedBox(),
-                        Flexible(child: Container()),
-                        const SizedBox(width: 16),
-                        CustomFilterButton(
-                          onPressed: () {
-                            reportsProvider.toggleFilter();
-                          },
-                          isFilter: reportsProvider.isFilter,
-                        ),
-                        const SizedBox(width: 16),
-                      ],
-                    ),
-                  ),
+                  _buildReportTable(reportsProvider),
+                  const SizedBox(height: 24),
+                  _buildSummaryDashboard(totalLeads, statusTotals),
                 ],
               ),
             ),
-            if (reportsProvider.isFilter)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    CommonReportDateFilter(
-                      fromDate: reportsProvider.fromDate?.toString(),
-                      toDate: reportsProvider.toDate?.toString(),
-                      formattedFromDate: reportsProvider.formattedFromDate,
-                      formattedToDate: reportsProvider.formattedToDate,
-                      onTap: () => onClickTopButton(context),
-                      label: 'Entry Date',
-                    ),
-                    const Spacer(),
-                    if (reportsProvider.fromDate != null ||
-                        reportsProvider.toDate != null ||
-                        (reportsProvider.selectedStatus != null &&
-                            reportsProvider.selectedStatus != 0) ||
-                        (reportsProvider.selectedUser != null &&
-                            reportsProvider.selectedUser != 0) ||
-                        reportsProvider.Search.isNotEmpty)
-                      CommonReportResetButton(
-                        onReset: () {
-                          reportsProvider.selectDateFilterOption(null);
-                          reportsProvider.removeStatus();
-                          searchController.clear();
-                          reportsProvider.setTaskSearchCriteria(
-                            '',
-                            '',
-                            '',
-                            '',
-                            '',
-                          );
-                          reportsProvider.getEnquirySummary(context);
-                        },
-                      ),
-                  ],
-                ),
-              ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.grey.shade200),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterPanel(
+      BuildContext context, EnquirySourceProvider reportsProvider) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: AppColors.grey, width: 1)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText('Filter by Date',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CommonReportDateFilter(
+                    fromDate: reportsProvider.fromDate?.toString(),
+                    toDate: reportsProvider.toDate?.toString(),
+                    formattedFromDate: reportsProvider.formattedFromDate,
+                    formattedToDate: reportsProvider.formattedToDate,
+                    onTap: () => onClickTopButton(context),
+                    label: 'Entry Date',
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                ),
+                if (reportsProvider.fromDate != null ||
+                    reportsProvider.toDate != null) ...[
+                  const SizedBox(width: 12),
+                  CommonReportResetButton(
+                    onReset: () {
+                      reportsProvider.selectDateFilterOption(null);
+                      reportsProvider.removeStatus();
+                      searchController.clear();
+                      reportsProvider.setTaskSearchCriteria(
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                      );
+                      reportsProvider.getEnquirySummary(context);
+                    },
+                  ),
+                ]
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReportTable(EnquirySourceProvider provider) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(color: AppColors.grey),
+      ),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.grey300.withOpacity(0.5),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Text('Enquiry Source',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textGrey3,
+                        fontSize: 13,
+                      )),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: Text('Leads',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textGrey3,
+                          fontSize: 13,
+                        )),
+                  ),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: Text('Details',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textGrey3,
+                        fontSize: 13,
+                      )),
+                ),
+              ],
+            ),
+          ),
+          // Rows
+          if (provider.enquiryReport.isEmpty)
+            _buildEmptyState()
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: provider.enquiryReport.length,
+              itemBuilder: (context, index) {
+                final item = provider.enquiryReport[index];
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: index % 2 == 0
+                        ? Colors.white
+                        : AppColors.scaffoldColor.withOpacity(0.5),
+                    border: Border(
+                      bottom:
+                          BorderSide(color: AppColors.grey.withOpacity(0.5)),
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Table Header
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(14),
-                            topRight: Radius.circular(14),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Enquiry source',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Center(
-                                child: Text(
-                                  'Leads',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[800],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Details',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Table Body
                       Expanded(
-                        child: reportsProvider.enquiryReport.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(height: 80),
-                                    Icon(Icons.search_off_outlined,
-                                        size: 80, color: Colors.grey[300]),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'No enquiry summary reports found',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: reportsProvider.enquiryReport.length,
-                                itemBuilder: (context, index) {
-                                  final item =
-                                      reportsProvider.enquiryReport[index];
-
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12, horizontal: 16),
-                                    decoration: BoxDecoration(
-                                      color: index % 2 == 0
-                                          ? Colors.white
-                                          : Colors.grey[50],
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          color: Colors.grey[200]!,
-                                          width: 1,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Source column
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            item.enquirySourceName ?? '',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-
-                                        // Count column
-                                        Expanded(
-                                          flex: 2,
-                                          child: Center(
-                                            child: Text(
-                                              '${item.totalLeads}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        // Details column with status counts
-                                        Expanded(
-                                          flex: 4,
-                                          child: Wrap(
-                                            spacing: 16,
-                                            children: [
-                                              if (item.summaryStatus != null)
-                                                ...item.summaryStatus!
-                                                    .map((status) {
-                                                  // Choose color based on status
-                                                  Color statusColor = Colors
-                                                      .blue; // Default color
-
-                                                  if (status.statusName
-                                                          ?.toLowerCase() ==
-                                                      'converted') {
-                                                    statusColor = Colors.green;
-                                                  } else if (status.statusName
-                                                          ?.toLowerCase() ==
-                                                      'not responding') {
-                                                    statusColor = Colors.orange;
-                                                  } else if (status.statusName
-                                                          ?.toLowerCase() ==
-                                                      'closed') {
-                                                    statusColor = Colors.red;
-                                                  } else if (status.statusName
-                                                          ?.toLowerCase() ==
-                                                      'switch off') {
-                                                    statusColor = Colors.purple;
-                                                  }
-
-                                                  return Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        '${status.statusName} ',
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Text(
-                                                        '${status.count}',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: statusColor,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                }),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                      ),
-
-                      // Summary Footer with total counts
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 16, horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(14),
-                            bottomRight: Radius.circular(14),
+                        flex: 3,
+                        child: Text(
+                          item.enquirySourceName ?? '-',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: AppColors.textBlack,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(0, -1),
-                            ),
-                          ],
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  'Summary',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Text(
-                                  'Total Leads: $totalLeads',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryBlue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            const SizedBox(height: 12),
-                            Wrap(
-                              spacing: 16,
-                              runSpacing: 8,
-                              children: statusTotals.entries.map((entry) {
-                                Color statusColor = Colors.blue;
-                                final statusName = entry.key.toLowerCase();
-
-                                if (statusName == 'converted') {
-                                  statusColor = Colors.green;
-                                } else if (statusName == 'not responding') {
-                                  statusColor = Colors.orange;
-                                } else if (statusName == 'closed') {
-                                  statusColor = Colors.red;
-                                } else if (statusName == 'switch off') {
-                                  statusColor = Colors.purple;
-                                }
-
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        entry.key,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${entry.value}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: statusColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
+                            child: Text(
+                              '${item.totalLeads}',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                                color: AppColors.primaryBlue,
+                              ),
                             ),
-                          ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: (item.summaryStatus ?? [])
+                              .map((status) => _buildStatusTag(
+                                  status.statusName ?? '', status.count ?? 0))
+                              .toList(),
                         ),
                       ),
                     ],
                   ),
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusTag(String name, dynamic count) {
+    Color color = AppColors.primaryBlue;
+    final lowerName = name.toLowerCase();
+    if (lowerName.contains('converted'))
+      color = Colors.green;
+    else if (lowerName.contains('not interested'))
+      color = Colors.red;
+    else if (lowerName.contains('in progress'))
+      color = Colors.orange;
+    else if (lowerName.contains('follow up')) color = Colors.blue;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          name,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textGrey3,
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          '$count',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSummaryDashboard(int totalLeads, Map<String, int> statusTotals) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(color: AppColors.grey),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomText('Overall Summary',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textBlack),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryBlue,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Total Leads: $totalLeads',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14,
+                  ),
                 ),
               ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 3.5,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
             ),
-          ],
-        ),
+            itemCount: statusTotals.length,
+            itemBuilder: (context, index) {
+              final entry = statusTotals.entries.elementAt(index);
+              return _buildDashboardItem(entry.key, entry.value);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDashboardItem(String name, int count) {
+    Color color = AppColors.primaryBlue;
+    final lowerName = name.toLowerCase();
+    if (lowerName.contains('converted'))
+      color = Colors.green;
+    else if (lowerName.contains('not interested'))
+      color = Colors.red;
+    else if (lowerName.contains('in progress')) color = Colors.orange;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.1)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              name,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textGrey3,
+              ),
+            ),
+          ),
+          Text(
+            '$count',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        children: [
+          const SizedBox(height: 60),
+          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[200]),
+          const SizedBox(height: 16),
+          Text('No records found',
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16, color: Colors.grey[600])),
+          const SizedBox(height: 60),
+        ],
       ),
     );
   }
@@ -598,20 +572,13 @@ class _EnquirySourceSummaryReportScreenState
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-
                           reportsProvider.formatDate();
-
-                          print(reportsProvider.formattedFromDate);
-                          print(reportsProvider.formattedToDate);
-
                           String status =
                               reportsProvider.selectedStatus.toString();
                           String assignedTo =
                               reportsProvider.selectedUser.toString();
                           String fromDate = reportsProvider.formattedFromDate;
                           String toDate = reportsProvider.formattedToDate;
-                          print(
-                              'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
                           reportsProvider.setTaskSearchCriteria(
                               reportsProvider.Search,
                               fromDate,
@@ -623,19 +590,11 @@ class _EnquirySourceSummaryReportScreenState
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
                         ),
-                        child: const Text(
-                          'Apply',
-                        ),
+                        child: const Text('Apply'),
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                     SizedBox(
                       width: double.infinity,
                       height: 40,
@@ -643,34 +602,13 @@ class _EnquirySourceSummaryReportScreenState
                         onPressed: () {
                           Navigator.pop(context);
                           reportsProvider.selectDateFilterOption(null);
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = '';
-                          String toDate = '';
-                          print(
-                              'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          reportsProvider.setTaskSearchCriteria(
-                            reportsProvider.Search,
-                            fromDate,
-                            toDate,
-                            status,
-                            assignedTo,
-                          );
                           reportsProvider.getEnquirySummary(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
                         ),
-                        child: const Text(
-                          'Clear',
-                        ),
+                        child: const Text('Clear'),
                       ),
                     ),
                   ],
