@@ -55,6 +55,7 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
   late CustomFieldWidgetBuilder widgetBuilder;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isInitialized = false;
+  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -167,8 +168,11 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
                     .copyWith(dividerColor: Colors.transparent),
                 child: ExpansionTile(
                   showTrailingIcon: false,
+                  onExpansionChanged: (expanded) {
+                    setState(() => _isExpanded = expanded);
+                  },
                   title: Text(
-                    'More options',
+                    _isExpanded ? 'Less options' : 'More options',
                     style: GoogleFonts.plusJakartaSans(
                       color: AppColors.bluebutton,
                       fontSize: 12,
