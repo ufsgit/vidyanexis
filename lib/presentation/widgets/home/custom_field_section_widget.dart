@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/home/signature_capture_dialog.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // Global keys for specific instances
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldLeadStatusKey =
@@ -131,6 +132,12 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
     if (widget.customFields.isEmpty) {
       return const SizedBox.shrink();
     }
+
+    final mandatoryFields =
+        widget.customFields.where((f) => f.isMandatory == 1).toList();
+    final nonMandatoryFields =
+        widget.customFields.where((f) => f.isMandatory != 1).toList();
+
     return Padding(
       padding: widget.padding ?? const EdgeInsets.all(0),
       child: Form(
@@ -138,21 +145,60 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final spacing = widget.spacing ?? 16.0;
-                // Always single column
-                return Column(
-                  children: widget.customFields
-                      .map((field) => Padding(
-                            padding: EdgeInsets.only(bottom: spacing / 2),
-                            child: widgetBuilder.buildWidget(field),
-                          ))
-                      .toList(),
-                );
-              },
-            ),
+            if (mandatoryFields.isNotEmpty) ...[
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final spacing = widget.spacing ?? 16.0;
+                  // Always single column
+                  return Column(
+                    children: mandatoryFields
+                        .map((field) => Padding(
+                              padding: EdgeInsets.only(bottom: spacing / 2),
+                              child: widgetBuilder.buildWidget(field),
+                            ))
+                        .toList(),
+                  );
+                },
+              ),
+            ],
+            if (nonMandatoryFields.isNotEmpty) ...[
+              Theme(
+                data: Theme.of(context)
+                    .copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  showTrailingIcon: false,
+                  title: Text(
+                    'More options',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.bluebutton,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  tilePadding: EdgeInsets.symmetric(horizontal: 10),
+                  children: [
+                    const SizedBox(height: 10),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final spacing = widget.spacing ?? 16.0;
+                        return Column(
+                          children: nonMandatoryFields
+                              .map((field) => Padding(
+                                    padding:
+                                        EdgeInsets.only(bottom: spacing / 2),
+                                    child: widgetBuilder.buildWidget(field),
+                                  ))
+                              .toList(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
