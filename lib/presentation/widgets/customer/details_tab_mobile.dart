@@ -271,6 +271,16 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                   .leadDetails![0].enquirySourceName),
                         ),
                         const SizedBox(height: 8),
+                        if (leadDetailsProvider
+                            .leadDetails![0].referenceName.isNotEmpty)
+                          LabelValueWidget(
+                            label: 'Sub Source',
+                            value: leadDetailsProvider
+                                .leadDetails![0].referenceName,
+                          ),
+                        if (leadDetailsProvider
+                            .leadDetails![0].referenceName.isNotEmpty)
+                          const SizedBox(height: 8),
                         LabelValueWidget(
                           label: 'Mobile no',
                           value: leadDetailsProvider
