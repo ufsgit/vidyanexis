@@ -379,7 +379,6 @@ class FormProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Form updated successfully')),
         );
-        fetchForms(context); // Refresh from server
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to update form')),
