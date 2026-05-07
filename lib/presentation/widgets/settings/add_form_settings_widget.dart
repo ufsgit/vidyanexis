@@ -468,35 +468,35 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                         );
                 },
               ),
-              const SizedBox(height: 16),
+              // const SizedBox(height: 16),
 
-              // Customer Dropdown
-              Consumer<FormProvider>(
-                builder: (context, provider, child) {
-                  return provider.isLoadingCustomers
-                      ? const Center(child: CircularProgressIndicator())
-                      : CommonDropdown<int>(
-                          hintText: 'Customer (optional)',
-                          selectedValue: _selectedCustomerId,
-                          items: provider.customers
-                              .map((c) => DropdownItem<int>(
-                                    id: c['id'],
-                                    name: c['name'],
-                                  ))
-                              .toList(),
-                          controller: TextEditingController(
-                              text: _selectedCustomerName),
-                          onItemSelected: (selectedId) {
-                            setState(() {
-                              _selectedCustomerId = selectedId;
-                              _selectedCustomerName = provider.customers
-                                  .firstWhere(
-                                      (c) => c['id'] == selectedId)['name'];
-                            });
-                          },
-                        );
-                },
-              ),
+              // // Customer Dropdown
+              // Consumer<FormProvider>(
+              //   builder: (context, provider, child) {
+              //     return provider.isLoadingCustomers
+              //         ? const Center(child: CircularProgressIndicator())
+              //         : CommonDropdown<int>(
+              //             hintText: 'Customer (optional)',
+              //             selectedValue: _selectedCustomerId,
+              //             items: provider.customers
+              //                 .map((c) => DropdownItem<int>(
+              //                       id: c['id'],
+              //                       name: c['name'],
+              //                     ))
+              //                 .toList(),
+              //             controller: TextEditingController(
+              //                 text: _selectedCustomerName),
+              //             onItemSelected: (selectedId) {
+              //               setState(() {
+              //                 _selectedCustomerId = selectedId;
+              //                 _selectedCustomerName = provider.customers
+              //                     .firstWhere(
+              //                         (c) => c['id'] == selectedId)['name'];
+              //               });
+              //             },
+              //           );
+              //   },
+              // ),
               const SizedBox(height: 24),
 
               // Custom Fields Section
