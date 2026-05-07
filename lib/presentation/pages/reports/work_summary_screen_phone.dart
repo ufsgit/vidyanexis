@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class WorkSummaryPhone extends StatefulWidget {
   const WorkSummaryPhone({super.key});
@@ -224,97 +225,27 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
               itemCount: reportsProvider.taskReport.length,
               itemBuilder: (context, index) {
                 var lead = reportsProvider.taskReport[index];
-                return InkWell(
+                return ReportListItem(
+                  title: lead.toStaff,
+                  subtitle: '${lead.noOfFollowUp} Follow-Ups >',
+                  status: '',
+                  statusColor: getAvatarColor(lead.toStaff),
+                  bottomLeftIcon: Icons.person_outline,
+                  bottomLeftText: 'Staff Member',
+                  description:
+                      'View detailed work and follow-up reports for ${lead.toStaff}',
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return WorkReportPhone(
-                          userId: lead.userDetailsId.toString(),
-                          userName: lead.toStaff.toString(),
-                        );
-                        // return WorkReportDetailsScreenPhone(
-                        //   userId: lead.userDetailsId.toString(),
-                        //   userName: lead.toStaff.toString(),
-                        // );
-                      },
-                    ));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WorkReportPhone(
+                            userId: lead.userDetailsId.toString(),
+                            userName: lead.toStaff.toString(),
+                          ),
+                        ));
                   },
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 35,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: getAvatarColor(lead.toStaff),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  lead.toStaff.substring(0, 1).toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                lead.toStaff,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textBlack),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              lead.noOfFollowUp.toString(),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlack),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Follow-Ups",
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textGrey4),
-                            ),
-                            const SizedBox(width: 8),
-                            Transform.rotate(
-                              angle: 4.7,
-                              child: Image.asset(
-                                "assets/icons/arrow_down_icon.png",
-                                width: 22,
-                                height: 22,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        height: 2,
-                        color: AppColors.grey,
-                      ),
-                    ],
-                  ),
                 );
               },
             ),

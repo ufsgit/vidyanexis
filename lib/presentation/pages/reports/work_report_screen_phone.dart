@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class WorkReportPhone extends StatefulWidget {
@@ -287,7 +288,20 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                           : service.statusName == "In Progress"
                               ? Colors.orange
                               : Colors.red;
-                      return InkWell(
+                      return ReportListItem(
+                        title: service.customer,
+                        subtitle: service.statusName,
+                        status: service.statusName,
+                        statusColor: statusColor,
+                        description: service.remark.isEmpty
+                            ? 'No remark provided'
+                            : service.remark,
+                        bottomLeftIcon: Icons.person_outline,
+                        bottomLeftText: service.assignedTo,
+                        bottomRightText:
+                            service.entryDate.toDayMonthYearFormat(),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -299,118 +313,6 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                             ),
                           );
                         },
-                        child: Container(
-                          width: MediaQuery.sizeOf(context).width,
-                          decoration:
-                              BoxDecoration(color: AppColors.whiteColor),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                        height: 16,
-                                        width: 3,
-                                        decoration: BoxDecoration(
-                                            color: statusColor,
-                                            borderRadius:
-                                                BorderRadius.circular(16))),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        '${service.customer} , ${service.statusName}',
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.bluebutton),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Container(
-                                        height: 18,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          color: statusColor.withAlpha(26),
-                                        ),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 0),
-                                            child: Text(
-                                              service.statusName,
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: statusColor),
-                                            ),
-                                          ),
-                                        )),
-                                  ],
-                                ),
-                                const SizedBox(height: 2),
-                                Row(
-                                  children: [
-                                    const SizedBox(
-                                        width: 11), // Bar width + SizedBox
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          RichText(
-                                            text: TextSpan(
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400,
-                                                color: AppColors.textBlack
-                                                    .withAlpha(150),
-                                              ),
-                                              children: [
-                                                const TextSpan(text: 'To '),
-                                                TextSpan(
-                                                  text: service.assignedTo,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                const TextSpan(text: ' on '),
-                                                TextSpan(
-                                                  text: service.entryDate
-                                                      .toDayMonthYearFormat(),
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                if (service
-                                                    .remark.isNotEmpty) ...[
-                                                  const TextSpan(text: ' , '),
-                                                  TextSpan(
-                                                      text: service.remark),
-                                                ],
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                       );
                     },
                   ),
