@@ -357,6 +357,32 @@ class _LeadsPageState extends State<LeadPage> {
                     ),
                   ),
                   const SizedBox(width: 16),
+                  PopupMenuButton<int>(
+                    icon: const Icon(Icons.sort, color: Color(0xFF152D70)),
+                    tooltip: 'Sort By',
+                    onSelected: (int value) {
+                      leadProvider.setSortOption(value, context);
+                    },
+                    itemBuilder: (BuildContext context) => [
+                      const PopupMenuItem(
+                        value: 0,
+                        child: Text('Default'),
+                      ),
+                      const PopupMenuItem(
+                        value: 1,
+                        child: Text('ID No'),
+                      ),
+                      const PopupMenuItem(
+                        value: 2,
+                        child: Text('Creation Date'),
+                      ),
+                      const PopupMenuItem(
+                        value: 3,
+                        child: Text('Followup Date'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 8),
                   CustomFilterButton(
                     onPressed: () {
                       leadProvider.toggleFilter();

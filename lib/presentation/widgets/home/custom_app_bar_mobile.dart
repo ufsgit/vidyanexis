@@ -33,6 +33,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final void Function()? onSearchTap;
   final void Function()? onExcelTap;
   final void Function()? onPdfTap;
+  final void Function(int)? onSortTap;
+  final bool showSort;
 
   final String searchHintText;
   final TextStyle? searchHintStyle;
@@ -84,6 +86,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showPdf = false,
     this.showTransfer = false,
     this.onTransferTap,
+    this.onSortTap,
+    this.showSort = false,
   }) : assert(title != null || customTitle != null,
             'Either title or customTitle must be provided');
 
@@ -130,7 +134,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
           widget.onClearTap,
           widget.onSearchTap,
           widget.onExcelTap,
-          widget.onPdfTap),
+          widget.onPdfTap,
+          widget.onSortTap),
     );
   }
 
@@ -201,7 +206,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
       void Function()? onClear,
       void Function()? onSearchTap,
       void Function()? onExcelTap,
-      void Function()? onPdfTap) {
+      void Function()? onPdfTap,
+      void Function(int)? onSortTap) {
     if (searchProvider.isSearching) {
       return [
         Padding(
@@ -231,6 +237,21 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   size: widget.searchIconSize,
                 ),
                 onPressed: onSearchTap,
+              ),
+            if (widget.showSort)
+              PopupMenuButton<int>(
+                icon: Icon(
+                  Icons.sort,
+                  color: widget.iconColor,
+                  size: widget.searchIconSize,
+                ),
+                onSelected: onSortTap,
+                itemBuilder: (context) => [
+                  const PopupMenuItem(value: 0, child: Text('Default')),
+                  const PopupMenuItem(value: 1, child: Text('ID No')),
+                  const PopupMenuItem(value: 2, child: Text('Creation Date')),
+                  const PopupMenuItem(value: 3, child: Text('Followup Date')),
+                ],
               ),
             if (widget.showExcel)
               IconButton(

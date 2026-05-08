@@ -257,6 +257,33 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                           ),
                           const SizedBox(width: 16),
+                          PopupMenuButton<int>(
+                            icon:
+                                const Icon(Icons.sort, color: Color(0xFF152D70)),
+                            tooltip: 'Sort By',
+                            onSelected: (int value) {
+                              customerProvider.setSortOption(value, context);
+                            },
+                            itemBuilder: (BuildContext context) => [
+                              const PopupMenuItem(
+                                value: 0,
+                                child: Text('Default'),
+                              ),
+                              const PopupMenuItem(
+                                value: 1,
+                                child: Text('ID No'),
+                              ),
+                              const PopupMenuItem(
+                                value: 2,
+                                child: Text('Creation Date'),
+                              ),
+                              const PopupMenuItem(
+                                value: 3,
+                                child: Text('Followup Date'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 8),
                           CustomFilterButton(
                             onPressed: () {
                               customerProvider.toggleFilter();
@@ -334,7 +361,33 @@ class _CustomerPageState extends State<CustomerPage> {
                               ),
                             ),
                           ),
-                          // const SizedBox(width: 16),
+                          PopupMenuButton<int>(
+                            icon:
+                                const Icon(Icons.sort, color: Color(0xFF152D70)),
+                            tooltip: 'Sort By',
+                            onSelected: (int value) {
+                              customerProvider.setSortOption(value, context);
+                            },
+                            itemBuilder: (BuildContext context) => [
+                              const PopupMenuItem(
+                                value: 0,
+                                child: Text('Default'),
+                              ),
+                              const PopupMenuItem(
+                                value: 1,
+                                child: Text('ID No'),
+                              ),
+                              const PopupMenuItem(
+                                value: 2,
+                                child: Text('Creation Date'),
+                              ),
+                              const PopupMenuItem(
+                                value: 3,
+                                child: Text('Followup Date'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 8),
                           CustomFilterButton(
                             onPressed: () {
                               customerProvider.toggleFilter();
@@ -867,7 +920,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         ? const EdgeInsets
                                                             .symmetric(
                                                             horizontal: 8,
-                                                            vertical: 8)
+                                                            vertical: 4)
                                                         : EdgeInsets.zero,
                                                     decoration: BoxDecoration(
                                                       color: parseColor(

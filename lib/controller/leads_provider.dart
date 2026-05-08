@@ -102,6 +102,15 @@ class LeadsProvider extends ChangeNotifier {
   final TextEditingController costIncludesController = TextEditingController();
 
   final TextEditingController amountPaidController = TextEditingController();
+
+  int _selectedSortOption = 0; // 0: Default, 1: ID, 2: Creation Date, 3: Followup Date
+  int get selectedSortOption => _selectedSortOption;
+
+  void setSortOption(int option, BuildContext context) {
+    _selectedSortOption = option;
+    notifyListeners();
+    getSearchLeads(context);
+  }
   final TextEditingController deadlineDateController = TextEditingController();
   bool _isChecked = false;
   bool get isChecked => _isChecked;
@@ -960,7 +969,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$_selectedSortOption');
 
       if (response.statusCode == 200) {
         final data = response.data;

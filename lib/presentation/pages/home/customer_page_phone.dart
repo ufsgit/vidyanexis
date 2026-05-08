@@ -140,6 +140,10 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         showLogo: false,
         showUserName: false,
         showFilterIcon: false,
+        showSort: true,
+        onSortTap: (value) {
+          customerProvider.setSortOption(value, context);
+        },
         onSearch: (String query) {
           customerProvider.setSearchCriteria(
             query,

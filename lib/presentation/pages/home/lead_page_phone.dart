@@ -200,6 +200,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
+              showSort: true,
+              onSortTap: (value) {
+                leadProvider.setSortOption(value, context);
+              },
               onSearch: (String query) {
                 leadProvider.setSearchCriteria(
                   query,
@@ -230,6 +234,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
+              showSort: true,
+              onSortTap: (value) {
+                leadProvider.setSortOption(value, context);
+              },
               onSearch: (String query) {
                 leadProvider.setSearchCriteria(
                   query,

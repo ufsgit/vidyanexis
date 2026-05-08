@@ -202,8 +202,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
                   CustomFilterButton(
+
                     onPressed: () {
                       reportsProvider.toggleFilter();
                     },

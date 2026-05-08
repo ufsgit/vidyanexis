@@ -255,6 +255,10 @@ class _tasksPageReportState extends State<TaskPage> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
+              showSort: true,
+              onSortTap: (value) {
+                reportsProvider.setSortOption(value, context);
+              },
               onSearchTap: () {
                 reportsProvider.toggleFilter();
 
@@ -458,6 +462,35 @@ class _tasksPageReportState extends State<TaskPage> {
                                               ),
                                             ),
 
+                                            const SizedBox(width: 16),
+                                            PopupMenuButton<int>(
+                                              icon: const Icon(Icons.sort,
+                                                  color: Color(0xFF152D70)),
+                                              tooltip: 'Sort By',
+                                              onSelected: (int value) {
+                                                reportsProvider.setSortOption(
+                                                    value, context);
+                                              },
+                                              itemBuilder:
+                                                  (BuildContext context) => [
+                                                const PopupMenuItem(
+                                                  value: 0,
+                                                  child: Text('Default'),
+                                                ),
+                                                const PopupMenuItem(
+                                                  value: 1,
+                                                  child: Text('ID No'),
+                                                ),
+                                                const PopupMenuItem(
+                                                  value: 2,
+                                                  child: Text('Creation Date'),
+                                                ),
+                                                const PopupMenuItem(
+                                                  value: 3,
+                                                  child: Text('Followup Date'),
+                                                ),
+                                              ],
+                                            ),
                                             const SizedBox(width: 16),
 
                                             Row(
