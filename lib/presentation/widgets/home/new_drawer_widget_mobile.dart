@@ -1698,13 +1698,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           labelText: 'Longitude',
         ),
         const SizedBox(height: 8),
-        CustomTextfieldWidgetMobile(
-          controller: leadProvider.cityController,
-          labelText: 'City',
-          showError: dropDownProvider.showValidation &&
-              !_isFieldValid(leadProvider.cityController.text),
-        ),
-        const SizedBox(height: 8),
         CommonDropdown<int>(
           hintText: 'District',
           items: dropDownProvider.districtList
@@ -2256,6 +2249,23 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(
           height: 10,
         ),
+        CustomTextfieldWidgetMobile(
+          focusNode: FocusNode(),
+          controller: leadProvider.referenceNameController,
+          labelText: 'Reference Name',
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        CustomTextfieldWidgetMobile(
+          controller: leadProvider.cityController,
+          labelText: 'Place',
+          showError: dropDownProvider.showValidation &&
+              !_isFieldValid(leadProvider.cityController.text),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
 
         CommonDropdown<int>(
           hintText: 'Source',
@@ -2455,14 +2465,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               },
             ),
           ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        CustomTextfieldWidgetMobile(
-          focusNode: FocusNode(),
-          controller: leadProvider.referenceNameController,
-          labelText: 'Sub Source',
         ),
         const SizedBox(
           height: 10,

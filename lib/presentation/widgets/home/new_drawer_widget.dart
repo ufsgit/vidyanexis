@@ -632,7 +632,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             height: 5,
                           ),
                           const SizedBox(height: 10),
-                          // Row 1: Lead Name, Channel Source, Mobile No
+                          // Row 1: Lead Name
                           ResponsiveRow(
                             children: [
                               Expanded(
@@ -651,6 +651,57 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   ),
                                 ),
                               ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Row 2: Reference Name
+                          ResponsiveRow(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CustomTextField(
+                                    height: 54,
+                                    controller:
+                                        leadProvider.referenceNameController,
+                                    hintText: 'Reference Name',
+                                    labelText: '',
+                                    showError:
+                                        dropDownProvider.showValidation &&
+                                            !_isFieldValid(leadProvider
+                                                .referenceNameController.text),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Row 3: Place
+                          ResponsiveRow(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CustomTextField(
+                                    height: 54,
+                                    controller: leadProvider.cityController,
+                                    hintText: 'Place',
+                                    labelText: '',
+                                    showError: dropDownProvider
+                                            .showValidation &&
+                                        !_isFieldValid(
+                                            leadProvider.cityController.text),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Row 4: Source, Mobile No
+                          ResponsiveRow(
+                            children: [
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -674,17 +725,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               source.sourceId == selectedId);
                                       leadProvider.sourceCategoryController
                                           .text = selectedItem.sourceName ?? '';
-                                      // dropDownProvider
-                                      //     .setSelectedEnquirySourceId(-1);
-                                      // leadProvider.enquirySourceController
-                                      //     .clear();
-                                      // dropDownProvider
-                                      //     .filterEnquirySourcesByCategory(
-                                      //         selectedId);
                                       dropDownProvider.updateEnquiryForName(
                                           0, '');
                                       leadProvider.enquiryForController.clear();
-
                                       dropDownProvider
                                           .filterEnquiryForByCategory(
                                               selectedId);
@@ -698,7 +741,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    // 📱 Phone TextField
                                     Expanded(
                                       child: Padding(
                                         padding:
@@ -710,7 +752,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           builder: (context, value, child) {
                                             final isValid =
                                                 value.text.length == 10;
-
                                             return CustomTextField(
                                               controller: leadProvider
                                                   .contactNoController,
@@ -740,10 +781,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         ),
                                       ),
                                     ),
-
                                     const SizedBox(width: 8),
-
-                                    // ☑️ Validation Checkbox
                                     Tooltip(
                                       message:
                                           "Enable to validate phone number",
@@ -763,7 +801,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 8),
 
-                          // Row 2: Enquiry Source, Enquiry For, Sub Source
+                          // Row 5: Enquiry Source, Enquiry For
                           ResponsiveRow(
                             children: [
                               Expanded(
@@ -789,7 +827,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           .firstWhere((source) =>
                                               source.enquirySourceId ==
                                               selectedId);
-
                                       leadProvider
                                               .enquirySourceController.text =
                                           selectedItem.enquirySourceName ?? '';
@@ -811,8 +848,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                       return const AddEnquirySource(
                                         editId: '0',
                                         isEdit: false,
-                                        // sourceId: '0',
-                                        // sourceName: '',
                                         status: '',
                                       );
                                     },
@@ -902,26 +937,11 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   });
                                 },
                               ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: CustomTextField(
-                                    height: 54,
-                                    controller:
-                                        leadProvider.referenceNameController,
-                                    hintText: 'Sub Source',
-                                    labelText: '',
-                                    showError:
-                                        dropDownProvider.showValidation &&
-                                            !_isFieldValid(leadProvider
-                                                .referenceNameController.text),
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                           const SizedBox(height: 8),
-                          // Row 3: Total Project Cost
+
+                          // Row 6: Total Project Cost, Commission
                           ResponsiveRow(
                             children: [
                               if (settingsProvider.menuIsViewMap[104] == 1)
@@ -964,6 +984,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ],
                           ),
                           const SizedBox(height: 8),
+
+                          // Row 7: Consumer Details
                           ResponsiveRow(
                             children: [
                               if (settingsProvider.consumerNameMandatory == 1)
@@ -1002,127 +1024,13 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          // // Row 3: PE, CRE, Lead Type
-                          // Row(
-                          //   children: [
-                          //     // Expanded(
-                          //     //   child: Padding(
-                          //     //     padding: const EdgeInsets.only(right: 8.0),
-                          //     //     child: CommonDropdown<int>(
-                          //     //       hintText: 'PE',
-                          //     //       items: dropDownProvider.searchUserDetails
-                          //     //           .map((staff) => DropdownItem<int>(
-                          //     //                 id: staff.userDetailsId,
-                          //     //                 name: staff.userDetailsName,
-                          //     //               ))
-                          //     //           .toList(),
-                          //     //       controller: leadProvider.peController,
-                          //     //       onItemSelected: (selectedId) {
-                          //     //         dropDownProvider
-                          //     //             .setSelectedpeUserId(selectedId);
-                          //     //         final selectedStaff = dropDownProvider
-                          //     //             .searchUserDetails
-                          //     //             .firstWhere((staff) =>
-                          //     //                 staff.userDetailsId ==
-                          //     //                 selectedId);
-                          //     //         leadProvider.peController.text =
-                          //     //             selectedStaff.userDetailsName;
-                          //     //       },
-                          //     //       selectedValue:
-                          //     //           dropDownProvider.selectedpeUserId,
-                          //     //     ),
-                          //     //   ),
-                          //     // ),
-                          //     // Expanded(
-                          //     //   child: Padding(
-                          //     //     padding: const EdgeInsets.symmetric(
-                          //     //         horizontal: 4.0),
-                          //     //     child: CommonDropdown<int>(
-                          //     //       hintText: 'CRE',
-                          //     //       items: dropDownProvider.searchUserDetails
-                          //     //           .map((staff) => DropdownItem<int>(
-                          //     //                 id: staff.userDetailsId,
-                          //     //                 name: staff.userDetailsName,
-                          //     //               ))
-                          //     //           .toList(),
-                          //     //       controller: leadProvider.creController,
-                          //     //       onItemSelected: (selectedId) {
-                          //     //         dropDownProvider
-                          //     //             .setSelectedcreUserId(selectedId);
-                          //     //         final selectedStaff = dropDownProvider
-                          //     //             .searchUserDetails
-                          //     //             .firstWhere((staff) =>
-                          //     //                 staff.userDetailsId ==
-                          //     //                 selectedId);
-                          //     //         leadProvider.creController.text =
-                          //     //             selectedStaff.userDetailsName;
-                          //     //       },
-                          //     //       selectedValue:
-                          //     //           dropDownProvider.selectedcreUserId,
-                          //     //     ),
-                          //     //   ),
-                          //     // ),
-                          //     // Expanded(
-                          //     //   child: Padding(
-                          //     //     padding: const EdgeInsets.only(left: 0.0),
-                          //     //     child: CommonDropdown<int>(
-                          //     //       hintText: 'Lead type',
-                          //     //       items: UserStatusType.values
-                          //     //           .map((staff) => DropdownItem<int>(
-                          //     //                 id: staff.value,
-                          //     //                 name: '${staff.name}',
-                          //     //               ))
-                          //     //           .toList(),
-                          //     //       controller: leadProvider.leadtypeController,
-                          //     //       onItemSelected: (selectedId) {
-                          //     //         dropDownProvider
-                          //     //             .setSelectedleadtypeUserId(
-                          //     //                 selectedId);
-                          //     //         final selectedStatus = UserStatusType
-                          //     //             .values
-                          //     //             .firstWhere((status) =>
-                          //     //                 status.value == selectedId);
-                          //     //         leadProvider.leadtypeController.text =
-                          //     //             selectedStatus.name;
-                          //     //       },
-                          //     //       selectedValue:
-                          //     //           dropDownProvider.selectedleadtypeUserId,
-                          //     //     ),
-                          //     //   ),
-                          //     // ),
-                          //   ],
-                          // ),
-                          const SizedBox(height: 8),
 
-                          // if (dropDownProvider.selectedEnquiryForId != null &&
-                          //     dropDownProvider.selectedEnquiryForId != 0)
-                          //   if (leadProvider.isLoadingEnquiryCustomFields)
-                          //     const Center(child: CircularProgressIndicator())
-                          //   else if (leadProvider
-                          //       .customFieldEnquiryFor.isNotEmpty)
-                          //     CustomFieldSectionWidget(
-                          //       controllerKey: CustomFieldControllerkey
-                          //           .enquirySource.value,
-                          //       key: customFieldEnquirySourceKey,
-                          //       initialFieldValues: widget.isEdit
-                          //           ? leadProvider.customFieldEnquiryFor
-                          //               .map((e) => FieldValueModel(
-                          //                   customFieldId: e.customFieldId,
-                          //                   value: e.datavalue))
-                          //               .toList()
-                          //           : [],
-                          //       onFieldValuesChanged: (p0) {},
-                          //       customFields:
-                          //           leadProvider.customFieldEnquiryFor,
-                          //       initialValues: const {},
-                          //     ),
                           if (dropDownProvider.selectedEnquiryForId != null &&
                               dropDownProvider.selectedEnquiryForId != 0)
                             if (leadProvider.isLoadingEnquiryCustomFields)
                               const Center(child: CircularProgressIndicator())
                             else if (leadProvider
                                 .customFieldEnquiryFor.isNotEmpty)
-                              // Use Consumer to rebuild only when custom field values change
                               Consumer<LeadsProvider>(
                                 builder: (context, provider, child) {
                                   return CustomFieldSectionWidget(
@@ -1310,18 +1218,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                       dropDownProvider.selectedLocationId,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: CustomTextField(
-                                  height: 54,
-                                  controller: leadProvider.cityController,
-                                  hintText: 'City',
-                                  labelText: '',
-                                  showError: dropDownProvider.showValidation &&
-                                      !_isFieldValid(
-                                          leadProvider.cityController.text),
-                                ),
-                              ),
+                              const Spacer(),
                             ],
                           ),
                           const SizedBox(height: 8),
