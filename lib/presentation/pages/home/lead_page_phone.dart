@@ -201,6 +201,9 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showUserName: false,
               showFilterIcon: false,
               showSort: true,
+              showOrder: true,
+              sortOrder: leadProvider.sortOrder,
+              onOrderTap: () => leadProvider.toggleSortOrder(context),
               onSortTap: (value) {
                 leadProvider.setSortOption(value, context);
               },

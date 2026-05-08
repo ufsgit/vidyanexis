@@ -43,6 +43,9 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool showSearch;
   final bool showExcel;
   final bool showPdf;
+  final void Function()? onOrderTap;
+  final String? sortOrder;
+  final bool showOrder;
   final bool showTransfer;
   final void Function()? onTransferTap;
 
@@ -87,6 +90,9 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showTransfer = false,
     this.onTransferTap,
     this.onSortTap,
+    this.onOrderTap,
+    this.sortOrder,
+    this.showOrder = false,
     this.showSort = false,
   }) : assert(title != null || customTitle != null,
             'Either title or customTitle must be provided');
@@ -135,7 +141,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
           widget.onSearchTap,
           widget.onExcelTap,
           widget.onPdfTap,
-          widget.onSortTap),
+          widget.onSortTap,
+          widget.onOrderTap,
+          widget.sortOrder),
     );
   }
 
@@ -207,7 +215,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
       void Function()? onSearchTap,
       void Function()? onExcelTap,
       void Function()? onPdfTap,
-      void Function(int)? onSortTap) {
+      void Function(int)? onSortTap,
+      void Function()? onOrderTap,
+      String? sortOrder) {
     if (searchProvider.isSearching) {
       return [
         Padding(
@@ -252,6 +262,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   const PopupMenuItem(value: 2, child: Text('Creation Date')),
                   const PopupMenuItem(value: 3, child: Text('Followup Date')),
                 ],
+              ),
+            if (widget.showOrder && onOrderTap != null)
+              IconButton(
+                icon: Icon(
+                  sortOrder == 'ASC'
+                      ? Icons.arrow_upward
+                      : Icons.arrow_downward,
+                  color: widget.iconColor,
+                  size: widget.searchIconSize,
+                ),
+                onPressed: onOrderTap,
+                tooltip: sortOrder == 'ASC' ? 'Ascending' : 'Descending',
               ),
             if (widget.showExcel)
               IconButton(

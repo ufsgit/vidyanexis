@@ -76,8 +76,17 @@ class CustomerProvider extends ChangeNotifier {
   int _selectedSortOption = 0; // 0: Default, 1: ID, 2: Creation Date, 3: Followup Date
   int get selectedSortOption => _selectedSortOption;
 
+  String _sortOrder = 'DESC'; // ASC or DESC
+  String get sortOrder => _sortOrder;
+
   void setSortOption(int option, BuildContext context) {
     _selectedSortOption = option;
+    notifyListeners();
+    getSearchCustomers(context);
+  }
+
+  void toggleSortOrder(BuildContext context) {
+    _sortOrder = _sortOrder == 'ASC' ? 'DESC' : 'ASC';
     notifyListeners();
     getSearchCustomers(context);
   }
@@ -434,7 +443,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Order_By_=$_selectedSortOption');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder');
 
       if (response.statusCode == 200) {
         var data = response.data;

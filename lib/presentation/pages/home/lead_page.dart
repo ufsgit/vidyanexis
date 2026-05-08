@@ -382,6 +382,20 @@ class _LeadsPageState extends State<LeadPage> {
                       ),
                     ],
                   ),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    icon: Icon(
+                      leadProvider.sortOrder == 'ASC'
+                          ? Icons.arrow_upward
+                          : Icons.arrow_downward,
+                      color: const Color(0xFF152D70),
+                      size: 20,
+                    ),
+                    onPressed: () => leadProvider.toggleSortOrder(context),
+                    tooltip: leadProvider.sortOrder == 'ASC'
+                        ? 'Ascending'
+                        : 'Descending',
+                  ),
                   const SizedBox(width: 8),
                   CustomFilterButton(
                     onPressed: () {
