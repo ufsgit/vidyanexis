@@ -441,6 +441,16 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String _sortOrder = 'DESC'; // ASC or DESC
+  String get sortOrder => _sortOrder;
+
+  void toggleSortOrder(BuildContext context) {
+    _sortOrder = _sortOrder == 'ASC' ? 'DESC' : 'ASC';
+    _pageIndex = 1;
+    searchTaskByCustomer(context);
+    notifyListeners();
+  }
+
   void removeStatus() {
     clearAllFilters();
   }
@@ -526,7 +536,7 @@ class TaskPageProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$_selectedSortOption');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder');
 
       if (response.statusCode == 200) {
         final data = response.data;

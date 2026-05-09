@@ -259,6 +259,11 @@ class _tasksPageReportState extends State<TaskPage> {
               onSortTap: (value) {
                 reportsProvider.setSortOption(value, context);
               },
+              showOrder: true,
+              sortOrder: reportsProvider.sortOrder,
+              onOrderTap: () {
+                reportsProvider.toggleSortOrder(context);
+              },
               onSearchTap: () {
                 reportsProvider.toggleFilter();
 
@@ -491,7 +496,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(width: 16),
+                                            const SizedBox(width: 4),
+                                            IconButton(
+                                              icon: Icon(
+                                                reportsProvider.sortOrder == 'ASC'
+                                                    ? Icons.arrow_upward
+                                                    : Icons.arrow_downward,
+                                                color: const Color(0xFF152D70),
+                                                size: 20,
+                                              ),
+                                              onPressed: () => reportsProvider.toggleSortOrder(context),
+                                              tooltip: reportsProvider.sortOrder == 'ASC'
+                                                  ? 'Ascending'
+                                                  : 'Descending',
+                                            ),
+                                            const SizedBox(width: 8),
 
                                             Row(
                                               children: [
