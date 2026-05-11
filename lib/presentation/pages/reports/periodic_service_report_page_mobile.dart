@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class PeriodicServiceReportPageMobile extends StatefulWidget {
@@ -256,15 +257,17 @@ class _PeriodicServiceReportPageMobileState
                 ),
               ),
 
-            // ── LIST ────────────────────────────────────────────────────────
-
+            if (reportsProvider.amcReport.isNotEmpty &&
+                !reportsProvider.isFilter)
+              CommonReportSummaryBar(
+                totalLabel: 'Total Services',
+                totalCount: reportsProvider.amcReport.length,
+                showingLabel: 'Showing',
+                showingCount: reportsProvider.amcReport.length,
+              ),
             ListView.separated(
-              separatorBuilder: (context, index) {
-                return Divider(
-                  height: 2,
-                  color: AppColors.grey,
-                );
-              },
+              padding: const EdgeInsets.all(16),
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
               itemCount: reportsProvider.amcReport.length,
               shrinkWrap: true,
               physics: const ClampingScrollPhysics(),
@@ -276,7 +279,8 @@ class _PeriodicServiceReportPageMobileState
                     : service.amcStatusName == "In Progress"
                         ? Colors.orange
                         : Colors.red;
-                return InkWell(
+
+                return ReportListItem(
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
@@ -284,190 +288,19 @@ class _PeriodicServiceReportPageMobileState
                       },
                     ));
                   },
-                  child: Container(
-                    width: MediaQuery.sizeOf(context).width,
-                    decoration: BoxDecoration(color: AppColors.whiteColor),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                  height: 36,
-                                  width: 3,
-                                  decoration: BoxDecoration(
-                                      color: statusColor,
-                                      borderRadius: BorderRadius.circular(16))),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    service.serviceName,
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.textBlack),
-                                  ),
-                                  Text(
-                                    service.productName,
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.textGrey4),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              CustomerDetailPageMobile(
-                                            customerId: service.customerId,
-                                            fromLead: false,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          service.customerName,
-                                          style: GoogleFonts.plusJakartaSans(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor:
-                                                  AppColors.bluebutton,
-                                              decorationThickness: 1.5,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.bluebutton),
-                                        ),
-                                        Icon(
-                                          Icons.keyboard_arrow_right_rounded,
-                                          color: AppColors.bluebutton,
-                                          size: 18,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Container(
-                                  height: 22,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: statusColor.withOpacity(.1),
-                                  ),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 2),
-                                      child: Text(
-                                        service.amcStatusName,
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                            color: statusColor),
-                                      ),
-                                    ),
-                                  )),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              service.description,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textGrey3),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Row(
-                            children: [
-                              service.amount != "0" &&
-                                      service.amount != "0.0" &&
-                                      service.amount != "0.000"
-                                  ? CustomText(
-                                      "₹${service.amount.split('.')[0]}",
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.textGrey4,
-                                    )
-                                  : SizedBox(),
-                              service.amount != "0" &&
-                                      service.amount != "0.0" &&
-                                      service.amount != "0.000"
-                                  ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 6),
-                                      child: CustomText(
-                                        '•',
-                                        color:
-                                            AppColors.textGrey4.withOpacity(.5),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                              RichText(
-                                text: TextSpan(
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.textBlack.withOpacity(.4),
-                                  ),
-                                  children: [
-                                    const TextSpan(text: 'From  '),
-                                    TextSpan(
-                                      text: service.fromDate
-                                          .toString()
-                                          .toMonthDayYearFormat(),
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textGrey4,
-                                      ),
-                                    ),
-                                    const TextSpan(text: '  to  '),
-                                    TextSpan(
-                                      text: service.toDate
-                                          .toString()
-                                          .toMonthDayYearFormat(),
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textGrey4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  title: service.serviceName,
+                  subtitle: service.customerName,
+                  status: service.amcStatusName,
+                  statusColor: statusColor,
+                  description: service.productName,
+                  bottomLeftIcon: Icons.calendar_month_outlined,
+                  bottomLeftText:
+                      '${service.fromDate.toString().toMonthDayYearFormat()} - ${service.toDate.toString().toMonthDayYearFormat()}',
+                  bottomRightText: service.amount != "0" &&
+                          service.amount != "0.0" &&
+                          service.amount != "0.000"
+                      ? "₹${service.amount.split('.')[0]}"
+                      : null,
                 );
               },
             )

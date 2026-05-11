@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class TotalOutstandingReportPage extends StatefulWidget {
   const TotalOutstandingReportPage({super.key});
@@ -404,177 +405,68 @@ class _TotalOutstandingReportPageState
     if (provider.isOutstandingLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (provider.totalOutstandingReportList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 80),
-            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'No total outstanding reports found',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CommonReportDateFilter(
+            fromDate: provider.fromDate?.toString(),
+            toDate: provider.toDate?.toString(),
+            formattedFromDate: provider.formattedFromDate,
+            formattedToDate: provider.formattedToDate,
+            onTap: () => onClickTopButton(context),
+          ),
         ),
-      );
-    }
-    return Container(
-        color: Colors.grey[50],
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () => onClickTopButton(context),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.primaryBlue),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        if (provider.totalOutstandingReportList.isNotEmpty)
+          CommonReportSummaryBar(
+            totalLabel: 'Total Records',
+            totalCount: provider.totalOutstandingReportList.length,
+            showingLabel: 'Showing',
+            showingCount: provider.totalOutstandingReportList.length,
+          ),
+        Expanded(
+          child: provider.totalOutstandingReportList.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (provider.fromDate == null && provider.toDate == null)
-                        const Text('Date: All'),
-                      if (provider.fromDate != null && provider.toDate != null)
-                        Text(
-                          'Date: ${provider.formattedFromDate} - ${provider.formattedToDate}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      Icon(Icons.search_off_outlined,
+                          size: 80, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No total outstanding reports found',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
                         ),
-                      const Icon(Icons.calendar_today, size: 18),
+                      ),
                     ],
                   ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: provider.totalOutstandingReportList.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final item = provider.totalOutstandingReportList[index];
+                    return ReportListItem(
+                      title: item.customerName,
+                      subtitle:
+                          'Sch: ₹${item.totalScheduleAmount.toStringAsFixed(0)}',
+                      status:
+                          '₹ ${item.totalOutstandingAmount.toStringAsFixed(2)}',
+                      statusColor: AppColors.textRed,
+                      bottomLeftIcon: Icons.payments_outlined,
+                      bottomLeftText:
+                          'Paid: ₹${item.totalPaidAmount.toStringAsFixed(0)}',
+                    );
+                  },
                 ),
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: provider.totalOutstandingReportList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final item = provider.totalOutstandingReportList[index];
-                  return _buildMobileCard(item);
-                },
-              ),
-            ),
-          ],
-        ));
-  }
-
-  Widget _buildMobileCard(dynamic item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.customerName,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Divider(),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Schedule Amount:',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-                Text(
-                  '₹ ${item.totalScheduleAmount.toStringAsFixed(2)}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textBlack,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Paid Amount:',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-                Text(
-                  '₹ ${item.totalPaidAmount.toStringAsFixed(2)}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.green,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Outstanding Amount:',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-                Text(
-                  '₹ ${item.totalOutstandingAmount.toStringAsFixed(2)}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
-      ),
+      ],
     );
   }
 

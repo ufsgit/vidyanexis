@@ -8,6 +8,7 @@ import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class SubContractReportMobile extends StatefulWidget {
   const SubContractReportMobile({super.key});
@@ -228,7 +229,7 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                         const SizedBox(height: 16),
                         Text(
                           'No sub contract reports found',
-                          style: TextStyle(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w500,
@@ -239,131 +240,32 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                   )
                 : Column(
                     children: [
+                      if (!provider.isFilter)
+                        CommonReportSummaryBar(
+                          totalLabel: 'Total Records',
+                          totalCount: provider.subContractReport.length,
+                          showingLabel: 'Showing',
+                          showingCount: provider.subContractReport.length,
+                        ),
                       Expanded(
-                        child: ListView.builder(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.all(16),
                           itemCount: provider.subContractReport.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final item = provider.subContractReport[index];
-                            return Card(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                side: BorderSide(color: Colors.grey[200]!),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            item.customerName,
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          item.entryDate,
-                                          style: TextStyle(
-                                              color: Colors.grey[500],
-                                              fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Task Type',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text(item.taskTypeName,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 12)),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text('Status',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text(
-                                                  item.taskStatusName.isEmpty
-                                                      ? 'Pending'
-                                                      : item.taskStatusName,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 12,
-                                                      color: Colors.blue)),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('To User',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text(item.toUserName,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 12)),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text('Commission',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text('₹${item.commission}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.green,
-                                                      fontSize: 13)),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            return ReportListItem(
+                              title: item.customerName,
+                              subtitle: item.toUserName,
+                              status: item.taskStatusName.isEmpty
+                                  ? 'Pending'
+                                  : item.taskStatusName,
+                              statusColor: Colors.blue,
+                              description: 'Type: ${item.taskTypeName}',
+                              bottomLeftIcon: Icons.calendar_today_outlined,
+                              bottomLeftText: item.entryDate,
+                              bottomRightText: '₹${item.commission}',
                             );
                           },
                         ),

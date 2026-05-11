@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart'; // Ensure this exists or use local
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart'; // Ensure this exists
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class PaymentReportPage extends StatefulWidget {
   const PaymentReportPage({super.key});
@@ -408,95 +409,38 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
               ),
             ),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: provider.paymentReportList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final item = provider.paymentReportList[index];
-                  return _buildMobileCard(item);
-                },
+              child: Column(
+                children: [
+                  CommonReportSummaryBar(
+                    totalLabel: 'Total Payments',
+                    totalCount: provider.paymentReportList.length,
+                    showingLabel: 'Showing',
+                    showingCount: provider.paymentReportList.length,
+                  ),
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: provider.paymentReportList.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final item = provider.paymentReportList[index];
+                        return ReportListItem(
+                          title: item.customerName,
+                          subtitle: item.paymentModeName,
+                          status: '₹ ${item.payingAmount.toStringAsFixed(2)}',
+                          statusColor: AppColors.primaryBlue,
+                          bottomLeftIcon: Icons.calendar_today_outlined,
+                          bottomLeftText: item.paymentDate,
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ));
-  }
-
-  Widget _buildMobileCard(dynamic item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.customerName,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                ),
-                Text(
-                  '₹ ${item.payingAmount.toStringAsFixed(2)}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryBlue,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  item.paymentDate,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    item.paymentModeName,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryBlue,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   void _exportData(PaymentReportProvider provider) {

@@ -139,7 +139,16 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
       ),
       body: Column(
         children: [
-          if (quotationProvider.isFilter) _buildFilterPanel(context, quotationProvider, provider),
+          if (quotationProvider.isFilter)
+            _buildFilterPanel(context, quotationProvider, provider),
+          if (quotationProvider.quotationReports.isNotEmpty &&
+              !quotationProvider.isFilter)
+            CommonReportSummaryBar(
+              totalLabel: 'Total Quotations',
+              totalCount: quotationProvider.quotationReports.length,
+              showingLabel: 'Showing',
+              showingCount: quotationProvider.quotationReports.length,
+            ),
           Expanded(
             child: !quotationProvider.hasFetched
                 ? _buildInitialState()

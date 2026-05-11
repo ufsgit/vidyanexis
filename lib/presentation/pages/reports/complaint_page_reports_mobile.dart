@@ -297,6 +297,14 @@ class _ComplaintPageReportsMobileState
               ),
             if (!reportsProvider.isLoading &&
                 reportsProvider.serviceReport.isNotEmpty)
+              CommonReportSummaryBar(
+                totalLabel: 'Total Complaints',
+                totalCount: reportsProvider.serviceReport.length,
+                showingLabel: 'Showing',
+                showingCount: reportsProvider.serviceReport.length,
+              ),
+            if (!reportsProvider.isLoading &&
+                reportsProvider.serviceReport.isNotEmpty)
               ListView.separated(
                 separatorBuilder: (context, index) {
                   return Divider(

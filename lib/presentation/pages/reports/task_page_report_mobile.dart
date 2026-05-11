@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
@@ -218,7 +219,6 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
         showExcel: true,
         searchController: searchController,
       ),
-
       body: Container(
         color: Colors.grey[50],
         child: Column(
@@ -286,14 +286,15 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                 reportsProvider.selectedUser == null,
                             onTap: () => reportsProvider.setUserFilterStatus(0),
                           ),
-                          ...provider.searchUserDetails.map((u) =>
-                              FilterChipWidget(
-                                label: u.userDetailsName ?? 'Unknown',
-                                isSelected: reportsProvider.selectedUser ==
-                                    u.userDetailsId,
-                                onTap: () => reportsProvider
-                                    .setUserFilterStatus(u.userDetailsId ?? 0),
-                              )),
+                          ...provider.searchUserDetails
+                              .map((u) => FilterChipWidget(
+                                    label: u.userDetailsName ?? 'Unknown',
+                                    isSelected: reportsProvider.selectedUser ==
+                                        u.userDetailsId,
+                                    onTap: () =>
+                                        reportsProvider.setUserFilterStatus(
+                                            u.userDetailsId ?? 0),
+                                  )),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -360,6 +361,16 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                 ),
               ),
 
+            // ── SUMMARY BAR ──────────────────────────────────────────────────
+            if (reportsProvider.taskReport.isNotEmpty &&
+                !reportsProvider.isFilter)
+              CommonReportSummaryBar(
+                totalLabel: 'Total Tasks',
+                totalCount: reportsProvider.totalSize,
+                showingLabel: 'Showing',
+                showingCount: reportsProvider.taskReport.length,
+              ),
+
             // ── LIST ────────────────────────────────────────────────────────
 
             Expanded(
@@ -390,8 +401,8 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           ListView.separated(
                             separatorBuilder: (context, index) {
                               return Divider(
-                                height: 2,
-                                color: AppColors.grey,
+                                height: 1,
+                                color: AppColors.grey.withOpacity(0.5),
                               );
                             },
                             itemCount: reportsProvider.taskReport.length,
@@ -406,11 +417,9 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                       : task.taskStatusName == "In Progress"
                                           ? Colors.orange
                                           : Colors.red;
-                              return InkWell(
-                                onTap: () {
-                                  // context.push(
-                                  //     '${TaskDetailsPagePhone.route}${task.taskMasterId}/${task.taskId}');
 
+                              return ReportListItem(
+                                onTap: () {
                                   Navigator.push(context, MaterialPageRoute(
                                     builder: (context) {
                                       return TaskDetailsPagePhone(
@@ -422,281 +431,17 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                     },
                                   ));
                                 },
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  decoration: BoxDecoration(
-                                      color: AppColors.whiteColor),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Container(
-                                                height: 36,
-                                                width: 3,
-                                                decoration: BoxDecoration(
-                                                    color: statusColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            16))),
-                                            const SizedBox(
-                                              width: 8,
-                                            ),
-                                            // SizedBox(
-                                            //     height: 16,
-                                            //     width: 16,
-                                            //     child: Image.asset(
-                                            //       task.taskTypeId == 1
-                                            //           ? 'assets/images/icon_site.png'
-                                            //           : task.taskTypeId == 2
-                                            //               ? 'assets/images/icon_installation.png'
-                                            //               : task.taskTypeId == 3
-                                            //                   ? 'assets/images/icon_service.png'
-                                            //                   : 'assets/images/icon_amc.png',
-                                            //     )),
-                                            // const SizedBox(
-                                            //   width: 4,
-                                            // ),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    task.taskTypeName,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: AppColors
-                                                                .textBlack),
-                                                  ),
-                                                  if (task.enquiryForName
-                                                      .isNotEmpty)
-                                                    Text(
-                                                      task.enquiryForName,
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            AppColors.appViolet,
-                                                      ),
-                                                    ),
-                                                  InkWell(
-                                                    onTap: () {
-                                                      print("object");
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              CustomerDetailPageMobile(
-                                                            customerId:
-                                                                task.customerId,
-                                                            fromLead: false,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Text(
-                                                      '${task.customerName} >',
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: AppColors
-                                                            .bluebutton,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
-                                                        decorationColor:
-                                                            AppColors
-                                                                .bluebutton,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                  if (task.mobile.isNotEmpty)
-                                                    Text(
-                                                      task.mobile,
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: AppColors
-                                                                  .textGrey3),
-                                                    ),
-                                                  if (task.address1.isNotEmpty)
-                                                    Text(
-                                                      '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: AppColors
-                                                                  .textGrey3),
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                                height: 22,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30),
-                                                    color: statusColor
-                                                        .withAlpha(25)),
-                                                child: Center(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 2),
-                                                    child: Text(
-                                                      StatusUtils
-                                                          .getDisplayStatus(task
-                                                              .taskStatusName),
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color:
-                                                                  statusColor),
-                                                    ),
-                                                  ),
-                                                )),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 12,
-                                        ),
-                                        Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Text(
-                                            task.description,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                                color: AppColors.textBlack),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 12,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              height: 22,
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      AppColors.scaffoldColor,
-                                                  border: Border.all(
-                                                      color: AppColors.grey),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6)),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 6,
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons
-                                                          .calendar_month_outlined,
-                                                      size: 16,
-                                                      color:
-                                                          AppColors.textGrey3,
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                    Text(
-                                                      task.taskDate
-                                                          .toString()
-                                                          .toFormattedDate(),
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color: AppColors
-                                                                  .textGrey3),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            // Padding(
-                                            //   padding:
-                                            //       const EdgeInsets.symmetric(horizontal: 5),
-                                            //   child: Text(
-                                            //     '•',
-                                            //     style: GoogleFonts.plusJakartaSans(
-                                            //         fontSize: 10,
-                                            //         fontWeight: FontWeight.w500,
-                                            //         color: AppColors.textGrey3),
-                                            //   ),
-                                            // ),
-                                            // Container(
-                                            //   height: 20,
-                                            //   width: 20,
-                                            //   decoration: BoxDecoration(
-                                            //       borderRadius: BorderRadius.circular(100),
-                                            //       color: AppColors.textRed),
-                                            // ),
-                                            // const SizedBox(width: 4),
-                                            // Text(
-                                            //   'David',
-                                            //   style: GoogleFonts.plusJakartaSans(
-                                            //       fontSize: 14,
-                                            //       fontWeight: FontWeight.w500,
-                                            //       color: AppColors.textGrey3),
-                                            // ),
-                                            const Spacer(),
-                                            Text(
-                                              task.entryDate
-                                                  .toString()
-                                                  .toTimeAgo(),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color:
-                                                          AppColors.textGrey3),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                title: task.taskTypeName,
+                                subtitle: task.customerName,
+                                id: task.taskId.toString(),
+                                status: task.taskStatusName,
+                                statusColor: statusColor,
+                                description: task.description,
+                                bottomLeftIcon: Icons.calendar_month_outlined,
+                                bottomLeftText:
+                                    task.taskDate.toString().toFormattedDate(),
+                                bottomRightText:
+                                    task.entryDate.toString().toTimeAgo(),
                               );
                             },
                           ),

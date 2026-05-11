@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class OutstandingReportPage extends StatefulWidget {
   const OutstandingReportPage({super.key});
@@ -367,135 +368,65 @@ class _OutstandingReportPageState extends State<OutstandingReportPage> {
     if (provider.isOutstandingListLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (provider.outstandingReportList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 80),
-            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'No outstanding reports found',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-    return Container(
-        color: Colors.grey[50],
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CommonReportDateFilter(
-                fromDate: provider.fromDate?.toString(),
-                toDate: provider.toDate?.toString(),
-                formattedFromDate: provider.formattedFromDate,
-                formattedToDate: provider.formattedToDate,
-                onTap: () => onClickTopButton(context),
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: provider.outstandingReportList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final item = provider.outstandingReportList[index];
-                  return _buildMobileCard(item);
-                },
-              ),
-            ),
-          ],
-        ));
-  }
 
-  Widget _buildMobileCard(dynamic item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CommonReportDateFilter(
+            fromDate: provider.fromDate?.toString(),
+            toDate: provider.toDate?.toString(),
+            formattedFromDate: provider.formattedFromDate,
+            formattedToDate: provider.formattedToDate,
+            onTap: () => onClickTopButton(context),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.customerName,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Divider(),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Schedule Date:',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-                Text(
-                  item.scheduleDate,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textBlack,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Outstanding Amount:',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-                Text(
-                  '₹ ${item.outstandingAmount.toStringAsFixed(2)}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
-      ),
+        if (provider.outstandingReportList.isNotEmpty)
+          CommonReportSummaryBar(
+            totalLabel: 'Total Records',
+            totalCount: provider.outstandingReportList.length,
+            showingLabel: 'Showing',
+            showingCount: provider.outstandingReportList.length,
+          ),
+        Expanded(
+          child: provider.outstandingReportList.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_off_outlined,
+                          size: 80, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No outstanding reports found',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: provider.outstandingReportList.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final item = provider.outstandingReportList[index];
+                    return ReportListItem(
+                      title: item.customerName,
+                      subtitle: 'Schedule: ${item.scheduleDate}',
+                      status: '₹ ${item.outstandingAmount.toStringAsFixed(2)}',
+                      statusColor: AppColors.textRed,
+                      bottomLeftIcon: Icons.calendar_today_outlined,
+                      bottomLeftText: 'Date: ${item.scheduleDate}',
+                    );
+                  },
+                ),
+        ),
+      ],
     );
   }
 
