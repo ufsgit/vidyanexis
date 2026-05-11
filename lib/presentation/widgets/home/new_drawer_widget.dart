@@ -678,12 +678,13 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 8),
 
-                          // Row 3: Place
+                          // Row 3: Place, Location
                           ResponsiveRow(
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
                                   child: CustomTextField(
                                     height: 54,
                                     controller: leadProvider.cityController,
@@ -693,6 +694,27 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                             .showValidation &&
                                         !_isFieldValid(
                                             leadProvider.cityController.text),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: CommonDropdown<int>(
+                                    hintText: 'Location',
+                                    items: dropDownProvider.locationList
+                                        .map((loc) => DropdownItem<int>(
+                                              id: loc.locationId,
+                                              name: loc.locationName,
+                                            ))
+                                        .toList(),
+                                    onItemSelected: (selectedId) {
+                                      dropDownProvider.selectedLocationId =
+                                          selectedId;
+                                    },
+                                    selectedValue:
+                                        dropDownProvider.selectedLocationId,
                                   ),
                                 ),
                               ),
@@ -1200,24 +1222,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   labelText: '',
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: CommonDropdown<int>(
-                                  hintText: 'Location',
-                                  items: dropDownProvider.locationList
-                                      .map((loc) => DropdownItem<int>(
-                                            id: loc.locationId,
-                                            name: loc.locationName,
-                                          ))
-                                      .toList(),
-                                  onItemSelected: (selectedId) {
-                                    dropDownProvider.selectedLocationId =
-                                        selectedId;
-                                  },
-                                  selectedValue:
-                                      dropDownProvider.selectedLocationId,
-                                ),
-                              ),
+                              const Spacer(),
                               const Spacer(),
                             ],
                           ),

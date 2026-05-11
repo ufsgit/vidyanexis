@@ -233,70 +233,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                           },
                         ),
                 ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Container(
-                    height: 58,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey300,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 32,
-                            width: 32,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: Icon(
-                              Icons.account_circle,
-                              size: 32,
-                              color: AppColors.textGrey4,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          FutureBuilder<String>(
-                              future: getUserName(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasError) {
-                                  return const Center(
-                                      child: Text('Error loading username'));
-                                } else {
-                                  final userName = snapshot.data ?? '';
-                                  return Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CustomText(
-                                          userName,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        // CustomText(
-                                        //   'Admin',
-                                        //   fontSize: 12,
-                                        //   fontWeight: FontWeight.w500,
-                                        //   color: AppColors.textGrey4,
-                                        // ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                              }),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 16),
                 if (settingsProvider.menuIsViewMap[29].toString() == '1')
                   _buildMenuItem(
                     'Inventory',

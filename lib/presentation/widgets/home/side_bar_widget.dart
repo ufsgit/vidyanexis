@@ -183,37 +183,6 @@ class _CustomSidebarState extends State<CustomSidebar> {
               },
             ),
           ),
-          // User Profile Section
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
-            child: Container(
-              height: 40,
-              color: AppColors.surfaceGrey,
-              alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/images/profile_icon.svg',
-                      width: 24,
-                      height: 24,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.userName,
-                      style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.primaryBlue,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(),
-                  ],
-                ),
-              ),
-            ),
-          ),
           _buildLogoutButton(context),
           // Version Number
           Center(
