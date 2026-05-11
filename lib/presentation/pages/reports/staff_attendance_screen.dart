@@ -11,6 +11,9 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 class StaffAttendanceScreen extends StatefulWidget {
   const StaffAttendanceScreen({super.key});
@@ -57,17 +60,48 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
-        title: Text(
-          'Attendance',
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      drawer: const SidebarDrawer(),
+      appBar: !AppStyles.isWebScreen(context)
+          ? CustomAppBar(
+              title: 'Attendance',
+              onFilterTap: () => reportsProvider.toggleFilter(),
+              showSearch: true,
+              onSearch: (query) {
+                reportsProvider.setTaskSearchCriteria(
+                  query,
+                  reportsProvider.fromDateS,
+                  reportsProvider.toDateS,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                  reportsProvider.TaskType,
+                );
+                reportsProvider.getSearchTaskReport(context);
+              },
+              searchController: searchController,
+              onClearTap: () {
+                searchController.clear();
+                reportsProvider.setTaskSearchCriteria(
+                  '',
+                  reportsProvider.fromDateS,
+                  reportsProvider.toDateS,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                  reportsProvider.TaskType,
+                );
+                reportsProvider.getSearchTaskReport(context);
+              },
+            )
+          : AppBar(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
+              title: Text(
+                'Attendance',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
       body: Container(
         color: Colors.grey[50],
         child: Column(

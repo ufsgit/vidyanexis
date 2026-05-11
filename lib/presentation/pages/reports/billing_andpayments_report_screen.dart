@@ -10,6 +10,7 @@ import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
@@ -48,24 +49,11 @@ class _BillingAndpaymentsReportScreenState
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         onSearchTap: () {
           searchProvider.startSearch();
         },
-        leadingWidth: 40,
-        leadingWidget: IconButton(
-          onPressed: () {
-            searchProvider.stopSearch();
-            customerProvider.setFilter(false);
-            leadProvider.setFilter(false);
-            context.pop();
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.textGrey4,
-          ),
-          iconSize: 24,
-        ),
         title: 'Billing & Payments Report',
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,

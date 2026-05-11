@@ -532,17 +532,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 8),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   CustomText(
                                     'Total Leads: ${leadProvider.totalCount}',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textBlack,
-                                  ),
-                                  CustomText(
-                                    'Showing: ${leadProvider.leadData.length}',
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.textGrey3,

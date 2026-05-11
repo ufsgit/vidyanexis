@@ -2,6 +2,7 @@ import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -75,17 +76,13 @@ class _EnquirySourceSummaryReportScreenState
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         title: 'Enquiry Source Summary',
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textBlack),
-        leadingWidget: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
-          iconSize: 24,
-        ),
         onFilterTap: () => reportsProvider.toggleFilter(),
         showSearch: false,
         onSearch: (p0) {},

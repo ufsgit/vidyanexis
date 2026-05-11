@@ -10,6 +10,7 @@ import 'package:vidyanexis/controller/models/lead_check_in_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class LeadCheckInReportMobile extends StatefulWidget {
@@ -51,15 +52,12 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         title: 'Check-in Reports',
         showExcel: false,
         showSearch: false,
         onSearch: (query) {},
-        leadingWidget: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
         onFilterTap: () => reportProvider.toggleFilter(),
       ),
       body: Container(

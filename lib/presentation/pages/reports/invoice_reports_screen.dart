@@ -15,6 +15,8 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 class InvoiceReportsScreen extends StatefulWidget {
   const InvoiceReportsScreen({super.key});
@@ -57,19 +59,26 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
     final leadProvider = Provider.of<LeadsProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
-      appBar: !AppStyles.isWebScreen(context)
-          ? AppBar(
-              surfaceTintColor: AppColors.scaffoldColor,
-              backgroundColor: AppColors.whiteColor,
-              title: Text(
-                'Invoice Report',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          : null,
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
+      appBar: AppStyles.isWebScreen(context)
+          ? null
+          : CustomAppBar(
+              title: 'Invoice Report',
+              onSearch: (query) {
+                reportsProvider.setTaskSearchCriteria(
+                    query,
+                    reportsProvider.fromDateS,
+                    reportsProvider.toDateS,
+                    reportsProvider.Status,
+                    reportsProvider.AssignedTo,
+                    reportsProvider.enquiryFor,
+                    reportsProvider.enquirySource);
+                reportsProvider.getSearchTaskReport(context);
+              },
+              onSearchTap: () => reportsProvider.toggleFilter(),
+              onFilterTap: () => reportsProvider.toggleFilter(),
+              searchController: searchController,
+            ),
       body: Container(
         color: Colors.grey[50],
         child: Column(

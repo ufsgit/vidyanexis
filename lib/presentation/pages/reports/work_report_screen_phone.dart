@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/work_report_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
@@ -98,25 +99,8 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
-        leadingWidth: 40,
-        leadingWidget: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 8),
-          child: IconButton(
-            onPressed: () {
-              searchProvider.stopSearch();
-              customerProvider.setFilter(false);
-              leadProvider.setFilter(false);
-              context.pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppColors.textGrey4,
-            ),
-            iconSize: 24,
-          ),
-        ),
         title: 'Work report of ${widget.userName}',
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,

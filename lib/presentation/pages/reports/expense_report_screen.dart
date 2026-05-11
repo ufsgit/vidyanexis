@@ -11,6 +11,7 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
@@ -49,17 +50,13 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      drawer: isSmallScreen ? const SidebarDrawer() : null,
       appBar: CustomAppBar(
         title: 'Expense Report',
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textBlack),
-        leadingWidget: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
-          iconSize: 24,
-        ),
         onFilterTap: () => provider.toggleFilter(),
         showExcel: true,
         onExcelTap: () => _handleExport(provider),

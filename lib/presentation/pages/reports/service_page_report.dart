@@ -17,6 +17,8 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import '../../widgets/customer/service_details_widget.dart';
 
 class ServicePageReport extends StatefulWidget {
@@ -76,20 +78,21 @@ class _ServicesPageReportState extends State<ServicePageReport> {
         (AppStyles.isWebScreen(context) ? 100 : 200);
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.grey[50],
-      appBar: !AppStyles.isWebScreen(context)
-          ? AppBar(
-              surfaceTintColor: AppColors.scaffoldColor,
-              backgroundColor: AppColors.whiteColor,
-              title: const Text(
-                'Complaint Report',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          : null,
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
+      appBar: AppStyles.isWebScreen(context)
+          ? null
+          : CustomAppBar(
+              title: 'Complaint Report',
+              onSearch: (query) {
+                reportsProvider.setTaskSearchCriteria(query, '', '', '', '');
+                reportsProvider.getSearchServiceReport(context);
+              },
+              onSearchTap: () => reportsProvider.toggleFilter(),
+              onFilterTap: () => reportsProvider.toggleFilter(),
+              searchController: searchController,
+            ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

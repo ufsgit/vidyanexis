@@ -8,6 +8,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/balance_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
@@ -42,6 +43,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      drawer: isWeb ? null : const SidebarDrawer(),
       appBar: isWeb
           ? null
           : CustomAppBar(
@@ -49,14 +51,6 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
               onSearchTap: () {
                 sideProvider.startSearch();
               },
-              leadingWidth: 40,
-              leadingWidget: IconButton(
-                onPressed: () {
-                  sideProvider.stopSearch();
-                  context.pop();
-                },
-                icon: Icon(Icons.arrow_back, color: AppColors.textGrey4),
-              ),
               onSearch: (query) {
                 balanceProvider.setSearch(query);
                 balanceProvider.getBalanceReport(context);

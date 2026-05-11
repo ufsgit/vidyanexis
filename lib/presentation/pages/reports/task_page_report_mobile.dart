@@ -17,6 +17,7 @@ import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 
@@ -113,25 +114,8 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
     //     Provider.of<CustomerDetailsProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
-        leadingWidth: 40,
-        leadingWidget: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 8),
-          child: IconButton(
-            onPressed: () {
-              customerProvider.setFilter(false);
-              leadProvider.setFilter(false);
-              searchProvider.stopSearch();
-              context.pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppColors.textGrey4,
-            ),
-            iconSize: 24,
-          ),
-        ),
         title: 'Task Report',
         onSearchTap: () {
           searchProvider.startSearch();

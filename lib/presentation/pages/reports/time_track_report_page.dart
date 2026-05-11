@@ -7,6 +7,7 @@ import 'package:vidyanexis/controller/time_track_report_provider.dart';
 import 'package:vidyanexis/controller/models/time_track_chart_data.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
@@ -46,22 +47,13 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         title: 'Time Track Report',
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textBlack),
-        leadingWidget: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: AppColors.textGrey4,
-          ),
-          iconSize: 24,
-        ),
         onFilterTap: () {
           providerTimeTrack.toggleFilter();
         },

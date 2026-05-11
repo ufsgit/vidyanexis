@@ -9,6 +9,7 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 class CustomerOutstandingReportMobile extends StatefulWidget {
   const CustomerOutstandingReportMobile({super.key});
@@ -47,6 +48,7 @@ class _CustomerOutstandingReportMobileState
     final provider = Provider.of<CustomerOutstandingReportProvider>(context);
 
     return Scaffold(
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         title: 'Customer Outstanding Report',
         onSearchTap: () {

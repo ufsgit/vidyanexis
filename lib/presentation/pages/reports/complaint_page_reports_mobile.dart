@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -66,26 +67,8 @@ class _ComplaintPageReportsMobileState
     final leadProvider = Provider.of<LeadsProvider>(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
-        leadingWidth: 40,
-        leadingWidget: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 8),
-          child: IconButton(
-            onPressed: () {
-              searchProvider.stopSearch();
-
-              customerProvider.setFilter(false);
-              leadProvider.setFilter(false);
-              context.pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppColors.textGrey4,
-            ),
-            iconSize: 24,
-          ),
-        ),
         title: 'Complaint Report',
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,

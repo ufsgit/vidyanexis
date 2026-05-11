@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/payment_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
@@ -57,18 +58,12 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      drawer: isWeb ? null : const SidebarDrawer(),
       appBar: isWeb
           ? null
           : CustomAppBar(
               title: 'Upcoming Payment Reports',
               showSearch: false,
-              leadingWidth: 40,
-              leadingWidget: IconButton(
-                onPressed: () {
-                  context.pop();
-                },
-                icon: Icon(Icons.arrow_back, color: AppColors.textGrey4),
-              ),
               onSearch: (query) {},
             ),
       body: isWeb ? _buildWebBody(provider) : _buildMobileBody(provider),

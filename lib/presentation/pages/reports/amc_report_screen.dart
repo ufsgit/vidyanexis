@@ -22,6 +22,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 class AmcReportScreen extends StatefulWidget {
   final bool fromDashBoard;
@@ -88,28 +90,25 @@ class _AmcReportScreen extends State<AmcReportScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: !AppStyles.isWebScreen(context)
-          ? AppBar(
-              surfaceTintColor: AppColors.scaffoldColor,
-              backgroundColor: AppColors.whiteColor,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: AppColors.textGrey4,
-                ),
-              ),
-              title: Text(
-                'Periodic Service Report',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          : null,
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
+      appBar: AppStyles.isWebScreen(context)
+          ? null
+          : CustomAppBar(
+              title: 'Periodic Service Report',
+              onSearch: (query) {
+                reportsProvider.setTaskSearchCriteria(
+                  query,
+                  reportsProvider.fromDateS,
+                  reportsProvider.toDateS,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                );
+                reportsProvider.getSearchAmcReport(context);
+              },
+              onSearchTap: () => reportsProvider.toggleFilter(),
+              onFilterTap: () => reportsProvider.toggleFilter(),
+              searchController: searchController,
+            ),
       body: Container(
         color: Colors.grey[50],
         child: Column(

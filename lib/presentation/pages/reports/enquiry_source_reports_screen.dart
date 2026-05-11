@@ -1,6 +1,7 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -70,6 +71,7 @@ class _EnquirySourceReportsScreenState
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.scaffoldColor,
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
       appBar: AppStyles.isWebScreen(context)
           ? AppBar(
               surfaceTintColor: Colors.white,
@@ -81,11 +83,6 @@ class _EnquirySourceReportsScreenState
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textBlack),
-              leadingWidget: IconButton(
-                onPressed: () => context.pop(),
-                icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
-                iconSize: 24,
-              ),
               onFilterTap: () => reportsProvider.toggleFilter(),
               showSearch: true,
               onSearch: (query) {

@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
@@ -69,6 +70,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.scaffoldColor,
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         showExcel: true,
         onExcelTap: () {
@@ -95,19 +97,6 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
             fileName: 'Quotation_Report',
           );
         },
-        leadingWidth: 40,
-        leadingWidget: IconButton(
-          onPressed: () {
-            quotationProvider.setFilter(false);
-            searchProvider.stopSearch();
-            context.pop();
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.textGrey4,
-          ),
-          iconSize: 24,
-        ),
         title: 'Quotation Report',
         onSearchTap: () {
           searchProvider.startSearch();

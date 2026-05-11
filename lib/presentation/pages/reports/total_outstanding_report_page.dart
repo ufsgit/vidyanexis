@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/payment_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
@@ -67,6 +68,7 @@ class _TotalOutstandingReportPageState
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      drawer: isWeb ? null : const SidebarDrawer(),
       appBar: isWeb
           ? null
           : CustomAppBar(
@@ -74,14 +76,6 @@ class _TotalOutstandingReportPageState
               onSearchTap: () {
                 sideProvider.startSearch();
               },
-              leadingWidth: 40,
-              leadingWidget: IconButton(
-                onPressed: () {
-                  sideProvider.stopSearch();
-                  context.pop();
-                },
-                icon: Icon(Icons.arrow_back, color: AppColors.textGrey4),
-              ),
               onSearch: (query) {
                 provider.setSearch(query);
                 provider.getTotalOutstandingReport(context);

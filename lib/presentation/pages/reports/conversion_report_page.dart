@@ -10,6 +10,9 @@ import 'package:vidyanexis/presentation/widgets/customer/conversion_details_page
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/controller/conversion_report_provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -61,23 +64,43 @@ class _ConversionReportPage extends State<ConversionReportPage> {
         Provider.of<CustomerDetailsProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
+      drawer: const SidebarDrawer(),
       appBar: !AppStyles.isWebScreen(context)
-          ? AppBar(
-              surfaceTintColor: AppColors.scaffoldColor,
-              backgroundColor: AppColors.whiteColor,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              title: const Text(
-                'Conversion Report',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+          ? CustomAppBar(
+              title: 'Conversion Report',
+              onSearchTap: () {
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .startSearch();
+                reportsProvider.toggleFilter();
+              },
+              onFilterTap: () {
+                reportsProvider.toggleFilter();
+              },
+              onClearTap: () {
+                searchController.clear();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .stopSearch();
+                reportsProvider.toggleFilter();
+                reportsProvider.setTaskSearchCriteria(
+                  '',
+                  '',
+                  '',
+                  '',
+                  '',
+                );
+                reportsProvider.getSearchConversionReport(context);
+              },
+              onSearch: (query) {
+                reportsProvider.setTaskSearchCriteria(
+                  query,
+                  reportsProvider.fromDateS,
+                  reportsProvider.toDateS,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                );
+                reportsProvider.getSearchConversionReport(context);
+              },
+              searchController: searchController,
             )
           : null,
       body: Container(

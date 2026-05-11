@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
@@ -102,25 +103,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
 
     return Scaffold(
       key: _scaffoldKey,
+      drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
-        leadingWidth: 40,
-        leadingWidget: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 8),
-          child: IconButton(
-            onPressed: () {
-              customerProvider.setFilter(false);
-              leadReportProvider.setFilter(false);
-              searchProvider.stopSearch();
-              context.pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppColors.textGrey4,
-            ),
-            iconSize: 24,
-          ),
-        ),
         title: 'Leads Report',
         onSearchTap: () {
           searchProvider.startSearch();
