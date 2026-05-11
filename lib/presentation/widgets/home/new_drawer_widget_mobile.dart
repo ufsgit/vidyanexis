@@ -228,7 +228,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         creId: dropDownProvider.selectedcreUserId ?? 0,
         creName: leadProvider.creController.text,
         leadtypeId: dropDownProvider.selectedleadtypeUserId ?? 0,
-        leadtypeName: leadProvider.leadtypeController.text);
+        leadtypeName: leadProvider.leadtypeController.text,
+        locationId: dropDownProvider.selectedLocationId);
   }
 
   bool _validateForm(
@@ -455,6 +456,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         }
       }
       dropDownProvider.getUserDetails(context);
+      dropDownProvider.getLocations(context);
       leadProvider.searchUserController.text = leadProvider.loginUserName;
       dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
 
@@ -2262,6 +2264,22 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           labelText: 'Place',
           showError: dropDownProvider.showValidation &&
               !_isFieldValid(leadProvider.cityController.text),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        CommonDropdown<int>(
+          hintText: 'Location',
+          items: dropDownProvider.locationList
+              .map((loc) => DropdownItem<int>(
+                    id: loc.locationId,
+                    name: loc.locationName,
+                  ))
+              .toList(),
+          onItemSelected: (selectedId) {
+            dropDownProvider.selectedLocationId = selectedId;
+          },
+          selectedValue: dropDownProvider.selectedLocationId,
         ),
         const SizedBox(
           height: 10,

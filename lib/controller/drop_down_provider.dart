@@ -423,6 +423,7 @@ class DropDownProvider extends ChangeNotifier {
     _selectedEnquirySourceId = null;
     _selectedSourceId = null;
     _selectedDepartmentId = null;
+    _selectedLocationId = null;
     notifyListeners();
   }
 
