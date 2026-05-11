@@ -14,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
@@ -76,6 +77,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
     final displayLogo = settingsProvider.displayLogo;
     Future<String> getUserName() async {
       final prefs = await SharedPreferences.getInstance();
@@ -240,16 +242,18 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     'assets/images/inventory.svg',
                     const InventoryPage(),
                     context,
+                    sideProvider,
                   ),
                 if (settingsProvider.menuIsViewMap[36].toString() == '1')
                   _buildMenuItem('Process Flow', 'assets/images/flow.svg',
-                      const ProcessFlowPage(), context),
+                      const ProcessFlowPage(), context, sideProvider),
                 if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
                   _buildMenuItem(
                       'Expense Management',
                       'assets/images/inventory.svg',
                       const ExpenseManagement(),
-                      context),
+                      context,
+                      sideProvider),
                 // if (settingsProvider.menuIsViewMap[36].toString() == '1')
                 //   _buildMenuItem(
                 //       'Tasks', 'assets/images/task.svg', const TaskPage(), context),
@@ -283,6 +287,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                                 report['title'],
                                 report['page'],
                                 context,
+                                sideProvider,
                               ))
                           .toList(),
                     ),
@@ -295,6 +300,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     'assets/images/settings-02.svg',
                     const SettingsPage(),
                     context,
+                    sideProvider,
                   ),
               ],
             ),
@@ -433,8 +439,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
   }
 
   // Helper method to build main menu items
-  Widget _buildMenuItem(
-      String title, String iconPath, Widget page, BuildContext context) {
+  Widget _buildMenuItem(String title, String iconPath, Widget page,
+      BuildContext context, SidebarProvider sideProvider) {
     return ListTileTheme(
       dense: true,
       horizontalTitleGap: 0,
@@ -453,17 +459,15 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
             )),
         onTap: () {
           Navigator.pop(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => page),
-          );
+          sideProvider.setReportPage(page);
         },
       ),
     );
   }
 
   // Helper method to build report items
-  Widget _buildReportItem(String title, Widget page, BuildContext context) {
+  Widget _buildReportItem(
+      String title, Widget page, BuildContext context, SidebarProvider sideProvider) {
     return ListTile(
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -477,10 +481,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       ),
       onTap: () {
         Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => page),
-        );
+        sideProvider.setReportPage(page);
       },
     );
   }

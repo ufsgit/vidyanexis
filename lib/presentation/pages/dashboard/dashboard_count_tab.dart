@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_data_page.dart';
 
 class DashboardCountTab extends StatelessWidget {
@@ -91,17 +92,14 @@ class DashboardCountTab extends StatelessWidget {
                 count: count,
                 theme: theme,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LeadDataPage(
-                        source: keyword,
-                        fromDate: dashBoardProvider.formattedFromDate,
-                        toDate: dashBoardProvider.formattedToDate,
-                        user: dashBoardProvider.selectedUser,
-                      ),
-                    ),
-                  );
+                  final sideProvider =
+                      Provider.of<SidebarProvider>(context, listen: false);
+                  sideProvider.setReportPage(LeadDataPage(
+                    source: keyword,
+                    fromDate: dashBoardProvider.formattedFromDate,
+                    toDate: dashBoardProvider.formattedToDate,
+                    user: dashBoardProvider.selectedUser,
+                  ));
                 },
               );
             },

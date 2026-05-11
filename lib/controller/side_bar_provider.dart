@@ -24,6 +24,14 @@ class SidebarProvider extends ChangeNotifier {
   int get selectedIndexMobile => _selectedIndexMobile;
   void setSelectedIndexMobile(int index) {
     _selectedIndexMobile = index;
+    _reportPage = null; // Clear report page when switching tabs
+    notifyListeners();
+  }
+
+  Widget? _reportPage;
+  Widget? get reportPage => _reportPage;
+  void setReportPage(Widget? page) {
+    _reportPage = page;
     notifyListeners();
   }
 

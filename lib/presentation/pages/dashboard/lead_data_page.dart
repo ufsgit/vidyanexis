@@ -501,7 +501,11 @@ class _LeadDataPageState extends State<LeadDataPage> {
                   icon: const Icon(Icons.arrow_back),
                   color: const Color(0xFF152D70),
                   onPressed: () {
-                    context.pop();
+                    if (sideProvider.reportPage != null) {
+                      sideProvider.setReportPage(null);
+                    } else {
+                      context.pop();
+                    }
                   },
                 ),
               )

@@ -104,9 +104,12 @@ class _HomePageMobileState extends State<HomePageMobile> {
     return Scaffold(
       drawer: const SidebarDrawer(),
       appBar: bottomNavItems.isEmpty ? AppBar() : null,
-      body: bottomNavItems.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : pages[sideProvider.selectedIndexMobile.clamp(0, pages.length - 1)],
+      body: sideProvider.reportPage != null
+          ? sideProvider.reportPage!
+          : (bottomNavItems.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : pages[
+                  sideProvider.selectedIndexMobile.clamp(0, pages.length - 1)]),
       bottomNavigationBar: bottomNavItems.length >= 2
           ? BottomNavigationBar(
               currentIndex: sideProvider.selectedIndexMobile
