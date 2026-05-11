@@ -198,7 +198,9 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   Future<void> getTaskInfoDashBoard(BuildContext context,
-      {bool shouldNotify = true, bool isPagination = false}) async {
+      {bool shouldNotify = true,
+      bool isPagination = false,
+      bool isSilent = false}) async {
     try {
       // isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
@@ -206,7 +208,9 @@ class DashboardProvider extends ChangeNotifier {
       int pageIndex1 = (_taskCurrentPage * _taskItemsPerPage) + 1;
       int pageIndex2 = (_taskCurrentPage + 1) * _taskItemsPerPage;
 
-      Loader.showLoader(context);
+      if (!isSilent) {
+        Loader.showLoader(context);
+      }
 
       final response = await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.getTaskInfoDashBoard,
@@ -254,9 +258,10 @@ class DashboardProvider extends ChangeNotifier {
         );
       });
     } finally {
-      // isDashBoardLoading = false;
       if (shouldNotify) notifyListeners();
-      Loader.stopLoader(context);
+      if (!isSilent) {
+        Loader.stopLoader(context);
+      }
     }
   }
 
@@ -569,7 +574,8 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadDataForTab(int activeTab, BuildContext context) async {
+  Future<void> loadDataForTab(int activeTab, BuildContext context,
+      {bool isSilent = false}) async {
     switch (activeTab) {
       case 0: // Leads Overview
         await getLeadData();
@@ -581,7 +587,7 @@ class DashboardProvider extends ChangeNotifier {
         await fetchDashBoardTaskData();
         break;
       case 3: // Task Summary
-        await getTaskInfoDashBoard(context);
+        await getTaskInfoDashBoard(context, isSilent: isSilent);
         break;
       case 4: // Amc Notification
         await Provider.of<WarrentyReportProvider>(context, listen: false)
@@ -732,9 +738,10 @@ class DashboardProvider extends ChangeNotifier {
     isPaymentLoaded = false;
   }
 
-  Future<void> refreshDashboardData(BuildContext context) async {
+  Future<void> refreshDashboardData(BuildContext context,
+      {bool isSilent = false}) async {
     clearDashboardFlags();
-    await loadDataForTab(tabIndex, context);
+    await loadDataForTab(tabIndex, context, isSilent: isSilent);
     notifyListeners();
   }
 

@@ -1434,7 +1434,7 @@ class LeadsProvider extends ChangeNotifier {
         } else {
           log('Success');
           leadData.clear();
-          await getSearchLeads(context);
+          await getSearchLeads(context, isSilent: true);
           final customerDetailsProvider =
               Provider.of<CustomerDetailsProvider>(context, listen: false);
           final leadDetailsProvider =
@@ -1455,7 +1455,7 @@ class LeadsProvider extends ChangeNotifier {
 
           final dashboardProvider =
               Provider.of<DashboardProvider>(context, listen: false);
-          dashboardProvider.refreshDashboardData(context);
+          dashboardProvider.refreshDashboardData(context, isSilent: true);
 
           Navigator.pop(context);
           Loader.stopLoader(context);
@@ -1554,10 +1554,10 @@ class LeadsProvider extends ChangeNotifier {
           _leadData.clear();
         }
 
-        await getSearchLeads(context);
+        await getSearchLeads(context, isSilent: true);
         leadDetailsProvider.fetchLeadDetails(custId.toString(), context);
         leadDetailsProvider.fetchFollowUpHistory(custId.toString());
-        await customerProvider.getSearchCustomers(context);
+        await customerProvider.getSearchCustomers(context, isSilent: true);
 
         messageController.clear();
         statusController.clear();
@@ -1566,7 +1566,7 @@ class LeadsProvider extends ChangeNotifier {
 
         final dashboardProvider =
             Provider.of<DashboardProvider>(context, listen: false);
-        dashboardProvider.refreshDashboardData(context);
+        dashboardProvider.refreshDashboardData(context, isSilent: true);
 
         notifyListeners();
         print(data);
@@ -1837,7 +1837,7 @@ class LeadsProvider extends ChangeNotifier {
         removeLeadFromList(custId);
         final dashboardProvider =
             Provider.of<DashboardProvider>(context, listen: false);
-        dashboardProvider.refreshDashboardData(context);
+        dashboardProvider.refreshDashboardData(context, isSilent: true);
       }
     } catch (e) {
       print('Exception occurred: $e');
@@ -1867,10 +1867,10 @@ class LeadsProvider extends ChangeNotifier {
 
       if (response != null && response.statusCode == 200) {
         Fluttertoast.showToast(msg: "Lead Converted Successfully");
-        await getSearchLeads(context);
+        await getSearchLeads(context, isSilent: true);
         final dashboardProvider =
             Provider.of<DashboardProvider>(context, listen: false);
-        dashboardProvider.refreshDashboardData(context);
+        dashboardProvider.refreshDashboardData(context, isSilent: true);
         if (context.mounted && Navigator.canPop(context)) {
           Navigator.pop(context); // Close the details/dialog
         }
@@ -2160,7 +2160,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final dashboardProvider =
           Provider.of<DashboardProvider>(context, listen: false);
-      dashboardProvider.refreshDashboardData(context);
+      dashboardProvider.refreshDashboardData(context, isSilent: true);
     } catch (e) {
       log('Import Exception: $e');
       _importStatusText = 'Import failed. Process stopped.';
