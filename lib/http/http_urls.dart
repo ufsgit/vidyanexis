@@ -22,13 +22,13 @@ class HttpUrls {
   // static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
   // static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
   // static String baseUrl = 'https://sunxpertapi.trackbox.net.in/';
-  // static String baseUrl = 'https://ramcoelectronicsapi.trackbox.net.in/';
+  static String baseUrl = 'https://ramcoelectronicsapi.trackbox.net.in/';
   // static String baseUrl = 'https://exactsystem.trackbox.net.in/';
   //static String baseUrl = 'https://sunxpertapi.trackbox.net.in/';
 
 //dev
 
-  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  //static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
 //static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 

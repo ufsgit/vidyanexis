@@ -1,8 +1,14 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
-import 'package:flutter/material.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/enquiry_report_provider.dart';
@@ -60,54 +66,270 @@ class _EnquirySourceReportsScreenState
   Widget build(BuildContext context) {
     final reportsProvider = Provider.of<EnquiryReportProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
-    final customerDetailsProvider =
-        Provider.of<CustomerDetailsProvider>(context);
+    
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
+      backgroundColor: AppColors.scaffoldColor,
+      appBar: AppStyles.isWebScreen(context)
+          ? AppBar(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
+            )
+          : CustomAppBar(
+              title: 'Enquiry Source Report',
+              titleStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack),
+              leadingWidget: IconButton(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
+                iconSize: 24,
+              ),
+              onFilterTap: () => reportsProvider.toggleFilter(),
+              showSearch: true,
+              onSearch: (query) {
+                reportsProvider.setTaskSearchCriteria(
+                  query,
+                  reportsProvider.fromDateS,
+                  reportsProvider.toDateS,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                );
+                reportsProvider.getSearchTaskReport(widget.userId, context);
+              },
+              searchController: searchController,
+            ),
+      body: Consumer<EnquiryReportProvider>(
+        builder: (context, reportsProvider, child) {
+          if (AppStyles.isWebScreen(context)) {
+            return Container(
+              color: Colors.grey[50],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildWebHeader(context, reportsProvider),
+                  if (reportsProvider.isFilter) _buildWebFilterPanel(context, reportsProvider, provider),
+                  _buildWebDataTable(context, reportsProvider),
+                ],
+              ),
+            );
+          }
+          return _buildMobileLayout(context, reportsProvider, provider);
+        },
       ),
-      body: Container(
-        color: Colors.grey[50],
+    );
+  }
+
+  Widget _buildMobileLayout(BuildContext context,
+      EnquiryReportProvider reportsProvider, DropDownProvider provider) {
+    return Column(
+      children: [
+        if (reportsProvider.isFilter)
+          _buildMobileFilterPanel(context, reportsProvider, provider),
+        Expanded(
+          child: reportsProvider.taskReport.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: reportsProvider.taskReport.length,
+                  itemBuilder: (context, index) {
+                    final task = reportsProvider.taskReport[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: ReportListItem(
+                        onTap: () {
+                          context.push(
+                              '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                        },
+                        title: task.customer,
+                        subtitle: task.mobile,
+                        description: task.remark,
+                        status: task.statusName,
+                        statusColor: parseColor(task.colorCode),
+                        bottomLeftIcon: Icons.calendar_today_outlined,
+                        bottomLeftText: task.followUp,
+                        bottomRightText: task.followUpBy,
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileFilterPanel(BuildContext context,
+      EnquiryReportProvider reportsProvider, DropDownProvider provider) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: AppColors.grey, width: 1)),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  // IconButton(
-                  //   onPressed: () {
-                  //     Navigator.pop(context);
-                  //   },
-                  //   icon: Icon(Icons.arrow_back_rounded),
-                  // ),
-                  // SizedBox(
-                  //   width: 10,
-                  // ),
-                  const Text(
-                    'Enquiry Source Reports',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+            CustomText('Date Range',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            CommonReportDateFilter(
+              fromDate: reportsProvider.fromDate?.toString(),
+              toDate: reportsProvider.toDate?.toString(),
+              formattedFromDate: reportsProvider.formattedFromDate,
+              formattedToDate: reportsProvider.formattedToDate,
+              onTap: () => onClickTopButton(context),
+            ),
+            const SizedBox(height: 24),
+            CustomText('Status',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: [
+                FilterChipWidget(
+                  label: 'All',
+                  isSelected: reportsProvider.selectedStatus == 0 ||
+                      reportsProvider.selectedStatus == null,
+                  onTap: () {
+                    reportsProvider.setStatus(0);
+                    reportsProvider.setTaskSearchCriteria(
+                        reportsProvider.Search,
+                        reportsProvider.formattedFromDate,
+                        reportsProvider.formattedToDate,
+                        '0',
+                        reportsProvider.AssignedTo);
+                    reportsProvider.getSearchTaskReport(widget.userId, context);
+                  },
+                ),
+                ...provider.followUpData.map((status) {
+                  return FilterChipWidget(
+                    label: status.statusName ?? 'Unknown',
+                    isSelected:
+                        reportsProvider.selectedStatus == status.statusId,
+                    onTap: () {
+                      reportsProvider.setStatus(status.statusId ?? 0);
+                      reportsProvider.setTaskSearchCriteria(
+                          reportsProvider.Search,
+                          reportsProvider.formattedFromDate,
+                          reportsProvider.formattedToDate,
+                          (status.statusId ?? 0).toString(),
+                          reportsProvider.AssignedTo);
+                      reportsProvider.getSearchTaskReport(widget.userId, context);
+                    },
+                  );
+                }).toList(),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      reportsProvider.getSearchTaskReport(
+                          widget.userId, context);
+                      reportsProvider.toggleFilter();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
+                    child: const Text('Apply Filters'),
                   ),
-                  Flexible(child: Container()),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 4,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: TextField(
-                      controller: searchController,
-                      onSubmitted: (query) {
-                        // reportsProvider.selectDateFilterOption(null);
-                        // reportsProvider.removeStatus();
+                ),
+                const SizedBox(width: 12),
+                CommonReportResetButton(
+                  onReset: () {
+                    reportsProvider.removeStatus();
+                    searchController.clear();
+                    reportsProvider.setTaskSearchCriteria(
+                      '',
+                      '',
+                      '',
+                      '',
+                      '',
+                    );
+                    reportsProvider.getSearchTaskReport(widget.userId, context);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWebHeader(
+      BuildContext context, EnquiryReportProvider reportsProvider) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          const Text(
+            'Enquiry Source Reports',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Flexible(child: Container()),
+          Container(
+            width: MediaQuery.of(context).size.width / 4,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: TextField(
+              controller: searchController,
+              onSubmitted: (query) {
+                reportsProvider.setTaskSearchCriteria(
+                  query,
+                  reportsProvider.fromDateS,
+                  reportsProvider.toDateS,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                );
+                reportsProvider.getSearchTaskReport(widget.userId, context);
+              },
+              decoration: InputDecoration(
+                hintText: 'Search here....',
+                prefixIcon: const Icon(Icons.search),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      String query = searchController.text;
+                      if (reportsProvider.Search.isNotEmpty) {
+                        searchController.clear();
+                        reportsProvider.setTaskSearchCriteria(
+                          '',
+                          reportsProvider.fromDateS,
+                          reportsProvider.toDateS,
+                          reportsProvider.Status,
+                          reportsProvider.AssignedTo,
+                        );
+                        reportsProvider.getSearchTaskReport(
+                            widget.userId, context);
+                      } else {
                         reportsProvider.setTaskSearchCriteria(
                           query,
                           reportsProvider.fromDateS,
@@ -117,712 +339,362 @@ class _EnquirySourceReportsScreenState
                         );
                         reportsProvider.getSearchTaskReport(
                             widget.userId, context);
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Search here....',
-                        prefixIcon: const Icon(Icons.search),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 4,
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              String query = searchController.text;
-                              // leadProvider.selectDateFilterOption(null);
-                              // leadProvider.removeStatus();
-                              print(query);
-                              if (reportsProvider.Search.isNotEmpty) {
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  reportsProvider.fromDateS,
-                                  reportsProvider.toDateS,
-                                  reportsProvider.Status,
-                                  reportsProvider.AssignedTo,
-                                );
-                                reportsProvider.getSearchTaskReport(
-                                    widget.userId, context);
-                              } else {
-                                reportsProvider.setTaskSearchCriteria(
-                                  query,
-                                  reportsProvider.fromDateS,
-                                  reportsProvider.toDateS,
-                                  reportsProvider.Status,
-                                  reportsProvider.AssignedTo,
-                                );
-                                reportsProvider.getSearchTaskReport(
-                                    widget.userId, context);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.textGrey4,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                            ),
-                            child: Text(reportsProvider.Search.isNotEmpty
-                                ? 'Cancel'
-                                : 'Search'),
-                          ),
-                        ),
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.textGrey4,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
                       ),
                     ),
+                    child: Text(reportsProvider.Search.isNotEmpty
+                        ? 'Cancel'
+                        : 'Search'),
                   ),
-                  const SizedBox(width: 16),
-                  CustomFilterButton(
-                    onPressed: () {
-                      reportsProvider.toggleFilter();
-                    },
-                    isFilter: reportsProvider.isFilter,
-                  ),
-                  const SizedBox(width: 16),
-                  CustomElevatedButton(
-                    onPressed: () {
-                      exportToExcel(
-                        headers: [
-                          'Customer Name',
-                          'Mobile',
-                          'Address',
-                          'Follow Up By',
-                          'Remark',
-                          'Entry Date',
-                          'Follow Up Date',
-                          'Status'
-                        ],
-                        data: reportsProvider.taskReport.map((task) {
-                          return {
-                            'Customer Name': task.customer,
-                            'Mobile': task.mobile,
-                            'Address': task.address1,
-                            'Follow Up By': task.followUpBy,
-                            'Remark': task.remark,
-                            'Entry Date': task.entryDate,
-                            'Follow Up Date': task.followUp,
-                            'Status': task.statusName,
-                          };
-                        }).toList(),
-                        fileName: 'Work_Report',
-                      );
-                    },
-                    buttonText: 'Export to Excel',
-                    textColor: AppColors.whiteColor,
-                    borderColor: AppColors.appViolet,
-                    backgroundColor: AppColors.appViolet,
-                  )
-                ],
+                ),
               ),
             ),
-            if (reportsProvider.isFilter)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+          ),
+          const SizedBox(width: 16),
+          CustomFilterButton(
+            onPressed: () {
+              reportsProvider.toggleFilter();
+            },
+            isFilter: reportsProvider.isFilter,
+          ),
+          const SizedBox(width: 16),
+          CustomElevatedButton(
+            onPressed: () {
+              exportToExcel(
+                headers: [
+                  'Customer Name',
+                  'Mobile',
+                  'Address',
+                  'Follow Up By',
+                  'Remark',
+                  'Entry Date',
+                  'Follow Up Date',
+                  'Status'
+                ],
+                data: reportsProvider.taskReport.map((task) {
+                  return {
+                    'Customer Name': task.customer,
+                    'Mobile': task.mobile,
+                    'Address': task.address1,
+                    'Follow Up By': task.followUpBy,
+                    'Remark': task.remark,
+                    'Entry Date': task.entryDate,
+                    'Follow Up Date': task.followUp,
+                    'Status': task.statusName,
+                  };
+                }).toList(),
+                fileName: 'Work_Report',
+              );
+            },
+            buttonText: 'Export to Excel',
+            textColor: AppColors.whiteColor,
+            borderColor: AppColors.appViolet,
+            backgroundColor: AppColors.appViolet,
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWebFilterPanel(BuildContext context,
+      EnquiryReportProvider reportsProvider, DropDownProvider provider) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.primaryBlue),
+            ),
+            child: Row(
+              children: [
+                const Text('Status: '),
+                DropdownButton<int>(
+                  value: reportsProvider.selectedStatus,
+                  hint: const Text('All'),
+                  items: [
+                        const DropdownMenuItem<int>(
+                          value: 0,
+                          child: Text(
+                            'All',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ] +
+                      provider.followUpData
+                          .map((status) => DropdownMenuItem<int>(
+                                value: status.statusId,
+                                child: Text(
+                                  status.statusName ?? '',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ))
+                          .toList(),
+                  onChanged: (int? newValue) {
+                    if (newValue != null) {
+                      reportsProvider.setStatus(newValue);
+                    }
+                    reportsProvider.setTaskSearchCriteria(
+                        reportsProvider.Search,
+                        reportsProvider.formattedFromDate,
+                        reportsProvider.formattedToDate,
+                        (newValue ?? 0).toString(),
+                        reportsProvider.AssignedTo);
+                    reportsProvider.getSearchTaskReport(widget.userId, context);
+                  },
+                  underline: Container(),
+                  isDense: true,
+                  iconSize: 18,
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : AppColors.primaryBlue),
+              ],
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          CommonReportDateFilter(
+            fromDate: reportsProvider.fromDate?.toString(),
+            toDate: reportsProvider.toDate?.toString(),
+            formattedFromDate: reportsProvider.formattedFromDate,
+            formattedToDate: reportsProvider.formattedToDate,
+            onTap: () => onClickTopButton(context),
+          ),
+          const Spacer(),
+          if (reportsProvider.fromDate != null ||
+              reportsProvider.toDate != null ||
+              (reportsProvider.selectedStatus != null &&
+                  reportsProvider.selectedStatus != 0) ||
+              (reportsProvider.selectedUser != null &&
+                  reportsProvider.selectedUser != 0) ||
+              reportsProvider.Search.isNotEmpty)
+            CommonReportResetButton(
+              onReset: () {
+                reportsProvider.removeStatus();
+                searchController.clear();
+                reportsProvider.setTaskSearchCriteria(
+                  '',
+                  '',
+                  '',
+                  '',
+                  '',
+                );
+                reportsProvider.getSearchTaskReport(widget.userId, context);
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWebDataTable(
+      BuildContext context, EnquiryReportProvider reportsProvider) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                // Header Row (Table Column Titles)
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEFF2F5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12.0, horizontal: 25.0),
+                          child: Text('No.',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF607185))),
+                        ),
                       ),
-                      child: Row(
-                        children: [
-                          const Text('Status: '),
-                          DropdownButton<int>(
-                            value: reportsProvider.selectedStatus,
-                            hint: const Text('All'),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value:
-                                        0, // Use 0 or null to represent "All"
-                                    child: Text(
-                                      'All',
-                                      style: TextStyle(fontSize: 14),
+                      TableWidget(
+                          flex: 2,
+                          title: 'Customer Name',
+                          color: Color(0xFF607185)),
+                      TableWidget(
+                          flex: 1, title: 'Mobile', color: Color(0xFF607185)),
+                      TableWidget(
+                          flex: 2, title: 'Address', color: Color(0xFF607185)),
+                      TableWidget(
+                          flex: 1,
+                          title: 'Follow Up By',
+                          color: Color(0xFF607185)),
+                      TableWidget(
+                          flex: 3, title: 'Remark', color: Color(0xFF607185)),
+                      TableWidget(
+                          flex: 1, title: 'Entry Date', color: Color(0xFF607185)),
+                      TableWidget(
+                          flex: 1,
+                          title: 'Follow Up Date',
+                          color: Color(0xFF607185)),
+                      TableWidget(
+                          flex: 1, title: 'Status', color: Color(0xFF607185)),
+                    ],
+                  ),
+                ),
+                // Data Rows
+                Expanded(
+                  child: reportsProvider.taskReport.isEmpty
+                      ? _buildEmptyState()
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: reportsProvider.taskReport.length,
+                          itemBuilder: (context, index) {
+                            var task = reportsProvider.taskReport[index];
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: index % 2 == 0
+                                    ? Colors.white
+                                    : const Color(0xFFF6F7F9),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 80,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 25.0),
+                                      child: Text((index + 1).toString(),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ),
                                   ),
-                                ] +
-                                provider.followUpData
-                                    .map((status) => DropdownMenuItem<int>(
-                                          value: status.statusId,
-                                          child: Text(
-                                            status.statusName ?? '',
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                        ))
-                                    .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  reportsProvider.selectedStatus.toString();
-                              String assignedTo =
-                                  reportsProvider.selectedUser.toString();
-                              String fromDate =
-                                  reportsProvider.formattedFromDate;
-                              String toDate = reportsProvider.formattedToDate;
-                              print(
-                                  'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                              reportsProvider.setTaskSearchCriteria(
-                                  reportsProvider.Search,
-                                  fromDate,
-                                  toDate,
-                                  status,
-                                  assignedTo);
-                              reportsProvider.getSearchTaskReport(
-                                  widget.userId, context);
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    CommonReportDateFilter(
-                      fromDate: reportsProvider.fromDate?.toString(),
-                      toDate: reportsProvider.toDate?.toString(),
-                      formattedFromDate: reportsProvider.formattedFromDate,
-                      formattedToDate: reportsProvider.formattedToDate,
-                      onTap: () => onClickTopButton(context),
-                    ),
-                    // const SizedBox(
-                    //   width: 10,
-                    // ),
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.white,
-                    //     borderRadius: BorderRadius.circular(20),
-                    //     border: Border.all(
-                    //         color: reportsProvider.selectedUser != null &&
-                    //                 reportsProvider.selectedUser != 0
-                    //             ? AppColors.primaryBlue
-                    //             : Colors.grey[300]!),
-                    //   ),
-                    //   child: Row(
-                    //     children: [
-                    //       const Text('Assigned to: '),
-                    //       DropdownButton<int>(
-                    //         value: reportsProvider.selectedUser,
-                    //         hint: const Text('All'),
-                    //         items: [
-                    //               const DropdownMenuItem<int>(
-                    //                 value:
-                    //                     0, // Use 0 or null to represent "All"
-                    //                 child: Text(
-                    //                   'All',
-                    //                   style: TextStyle(fontSize: 14),
-                    //                 ),
-                    //               ),
-                    //             ] +
-                    //             provider.searchUserDetails
-                    //                 .map((status) => DropdownMenuItem<int>(
-                    //                       value: status.userDetailsId,
-                    //                       child: ConstrainedBox(
-                    //                         constraints: BoxConstraints(
-                    //                             maxWidth: 150),
-                    //                         child: Text(
-                    //                           status.userDetailsName ?? '',
-                    //                           overflow: TextOverflow
-                    //                               .ellipsis, // Adds ellipsis when the text is too long
-                    //                           style: const TextStyle(
-                    //                               fontSize: 14),
-                    //                         ),
-                    //                       ),
-                    //                     ))
-                    //                 .toList(),
-                    //         onChanged: (int? newValue) {
-                    //           if (newValue != null) {
-                    //             reportsProvider.setUserFilterStatus(
-                    //                 newValue); // Update the status in the provider
-                    //           }
-                    //           String status =
-                    //               reportsProvider.selectedStatus.toString();
-                    //           String assignedTo =
-                    //               reportsProvider.selectedUser.toString();
-                    //           String fromDate =
-                    //               reportsProvider.formattedFromDate;
-                    //           String toDate =
-                    //               reportsProvider.formattedToDate;
-                    //           print(
-                    //               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                    //           reportsProvider.setTaskSearchCriteria(
-                    //             reportsProvider.Search,
-                    //             fromDate,
-                    //             toDate,
-                    //             status,
-                    //             assignedTo,
-                    //           );
-                    //           reportsProvider.getSearchTaskReport(
-                    //               widget.userId, context);
-                    //         },
-                    //         underline: Container(),
-                    //         isDense: true,
-                    //         iconSize: 18,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    const Spacer(),
-                    // ElevatedButton(
-                    //   onPressed: () {
-                    //     // Apply the selected filters (You can use values from the provider)
-                    //     String status =
-                    //         reportsProvider.selectedStatus.toString();
-                    //     String fromDate =
-                    //         reportsProvider.formattedFromDate;
-                    //     String toDate = reportsProvider.formattedToDate;
-                    //     print(
-                    //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                    //     reportsProvider.setSearchCriteria(
-                    //       reportsProvider.search,
-                    //       fromDate,
-                    //       toDate,
-                    //       status,
-                    //     );
-                    //     reportsProvider.getSearchCustomers(context);
-                    //   },
-                    //   style: ElevatedButton.styleFrom(
-                    //     backgroundColor: Colors.white,
-                    //     foregroundColor: AppColors.primaryBlue,
-                    //     side: BorderSide(color: AppColors.primaryBlue),
-                    //     padding: const EdgeInsets.symmetric(
-                    //       horizontal: 16,
-                    //       vertical: 12,
-                    //     ),
-                    //   ),
-                    //   child: const Text('Apply'),
-                    // ),
-                    // const SizedBox(
-                    //   width: 10,
-                    // ),
-                    if (reportsProvider.fromDate != null ||
-                        reportsProvider.toDate != null ||
-                        (reportsProvider.selectedStatus != null &&
-                            reportsProvider.selectedStatus != 0) ||
-                        (reportsProvider.selectedUser != null &&
-                            reportsProvider.selectedUser != 0) ||
-                        reportsProvider.Search.isNotEmpty)
-                      CommonReportResetButton(
-                        onReset: () {
-                          reportsProvider.selectDateFilterOption(null);
-                          reportsProvider.removeStatus();
-                          searchController.clear();
-                          reportsProvider.setTaskSearchCriteria(
-                            '',
-                            '',
-                            '',
-                            '',
-                            '',
-                          );
-                          reportsProvider.getSearchTaskReport(
-                              widget.userId, context);
-                        },
-                      ),
-                  ],
-                ),
-              ),
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        // Header Row (Table Column Titles)
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFEFF2F5),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 80,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 12.0, horizontal: 25.0),
-                                  child: Text('No.',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF607185))),
-                                ),
-                              ),
-                              TableWidget(
-                                  flex: 2,
-                                  title: 'Customer Name',
-                                  color: Color(0xFF607185)),
-                              TableWidget(
-                                  flex: 1,
-                                  title: 'Mobile',
-                                  color: Color(0xFF607185)),
-                              TableWidget(
-                                  flex: 2,
-                                  title: 'Address',
-                                  color: Color(0xFF607185)),
-                              TableWidget(
-                                  flex: 1,
-                                  title: 'Follow Up By',
-                                  color: Color(0xFF607185)),
-                              TableWidget(
-                                  flex: 3,
-                                  title: 'Remark',
-                                  color: Color(0xFF607185)),
-                              TableWidget(
-                                  flex: 1,
-                                  title: 'Entry Date',
-                                  color: Color(0xFF607185)),
-                              TableWidget(
-                                  flex: 1,
-                                  title: 'Follow Up Date',
-                                  color: Color(0xFF607185)),
-                              TableWidget(
-                                  flex: 1,
-                                  title: 'Status',
-                                  color: Color(0xFF607185)),
-                            ],
-                          ),
-                        ),
-                        // Data Rows
-                        Expanded(
-                          child: reportsProvider.taskReport.isEmpty
-                              ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const SizedBox(height: 80),
-                                      Icon(Icons.search_off_outlined,
-                                          size: 80, color: Colors.grey[300]),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'No enquiry reports found',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .taskReport.length, // Number of tasks
-                                  itemBuilder: (context, index) {
-                                    var task =
-                                        reportsProvider.taskReport[index];
-                                    return GestureDetector(
+                                  TableWidget(
+                                    flex: 2,
+                                    data: InkWell(
                                       onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
+                                        context.push(
+                                            '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                       },
                                       child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
+                                          color: const Color(0xFFE9EDF1),
                                           borderRadius:
-                                              BorderRadius.circular(8),
+                                              BorderRadius.circular(50),
                                         ),
-                                        // Alternate row colors
-                                        child: Row(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(task.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                child:
-                                                    Text((index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )),
-                                              ),
-                                            ),
-                                            // TableWidget(title: task.orderNo),
-                                            TableWidget(
-                                              flex: 2,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          1700
-                                                      ? Row(
-                                                          mainAxisSize: MainAxisSize
-                                                              .min, // Ensures the Row takes only as much space as needed
-                                                          children: [
-                                                            // Front image (before text)
-                                                            Icon(
-                                                              Icons
-                                                                  .account_circle,
-                                                              size: 15,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the image and text
-                                                            Text(
-                                                              task.customer
-                                                                          .length >
-                                                                      20
-                                                                  ? '${task.customer.substring(0, 20)}...'
-                                                                  : task
-                                                                      .customer,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the text and back image
-                                                            // Back image (after text)
-                                                            Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                              size: 12,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Text(
-                                                          task.customer,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableWidget(
-                                                flex: 1, title: task.mobile),
-                                            TableWidget(
-                                              flex: 2,
-                                              data: Tooltip(
-                                                message: task.address1,
-                                                child: Text(
-                                                  task.address1,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: task.followUpBy),
-                                            TableWidget(
-                                                flex: 3, title: task.remark),
-                                            TableWidget(
-                                              flex: 1,
-                                              title: task.entryDate,
-                                            ),
-                                            TableWidget(
-                                              flex: 1,
-                                              title: task.followUp,
-                                            ),
-                                            // TableWidget(
-                                            //   flex: 1,
-                                            //   data: Container(
-                                            //     padding:
-                                            //         task.taskStatusName.isNotEmpty
-                                            //             ? const EdgeInsets.symmetric(
-                                            //                 horizontal: 8,
-                                            //                 vertical: 2)
-                                            //             : const EdgeInsets.all(0),
-                                            //     decoration: BoxDecoration(
-                                            //       color: StatusUtils.getTaskColor(
-                                            //           task.taskStatusId),
-                                            //       borderRadius:
-                                            //           BorderRadius.circular(6),
-                                            //       border: Border.all(
-                                            //           color: Colors.black45,
-                                            //           width: 0.1),
-                                            //     ),
-                                            //     child: Text(
-                                            //       task.taskStatusName,
-                                            //       overflow: TextOverflow.ellipsis,
-                                            //       maxLines: 1,
-                                            //       style: TextStyle(
-                                            //         color:
-                                            //             StatusUtils.getTaskTextColor(
-                                            //                 task.taskStatusId),
-                                            //         fontSize: 13,
-                                            //       ),
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            // Expanded(
-                                            //   child: CustomOutlinedSvgButton(
-                                            //     showIcon: false,
-                                            //     onPressed: () async {
-                                            //       String taskId =
-                                            //           task.taskId.toString();
-                                            //       String customerId =
-                                            //           task.customerId.toString();
-                                            //       print('Task ID: $taskId');
-                                            //       customerDetailsProvider
-                                            //           .getTaskDetails(
-                                            //               taskId.toString(), context);
-
-                                            //       showDialog(
-                                            //         context: context,
-                                            //         builder: (BuildContext context) {
-                                            //           return TaskDetailsWidget(
-                                            //             taskId: taskId.toString(),
-                                            //             customerId:
-                                            //                 customerId.toString(),
-                                            //             showEdit: false,
-                                            //           );
-                                            //         },
-                                            //       );
-                                            //     },
-                                            //     svgPath: 'assets/images/Print.svg',
-                                            //     label: 'View Details',
-                                            //     breakpoint: 860,
-                                            //     foregroundColor:
-                                            //         AppColors.primaryBlue,
-                                            //     backgroundColor: Colors.white,
-                                            //     borderSide: BorderSide(
-                                            //         color: AppColors.primaryBlue),
-                                            //   ),
-                                            // ),
-                                            TableWidget(
-                                              // width: 200,
-                                              flex: 1,
-                                              data: Container(
-                                                padding: task
-                                                        .statusName.isNotEmpty
-                                                    ? const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4)
-                                                    : const EdgeInsets.all(0),
-                                                decoration: BoxDecoration(
-                                                  // color: StatusUtils.getStatusColor(
-                                                  //     int.parse(lead.statusId)),
-                                                  color:
-                                                      parseColor(task.colorCode)
-                                                          .withOpacity(0.1)
-                                                          .withAlpha(30),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  border: Border.all(
-                                                      color: Colors.black45,
-                                                      width: 0.1),
-                                                ),
-                                                child: Text(
-                                                  task.statusName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    color: parseColor(
-                                                        task.colorCode),
-                                                    fontWeight: FontWeight.w600,
-                                                    // color:
-                                                    //     StatusUtils.getStatusTextColor(
-                                                    //         int.parse(lead.statusId)),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                        child: Text(
+                                          task.customer,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
+                                    ),
+                                  ),
+                                  TableWidget(flex: 1, title: task.mobile),
+                                  TableWidget(
+                                    flex: 2,
+                                    data: Tooltip(
+                                      message: task.address1,
+                                      child: Text(
+                                        task.address1,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TableWidget(flex: 1, title: task.followUpBy),
+                                  TableWidget(flex: 3, title: task.remark),
+                                  TableWidget(flex: 1, title: task.entryDate),
+                                  TableWidget(flex: 1, title: task.followUp),
+                                  TableWidget(
+                                    flex: 1,
+                                    data: Container(
+                                      padding: task.statusName.isNotEmpty
+                                          ? const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4)
+                                          : const EdgeInsets.all(0),
+                                      decoration: BoxDecoration(
+                                        color: parseColor(task.colorCode)
+                                            .withOpacity(0.1)
+                                            .withAlpha(30),
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(
+                                            color: Colors.black45, width: 0.1),
+                                      ),
+                                      child: Text(
+                                        task.statusName,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          color: parseColor(task.colorCode),
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                      ],
-                    ),
-                  ),
                 ),
-              ),
-            )
-          ],
+              ],
+            ),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 80),
+          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
+          const SizedBox(height: 16),
+          Text(
+            'No reports found',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }

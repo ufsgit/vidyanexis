@@ -1,4 +1,10 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +13,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/lead_status_report_provider.dart';
 import 'package:vidyanexis/controller/models/lead_status_report_model.dart';
-
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
@@ -52,33 +57,176 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<LeadStatusReportProvider>(context);
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.scaffoldColor,
       appBar: AppStyles.isWebScreen(context)
           ? null
-          : AppBar(
-              title: const Text('Lead Status Report'),
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              elevation: 0,
+          : CustomAppBar(
+              title: 'Lead Status Report',
+              titleStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack),
+              leadingWidget: IconButton(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
+                iconSize: 24,
+              ),
+              onFilterTap: () => provider.toggleFilter(),
+              onSearch: (query) {},
+              showSearch: false,
             ),
       body: Consumer<LeadStatusReportProvider>(
         builder: (context, provider, child) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          if (AppStyles.isWebScreen(context)) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(context, provider),
+                  const SizedBox(height: 24),
+                  if (provider.isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    _buildContentBody(context, provider),
+                ],
+              ),
+            );
+          }
+          return _buildMobileLayout(context, provider);
+        },
+      ),
+    );
+  }
+
+  Widget _buildMobileLayout(
+      BuildContext context, LeadStatusReportProvider provider) {
+    return Column(
+      children: [
+        if (provider.isFilter) _buildFilterPanel(context, provider),
+        Expanded(
+          child: provider.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : provider.reportData.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: provider.reportData.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildChartCard('Lead Status Funnel', provider.reportData),
+                              const SizedBox(height: 24),
+                              CustomText('Status Summary',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textBlack),
+                              const SizedBox(height: 12),
+                            ],
+                          );
+                        }
+                        final totalLeads = provider.reportData.fold(0, (sum, item) => sum + (item.leadCount ?? 0));
+                        final report = provider.reportData[index - 1];
+                        final percentage = totalLeads > 0 
+                            ? ((report.leadCount ?? 0) / totalLeads * 100) 
+                            : 0.0;
+                            
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: ReportListItem(
+                            title: report.statusName ?? 'Unknown',
+                            subtitle: '${percentage.toStringAsFixed(1)}%',
+                            description: 'Total Leads: ${report.leadCount ?? 0}',
+                            statusColor: AppColors.primaryBlue,
+                            trailingText: (report.leadCount ?? 0).toString(),
+                          ),
+                        );
+                      },
+                    ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterPanel(
+      BuildContext context, LeadStatusReportProvider provider) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: AppColors.grey, width: 1)),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText('Date Range',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            CommonReportDateFilter(
+              fromDate: provider.fromDate?.toString(),
+              toDate: provider.toDate?.toString(),
+              formattedFromDate: provider.formattedFromDate,
+              formattedToDate: provider.formattedToDate,
+              onTap: () => onClickTopButton(context),
+            ),
+            const SizedBox(height: 24),
+            Row(
               children: [
-                _buildHeader(context, provider),
-                const SizedBox(height: 24),
-                if (provider.isLoading)
-                  const Center(child: CircularProgressIndicator())
-                else
-                  _buildContentBody(context, provider),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      provider.fetchReportData(context);
+                      provider.toggleFilter();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Apply Filters'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                CommonReportResetButton(
+                  onReset: () {
+                    provider.removeStatus();
+                    provider.fetchReportData(context);
+                  },
+                ),
               ],
             ),
-          );
-        },
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
+          const SizedBox(height: 16),
+          Text(
+            'No report data found',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }

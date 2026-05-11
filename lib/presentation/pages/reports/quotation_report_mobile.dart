@@ -9,6 +9,8 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -66,6 +68,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
     final quotationProvider = Provider.of<QuotationReportProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: AppColors.scaffoldColor,
       appBar: CustomAppBar(
         showExcel: true,
         onExcelTap: () {
@@ -93,27 +96,21 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
           );
         },
         leadingWidth: 40,
-        leadingWidget: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 8),
-          child: IconButton(
-            onPressed: () {
-              quotationProvider.setFilter(false);
-              quotationProvider.setFilter(false);
-              searchProvider.stopSearch();
-              context.pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppColors.textGrey4,
-            ),
-            iconSize: 24,
+        leadingWidget: IconButton(
+          onPressed: () {
+            quotationProvider.setFilter(false);
+            searchProvider.stopSearch();
+            context.pop();
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: AppColors.textGrey4,
           ),
+          iconSize: 24,
         ),
         title: 'Quotation Report',
         onSearchTap: () {
           searchProvider.startSearch();
-          quotationProvider.toggleFilter();
         },
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
@@ -126,19 +123,10 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
         onClearTap: () {
           searchController.clear();
           searchProvider.stopSearch();
-          quotationProvider.toggleFilter();
-
-          quotationProvider.setQuotationSearch(
-            '',
-            '',
-            '',
-            '',
-          );
+          quotationProvider.setQuotationSearch('', '', '', '');
           quotationProvider.getQuotationReports(context);
         },
         onSearch: (query) {
-          // reportsProvider.selectDateFilterOption(null);
-          // reportsProvider.removeStatus();
           quotationProvider.setQuotationSearch(
             query,
             quotationProvider.fromDateS,
@@ -149,331 +137,180 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
         },
         searchController: searchController,
       ),
-      body: Container(
-        color: Colors.grey[50],
+      body: Column(
+        children: [
+          if (quotationProvider.isFilter) _buildFilterPanel(context, quotationProvider, provider),
+          Expanded(
+            child: !quotationProvider.hasFetched
+                ? _buildInitialState()
+                : quotationProvider.quotationReports.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: quotationProvider.quotationReports.length,
+                        itemBuilder: (context, index) {
+                          final quotation = quotationProvider.quotationReports[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: ReportListItem(
+                              title: quotation.customerName ?? 'No Name',
+                              subtitle: quotation.productName ?? 'No Product',
+                              description: 'Phone: ${quotation.phoneNumber ?? "-"}',
+                              status: quotation.quotationStatusName ?? 'Pending',
+                              statusColor: getAvatarColor(quotation.quotationStatusName ?? ''),
+                              bottomLeftIcon: Icons.calendar_today_outlined,
+                              bottomLeftText: quotation.entryDate.toString().toFormattedDate(),
+                              bottomRightText: '₹ ${quotation.totalAmount}',
+                            ),
+                          );
+                        },
+                      ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterPanel(BuildContext context, QuotationReportProvider quotationProvider, DropDownProvider provider) {
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: AppColors.grey, width: 1)),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── FILTER PANEL ────────────────────────────────────────────────
-            if (quotationProvider.isFilter)
-              SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    const Text('Status',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black)),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                      children: [
-                        FilterChipWidget(
-                          label: 'All',
-                          isSelected: quotationProvider.selectedStatus == 0 ||
-                              quotationProvider.selectedStatus == null,
-                          onTap: () {
-                            quotationProvider.setStatus(0);
-                            quotationProvider.getQuotationReports(context);
-                          },
-                        ),
-                        FilterChipWidget(
-                          label: 'Pending',
-                          isSelected: quotationProvider.selectedStatus == 1,
-                          onTap: () {
-                            quotationProvider.setStatus(1);
-                            quotationProvider.getQuotationReports(context);
-                          },
-                        ),
-                        FilterChipWidget(
-                          label: 'Approved',
-                          isSelected: quotationProvider.selectedStatus == 2,
-                          onTap: () {
-                            quotationProvider.setStatus(2);
-                            quotationProvider.getQuotationReports(context);
-                          },
-                        ),
-                        FilterChipWidget(
-                          label: 'Rejected',
-                          isSelected: quotationProvider.selectedStatus == 3,
-                          onTap: () {
-                            quotationProvider.setStatus(3);
-                            quotationProvider.getQuotationReports(context);
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    const Text('Date Range',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black)),
-                    const SizedBox(height: 8),
-                    CommonReportDateFilter(
-                      fromDate: quotationProvider.fromDate?.toString(),
-                      toDate: quotationProvider.toDate?.toString(),
-                      formattedFromDate: quotationProvider.formattedFromDate,
-                      formattedToDate: quotationProvider.formattedToDate,
-                      onTap: () => onClickTopButton(context),
-                    ),
-                    const SizedBox(height: 24),
-                    if (quotationProvider.fromDate != null ||
-                        quotationProvider.toDate != null ||
-                        (quotationProvider.selectedStatus != null &&
-                            quotationProvider.selectedStatus != 0) ||
-                        quotationProvider.Search.isNotEmpty)
-                      SizedBox(
-                        width: double.infinity,
-                        child: CommonReportResetButton(
-                          label: 'Reset All Filters',
-                          onReset: () {
-                            quotationProvider.selectDateFilterOption(null);
-                            quotationProvider.removeStatus();
-                            searchController.clear();
-                            quotationProvider.setQuotationSearch(
-                                '', '', '', '');
-                            quotationProvider.getQuotationReports(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppColors.textRed,
-                            elevation: 0,
-                            side: BorderSide(color: AppColors.textRed),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                          ),
-                        ),
-                      ),
-                  ],
+            CustomText('Status',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: [
+                FilterChipWidget(
+                  label: 'All',
+                  isSelected: quotationProvider.selectedStatus == 0 || quotationProvider.selectedStatus == null,
+                  onTap: () => quotationProvider.setStatus(0),
                 ),
-              ),
-
-            // ── LIST ────────────────────────────────────────────────────────
-
-            Expanded(
-              child: !quotationProvider.hasFetched
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.calendar_month_outlined,
-                              size: 80, color: Colors.grey[300]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Select a date range to view reports',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: () => onClickTopButton(context),
-                            icon: const Icon(Icons.date_range),
-                            label: const Text('Choose Date'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : quotationProvider.quotationReports.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.search_off_outlined,
-                                  size: 80, color: Colors.grey[300]),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No reports found for the selected range',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              ListView.separated(
-                                separatorBuilder: (context, index) {
-                                  return Divider(
-                                    height: 2,
-                                    color: AppColors.grey,
-                                  );
-                                },
-                                shrinkWrap: true,
-                                physics: const ClampingScrollPhysics(),
-                                itemCount:
-                                    quotationProvider.quotationReports.length,
-                                itemBuilder: (context, index) {
-                                  var quotation =
-                                      quotationProvider.quotationReports[index];
-
-                                  return InkWell(
-                                    child: Container(
-                                      width: MediaQuery.sizeOf(context).width,
-                                      decoration: BoxDecoration(
-                                          color: AppColors.whiteColor),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 12),
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Container(
-                                                    height: 42,
-                                                    width: 3,
-                                                    decoration: BoxDecoration(
-                                                        color: getAvatarColor(
-                                                            quotation
-                                                                    .quotationStatusName ??
-                                                                ''),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(16))),
-                                                const SizedBox(
-                                                  width: 8,
-                                                ),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        quotation
-                                                                .customerName ??
-                                                            '',
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: AppColors
-                                                              .textBlack,
-                                                        ),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                      Text(
-                                                        quotation.phoneNumber ??
-                                                            '',
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColors
-                                                                    .textGrey3),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Container(
-                                                  height: 22,
-                                                  decoration: BoxDecoration(
-                                                      color: AppColors
-                                                          .scaffoldColor,
-                                                      border: Border.all(
-                                                          color:
-                                                              AppColors.grey),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6)),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                      horizontal: 6,
-                                                    ),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons
-                                                              .calendar_month_outlined,
-                                                          size: 16,
-                                                          color: AppColors
-                                                              .textGrey3,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 4,
-                                                        ),
-                                                        Text(
-                                                          quotation.entryDate
-                                                              .toString()
-                                                              .toFormattedDate(),
-                                                          maxLines: 2,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: GoogleFonts
-                                                              .plusJakartaSans(
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: AppColors
-                                                                      .textGrey3),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 4,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Total amount - ${quotation.totalAmount}',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: AppColors
-                                                              .textBlack),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              )
-                            ],
-                          ),
-                        ),
+                FilterChipWidget(
+                  label: 'Pending',
+                  isSelected: quotationProvider.selectedStatus == 1,
+                  onTap: () => quotationProvider.setStatus(1),
+                ),
+                FilterChipWidget(
+                  label: 'Approved',
+                  isSelected: quotationProvider.selectedStatus == 2,
+                  onTap: () => quotationProvider.setStatus(2),
+                ),
+                FilterChipWidget(
+                  label: 'Rejected',
+                  isSelected: quotationProvider.selectedStatus == 3,
+                  onTap: () => quotationProvider.setStatus(3),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            CustomText('Date Range',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textBlack),
+            const SizedBox(height: 12),
+            CommonReportDateFilter(
+              fromDate: quotationProvider.fromDate?.toString(),
+              toDate: quotationProvider.toDate?.toString(),
+              formattedFromDate: quotationProvider.formattedFromDate,
+              formattedToDate: quotationProvider.formattedToDate,
+              onTap: () => onClickTopButton(context),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      quotationProvider.getQuotationReports(context);
+                      quotationProvider.toggleFilter();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Apply Filters'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                CommonReportResetButton(
+                  onReset: () {
+                    quotationProvider.selectDateFilterOption(null);
+                    quotationProvider.removeStatus();
+                    searchController.clear();
+                    quotationProvider.setQuotationSearch('', '', '', '');
+                    quotationProvider.getQuotationReports(context);
+                  },
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInitialState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.calendar_month_outlined, size: 80, color: Colors.grey[300]),
+          const SizedBox(height: 16),
+          Text(
+            'Select a date range to view reports',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () => onClickTopButton(context),
+            icon: const Icon(Icons.date_range),
+            label: const Text('Choose Date'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryBlue,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
+          const SizedBox(height: 16),
+          Text(
+            'No reports found for the selected range',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
