@@ -12,7 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
-
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class ReceiptReportPage extends StatefulWidget {
@@ -400,114 +400,42 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
               ),
             ),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: provider.receiptReportList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final item = provider.receiptReportList[index];
-                  return _buildMobileCard(item);
-                },
+              child: Column(
+                children: [
+                  CommonReportSummaryBar(
+                    totalLabel: 'Total Receipts',
+                    totalCount: provider.receiptReportList.length,
+                    showingLabel: 'Showing',
+                    showingCount: provider.receiptReportList.length,
+                  ),
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: provider.receiptReportList.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final item = provider.receiptReportList[index];
+                        return ReportListItem(
+                          title: item.customerName,
+                          subtitle: 'Receipt No: ${item.receiptNo}',
+                          status: '₹ ${item.amount.toStringAsFixed(2)}',
+                          statusColor: AppColors.primaryBlue,
+                          description: item.description,
+                          bottomLeftIcon: Icons.calendar_today_outlined,
+                          bottomLeftText: 'Date: ${item.entryDate}',
+                          bottomRightText: 'By: ${item.byUserName}',
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ));
   }
 
-  Widget _buildMobileCard(dynamic item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.customerName,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                ),
-                Text(
-                  '₹ ${item.amount.toStringAsFixed(2)}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryBlue,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Receipt No: ${item.receiptNo}',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textGrey3,
-              ),
-            ),
-            const SizedBox(height: 4),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Entered: ${item.entryDate}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'By: ${item.byUserName}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-              ],
-            ),
-            if (item.description.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Description: ${item.description}',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  color: AppColors.textGrey3,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
 
   void _exportData(ReceiptReportProvider provider) {
     exportToExcel(

@@ -11,6 +11,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class UpcomingPaymentReportPage extends StatefulWidget {
   const UpcomingPaymentReportPage({super.key});
@@ -293,134 +294,65 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
     if (provider.isUpcomingLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (provider.upcomingPaymentReportList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 80),
-            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'No upcoming payment reports found',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CommonReportDateFilter(
+            fromDate: provider.fromDate?.toString(),
+            toDate: provider.toDate?.toString(),
+            formattedFromDate: provider.formattedFromDate,
+            formattedToDate: provider.formattedToDate,
+            onTap: () => onClickTopButton(context),
+          ),
         ),
-      );
-    }
-    return Container(
-        color: Colors.grey[50],
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () => onClickTopButton(context),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.primaryBlue),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        if (provider.upcomingPaymentReportList.isNotEmpty)
+          CommonReportSummaryBar(
+            totalLabel: 'Total Records',
+            totalCount: provider.upcomingPaymentReportList.length,
+            showingLabel: 'Showing',
+            showingCount: provider.upcomingPaymentReportList.length,
+          ),
+        Expanded(
+          child: provider.upcomingPaymentReportList.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (provider.fromDate == null && provider.toDate == null)
-                        const Text('Date: All'),
-                      if (provider.fromDate != null && provider.toDate != null)
-                        Text(
-                          'Date: ${provider.formattedFromDate} - ${provider.formattedToDate}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      Icon(Icons.search_off_outlined,
+                          size: 80, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No upcoming payment reports found',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
                         ),
-                      const Icon(Icons.calendar_today, size: 18),
+                      ),
                     ],
                   ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: provider.upcomingPaymentReportList.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final item = provider.upcomingPaymentReportList[index];
+                    return ReportListItem(
+                      title: item.customerName,
+                      subtitle: 'Scheduled: ${item.scheduleDate}',
+                      status: '₹ ${item.scheduleAmount.toStringAsFixed(2)}',
+                      statusColor: AppColors.primaryBlue,
+                      bottomLeftIcon: Icons.calendar_today_outlined,
+                      bottomLeftText: 'Date: ${item.scheduleDate}',
+                    );
+                  },
                 ),
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: provider.upcomingPaymentReportList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final item = provider.upcomingPaymentReportList[index];
-                  return _buildMobileCard(item);
-                },
-              ),
-            ),
-          ],
-        ));
-  }
-
-  Widget _buildMobileCard(dynamic item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.customerName,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                ),
-                Text(
-                  '₹ ${item.scheduleAmount.toStringAsFixed(2)}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryBlue,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Scheduled: ${item.scheduleDate}',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textGrey3,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
-      ),
+      ],
     );
   }
 

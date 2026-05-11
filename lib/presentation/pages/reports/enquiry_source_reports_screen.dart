@@ -124,6 +124,13 @@ class _EnquirySourceReportsScreenState
       children: [
         if (reportsProvider.isFilter)
           _buildMobileFilterPanel(context, reportsProvider, provider),
+        if (reportsProvider.taskReport.isNotEmpty && !reportsProvider.isFilter)
+          CommonReportSummaryBar(
+            totalLabel: 'Total Enquiries',
+            totalCount: reportsProvider.taskReport.length,
+            showingLabel: 'Showing',
+            showingCount: reportsProvider.taskReport.length,
+          ),
         Expanded(
           child: reportsProvider.taskReport.isEmpty
               ? _buildEmptyState()

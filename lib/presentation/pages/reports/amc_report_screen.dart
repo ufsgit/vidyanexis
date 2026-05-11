@@ -2,6 +2,7 @@ import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button
 
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/utils/status_utils.dart' hide StatusUtils;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
@@ -1000,365 +1002,75 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                         ),
                       ),
                     )
-                  : SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width < 2200
-                            ? 2200
-                            : MediaQuery.of(context).size.width,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  // Table Header
-                                  Container(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF1F4F9),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Row(
-                                      children: [
-                                        TableWidget(
-                                            width: 60,
-                                            title: 'No.',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 250,
-                                            title: 'Customer Name',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 350,
-                                            title: 'Address',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 180,
-                                            title: 'Phone',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 150,
-                                            title: 'Description',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 140,
-                                            title: 'AMC Date',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 140,
-                                            title: 'From Date',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 140,
-                                            title: 'To Date',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 200,
-                                            title: 'Product Name',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 130,
-                                            title: 'Amount',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 150,
-                                            title: 'Category',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 150,
-                                            title: 'Status',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 130,
-                                            title: 'Service',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            width: 180,
-                                            title: 'View Details',
-                                            fontSize: 13,
-                                            color: Color(0xFF607185)),
-                                      ],
-                                    ),
+                  : Column(
+                      children: [
+                        if (!reportsProvider.isFilter &&
+                            reportsProvider.amcReport.isNotEmpty)
+                          CommonReportSummaryBar(
+                            totalLabel: 'Total AMC',
+                            totalCount: reportsProvider.amcReport.length,
+                            showingLabel: 'Showing',
+                            showingCount: reportsProvider.amcReport.length,
+                          ),
+                        Expanded(
+                          child: reportsProvider.amcReport.isEmpty
+                              ? Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.search_off_outlined,
+                                          size: 80, color: Colors.grey[300]),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'No reports found',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 16,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 8),
-                                  // Data Rows
-                                  Expanded(
-                                    child: ListView.builder(
-                                      shrinkWrap: false,
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      itemCount:
-                                          reportsProvider.amcReport.length,
-                                      itemBuilder: (context, index) {
-                                        var task =
-                                            reportsProvider.amcReport[index];
-                                        return GestureDetector(
-                                          onTap: () {},
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: index % 2 == 0
-                                                  ? Colors.white
-                                                  : const Color(0xFFF6F7F9),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: 60,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 16.0),
-                                                    child: Text(
-                                                        (index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        )),
-                                                  ),
-                                                ),
-                                                TableWidget(
-                                                  width: 250,
-                                                  data: InkWell(
-                                                    onTap: () {
-                                                      context.push(
-                                                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFE9EDF1),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50),
-                                                      ),
-                                                      child: Text(
-                                                        task.customerName
-                                                                    .length >
-                                                                30
-                                                            ? '${task.customerName.substring(0, 30)}...'
-                                                            : task.customerName,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                TableWidget(
-                                                    width: 350,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 4),
-                                                    title: task.address1),
-                                                TableWidget(
-                                                    width: 180,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 4),
-                                                    title: task.mobile),
-                                                TableWidget(
-                                                    width: 150,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 4),
-                                                    title: task.description),
-                                                TableWidget(
-                                                    width: 140,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 4),
-                                                    title: task.intervalDate),
-                                                TableWidget(
-                                                    width: 140,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 8),
-                                                    title: (task.fromDate
-                                                            .toString()
-                                                            .isNotEmpty)
-                                                        ? task.fromDate
-                                                            .toString()
-                                                            .toDDMMYYYY()
-                                                        : ''),
-                                                TableWidget(
-                                                    width: 140,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 8),
-                                                    title: (task.toDate
-                                                            .toString()
-                                                            .isNotEmpty)
-                                                        ? task.toDate
-                                                            .toString()
-                                                            .toDDMMYYYY()
-                                                        : ''),
-                                                TableWidget(
-                                                    width: 180,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 8),
-                                                    title: task.productName
-                                                        .toString()),
-                                                TableWidget(
-                                                    width: 130,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 8),
-                                                    title:
-                                                        "₹${double.parse(task.amount).toStringAsFixed(1)}"),
-                                                TableWidget(
-                                                    width: 150,
-                                                    fontSize: 13,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 16,
-                                                        horizontal: 8),
-                                                    title: task.categoryName
-                                                            .isNotEmpty
-                                                        ? task.categoryName
-                                                        : 'AMC'),
-                                                TableWidget(
-                                                  width: 150,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 16,
-                                                      horizontal: 8),
-                                                  data: Container(
-                                                    padding: task.amcStatusName
-                                                            .isNotEmpty
-                                                        ? const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 2)
-                                                        : const EdgeInsets.all(
-                                                            0),
-                                                    decoration: BoxDecoration(
-                                                      color: StatusUtils
-                                                          .getTaskColor(
-                                                              task.amcStatusId),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
-                                                      border: Border.all(
-                                                          color: Colors.black45,
-                                                          width: 0.1),
-                                                    ),
-                                                    child: Text(
-                                                      task.displayStatus,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: TextStyle(
-                                                        color: StatusUtils
-                                                            .getTaskTextColor(
-                                                                task.amcStatusId),
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                TableWidget(
-                                                    width: 130,
-                                                    fontSize: 13,
-                                                    title: task.serviceName
-                                                        .toString()),
-                                                TableWidget(
-                                                  width: 180,
-                                                  data: CustomOutlinedSvgButton(
-                                                    showIcon: false,
-                                                    onPressed: () async {
-                                                      String customerId = task
-                                                          .customerId
-                                                          .toString();
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return PeriodicServiceDetailsPage(
-                                                              amcReportModeld:
-                                                                  task,
-                                                              customerId:
-                                                                  customerId
-                                                                      .toString(),
-                                                              showEdit: false);
-                                                        },
-                                                      );
-                                                    },
-                                                    svgPath:
-                                                        'assets/images/Print.svg',
-                                                    label: 'View Details',
-                                                    breakpoint: 860,
-                                                    foregroundColor:
-                                                        AppColors.primaryBlue,
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    borderSide: BorderSide(
-                                                        color: AppColors
-                                                            .primaryBlue),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                )
+                              : ListView.separated(
+                                  padding: const EdgeInsets.all(16),
+                                  itemCount: reportsProvider.amcReport.length,
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 12),
+                                  itemBuilder: (context, index) {
+                                    final task =
+                                        reportsProvider.amcReport[index];
+                                    return ReportListItem(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              PeriodicServiceDetailsPage(
+                                            customerId:
+                                                task.customerId.toString(),
+                                            amcReportModeld: task,
+                                            showEdit: false,
                                           ),
                                         );
                                       },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                      title: task.customerName,
+                                      subtitle: task.mobile,
+                                      description:
+                                          '${task.productName} - ${task.description}',
+                                      status: task.displayStatus,
+                                      statusColor: StatusUtils.getTaskColor(
+                                          task.amcStatusId),
+                                      bottomLeftIcon:
+                                          Icons.calendar_today_outlined,
+                                      bottomLeftText: task.intervalDate,
+                                      bottomRightText: task.serviceName,
+                                    );
+                                  },
+                                ),
                         ),
-                      ),
+                      ],
                     ),
+
             ),
           ],
         ),

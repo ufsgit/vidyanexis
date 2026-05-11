@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class CommissionReportMobile extends StatefulWidget {
   const CommissionReportMobile({super.key});
@@ -223,7 +224,7 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                         const SizedBox(height: 16),
                         Text(
                           'No commission reports found',
-                          style: TextStyle(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w500,
@@ -234,102 +235,30 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                   )
                 : Column(
                     children: [
+                      if (!provider.isFilter)
+                        CommonReportSummaryBar(
+                          totalLabel: 'Total Records',
+                          totalCount: provider.commissionReport.length,
+                          showingLabel: 'Showing',
+                          showingCount: provider.commissionReport.length,
+                        ),
                       Expanded(
-                        child: ListView.builder(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.all(16),
                           itemCount: provider.commissionReport.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final item = provider.commissionReport[index];
-                            return Card(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                side: BorderSide(color: Colors.grey[200]!),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            item.customerName,
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          item.entryDate,
-                                          style: TextStyle(
-                                              color: Colors.grey[500],
-                                              fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      item.contactNumber,
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 12),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Source: ${item.enquirySourceName}',
-                                      style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 12),
-                                    ),
-                                    const Divider(height: 20),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Project Cost',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text('₹${item.totalProjectCost}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13)),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text('Commission',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text('₹${item.commission}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.green,
-                                                      fontSize: 13)),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            return ReportListItem(
+                              title: item.customerName,
+                              subtitle: item.contactNumber,
+                              description: 'Source: ${item.enquirySourceName}',
+                              status: item.statusName,
+                              statusColor: Colors.green,
+                              bottomLeftIcon: Icons.calendar_today_outlined,
+                              bottomLeftText: item.entryDate,
+                              bottomRightText: '₹${item.commission}',
                             );
                           },
                         ),

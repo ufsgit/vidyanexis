@@ -73,6 +73,7 @@ class CommonReportResetButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onReset,
       style: style ??
+          style ??
           ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             foregroundColor: AppColors.textRed,
@@ -89,6 +90,49 @@ class CommonReportResetButton extends StatelessWidget {
       child: Text(
         label,
         style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
+class CommonReportSummaryBar extends StatelessWidget {
+  final String totalLabel;
+  final int totalCount;
+  final String showingLabel;
+  final int showingCount;
+
+  const CommonReportSummaryBar({
+    super.key,
+    required this.totalLabel,
+    required this.totalCount,
+    required this.showingLabel,
+    required this.showingCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '$totalLabel: $totalCount',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          Text(
+            '$showingLabel: $showingCount',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
       ),
     );
   }

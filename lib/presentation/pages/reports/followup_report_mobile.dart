@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class FollowupReportMobile extends StatefulWidget {
@@ -264,213 +265,60 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                           ],
                         ),
                       )
-                    : SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            ListView.separated(
-                              separatorBuilder: (context, index) =>
-                                  Divider(height: 2, color: AppColors.grey),
-                              shrinkWrap: true,
-                              physics: const ClampingScrollPhysics(),
-                              itemCount: followUpReportsProvider
+                    : Column(
+                        children: [
+                          if (!followUpReportsProvider.isFilter &&
+                              followUpReportsProvider
+                                  .pendingFolloWuP.isNotEmpty)
+                            CommonReportSummaryBar(
+                              totalLabel: 'Total Followups',
+                              totalCount: followUpReportsProvider
                                   .pendingFolloWuP.length,
-                              itemBuilder: (context, index) {
-                                var followup = followUpReportsProvider
-                                    .pendingFolloWuP[index];
-                                return InkWell(
-                                  child: Container(
-                                    width: MediaQuery.sizeOf(context).width,
-                                    decoration: BoxDecoration(
-                                        color: AppColors.whiteColor),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 6),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Container(
-                                                  height: 36,
-                                                  width: 3,
-                                                  decoration: BoxDecoration(
-                                                      color: getAvatarColor(
-                                                          followup.statusName ??
-                                                              ''),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              16))),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                CustomerDetailPageMobile(
-                                                              customerId: followup
-                                                                      .customerId ??
-                                                                  0,
-                                                              fromLead: false,
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Text(
-                                                        '${followup.customerName ?? ''} >',
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColors
-                                                              .bluebutton,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .underline,
-                                                          decorationColor:
-                                                              AppColors
-                                                                  .bluebutton,
-                                                        ),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      followup.phoneNumber ??
-                                                          '',
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color: AppColors
-                                                                  .textBlack),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Container(
-                                                  height: 22,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              30),
-                                                      color: getAvatarColor(
-                                                              followup.statusName ??
-                                                                  '')
-                                                          .withOpacity(.15)),
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 2),
-                                                      child: Text(
-                                                        followup.statusName ??
-                                                            '',
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: getAvatarColor(
-                                                              followup.statusName ??
-                                                                  ''),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              followup.remark ?? '',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color:
-                                                          AppColors.textBlack),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                height: 22,
-                                                decoration: BoxDecoration(
-                                                    color:
-                                                        AppColors.scaffoldColor,
-                                                    border: Border.all(
-                                                        color: AppColors.grey),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6)),
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 6),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                          Icons
-                                                              .calendar_month_outlined,
-                                                          size: 16,
-                                                          color: AppColors
-                                                              .textGrey3),
-                                                      const SizedBox(width: 4),
-                                                      Text(
-                                                        followup
-                                                            .nextFollowUpDate
-                                                            .toString()
-                                                            .toFormattedDate(),
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColors
-                                                                    .textGrey3),
-                                                      ),
-                                                      const SizedBox(width: 4),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                '${followup.toUserName}',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: AppColors
-                                                            .textGrey3),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                              showingLabel: 'Showing',
+                              showingCount: followUpReportsProvider
+                                  .pendingFolloWuP.length,
+                            ),
+                          ListView.separated(
+                            separatorBuilder: (context, index) => const SizedBox(
+                              height: 12,
+                            ),
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(16),
+                            physics: const ClampingScrollPhysics(),
+                            itemCount: followUpReportsProvider
+                                .pendingFolloWuP.length,
+                            itemBuilder: (context, index) {
+                              var followup = followUpReportsProvider
+                                  .pendingFolloWuP[index];
+                              return ReportListItem(
+                                onTap: () {},
+                                onSubtitleTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CustomerDetailPageMobile(
+                                        customerId: followup.customerId ?? 0,
+                                        fromLead: false,
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                                  );
+                                },
+                                title: followup.customerName ?? '',
+                                subtitle: '${followup.phoneNumber ?? ''} >',
+                                status: followup.statusName ?? '',
+                                statusColor: getAvatarColor(
+                                    followup.statusName ?? ''),
+                                description: followup.remark ?? '',
+                                bottomLeftIcon: Icons.calendar_today_outlined,
+                                bottomLeftText: followup.nextFollowUpDate
+                                    .toString()
+                                    .toFormattedDate(),
+                                bottomRightText: followup.toUserName ?? '',
+                              );
+                            },
+                          ),
+                        ],
                       ),
               ),
           ],

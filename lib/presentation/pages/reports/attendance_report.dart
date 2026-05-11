@@ -71,9 +71,16 @@ class _AttendanceReportState extends State<AttendanceReport> {
       ),
       body: Column(
         children: [
-          if (reportsProvider.isFilter)
-            _buildFilterPanel(context, reportsProvider, provider),
-          Expanded(
+        if (reportsProvider.isFilter)
+          _buildFilterPanel(context, reportsProvider, provider),
+        if (reportsProvider.taskReport.isNotEmpty && !reportsProvider.isFilter)
+          CommonReportSummaryBar(
+            totalLabel: 'Total Records',
+            totalCount: reportsProvider.taskReport.length,
+            showingLabel: 'Showing',
+            showingCount: reportsProvider.taskReport.length,
+          ),
+        Expanded(
             child: reportsProvider.taskReport.isEmpty
                 ? _buildEmptyState()
                 : ListView.builder(

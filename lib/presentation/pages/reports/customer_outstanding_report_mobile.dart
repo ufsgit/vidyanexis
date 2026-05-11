@@ -7,6 +7,7 @@ import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
@@ -177,137 +178,51 @@ class _CustomerOutstandingReportMobileState
 
           Expanded(
             child: provider.reportData.isEmpty
-                ? const Center(child: Text('No data found'))
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 80),
+                        Icon(Icons.search_off_outlined,
+                            size: 80, color: Colors.grey[300]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No records found',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 : Column(
                     children: [
+                      if (!provider.isFilter)
+                        CommonReportSummaryBar(
+                          totalLabel: 'Total Records',
+                          totalCount: provider.reportData.length,
+                          showingLabel: 'Showing',
+                          showingCount: provider.reportData.length,
+                        ),
                       Expanded(
-                        child: ListView.builder(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.all(16),
                           itemCount: provider.reportData.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final item = provider.reportData[index];
-                            return Card(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                side: BorderSide(color: Colors.grey[200]!),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            item.customerName,
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
-                                        const Icon(Icons.chevron_right,
-                                            size: 16, color: Colors.grey),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          item.phone,
-                                          style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontSize: 12),
-                                        ),
-                                        if (item.enquirySource.isNotEmpty)
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.primaryBlue
-                                                  .withOpacity(0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                            child: Text(
-                                              item.enquirySource,
-                                              style: TextStyle(
-                                                color: AppColors.primaryBlue,
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                    const Divider(height: 20),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('Project Cost',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text('₹${item.projectCost}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 13)),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Text('Received',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text('₹${item.received}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.green,
-                                                      fontSize: 13)),
-                                            ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text('Balance',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[500],
-                                                      fontSize: 10)),
-                                              Text('₹${item.balance}',
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.red,
-                                                      fontSize: 13)),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            return ReportListItem(
+                              title: item.customerName,
+                              subtitle: item.phone,
+                              status: item.enquirySource,
+                              statusColor: AppColors.primaryBlue,
+                              description:
+                                  'Cost: ₹${item.projectCost} | Recv: ₹${item.received}',
+                              bottomRightText: 'Bal: ₹${item.balance}',
+                              onTap: () {},
                             );
                           },
                         ),
@@ -324,52 +239,48 @@ class _CustomerOutstandingReportMobileState
                             ),
                           ],
                         ),
-                        child: Column(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text('Total Cost',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey)),
-                                    Text('₹${provider.totalProjectCost}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14)),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text('Total Received',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey)),
-                                    Text('₹${provider.totalReceived}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.green)),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text('Total Balance',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey)),
-                                    Text('₹${provider.totalBalance}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.red)),
-                                  ],
-                                ),
+                                const Text('Total Cost',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey)),
+                                Text('₹${provider.totalProjectCost}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14)),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('Total Received',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey)),
+                                Text('₹${provider.totalReceived}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.green)),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('Total Balance',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey)),
+                                Text('₹${provider.totalBalance}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.red)),
                               ],
                             ),
                           ],

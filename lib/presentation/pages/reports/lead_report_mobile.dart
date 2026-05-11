@@ -465,167 +465,202 @@ class _leadReportMobile extends State<LeadReportMobile> {
               ),
             if (!leadReportProvider.isFilter)
               Expanded(
-                child: leadReportProvider.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : leadReportProvider.leadReportData.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const SizedBox(height: 100),
-                                Icon(Icons.search_off_outlined,
-                                    size: 80, color: Colors.grey[300]),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No lead reports found',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 24),
-                                if (leadReportProvider.fromDate != null ||
-                                    leadReportProvider.toDate != null ||
-                                    (leadReportProvider.selectedStatus !=
-                                            null &&
-                                        leadReportProvider.selectedStatus !=
-                                            0) ||
-                                    (leadReportProvider.selectedUser != null &&
-                                        leadReportProvider.selectedUser != 0) ||
-                                    (leadReportProvider.selectedEnquiryFor !=
-                                            null &&
-                                        leadReportProvider.selectedEnquiryFor !=
-                                            0) ||
-                                    (leadReportProvider.selectedEnquirySource !=
-                                            null &&
-                                        leadReportProvider
-                                                .selectedEnquirySource !=
-                                            0))
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      leadReportProvider
-                                          .selectDateFilterOption(null);
-                                      leadReportProvider.removeStatus();
-                                      leadReportProvider.getSearchLeadReports(
-                                          '', '', '', '', context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.white,
-                                      foregroundColor: AppColors.primaryBlue,
-                                      elevation: 0,
-                                      side: BorderSide(
-                                          color: AppColors.primaryBlue),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24,
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                    ),
-                                    child: const Text('Clear All Filters'),
-                                  ),
-                              ],
-                            ),
-                          )
-                        : SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  child: Row(
+                child: Column(
+                  children: [
+                    if (leadReportProvider.leadReportData.isNotEmpty)
+                      CommonReportSummaryBar(
+                        totalLabel: 'Total Leads',
+                        totalCount: leadReportProvider.totalSize,
+                        showingLabel: 'Showing',
+                        showingCount: leadReportProvider.leadReportData.length,
+                      ),
+                    Expanded(
+                      child: leadReportProvider.isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : leadReportProvider.leadReportData.isEmpty
+                              ? Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Checkbox(
-                                        value: leadReportProvider
-                                            .areAllLeadsSelected,
-                                        onChanged: (value) {
-                                          leadReportProvider
-                                              .toggleAllLeadsSelection(
-                                                  value ?? false);
+                                      const SizedBox(height: 100),
+                                      Icon(Icons.search_off_outlined,
+                                          size: 80, color: Colors.grey[300]),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'No lead reports found',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 24),
+                                      if (leadReportProvider.fromDate != null ||
+                                          leadReportProvider.toDate != null ||
+                                          (leadReportProvider.selectedStatus !=
+                                                  null &&
+                                              leadReportProvider
+                                                      .selectedStatus !=
+                                                  0) ||
+                                          (leadReportProvider.selectedUser !=
+                                                  null &&
+                                              leadReportProvider
+                                                      .selectedUser !=
+                                                  0) ||
+                                          (leadReportProvider
+                                                      .selectedEnquiryFor !=
+                                                  null &&
+                                              leadReportProvider
+                                                      .selectedEnquiryFor !=
+                                                  0) ||
+                                          (leadReportProvider
+                                                      .selectedEnquirySource !=
+                                                  null &&
+                                              leadReportProvider
+                                                      .selectedEnquirySource !=
+                                                  0))
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            leadReportProvider
+                                                .selectDateFilterOption(null);
+                                            leadReportProvider.removeStatus();
+                                            leadReportProvider
+                                                .getSearchLeadReports(
+                                                    '', '', '', '', context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            foregroundColor:
+                                                AppColors.primaryBlue,
+                                            elevation: 0,
+                                            side: BorderSide(
+                                                color: AppColors.primaryBlue),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                          ),
+                                          child:
+                                              const Text('Clear All Filters'),
+                                        ),
+                                    ],
+                                  ),
+                                )
+                              : SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
+                                        child: Row(
+                                          children: [
+                                            Checkbox(
+                                              value: leadReportProvider
+                                                  .areAllLeadsSelected,
+                                              onChanged: (value) {
+                                                leadReportProvider
+                                                    .toggleAllLeadsSelection(
+                                                        value ?? false);
+                                              },
+                                              activeColor:
+                                                  AppColors.primaryBlue,
+                                            ),
+                                            const CustomText(
+                                              'Select All Leads',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            const Spacer(),
+                                            CustomText(
+                                              '${leadReportProvider.selectedLeadIds.length} Selected',
+                                              fontSize: 14,
+                                              color: AppColors.primaryBlue,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      ListView.separated(
+                                        separatorBuilder: (context, index) =>
+                                            Divider(
+                                                height: 1,
+                                                color: AppColors.grey
+                                                    .withOpacity(0.5)),
+                                        shrinkWrap: true,
+                                        physics: const ClampingScrollPhysics(),
+                                        itemCount: leadReportProvider
+                                            .leadReportData.length,
+                                        itemBuilder: (context, index) {
+                                          var item = leadReportProvider
+                                              .leadReportData[index];
+
+                                          return Row(
+                                            children: [
+                                              const SizedBox(width: 8),
+                                              Checkbox(
+                                                value: leadReportProvider
+                                                    .isLeadSelected(
+                                                        item.customerId),
+                                                onChanged: (value) {
+                                                  leadReportProvider
+                                                      .toggleLeadSelection(
+                                                          item.customerId);
+                                                },
+                                                activeColor:
+                                                    AppColors.primaryBlue,
+                                              ),
+                                              Expanded(
+                                                child: ReportListItem(
+                                                  title: item.customerName,
+                                                  subtitle: item.contactNumber,
+                                                  onSubtitleTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            CustomerDetailPageMobile(
+                                                          customerId:
+                                                              item.customerId,
+                                                          fromLead: false,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  status: item.statusName,
+                                                  statusColor: getAvatarColor(
+                                                      item.statusName),
+                                                  description: item
+                                                          .remark.isEmpty
+                                                      ? 'No remark provided'
+                                                      : item.remark,
+                                                  bottomLeftIcon:
+                                                      Icons.person_outline,
+                                                  bottomLeftText:
+                                                      item.toUserName,
+                                                  bottomRightText: item
+                                                          .nextFollowUpDate
+                                                          .isNotEmpty
+                                                      ? DateFormat(
+                                                              'dd MMM yyyy')
+                                                          .format(DateTime.parse(
+                                                              item.nextFollowUpDate))
+                                                      : '',
+                                                ),
+                                              ),
+                                            ],
+                                          );
                                         },
-                                        activeColor: AppColors.primaryBlue,
-                                      ),
-                                      const CustomText(
-                                        'Select All Leads',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      const Spacer(),
-                                      CustomText(
-                                        '${leadReportProvider.selectedLeadIds.length} Selected',
-                                        fontSize: 14,
-                                        color: AppColors.primaryBlue,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),
-                                ListView.separated(
-                                  separatorBuilder: (context, index) =>
-                                      Divider(height: 2, color: AppColors.grey),
-                                  shrinkWrap: true,
-                                  physics: const ClampingScrollPhysics(),
-                                  itemCount:
-                                      leadReportProvider.leadReportData.length,
-                                  itemBuilder: (context, index) {
-                                    var item = leadReportProvider
-                                        .leadReportData[index];
-
-                                    return Row(
-                                      children: [
-                                        const SizedBox(width: 8),
-                                        Checkbox(
-                                          value: leadReportProvider
-                                              .isLeadSelected(item.customerId),
-                                          onChanged: (value) {
-                                            leadReportProvider
-                                                .toggleLeadSelection(
-                                                    item.customerId);
-                                          },
-                                          activeColor: AppColors.primaryBlue,
-                                        ),
-                                        Expanded(
-                                          child: ReportListItem(
-                                            title: item.customerName,
-                                            subtitle: item.contactNumber,
-                                            onSubtitleTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      CustomerDetailPageMobile(
-                                                    customerId: item.customerId,
-                                                    fromLead: false,
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            status: item.statusName,
-                                            statusColor:
-                                                getAvatarColor(item.statusName),
-                                            description: item.remark.isEmpty
-                                                ? 'No remark provided'
-                                                : item.remark,
-                                            bottomLeftIcon:
-                                                Icons.person_outline,
-                                            bottomLeftText: item.toUserName,
-                                            bottomRightText: item
-                                                    .nextFollowUpDate.isNotEmpty
-                                                ? DateFormat('dd MMM yyyy')
-                                                    .format(DateTime.parse(
-                                                        item.nextFollowUpDate))
-                                                : '',
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
-                          ),
+                    ),
+                  ],
+                ),
               ),
           ],
         ),

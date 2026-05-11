@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class BalanceReportPage extends StatefulWidget {
   const BalanceReportPage({super.key});
@@ -430,156 +431,42 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                       ],
                     ),
                   )
-                : ListView.separated(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    itemCount: provider.balanceReportList.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 8),
-                    itemBuilder: (context, index) {
-                      final item = provider.balanceReportList[index];
-                      return _buildMobileCard(item);
-                    },
-                  ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildMobileCard(dynamic item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Container(
-              width: 4,
-              decoration: BoxDecoration(
-                color: item.balance > 0
-                    ? AppColors.textRed
-                    : AppColors.primaryBlue,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            item.customerName,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textBlack,
-                            ),
-                          ),
+                : Column(
+                    children: [
+                      CommonReportSummaryBar(
+                        totalLabel: 'Total Records',
+                        totalCount: provider.balanceReportList.length,
+                        showingLabel: 'Showing',
+                        showingCount: provider.balanceReportList.length,
+                      ),
+                      Expanded(
+                        child: ListView.separated(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: provider.balanceReportList.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            final item = provider.balanceReportList[index];
+                            return ReportListItem(
+                              title: item.customerName,
+                              subtitle: item.phone,
+                              status: '₹ ${item.balance.toStringAsFixed(2)}',
+                              statusColor: item.balance > 0
+                                  ? AppColors.textRed
+                                  : AppColors.primaryBlue,
+                              description: item.address,
+                              bottomLeftIcon: Icons.payments_outlined,
+                              bottomLeftText:
+                                  'Sch: ₹${item.totalPaymentSchedule.toStringAsFixed(0)}',
+                              bottomRightText:
+                                  'Rec: ₹${item.totalReceipt.toStringAsFixed(0)}',
+                            );
+                          },
                         ),
-                        Text(
-                          '₹ ${item.balance.toStringAsFixed(2)}',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: item.balance > 0
-                                ? AppColors.textRed
-                                : AppColors.primaryBlue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.phone_outlined,
-                            size: 14, color: AppColors.textGrey3),
-                        const SizedBox(width: 4),
-                        Text(
-                          item.phone,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            color: AppColors.textGrey3,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (item.address.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.location_on_outlined,
-                              size: 14, color: AppColors.textGrey3),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              item.address,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13,
-                                color: AppColors.textGrey3,
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ],
-                    const Divider(height: 8),
-                    Row(
-                      children: [
-                        _buildMobileStat('Schedule', item.totalPaymentSchedule),
-                        const SizedBox(width: 24),
-                        _buildMobileStat('Receipt', item.totalReceipt),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMobileStat(String label, double amount) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 11,
-            color: AppColors.textGrey3,
+                  ),
           ),
-        ),
-        Text(
-          '₹ ${amount.toStringAsFixed(2)}',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack,
-          ),
-        ),
       ],
     );
   }
