@@ -321,7 +321,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         : const Alignment(-100, 0),
                     child: Column(
                       children: [
-                        filterWidget(dashBoardProvider: dashBoardProvider),
+                        filterWidget(
+                            dashBoardProvider: dashBoardProvider,
+                            activeTab: activeTab),
                         const SizedBox(height: 20),
                         DashboardCountTab(
                           dashBoardProvider: dashBoardProvider,
@@ -337,7 +339,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         : const Alignment(-100, 0),
                     child: Column(
                       children: [
-                        filterWidget(dashBoardProvider: dashBoardProvider),
+                        filterWidget(
+                            dashBoardProvider: dashBoardProvider,
+                            activeTab: activeTab),
                         const SizedBox(height: 20),
                         LeadsOverViewTab(
                           dashBoardProvider: dashBoardProvider,
@@ -399,7 +403,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
     );
   }
 
-  void onClickTopButton(BuildContext context) {
+  void onClickTopButton(BuildContext context, int activeTab) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -502,8 +506,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
                           dashBoardProvider.formatDate();
 
-                          dashBoardProvider.getLeadData();
-                          dashBoardProvider.getWorkData();
+                          dashBoardProvider.loadDataForTab(activeTab, context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -526,8 +529,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         onPressed: () {
                           Navigator.pop(context);
                           dashBoardProvider.selectDateFilterOption(null);
-                          dashBoardProvider.getLeadData();
-                          dashBoardProvider.getWorkData();
+                          dashBoardProvider.loadDataForTab(activeTab, context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
@@ -561,7 +563,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
   ];
 
   // Filters (no date): User, Client, Project Type, Expense Type
-  Widget _buildAssignedStaffFilter(DashboardProvider dashBoardProvider) {
+  Widget _buildAssignedStaffFilter(
+      DashboardProvider dashBoardProvider, int activeTab) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
         bool isAdmin = userType == "1" || userType == "0";
@@ -636,7 +639,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     ? (int? newValue) {
                         if (newValue != null) {
                           dashBoardProvider.setUserFilterStatus(newValue);
-                          dashBoardProvider.getLeadData();
+                          dashBoardProvider.loadDataForTab(activeTab, context);
                         }
                       }
                     : null,
@@ -655,7 +658,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
     );
   }
 
-  Widget filterWidget({required DashboardProvider dashBoardProvider}) {
+  Widget filterWidget(
+      {required DashboardProvider dashBoardProvider, required int activeTab}) {
     return Container(
       width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -670,7 +674,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         children: [
           GestureDetector(
             onTap: () {
-              onClickTopButton(context);
+              onClickTopButton(context, activeTab);
             },
             child: Container(
               padding:
@@ -711,7 +715,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
           const SizedBox(
             width: 10,
           ),
-          _buildAssignedStaffFilter(dashBoardProvider),
+          _buildAssignedStaffFilter(dashBoardProvider, activeTab),
           // const Spacer(),
           if (dashBoardProvider.fromDate != null ||
               dashBoardProvider.toDate != null ||
@@ -726,7 +730,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 } else {
                   dashBoardProvider.setUserFilterStatus(0);
                 }
-                dashBoardProvider.getLeadData();
+                dashBoardProvider.loadDataForTab(activeTab, context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,

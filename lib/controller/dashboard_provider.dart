@@ -163,7 +163,6 @@ class DashboardProvider extends ChangeNotifier {
 
   // Fetch dashboard task data
   Future<void> fetchDashBoardTaskData({bool shouldNotify = true}) async {
-    if (isTaskOverviewLoaded) return;
     _isLoading = true;
     _errorMessage = null;
     if (shouldNotify) notifyListeners();
@@ -200,7 +199,6 @@ class DashboardProvider extends ChangeNotifier {
 
   Future<void> getTaskInfoDashBoard(BuildContext context,
       {bool shouldNotify = true, bool isPagination = false}) async {
-    if (isTaskInfoLoaded && !isPagination) return;
     try {
       // isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
@@ -441,7 +439,6 @@ class DashboardProvider extends ChangeNotifier {
       String? filterValue,
       String? keyword,
       bool shouldNotify = true}) async {
-    if (isWorkDashboardCountLoaded && !isFilter) return;
     try {
       if (shouldNotify) notifyListeners();
       selectedDashboardCountValue = filterValue;
@@ -636,7 +633,6 @@ class DashboardProvider extends ChangeNotifier {
 
   /// like: [{"New_Leads": 1, "Missed_Leads": 117, ...}]
   Future<void> getLeadDashboardCount({bool shouldNotify = true}) async {
-    if (isDashboardCountLoaded) return;
     try {
       if (shouldNotify) notifyListeners();
 
@@ -678,7 +674,6 @@ class DashboardProvider extends ChangeNotifier {
 
   Future<void> getLeadData(
       {String? filterValue, bool shouldNotify = true}) async {
-    if (isLeadLoaded && filterValue == null) return;
     try {
       if (filterValue != null) {
         setCommonDateFilter(filterValue);
@@ -690,8 +685,6 @@ class DashboardProvider extends ChangeNotifier {
         getLeadConversionChartData(shouldNotify: false),
         getLeadProgressionReport(shouldNotify: false),
         getLeadEnquiryReport(shouldNotify: false),
-        getLeadDashboardCount(shouldNotify: false),
-        getDashBoardCount(shouldNotify: false),
       ]);
       isLeadLoaded = true;
     } finally {
@@ -701,7 +694,6 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   Future<void> getWorkData({bool shouldNotify = true}) async {
-    if (isWorkLoaded) return;
     try {
       isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();

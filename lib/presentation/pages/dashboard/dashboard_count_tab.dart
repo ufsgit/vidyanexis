@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:vidyanexis/controller/dashboard_provider.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/lead_data_page.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/lead_data_page.dart';
 
 class DashboardCountTab extends StatelessWidget {
   final DashboardProvider dashBoardProvider;
@@ -11,35 +12,6 @@ class DashboardCountTab extends StatelessWidget {
     super.key,
     required this.dashBoardProvider,
   });
-
-  Color _colorForTitle(String title) {
-    final t = title.toLowerCase();
-    if (t.contains('new_leads')) return const Color(0xFF007AFF); // Blue
-    if (t.contains('followup')) return const Color(0xFFFF9500); // Orange
-    if (t.contains('closed')) return const Color(0xFF34C759); // Green
-    if (t.contains('called')) return const Color(0xFF5856D6); // Indigo
-    if (t.contains('transferred')) return const Color(0xFF8E8E93); // Grey
-    if (t.contains('missed')) return const Color(0xFFFF3B30); // Red
-    if (t.contains('interested')) return const Color(0xFF3A3A3C); // Dark Grey
-    if (t.contains('fresh_leads')) return const Color(0xFF5AC8FA); // Cyan
-    if (t.contains('total_leads')) return const Color(0xFF5856D6); // Indigo
-    if (t.contains('upcoming_followup')) return const Color(0xFFA2845E); // Brownish/Gold
-    return Colors.grey.shade300;
-  }
-
-  IconData _iconForTitle(String title) {
-    final t = title.toLowerCase();
-    if (t.contains('total_leads')) return Icons.all_inbox_rounded;
-    if (t.contains('fresh_leads')) return Icons.new_releases_rounded;
-    if (t.contains('upcoming_followup')) return Icons.event_note_rounded;
-    if (t.contains('new_leads')) return Icons.star_rounded;
-    if (t.contains('missed_leads')) return Icons.call_missed_rounded;
-    if (t.contains('followup_leads')) return Icons.history_rounded;
-    if (t.contains('not_interested')) return Icons.thumb_down_rounded;
-    if (t.contains('transferred_leads')) return Icons.move_to_inbox_rounded;
-    if (t.contains('closed_leads')) return Icons.check_circle_rounded;
-    return Icons.dashboard_rounded;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +52,7 @@ class DashboardCountTab extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       child: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = 2; // Default to 2 for mobile
@@ -90,12 +62,12 @@ class DashboardCountTab extends StatelessWidget {
             crossAxisCount = 3;
           }
 
-          final double spacing = 16.0;
+          final double spacing = 12.0;
           final double availableWidth =
               constraints.maxWidth - (spacing * (crossAxisCount - 1));
           final double itemWidth = availableWidth / crossAxisCount;
-          // Target height to prevent overflow while keeping the design clean
-          final double itemHeight = 100.0;
+          // Target height to match the premium design (taller than before)
+          final double itemHeight = 120.0;
           final double aspectRatio = itemWidth / itemHeight;
 
           return GridView.builder(
@@ -112,13 +84,12 @@ class DashboardCountTab extends StatelessWidget {
               final item = items[index];
               final String keyword = item.key;
               final int count = item.value;
-              final color = _colorForTitle(keyword);
+              final theme = _getCardTheme(index);
 
               return _DashboardCard(
                 keyword: keyword,
                 count: count,
-                color: color,
-                icon: _iconForTitle(keyword),
+                theme: theme,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -140,6 +111,18 @@ class DashboardCountTab extends StatelessWidget {
     );
   }
 
+  _CardTheme _getCardTheme(int index) {
+    final themes = [
+      _CardTheme(const Color(0xFFE9EAFB), const Color(0xFF7B61FF)), // Purple
+      _CardTheme(const Color(0xFFFFF1E8), const Color(0xFFFF9D6E)), // Orange
+      _CardTheme(const Color(0xFFE6F5FF), const Color(0xFF63B3ED)), // Blue
+      _CardTheme(const Color(0xFFEDF7ED), const Color(0xFF48BB78)), // Green
+      _CardTheme(const Color(0xFFFCE4EC), const Color(0xFFF06292)), // Rose
+      _CardTheme(const Color(0xFFFFF9C4), const Color(0xFFFBC02D)), // Amber
+    ];
+    return themes[index % themes.length];
+  }
+
   Widget _buildSkeleton(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -155,47 +138,46 @@ class DashboardCountTab extends StatelessWidget {
           crossAxisCount: 2,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 1.5,
+          childAspectRatio: 1.4,
         ),
         itemBuilder: (context, index) {
           return Container(
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(16),
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(24),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Container(
-                        height: 24,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ],
+                  Container(
+                    height: 30,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
-                  const Spacer(),
+                  const SizedBox(height: 8),
                   Container(
                     height: 12,
-                    width: 80,
+                    width: 60,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const Spacer(),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Container(
+                      height: 20,
+                      width: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                   ),
                 ],
@@ -208,18 +190,22 @@ class DashboardCountTab extends StatelessWidget {
   }
 }
 
+class _CardTheme {
+  final Color background;
+  final Color accent;
+  _CardTheme(this.background, this.accent);
+}
+
 class _DashboardCard extends StatefulWidget {
   final String keyword;
   final int count;
-  final Color color;
-  final IconData icon;
+  final _CardTheme theme;
   final VoidCallback onTap;
 
   const _DashboardCard({
     required this.keyword,
     required this.count,
-    required this.color,
-    required this.icon,
+    required this.theme,
     required this.onTap,
   });
 
@@ -238,11 +224,6 @@ class _DashboardCardState extends State<_DashboardCard> {
         .map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w)
         .join(' ');
 
-    // Text color: White for maximum visibility
-    final Color textColor = Colors.white;
-    final Color iconBackgroundColor = Colors.white.withValues(alpha: 0.25);
-    final Color hoverColor = Color.lerp(widget.color, Colors.black, 0.15)!;
-
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -250,84 +231,77 @@ class _DashboardCardState extends State<_DashboardCard> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedScale(
-          scale: _isHovered ? 1.02 : 1.0,
+          scale: _isHovered ? 1.03 : 1.0,
           duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
+          child: Container(
             decoration: BoxDecoration(
-              color: (_isHovered ? hoverColor : widget.color).withValues(alpha: 0.9),
-              borderRadius: BorderRadius.circular(16),
+              color: widget.theme.background,
+              borderRadius: BorderRadius.circular(24),
               boxShadow: _isHovered
                   ? [
                       BoxShadow(
-                        color: widget.color.withValues(alpha: 0.3),
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                        offset: const Offset(0, 6),
+                        color: widget.theme.accent.withOpacity(0.15),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
                       )
                     ]
                   : [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 4,
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 5,
                         offset: const Offset(0, 2),
                       )
                     ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: iconBackgroundColor,
-                        shape: BoxShape.circle,
-                      ),
-                      padding: const EdgeInsets.all(6),
-                      child: Icon(
-                        widget.icon,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      widget.count.toString(),
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black26,
-                            blurRadius: 4,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                // Wave Graphic
+                Positioned(
+                  right: -10,
+                  top: 20,
+                  bottom: 20,
+                  width: 60,
+                  child: CustomPaint(
+                    painter: _WavePainter(color: widget.theme.accent),
+                  ),
                 ),
-                const Spacer(),
-                Text(
-                  displayTitle,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold, // Increased from w600
-                    color: textColor,
-                    shadows: const [
-                      Shadow(
-                        color: Colors.black26,
-                        blurRadius: 2,
-                        offset: Offset(0, 1),
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.count.toString(),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black.withOpacity(0.8),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        displayTitle,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const Spacer(),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          color: Colors.black.withOpacity(0.3),
+                          size: 24,
+                        ),
                       ),
                     ],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -336,4 +310,68 @@ class _DashboardCardState extends State<_DashboardCard> {
       ),
     );
   }
+}
+
+class _WavePainter extends CustomPainter {
+  final Color color;
+  _WavePainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withOpacity(0.4)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..strokeCap = StrokeCap.round;
+
+    final path = Path();
+    double midY = size.height / 2;
+    double amplitude = 15;
+    double frequency = 0.1;
+
+    path.moveTo(0, midY);
+    for (double x = 0; x <= size.width; x++) {
+      double y = midY +
+          amplitude *
+              1.5 *
+              (0.5 * (1 + (x / size.width))) *
+              (x / size.width % 0.5 == 0 ? 1 : 0.8);
+      // Let's draw a more "organic" wave like in the image
+      y = midY +
+          amplitude *
+              ((x < size.width * 0.2)
+                  ? (x / (size.width * 0.2))
+                  : (x < size.width * 0.5)
+                      ? (1 - (x - size.width * 0.2) / (size.width * 0.3))
+                      : (x < size.width * 0.8)
+                          ? (-(x - size.width * 0.5) / (size.width * 0.3))
+                          : (-1 + (x - size.width * 0.8) / (size.width * 0.2)));
+      // Wait, simple sine is better
+    }
+
+    // Drawing a stylized wave line
+    path.reset();
+    path.moveTo(0, midY);
+    path.cubicTo(size.width * 0.25, midY - amplitude, size.width * 0.5,
+        midY + amplitude, size.width * 0.75, midY - amplitude * 0.5);
+    path.quadraticBezierTo(
+        size.width, midY + amplitude * 0.2, size.width, midY);
+
+    canvas.drawPath(path, paint);
+
+    // Draw a second wave for more detail
+    final paint2 = Paint()
+      ..color = color.withOpacity(0.15)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+
+    final path2 = Path();
+    path2.moveTo(0, midY + 5);
+    path2.cubicTo(size.width * 0.3, midY + 5 - amplitude, size.width * 0.6,
+        midY + 5 + amplitude, size.width * 0.9, midY + 5 - amplitude * 0.3);
+    canvas.drawPath(path2, paint2);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
