@@ -8,6 +8,8 @@ class CustomFieldByStatusId {
   List<CheckBoxValues>? checkboxValues;
   dynamic missingMandatoryDocumentCount;
   List<String>? missingMandatoryDocumentNames;
+  int? isQuotationCustom;
+  int? isViewInQuotation;
 
   CustomFieldByStatusId({
     this.isMandatory,
@@ -19,6 +21,8 @@ class CustomFieldByStatusId {
     this.checkboxValues,
     this.missingMandatoryDocumentCount,
     this.missingMandatoryDocumentNames,
+    this.isQuotationCustom,
+    this.isViewInQuotation,
   });
 
   CustomFieldByStatusId copyWith({
@@ -30,6 +34,8 @@ class CustomFieldByStatusId {
     List<CheckBoxValues>? checkboxValues,
     dynamic missingMandatoryDocumentCount,
     List<String>? missingMandatoryDocumentNames,
+    int? isQuotationCustom,
+    int? isViewInQuotation,
   }) =>
       CustomFieldByStatusId(
         isMandatory: isMandatory ?? this.isMandatory,
@@ -42,6 +48,8 @@ class CustomFieldByStatusId {
             missingMandatoryDocumentCount ?? this.missingMandatoryDocumentCount,
         missingMandatoryDocumentNames:
             missingMandatoryDocumentNames ?? this.missingMandatoryDocumentNames,
+        isQuotationCustom: isQuotationCustom ?? this.isQuotationCustom,
+        isViewInQuotation: isViewInQuotation ?? this.isViewInQuotation,
       );
 
   factory CustomFieldByStatusId.fromJson(Map<String, dynamic> json) =>
@@ -51,6 +59,8 @@ class CustomFieldByStatusId {
         customFieldName: json["custom_field_name"],
         datavalue: json["datavalue"] ?? "",
         customFieldTypeId: json["custom_field_type_id"],
+        isQuotationCustom: json["quotation_custom"],
+        isViewInQuotation: json["view_in_quotation"],
         dropdownValues: json["dropdown_values"] == null
             ? []
             : List<DropdownValue>.from(
@@ -71,6 +81,8 @@ class CustomFieldByStatusId {
         "custom_field_id": customFieldId,
         "custom_field_name": customFieldName,
         "custom_field_type_id": customFieldTypeId,
+        "quotation_custom": isQuotationCustom,
+        "view_in_quotation": isViewInQuotation,
         "dropdown_values": dropdownValues == null
             ? []
             : List<dynamic>.from(dropdownValues!.map((x) => x.toJson())),

@@ -3977,8 +3977,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
           endPoint: HttpUrls.loadQuotationFromCustomFields,
           bodyData: {
             "custom_fields":
-                customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
-                    [],
+                (customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
+                        [])
+                    .where((field) {
+              final fieldId = field['custom_field_id'];
+              return _customFieldQuotation.any((element) =>
+                  element.customFieldId == fieldId &&
+                  element.isQuotationCustom == 1);
+            }).toList(),
             "type": type,
             "quotation_type_id": quotationType
           });
