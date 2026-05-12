@@ -34,15 +34,33 @@ class DashboardCountTab extends StatelessWidget {
 
     // Only render the required keys if they exist in the map
     final allowedKeys = [
-      if (settingsProvider.menuIsViewMap[130] == 1) 'Total_Leads',
-      if (settingsProvider.menuIsViewMap[131] == 1) 'Fresh_Leads',
-      if (settingsProvider.menuIsViewMap[132] == 1) 'Upcoming_Followup',
-      if (settingsProvider.menuIsViewMap[124] == 1) 'New_Leads',
-      if (settingsProvider.menuIsViewMap[125] == 1) 'Missed_Leads',
-      if (settingsProvider.menuIsViewMap[126] == 1) 'Followup_Leads',
-      if (settingsProvider.menuIsViewMap[127] == 1) 'Not_Interested',
-      if (settingsProvider.menuIsViewMap[128] == 1) 'Transferred_Leads',
-      if (settingsProvider.menuIsViewMap[129] == 1) 'Closed_Leads',
+      if (settingsProvider.menuIsViewMap[130] == 1 ||
+          settingsProvider.menuIsViewMap[139] == 1)
+        'Total_Leads',
+      if (settingsProvider.menuIsViewMap[131] == 1 ||
+          settingsProvider.menuIsViewMap[140] == 1)
+        'Fresh_Leads',
+      if (settingsProvider.menuIsViewMap[132] == 1 ||
+          settingsProvider.menuIsViewMap[141] == 1)
+        'Upcoming_Followup',
+      if (settingsProvider.menuIsViewMap[124] == 1 ||
+          settingsProvider.menuIsViewMap[133] == 1)
+        'New_Leads',
+      if (settingsProvider.menuIsViewMap[125] == 1 ||
+          settingsProvider.menuIsViewMap[134] == 1)
+        'Missed_Leads',
+      if (settingsProvider.menuIsViewMap[126] == 1 ||
+          settingsProvider.menuIsViewMap[135] == 1)
+        'Followup_Leads',
+      if (settingsProvider.menuIsViewMap[127] == 1 ||
+          settingsProvider.menuIsViewMap[136] == 1)
+        'Not_Interested',
+      if (settingsProvider.menuIsViewMap[128] == 1 ||
+          settingsProvider.menuIsViewMap[137] == 1)
+        'Transferred_Leads',
+      if (settingsProvider.menuIsViewMap[129] == 1 ||
+          settingsProvider.menuIsViewMap[138] == 1)
+        'Closed_Leads',
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))
@@ -91,15 +109,18 @@ class DashboardCountTab extends StatelessWidget {
                 keyword: keyword,
                 count: count,
                 theme: theme,
-                onTap: () {
-                  final sideProvider =
-                      Provider.of<SidebarProvider>(context, listen: false);
-                  sideProvider.setReportPage(LeadDataPage(
-                    source: keyword,
-                    fromDate: dashBoardProvider.formattedFromDate,
-                    toDate: dashBoardProvider.formattedToDate,
-                    user: dashBoardProvider.selectedUser,
-                  ));
+                 onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LeadDataPage(
+                        source: keyword,
+                        fromDate: dashBoardProvider.formattedFromDate,
+                        toDate: dashBoardProvider.formattedToDate,
+                        user: dashBoardProvider.selectedUser,
+                      ),
+                    ),
+                  );
                 },
               );
             },
