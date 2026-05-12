@@ -664,29 +664,29 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             surfaceTintColor: Colors.white,
             title: Row(
               children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.transparent,
-                  child: ClipOval(
-                    child: displayLogo.startsWith('http')
-                        ? Image.network(
-                            displayLogo,
-                            height: 32,
-                            width: 32,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const SizedBox.shrink(),
-                          )
-                        : Image.asset(
-                            displayLogo,
-                            height: 32,
-                            width: 32,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const SizedBox.shrink(),
-                          ),
-                  ),
-                ),
+                // CircleAvatar(
+                //   radius: 16,
+                //   backgroundColor: Colors.transparent,
+                //   child: ClipOval(
+                //     child: displayLogo.startsWith('http')
+                //         ? Image.network(
+                //             displayLogo,
+                //             height: 32,
+                //             width: 32,
+                //             fit: BoxFit.cover,
+                //             errorBuilder: (context, error, stackTrace) =>
+                //                 const SizedBox.shrink(),
+                //           )
+                //         : Image.asset(
+                //             displayLogo,
+                //             height: 32,
+                //             width: 32,
+                //             fit: BoxFit.cover,
+                //             errorBuilder: (context, error, stackTrace) =>
+                //                 const SizedBox.shrink(),
+                //           ),
+                //   ),
+                // ),
                 const SizedBox(width: 8),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
