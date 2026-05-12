@@ -696,6 +696,7 @@ class LeadReportProvider extends ChangeNotifier {
 
   void setStatus(int newStatus) {
     _selectedStatus = newStatus;
+    _status = newStatus.toString();
     print(_selectedStatus.toString());
     notifyListeners(); // Notify listeners about the change
   }
@@ -708,6 +709,7 @@ class LeadReportProvider extends ChangeNotifier {
 
   void setEnquiryForFilter(int newStatus) {
     _selectedEnquiryFor = newStatus;
+    _enquiryForS = newStatus.toString();
     print(_selectedEnquiryFor.toString());
     notifyListeners(); // Notify listeners about the change
   }

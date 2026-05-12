@@ -128,14 +128,14 @@ class _leadReportMobile extends State<LeadReportMobile> {
           leadReportProvider.toggleFilter();
         },
         onClearTap: () {
-          searchController.clear();
+          // searchController.clear();
           searchProvider.stopSearch();
-          leadReportProvider.removeStatus();
-          leadReportProvider.selectDateFilterOption(null);
+          // leadReportProvider.removeStatus();
+          // leadReportProvider.selectDateFilterOption(null);
           if (leadReportProvider.isFilter) {
             leadReportProvider.toggleFilter();
           }
-          leadReportProvider.getSearchLeadReports('', '', '', '', context);
+          // leadReportProvider.getSearchLeadReports('', '', '', '', context);
         },
         onSearch: (query) {
           String query = searchController.text;
@@ -229,6 +229,36 @@ class _leadReportMobile extends State<LeadReportMobile> {
             );
           }
         },
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: leadReportProvider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_filter_fab',
+                  onPressed: () async {
+                    leadReportProvider.getSearchLeadReports(
+                      searchController.text,
+                      leadReportProvider.fromDateS,
+                      leadReportProvider.toDateS,
+                      leadReportProvider.status,
+                      context,
+                    );
+                    searchProvider.stopSearch();
+                    leadReportProvider.setFilter(false);
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
       ),
       body: Container(
         color: Colors.grey[50],
@@ -405,56 +435,60 @@ class _leadReportMobile extends State<LeadReportMobile> {
                           (leadReportProvider.selectedEnquiryFor != null &&
                               leadReportProvider.selectedEnquiryFor != 0) ||
                           (leadReportProvider.selectedEnquirySource != null &&
-                              leadReportProvider.selectedEnquirySource != 0))
+                              leadReportProvider.selectedEnquirySource != 0) ||
+                          searchController.text.isNotEmpty)
                         Column(
                           children: [
+                            // SizedBox(
+                            //   width: double.infinity,
+                            //   child: CustomElevatedButton(
+                            //     buttonText: 'Apply Filters',
+                            //     onPressed: () {
+                            //       leadReportProvider.getSearchLeadReports(
+                            //         searchController.text,
+                            //         leadReportProvider.fromDateS,
+                            //         leadReportProvider.toDateS,
+                            //         leadReportProvider.status,
+                            //         context,
+                            //       );
+                            //       leadReportProvider.toggleFilter();
+                            //     },
+                            //     textColor: AppColors.whiteColor,
+                            //     borderColor: AppColors.primaryBlue,
+                            //     backgroundColor: AppColors.primaryBlue,
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 12),
+                            // if (leadReportProvider.fromDate != null ||
+                            //     leadReportProvider.toDate != null ||
+                            //     (leadReportProvider.selectedStatus != null &&
+                            //         leadReportProvider.selectedStatus != 0) ||
+                            //     (leadReportProvider.selectedUser != null &&
+                            //         leadReportProvider.selectedUser != 0) ||
+                            //     (leadReportProvider.selectedEnquiryFor !=
+                            //             null &&
+                            //         leadReportProvider.selectedEnquiryFor !=
+                            //             0) ||
+                            //     (leadReportProvider.selectedEnquirySource !=
+                            //             null &&
+                            //         leadReportProvider.selectedEnquirySource !=
+                            //             0))
                             SizedBox(
                               width: double.infinity,
-                              child: CustomElevatedButton(
-                                buttonText: 'Apply Filters',
-                                onPressed: () {
+                              child: CommonReportResetButton(
+                                label: 'Reset',
+                                onReset: () {
+                                  leadReportProvider
+                                      .selectDateFilterOption(null);
+                                  leadReportProvider.removeStatus();
+                                  searchController.clear();
                                   leadReportProvider.getSearchLeadReports(
-                                    searchController.text,
-                                    leadReportProvider.fromDateS,
-                                    leadReportProvider.toDateS,
-                                    leadReportProvider.status,
-                                    context,
-                                  );
-                                  leadReportProvider.toggleFilter();
+                                      '', '', '', '', context);
+                                  searchProvider.stopSearch();
+                                  leadReportProvider.setFilter(false);
                                 },
-                                textColor: AppColors.whiteColor,
-                                borderColor: AppColors.primaryBlue,
-                                backgroundColor: AppColors.primaryBlue,
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            if (leadReportProvider.fromDate != null ||
-                                leadReportProvider.toDate != null ||
-                                (leadReportProvider.selectedStatus != null &&
-                                    leadReportProvider.selectedStatus != 0) ||
-                                (leadReportProvider.selectedUser != null &&
-                                    leadReportProvider.selectedUser != 0) ||
-                                (leadReportProvider.selectedEnquiryFor !=
-                                        null &&
-                                    leadReportProvider.selectedEnquiryFor !=
-                                        0) ||
-                                (leadReportProvider.selectedEnquirySource !=
-                                        null &&
-                                    leadReportProvider.selectedEnquirySource !=
-                                        0))
-                              SizedBox(
-                                width: double.infinity,
-                                child: CommonReportResetButton(
-                                  label: 'Reset All Filters',
-                                  onReset: () {
-                                    leadReportProvider
-                                        .selectDateFilterOption(null);
-                                    leadReportProvider.removeStatus();
-                                    leadReportProvider.getSearchLeadReports(
-                                        '', '', '', '', context);
-                                  },
-                                ),
-                              ),
                           ],
                         ),
                       const SizedBox(height: 12),
@@ -504,8 +538,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                   0) ||
                                           (leadReportProvider.selectedUser !=
                                                   null &&
-                                              leadReportProvider
-                                                      .selectedUser !=
+                                              leadReportProvider.selectedUser !=
                                                   0) ||
                                           (leadReportProvider
                                                       .selectedEnquiryFor !=
@@ -633,10 +666,10 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                   status: item.statusName,
                                                   statusColor: getAvatarColor(
                                                       item.statusName),
-                                                  description: item
-                                                          .remark.isEmpty
-                                                      ? 'No remark provided'
-                                                      : item.remark,
+                                                  description:
+                                                      item.remark.isEmpty
+                                                          ? 'No remark provided'
+                                                          : item.remark,
                                                   bottomLeftIcon:
                                                       Icons.person_outline,
                                                   bottomLeftText:
@@ -646,8 +679,9 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                           .isNotEmpty
                                                       ? DateFormat(
                                                               'dd MMM yyyy')
-                                                          .format(DateTime.parse(
-                                                              item.nextFollowUpDate))
+                                                          .format(DateTime
+                                                              .parse(item
+                                                                  .nextFollowUpDate))
                                                       : '',
                                                 ),
                                               ),
