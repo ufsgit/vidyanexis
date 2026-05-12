@@ -411,14 +411,7 @@ class _HomePageState extends State<HomePage> {
               elevation: 0,
               leading: Builder(
                 builder: (context) => IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceGrey,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.menu, color: Colors.black87),
-                  ),
+                  icon: const Icon(Icons.menu, color: Colors.black87),
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),

@@ -232,23 +232,7 @@ class _tasksPageReportState extends State<TaskPage> {
                         onPressed: () => Navigator.pop(context),
                       ),
                     )
-                  : Builder(
-                      builder: (context) {
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: InkWell(
-                            onTap: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            child: Image.asset(
-                              'assets/images/menu.png',
-                              height: 24,
-                              width: 24,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                  : null,
               onExcelTap: () async {
                 await reportsProvider.fetchTasksForExport(context);
               },

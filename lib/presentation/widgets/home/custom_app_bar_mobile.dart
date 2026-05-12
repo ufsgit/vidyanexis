@@ -150,24 +150,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget _defaultLeading(BuildContext context) {
     return Padding(
       padding: widget.leadingPadding!,
-      child: InkWell(
-        onTap: () {
+      child: IconButton(
+        icon: Icon(
+          Icons.menu,
+          size: widget.leadingIconSize,
+          color: widget.iconColor ?? Colors.black87,
+        ),
+        onPressed: () {
           Scaffold.of(context).openDrawer();
         },
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceGrey,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.menu,
-              size: widget.leadingIconSize,
-              color: widget.iconColor,
-            ),
-          ),
-        ),
       ),
     );
   }
