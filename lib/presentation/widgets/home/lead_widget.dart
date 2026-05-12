@@ -193,7 +193,7 @@ class _LeadCardState extends State<LeadCard> {
                                           TextSpan(
                                             text: widget.lead.customerName,
                                             style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 14,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.w600,
                                                 color: AppColors.textBlack),
                                           ),
@@ -228,38 +228,63 @@ class _LeadCardState extends State<LeadCard> {
                                 ],
                               ),
                               const SizedBox(height: 4),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: widget.lead.statusName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.parseColor(
-                                              widget.lead.colorCode)),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.parseColor(
+                                              widget.lead.colorCode)
+                                          .withOpacity(0.12),
+                                      borderRadius: BorderRadius.circular(6),
                                     ),
-                                    TextSpan(
-                                      text:
-                                          ' , Assigned to ${widget.lead.toUserName}',
+                                    child: Text(
+                                      widget.lead.statusName.toUpperCase(),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.parseColor(
+                                            widget.lead.colorCode),
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  if (widget.lead.createdByName.isNotEmpty)
+                                    Text(
+                                      'By ${widget.lead.createdByName}',
                                       style: GoogleFonts.plusJakartaSans(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColors.textBlack),
+                                          color: AppColors.textGrey3),
                                     ),
-                                    if (widget.lead.createdByName.isNotEmpty)
-                                      TextSpan(
-                                        text:
-                                            ' , Created By ${widget.lead.createdByName}',
+                                  if (widget.lead.createdByName.isNotEmpty &&
+                                      widget.lead.toUserName.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: Text('|',
+                                          style: TextStyle(
+                                              color: AppColors.textGrey3,
+                                              fontSize: 12)),
+                                    ),
+                                  if (widget.lead.toUserName.isNotEmpty)
+                                    Flexible(
+                                      child: Text(
+                                        'To ${widget.lead.toUserName}',
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
-                                            color: AppColors.textBlack),
+                                            color: AppColors.textGrey3),
                                       ),
-                                  ],
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
+                                    ),
+                                ],
                               ),
                               if (widget.lead.remark.isNotEmpty) ...[
                                 const SizedBox(height: 2),
@@ -273,15 +298,16 @@ class _LeadCardState extends State<LeadCard> {
                                       color: AppColors.textGrey4),
                                 ),
                               ],
-                              Text(
-                                'Location : ${widget.lead.locationName ?? ''}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.textGrey4),
-                              ),
+                              if (settingsProvider.menuIsViewMap[142] == 1)
+                                Text(
+                                  'Location : ${widget.lead.locationName ?? ''}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textGrey4),
+                                ),
                             ],
                           ),
                         ),

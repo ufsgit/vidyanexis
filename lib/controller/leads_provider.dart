@@ -630,7 +630,13 @@ class LeadsProvider extends ChangeNotifier {
   bool _isScrollInitialized = false;
 
   void scrollListener(BuildContext context) {
-    // Pagination disabled per user request to show all data at once
+    if (scrollController.hasClients &&
+        scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200) {
+      if (!isLoadingMore && hasMoreData) {
+        loadMoreLeads(context);
+      }
+    }
   }
 
   Future<void> loadMoreLeads(BuildContext context) async {
@@ -933,8 +939,7 @@ class LeadsProvider extends ChangeNotifier {
       if (isWebPagination) {
         _leadData.clear();
       }
-      pageSize =
-          AppStyles.isWebScreen(context) ? 20 : 10000; //web 20 and mobile 10000
+      pageSize = 20; // Set pageSize to 20 for both web and mobile as per user request
 
       _startLimit = ((currentPage - 1) * pageSize) + 1;
       _endLimit = currentPage * pageSize;

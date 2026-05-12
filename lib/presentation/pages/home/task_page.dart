@@ -3,6 +3,7 @@ import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
@@ -219,7 +220,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
     return Scaffold(
       backgroundColor:
-          AppStyles.isWebScreen(context) ? null : AppColors.whiteColor,
+          AppStyles.isWebScreen(context) ? null : AppColors.scaffoldColor,
       key: _scaffoldKey,
       appBar: !AppStyles.isWebScreen(context)
           ? CustomAppBar(
@@ -318,7 +319,7 @@ class _tasksPageReportState extends State<TaskPage> {
       body: Container(
         color: AppStyles.isWebScreen(context)
             ? Colors.grey[50]
-            : AppColors.whiteColor,
+            : AppColors.scaffoldColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1105,7 +1106,21 @@ class _tasksPageReportState extends State<TaskPage> {
                       child: Column(
                         children: [
                           if (!AppStyles.isWebScreen(context))
-                            const SizedBox()
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  CustomText(
+                                    'Total Tasks: ${reportsProvider.totalSize}',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.textGrey3,
+                                  ),
+                                ],
+                              ),
+                            )
                           else
                             Container(
                               decoration: BoxDecoration(
@@ -1204,19 +1219,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                               reportsProvider
                                                   .taskReport.length &&
                                           _isLoadingMore) {
-                                        return Container(
-                                          padding: const EdgeInsets.all(16),
-                                          alignment: Alignment.center,
-                                          child: Column(
-                                            children: [
-                                              const CircularProgressIndicator(),
-                                              const SizedBox(height: 8),
-                                              CustomText(
-                                                'Loading more tasks...',
-                                                fontSize: 12,
-                                                color: AppColors.textGrey2,
-                                              ),
-                                            ],
+                                        return const Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
                                           ),
                                         );
                                       }
@@ -1227,7 +1233,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           ((reportsProvider.pageIndex ?? 1) -
                                                       1) *
                                                   (reportsProvider.pageSize ??
-                                                      10) +
+                                                      20) +
                                               index +
                                               1;
 
@@ -1237,7 +1243,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             Divider(
                                               height: 1,
                                               thickness: 1,
-                                              color: const Color(0xFFCDD2D6),
+                                              color: AppColors.grey,
                                             ),
                                             TaskCard(
                                               task: task,

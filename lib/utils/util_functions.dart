@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
 void showToastInDialog(String message, BuildContext context) {
@@ -75,6 +76,41 @@ void showFriendlySnackBar(BuildContext context, String message,
       duration: const Duration(seconds: 3),
     ),
   );
+}
+
+void showErrorSnackBar(BuildContext context, dynamic error) {
+  String message = "An error occurred";
+  String code = "";
+
+  String errorStr = error.toString();
+
+  if (error is String) {
+    message = error;
+  } else if (error is Response) {
+    message = "Server Error";
+    code = " (Code: ${error.statusCode})";
+  }
+
+  // If it's a technical error, try to extract codes
+  if (errorStr.contains('DioException') ||
+      errorStr.contains('SocketException')) {
+    message = "Server Error";
+    if (errorStr.contains('errno =')) {
+      final match = RegExp(r'errno = (\d+)').firstMatch(errorStr);
+      if (match != null) {
+        code = " (Code: ${match.group(1)})";
+      }
+    } else if (errorStr.contains('status code of')) {
+      final match = RegExp(r'status code of (\d+)').firstMatch(errorStr);
+      if (match != null) {
+        code = " (Code: ${match.group(1)})";
+      }
+    } else if (errorStr.contains('connection error')) {
+      code = " (Connection Failed)";
+    }
+  }
+
+  showFriendlySnackBar(context, "$message$code", isError: true);
 }
 
 String formatIndianPhoneNumber(String input) {

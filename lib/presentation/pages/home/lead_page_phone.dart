@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -170,7 +171,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     final searchProvider = Provider.of<SidebarProvider>(context);
 
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.scaffoldColor,
       appBar: widget.fromDashBoard
           ? CustomAppBar(
               leadingWidget: InkWell(
@@ -527,6 +528,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                       child: CustomScrollView(
                         controller: leadProvider.scrollController,
                         slivers: [
+
                           SliverToBoxAdapter(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -564,7 +566,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                     Divider(
                                       height: 1,
                                       thickness: 1,
-                                      color: const Color(0xFFCDD2D6),
+                                      color: AppColors.grey,
                                     ),
                                     LeadCard(
                                       isLead: true,

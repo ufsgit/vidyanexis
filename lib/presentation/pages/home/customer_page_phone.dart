@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
@@ -80,8 +81,9 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
       final searchProvider =
           Provider.of<SidebarProvider>(context, listen: false);
       searchProvider.stopSearch();
-      final customerProvider =
+      _customerProvider =
           Provider.of<CustomerProvider>(context, listen: false);
+      final customerProvider = _customerProvider!;
       customerProvider.setSearchCriteria(
         '',
         '',
@@ -106,6 +108,15 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
   }
 
   @override
+  void dispose() {
+    _debounce?.cancel();
+    _customerProvider?.scrollController.removeListener(() {
+      _customerProvider?.scrollListener(context);
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final customerProvider = Provider.of<CustomerProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
@@ -114,7 +125,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.scaffoldColor,
       appBar: CustomAppBar(
         onSearchTap: () {
           customerProvider.toggleFilter();
@@ -325,9 +336,37 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                       child: CustomScrollView(
                         controller: customerProvider.scrollController,
                         slivers: [
+
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  CustomText(
+                                    'Total Customers: ${customerProvider.totalCount}',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.textGrey3,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                           SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
+                                  if (index == customerProvider.customerData.length) {
+                                   return customerProvider.isLoadingMore
+                                       ? const Padding(
+                                           padding: EdgeInsets.all(16),
+                                           child: Center(
+                                             child: CircularProgressIndicator(),
+                                           ),
+                                         )
+                                       : const SizedBox.shrink();
+                                 }
                                 var customer =
                                     customerProvider.customerData[index];
                                 return Column(
@@ -336,7 +375,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                     Divider(
                                       height: 1,
                                       thickness: 1,
-                                      color: const Color(0xFFCDD2D6),
+                                      color: AppColors.grey,
                                     ),
                                     LeadCard(
                                       isLead: false,
@@ -361,7 +400,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   ],
                                 );
                               },
-                              childCount: customerProvider.customerData.length,
+                              childCount: customerProvider.customerData.length + 1,
                             ),
                           ),
                         ],

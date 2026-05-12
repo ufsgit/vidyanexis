@@ -110,8 +110,8 @@ class CustomerProvider extends ChangeNotifier {
   void scrollListener(BuildContext context) {
     if (scrollController.hasClients &&
         scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 100) {
-      if (!isLoadingMore && hasMoreData && _endLimit < _totalCount) {
+            scrollController.position.maxScrollExtent - 200) {
+      if (!isLoadingMore && hasMoreData) {
         loadMoreCustomers(context);
       }
     }
@@ -131,8 +131,8 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _startLimit += 10000;
-      _endLimit += 10000;
+      _startLimit += 20;
+      _endLimit += 20;
 
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
@@ -195,7 +195,7 @@ class CustomerProvider extends ChangeNotifier {
     _toDateS = toDate;
     _status = _selectedStatusIds.join(',');
     _startLimit = 1;
-    _endLimit = 10000;
+    _endLimit = 20;
     currentPage = 1;
     hasMoreData = true;
     notifyListeners(); // Notify listeners so that UI can rebuild
@@ -289,7 +289,7 @@ class CustomerProvider extends ChangeNotifier {
 
   void setLimit() {
     _startLimit = 1;
-    _endLimit = 10000;
+    _endLimit = 20;
     notifyListeners(); // Notify listeners about the change
   }
 
@@ -485,7 +485,7 @@ class CustomerProvider extends ChangeNotifier {
   //no context only for back in customer detail
   Future<void> getSearchCustomersNoContext() async {
     _startLimit = 1;
-    _endLimit = 10000;
+    _endLimit = 20;
 
     try {
       _isLoading = true;

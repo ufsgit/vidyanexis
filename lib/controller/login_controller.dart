@@ -10,6 +10,7 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 
 class LoginController extends ChangeNotifier {
   String _userName = '';
@@ -96,19 +97,13 @@ class LoginController extends ChangeNotifier {
         notifyListeners();
         print(data);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(response?.statusCode == 0
-                  ? '${response?.statusMessage}'
-                  : 'Server Error: ${response?.statusCode}')),
-        );
+        showErrorSnackBar(context,
+            response?.statusCode == 0 ? response?.statusMessage : response);
         Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      showErrorSnackBar(context, e);
       Loader.stopLoader(context);
     }
   }

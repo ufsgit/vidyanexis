@@ -539,7 +539,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                 color: const Color.fromARGB(255, 0, 90, 69),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Row(
+                              child: Row(
                                 children: [
                                   TableWidget(
                                     width: 80,
@@ -590,6 +590,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
+                                  if (settingsProvider.menuIsViewMap[142] == 1)
+                                    TableWidget(
+                                        flex: 2,
+                                        title: 'Location',
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 4.0, horizontal: 8.0),
+                                        color: Color(0xFFFFFFFF)),
                                 ],
                               ),
                             ),
@@ -992,6 +999,16 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       ? lead.nextFollowUpDate
                                                           .toDayMonthYearFormat()
                                                       : ''),
+                                              if (settingsProvider.menuIsViewMap[142] == 1)
+                                                TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
+                                                  title:
+                                                      lead.locationName ?? ''),
                                             ],
                                           )
                                         //Mobile Design
@@ -1056,7 +1073,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text(
-                                                    'Assigned: ${lead.toUserName}',
+                                                    'To: ${lead.toUserName}',
                                                     style: TextStyle(
                                                         fontSize: 12,
                                                         color: Colors

@@ -1103,7 +1103,7 @@ class _LeadsPageState extends State<LeadPage> {
                                         topRight: Radius.circular(8),
                                         bottomRight: Radius.circular(8)),
                                   ),
-                                  child: const Row(
+                                  child: Row(
                                     children: [
                                       TableWidget(
                                         width: 150,
@@ -1235,19 +1235,20 @@ class _LeadsPageState extends State<LeadPage> {
                                           ),
                                         ),
                                       ),
-                                      TableWidget(
-                                        width: 150,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 4.0, horizontal: 12.0),
-                                        alignment: Alignment.centerLeft,
-                                        data: Text(
-                                          'Location',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.white,
+                                      if (settingsProvider.menuIsViewMap[142] == 1)
+                                        TableWidget(
+                                          width: 150,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4.0, horizontal: 12.0),
+                                          alignment: Alignment.centerLeft,
+                                          data: const Text(
+                                            'Location',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
-                                      ),
                                       TableWidget(
                                         width: 150,
                                         padding: EdgeInsets.symmetric(
@@ -1535,22 +1536,23 @@ class _LeadsPageState extends State<LeadPage> {
                                                         fontSize: 12),
                                                   ),
                                                 ),
-                                                TableWidget(
-                                                  width: 150,
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  data: Text(
-                                                    lead.locationName ?? '',
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 12),
+                                                if (settingsProvider.menuIsViewMap[142] == 1)
+                                                  TableWidget(
+                                                    width: 150,
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    padding: const EdgeInsets.symmetric(
+                                                        vertical: 4.0,
+                                                        horizontal: 12.0),
+                                                    data: Text(
+                                                      lead.locationName ?? '',
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                          fontSize: 12),
+                                                    ),
                                                   ),
-                                                ),
                                                 TableWidget(
                                                   width: 150,
                                                   alignment:

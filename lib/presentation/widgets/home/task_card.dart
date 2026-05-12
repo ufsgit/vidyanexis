@@ -59,17 +59,7 @@ class _TaskCardState extends State<TaskCard> {
     final mappedEnquiryForName = dropDownProvider.getEnquiryForNameById(
         widget.task.enquiryForId, widget.task.enquiryForName);
 
-    Color getStatusColor(String statusName) {
-      statusName = statusName.toUpperCase();
-      if (statusName.contains('FOLLOW-UP')) return Colors.blue;
-      if (statusName.contains('NEW')) return Colors.green;
-      if (statusName.contains('AMC')) return Colors.grey;
-      if (statusName.contains('HOT')) return Colors.red;
-      // Default to task.colorCode if available, else primaryBlue
-      return widget.task.colorCode ?? AppColors.primaryBlue;
-    }
 
-    final statusColor = getStatusColor(widget.task.taskStatusName);
 
     return Column(
       children: [
@@ -77,104 +67,128 @@ class _TaskCardState extends State<TaskCard> {
           onTap: () => widget.showStatusUpdate(context, widget.task),
           child: Container(
             width: MediaQuery.sizeOf(context).width,
-            decoration: BoxDecoration(
-              color: AppColors.whiteColor,
-            ),
+            color: AppColors.whiteColor,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // FIRST LINE: Customer Name and Date
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.task.customerName,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textBlack,
-                        ),
-                      ),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 3,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: getAvatarColor(widget.task.customerName)
+                          .withOpacity(.4),
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.task.taskDate.toFormattedDate(),
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textGrey3,
-                      ),
-                    ),
-                  ],
-                ),
-
-                // SECOND LINE: Task Type, Status and Dropdown Arrow
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              widget.task.taskTypeName,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textGrey3,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                widget.task.customerName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlack,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
+                            const SizedBox(width: 8),
+                            Text(
+                              'ID ${widget.task.customerId}',
+                              style: TextStyle(
+                                color: AppColors.textGrey3,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                widget.task.taskTypeName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.textGrey3,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: (widget.task.colorCode ??
+                                        AppColors.primaryBlue)
+                                    .withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                widget.task.taskStatusName.toUpperCase(),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: widget.task.colorCode ??
+                                      AppColors.primaryBlue,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (userType == "1") ...[
+                          const SizedBox(height: 4),
                           Text(
-                            widget.task.taskStatusName,
+                            'To ${widget.task.toUserName}',
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: statusColor,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textBlack,
                             ),
                           ),
                         ],
-                      ),
+                      ],
                     ),
-                    InkWell(
-                      onTap: () => widget.onTap(),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 8.0, top: 0.0, bottom: 0.0),
-                        child: Icon(
-                          widget.isExpanded
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          size: 32,
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        widget.task.taskDate.toFormattedDate(),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                           color: AppColors.textGrey3,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-
-                // FOURTH LINE: Assigned To (If Admin)
-                if (userType == "1")
-                  Transform.translate(
-                    offset: const Offset(0, -4),
-                    child: Text(
-                      'Assigned To: ${widget.task.toUserName}',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textBlack,
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onTap: widget.onTap,
+                        child: Icon(
+                          widget.isExpanded
+                              ? Icons.keyboard_arrow_up_outlined
+                              : Icons.keyboard_arrow_down_outlined,
+                          color: AppColors.textGrey3,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
