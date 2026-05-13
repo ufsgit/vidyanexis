@@ -2958,11 +2958,19 @@ class SettingsProvider extends ChangeNotifier {
   bool _isManualCreation = false;
   bool get isManualCreation => _isManualCreation;
 
+  bool _isEnquiryForVisible = false;
+  bool get isEnquiryForVisible => _isEnquiryForVisible;
+
   bool _isQuotationCustom = false;
   bool get isQuotationCustom => _isQuotationCustom;
 
   bool _isViewInQuotation = false;
   bool get isViewInQuotation => _isViewInQuotation;
+
+  void toggleEnquiryForVisible(bool value) {
+    _isEnquiryForVisible = value;
+    notifyListeners();
+  }
 
   void toggleQuotationCustom(bool value) {
     _isQuotationCustom = value;
@@ -3832,13 +3840,15 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  void searchTaskType(String search, BuildContext context) async {
+  void searchTaskType(String search, BuildContext context,
+      {String enquiryForId = '0'}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchTaskType}?Task_Type_Name=$search');
+          endPoint:
+              '${HttpUrls.searchTaskType}?Task_Type_Name=$search&Enquiry_For_Id=$enquiryForId');
 
       if (response.statusCode == 200) {
         final data = response.data;

@@ -802,13 +802,17 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  void getTaskType(BuildContext context) async {
+  void getTaskType(BuildContext context, {String enquiryForId = '0'}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.searchTaskType, bodyData: {'Task_Type_Name': ''});
+          endPoint: HttpUrls.searchTaskType,
+          bodyData: {
+            'Task_Type_Name': '',
+            'Enquiry_For_Id': enquiryForId,
+          });
 
       if (response.statusCode == 200) {
         final data = response.data;
