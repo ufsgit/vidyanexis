@@ -699,6 +699,8 @@ class SettingsProvider extends ChangeNotifier {
     required String userIds,
     required int enquirySourceId,
     required String enquirySourceName,
+    required int enquiryForId,
+    required String enquiryForName,
   }) async {
     try {
       Loader.showLoader(context);
@@ -711,6 +713,8 @@ class SettingsProvider extends ChangeNotifier {
             "User_Ids": userIds,
             "Enquiry_Source_Id": enquirySourceId,
             "Enquiry_Source_Name": enquirySourceName,
+            "Enquiry_For_Id": enquiryForId,
+            "Enquiry_For_Name": enquiryForName,
           });
 
       if (response != null && response.statusCode == 200) {
