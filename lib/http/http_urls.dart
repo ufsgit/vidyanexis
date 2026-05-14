@@ -369,4 +369,5 @@ class HttpUrls {
   static String getCustomerTaskMonth = "task/Get_Customer_Task_Month";
   static String saveStructureMaterials =
       "quotation_details/Save_structure_materials";
+  static String getLeadCustomerList = "lead/Get_Customer_List";
 }
