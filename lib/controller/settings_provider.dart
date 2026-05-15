@@ -4753,7 +4753,7 @@ class SettingsProvider extends ChangeNotifier {
   Future<void> searchLeadCustomerApi(String query, BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getLeadCustomerList}?Customer_Name=$query');
+          endPoint: '${HttpUrls.getLeadCustomerList}?Search_Value_=$query');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -4761,6 +4761,7 @@ class SettingsProvider extends ChangeNotifier {
         if (data != null) {
           final newData = data['data'];
           _searchLeadCustomer = (newData as List<dynamic>)
+              .where((item) => item != null)
               .map((item) => LeadCustomerModel.fromJson(item))
               .toList();
           notifyListeners();

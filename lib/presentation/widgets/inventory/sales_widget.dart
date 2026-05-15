@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 
 import '../../../controller/expense_provider.dart';
 import '../../../controller/settings_provider.dart';
+import 'lead_autocomplete_widget.dart';
 import '../home/custom_dropdown_widget.dart';
 
 class SalesWidget extends StatefulWidget {
@@ -292,26 +293,42 @@ class _SalesWidgetState extends State<SalesWidget> {
             Row(
               children: [
                 Expanded(
-                  child: CommonDropdown<int>(
-                    hintText: 'Select Customer*',
-                    items: settingsProvider.searchInventoryCustomer
-                        .map((status) => DropdownItem<int>(
-                              id: status.customerId,
-                              name: status.customerName,
-                            ))
-                        .toList(),
-                    controller: TextEditingController(),
-                    onItemSelected: (selectedId) {
-                      final selectedPerson =
-                          settingsProvider.searchInventoryCustomer.firstWhere(
-                        (item) => item.customerId == selectedId,
-                      );
-                      expenseProvider.addressSalesController.text =
-                          selectedPerson.address;
-                      expenseProvider.setSelectedSalesCustomerId(selectedId);
-                    },
-                    selectedValue: expenseProvider.selectedSalesCustomerId,
-                  ),
+                  child: settingsProvider.leadInSales == 1
+                      ? LeadAutocompleteWidget(
+                          labelText: 'Select Lead*',
+                          initialValue: widget.isEdit && widget.data != null
+                              ? widget.data!.customerName
+                              : null,
+                          onSelected: (model) {
+                            expenseProvider.addressSalesController.text =
+                                model.address;
+                            expenseProvider
+                                .setSelectedSalesCustomerId(model.customerId);
+                          },
+                        )
+                      : CommonDropdown<int>(
+                          hintText: 'Select Customer*',
+                          items: settingsProvider.searchInventoryCustomer
+                              .map((status) => DropdownItem<int>(
+                                    id: status.customerId,
+                                    name: status.customerName,
+                                  ))
+                              .toList(),
+                          controller: TextEditingController(),
+                          onItemSelected: (selectedId) {
+                            final selectedPerson = settingsProvider
+                                .searchInventoryCustomer
+                                .firstWhere(
+                              (item) => item.customerId == selectedId,
+                            );
+                            expenseProvider.addressSalesController.text =
+                                selectedPerson.address;
+                            expenseProvider
+                                .setSelectedSalesCustomerId(selectedId);
+                          },
+                          selectedValue:
+                              expenseProvider.selectedSalesCustomerId,
+                        ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
