@@ -141,7 +141,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                           ],
                         ),
                         pw.SizedBox(height: 4),
-                        pw.Text('GST : 32AAXA0127A1Z8',
+                        pw.Text('GST : 32AAXCA0127A1Z8',
                             style: pw.TextStyle(font: boldFont, fontSize: 11)),
                         pw.SizedBox(height: 4),
                         pw.Text(
