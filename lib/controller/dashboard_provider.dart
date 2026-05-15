@@ -576,6 +576,16 @@ class DashboardProvider extends ChangeNotifier {
 
   Future<void> loadDataForTab(int activeTab, BuildContext context,
       {bool isSilent = false}) async {
+    // Sync filters with other providers if needed
+    final warrantyProvider = Provider.of<WarrentyReportProvider>(context, listen: false);
+    
+    // Sync common filters to Warranty Provider
+    warrantyProvider.syncCommonFilters(
+      fromDate: _fromDate,
+      toDate: _toDate,
+      selectedUser: _selectedUser,
+    );
+
     switch (activeTab) {
       case 0: // Leads Overview
         await getLeadData();
@@ -590,13 +600,11 @@ class DashboardProvider extends ChangeNotifier {
         await getTaskInfoDashBoard(context, isSilent: isSilent);
         break;
       case 4: // Amc Notification
-        await Provider.of<WarrentyReportProvider>(context, listen: false)
-            .getAmcNotification(context);
+        await warrantyProvider.getAmcNotification(context, isFilter: true);
         isAmcLoaded = true;
         break;
       case 5: // Payment Reminders
-        await Provider.of<WarrentyReportProvider>(context, listen: false)
-            .getPaymentReminders(context);
+        await warrantyProvider.getPaymentReminders(context, isFilter: true);
         isPaymentLoaded = true;
         break;
       case 6: // Dashboard count

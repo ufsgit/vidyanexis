@@ -141,280 +141,205 @@ class _AddItemWidgetState extends State<AddItemWidget> {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     final provider = Provider.of<SettingsProvider>(context);
 
-    return AlertDialog(
+    return Scaffold(
       backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          Text(
-            widget.isEdit ? 'Edit Item' : 'Add Item',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        title: Text(
+          widget.isEdit ? 'Edit Item' : 'Add Item',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textBlue800,
           ),
-          const Spacer(),
-          IconButton(
-            onPressed: () {
-              // expenseProvider.statusController.clear();
-              // expenseProvider.folloupController.clear();
-              // expenseProvider.isRegisterController.clear();
-              // expenseProvider.setSelectedColor(null);
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.close),
-          )
-        ],
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      content: Container(
-        color: Colors.white,
-        width: MediaQuery.sizeOf(context).width / 2,
-        // height: MediaQuery.sizeOf(context).height / 4,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              Row(
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: expenseProvider.itemNameController,
-                      hintText: 'Item Name*',
-                      labelText: '',
-                    ),
+                  _buildSectionTitle('Basic Information'),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 56,
+                    controller: expenseProvider.itemNameController,
+                    hintText: 'Item Name*',
+                    labelText: '',
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Container(
-                      child: CommonDropdown<int>(
-                        hintText: 'Category*',
-                        selectedValue: widget.isEdit
-                            ? expenseProvider.selectedItemCategory
-                            : null,
-                        items: provider.searchCategory
-                            .map((status) => DropdownItem<int>(
-                                  id: status.categoryId,
-                                  name: status.categoryName ?? '',
-                                ))
-                            .toList(),
-                        controller: expenseProvider.itemCategoryController,
-                        onItemSelected: (selectedId) {
-                          expenseProvider.setItemCategory(selectedId);
-                        },
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CommonDropdown<int>(
+                          hintText: 'Category*',
+                          selectedValue: widget.isEdit
+                              ? expenseProvider.selectedItemCategory
+                              : null,
+                          items: provider.searchCategory
+                              .map((status) => DropdownItem<int>(
+                                    id: status.categoryId,
+                                    name: status.categoryName ?? '',
+                                  ))
+                              .toList(),
+                          controller: expenseProvider.itemCategoryController,
+                          onItemSelected: (selectedId) {
+                            expenseProvider.setItemCategory(selectedId);
+                          },
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      child: CommonDropdown<int>(
-                        hintText: 'Unit*',
-                        selectedValue: widget.isEdit
-                            ? expenseProvider.selectedItemUnit
-                            : null,
-                        items: provider.searchUnit
-                            .map((status) => DropdownItem<int>(
-                                  id: status.unitId,
-                                  name: status.unitName ?? '',
-                                ))
-                            .toList(),
-                        controller: expenseProvider.itemUnitController,
-                        onItemSelected: (selectedId) {
-                          expenseProvider.setItemUnit(selectedId);
-                        },
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CommonDropdown<int>(
+                          hintText: 'Unit*',
+                          selectedValue: widget.isEdit
+                              ? expenseProvider.selectedItemUnit
+                              : null,
+                          items: provider.searchUnit
+                              .map((status) => DropdownItem<int>(
+                                    id: status.unitId,
+                                    name: status.unitName ?? '',
+                                  ))
+                              .toList(),
+                          controller: expenseProvider.itemUnitController,
+                          onItemSelected: (selectedId) {
+                            expenseProvider.setItemUnit(selectedId);
+                          },
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: expenseProvider.itemUnitPriceController,
-                      hintText: 'Unit Price*',
-                      labelText: '',
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d{0,2}')),
-                      ],
-                    ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: expenseProvider.itemUnitPriceController,
+                          hintText: 'Unit Price*',
+                          labelText: '',
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,2}')),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: expenseProvider.itemHSNController,
+                          hintText: 'HSN Code',
+                          labelText: '',
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: expenseProvider.itemHSNController,
-                      hintText: 'HSN Code',
-                      labelText: '',
-                    ),
+                  const SizedBox(height: 32),
+                  _buildSectionTitle('Tax Information'),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: expenseProvider.cgstController,
+                          hintText: 'CGST %*',
+                          labelText: '',
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          onChanged: (p0) {
+                            int gst = (int.tryParse(
+                                        expenseProvider.cgstController.text) ??
+                                    0) +
+                                (int.tryParse(
+                                        expenseProvider.sgstController.text) ??
+                                    0);
+                            expenseProvider.igstController.text = gst.toString();
+                            expenseProvider.gstController.text = gst.toString();
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: expenseProvider.sgstController,
+                          hintText: 'SGST %*',
+                          labelText: '',
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          onChanged: (p0) {
+                            int gst = (int.tryParse(
+                                        expenseProvider.cgstController.text) ??
+                                    0) +
+                                (int.tryParse(
+                                        expenseProvider.sgstController.text) ??
+                                    0);
+                            expenseProvider.igstController.text = gst.toString();
+                            expenseProvider.gstController.text = gst.toString();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  const Spacer(),
-                ],
-              ),
-              // const SizedBox(
-              //   height: 10,
-              // ),
-              // Wrap(
-              //   children: [
-              //     Row(
-              //       mainAxisSize: MainAxisSize.min,
-              //       children: [
-              //         const Text("Is Service"),
-              //         const SizedBox(
-              //           width: 5,
-              //         ),
-              //         Checkbox(
-              //           value: expenseProvider.isChecked == 0,
-              //           onChanged: (bool? value) {
-              //             expenseProvider.toggleCheckbox(value ?? false);
-              //           },
-              //         ),
-              //         const SizedBox(
-              //           width: 16,
-              //         ),
-              //       ],
-              //     ),
-              //     Row(
-              //       mainAxisSize: MainAxisSize.min,
-              //       children: [
-              //         const Text("Primary item"),
-              //         const SizedBox(
-              //           width: 5,
-              //         ),
-              //         Checkbox(
-              //           value: expenseProvider.isPrimaryItem == 0,
-              //           onChanged: (bool? value) {
-              //             expenseProvider.togglePrimaryCheckbox(value ?? false);
-              //             expenseProvider.clearItemFields();
-              //             expenseProvider.items.clear();
-              //           },
-              //         ),
-              //       ],
-              //     ),
-              //   ],
-              // ),
-              const SizedBox(height: 24.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: expenseProvider.cgstController,
-                      hintText: 'CGST %*',
-                      labelText: '',
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      onChanged: (p0) {
-                        int gst = (int.tryParse(
-                                    expenseProvider.cgstController.text) ??
-                                0) +
-                            (int.tryParse(
-                                    expenseProvider.sgstController.text) ??
-                                0);
-                        expenseProvider.igstController.text = gst.toString();
-                        expenseProvider.gstController.text = gst.toString();
-                      },
-                    ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: true,
+                          height: 56,
+                          controller: expenseProvider.igstController,
+                          hintText: 'IGST %*',
+                          labelText: '',
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: true,
+                          height: 56,
+                          controller: expenseProvider.gstController,
+                          hintText: 'GST %*',
+                          labelText: '',
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: expenseProvider.sgstController,
-                      hintText: 'SGST %*',
-                      labelText: '',
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      onChanged: (p0) {
-                        int gst = (int.tryParse(
-                                    expenseProvider.cgstController.text) ??
-                                0) +
-                            (int.tryParse(
-                                    expenseProvider.sgstController.text) ??
-                                0);
-                        expenseProvider.igstController.text = gst.toString();
-                        expenseProvider.gstController.text = gst.toString();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: true,
-                      height: 54,
-                      controller: expenseProvider.igstController,
-                      hintText: 'IGST %*',
-                      labelText: '',
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: true,
-                      height: 54,
-                      controller: expenseProvider.gstController,
-                      hintText: 'GST %*',
-                      labelText: '',
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              expenseProvider.isPrimaryItem == 1
-                  ? Container(
+                  if (expenseProvider.isPrimaryItem == 1) ...[
+                    const SizedBox(height: 32),
+                    _buildSectionTitle('Item Material'),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF6F7F9),
-                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
                       ),
-                      padding: const EdgeInsets.all(16.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Item Material',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textBlack,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
                           Row(
                             children: [
                               Expanded(
                                 child: CommonDropdown(
-                                  hintText: "Item Material",
+                                  hintText: "Select Material",
                                   items: expenseProvider.itemList
                                       .where((status) {
                                         if (widget.isEdit &&
@@ -443,21 +368,12 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                   },
                                   selectedValue: expenseProvider.subItemId,
                                 ),
-
-                                //     CustomTextField(
-                                //   readOnly: false,
-                                //   height: 54,
-                                //   controller:
-                                //       expenseProvider.itemMaterialController,
-                                //   hintText: 'Item Material Name',
-                                //   labelText: '',
-                                // ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 12),
                               Expanded(
                                 child: CustomTextField(
                                   readOnly: false,
-                                  height: 54,
+                                  height: 56,
                                   controller:
                                       expenseProvider.itemQuantityController,
                                   hintText: 'Quantity',
@@ -470,136 +386,165 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          OutlinedButton.icon(
-                            onPressed: () {
-                              expenseProvider.addOrEditItem(context);
-                            },
-                            icon: const Icon(Icons.add),
-                            label: const Text('Add item'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors
-                                  .primaryBlue, // Change foreground color
-                              backgroundColor:
-                                  Colors.white, // Change background color
-                              side: BorderSide(
-                                  color: AppColors
-                                      .primaryBlue), // Change border color
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 0,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8), // Add border radius
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () => expenseProvider.addOrEditItem(context),
+                              icon: const Icon(Icons.add_rounded, size: 20),
+                              label: const Text('Add Material'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.secondaryBlue,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: expenseProvider.items.length,
-                            itemBuilder: (context, index) {
-                              final item = expenseProvider.items[index];
-                              return Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                margin: const EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        item.itemMaterialName,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                          if (expenseProvider.items.isNotEmpty) ...[
+                            const SizedBox(height: 20),
+                            const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                            const SizedBox(height: 16),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: expenseProvider.items.length,
+                              itemBuilder: (context, index) {
+                                final item = expenseProvider.items[index];
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.itemMaterialName,
+                                              style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF1E293B),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Qty: ${item.quantity}',
+                                              style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                color: const Color(0xFF64748B),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Quantity: ${item.quantity}',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
+                                      IconButton(
+                                        icon: const Icon(Icons.edit_outlined, size: 20, color: Color(0xFF3B82F6)),
+                                        onPressed: () => expenseProvider.populateItemFieldsForEditing(index),
                                       ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    TextButton(
-                                      onPressed: () => expenseProvider
-                                          .populateItemFieldsForEditing(index),
-                                      child: Text(
-                                        'Edit',
-                                        style: TextStyle(
-                                          color: Colors.blue[400],
-                                        ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Color(0xFFEF4444)),
+                                        onPressed: () => expenseProvider.deleteItem(index),
                                       ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () =>
-                                          expenseProvider.deleteItem(index),
-                                      child: Text(
-                                        'Delete',
-                                        style: TextStyle(
-                                          color: Colors.red[400],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ],
                       ),
-                    )
-                  : SizedBox(),
-              const SizedBox(height: 24.0),
-            ],
+                    ),
+                  ],
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
           ),
-        ),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      expenseProvider.clearItemAdd();
+                      expenseProvider.togglePrimaryCheckbox(false);
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      side: const BorderSide(color: Color(0xFFE2E8F0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final validationError = validateInputs(context, expenseProvider);
+                      if (validationError != null) {
+                        showErrorDialog(context, validationError);
+                        return;
+                      }
+                      expenseProvider.saveItem(widget.editId, context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondaryBlue,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      actions: [
-        CustomElevatedButton(
-          buttonText: 'Cancel',
-          onPressed: () {
-            // expenseProvider.statusController.clear();
-            // expenseProvider.folloupController.clear();
-            // expenseProvider.isRegisterController.clear();
-            // expenseProvider.setSelectedColor(null);
-            expenseProvider.clearItemAdd();
-            expenseProvider.togglePrimaryCheckbox(false);
-            Navigator.pop(context);
-          },
-          backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
-        ),
-        CustomElevatedButton(
-          buttonText: 'Save',
-          onPressed: () async {
-            final validationError = validateInputs(context, expenseProvider);
-            if (validationError != null) {
-              showErrorDialog(context, validationError);
-              return;
-            }
+    );
+  }
 
-            expenseProvider.saveItem(widget.editId, context);
-          },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.whiteColor,
-        ),
-      ],
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.plusJakartaSans(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: const Color(0xFF1E293B),
+      ),
     );
   }
 }

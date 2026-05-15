@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
@@ -6,6 +8,7 @@ import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
 import 'package:vidyanexis/presentation/pages/home/task_summary_page.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -100,37 +103,48 @@ class _DashBoardPageState extends State<DashBoardPage> {
         Provider.of<DashboardProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
+    final allowedTabs = <int>[
+      if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0') 6,
+      if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0') 0,
+      if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0') 1,
+      if ((settingsProvider.menuIsViewMap[76] ?? 1).toString() != '0') 4,
+      if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0') 5,
+      if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0') 2,
+      if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
+    ];
+
     return Scaffold(
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
+      backgroundColor: AppColors.scaffoldColor,
       appBar: !AppStyles.isWebScreen(context)
           ? AppBar(
-              surfaceTintColor: AppColors.scaffoldColor,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              surfaceTintColor: Colors.transparent,
               backgroundColor: AppColors.whiteColor,
-              leadingWidth: 40,
+              leadingWidth: 56,
               leading: Builder(
                 builder: (context) {
-                  return InkWell(
-                    onTap: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceGrey,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.menu,
-                            size: 20, color: Colors.black87),
+                  return IconButton(
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      child: const Icon(Icons.sort,
+                          size: 20, color: AppColors.textBlue800),
                     ),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
                   );
                 },
               ),
-              title: const Text(
+              title: Text(
                 'Dashboard',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textBlack,
                 ),
               ),
               actions: [
@@ -141,9 +155,10 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     return Stack(
                       children: [
                         IconButton(
-                          icon: const Icon(
-                            Icons.notifications_active_outlined,
-                            size: 28,
+                          icon: Icon(
+                            Icons.notifications_none_rounded,
+                            size: 26,
+                            color: Colors.black.withOpacity(0.7),
                           ),
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(
@@ -155,23 +170,23 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         ),
                         if (count > 0)
                           Positioned(
-                            right: 4,
-                            top: 4,
+                            right: 8,
+                            top: 8,
                             child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(10),
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
                               ),
                               constraints: const BoxConstraints(
                                 minWidth: 16,
                                 minHeight: 16,
                               ),
                               child: Text(
-                                count > 99 ? '99+' : count.toString(),
+                                count > 99 ? '!' : count.toString(),
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 10,
+                                  fontSize: 9,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,
@@ -183,134 +198,217 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.refresh),
-                  tooltip: 'Refresh Data',
-                  onPressed: () =>
-                      dashBoardProvider.refreshDashboardData(context),
+                  icon: Icon(Icons.refresh_rounded, color: Colors.black.withOpacity(0.7)),
+                  onPressed: () => dashBoardProvider.refreshDashboardData(context),
                 ),
+                const SizedBox(width: 8),
               ],
             )
           : null,
-      drawer: const SidebarDrawer(),
       body: RefreshIndicator(
         onRefresh: () => dashBoardProvider.refreshDashboardData(context),
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: AppStyles.isWebScreen(context)
-              ? const EdgeInsets.symmetric(vertical: 18, horizontal: 130)
-              : const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-          children: [
-            // TextButton(onPressed: (){
-            //   if (formKey.currentState!.validate()) {
+          padding: EdgeInsets.zero, // Remove padding here, add inside containers
 
-            //   }
-            // }, child: Text("data")),
-            if (AppStyles.isWebScreen(context))
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Dashboard',
-                    style: AppStyles.getHeadingTextStyle(
-                        fontSize: 24, fontColor: AppColors.primaryViolet),
-                  ),
-                  TextButton.icon(
-                    onPressed: () =>
-                        dashBoardProvider.refreshDashboardData(context),
-                    icon: const Icon(Icons.refresh, size: 20),
-                    label: const Text('Refresh'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.primaryBlue,
-                    ),
+          children: [
+            // Premium Header Section
+            Container(
+              padding: const EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
-            const SizedBox(height: 10),
-            CustomTab(dashBoardProvider: dashBoardProvider),
-            // const SizedBox(height: 10),
-            // const SizedBox(height: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Consumer<AttendanceReportProvider>(
-                  builder: (context, attendanceProvider, child) {
-                    if (settingsProvider.menuIsViewMap[26].toString() != '1') {
-                      return const SizedBox.shrink();
-                    }
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTab(dashBoardProvider: dashBoardProvider),
+                  const SizedBox(height: 12),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Filters Column (Left)
+                      Expanded(
+                        child: Column(
+                          children: [
+                            // Date Filter Button
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => onClickTopButton(context, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
+                                borderRadius: BorderRadius.circular(10),
+                                child: Ink(
+                                  height: 34,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF1F5F9),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(width: 10),
+                                      Icon(Icons.calendar_today_rounded, size: 13, color: AppColors.secondaryBlue),
+                                      const SizedBox(width: 8),
+                                      Flexible(
+                                        child: Text(
+                                          dashBoardProvider.fromDate == null &&
+                                                  dashBoardProvider.toDate == null
+                                              ? 'All Dates'
+                                              : dashBoardProvider.formattedFromDate ==
+                                                      dashBoardProvider.formattedToDate
+                                                  ? dashBoardProvider.formattedFromDate
+                                                  : '${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.secondaryBlue,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            // Staff Filter Button
+                            Material(
+                              color: Colors.transparent,
+                              child: Ink(
+                                height: 34,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F5F9),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: _buildAssignedStaffFilter(dashBoardProvider, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
+                              ),
+                            ),
 
-                    if (attendanceProvider.isCompletedToday) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        child: Text(
-                          'Attendance Completed',
-                          style: AppStyles.getBoldTextStyle(
-                            fontColor: AppColors.btnRed,
-                            fontSize: 16,
-                          ),
-                        ),
-                      );
-                    }
 
-                    return ElevatedButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const AddAttendanceWidget(
-                                editId: '0',
-                                isEdit: false,
-                                user: '',
-                                userId: 0);
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Mark Attendance'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryBlue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
-              ],
+                      const SizedBox(width: 10),
+                      // Attendance Button (Right)
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 140),
+                        child: Consumer<AttendanceReportProvider>(
+                          builder: (context, attendanceProvider, child) {
+                            if (settingsProvider.menuIsViewMap[26].toString() != '1') {
+                              return const SizedBox.shrink();
+                            }
+
+                            if (attendanceProvider.isCompletedToday) {
+                              return Container(
+                                height: 74, // Matches 34+6+34 of filters
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF0FDF4),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: const Color(0xFFDCFCE7)),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 18),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Done',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: const Color(0xFF16A34A),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            return Container(
+                              height: 74, // Matches 34+6+34 of filters
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.secondaryBlue,
+                                    AppColors.secondaryBlue.withOpacity(0.85),
+                                  ],
+                                ),
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const AddAttendanceWidget(
+                                          editId: '0',
+                                          isEdit: false,
+                                          user: '',
+                                          userId: 0);
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  foregroundColor: Colors.white,
+                                  shadowColor: Colors.transparent,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.fingerprint_rounded, size: 20),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Attendance',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 8),
-            // Render tab body only if permitted
-            Builder(builder: (context) {
-              final allowedTabs = <int>[
-                if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0')
-                  6, // Dashboard count
-                if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0')
-                  0, // Leads Overview
-                if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0')
-                  1, // Work Overview
-                if ((settingsProvider.menuIsViewMap[76] ?? 1).toString() != '0')
-                  4, // Amc Notification
-                if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0')
-                  5, // Payment Reminders
-                if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0')
-                  2, // Task Overview
-                if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0')
-                  3, // Task Summary
-              ];
-              //change permissions id in CustomTab also ----------------
 
-              if (allowedTabs.isEmpty) {
-                return Container();
-              }
 
-              final safeIndex =
-                  dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
-              final activeTab = allowedTabs[safeIndex];
+
+
+            const SizedBox(height: 16),
+            
+            // Tab Content
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Builder(builder: (context) {
+                final safeIndex =
+                    dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
+                final activeTab = allowedTabs[safeIndex];
+
 
               switch (activeTab) {
                 case 6:
@@ -319,16 +417,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     alignment: safeIndex == allowedTabs.indexOf(6)
                         ? const Alignment(0, 0)
                         : const Alignment(-100, 0),
-                    child: Column(
-                      children: [
-                        filterWidget(
-                            dashBoardProvider: dashBoardProvider,
-                            activeTab: activeTab),
-                        const SizedBox(height: 20),
-                        DashboardCountTab(
-                          dashBoardProvider: dashBoardProvider,
-                        ),
-                      ],
+                    child: DashboardCountTab(
+                      dashBoardProvider: dashBoardProvider,
                     ),
                   );
                 case 0:
@@ -337,25 +427,18 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     alignment: safeIndex == allowedTabs.indexOf(0)
                         ? const Alignment(0, 0)
                         : const Alignment(-100, 0),
-                    child: Column(
-                      children: [
-                        filterWidget(
-                            dashBoardProvider: dashBoardProvider,
-                            activeTab: activeTab),
-                        const SizedBox(height: 20),
-                        LeadsOverViewTab(
-                          dashBoardProvider: dashBoardProvider,
-                          taskAllocationData:
-                              dashBoardProvider.taskAllocationSummaryData,
-                          followUpLeadData:
-                              dashBoardProvider.followUpSummaryData,
-                          leadConversionData: dashBoardProvider.conversionData,
-                          countLeadData: dashBoardProvider.conversionCountData,
-                          pieData: dashBoardProvider.leadProgressReport,
-                        ),
-                      ],
+                    child: LeadsOverViewTab(
+                      dashBoardProvider: dashBoardProvider,
+                      taskAllocationData:
+                          dashBoardProvider.taskAllocationSummaryData,
+                      followUpLeadData:
+                          dashBoardProvider.followUpSummaryData,
+                      leadConversionData: dashBoardProvider.conversionData,
+                      countLeadData: dashBoardProvider.conversionCountData,
+                      pieData: dashBoardProvider.leadProgressReport,
                     ),
                   );
+
                 case 1:
                   return AnimatedAlign(
                     duration: const Duration(milliseconds: 600),
@@ -393,14 +476,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     alignment: const Alignment(0, 0),
                     child: const TaskSummaryPage(),
                   );
-                default:
-                  return Container();
-              }
-            }),
+                }
+                return const SizedBox.shrink();
+              }),
+
+            ),
           ],
         ),
       ),
     );
+
   }
 
   void onClickTopButton(BuildContext context, int activeTab) {
@@ -572,13 +657,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
         List<DropdownMenuItem<int>> dropdownItems;
 
         if (isAdmin) {
-          // Admin: Show all users with "All" option
           dropdownItems = [
-                const DropdownMenuItem<int>(
+                DropdownMenuItem<int>(
                   value: 0,
                   child: Text(
-                    'All',
-                    style: TextStyle(fontSize: 14),
+                    'All Staff',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.secondaryBlue,
+                    ),
                   ),
                 ),
               ] +
@@ -590,140 +678,139 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           child: Text(
                             user.userDetailsName ?? '',
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 14),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.secondaryBlue,
+                            ),
                           ),
                         ),
                       ))
                   .toList();
           dropdownValue = dashBoardProvider.selectedUser ?? 0;
         } else {
-          // Non-admin staff: Show only their own name
           dropdownItems = [
             DropdownMenuItem<int>(
-              value: userId, // Use userId from state
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 150),
+              value: userId,
                 child: Text(
                   userName.isNotEmpty ? userName : 'Current User',
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 14),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.secondaryBlue,
+                  ),
                 ),
-              ),
             ),
           ];
           dropdownValue = userId;
         }
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: (dashBoardProvider.selectedUser != 0)
-                  ? AppColors.primaryBlue
-                  : Colors.grey[300]!,
-            ),
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Text('Assigned Staff: '),
-              DropdownButton<int>(
-                value: dropdownItems.any((item) => item.value == dropdownValue)
-                    ? dropdownValue
-                    : 0,
-                hint: const Text('All'),
-                items: dropdownItems,
-                onChanged: isAdmin
-                    ? (int? newValue) {
-                        if (newValue != null) {
-                          dashBoardProvider.setUserFilterStatus(newValue);
-                          dashBoardProvider.loadDataForTab(activeTab, context);
+              Icon(Icons.person_search_rounded, size: 13, color: AppColors.secondaryBlue),
+              const SizedBox(width: 8),
+              Expanded(
+                child: DropdownButton<int>(
+                  value: dropdownItems.any((item) => item.value == dropdownValue)
+                      ? dropdownValue
+                      : 0,
+                  underline: Container(),
+                  isDense: true,
+                  isExpanded: true,
+                  alignment: Alignment.centerLeft,
+                  icon: Icon(Icons.keyboard_arrow_down_rounded, size: 14, color: AppColors.secondaryBlue.withOpacity(0.5)),
+                  items: dropdownItems,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.secondaryBlue,
+                  ),
+                  onChanged: isAdmin
+                      ? (int? newValue) {
+                          if (newValue != null) {
+                            dashBoardProvider.setUserFilterStatus(newValue);
+                            dashBoardProvider.loadDataForTab(activeTab, context);
+                          }
                         }
-                      }
-                    : null,
-                underline: Container(),
-                isDense: true,
-                iconSize: 18,
-                disabledHint: Text(
-                  userName.isNotEmpty ? userName : 'Current User',
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                      : null,
                 ),
               ),
             ],
           ),
         );
+
+
+
       },
     );
   }
 
   Widget filterWidget(
       {required DashboardProvider dashBoardProvider, required int activeTab}) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.symmetric(horizontal: 0.0),
-      padding: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Wrap(
-        spacing: 10,
-        runSpacing: 10,
+    return SizedBox(
+      height: 44,
+      child: Row(
         children: [
-          GestureDetector(
-            onTap: () {
-              onClickTopButton(context, activeTab);
-            },
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 1.5),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                    color: dashBoardProvider.fromDate != null ||
-                            dashBoardProvider.toDate != null
-                        ? AppColors.primaryBlue
-                        : Colors.grey[300]!),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (dashBoardProvider.fromDate == null &&
-                      dashBoardProvider.toDate == null)
-                    const Text('Follow-Up Date: All'),
-                  if (dashBoardProvider.fromDate != null &&
-                      dashBoardProvider.toDate != null)
-                    Text(dashBoardProvider.formattedFromDate ==
-                            dashBoardProvider.formattedToDate
-                        ? 'Date : ${dashBoardProvider.formattedFromDate}'
-                        : 'Date : ${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}'),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Icon(
-                    Icons.arrow_drop_down_outlined,
-                    color: Colors.black45,
-                    size: 20,
-                  ),
-                ],
+          Expanded(
+            child: GestureDetector(
+              onTap: () => onClickTopButton(context, activeTab),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: dashBoardProvider.fromDate != null ||
+                              dashBoardProvider.toDate != null
+                          ? AppColors.secondaryBlue.withOpacity(0.5)
+                          : Colors.grey[200]!,
+                      width: 1.2),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_today_rounded, size: 14, color: Colors.black.withOpacity(0.5)),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        dashBoardProvider.fromDate == null &&
+                                dashBoardProvider.toDate == null
+                            ? 'All Dates'
+                            : dashBoardProvider.formattedFromDate ==
+                                    dashBoardProvider.formattedToDate
+                                ? dashBoardProvider.formattedFromDate
+                                : '${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Colors.black45),
+                  ],
+                ),
               ),
             ),
           ),
-          const SizedBox(
-            width: 10,
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildAssignedStaffFilter(dashBoardProvider, activeTab),
           ),
-          _buildAssignedStaffFilter(dashBoardProvider, activeTab),
-          // const Spacer(),
           if (dashBoardProvider.fromDate != null ||
               dashBoardProvider.toDate != null ||
-              dashBoardProvider.selectedUser != 0)
-            ElevatedButton(
+              dashBoardProvider.selectedUser != 0) ...[
+            const SizedBox(width: 6),
+            IconButton(
               onPressed: () {
                 dashBoardProvider.selectDateFilterOption(null);
-                // clear keyword filter as well
                 dashBoardProvider.selectedLeadCountKeyword = null;
                 if (userType != "1") {
                   dashBoardProvider.setUserFilterStatus(userId);
@@ -732,21 +819,23 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 }
                 dashBoardProvider.loadDataForTab(activeTab, context);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: AppColors.textRed,
-                side: BorderSide(color: AppColors.textRed),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.redAccent.withOpacity(0.1),
+                foregroundColor: Colors.redAccent,
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(36, 36),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text('Reset'),
             ),
+          ]
         ],
       ),
     );
   }
+
+
+
 
   /*
   Widget _buildTaskReports(

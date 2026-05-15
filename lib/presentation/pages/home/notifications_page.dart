@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
@@ -87,10 +88,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       context.go(HomePage.route);
                     }
                   },
-                  child: Icon(
-                    Icons.arrow_back,
-                    size: 24,
-                    color: Color(0xFF152D70),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.arrow_back,
+                      size: 20,
+                      color: AppColors.textGrey4,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -160,10 +168,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     context.go(HomePage.route);
                   }
                 },
-                child: Image.asset(
-                  'assets/images/ArrowRight.png',
-                  width: 24,
-                  height: 24,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 20,
+                    color: AppColors.textGrey4,
+                  ),
                 ),
               ),
               SizedBox(
@@ -232,10 +247,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     context.go(HomePage.route);
                   }
                 },
-                child: Image.asset(
-                  'assets/images/ArrowRight.png',
-                  width: 24,
-                  height: 24,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 20,
+                    color: AppColors.textGrey4,
+                  ),
                 ),
               ),
               SizedBox(

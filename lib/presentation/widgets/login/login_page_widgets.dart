@@ -23,8 +23,8 @@ Widget textFieldWidget(
       obscureText: obscureText,
       controller: controller,
       style: GoogleFonts.plusJakartaSans(
-        color: AppColors.textGrey4,
-        fontSize: 14,
+        color: AppColors.textBlack,
+        fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
@@ -34,26 +34,23 @@ Widget textFieldWidget(
         hintStyle: GoogleFonts.plusJakartaSans(
           color: AppColors.textGrey3,
           fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w400,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        fillColor: AppStyles.isWebScreen(context)
-            ? AppColors.scaffoldColor
-            : AppColors.surfaceGrey,
+        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        fillColor: const Color(0xFFF0F2F5),
         filled: true,
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.textGrey2, width: 1.5)),
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-                color: AppStyles.isWebScreen(context)
-                    ? AppColors.textGrey2
-                    : AppColors.surfaceGrey,
-                width: 1.5)),
         border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.textGrey2)),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.black, width: 1),
+        ),
       ),
     ),
   );
@@ -72,18 +69,21 @@ Widget buttonWidget(
     width: MediaQuery.sizeOf(context).width,
     child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          backgroundColor: backgroundColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          backgroundColor: Colors.black,
+          elevation: 0,
         ),
         onPressed: onPressed,
         child: Text(
           text,
           style: GoogleFonts.plusJakartaSans(
-            color: txtColor,
-            fontSize: fontSize,
-            fontWeight: FontWeight.w500,
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.2,
           ),
         )),
   );
 }
+
+

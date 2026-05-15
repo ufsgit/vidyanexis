@@ -62,6 +62,20 @@ class WarrentyReportProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Synchronizes filters from the common Dashboard header
+  void syncCommonFilters({
+    DateTime? fromDate,
+    DateTime? toDate,
+    int? selectedUser,
+  }) {
+    _fromDate = fromDate;
+    _toDate = toDate;
+    _selectedUser = selectedUser;
+    formatDate();
+    // We don't notifyListeners here as it's usually called during tab loading 
+    // which will notify once data is fetched
+  }
+
   void selectDateFilterOption(int? index) {
     if (index == null) {
       // If the index is null, we are clearing the filter

@@ -78,68 +78,35 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
-    final displayLogo = settingsProvider.displayLogo;
-    Future<String> getUserName() async {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString('userName') ?? "Admin";
-    }
-
+    
     // Report items
     final List<Map<String, dynamic>> reportItems = [
-      // if (settingsProvider.menuIsViewMap[24].toString() == '1')
-      //   {'title': 'Employee Tracking', 'page': const EmployeeTracking()},
       if (settingsProvider.menuIsViewMap[7].toString() == '1')
         {'title': 'Task Reports', 'page': const TaskPageReportMobile()},
       if (settingsProvider.menuIsViewMap[8].toString() == '1')
-        {
-          'title': 'Complaint Reports',
-          'page': const ComplaintPageReportsMobile()
-        },
+        {'title': 'Complaint Reports', 'page': const ComplaintPageReportsMobile()},
       if (settingsProvider.menuIsViewMap[9].toString() == '1')
-        {
-          'title': 'Periodic Service Reports',
-          'page': const PeriodicServiceReportPageMobile()
-        },
+        {'title': 'Periodic Service Reports', 'page': const PeriodicServiceReportPageMobile()},
       if (settingsProvider.menuIsViewMap[112].toString() == '1')
-        {
-          'title': 'Out Of Warranty Reports',
-          'page': const OutOfWarrentyReportScreen()
-        },
+        {'title': 'Out Of Warranty Reports', 'page': const OutOfWarrentyReportScreen()},
       if (settingsProvider.menuIsViewMap[117].toString() == '1')
-        {
-          'title': 'Upcoming Warranty Reports',
-          'page': const UpcomingWarrentyReportScreen()
-        },
+        {'title': 'Upcoming Warranty Reports', 'page': const UpcomingWarrentyReportScreen()},
       if (settingsProvider.menuIsViewMap[10].toString() == '1')
         {'title': 'Conversion Reports', 'page': const ConversionReportPage()},
       if (settingsProvider.menuIsViewMap[11].toString() == '1')
         {'title': 'Invoice Reports', 'page': const InvoiceReportsScreen()},
-      // {
-      //   'title': 'Billing & Payments Report',
-      //   'page': const BillingAndpaymentsReportScreen()
-      // },
       if (settingsProvider.menuIsViewMap[25].toString() == '1')
         {'title': 'Work Reports', 'page': const WorkSummaryPhone()},
       if (settingsProvider.menuIsViewMap[24].toString() == '1')
         {'title': 'Time Track Reports', 'page': const TimeTrackReportPage()},
       if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
         {'title': 'Expense Reports', 'page': const ExpenseReportScreen()},
-
       if (settingsProvider.menuIsViewMap[119].toString() == '1')
-        {
-          'title': 'Enquiry Source Reports',
-          'page': const EnquirySourceSummaryReportScreen()
-        },
-
+        {'title': 'Enquiry Source Reports', 'page': const EnquirySourceSummaryReportScreen()},
       if (settingsProvider.menuIsViewMap[26].toString() == '1')
         {'title': 'Attendance Reports', 'page': const CheckInOutScreen()},
       if (settingsProvider.menuIsViewMap[96].toString() == '1')
         {'title': 'Check-in Reports', 'page': const LeadCheckInReportScreen()},
-      // if (settingsProvider.menuIsViewMap[40].toString() == '1')
-      //   {
-      //     'title': 'Employee Location Reports',
-      //     'page': const EmployeeLocationReportScreen()
-      //   },
       if (settingsProvider.menuIsViewMap[115].toString() == '1')
         {'title': 'Followup Reports', 'page': const FollowupReportMobile()},
       if (settingsProvider.menuIsViewMap[118].toString() == '1')
@@ -155,22 +122,13 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if (settingsProvider.menuIsViewMap[72].toString() == '1')
         {'title': 'Payment Reports', 'page': const PaymentReportPage()},
       if (settingsProvider.menuIsViewMap[73].toString() == '1')
-        {
-          'title': 'Upcoming Payment Reports',
-          'page': const UpcomingPaymentReportPage()
-        },
+        {'title': 'Upcoming Payment Reports', 'page': const UpcomingPaymentReportPage()},
       if (settingsProvider.menuIsViewMap[74].toString() == '1')
-        {
-          'title': 'Total Outstanding Reports',
-          'page': const TotalOutstandingReportPage()
-        },
+        {'title': 'Total Outstanding Reports', 'page': const TotalOutstandingReportPage()},
       if (settingsProvider.menuIsViewMap[75].toString() == '1')
         {'title': 'Outstanding Reports', 'page': const OutstandingReportPage()},
       if (settingsProvider.menuIsViewMap[89].toString() == '1')
-        {
-          'title': 'Task Summary Reports',
-          'page': const TaskSummaryReportScreen()
-        },
+        {'title': 'Task Summary Reports', 'page': const TaskSummaryReportScreen()},
       if (settingsProvider.menuIsViewMap[80].toString() == '1')
         {'title': 'Stock Reports', 'page': const StockReport()},
       if (settingsProvider.menuIsViewMap[121].toString() == '1')
@@ -180,309 +138,498 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if (settingsProvider.menuIsViewMap[113].toString() == '1')
         {'title': 'Commission Reports', 'page': const CommissionReportMobile()},
       if (settingsProvider.menuIsViewMap[114].toString() == '1')
-        {
-          'title': 'Sub Contract Reports',
-          'page': const SubContractReportMobile()
-        },
+        {'title': 'Sub Contract Reports', 'page': const SubContractReportMobile()},
       if (settingsProvider.menuIsViewMap[88].toString() == '1')
         {'title': 'Receipt Reports', 'page': const ReceiptReportPage()},
       if (settingsProvider.menuIsViewMap[123].toString() == '1')
         {'title': 'Customer Task Month Report', 'page': const CustomerTaskMonthReportScreen()},
       if (settingsProvider.menuIsViewMap[116].toString() == '1')
-        {
-          'title': 'Customer Outstanding Reports',
-          'page': const CustomerOutstandingReportMobile()
-        },
+        {'title': 'Customer Outstanding Reports', 'page': const CustomerOutstandingReportMobile()},
     ];
 
+    Future<String> getUserName() async {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('userName') ?? "Admin";
+    }
+
     return Drawer(
-      shape: LinearBorder(),
-      backgroundColor: AppColors.whiteColor,
-      width: 250,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+      ),
+      width: 280,
       child: Column(
         children: [
+          // Premium Header Section
+          _buildHeader(settingsProvider, getUserName),
+          
           Expanded(
             child: ListView(
-              padding: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              physics: const BouncingScrollPhysics(),
               children: [
-                // Inventory option
-                const SizedBox(
-                  height: 48,
-                ),
-                Center(
-                  child: displayLogo.startsWith('http')
-                      ? Image.network(
-                          displayLogo,
-                          height: 80,
-                          width: 100,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              AppStyles.logo(),
-                              height: 80,
-                              width: 100,
-                              fit: BoxFit.contain,
-                            );
-                          },
-                        )
-                      : Image.asset(
-                          displayLogo,
-                          height: 80,
-                          width: 100,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container();
-                          },
-                        ),
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
+                _buildSectionTitle('MAIN MENU'),
+                
                 if (settingsProvider.menuIsViewMap[29].toString() == '1')
-                  _buildMenuItem(
-                    'Inventory',
-                    'assets/images/inventory.svg',
-                    const InventoryPage(),
-                    context,
-                    sideProvider,
+                  _buildModernMenuItem(
+                    context: context,
+                    title: 'Inventory',
+                    iconPath: 'assets/images/inventory.svg',
+                    page: const InventoryPage(),
+                    sideProvider: sideProvider,
+                    activeColor: const Color(0xFF7B61FF), // Purple
+                    lightColor: const Color(0xFFE9EAFB),
                   ),
+                
                 if (settingsProvider.menuIsViewMap[36].toString() == '1')
-                  _buildMenuItem('Process Flow', 'assets/images/flow.svg',
-                      const ProcessFlowPage(), context, sideProvider),
+                  _buildModernMenuItem(
+                    context: context,
+                    title: 'Process Flow',
+                    iconPath: 'assets/images/flow.svg',
+                    page: const ProcessFlowPage(),
+                    sideProvider: sideProvider,
+                    activeColor: const Color(0xFF63B3ED), // Blue
+                    lightColor: const Color(0xFFE6F5FF),
+                  ),
+                  
                 if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
-                  _buildMenuItem(
-                      'Expense Management',
-                      'assets/images/inventory.svg',
-                      const ExpenseManagement(),
-                      context,
-                      sideProvider),
-                // if (settingsProvider.menuIsViewMap[36].toString() == '1')
-                //   _buildMenuItem(
-                //       'Tasks', 'assets/images/task.svg', const TaskPage(), context),
-                if (reportItems.isNotEmpty)
-                  ListTileTheme(
-                    dense: true,
-                    horizontalTitleGap: 0,
-                    child: ExpansionTile(
-                      collapsedTextColor: AppColors.textBlack,
-                      collapsedIconColor: AppColors.textBlack,
-                      iconColor: AppColors.bluebutton,
-                      textColor: AppColors.bluebutton,
-                      tilePadding: const EdgeInsets.symmetric(horizontal: 8),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
-                      ),
-                      leading: SvgPicture.asset(
-                        'assets/images/Reports.svg',
-                        width: 18,
-                        height: 18,
-                      ),
-                      title: Text(
-                        'Reports',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      children: reportItems
-                          .map((report) => _buildReportItem(
-                                report['title'],
-                                report['page'],
-                                context,
-                                sideProvider,
-                              ))
-                          .toList(),
-                    ),
+                  _buildModernMenuItem(
+                    context: context,
+                    title: 'Expenses',
+                    iconPath: 'assets/images/inventory.svg',
+                    page: const ExpenseManagement(),
+                    sideProvider: sideProvider,
+                    activeColor: const Color(0xFFFF9D6E), // Orange
+                    lightColor: const Color(0xFFFFF1E8),
                   ),
 
-                // Settings option - now after Reports
-                if (settingsProvider.menuIsViewMap[2].toString() == '1')
-                  _buildMenuItem(
-                    'Settings',
-                    'assets/images/settings-02.svg',
-                    const SettingsPage(),
-                    context,
-                    sideProvider,
+                const SizedBox(height: 16),
+                _buildSectionTitle('ANALYSIS'),
+
+                if (reportItems.isNotEmpty)
+                  _buildReportsExpansionTile(
+                    context: context,
+                    reportItems: reportItems,
+                    sideProvider: sideProvider,
                   ),
+
+                const SizedBox(height: 16),
+                _buildSectionTitle('OTHERS'),
+
+                if (settingsProvider.menuIsViewMap[2].toString() == '1')
+                  _buildModernMenuItem(
+                    context: context,
+                    title: 'Settings',
+                    iconPath: 'assets/images/settings-02.svg',
+                    page: const SettingsPage(),
+                    sideProvider: sideProvider,
+                    activeColor: const Color(0xFF48BB78), // Green
+                    lightColor: const Color(0xFFEDF7ED),
+                  ),
+                
+                const SizedBox(height: 32),
               ],
             ),
           ),
-          _buildLogoutButton(context),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(null != packageInfo
-                ? "${packageInfo!.version}.${packageInfo!.buildNumber}"
-                : "0.0"),
+          
+          // Footer Section
+          _buildFooter(context, packageInfo),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(SettingsProvider settingsProvider, Future<String> Function() getUserName) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF7B61FF), Color(0xFF63B3ED)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF7B61FF).withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(Icons.person_rounded, color: Colors.white, size: 28),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FutureBuilder<String>(
+                      future: getUserName(),
+                      builder: (context, snapshot) {
+                        return Text(
+                          snapshot.data ?? 'Admin',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF172230),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        );
+                      },
+                    ),
+                    Text(
+                      'Welcome Back!',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Center(
+            child: Opacity(
+              opacity: 0.8,
+              child: settingsProvider.displayLogo.startsWith('http')
+                  ? Image.network(
+                      settingsProvider.displayLogo,
+                      height: 40,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => 
+                        Image.asset(AppStyles.logo(), height: 40),
+                    )
+                  : Image.asset(
+                      settingsProvider.displayLogo,
+                      height: 40,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => Container(),
+                    ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context) {
-    return Tooltip(
-      message: 'Logout',
-      child: Center(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.whiteColor,
-            foregroundColor: AppColors.textRed,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-              side: BorderSide(
-                color: AppColors.textRed,
-              ),
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, bottom: 8, top: 8),
+      child: Text(
+        title,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: Colors.grey[400],
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernMenuItem({
+    required BuildContext context,
+    required String title,
+    required String iconPath,
+    required Widget page,
+    required SidebarProvider sideProvider,
+    required Color activeColor,
+    required Color lightColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+            sideProvider.setReportPage(page);
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: lightColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: SvgPicture.asset(
+                    iconPath,
+                    width: 18,
+                    height: 18,
+                    colorFilter: ColorFilter.mode(activeColor, BlendMode.srcIn),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF172230),
+                    ),
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, size: 20, color: Colors.grey[300]),
+              ],
             ),
           ),
-          child: const Text('Logout'),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to log out?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        // Navigator.of(context).pop();
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
+        ),
+      ),
+    );
+  }
 
-                        // Backup attendance state
-                        String? userId = prefs.getString('userId');
-                        bool? isCheckedIn;
-                        String? checkInDate;
-                        String? checkInTime;
-                        int? attendanceId;
+  Widget _buildReportsExpansionTile({
+    required BuildContext context,
+    required List<Map<String, dynamic>> reportItems,
+    required SidebarProvider sideProvider,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE9EAFB),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: SvgPicture.asset(
+              'assets/images/Reports.svg',
+              width: 18,
+              height: 18,
+              colorFilter: const ColorFilter.mode(Color(0xFF7B61FF), BlendMode.srcIn),
+            ),
+          ),
+          title: Text(
+            'Reports',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF172230),
+            ),
+          ),
+          iconColor: const Color(0xFF7B61FF),
+          collapsedIconColor: Colors.grey[400],
+          childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          children: reportItems.map((report) {
+            return ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              dense: true,
+              visualDensity: VisualDensity.compact,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              title: Text(
+                report['title'],
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[700],
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                sideProvider.setReportPage(report['page']);
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
 
-                        if (userId != null) {
-                          isCheckedIn = prefs.getBool('is_checked_in_$userId');
-                          checkInDate =
-                              prefs.getString('check_in_date_$userId');
-                          checkInTime =
-                              prefs.getString('check_in_time_$userId');
-                          attendanceId = prefs.getInt('attendance_id_$userId');
-
-                          try {
-                            if (!kIsWeb && userId.isNotEmpty) {
-                              final String topicName =
-                                  '${AppStyles.name()}-$userId';
-                              print("Unsubscribing from topic: $topicName");
-                              await FirebaseMessaging.instance
-                                  .unsubscribeFromTopic(topicName);
-                            }
-                          } catch (e) {
-                            print(e);
-                          }
-                        }
-
-                        // Backup branding state
-                        String? cachedLogo =
-                            prefs.getString('cached_company_logo');
-                        String? cachedTitle =
-                            prefs.getString('cached_company_title');
-
-                        await prefs.clear();
-
-                        // Restore attendance state
-                        if (userId != null) {
-                          if (isCheckedIn != null) {
-                            await prefs.setBool(
-                                'is_checked_in_$userId', isCheckedIn);
-                          }
-                          if (checkInDate != null) {
-                            await prefs.setString(
-                                'check_in_date_$userId', checkInDate);
-                          }
-                          if (checkInTime != null) {
-                            await prefs.setString(
-                                'check_in_time_$userId', checkInTime);
-                          }
-                          if (attendanceId != null) {
-                            await prefs.setInt(
-                                'attendance_id_$userId', attendanceId);
-                          }
-                        }
-
-                        // Restore branding state
-                        if (cachedLogo != null) {
-                          await prefs.setString(
-                              'cached_company_logo', cachedLogo);
-                        }
-                        if (cachedTitle != null) {
-                          await prefs.setString(
-                              'cached_company_title', cachedTitle);
-                        }
-
-                        if (context.mounted) {
-                          Navigator.of(context).pop();
-                          context.go(LoginPage.route);
-                        }
-                      },
-                      child: const Text(
-                        'Confirm',
-                        style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.w500),
+  Widget _buildFooter(BuildContext context, PackageInfo? packageInfo) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey[100]!)),
+      ),
+      child: Column(
+        children: [
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _handleLogout(context),
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFFFF3B30).withOpacity(0.2)),
+                  borderRadius: BorderRadius.circular(16),
+                  color: const Color(0xFFFF3B30).withOpacity(0.05),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.logout_rounded, color: Color(0xFFFF3B30), size: 20),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Logout',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFFF3B30),
                       ),
                     ),
                   ],
-                );
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  // Helper method to build main menu items
-  Widget _buildMenuItem(String title, String iconPath, Widget page,
-      BuildContext context, SidebarProvider sideProvider) {
-    return ListTileTheme(
-      dense: true,
-      horizontalTitleGap: 0,
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 8),
-        leading: SvgPicture.asset(
-          iconPath,
-          width: 18,
-          height: 18,
-        ),
-        title: Text(title,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            packageInfo != null 
+                ? "v${packageInfo.version} (${packageInfo.buildNumber})" 
+                : "v1.0.0",
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            )),
-        onTap: () {
-          Navigator.pop(context);
-          sideProvider.setReportPage(page);
-        },
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[400],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // Helper method to build report items
-  Widget _buildReportItem(
-      String title, Widget page, BuildContext context, SidebarProvider sideProvider) {
-    return ListTile(
-      title: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          title,
-          style: GoogleFonts.plusJakartaSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack),
-        ),
-      ),
-      onTap: () {
-        Navigator.pop(context);
-        sideProvider.setReportPage(page);
+  void _handleLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            'Logout',
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800),
+          ),
+          content: Text(
+            'Are you sure you want to log out from Vidyanexis?',
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              child: ElevatedButton(
+                onPressed: () async {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                  // Backup attendance state
+                  String? userId = prefs.getString('userId');
+                  bool? isCheckedIn;
+                  String? checkInDate;
+                  String? checkInTime;
+                  int? attendanceId;
+
+                  if (userId != null) {
+                    isCheckedIn = prefs.getBool('is_checked_in_$userId');
+                    checkInDate = prefs.getString('check_in_date_$userId');
+                    checkInTime = prefs.getString('check_in_time_$userId');
+                    attendanceId = prefs.getInt('attendance_id_$userId');
+
+                    try {
+                      if (!kIsWeb && userId.isNotEmpty) {
+                        final String topicName = '${AppStyles.name()}-$userId';
+                        await FirebaseMessaging.instance.unsubscribeFromTopic(topicName);
+                      }
+                    } catch (e) {
+                      if (kDebugMode) print(e);
+                    }
+                  }
+
+                  // Backup branding state
+                  String? cachedLogo = prefs.getString('cached_company_logo');
+                  String? cachedTitle = prefs.getString('cached_company_title');
+
+                  await prefs.clear();
+
+                  // Restore attendance state
+                  if (userId != null) {
+                    if (isCheckedIn != null) await prefs.setBool('is_checked_in_$userId', isCheckedIn);
+                    if (checkInDate != null) await prefs.setString('check_in_date_$userId', checkInDate);
+                    if (checkInTime != null) await prefs.setString('check_in_time_$userId', checkInTime);
+                    if (attendanceId != null) await prefs.setInt('attendance_id_$userId', attendanceId);
+                  }
+
+                  // Restore branding state
+                  if (cachedLogo != null) await prefs.setString('cached_company_logo', cachedLogo);
+                  if (cachedTitle != null) await prefs.setString('cached_company_title', cachedTitle);
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    context.go(LoginPage.route);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF3B30),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(
+                  'Logout',
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
+        );
       },
     );
   }
+
 }

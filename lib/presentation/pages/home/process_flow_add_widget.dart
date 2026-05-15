@@ -97,17 +97,15 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
             ? null
             : AppBar(
                 title: Text(
-                  widget.isEdit
-                      ? ('Edit Process flow ( ' +
-                          (widget.processFlowModel.taskTypeName ?? "") +
-                          " )")
-                      : 'Add Process flow',
+                  widget.isEdit ? 'Edit Process flow' : 'Add Process flow',
                   style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.textBlack,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    color: AppColors.textBlue800,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
+                backgroundColor: const Color(0xFFF7FAF9),
+                elevation: 0,
                 leading: Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.only(left: 8),
@@ -134,20 +132,20 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   Navigator.of(context).pop();
                   _onDrawerClosed(context);
                 },
-                backgroundColor: AppColors.whiteColor,
+                backgroundColor: Colors.white,
                 borderColor: AppColors.appViolet,
                 textColor: AppColors.appViolet,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               isSavingData
-                  ? SizedBox(
-                      width: 20, height: 20, child: CircularProgressIndicator())
+                  ? const SizedBox(
+                      width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                   : CustomElevatedButton(
                       buttonText: 'Save',
                       onPressed: saveData,
-                      backgroundColor: AppColors.appViolet,
-                      borderColor: AppColors.appViolet,
-                      textColor: AppColors.whiteColor,
+                      backgroundColor: AppColors.secondaryBlue,
+                      borderColor: AppColors.secondaryBlue,
+                      textColor: Colors.white,
                     ),
             ],
           ),
@@ -314,9 +312,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       Text(
                         'Create task',
                         style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textBlack,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlue800,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -426,8 +424,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             onPressed: () {
                               _addTaskToFlow();
                             },
-                            backgroundColor: AppColors.appViolet,
-                            borderColor: AppColors.appViolet,
+                            backgroundColor: AppColors.secondaryBlue,
+                            borderColor: AppColors.secondaryBlue,
                             textColor: AppColors.whiteColor,
                           ),
                           if (isEditingTaskFlow)
@@ -449,16 +447,15 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       ),
                       _buildTaskFlowList(
                           taskTypeList, departmentList, branchList),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       Text(
                         'Mandatory task',
                         style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textBlack,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlue800,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 16),
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -514,7 +511,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 const Icon(Icons.add_circle_outline, size: 16),
                             label: const Text('Assign Status'),
                             style: TextButton.styleFrom(
-                              foregroundColor: AppColors.appViolet,
+                              foregroundColor: AppColors.secondaryBlue,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 8,
@@ -544,8 +541,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                               buttonText:
                                   isEditingMandatoryTask ? 'Update' : "Add",
                               onPressed: _addMandatoryTask,
-                              backgroundColor: AppColors.appViolet,
-                              borderColor: AppColors.appViolet,
+                              backgroundColor: AppColors.secondaryBlue,
+                              borderColor: AppColors.secondaryBlue,
                               textColor: AppColors.whiteColor,
                             ),
                             const SizedBox(width: 8),
@@ -566,15 +563,13 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         ),
                       ),
                       _buildMandatoryTaskList(taskTypeList, taskTypeStatusList),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 24),
                       Text(
                         'Mandatory Document',
                         style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textBlack,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlue800,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(
@@ -582,24 +577,52 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       ),
                       Consumer<ProcessFlowProvider>(
                         builder: (context, provider, child) {
-                          return Container(
-                            constraints: const BoxConstraints(maxHeight: 300),
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: documentTypeList.map((doc) {
-                                bool isSelected = provider.selectedDocuments
-                                    .any((selected) =>
-                                        selected.documentTypeId ==
-                                        doc.documentTypeId);
-                                return CheckboxListTile(
-                                  title: Text(doc.documentTypeName),
-                                  value: isSelected,
-                                  onChanged: (bool? value) {
-                                    provider.toggleDocumentSelection(doc);
-                                  },
-                                );
-                              }).toList(),
-                            ),
+                          return ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: documentTypeList.length,
+                            separatorBuilder: (context, index) => const SizedBox(height: 8),
+                            itemBuilder: (context, index) {
+                              final doc = documentTypeList[index];
+                              bool isSelected = provider.selectedDocuments
+                                  .any((selected) =>
+                                      selected.documentTypeId ==
+                                      doc.documentTypeId);
+                              return InkWell(
+                                onTap: () => provider.toggleDocumentSelection(doc),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          doc.documentTypeName,
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 15,
+                                            color: AppColors.textBlue800,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 24,
+                                        width: 24,
+                                        child: Checkbox(
+                                          value: isSelected,
+                                          activeColor: AppColors.secondaryBlue,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          onChanged: (bool? value) {
+                                            provider.toggleDocumentSelection(doc);
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       )
@@ -617,24 +640,39 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     if (processFlowProvider.mandatoryTaskList.isEmpty) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 16.0),
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey[300]!),
+          color: const Color(0xFFF8F9FA),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFEDF2F7)),
         ),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle_outline,
-                  size: 40, color: Colors.grey[400]),
-              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(Icons.check_circle_outline_rounded,
+                    size: 32, color: Colors.grey[400]),
+              ),
+              const SizedBox(height: 16),
               Text(
                 'No mandatory tasks added yet',
                 style: GoogleFonts.plusJakartaSans(
-                  color: Colors.grey[600],
+                  color: Colors.grey[500],
                   fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -643,190 +681,204 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
       );
     }
 
-    return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Icon(Icons.check_circle, color: AppColors.appViolet),
-                const SizedBox(width: 8),
-                Text(
-                  'Mandatory Tasks',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.textBlack,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${processFlowProvider.mandatoryTaskList.length} ${processFlowProvider.mandatoryTaskList.length == 1 ? 'task' : 'tasks'}',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Icon(Icons.check_circle_rounded, color: AppColors.secondaryBlue, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Mandatory Tasks',
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.textBlue800,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-          // Header row
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: Colors.grey[50],
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: Text(
-                    'TASK TYPE',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 6,
-                  child: Text(
-                    'STATUSES',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 80), // Space for action buttons
-              ],
+            const Spacer(),
+            Text(
+              '${processFlowProvider.mandatoryTaskList.length} ${processFlowProvider.mandatoryTaskList.length == 1 ? 'task' : 'tasks'}',
+              style: GoogleFonts.plusJakartaSans(
+                color: Colors.grey[600],
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          // Data rows
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: processFlowProvider.mandatoryTaskList.length,
-            separatorBuilder: (context, index) =>
-                Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-            itemBuilder: (context, index) {
-              final task = processFlowProvider.mandatoryTaskList[index];
+          ],
+        ),
+        const SizedBox(height: 12),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: processFlowProvider.mandatoryTaskList.length,
+          itemBuilder: (context, index) {
+            final task = processFlowProvider.mandatoryTaskList[index];
 
-              // Get task type name
-              final typeName = taskTypes
-                      .where((element) => element.taskTypeId == task.taskTypeId)
+            // Get task type name
+            final typeName = taskTypes
+                    .where((element) => element.taskTypeId == task.taskTypeId)
+                    .firstOrNull
+                    ?.taskTypeName ??
+                "N/A";
+
+            // Get status names
+            final statusIds = task.statusIds ?? [];
+            final statusNames = statusIds.map((id) {
+              return statusList
+                      .where((status) => status.statusId.toString() == id)
                       .firstOrNull
-                      ?.taskTypeName ??
-                  "N/A";
+                      ?.statusName ??
+                  "Unknown";
+            }).join(", ");
 
-              // Get status names
-              final statusIds = task.statusIds ?? [];
-              final statusNames = statusIds.map((id) {
-                return statusList
-                        .where((status) => status.statusId.toString() == id)
-                        .firstOrNull
-                        ?.statusName ??
-                    "Unknown";
-              }).join(", ");
-
-              return Container(
-                color: index % 2 == 0 ? Colors.white : Colors.grey[50],
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          typeName,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textBlack,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 6,
-                        child: Text(
-                          statusNames,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textBlack,
-                            fontSize: 14,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 80,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit,
-                                  size: 20, color: Colors.blue),
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
-                              onPressed: () {
-                                _editMandatoryTask(index, taskTypes);
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              icon: const Icon(Icons.delete,
-                                  size: 20, color: Colors.red),
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text('Confirm Deletion'),
-                                    content: Text(
-                                        'Are you sure you want to remove this mandatory task?'),
-                                    actions: [
-                                      TextButton(
-                                        child: Text('Cancel'),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                      ),
-                                      TextButton(
-                                        child: Text('Delete',
-                                            style:
-                                                TextStyle(color: Colors.red)),
-                                        onPressed: () {
-                                          processFlowProvider
-                                              .removeMandatory(index);
-                                          Navigator.of(context).pop();
-                                          setState(() {});
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
                   ),
+                ],
+                border: Border.all(
+                  color: const Color(0xFFF1F5F9),
+                  width: 1,
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${index + 1}',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.secondaryBlue,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            typeName,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textBlue800,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.info_outline_rounded,
+                                  size: 13, color: Color(0xFF64748B)),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  statusNames.isEmpty ? 'No statuses assigned' : statusNames,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    color: const Color(0xFF64748B),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            _editMandatoryTask(index, taskTypes);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.edit_outlined,
+                              color: Colors.blue,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Confirm Deletion'),
+                                content: const Text(
+                                    'Are you sure you want to remove this mandatory task?'),
+                                actions: [
+                                  TextButton(
+                                    child: const Text('Cancel'),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                  ),
+                                  TextButton(
+                                    child: const Text('Delete',
+                                        style:
+                                            TextStyle(color: Colors.red)),
+                                    onPressed: () {
+                                      processFlowProvider
+                                          .removeMandatory(index);
+                                      Navigator.of(context).pop();
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFEF2F2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: Color(0xFFEF4444),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -886,8 +938,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   },
                   buttonText: 'Cancel',
                   backgroundColor: AppColors.whiteColor,
-                  borderColor: AppColors.appViolet,
-                  textColor: AppColors.appViolet,
+                  borderColor: AppColors.secondaryBlue,
+                  textColor: AppColors.secondaryBlue,
                 ),
                 CustomElevatedButton(
                   onPressed: () {
@@ -896,8 +948,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                     Navigator.pop(context); // Close dialog and save
                   },
                   buttonText: "Confirm",
-                  backgroundColor: AppColors.appViolet,
-                  borderColor: AppColors.appViolet,
+                  backgroundColor: AppColors.secondaryBlue,
+                  borderColor: AppColors.secondaryBlue,
                   textColor: AppColors.whiteColor,
                 ),
               ],
@@ -1081,23 +1133,39 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     if (processFlowProvider.taskFlowList.isEmpty) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 16.0),
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey[300]!),
+          color: const Color(0xFFF8F9FA),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFEDF2F7)),
         ),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.list_alt, size: 40, color: Colors.grey[400]),
-              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(Icons.format_list_bulleted_rounded,
+                    size: 32, color: Colors.grey[400]),
+              ),
+              const SizedBox(height: 16),
               Text(
                 'No tasks added yet',
                 style: GoogleFonts.plusJakartaSans(
-                  color: Colors.grey[600],
+                  color: Colors.grey[500],
                   fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -1106,214 +1174,208 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
       );
     }
 
-    return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Icon(Icons.assignment, color: AppColors.appViolet),
-                const SizedBox(width: 8),
-                Text(
-                  'Added Tasks',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.textBlack,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${processFlowProvider.taskFlowList.length} ${processFlowProvider.taskFlowList.length == 1 ? 'task' : 'tasks'}',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Icon(Icons.assignment_rounded, color: AppColors.secondaryBlue, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Added Tasks',
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.textBlue800,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-          // Header row
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: Colors.grey[50],
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    'BRANCH',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    'DEPARTMENT',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    'TASK TYPE',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 80), // Space for action buttons
-              ],
+            const Spacer(),
+            Text(
+              '${processFlowProvider.taskFlowList.length} ${processFlowProvider.taskFlowList.length == 1 ? 'task' : 'tasks'}',
+              style: GoogleFonts.plusJakartaSans(
+                color: Colors.grey[600],
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          // Data rows
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: processFlowProvider.taskFlowList.length,
-            separatorBuilder: (context, index) =>
-                Divider(height: 1, thickness: 1, color: Colors.grey[200]),
-            itemBuilder: (context, index) {
-              final task = processFlowProvider.taskFlowList[index];
+          ],
+        ),
+        const SizedBox(height: 12),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: processFlowProvider.taskFlowList.length,
+          itemBuilder: (context, index) {
+            final task = processFlowProvider.taskFlowList[index];
 
-              final branchName = branches
-                      .where((element) => element.branchId == task.branchId)
-                      .firstOrNull
-                      ?.branchName ??
-                  "N/A";
-              final deptName = departments
-                      .where((element) =>
-                          element.departmentId == task.departmentId)
-                      .firstOrNull
-                      ?.departmentName ??
-                  "N/A";
-              final typeName = taskTypes
-                      .where((element) => element.taskTypeId == task.taskTypeId)
-                      .firstOrNull
-                      ?.taskTypeName ??
-                  "N/A";
+            final branchName = branches
+                    .where((element) => element.branchId == task.branchId)
+                    .firstOrNull
+                    ?.branchName ??
+                "N/A";
+            final deptName = departments
+                    .where((element) =>
+                        element.departmentId == task.departmentId)
+                    .firstOrNull
+                    ?.departmentName ??
+                "N/A";
+            final typeName = taskTypes
+                    .where((element) => element.taskTypeId == task.taskTypeId)
+                    .firstOrNull
+                    ?.taskTypeName ??
+                "N/A";
 
-              return Container(
-                color: index % 2 == 0 ? Colors.white : Colors.grey[50],
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(
+                  color: const Color(0xFFF1F5F9),
+                  width: 1,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
                         child: Text(
-                          branchName,
+                          '${index + 1}',
                           style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textBlack,
-                            fontSize: 14,
+                            color: AppColors.secondaryBlue,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
                           ),
                         ),
                       ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          deptName,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textBlack,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          typeName,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textBlack,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 80,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit,
-                                  size: 20, color: Colors.blue),
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
-                              onPressed: () {
-                                _editTaskFlow(index, task, branches,
-                                    departments, taskTypes);
-                                _taskTypeByDepartmentFuture =
-                                    processFlowProvider.getTaskTypeByDepartment(
-                                        context, task.departmentId.toString());
-                              },
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            typeName,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textBlue800,
                             ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              icon: const Icon(Icons.delete,
-                                  size: 20, color: Colors.red),
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text('Confirm Deletion'),
-                                    content: Text(
-                                        'Are you sure you want to remove this task?'),
-                                    actions: [
-                                      TextButton(
-                                        child: Text('Cancel'),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                      ),
-                                      TextButton(
-                                        child: Text('Delete',
-                                            style:
-                                                TextStyle(color: Colors.red)),
-                                        onPressed: () {
-                                          processFlowProvider
-                                              .removeTaskFlow(index);
-                                          Navigator.of(context).pop();
-                                          setState(() {});
-                                        },
-                                      ),
-                                    ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.info_outline_rounded,
+                                  size: 13, color: Color(0xFF64748B)),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  '$branchName | $deptName',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    color: const Color(0xFF64748B),
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            _editTaskFlow(index, task, branches,
+                                departments, taskTypes);
+                            _taskTypeByDepartmentFuture =
+                                processFlowProvider.getTaskTypeByDepartment(
+                                    context, task.departmentId.toString());
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.edit_outlined,
+                              color: Colors.blue,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Confirm Deletion'),
+                                content: const Text(
+                                    'Are you sure you want to remove this task?'),
+                                actions: [
+                                  TextButton(
+                                    child: const Text('Cancel'),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                  ),
+                                  TextButton(
+                                    child: const Text('Delete',
+                                        style:
+                                            TextStyle(color: Colors.red)),
+                                    onPressed: () {
+                                      processFlowProvider
+                                          .removeTaskFlow(index);
+                                      Navigator.of(context).pop();
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFEF2F2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: Color(0xFFEF4444),
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
