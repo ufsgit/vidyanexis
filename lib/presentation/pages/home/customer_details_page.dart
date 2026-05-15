@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -65,6 +66,8 @@ import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.d
 import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
+import 'package:vidyanexis/utils/pdf_action_helper.dart';
+
 
 class CustomerDetailsScreen extends StatefulWidget {
   static const String route = '/customerDetails/';
@@ -1994,10 +1997,18 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'KSEB',
                                                                         onPressed:
                                                                             () async {
-                                                                          await ksebPdf(
-                                                                              customerDetails: customerDetailsProvider.leadDetails!.first,
-                                                                              context: context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'KSEB PDF',
+                                                                            onGenerate: () async {
+                                                                              return await generateKsebPdfBytes(
+                                                                                customerDetails: customerDetailsProvider.leadDetails!.first,
+                                                                                context: context,
+                                                                              ) ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[63] ==
                                                                             1 &&
@@ -2014,10 +2025,18 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Vendor Agreement',
                                                                         onPressed:
                                                                             () async {
-                                                                          await vendorAgreementPdf(
-                                                                              customerDetails: customerDetailsProvider.leadDetails!.first,
-                                                                              context: context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Vendor Agreement',
+                                                                            onGenerate: () async {
+                                                                              return await generateVendorAgreementPdfBytes(
+                                                                                customerDetails: customerDetailsProvider.leadDetails!.first,
+                                                                                context: context,
+                                                                              ) ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[62] ==
                                                                             1 &&
@@ -2034,10 +2053,18 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Vendor Feasibility',
                                                                         onPressed:
                                                                             () async {
-                                                                          await rtsFeasibilityReportPdf(
-                                                                              customerDetails: customerDetailsProvider.leadDetails!.first,
-                                                                              context: context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Vendor Feasibility',
+                                                                            onGenerate: () async {
+                                                                              return await generateRtsFeasibilityReportPdfBytes(
+                                                                                customerDetails: customerDetailsProvider.leadDetails!.first,
+                                                                                context: context,
+                                                                              ) ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[101] ==
                                                                             1 &&
@@ -2054,11 +2081,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Annexture1',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
-                                                                              'Annexture1',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Annexture1',
+                                                                            pdfUrl: '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure1}${widget.customerId}');
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[102] ==
                                                                             1 &&
@@ -2075,11 +2108,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Annexture2',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
-                                                                              'Annexture2',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Annexture 2',
+                                                                            pdfUrl: '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure2}${widget.customerId}');
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[103] ==
                                                                             1 &&
@@ -2096,11 +2135,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Annexture3',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
-                                                                              'Annexture3',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Annexture 3',
+                                                                            pdfUrl: '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure3}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[105] ==
                                                                             1 &&
@@ -2117,11 +2164,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Net meter Agreement',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
-                                                                              'Net meter Agreement',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Net meter Agreement',
+                                                                            pdfUrl: '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[106] ==
                                                                             1 &&
@@ -2138,11 +2193,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'MNRE Agreement',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
-                                                                              'MNRE Agreement',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'MNRE Agreement',
+                                                                            pdfUrl: '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfMnreAgreement}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[107] ==
                                                                             1 &&
@@ -2159,11 +2222,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Loan Agreement',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
-                                                                              'Loan Agreement',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Loan Agreement',
+                                                                            pdfUrl: '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfLoanAgreement}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[108] ==
                                                                             1 &&
@@ -2180,11 +2251,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Schedule',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfSchedule}${widget.customerId}',
-                                                                              'Schedule',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Schedule',
+                                                                            pdfUrl: '${HttpUrls.getPdfSchedule}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfSchedule}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[109] ==
                                                                             1 &&
@@ -2201,11 +2280,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Completion Report',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
-                                                                              'Completion Report',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Completion Report',
+                                                                            pdfUrl: '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfCompletionReport}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[110] ==
                                                                             1 &&
@@ -2222,11 +2309,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'KSEB Net Meter',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}',
-                                                                              'KSEB Net Meter',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'KSEB Net Meter',
+                                                                            pdfUrl: '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfKsebNetMeter}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[111] ==
                                                                             1 &&
@@ -2243,11 +2338,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Vendor Agreement A3s',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
-                                                                              'Vendor Agreement A3s',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Vendor Agreement A3s',
+                                                                            pdfUrl: '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorAgreement}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[112] ==
                                                                             1 &&
@@ -2264,11 +2367,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Warranty',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf(
-                                                                              '${HttpUrls.getPdfWarranty}${widget.customerId}',
-                                                                              'Warranty',
-                                                                              context);
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Warranty',
+                                                                            pdfUrl: '${HttpUrls.getPdfWarranty}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWarranty}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
                                                                         },
+
                                                                       ),
                                                                   ],
                                                                 ),
@@ -2742,12 +2853,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       'KSEB',
                                                                   onPressed:
                                                                       () async {
-                                                                    await ksebPdf(
-                                                                        customerDetails: leadDetailsProvider
-                                                                            .leadDetails!
-                                                                            .first,
-                                                                        context:
-                                                                            context);
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'KSEB PDF',
+                                                                       onGenerate: () async {
+                                                                         return await generateKsebPdfBytes(
+                                                                           customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                           context: context,
+                                                                         ) ?? Uint8List(0);
+                                                                       },
+                                                                     );
+
                                                                   },
                                                                 ),
                                                               if (settingsprovider
@@ -2771,12 +2887,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       'Vendor Agreement',
                                                                   onPressed:
                                                                       () async {
-                                                                    await vendorAgreementPdf(
-                                                                        customerDetails: leadDetailsProvider
-                                                                            .leadDetails!
-                                                                            .first,
-                                                                        context:
-                                                                            context);
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Vendor Agreement',
+                                                                       onGenerate: () async {
+                                                                         return await generateVendorAgreementPdfBytes(
+                                                                           customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                           context: context,
+                                                                         ) ?? Uint8List(0);
+                                                                       },
+                                                                     );
+
                                                                   },
                                                                 ),
                                                               if (settingsprovider
@@ -2800,12 +2921,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       'Vendor Feasibility',
                                                                   onPressed:
                                                                       () async {
-                                                                    await rtsFeasibilityReportPdf(
-                                                                        customerDetails: leadDetailsProvider
-                                                                            .leadDetails!
-                                                                            .first,
-                                                                        context:
-                                                                            context);
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Vendor Feasibility',
+                                                                       onGenerate: () async {
+                                                                         return await generateRtsFeasibilityReportPdfBytes(
+                                                                           customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                           context: context,
+                                                                         ) ?? Uint8List(0);
+                                                                       },
+                                                                     );
+
                                                                   },
                                                                 ),
                                                               if (settingsprovider
@@ -2827,13 +2953,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'Annexture1',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
-                                                                        'Annexture1',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Annexture1',
+                                                                       pdfUrl: '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure1}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -2856,11 +2990,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       'Annexture2',
                                                                   onPressed:
                                                                       () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
-                                                                        'Annexture2',
-                                                                        context);
-                                                                  },
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Annexture 2',
+                                                                       pdfUrl: '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure2}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -2883,11 +3025,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       'Annexture3',
                                                                   onPressed:
                                                                       () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
-                                                                        'Annexture3',
-                                                                        context);
-                                                                  },
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Annexture 3',
+                                                                       pdfUrl: '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure3}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -2908,13 +3058,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'Net meter Agreement',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
-                                                                        'Net meter Agreement',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Net meter Agreement',
+                                                                       pdfUrl: '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -2935,13 +3093,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'MNRE Agreement',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
-                                                                        'MNRE Agreement',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'MNRE Agreement',
+                                                                       pdfUrl: '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfMnreAgreement}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -2962,13 +3128,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'Loan Agreement',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
-                                                                        'Loan Agreement',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Loan Agreement',
+                                                                       pdfUrl: '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfLoanAgreement}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -2989,13 +3163,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'Schedule',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfSchedule}${widget.customerId}',
-                                                                        'Schedule',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Schedule',
+                                                                       pdfUrl: '${HttpUrls.getPdfSchedule}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfSchedule}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -3016,13 +3198,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'Completion Report',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
-                                                                        'Completion Report',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Completion Report',
+                                                                       pdfUrl: '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfCompletionReport}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -3043,13 +3233,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'KSEB Net Meter',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}',
-                                                                        'KSEB Net Meter',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'KSEB Net Meter',
+                                                                       pdfUrl: '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfKsebNetMeter}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -3070,13 +3268,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'Vendor Agreement A3s',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
-                                                                        'Vendor Agreement A3s',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Vendor Agreement A3s',
+                                                                       pdfUrl: '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorAgreement}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                               if (settingsprovider
                                                                               .menuIsViewMap[
@@ -3097,13 +3303,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .bluebutton,
                                                                   buttonText:
                                                                       'Warranty',
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf(
-                                                                        '${HttpUrls.getPdfWarranty}${widget.customerId}',
-                                                                        'Warranty',
-                                                                        context);
-                                                                  },
+                                                                   onPressed:
+                                                                       () async {
+                                                                     PdfActionHelper.showPdfOptions(
+                                                                       context: context,
+                                                                       title: 'Warranty',
+                                                                       pdfUrl: '${HttpUrls.getPdfWarranty}${widget.customerId}',
+                                                                       onGenerate: () async {
+                                                                         await Loader.showLoader(context);
+                                                                         final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWarranty}${widget.customerId}');
+                                                                         Loader.stopLoader(context);
+                                                                         return bytes ?? Uint8List(0);
+                                                                       },
+                                                                     );
+                                                                   },
+
                                                                 ),
                                                             ],
                                                           ),
@@ -4867,17 +5081,36 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          // Generic Print Button
+                                          // Generic Share Button
                                           if (settingsprovider
                                                   .menuIsViewMap[32] ==
                                               1)
                                             IconButton(
-                                              tooltip: 'Print Quotation 1',
-                                              icon: const Icon(Icons.print,
-                                                  size: 20, color: Colors.blue),
+                                              tooltip: 'Share Quotation 1',
+                                              icon: Icon(Icons.share,
+                                                  size: 20, color: AppColors.primaryBlue),
                                               onPressed: () async {
-                                                await Loader.showLoader(
-                                                    context);
+                                                PdfActionHelper.showShareOptions(
+                                                  context: context,
+                                                  title: 'Quotation 1',
+                                                  pdfUrl:
+                                                      '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${task.quotationMasterId}',
+                                                  onGenerate: () async {
+                                                    await Loader.showLoader(context);
+                                                    final bytes = await customerDetailsProvider
+                                                        .getQuotationMasterPdfBytes(task.quotationMasterId.toString());
+                                                    Loader.stopLoader(context);
+                                                    return bytes ?? Uint8List(0);
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                            IconButton(
+                                              tooltip: 'Print Quotation 1',
+                                              icon: Icon(Icons.print,
+                                                  size: 20, color: AppColors.primaryBlue),
+                                              onPressed: () async {
+                                                await Loader.showLoader(context);
                                                 await customerDetailsProvider
                                                     .getQuotationMasterPdf(
                                                         task.quotationMasterId
@@ -4886,20 +5119,59 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 Loader.stopLoader(context);
                                               },
                                             ),
-                                          // Specific Print Button
+                                          // Specific Share Button
                                           if (settingsprovider
                                                   .menuIsViewMap[55] ==
                                               1)
                                             if (task.quotationTypeId == 2)
                                               IconButton(
-                                                tooltip: 'Print Commercial',
-                                                icon: const Icon(
-                                                    Icons.print_outlined,
+                                                tooltip: 'Share Commercial',
+                                                icon: Icon(
+                                                    Icons.share_outlined,
                                                     size: 20,
-                                                    color: Colors.blue),
+                                                    color: AppColors.primaryBlue),
                                                 onPressed: () async {
-                                                  await Loader.showLoader(
-                                                      context);
+                                                  PdfActionHelper.showShareOptions(
+                                                    context: context,
+                                                    title: 'Commercial PDF',
+                                                    onGenerate: () async {
+                                                      await Loader.showLoader(context);
+                                                      await customerDetailsProvider
+                                                          .getQuatationListByMasterId(
+                                                              task.quotationMasterId
+                                                                  .toString(),
+                                                              context);
+                                                      await customerDetailsProvider
+                                                          .fetchLeadDetails(
+                                                              widget.customerId,
+                                                              context);
+                                                      await settingsprovider
+                                                          .getCompanyDetails();
+                                                      Loader.stopLoader(context);
+
+                                                      if (settingsprovider.companyDetails.isNotEmpty &&
+                                                          (customerDetailsProvider.leadDetails?.isNotEmpty ?? false) &&
+                                                          customerDetailsProvider.quotationListByMaster.isNotEmpty) {
+                                                        return await generateCommercialPDFBytes(
+                                                              context: context,
+                                                              companyDetails: settingsprovider.companyDetails[0],
+                                                              customerDetails: customerDetailsProvider.leadDetails![0],
+                                                              quotationData: customerDetailsProvider.quotationListByMaster[0],
+                                                            ) ??
+                                                            Uint8List(0);
+                                                      }
+                                                      return Uint8List(0);
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                              IconButton(
+                                                tooltip: 'Print Commercial',
+                                                icon: Icon(Icons.print_outlined,
+                                                    size: 20,
+                                                    color: AppColors.primaryBlue),
+                                                onPressed: () async {
+                                                  await Loader.showLoader(context);
                                                   await customerDetailsProvider
                                                       .getQuatationListByMasterId(
                                                           task.quotationMasterId
@@ -4911,18 +5183,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           context);
                                                   await settingsprovider
                                                       .getCompanyDetails();
-                                                  printCommercialPDFs(
-                                                      context: context,
-                                                      companyDetails:
-                                                          settingsprovider
-                                                                  .companyDetails[
-                                                              0],
-                                                      customerDetails:
-                                                          customerDetailsProvider
-                                                              .leadDetails![0],
-                                                      quotationData:
-                                                          customerDetailsProvider
-                                                              .quotationListByMaster[0]);
+                                                  if (settingsprovider.companyDetails.isNotEmpty &&
+                                                      (customerDetailsProvider.leadDetails?.isNotEmpty ?? false) &&
+                                                      customerDetailsProvider
+                                                          .quotationListByMaster.isNotEmpty) {
+                                                    printCommercialPDFs(
+                                                        context: context,
+                                                        companyDetails: settingsprovider.companyDetails[0],
+                                                        customerDetails: customerDetailsProvider.leadDetails![0],
+                                                        quotationData:
+                                                            customerDetailsProvider.quotationListByMaster[0]);
+                                                  }
                                                   Loader.stopLoader(context);
                                                 },
                                               ),
@@ -4931,14 +5202,53 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               1)
                                             if (task.quotationTypeId == 1)
                                               IconButton(
-                                                tooltip: 'Print Residential',
-                                                icon: const Icon(
-                                                    Icons.print_outlined,
+                                                tooltip: 'Share Residential',
+                                                icon: Icon(
+                                                    Icons.share_outlined,
                                                     size: 20,
-                                                    color: Colors.blue),
+                                                    color: AppColors.primaryBlue),
                                                 onPressed: () async {
-                                                  await Loader.showLoader(
-                                                      context);
+                                                  PdfActionHelper.showShareOptions(
+                                                    context: context,
+                                                    title: 'Residential PDF',
+                                                    onGenerate: () async {
+                                                      await Loader.showLoader(context);
+                                                      await customerDetailsProvider
+                                                          .getQuatationListByMasterId(
+                                                              task.quotationMasterId
+                                                                  .toString(),
+                                                              context);
+                                                      await customerDetailsProvider
+                                                          .fetchLeadDetails(
+                                                              widget.customerId,
+                                                              context);
+                                                      await settingsprovider
+                                                          .getCompanyDetails();
+                                                      Loader.stopLoader(context);
+
+                                                      if (settingsprovider.companyDetails.isNotEmpty &&
+                                                          (customerDetailsProvider.leadDetails?.isNotEmpty ?? false) &&
+                                                          customerDetailsProvider.quotationListByMaster.isNotEmpty) {
+                                                        return await generateResidentialPDFBytes(
+                                                              context: context,
+                                                              companyDetails: settingsprovider.companyDetails[0],
+                                                              customerDetails: customerDetailsProvider.leadDetails![0],
+                                                              quotationData: customerDetailsProvider.quotationListByMaster[0],
+                                                            ) ??
+                                                            Uint8List(0);
+                                                      }
+                                                      return Uint8List(0);
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                              IconButton(
+                                                tooltip: 'Print Residential',
+                                                icon: Icon(Icons.print_outlined,
+                                                    size: 20,
+                                                    color: AppColors.primaryBlue),
+                                                onPressed: () async {
+                                                  await Loader.showLoader(context);
                                                   await customerDetailsProvider
                                                       .getQuatationListByMasterId(
                                                           task.quotationMasterId
@@ -4950,18 +5260,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           context);
                                                   await settingsprovider
                                                       .getCompanyDetails();
-                                                  printResidentialPDFs(
-                                                      context: context,
-                                                      companyDetails:
-                                                          settingsprovider
-                                                                  .companyDetails[
-                                                              0],
-                                                      customerDetails:
-                                                          customerDetailsProvider
-                                                              .leadDetails![0],
-                                                      quotationData:
-                                                          customerDetailsProvider
-                                                              .quotationListByMaster[0]);
+                                                  if (settingsprovider.companyDetails.isNotEmpty &&
+                                                      (customerDetailsProvider.leadDetails?.isNotEmpty ?? false) &&
+                                                      customerDetailsProvider
+                                                          .quotationListByMaster.isNotEmpty) {
+                                                    printResidentialPDFs(
+                                                        context: context,
+                                                        companyDetails: settingsprovider.companyDetails[0],
+                                                        customerDetails: customerDetailsProvider.leadDetails![0],
+                                                        quotationData:
+                                                            customerDetailsProvider.quotationListByMaster[0]);
+                                                  }
                                                   Loader.stopLoader(context);
                                                 },
                                               ),

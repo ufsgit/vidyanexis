@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,8 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/utils/pdf_action_helper.dart';
 import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_expansion_tile_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
@@ -46,7 +49,26 @@ class QuotationDetailsWidget extends StatelessWidget {
           ),
         ),
         actions: [
-          if (settingsprovider.menuIsViewMap[32] == 1)
+          if (settingsprovider.menuIsViewMap[32] == 1) ...[
+            IconButton(
+              onPressed: () async {
+                PdfActionHelper.showShareOptions(
+                  context: context,
+                  title: 'Quotation 1',
+                  pdfUrl:
+                      '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=$serviceId',
+                  onGenerate: () async {
+                    await Loader.showLoader(context);
+                    final bytes = await customerDetailsProvider
+                        .getQuotationMasterPdfBytes(serviceId);
+                    Loader.stopLoader(context);
+                    return bytes ?? Uint8List(0);
+                  },
+                );
+              },
+              icon: Icon(Icons.share, color: AppColors.primaryBlue),
+              tooltip: 'Share Quotation 1',
+            ),
             IconButton(
               onPressed: () async {
                 await Loader.showLoader(context);
@@ -57,6 +79,7 @@ class QuotationDetailsWidget extends StatelessWidget {
               icon: Icon(Icons.print, color: AppColors.primaryBlue),
               tooltip: 'Print Quotation 1',
             ),
+          ],
           if (settingsprovider.menuIsEditMap[16] == 1)
             IconButton(
               onPressed: () async {

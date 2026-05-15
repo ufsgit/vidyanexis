@@ -5,7 +5,6 @@ import 'package:vidyanexis/presentation/pages/settings/checklist_item_page.dart'
 import 'package:vidyanexis/presentation/pages/settings/campaign_content.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
-
 import 'package:vidyanexis/presentation/pages/settings/form_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -52,10 +51,6 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       String userId = preferences.getString('userId') ?? "0";
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
-      // settingsProvider.getUserDetails(
-      //   '',
-      //   context,
-      // );
       settingsProvider.searchUserTypeDetails(context);
       settingsProvider.searchWorkingStatusData(context);
       settingsProvider.searchEnquiryStatusData('', context);
@@ -73,10 +68,12 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    final sidebarProvider = Provider.of<SidebarProvider>(context);
+    final isMobile = !AppStyles.isWebScreen(context);
+
     return Scaffold(
-      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
-      appBar: !AppStyles.isWebScreen(context)
+      backgroundColor: AppColors.scaffoldColor,
+      drawer: isMobile ? const SidebarDrawer() : null,
+      appBar: isMobile
           ? AppBar(
               surfaceTintColor: AppColors.scaffoldColor,
               backgroundColor: AppColors.whiteColor,
@@ -93,7 +90,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                     child: const Icon(
                       Icons.sort,
                       size: 20,
-                      color: AppColors.textGrey4,
+                      color: AppColors.secondaryBlue,
                     ),
                   ),
                 ),
@@ -101,9 +98,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
               title: Text(
                 'Settings',
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlack,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textBlue800,
                 ),
               ),
             )
@@ -111,55 +108,65 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Left sidebar
-          if (AppStyles.isWebScreen(context))
+          // Left sidebar for Web
+          if (!isMobile)
             Container(
               width: 250,
               decoration: BoxDecoration(
+                color: Colors.white,
                 border: Border(
                   right: BorderSide(
-                    color: Colors.grey.shade300,
+                    color: Colors.grey.shade200,
                     width: 1,
                   ),
                 ),
               ),
-              child: ListView(children: [
-                const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Settings',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Color(0xFF152D70),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ...tabBar(settingsProvider),
-              ]),
-            ),
-
-          Expanded(
-            child: SingleChildScrollView(
               child: Column(
                 children: [
-                  if (!AppStyles.isWebScreen(context))
-                    SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(children: tabBar(settingsProvider))),
-                  SizedBox(
-                    height: AppStyles.isWebScreen(context) ? 72 : 15,
-                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _buildContent(),
+                    padding: const EdgeInsets.all(24),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Settings',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 24,
+                            color: AppColors.textBlue800,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      children: tabBar(settingsProvider),
+                    ),
                   ),
                 ],
               ),
+            ),
+
+          Expanded(
+            child: Column(
+              children: [
+                if (isMobile)
+                  Container(
+                    color: Colors.white,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Row(children: tabBar(settingsProvider)),
+                    ),
+                  ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: _buildContent(),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -168,235 +175,122 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
   }
 
   Widget _buildMenuItem(BuildContext context, String title, IconData icon) {
-    return Consumer<SettingsProvider>(
-      builder: (context, settings, child) {
-        final isSelected = settings.selectedMenu == title;
+    final settings = Provider.of<SettingsProvider>(context);
+    final isSelected = settings.selectedMenu == title;
 
-        return InkWell(
-          onTap: () {
-            settings.setSelectedMenu(title);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(0),
-            child: Container(
-              height: 35,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: isSelected ? const Color(0xFFE5F0FF) : null,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
-                  children: [
-                    // Icon(
-                    //   icon,
-                    //   color: isSelected ? AppColors.primaryBlue : Colors.grey,
-                    //   size: 20,
-                    // ),
-                    // const SizedBox(width: 12),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: isSelected ? AppColors.primaryBlue : Colors.grey,
-                        fontWeight:
-                            isSelected ? FontWeight.w500 : FontWeight.normal,
-                      ),
-                    ),
-                  ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: InkWell(
+        onTap: () => settings.setSelectedMenu(title),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: isSelected ? AppColors.secondaryBlue.withOpacity(0.1) : Colors.transparent,
+          ),
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.plusJakartaSans(
+                  color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                  fontSize: 14,
                 ),
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
   Widget _buildContent() {
-    return Consumer<SettingsProvider>(
-      builder: (context, settings, child) {
-        switch (settings.selectedMenu) {
-          case 'Users':
-            return const UsersContent();
-          case 'Status':
-            return const LeadUsersContent();
-          case 'Enquiry Source':
-            return const EnquirySourceContent();
-          case 'Enquiry For':
-            return const EnquiryForContent();
-          case 'Document Type':
-            return const DocumentTypeContent();
-          // case 'CheckList Type':
-          //   return const CheckListContent();
-          case 'Task Type':
-            return const TaskTypeContent();
-
-          case 'Excel Import':
-            return const BulkImportScreen();
-          case 'Company Details':
-            return const CompanyDetails();
-          // case 'Version':
-          //   return const VersionPage();
-          case 'Department':
-            return const DepartmentPage();
-          case 'Branch':
-            return const BranchPage();
-          case 'Stage':
-            return const StagePage();
-          case 'Source Category':
-            return const SourceCategoryPage();
-          case 'Checklist Item':
-            return const CheckListItemPage();
-          case 'Checklist Category':
-            return const CheckListCategoryPage();
-          case 'Custom Field':
-            return const CustomField();
-          case 'ExpenseType':
-            return const ExpenseType();
-          case 'Location':
-            return const LocationPage();
-          case 'Forms':
-            return const FormContent();
-          case 'Campaign':
-            return const CampaignContent();
-
-          default:
-            return const SizedBox.shrink();
-        }
-      },
-    );
+    final settings = Provider.of<SettingsProvider>(context);
+    switch (settings.selectedMenu) {
+      case 'Users':
+        return const UsersContent();
+      case 'Status':
+        return const LeadUsersContent();
+      case 'Enquiry Source':
+        return const EnquirySourceContent();
+      case 'Enquiry For':
+        return const EnquiryForContent();
+      case 'Document Type':
+        return const DocumentTypeContent();
+      case 'Task Type':
+        return const TaskTypeContent();
+      case 'Excel Import':
+        return const BulkImportScreen();
+      case 'Company Details':
+        return const CompanyDetails();
+      case 'Department':
+        return const DepartmentPage();
+      case 'Branch':
+        return const BranchPage();
+      case 'Stage':
+        return const StagePage();
+      case 'Source Category':
+        return const SourceCategoryPage();
+      case 'Checklist Item':
+        return const CheckListItemPage();
+      case 'Checklist Category':
+        return const CheckListCategoryPage();
+      case 'Custom Field':
+        return const CustomField();
+      case 'ExpenseType':
+        return const ExpenseType();
+      case 'Location':
+        return const LocationPage();
+      case 'Forms':
+        return const FormContent();
+      case 'Campaign':
+        return const CampaignContent();
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   List<Widget> tabBar(SettingsProvider settingsProvider) {
     return [
       if (settingsProvider.menuIsViewMap[1].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Users',
-          Icons.people,
-        ),
+        _buildMenuItem(context, 'Users', Icons.people),
       if (settingsProvider.menuIsViewMap[5].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Status',
-          Icons.trending_up,
-        ),
+        _buildMenuItem(context, 'Status', Icons.trending_up),
       if (settingsProvider.menuIsViewMap[6].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Enquiry Source',
-          Icons.trending_up,
-        ),
+        _buildMenuItem(context, 'Enquiry Source', Icons.trending_up),
       if (settingsProvider.menuIsViewMap[17].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Enquiry For',
-          Icons.trending_up,
-        ),
+        _buildMenuItem(context, 'Enquiry For', Icons.trending_up),
       if (settingsProvider.menuIsViewMap[23].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Document Type',
-          Icons.trending_up,
-        ),
-      // if (settingsProvider.menuIsViewMap[22].toString() == '1')
-      //   _buildMenuItem(
-      //     context,
-      //     'CheckList Type',
-      //     Icons.trending_up,
-      //   ),
+        _buildMenuItem(context, 'Document Type', Icons.trending_up),
       if (settingsProvider.menuIsViewMap[41].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Task Type',
-          Icons.trending_up,
-        ),
-      // _buildMenuItem(context, 'Status', Icons.trending_up),
+        _buildMenuItem(context, 'Task Type', Icons.trending_up),
       if (settingsProvider.menuIsViewMap[20].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Excel Import',
-          Icons.document_scanner,
-        ),
+        _buildMenuItem(context, 'Excel Import', Icons.document_scanner),
       if (settingsProvider.menuIsViewMap[27].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Company Details',
-          Icons.document_scanner,
-        ),
-      // if (settingsProvider.menuIsViewMap[28].toString() == '1')
-      //   _buildMenuItem(
-      //     context,
-      //     'Version',
-      //     Icons.document_scanner,
-      //   ),
+        _buildMenuItem(context, 'Company Details', Icons.document_scanner),
       if (settingsProvider.menuIsViewMap[42].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Department',
-          Icons.document_scanner,
-        ),
+        _buildMenuItem(context, 'Department', Icons.document_scanner),
       if (settingsProvider.menuIsViewMap[57].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Branch',
-          Icons.category,
-        ),
+        _buildMenuItem(context, 'Branch', Icons.category),
       if (settingsProvider.menuIsViewMap[58].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Stage',
-          Icons.category,
-        ),
+        _buildMenuItem(context, 'Stage', Icons.category),
       if (settingsProvider.menuIsViewMap[59].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Source Category',
-          Icons.category,
-        ),
+        _buildMenuItem(context, 'Source Category', Icons.category),
       if (settingsProvider.menuIsViewMap[38].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Checklist Item',
-          Icons.category,
-        ),
+        _buildMenuItem(context, 'Checklist Item', Icons.category),
       if (settingsProvider.menuIsViewMap[39].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Checklist Category',
-          Icons.category,
-        ),
+        _buildMenuItem(context, 'Checklist Category', Icons.category),
       if (settingsProvider.menuIsViewMap[60].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Custom Field',
-          Icons.category,
-        ),
+        _buildMenuItem(context, 'Custom Field', Icons.category),
       if (settingsProvider.menuIsViewMap[64].toString() == '1')
-        _buildMenuItem(
-          context,
-          'ExpenseType',
-          Icons.category,
-        ),
+        _buildMenuItem(context, 'ExpenseType', Icons.category),
       if (settingsProvider.menuIsViewMap[86].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Location',
-          Icons.location_on,
-        ),
+        _buildMenuItem(context, 'Location', Icons.location_on),
       if (settingsProvider.menuIsViewMap[85].toString() == '1')
-        _buildMenuItem(
-          context,
-          'Forms',
-          Icons.format_list_bulleted,
-        ),
-      _buildMenuItem(
-        context,
-        'Campaign',
-        Icons.campaign,
-      ),
-      // if (settingsProvider.menuIsViewMap[28].toString() == '1')
-      //   _buildMenuItem(context, 'Branch', Icons.document_scanner),
+        _buildMenuItem(context, 'Forms', Icons.format_list_bulleted),
+      _buildMenuItem(context, 'Campaign', Icons.campaign),
     ];
   }
 }

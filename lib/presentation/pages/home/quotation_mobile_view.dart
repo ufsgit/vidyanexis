@@ -1,18 +1,24 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/utils/file_downloader.dart';
+import 'package:vidyanexis/utils/pdf_action_helper.dart';
+import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
-
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/utils/extensions.dart';
-
-import '../../../constants/app_colors.dart';
 
 class QuotationMobileView extends StatefulWidget {
   const QuotationMobileView({super.key, required this.customerId});
@@ -117,6 +123,11 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 5, horizontal: 7),
@@ -128,38 +139,189 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                               child: Text(
                                 item.quotationStatusName,
                                 style: AppStyles.getBoldTextStyle(
-                                  fontSize: 12,
+                                  fontSize: 11,
                                   fontColor: StatusUtils.getStatusTextColor(
                                       item.quotationStatusId),
                                 ),
                               ),
                             ),
-                            // Print 1 — API-generated PDF (menuIsViewMap[32])
+                            const Spacer(),
+                            // Share 1 — API-generated PDF (menuIsViewMap[32])
                             if (settingsProvider.menuIsViewMap[32] == 1) ...[
-                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: () async {
+                                  PdfActionHelper.showShareOptions(
+                                    context: context,
+                                    title: 'Quotation 1',
+                                    pdfUrl:
+                                        '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${item.quotationMasterId}',
+                                    onGenerate: () async {
+                                      final bytes =
+                                          await customerDetailsProvider
+                                              .getQuotationMasterPdfBytes(item
+                                                  .quotationMasterId
+                                                  .toString());
+                                      return bytes ?? Uint8List(0);
+                                    },
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Tooltip(
+                                    message: 'Share Quotation 1',
+                                    child: Icon(Icons.share,
+                                        size: 20, color: AppColors.primaryBlue),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
                               GestureDetector(
                                 onTap: () async {
                                   await Loader.showLoader(context);
-                                  await customerDetailsProvider
-                                      .getQuotationMasterPdf(
-                                    item.quotationMasterId.toString(),
-                                    context,
-                                  );
-                                  Loader.stopLoader(context);
+                                  try {
+                                    final bytes = await customerDetailsProvider
+                                        .getQuotationMasterPdfBytes(
+                                            item.quotationMasterId.toString());
+                                    if (bytes != null && bytes.isNotEmpty) {
+                                      final fileName =
+                                          'Quotation_${item.quotationMasterId}.pdf';
+                                      if (Platform.isAndroid) {
+                                        try {
+                                          await FileDownloader.saveFile(
+                                              bytes, fileName);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Downloaded to Downloads folder'),
+                                              backgroundColor: Colors.green,
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          debugPrint('Download failed, falling back to share: $e');
+                                          await Printing.sharePdf(
+                                              bytes: bytes, filename: fileName);
+                                        }
+                                      } else {
+                                        await Printing.sharePdf(
+                                            bytes: bytes, filename: fileName);
+                                      }
+                                    }
+                                  } catch (e) {
+                                    debugPrint('Error downloading PDF: $e');
+                                  } finally {
+                                    Loader.stopLoader(context);
+                                  }
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(4),
+                                  child: Tooltip(
+                                    message: 'Download Quotation',
+                                    child: Icon(Icons.download,
+                                        size: 20, color: Color(0xFF10B981)),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () async {
+                                  await Loader.showLoader(context);
+                                  try {
+                                    final bytes = await customerDetailsProvider
+                                        .getQuotationMasterPdfBytes(
+                                            item.quotationMasterId.toString());
+                                    if (bytes != null && bytes.isNotEmpty) {
+                                      await Printing.layoutPdf(
+                                        onLayout: (format) async => bytes,
+                                        name: 'Quotation_${item.quotationMasterId}',
+                                      );
+                                    }
+                                  } finally {
+                                    Loader.stopLoader(context);
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(4),
                                   child: Tooltip(
                                     message: 'Print Quotation 1',
-                                    child: const Icon(Icons.print,
-                                        size: 20, color: Colors.blue),
+                                    child: Icon(Icons.print,
+                                        size: 20, color: AppColors.primaryBlue),
                                   ),
                                 ),
                               ),
                             ],
-                            // Print 2 — Local Commercial/Residential PDF (menuIsViewMap[55])
+                            // Share 2 — Local Commercial/Residential PDF (menuIsViewMap[55])
                             if (settingsProvider.menuIsViewMap[55] == 1) ...[
-                              const SizedBox(width: 4),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () async {
+                                  PdfActionHelper.showShareOptions(
+                                    context: context,
+                                    title: item.quotationTypeId == 2
+                                        ? 'Commercial PDF'
+                                        : 'Residential PDF',
+                                    onGenerate: () async {
+                                      await customerDetailsProvider
+                                          .getQuatationListByMasterId(
+                                        item.quotationMasterId.toString(),
+                                        context,
+                                      );
+                                      await customerDetailsProvider
+                                          .fetchLeadDetails(
+                                              widget.customerId, context);
+                                      await settingsProvider.getCompanyDetails();
+
+                                      if (settingsProvider
+                                              .companyDetails.isNotEmpty &&
+                                          (customerDetailsProvider
+                                                  .leadDetails?.isNotEmpty ??
+                                              false) &&
+                                          customerDetailsProvider
+                                              .quotationListByMaster.isNotEmpty) {
+                                        if (item.quotationTypeId == 2) {
+                                          return await generateCommercialPDFBytes(
+                                                context: context,
+                                                companyDetails: settingsProvider
+                                                    .companyDetails[0],
+                                                customerDetails:
+                                                    customerDetailsProvider
+                                                        .leadDetails![0],
+                                                quotationData:
+                                                    customerDetailsProvider
+                                                        .quotationListByMaster[0],
+                                              ) ??
+                                              Uint8List(0);
+                                        } else {
+                                          return await generateResidentialPDFBytes(
+                                                context: context,
+                                                companyDetails: settingsProvider
+                                                    .companyDetails[0],
+                                                customerDetails:
+                                                    customerDetailsProvider
+                                                        .leadDetails![0],
+                                                quotationData:
+                                                    customerDetailsProvider
+                                                        .quotationListByMaster[0],
+                                              ) ??
+                                              Uint8List(0);
+                                        }
+                                      }
+                                      return Uint8List(0);
+                                    },
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Tooltip(
+                                    message: item.quotationTypeId == 2
+                                        ? 'Share Commercial'
+                                        : 'Share Residential',
+                                    child: Icon(Icons.share_outlined,
+                                        size: 20, color: AppColors.primaryBlue),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
                               GestureDetector(
                                 onTap: () async {
                                   await Loader.showLoader(context);
@@ -182,33 +344,26 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                                           .quotationListByMaster.isNotEmpty) {
                                     if (item.quotationTypeId == 2) {
                                       printCommercialPDFs(
-                                        context: context,
-                                        companyDetails:
-                                            settingsProvider.companyDetails[0],
-                                        customerDetails: customerDetailsProvider
-                                            .leadDetails![0],
-                                        quotationData: customerDetailsProvider
-                                            .quotationListByMaster[0],
-                                      );
+                                          context: context,
+                                          companyDetails: settingsProvider
+                                              .companyDetails[0],
+                                          customerDetails:
+                                              customerDetailsProvider
+                                                  .leadDetails![0],
+                                          quotationData:
+                                              customerDetailsProvider
+                                                  .quotationListByMaster[0]);
                                     } else {
                                       printResidentialPDFs(
-                                        context: context,
-                                        companyDetails:
-                                            settingsProvider.companyDetails[0],
-                                        customerDetails: customerDetailsProvider
-                                            .leadDetails![0],
-                                        quotationData: customerDetailsProvider
-                                            .quotationListByMaster[0],
-                                      );
-                                    }
-                                  } else {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Unable to load details for printing')),
-                                      );
+                                          context: context,
+                                          companyDetails: settingsProvider
+                                              .companyDetails[0],
+                                          customerDetails:
+                                              customerDetailsProvider
+                                                  .leadDetails![0],
+                                          quotationData:
+                                              customerDetailsProvider
+                                                  .quotationListByMaster[0]);
                                     }
                                   }
                                   Loader.stopLoader(context);
@@ -219,8 +374,8 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                                     message: item.quotationTypeId == 2
                                         ? 'Print Commercial'
                                         : 'Print Residential',
-                                    child: const Icon(Icons.print_outlined,
-                                        size: 20, color: Colors.blue),
+                                    child: Icon(Icons.print_outlined,
+                                        size: 20, color: AppColors.primaryBlue),
                                   ),
                                 ),
                               ),

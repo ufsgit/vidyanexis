@@ -38,6 +38,7 @@ class ConversionReportPage extends StatefulWidget {
 class _ConversionReportPage extends State<ConversionReportPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  TextEditingController leadIdController = TextEditingController();
 
   @override
   void initState() {
@@ -50,6 +51,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
       reportsProvider.getSearchConversionReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getEnquiryFor(context);
+      provider.getEnquirySource(context);
       provider.getAllFollowUpStatus(context, "0");
       provider.getUserDetails(context);
     });
@@ -73,14 +75,12 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                     .startSearch();
                 reportsProvider.toggleFilter();
               },
-              onFilterTap: () {
-                reportsProvider.toggleFilter();
-              },
+              onFilterTap: () {},
               onClearTap: () {
                 searchController.clear();
                 Provider.of<SidebarProvider>(context, listen: false)
                     .stopSearch();
-                reportsProvider.toggleFilter();
+                if (reportsProvider.isFilter) reportsProvider.toggleFilter();
                 reportsProvider.setTaskSearchCriteria(
                   '',
                   '',
@@ -99,7 +99,24 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                   reportsProvider.AssignedTo,
                 );
                 reportsProvider.getSearchConversionReport(context);
+                if (reportsProvider.isFilter) reportsProvider.toggleFilter();
               },
+              onExcelTap: () {
+                exportToExcel(
+                  headers: _exportHeaders,
+                  data: _prepareExportData(reportsProvider),
+                  fileName: 'Conversion_Report',
+                );
+              },
+              onPdfTap: () {
+                exportToPDF(
+                  headers: _exportHeaders,
+                  data: _prepareExportData(reportsProvider),
+                  fileName: 'Conversion_Report',
+                );
+              },
+              showExcel: true,
+              showPdf: true,
               searchController: searchController,
             )
           : null,
@@ -162,6 +179,8 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               );
                               reportsProvider
                                   .getSearchConversionReport(context);
+                              if (reportsProvider.isFilter)
+                                reportsProvider.toggleFilter();
                             },
                             decoration: InputDecoration(
                               hintText: 'Search here....',
@@ -187,6 +206,8 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                     );
                                     reportsProvider
                                         .getSearchConversionReport(context);
+                                    if (reportsProvider.isFilter)
+                                      reportsProvider.toggleFilter();
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF6C7C93),
@@ -211,56 +232,11 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        CustomFilterButton(
-                          onPressed: () {
-                            reportsProvider.toggleFilter();
-                          },
-                          isFilter: reportsProvider.isFilter,
-                        ),
-                        const SizedBox(width: 8),
                         CustomElevatedButton(
                           onPressed: () {
                             exportToExcel(
-                              headers: [
-                                'No.',
-                                'Cus. ID',
-                                'Lead Name',
-                                'Mobile No',
-                                'Address',
-                                'Enquiry For',
-                                'Enquiry Source',
-                                'By User',
-                                'Assigned Staff',
-                                'Status',
-                                'Created Date',
-                                'Next Follow-up',
-                                'Remark'
-                              ],
-                              data: reportsProvider.conversionReport
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
-                                final index = entry.key;
-                                final task = entry.value;
-                                return {
-                                  'No.': (index + 1).toString(),
-                                  'Cus. ID': task.customerId.toString(),
-                                  'Lead Name': task.customerName,
-                                  'Mobile No': task.mobile,
-                                  'Address':
-                                      '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
-                                  'Enquiry For': task.enquiryForName.toString(),
-                                  'Enquiry Source': task.enquirySourceName,
-                                  'By User': task.byUserName,
-                                  'Assigned Staff': task.toUserName,
-                                  'Status': task.statusName,
-                                  'Created Date':
-                                      _formatDateSafely(task.creationDate),
-                                  'Next Follow-up':
-                                      _formatDateSafely(task.nextFollowUpDate),
-                                  'Remark': task.remark,
-                                };
-                              }).toList(),
+                              headers: _exportHeaders,
+                              data: _prepareExportData(reportsProvider),
                               fileName: 'Conversion_Report',
                             );
                           },
@@ -273,46 +249,8 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                         CustomElevatedButton(
                           onPressed: () {
                             exportToPDF(
-                              headers: [
-                                'No.',
-                                'Cus. ID',
-                                'Lead Name',
-                                'Mobile No',
-                                'Address',
-                                'Enquiry For',
-                                'Enquiry Source',
-                                'By User',
-                                'Assigned Staff',
-                                'Status',
-                                'Created Date',
-                                'Next Follow-up',
-                                'Remark'
-                              ],
-                              data: reportsProvider.conversionReport
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
-                                final index = entry.key;
-                                final task = entry.value;
-                                return {
-                                  'No.': (index + 1).toString(),
-                                  'Cus. ID': task.customerId.toString(),
-                                  'Lead Name': task.customerName,
-                                  'Mobile No': task.mobile,
-                                  'Address':
-                                      '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
-                                  'Enquiry For': task.enquiryForName.toString(),
-                                  'Enquiry Source': task.enquirySourceName,
-                                  'By User': task.byUserName,
-                                  'Assigned Staff': task.toUserName,
-                                  'Status': task.statusName,
-                                  'Created Date':
-                                      _formatDateSafely(task.creationDate),
-                                  'Next Follow-up':
-                                      _formatDateSafely(task.nextFollowUpDate),
-                                  'Remark': task.remark,
-                                };
-                              }).toList(),
+                              headers: _exportHeaders,
+                              data: _prepareExportData(reportsProvider),
                               fileName: 'Conversion_Report',
                             );
                           },
@@ -342,104 +280,12 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            Container(
-                              width: MediaQuery.of(context).size.width > 600
-                                  ? MediaQuery.of(context).size.width / 4
-                                  : MediaQuery.of(context).size.width * 0.9,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Colors.grey[300]!),
-                              ),
-                              child: TextField(
-                                controller: searchController,
-                                textAlign: TextAlign.center,
-                                onSubmitted: (query) {
-                                  reportsProvider.setTaskSearchCriteria(
-                                    query,
-                                    reportsProvider.fromDateS,
-                                    reportsProvider.toDateS,
-                                    reportsProvider.Status,
-                                    reportsProvider.AssignedTo,
-                                  );
-                                  reportsProvider
-                                      .getSearchConversionReport(context);
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Search here....',
-                                  hintStyle: GoogleFonts.plusJakartaSans(
-                                    color: Colors.grey[400],
-                                    fontSize: 14,
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: Colors.grey[600],
-                                    size: 20,
-                                  ),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  suffixIcon: reportsProvider.Search.isNotEmpty
-                                      ? IconButton(
-                                          icon: const Icon(Icons.close),
-                                          onPressed: () {
-                                            searchController.clear();
-                                            reportsProvider
-                                                .setTaskSearchCriteria(
-                                              '',
-                                              reportsProvider.fromDateS,
-                                              reportsProvider.toDateS,
-                                              reportsProvider.Status,
-                                              reportsProvider.AssignedTo,
-                                            );
-                                            reportsProvider
-                                                .getSearchConversionReport(
-                                                    context);
-                                          },
-                                        )
-                                      : null,
-                                ),
-                              ),
-                            ),
-                            CustomFilterButton(
-                              onPressed: () {
-                                reportsProvider.toggleFilter();
-                              },
-                              isFilter: reportsProvider.isFilter,
-                            ),
+                            const SizedBox(width: 8),
                             ElevatedButton.icon(
                               onPressed: () {
                                 exportToExcel(
-                                  headers: [
-                                    'Customer Name',
-                                    'Conversion By',
-                                    'Creation Date',
-                                    'Conversion Date',
-                                    'Enquiry For',
-                                    'Status',
-                                  ],
-                                  data: reportsProvider.conversionReport
-                                      .map((task) {
-                                    return {
-                                      'ID': task.customerId,
-                                      'Customer Name': task.customerName,
-                                      'Contact No': task.mobile,
-                                      'Address':
-                                          '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
-                                      'Enquiry For': task.enquiryForName,
-                                      'Enquiry Source': task.enquirySourceName,
-                                      'By User': task.byUserName,
-                                      'Assigned Staff': task.toUserName,
-                                      'Status': task.statusName,
-                                      'Created Date': DateFormat('dd MMM yyyy')
-                                          .format(task.creationDate),
-                                      'Next FollowUp': DateFormat('dd MMM yyyy')
-                                          .format(task.nextFollowUpDate),
-                                      'Remark': task.remark,
-                                    };
-                                  }).toList(),
+                                  headers: _exportHeaders,
+                                  data: _prepareExportData(reportsProvider),
                                   fileName: 'Conversion_Report',
                                 );
                               },
@@ -464,34 +310,8 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             ElevatedButton.icon(
                               onPressed: () {
                                 exportToPDF(
-                                  headers: [
-                                    'Customer Name',
-                                    'Conversion By',
-                                    'Creation Date',
-                                    'Conversion Date',
-                                    'Enquiry For',
-                                    'Status',
-                                  ],
-                                  data: reportsProvider.conversionReport
-                                      .map((task) {
-                                    return {
-                                      'ID': task.customerId,
-                                      'Customer Name': task.customerName,
-                                      'Contact No': task.mobile,
-                                      'Address':
-                                          '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
-                                      'Enquiry For': task.enquiryForName,
-                                      'Enquiry Source': task.enquirySourceName,
-                                      'By User': task.byUserName,
-                                      'Assigned Staff': task.toUserName,
-                                      'Status': task.statusName,
-                                      'Created Date': DateFormat('dd MMM yyyy')
-                                          .format(task.creationDate),
-                                      'Next FollowUp': DateFormat('dd MMM yyyy')
-                                          .format(task.nextFollowUpDate),
-                                      'Remark': task.remark,
-                                    };
-                                  }).toList(),
+                                  headers: _exportHeaders,
+                                  data: _prepareExportData(reportsProvider),
                                   fileName: 'Conversion_Report',
                                 );
                               },
@@ -534,67 +354,178 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: reportsProvider.selectedStatus !=
-                                              null &&
-                                          reportsProvider.selectedStatus != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
+                                color: reportsProvider.selectedStatus != null &&
+                                        reportsProvider.selectedStatus != 0
+                                    ? AppColors.primaryBlue
+                                    : Colors.grey[300]!,
+                              ),
                             ),
                             child: Row(
                               children: [
                                 const Text('Enquiry For: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedStatus,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
+                                const SizedBox(width: 8), // Small spacing
+
+                                // Constrain the dropdown width
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                      maxWidth: 130), // ← Adjust this value
+                                  child: DropdownButton<int>(
+                                    value: reportsProvider.selectedStatus,
+                                    hint: const Text('All'),
+                                    isExpanded:
+                                        true, // Important: Makes it fill the constrained width
+                                    items: [
+                                          const DropdownMenuItem<int>(
+                                            value: 0,
+                                            child: Text('All',
+                                                style: TextStyle(fontSize: 14)),
                                           ),
-                                        ),
-                                      ] +
-                                      provider.enquiryForList
-                                          .map(
+                                        ] +
+                                        provider.enquiryForList
+                                            .map(
                                               (status) => DropdownMenuItem<int>(
-                                                    value: status.enquiryForId,
-                                                    child: Text(
-                                                      status.enquiryForName,
-                                                      style: const TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setStatus(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
+                                                value: status.enquiryForId,
+                                                child: Text(
+                                                  status.enquiryForName,
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Prevent overflow
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        reportsProvider.setStatus(newValue);
+                                      }
+
+                                      String status = reportsProvider
+                                          .selectedStatus
+                                          .toString();
+                                      String assignedTo = reportsProvider
+                                          .selectedUser
+                                          .toString();
+                                      String fromDate =
+                                          reportsProvider.formattedFromDate;
+                                      String toDate =
+                                          reportsProvider.formattedToDate;
+
+                                      reportsProvider.setTaskSearchCriteria(
                                         reportsProvider.Search,
                                         fromDate,
                                         toDate,
                                         status,
-                                        assignedTo);
-                                    reportsProvider
-                                        .getSearchConversionReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
+                                        assignedTo,
+                                      );
+                                      reportsProvider
+                                          .getSearchConversionReport(context);
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.black),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color:
+                                    reportsProvider.selectedEnquirySourceId !=
+                                                null &&
+                                            reportsProvider
+                                                    .selectedEnquirySourceId !=
+                                                0
+                                        ? AppColors.primaryBlue
+                                        : Colors.grey[300]!,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text('Enquiry Source: '),
+                                const SizedBox(
+                                    width:
+                                        8), // Spacing between label and dropdown
+
+                                // Constrain dropdown width
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                      maxWidth: 130), // ← You can adjust this
+                                  child: DropdownButton<int>(
+                                    value:
+                                        reportsProvider.selectedEnquirySourceId,
+                                    hint: const Text('All'),
+                                    isExpanded:
+                                        true, // Important for proper width control
+                                    items: [
+                                          const DropdownMenuItem<int>(
+                                            value: 0,
+                                            child: Text(
+                                              'All',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                          ),
+                                        ] +
+                                        provider.enquiryData
+                                            .map(
+                                              (status) => DropdownMenuItem<int>(
+                                                value: status.enquirySourceId,
+                                                child: Text(
+                                                  status.enquirySourceName,
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Prevents overflow
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        reportsProvider
+                                            .setEnquirySource(newValue);
+                                      }
+
+                                      String status = reportsProvider
+                                          .selectedStatus
+                                          .toString();
+                                      String assignedTo = reportsProvider
+                                          .selectedUser
+                                          .toString();
+                                      String fromDate =
+                                          reportsProvider.formattedFromDate;
+                                      String toDate =
+                                          reportsProvider.formattedToDate;
+
+                                      reportsProvider.setTaskSearchCriteria(
+                                        reportsProvider.Search,
+                                        fromDate,
+                                        toDate,
+                                        status,
+                                        assignedTo,
+                                      );
+                                      reportsProvider
+                                          .getSearchConversionReport(context);
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -792,6 +723,10 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                   reportsProvider.selectedStatus != 0) ||
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
+                              (reportsProvider.selectedEnquirySourceId !=
+                                      null &&
+                                  reportsProvider.selectedEnquirySourceId !=
+                                      0) ||
                               (reportsProvider.selectedFollowUpStatusId !=
                                       null &&
                                   reportsProvider.selectedFollowUpStatusId !=
@@ -829,15 +764,69 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                         ],
                       ),
                     )
-                  : Expanded(
+                  : Container(
+                      height: 250,
+                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            const SizedBox(height: 16),
+                            CustomText('Lead ID',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textBlack),
                             const SizedBox(height: 8),
+                            TextField(
+                              controller: leadIdController,
+                              decoration: InputDecoration(
+                                hintText: 'Enter Lead ID',
+                                hintStyle: GoogleFonts.plusJakartaSans(
+                                    fontSize: 13, color: Colors.grey),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: AppColors.grey),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(color: AppColors.grey),
+                                ),
+                              ),
+                              keyboardType: TextInputType.number,
+                              onSubmitted: (value) {
+                                reportsProvider.setLeadId(value);
+                                reportsProvider.setTaskSearchCriteria(
+                                  searchController.text,
+                                  reportsProvider.fromDateS,
+                                  reportsProvider.toDateS,
+                                  reportsProvider.Status,
+                                  reportsProvider.AssignedTo,
+                                  leadId: value,
+                                );
+                                reportsProvider
+                                    .getSearchConversionReport(context);
+                                if (reportsProvider.isFilter) {
+                                  reportsProvider.toggleFilter();
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 16),
                             CustomText('Enquiry For',
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textBlack),
                             const SizedBox(height: 8),
@@ -873,8 +862,48 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               ],
                             ),
                             const SizedBox(height: 16),
+                            CustomText('Enquiry Source',
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textBlack),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: [
+                                FilterChipWidget(
+                                  label: 'All',
+                                  isSelected: reportsProvider
+                                              .selectedEnquirySourceId ==
+                                          0 ||
+                                      reportsProvider
+                                              .selectedEnquirySourceId ==
+                                          null,
+                                  onTap: () {
+                                    reportsProvider.setEnquirySource(0);
+                                    reportsProvider
+                                        .getSearchConversionReport(context);
+                                  },
+                                ),
+                                ...provider.enquiryData
+                                    .map((e) => FilterChipWidget(
+                                          label: e.enquirySourceName,
+                                          isSelected: reportsProvider
+                                                  .selectedEnquirySourceId ==
+                                              e.enquirySourceId,
+                                          onTap: () {
+                                            reportsProvider.setEnquirySource(
+                                                e.enquirySourceId);
+                                            reportsProvider
+                                                .getSearchConversionReport(
+                                                    context);
+                                          },
+                                        )),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
                             CustomText('Conversion Date',
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textBlack),
                             const SizedBox(height: 8),
@@ -888,7 +917,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             ),
                             const SizedBox(height: 16),
                             CustomText('Conversion By',
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textBlack),
                             const SizedBox(height: 8),
@@ -925,7 +954,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             ),
                             const SizedBox(height: 16),
                             CustomText('Status',
-                                fontSize: 16,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textBlack),
                             const SizedBox(height: 8),
@@ -966,51 +995,100 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               ],
                             ),
                             const SizedBox(height: 16),
-                            if (reportsProvider.fromDate != null ||
-                                reportsProvider.toDate != null ||
-                                (reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0) ||
-                                (reportsProvider.selectedUser != null &&
-                                    reportsProvider.selectedUser != 0) ||
-                                (reportsProvider.selectedFollowUpStatusId !=
-                                        null &&
-                                    reportsProvider.selectedFollowUpStatusId !=
-                                        0) ||
-                                reportsProvider.Search.isNotEmpty)
-                              SizedBox(
-                                width: double.infinity,
-                                child: CommonReportResetButton(
-                                  label: 'Reset All Filters',
-                                  onReset: () {
-                                    reportsProvider
-                                        .selectDateFilterOption(null);
-                                    reportsProvider.removeStatus();
-                                    searchController.clear();
-                                    reportsProvider.setTaskSearchCriteria(
-                                        '', '', '', '', '');
-                                    reportsProvider
-                                        .getSearchConversionReport(context);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: AppColors.textRed,
-                                    elevation: 0,
-                                    side: BorderSide(color: AppColors.textRed),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
+                              if (reportsProvider.fromDate != null ||
+                                  reportsProvider.toDate != null ||
+                                  (reportsProvider.selectedStatus != null &&
+                                      reportsProvider.selectedStatus != 0) ||
+                                  (reportsProvider.selectedUser != null &&
+                                      reportsProvider.selectedUser != 0) ||
+                                  (reportsProvider.selectedEnquirySourceId !=
+                                          null &&
+                                      reportsProvider.selectedEnquirySourceId !=
+                                          0) ||
+                                  (reportsProvider.selectedFollowUpStatusId !=
+                                          null &&
+                                      reportsProvider.selectedFollowUpStatusId !=
+                                          0) ||
+                                  reportsProvider.Search.isNotEmpty ||
+                                  reportsProvider.leadId != '0')
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: CommonReportResetButton(
+                                    label: 'Reset All Filters',
+                                    onReset: () {
+                                      reportsProvider
+                                          .selectDateFilterOption(null);
+                                      reportsProvider.removeStatus();
+                                      searchController.clear();
+                                      leadIdController.clear();
+                                      reportsProvider.setTaskSearchCriteria(
+                                          '', '', '', '', '',
+                                          leadId: '0');
+                                      reportsProvider
+                                          .getSearchConversionReport(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: AppColors.textRed,
+                                      elevation: 0,
+                                      side:
+                                          BorderSide(color: AppColors.textRed),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                    ),
                                   ),
                                 ),
+                              const SizedBox(height: 24),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        reportsProvider
+                                            .setLeadId(leadIdController.text);
+                                        reportsProvider.setTaskSearchCriteria(
+                                          searchController.text,
+                                          reportsProvider.fromDateS,
+                                          reportsProvider.toDateS,
+                                          reportsProvider.Status,
+                                          reportsProvider.AssignedTo,
+                                          leadId: leadIdController.text,
+                                        );
+                                        reportsProvider
+                                            .getSearchConversionReport(context);
+                                        if (reportsProvider.isFilter) {
+                                          reportsProvider.toggleFilter();
+                                        }
+                                      },
+                                      icon: const Icon(Icons.check,
+                                          size: 18, color: Colors.white),
+                                      label: const Text('APPLY'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                          ],
+                              const SizedBox(height: 20),
+                            ],
                         ),
                       ),
                     ),
 
-            AppStyles.isWebScreen(context)
-                ? Expanded(
+            if (!reportsProvider.isFilter)
+              AppStyles.isWebScreen(context)
+                  ? Expanded(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: SizedBox(
@@ -1650,6 +1728,46 @@ class _ConversionReportPage extends State<ConversionReportPage> {
     'This Week',
     'This Month',
   ];
+
+  final List<String> _exportHeaders = [
+    'No.',
+    'Cus. ID',
+    'Lead Name',
+    'Mobile No',
+    'Address',
+    'Enquiry For',
+    'Enquiry Source',
+    'By User',
+    'Assigned Staff',
+    'Status',
+    'Created Date',
+    'Next Follow-up',
+    'Remark'
+  ];
+
+  List<Map<String, dynamic>> _prepareExportData(
+      ConversionReportProvider reportsProvider) {
+    return reportsProvider.conversionReport.asMap().entries.map((entry) {
+      final index = entry.key;
+      final task = entry.value;
+      return {
+        'No.': (index + 1).toString(),
+        'Cus. ID': task.customerId.toString(),
+        'Lead Name': task.customerName,
+        'Mobile No': task.mobile,
+        'Address':
+            '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+        'Enquiry For': task.enquiryForName.toString(),
+        'Enquiry Source': task.enquirySourceName,
+        'By User': task.byUserName,
+        'Assigned Staff': task.toUserName,
+        'Status': task.statusName,
+        'Created Date': _formatDateSafely(task.creationDate),
+        'Next Follow-up': _formatDateSafely(task.nextFollowUpDate),
+        'Remark': task.remark,
+      };
+    }).toList();
+  }
 
   String _formatDateSafely(DateTime? date) {
     if (date == null) return '';

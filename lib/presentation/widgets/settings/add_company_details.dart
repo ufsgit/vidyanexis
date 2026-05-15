@@ -391,6 +391,23 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                 ],
               ),
               const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lead In Sales :   ${settingsProvider.leadInSales == 1 ? "On" : "Off"}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 10),
+                  Switch(
+                    value: settingsProvider.leadInSales == 1,
+                    onChanged: (bool value) {
+                      settingsProvider.setLeadInSales(value ? 1 : 0);
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
               CustomElevatedButton(
                 buttonText: 'Upload Image',
                 onPressed: () async {

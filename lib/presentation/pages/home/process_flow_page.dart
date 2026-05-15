@@ -92,9 +92,6 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
         children: [
-          // Remove redundant sort icon as it's provided by the parent HomePage AppBar
-          // if (isMobile)
-          //   InkWell(...)
           Text(
             'Process Flow',
             style: GoogleFonts.plusJakartaSans(

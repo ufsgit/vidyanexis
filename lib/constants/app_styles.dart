@@ -68,7 +68,7 @@ class AppStyles {
 
   static bool isWebScreen(BuildContext context) {
     try {
-      return MediaQuery.sizeOf(context).width > 1300;
+      return MediaQuery.sizeOf(context).width > 1000;
     } catch (_) {
       return false; // Default for mobile or safely handle
     }

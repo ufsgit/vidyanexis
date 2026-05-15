@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_print
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 // import 'dart:html' as html;
@@ -8,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vidyanexis/controller/models/inventory_customer_model.dart';
+import 'package:vidyanexis/controller/models/lead_customer_model.dart';
 import 'package:vidyanexis/controller/models/location_model.dart';
 import 'package:vidyanexis/controller/models/branch_model.dart';
 import 'package:vidyanexis/controller/models/checklist_category_model.dart';
@@ -438,12 +440,14 @@ class SettingsProvider extends ChangeNotifier {
   int _enquiryForMandatory = 0;
   int _consumerNameMandatory = 0;
   int _consumerContactNoMandatory = 0;
+  int _leadInSales = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
   int get enquiryForMandatory => _enquiryForMandatory;
   int get consumerNameMandatory => _consumerNameMandatory;
   int get consumerContactNoMandatory => _consumerContactNoMandatory;
+  int get leadInSales => _leadInSales;
 
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
@@ -547,6 +551,9 @@ class SettingsProvider extends ChangeNotifier {
   List<InventoryCustomerModel> _searchInventoryCustomer = [];
   List<InventoryCustomerModel> get searchInventoryCustomer =>
       _searchInventoryCustomer;
+
+  List<LeadCustomerModel> _searchLeadCustomer = [];
+  List<LeadCustomerModel> get searchLeadCustomer => _searchLeadCustomer;
 
   Future<void> saveBranch({
     required BuildContext context,
@@ -699,6 +706,8 @@ class SettingsProvider extends ChangeNotifier {
     required String userIds,
     required int enquirySourceId,
     required String enquirySourceName,
+    required int enquiryForId,
+    required String enquiryForName,
   }) async {
     try {
       Loader.showLoader(context);
@@ -711,6 +720,8 @@ class SettingsProvider extends ChangeNotifier {
             "User_Ids": userIds,
             "Enquiry_Source_Id": enquirySourceId,
             "Enquiry_Source_Name": enquirySourceName,
+            "Enquiry_For_Id": enquiryForId,
+            "Enquiry_For_Name": enquiryForName,
           });
 
       if (response != null && response.statusCode == 200) {
@@ -959,6 +970,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setConsumerContactNoMandatory(int value) {
     _consumerContactNoMandatory = value;
+    notifyListeners();
+  }
+
+  void setLeadInSales(int value) {
+    _leadInSales = value;
     notifyListeners();
   }
 
@@ -2958,11 +2974,19 @@ class SettingsProvider extends ChangeNotifier {
   bool _isManualCreation = false;
   bool get isManualCreation => _isManualCreation;
 
+  bool _isEnquiryForVisible = false;
+  bool get isEnquiryForVisible => _isEnquiryForVisible;
+
   bool _isQuotationCustom = false;
   bool get isQuotationCustom => _isQuotationCustom;
 
   bool _isViewInQuotation = false;
   bool get isViewInQuotation => _isViewInQuotation;
+
+  void toggleEnquiryForVisible(bool value) {
+    _isEnquiryForVisible = value;
+    notifyListeners();
+  }
 
   void toggleQuotationCustom(bool value) {
     _isQuotationCustom = value;
@@ -3086,6 +3110,7 @@ class SettingsProvider extends ChangeNotifier {
               _consumerNameMandatory = _companyDetails[0].consumerNameMandatory;
               _consumerContactNoMandatory =
                   _companyDetails[0].consumerContactNoMandatory;
+              _leadInSales = _companyDetails[0].leadInSales;
             }
           } catch (e) {
             print(
@@ -3133,6 +3158,7 @@ class SettingsProvider extends ChangeNotifier {
           _enquiryForMandatory = data['Enquiry_For_Mandatory'] ?? 0;
           _consumerNameMandatory = data['Consumer_Name_Mandatory'] ?? 0;
           _consumerContactNoMandatory = data['Contact_Number_Mandatory'] ?? 0;
+          _leadInSales = data['Lead_In_Sales'] ?? 0;
 
           if (newLogo != logo ||
               newTitle != title ||
@@ -3203,6 +3229,7 @@ class SettingsProvider extends ChangeNotifier {
             "Enquiry_For_Mandatory": _enquiryForMandatory,
             "Consumer_Name_Mandatory": _consumerNameMandatory,
             "Contact_Number_Mandatory": _consumerContactNoMandatory,
+            "Lead_In_Sales": _leadInSales
           });
 
       if (response!.statusCode == 200) {
@@ -3832,13 +3859,15 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  void searchTaskType(String search, BuildContext context) async {
+  void searchTaskType(String search, BuildContext context,
+      {String enquiryForId = '0'}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchTaskType}?Task_Type_Name=$search');
+          endPoint:
+              '${HttpUrls.searchTaskType}?Task_Type_Name=$search&Enquiry_For_Id=$enquiryForId');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -4718,6 +4747,28 @@ class SettingsProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  Future<void> searchLeadCustomerApi(String query, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getLeadCustomerList}?Search_Value_=$query');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final newData = data['data'];
+          _searchLeadCustomer = (newData as List<dynamic>)
+              .where((item) => item != null)
+              .map((item) => LeadCustomerModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
     }
   }
 

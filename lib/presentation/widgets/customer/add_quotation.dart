@@ -2480,7 +2480,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(
             'Saved Successfully',
@@ -2496,10 +2496,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close dialog
-                // Requirement: stay on the same screen.
-                // However, we should probably at least clear the form or something if it was a success.
-                // But the user said "stay on the same screen".
+                Navigator.pop(dialogContext); // Close dialog
+                Navigator.pop(context); // Close page
               },
               child: Text(
                 'No',
@@ -2550,7 +2548,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     );
                   }
                 }
-                Navigator.pop(context); // Close dialog
+                Navigator.pop(dialogContext); // Close dialog
+                if (context.mounted) {
+                  Navigator.pop(context); // Close page
+                }
               },
               child: Text(
                 'Yes',

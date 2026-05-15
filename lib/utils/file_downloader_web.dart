@@ -44,4 +44,14 @@ class FileDownloader {
     } catch (_) {}
     return 'download_${DateTime.now().millisecondsSinceEpoch}';
   }
+
+  static Future<String> saveFile(dynamic bytes, String fileName) async {
+    final blob = html.Blob([bytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute('download', fileName)
+      ..click();
+    html.Url.revokeObjectUrl(url);
+    return fileName;
+  }
 }

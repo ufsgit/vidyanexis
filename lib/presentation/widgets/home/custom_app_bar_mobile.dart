@@ -237,6 +237,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: widget.actionsPadding,
         child: Row(
           children: [
+            if (widget.showFilterIcon && onFilterTap != null)
+              IconButton(
+                icon: Icon(
+                  Icons.filter_list,
+                  color: widget.iconColor,
+                  size: widget.filterIconSize,
+                ),
+                onPressed: onFilterTap,
+              ),
             if (widget.showSearch)
               IconButton(
                 icon: Icon(

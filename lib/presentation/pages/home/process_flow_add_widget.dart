@@ -111,7 +111,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   padding: const EdgeInsets.only(left: 8),
                   child: IconButton(
                     onPressed: () {
-                      context.pop();
+                      Navigator.of(context).pop();
                     },
                     icon: Icon(
                       Icons.arrow_back,

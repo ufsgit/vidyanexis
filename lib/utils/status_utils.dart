@@ -37,4 +37,38 @@ class StatusUtils {
     }
     return status;
   }
+
+  static Color getStatusColor(int status) {
+    switch (status) {
+      case 3:
+        return const Color(0xFFE5ECFA);
+      case 2:
+        return const Color(0xFFE8EFE6);
+      case 1:
+        return const Color(0xFFFCF1E3);
+      case 4:
+        return const Color(0xFFE7E9F0);
+      case 5:
+        return const Color(0xFFF2E3E0);
+      default:
+        return const Color(0xFFE5ECFA);
+    }
+  }
+
+  static Color getStatusTextColor(int status) {
+    switch (status) {
+      case 3:
+        return const Color(0xFF2349BF);
+      case 2:
+        return const Color(0xFF407537);
+      case 1:
+        return const Color(0xFFA4622B);
+      case 4:
+        return const Color(0xFF293681);
+      case 5:
+        return const Color(0xFFAE392D);
+      default:
+        return Colors.grey[700]!;
+    }
+  }
 }

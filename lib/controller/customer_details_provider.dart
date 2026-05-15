@@ -4045,43 +4045,46 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getAnnexurePdf(
-      String endpoint, String annexureName, BuildContext context) async {
+  Future<Uint8List?> getAnnexurePdfBytes(String endpoint) async {
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint: endpoint, returnBytes: true);
 
-      if (response.statusCode == 200) {
-        final data = response.data;
+      if (response.statusCode == 200 && response.data is List<int>) {
+        return Uint8List.fromList(response.data);
+      }
+      return null;
+    } catch (e) {
+      print('Exception occurred: $e');
+      return null;
+    }
+  }
+
+  Future<void> getAnnexurePdf(
+      String endpoint, String annexureName, BuildContext context) async {
+    try {
+      final data = await getAnnexurePdfBytes(endpoint);
+      if (data != null) {
         print("getAnnexurePdf $annexureName response received");
 
-        if (data is List<int>) {
-          if (kIsWeb) {
-            final blob =
-                html.Blob([Uint8List.fromList(data)], 'application/pdf');
-            final url = html.Url.createObjectUrlFromBlob(blob);
-            final anchor = html.AnchorElement(href: url)
-              ..setAttribute("download", "$annexureName.pdf")
-              ..click();
+        if (kIsWeb) {
+          final blob = html.Blob([data], 'application/pdf');
+          final url = html.Url.createObjectUrlFromBlob(blob);
+          final anchor = html.AnchorElement(href: url)
+            ..setAttribute("download", "$annexureName.pdf")
+            ..click();
 
-            // Delay cleanup to ensure download starts
-            await Future.delayed(const Duration(seconds: 2));
-            html.Url.revokeObjectUrl(url);
+          // Delay cleanup to ensure download starts
+          await Future.delayed(const Duration(seconds: 2));
+          html.Url.revokeObjectUrl(url);
 
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Downloading $annexureName...')));
-            }
-          } else {
-            if (context.mounted) {
-              await Printing.layoutPdf(
-                  onLayout: (format) async => Uint8List.fromList(data));
-            }
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Downloading $annexureName...')));
           }
         } else {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Invalid PDF data received. Please try again.')));
+            await Printing.layoutPdf(onLayout: (format) async => data);
           }
         }
       } else {
@@ -4101,47 +4104,49 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getQuotationMasterPdf(
-      String masterId, BuildContext context) async {
+
+  Future<Uint8List?> getQuotationMasterPdfBytes(String masterId) async {
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=$masterId',
           returnBytes: true);
 
-      if (response.statusCode == 200) {
-        final data = response.data;
-        print("getQuotationMasterPdf response received");
+      if (response.statusCode == 200 && response.data is List<int>) {
+        return Uint8List.fromList(response.data);
+      }
+      return null;
+    } catch (e) {
+      print('Exception occurred: $e');
+      return null;
+    }
+  }
 
-        if (data is List<int>) {
-          if (kIsWeb) {
-            final blob =
-                html.Blob([Uint8List.fromList(data)], 'application/pdf');
-            final url = html.Url.createObjectUrlFromBlob(blob);
-            final anchor = html.AnchorElement(href: url)
-              ..setAttribute("download", "Quotation_$masterId.pdf")
-              ..click();
+  Future<void> getQuotationMasterPdf(
+      String masterId, BuildContext context) async {
+    try {
+      final data = await getQuotationMasterPdfBytes(masterId);
 
-            // Delay cleanup to ensure download starts
-            await Future.delayed(const Duration(seconds: 2));
-            html.Url.revokeObjectUrl(url);
+      if (data != null) {
+        if (kIsWeb) {
+          final blob = html.Blob([data], 'application/pdf');
+          final url = html.Url.createObjectUrlFromBlob(blob);
+          final anchor = html.AnchorElement(href: url)
+            ..setAttribute("download", "Quotation_$masterId.pdf")
+            ..click();
 
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Downloading PDF...')));
-            }
-          } else {
-            if (context.mounted) {
-              await Printing.layoutPdf(
-                  onLayout: (format) async => Uint8List.fromList(data));
-            }
+          // Delay cleanup to ensure download starts
+          await Future.delayed(const Duration(seconds: 2));
+          html.Url.revokeObjectUrl(url);
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Downloading PDF...')));
           }
         } else {
-          // Check if it's a JSON response (like a URL) despite requesting bytes
-          // or if valid PDF handling failed.
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Invalid PDF data received. Please try again.')));
+            await Printing.layoutPdf(
+                onLayout: (format) async => data);
           }
         }
       } else {
@@ -4160,6 +4165,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
     }
   }
+
 
   void setCustomerId(int customerIdValue) {
     customerId = customerIdValue.toString();

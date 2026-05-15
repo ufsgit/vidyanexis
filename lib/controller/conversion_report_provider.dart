@@ -21,12 +21,14 @@ class ConversionReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
+  String _leadId = '0';
   String _fromDateS = '';
   String _toDateS = '';
   String _Status = '';
   String _AssignedTo = '';
 
   String get Search => _Search;
+  String get leadId => _leadId;
   String get fromDateS => _fromDateS;
   String get toDateS => _toDateS;
   String get Status => _Status;
@@ -35,6 +37,8 @@ class ConversionReportProvider extends ChangeNotifier {
   int? _selectedAMCStatus;
   int? _selectedUser;
   int? selectedFollowUpStatusId;
+  int? _selectedEnquirySourceId;
+  int? get selectedEnquirySourceId => _selectedEnquirySourceId;
   int? _selectedDateFilterIndex;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
   int? get selectedStatus => _selectedStatus;
@@ -150,29 +154,43 @@ class ConversionReportProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
-  void setUserFilterStatus(int newStatus) {
-    _selectedUser = newStatus;
+  void setEnquirySource(int newSource) {
+    _selectedEnquirySourceId = newSource;
+    notifyListeners();
+  }
+
+  void setUserFilterStatus(int? value) {
+    _selectedUser = value;
     print(_selectedUser.toString());
     notifyListeners(); // Notify listeners about the change
   }
 
+  void setLeadId(String value) {
+    _leadId = value.isEmpty ? '0' : value;
+    notifyListeners();
+  }
+
   void removeStatus() {
     _selectedStatus = null;
+    _selectedEnquirySourceId = null;
     _selectedUser = null;
     _selectedDateFilterIndex = null;
     selectedFollowUpStatusId = null;
     _fromDateS = '';
     _toDateS = '';
+    _leadId = '0';
     notifyListeners();
   }
 
   void setTaskSearchCriteria(String search, String fromDate, String toDate,
-      String status, String assignedTo) {
+      String status, String assignedTo,
+      {String leadId = '0'}) {
     _Search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
     _Status = status;
     _AssignedTo = assignedTo;
+    _leadId = leadId.isEmpty ? '0' : leadId;
     notifyListeners(); // Notify listeners so that UI can rebuild
   }
 
@@ -200,10 +218,11 @@ class ConversionReportProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
       String toUserId = (_selectedUser ?? 0).toString();
+      String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId&Status_Id=${selectedFollowUpStatusId ?? 0}');
+              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId&Status_Id=${selectedFollowUpStatusId ?? 0}&Enquiry_Source_Id=$enquirySourceIdStr&Lead_Id=$_leadId');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -253,10 +272,11 @@ class ConversionReportProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       String toUserId = (_selectedUser ?? 0).toString();
+      String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId');
+              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId&Status_Id=${selectedFollowUpStatusId ?? 0}&Enquiry_Source_Id=$enquirySourceIdStr&Lead_Id=$_leadId');
 
       if (response.statusCode == 200) {
         final data = response.data;

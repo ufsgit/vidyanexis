@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/time_track_report_provider.dart';
 import 'package:vidyanexis/controller/models/time_track_chart_data.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -11,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TimeTrackReportPage extends StatefulWidget {
@@ -44,26 +46,62 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
   Widget build(BuildContext context) {
     final providerTimeTrack = Provider.of<TimeTrackReportProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
+    final isWeb = AppStyles.isWebScreen(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      drawer: const SidebarDrawer(),
-      appBar: CustomAppBar(
-        title: 'Time Track Report',
-        titleStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack),
-        onFilterTap: () {
-          providerTimeTrack.toggleFilter();
-        },
-        showSearch: false,
-        onSearch: (q) {},
-      ),
+      backgroundColor: Colors.grey[50],
+      drawer: isWeb ? null : const SidebarDrawer(),
+      appBar: isWeb
+          ? null
+          : CustomAppBar(
+              title: 'Time Track Report',
+              titleStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack),
+              onFilterTap: () {
+                providerTimeTrack.toggleFilter();
+              },
+              showSearch: false,
+              onSearch: (q) {},
+            ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (providerTimeTrack.isFilter)
-            _buildFilterPanel(context, providerTimeTrack, dropDownProvider),
+          // ── Web header bar ──────────────────────────────────────────────
+          if (isWeb)
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+              child: Row(
+                children: [
+                  Text(
+                    'Time Track Report',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                  const Spacer(),
+                  CustomFilterButton(
+                    onPressed: () => providerTimeTrack.toggleFilter(),
+                    isFilter: providerTimeTrack.isFilter,
+                  ),
+                ],
+              ),
+            ),
+
+          // ── Web filter bar ───────────────────────────────────────────────
+          if (isWeb && providerTimeTrack.isFilter)
+            _buildWebFilterBar(context, providerTimeTrack, dropDownProvider),
+
+          // ── Mobile filter panel ──────────────────────────────────────────
+          if (!isWeb && providerTimeTrack.isFilter)
+            _buildMobileFilterPanel(
+                context, providerTimeTrack, dropDownProvider),
+
+          // ── Chart content ────────────────────────────────────────────────
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -200,7 +238,123 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
     );
   }
 
-  Widget _buildFilterPanel(
+  // ── Web: horizontal inline filter bar ───────────────────────────────────
+  Widget _buildWebFilterBar(
+    BuildContext context,
+    TimeTrackReportProvider provider,
+    DropDownProvider dropDownProvider,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.grey),
+      ),
+      child: Row(
+        children: [
+          // Date picker chip
+          CommonReportDateFilter(
+            fromDate: provider.fromDate?.toString(),
+            toDate: provider.toDate?.toString(),
+            formattedFromDate: provider.formattedFromDate,
+            formattedToDate: provider.formattedToDate,
+            label: 'Date',
+            onTap: () => _showDateDialog(context),
+          ),
+          const SizedBox(width: 12),
+          // User dropdown
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: provider.selectedUser != null && provider.selectedUser != 0
+                    ? AppColors.primaryBlue
+                    : Colors.grey[300]!,
+              ),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'By User: ',
+                  style: GoogleFonts.plusJakartaSans(fontSize: 14),
+                ),
+                DropdownButton<int>(
+                  value: provider.selectedUser,
+                  hint: const Text('All'),
+                  items: [
+                        const DropdownMenuItem<int>(
+                          value: 0,
+                          child:
+                              Text('All', style: TextStyle(fontSize: 14)),
+                        ),
+                      ] +
+                      dropDownProvider.searchUserDetails
+                          .map((user) => DropdownMenuItem<int>(
+                                value: user.userDetailsId,
+                                child: ConstrainedBox(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 150),
+                                  child: Text(
+                                    user.userDetailsName ?? '',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                  onChanged: (int? newValue) {
+                    if (newValue != null) {
+                      provider.setUserFilter(newValue);
+                    }
+                  },
+                  underline: Container(),
+                  isDense: true,
+                  iconSize: 18,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Apply button
+          ElevatedButton(
+            onPressed: () => provider.getTimeTrackReport(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryBlue,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: Text(
+              'Apply',
+              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+            ),
+          ),
+          const Spacer(),
+          // Reset button (shown only when filters are active)
+          if (provider.fromDate != null ||
+              (provider.selectedUser != null && provider.selectedUser != 0))
+            CommonReportResetButton(
+              label: 'Reset',
+              onReset: () {
+                provider.clearFilters();
+                provider.getTimeTrackReport(context);
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  // ── Mobile: vertical stacked filter panel ───────────────────────────────
+  Widget _buildMobileFilterPanel(
     BuildContext context,
     TimeTrackReportProvider provider,
     DropDownProvider dropDownProvider,
@@ -229,7 +383,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
               formattedFromDate: provider.formattedFromDate,
               formattedToDate: provider.formattedToDate,
               label: 'Selected Date',
-              onTap: () => onClickTopButton(context),
+              onTap: () => _showDateDialog(context),
             ),
             const SizedBox(height: 24),
             CustomText('Filter by User',
@@ -243,11 +397,10 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
               children: [
                 FilterChipWidget(
                   label: 'All Users',
-                  isSelected: provider.selectedUser == null ||
-                      provider.selectedUser == 0,
+                  isSelected:
+                      provider.selectedUser == null || provider.selectedUser == 0,
                   onTap: () {
                     provider.setUserFilter(0);
-                    provider.getTimeTrackReport(context);
                   },
                 ),
                 ...dropDownProvider.searchUserDetails.map(
@@ -256,32 +409,60 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                     isSelected: provider.selectedUser == user.userDetailsId,
                     onTap: () {
                       provider.setUserFilter(user.userDetailsId);
-                      provider.getTimeTrackReport(context);
                     },
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            if (provider.fromDate != null ||
-                (provider.selectedUser != null && provider.selectedUser != 0))
-              SizedBox(
-                width: double.infinity,
-                child: CommonReportResetButton(
-                  onReset: () {
-                    provider.clearFilters();
-                    provider.getTimeTrackReport(context);
-                  },
-                  label: 'Reset All Filters',
+            // Action buttons row
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      provider.toggleFilter();
+                      provider.getTimeTrackReport(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text(
+                      'Apply',
+                      style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w600, fontSize: 15),
+                    ),
+                  ),
                 ),
-              ),
+                if (provider.fromDate != null ||
+                    (provider.selectedUser != null &&
+                        provider.selectedUser != 0)) ...[
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CommonReportResetButton(
+                      onReset: () {
+                        provider.clearFilters();
+                        provider.getTimeTrackReport(context);
+                      },
+                      label: 'Reset',
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  void onClickTopButton(BuildContext context) {
+  void _showDateDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -310,9 +491,9 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: List<Widget>.generate(dateButtonTitles.length,
-                          (index) {
-                        String title = dateButtonTitles[index];
+                      children: List<Widget>.generate(
+                          _dateButtonTitles.length, (index) {
+                        String title = _dateButtonTitles[index];
                         return ActionChip(
                           onPressed: () {
                             reportsProvider.setDateFilter(title);
@@ -364,7 +545,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                         onPressed: () {
                           Navigator.pop(context);
                           reportsProvider.formatDate();
-                          reportsProvider.getTimeTrackReport(context);
+                          // Don't auto-fetch here — user will press Apply
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -374,14 +555,10 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                             vertical: 12,
                           ),
                         ),
-                        child: const Text(
-                          'Apply',
-                        ),
+                        child: const Text('Select'),
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                     SizedBox(
                       width: double.infinity,
                       height: 40,
@@ -389,7 +566,6 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                         onPressed: () {
                           Navigator.pop(context);
                           reportsProvider.selectDateFilterOption(null);
-                          reportsProvider.getTimeTrackReport(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
@@ -399,9 +575,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                             vertical: 12,
                           ),
                         ),
-                        child: const Text(
-                          'Clear',
-                        ),
+                        child: const Text('Clear'),
                       ),
                     ),
                   ],
@@ -414,7 +588,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
     );
   }
 
-  List<String> dateButtonTitles = [
+  final List<String> _dateButtonTitles = [
     'Yesterday',
     'Today',
     'Tomorrow',

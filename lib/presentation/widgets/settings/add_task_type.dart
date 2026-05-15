@@ -10,6 +10,8 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 
 class AddTaskType extends StatefulWidget {
   final bool isEdit;
@@ -49,11 +51,20 @@ class _AddTaskTypeState extends State<AddTaskType> {
     if (_selectedStatusIds.isEmpty) {
       return 'Please select at least one Lead Status';
     }
+    if (_selectedEnquiryForIds.isEmpty) {
+      return 'Please select at least one Enquiry For';
+    }
 
     // Validate that selected status IDs are all valid (greater than 0)
     for (var statusId in _selectedStatusIds) {
       if (statusId <= 0) {
         return 'One or more selected statuses are invalid';
+      }
+    }
+    // Validate that selected enquiry for IDs are all valid (greater than 0)
+    for (var enquiryForId in _selectedEnquiryForIds) {
+      if (enquiryForId <= 0) {
+        return 'One or more selected enquiry for are invalid';
       }
     }
 
@@ -110,6 +121,14 @@ class _AddTaskTypeState extends State<AddTaskType> {
       .toList();
   bool _selectAll = false;
 
+  // Map to store the selected enquiry for items
+  final Map<int, bool> _selectedEnquiryFor = {};
+  List<int> get _selectedEnquiryForIds => _selectedEnquiryFor.entries
+      .where((entry) => entry.value)
+      .map((entry) => entry.key)
+      .toList();
+  bool _selectAllEnquiryFor = false;
+
   @override
   void initState() {
     super.initState();
@@ -117,6 +136,12 @@ class _AddTaskTypeState extends State<AddTaskType> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      dropDownProvider.getEnquiryFor(context);
+
+      _selectedEnquiryFor.clear();
+      _selectAllEnquiryFor = false;
 
       settingsProvider.selectedDepartmentId = 0;
       settingsProvider.selectedDefaultStatus = 0;
@@ -130,6 +155,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
       settingsProvider.toggleLocation(false);
       settingsProvider.toggleCommission(false);
       settingsProvider.toggleManualCreation(false);
+      settingsProvider.toggleEnquiryForVisible(false);
 
       settingsProvider.getSearchLeadStatus('', "3", context);
 
@@ -156,6 +182,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
         settingsProvider.toggleCommission(isCommissionNumber);
         bool isManualCreation = widget.taskType?.manualCreation != 0;
         settingsProvider.toggleManualCreation(isManualCreation);
+        bool isEnquiryForVisible = widget.taskType?.enquiryForVisible != 0;
+        settingsProvider.toggleEnquiryForVisible(isEnquiryForVisible);
 
         // Prefill description
         settingsProvider.taskTypeDescriptionController.text =
@@ -240,6 +268,16 @@ class _AddTaskTypeState extends State<AddTaskType> {
         //   // Update _selectAll based on current selections
         //   _updateSelectAllState();
         // }
+        // Set selected enquiry for if available
+        if (widget.taskType?.enquiryFor != null &&
+            widget.taskType!.enquiryFor!.isNotEmpty) {
+          for (var item in widget.taskType!.enquiryFor!) {
+            if (item.enquiryForId > 0) {
+              _selectedEnquiryFor[item.enquiryForId] = true;
+            }
+          }
+          _updateSelectAllEnquiryForState();
+        }
       }
     });
   }
@@ -286,6 +324,45 @@ class _AddTaskTypeState extends State<AddTaskType> {
 
     setState(() {
       _selectAll = allSelected && validStatusCount > 0;
+    });
+  }
+
+  void _toggleSelectAllEnquiryFor() {
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+    setState(() {
+      _selectAllEnquiryFor = !_selectAllEnquiryFor;
+      for (var item in dropDownProvider.enquiryForList) {
+        if (item.enquiryForId > 0) {
+          _selectedEnquiryFor[item.enquiryForId] = _selectAllEnquiryFor;
+        }
+      }
+    });
+  }
+
+  void _updateSelectAllEnquiryForState() {
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+
+    if (dropDownProvider.enquiryForList.isEmpty) {
+      setState(() {
+        _selectAllEnquiryFor = false;
+      });
+      return;
+    }
+
+    bool allSelected = true;
+    for (var item in dropDownProvider.enquiryForList) {
+      if (item.enquiryForId > 0) {
+        if (!(_selectedEnquiryFor[item.enquiryForId] ?? false)) {
+          allSelected = false;
+          break;
+        }
+      }
+    }
+
+    setState(() {
+      _selectAllEnquiryFor = allSelected;
     });
   }
 
@@ -515,10 +592,27 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                           "Manual creation",
                                           style: TextStyle(fontSize: 14),
                                         ),
-                                        value: settingsProvider.isManualCreation,
+                                        value:
+                                            settingsProvider.isManualCreation,
                                         onChanged: (value) {
                                           settingsProvider
                                               .toggleManualCreation(value!);
+                                        },
+                                        controlAffinity:
+                                            ListTileControlAffinity.leading,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      CheckboxListTile(
+                                        title: const Text(
+                                          "Show Enquiry For",
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        value:
+                                            settingsProvider.isEnquiryForVisible,
+                                        onChanged: (value) {
+                                          settingsProvider
+                                              .toggleEnquiryForVisible(value!);
                                         },
                                         controlAffinity:
                                             ListTileControlAffinity.leading,
@@ -701,6 +795,138 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                 ),
                               ),
                             ),
+                            const SizedBox(width: 8),
+                            if(settingsProvider.isEnquiryForVisible)
+                            // Enquiry For Section
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Manage Enquiry For',
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[200],
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(
+                                              width: 48,
+                                              child:
+                                                  Center(child: Text('No.'))),
+                                          Expanded(child: Text('Enquiry For')),
+                                          Center(
+                                            child: Checkbox(
+                                              value: _selectAllEnquiryFor,
+                                              onChanged: (value) =>
+                                                  _toggleSelectAllEnquiryFor(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Consumer<DropDownProvider>(
+                                        builder:
+                                            (context, dropDownProvider, child) {
+                                          if (dropDownProvider
+                                              .enquiryForList.isEmpty) {
+                                            return const Center(
+                                                child: Text(
+                                                    'No enquiry categories available'));
+                                          }
+                                          return ListView.builder(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8),
+                                            itemCount: dropDownProvider
+                                                .enquiryForList.length,
+                                            itemBuilder: (context, index) {
+                                              final item = dropDownProvider
+                                                  .enquiryForList[index];
+                                              final id = item.enquiryForId;
+                                              if (!_selectedEnquiryFor
+                                                  .containsKey(id)) {
+                                                _selectedEnquiryFor[id] = false;
+                                              }
+                                              return Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4,
+                                                        horizontal: 8),
+                                                padding:
+                                                    const EdgeInsets.all(12),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  boxShadow: const [
+                                                    BoxShadow(
+                                                        color: Colors.black12,
+                                                        blurRadius: 2)
+                                                  ],
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                        width: 48,
+                                                        child: Center(
+                                                            child: Text(
+                                                                '${index + 1}'))),
+                                                    Expanded(
+                                                        child: Text(item
+                                                            .enquiryForName)),
+                                                    Checkbox(
+                                                      value:
+                                                          _selectedEnquiryFor[
+                                                                  id] ??
+                                                              false,
+                                                      onChanged: (bool? value) {
+                                                        setState(() {
+                                                          _selectedEnquiryFor[
+                                                                  id] =
+                                                              value ?? false;
+                                                          _updateSelectAllEnquiryForState();
+                                                        });
+                                                      },
+                                                      materialTapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ), //End Enquiry for section
                           ],
                         )
                       : // Mobile Layout - Stacked vertically
@@ -1100,6 +1326,11 @@ class _AddTaskTypeState extends State<AddTaskType> {
                             .map((entry) => {"Status_Id": entry.key})
                             .toList();
 
+                        final enquiryForList = _selectedEnquiryFor.entries
+                            .where((entry) => entry.value)
+                            .map((entry) => {"EnquiryFor_Id": entry.key})
+                            .toList();
+
                         final requestData = {
                           "Task_Type_Id": widget.isEdit
                               ? int.tryParse(widget.editId) ?? 0
@@ -1130,6 +1361,9 @@ class _AddTaskTypeState extends State<AddTaskType> {
                           "order_by": int.tryParse(
                                   settingsProvider.orderByController.text) ??
                               0,
+                          "Enquiry_For_Ids": enquiryForList,
+                          "Enquiry_For_Visible":
+                              settingsProvider.isEnquiryForVisible ? 1 : 0,
                         };
 
                         settingsProvider.addTaskType(

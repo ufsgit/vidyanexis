@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -6,7 +7,7 @@ import 'package:vidyanexis/controller/models/lead_details_model.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 LeadDetails? customer;
-Future<void> ksebPdf({
+Future<Uint8List?> generateKsebPdfBytes({
   LeadDetails? customerDetails,
   required BuildContext context,
 }) async {
@@ -33,11 +34,24 @@ Future<void> ksebPdf({
     ),
   );
 
-  // Save or share the PDF
-  await Printing.layoutPdf(
-    onLayout: (PdfPageFormat format) async => pdf.save(),
-  );
+  return await pdf.save();
 }
+
+Future<void> ksebPdf({
+  LeadDetails? customerDetails,
+  required BuildContext context,
+}) async {
+  final pdfBytes = await generateKsebPdfBytes(
+    customerDetails: customerDetails,
+    context: context,
+  );
+  if (pdfBytes != null) {
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdfBytes,
+    );
+  }
+}
+
 
 List<pw.Widget> _buildTitleSection(pw.TextStyle style) {
   return [

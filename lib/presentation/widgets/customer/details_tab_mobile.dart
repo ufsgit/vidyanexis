@@ -15,6 +15,10 @@ import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'dart:typed_data';
+import 'package:vidyanexis/utils/pdf_action_helper.dart';
+import 'package:vidyanexis/http/loader.dart';
+
 
 class DetailsTabMobile extends StatefulWidget {
   final String customerId;
@@ -72,10 +76,17 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'KSEB',
                               onPressed: () async {
-                                await ksebPdf(
-                                    customerDetails:
-                                        leadDetailsProvider.leadDetails!.first,
-                                    context: context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'KSEB PDF',
+                                 onGenerate: () async {
+                                   return await generateKsebPdfBytes(
+                                     customerDetails: leadDetailsProvider.leadDetails!.first,
+                                     context: context,
+                                   ) ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[63] == 1)
@@ -85,10 +96,17 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Vendor Agreement',
                               onPressed: () async {
-                                await vendorAgreementPdf(
-                                    customerDetails:
-                                        leadDetailsProvider.leadDetails!.first,
-                                    context: context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Vendor Agreement',
+                                 onGenerate: () async {
+                                   return await generateVendorAgreementPdfBytes(
+                                     customerDetails: leadDetailsProvider.leadDetails!.first,
+                                     context: context,
+                                   ) ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[62] == 1)
@@ -98,10 +116,17 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Vendor Feasibility',
                               onPressed: () async {
-                                await rtsFeasibilityReportPdf(
-                                    customerDetails:
-                                        leadDetailsProvider.leadDetails!.first,
-                                    context: context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Vendor Feasibility',
+                                 onGenerate: () async {
+                                   return await generateRtsFeasibilityReportPdfBytes(
+                                     customerDetails: leadDetailsProvider.leadDetails!.first,
+                                     context: context,
+                                   ) ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[101] == 1)
@@ -111,10 +136,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Annexture1',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
-                                    'Annexture1',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Annexture1',
+                                 pdfUrl: '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure1}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[102] == 1)
@@ -124,10 +157,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Annexture2',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
-                                    'Annexture2',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Annexture 2',
+                                 pdfUrl: '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure2}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[103] == 1)
@@ -137,10 +178,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Annexture3',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
-                                    'Annexture3',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Annexture 3',
+                                 pdfUrl: '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfAnnexure3}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[105] == 1)
@@ -150,10 +199,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Net meter Agreement',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
-                                    'Net meter Agreement',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Net meter Agreement',
+                                 pdfUrl: '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[106] == 1)
@@ -163,10 +220,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'MNRE Agreement',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
-                                    'MNRE Agreement',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'MNRE Agreement',
+                                 pdfUrl: '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfMnreAgreement}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[107] == 1)
@@ -176,10 +241,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Loan Agreement',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
-                                    'Loan Agreement',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Loan Agreement',
+                                 pdfUrl: '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfLoanAgreement}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[108] == 1)
@@ -189,10 +262,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Schedule',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfSchedule}${widget.customerId}',
-                                    'Schedule',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Schedule',
+                                 pdfUrl: '${HttpUrls.getPdfSchedule}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfSchedule}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[109] == 1)
@@ -202,10 +283,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Completion Report',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
-                                    'Completion Report',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Completion Report',
+                                 pdfUrl: '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfCompletionReport}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[110] == 1)
@@ -215,10 +304,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'KSEB Net Meter',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}',
-                                    'KSEB Net Meter',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'KSEB Net Meter',
+                                 pdfUrl: '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfKsebNetMeter}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[111] == 1)
@@ -228,10 +325,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Vendor Agreement A3s',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
-                                    'Vendor Agreement A3s',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Vendor Agreement A3s',
+                                 pdfUrl: '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfVendorAgreement}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                           if (settingsProvider.menuIsViewMap[112] == 1 &&
@@ -242,10 +347,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               textColor: AppColors.bluebutton,
                               buttonText: 'Warranty',
                               onPressed: () async {
-                                await customerDetailsProvider.getAnnexurePdf(
-                                    '${HttpUrls.getPdfWarranty}${widget.customerId}',
-                                    'Warranty',
-                                    context);
+                               PdfActionHelper.showPdfOptions(
+                                 context: context,
+                                 title: 'Warranty',
+                                 pdfUrl: '${HttpUrls.getPdfWarranty}${widget.customerId}',
+                                 onGenerate: () async {
+                                   await Loader.showLoader(context);
+                                   final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWarranty}${widget.customerId}');
+                                   Loader.stopLoader(context);
+                                   return bytes ?? Uint8List(0);
+                                 },
+                               );
+
                               },
                             ),
                         ],

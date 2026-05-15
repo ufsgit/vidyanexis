@@ -173,6 +173,7 @@ class _CampaignContentState extends State<CampaignContent> {
                                     campaignIdString: campaign.campaignIdString,
                                     userIds: campaign.userIds,
                                     enquirySourceId: campaign.enquirySourceId,
+                                    enquiryForId: campaign.enquiryForId,
                                   ),
                                 );
                               },

@@ -1,8 +1,11 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/utils/pdf_action_helper.dart';
 import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
@@ -116,18 +119,64 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
             if (widget.quotation.quotationTypeId == 2)
               CustomOutlinedSvgButton(
                 onPressed: () async {
+                  PdfActionHelper.showShareOptions(
+                    context: context,
+                    title: 'Commercial PDF',
+                    onGenerate: () async {
+                      await Loader.showLoader(context);
+                      await customerDetailsProvider.getQuatationListByMasterId(
+                          widget.quotationId, context);
+                      await customerDetailsProvider.fetchLeadDetails(
+                          widget.customerId, context);
+                      await settingsprovider.getCompanyDetails();
+                      Loader.stopLoader(context);
+
+                      if (settingsprovider.companyDetails.isNotEmpty &&
+                          (customerDetailsProvider.leadDetails?.isNotEmpty ??
+                              false) &&
+                          customerDetailsProvider
+                              .quotationListByMaster.isNotEmpty) {
+                        return await generateCommercialPDFBytes(
+                              context: context,
+                              companyDetails: settingsprovider.companyDetails[0],
+                              customerDetails:
+                                  customerDetailsProvider.leadDetails![0],
+                              quotationData: customerDetailsProvider
+                                  .quotationListByMaster[0],
+                            ) ??
+                            Uint8List(0);
+                      }
+                      return Uint8List(0);
+                    },
+                  );
+                },
+                svgPath: 'assets/images/Share.svg',
+                label: 'Share Commercial',
+                breakpoint: 860,
+                foregroundColor: AppColors.primaryBlue,
+                backgroundColor: Colors.white,
+                borderSide: BorderSide(color: AppColors.primaryBlue),
+              ),
+              CustomOutlinedSvgButton(
+                onPressed: () async {
                   await Loader.showLoader(context);
                   await customerDetailsProvider.getQuatationListByMasterId(
                       widget.quotationId, context);
                   await customerDetailsProvider.fetchLeadDetails(
                       widget.customerId, context);
                   await settingsprovider.getCompanyDetails();
-                  printCommercialPDFs(
-                      context: context, //     companyDetails:
-                      companyDetails: settingsprovider.companyDetails[0],
-                      customerDetails: customerDetailsProvider.leadDetails![0],
-                      quotationData:
-                          customerDetailsProvider.quotationListByMaster[0]);
+                  if (settingsprovider.companyDetails.isNotEmpty &&
+                      (customerDetailsProvider.leadDetails?.isNotEmpty ??
+                          false) &&
+                      customerDetailsProvider
+                          .quotationListByMaster.isNotEmpty) {
+                    printCommercialPDFs(
+                        context: context,
+                        companyDetails: settingsprovider.companyDetails[0],
+                        customerDetails: customerDetailsProvider.leadDetails![0],
+                        quotationData:
+                            customerDetailsProvider.quotationListByMaster[0]);
+                  }
                   Loader.stopLoader(context);
                 },
                 svgPath: 'assets/images/Print.svg',
@@ -140,18 +189,64 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
             if (widget.quotation.quotationTypeId == 1)
               CustomOutlinedSvgButton(
                 onPressed: () async {
+                  PdfActionHelper.showShareOptions(
+                    context: context,
+                    title: 'Residential PDF',
+                    onGenerate: () async {
+                      await Loader.showLoader(context);
+                      await customerDetailsProvider.getQuatationListByMasterId(
+                          widget.quotationId, context);
+                      await customerDetailsProvider.fetchLeadDetails(
+                          widget.customerId, context);
+                      await settingsprovider.getCompanyDetails();
+                      Loader.stopLoader(context);
+
+                      if (settingsprovider.companyDetails.isNotEmpty &&
+                          (customerDetailsProvider.leadDetails?.isNotEmpty ??
+                              false) &&
+                          customerDetailsProvider
+                              .quotationListByMaster.isNotEmpty) {
+                        return await generateResidentialPDFBytes(
+                              context: context,
+                              companyDetails: settingsprovider.companyDetails[0],
+                              customerDetails:
+                                  customerDetailsProvider.leadDetails![0],
+                              quotationData: customerDetailsProvider
+                                  .quotationListByMaster[0],
+                            ) ??
+                            Uint8List(0);
+                      }
+                      return Uint8List(0);
+                    },
+                  );
+                },
+                svgPath: 'assets/images/Share.svg',
+                label: 'Share Residential',
+                breakpoint: 860,
+                foregroundColor: AppColors.primaryBlue,
+                backgroundColor: Colors.white,
+                borderSide: BorderSide(color: AppColors.primaryBlue),
+              ),
+              CustomOutlinedSvgButton(
+                onPressed: () async {
                   await Loader.showLoader(context);
                   await customerDetailsProvider.getQuatationListByMasterId(
                       widget.quotationId, context);
                   await customerDetailsProvider.fetchLeadDetails(
                       widget.customerId, context);
                   await settingsprovider.getCompanyDetails();
-                  printResidentialPDFs(
-                      context: context, //     companyDetails:
-                      companyDetails: settingsprovider.companyDetails[0],
-                      customerDetails: customerDetailsProvider.leadDetails![0],
-                      quotationData:
-                          customerDetailsProvider.quotationListByMaster[0]);
+                  if (settingsprovider.companyDetails.isNotEmpty &&
+                      (customerDetailsProvider.leadDetails?.isNotEmpty ??
+                          false) &&
+                      customerDetailsProvider
+                          .quotationListByMaster.isNotEmpty) {
+                    printResidentialPDFs(
+                        context: context,
+                        companyDetails: settingsprovider.companyDetails[0],
+                        customerDetails: customerDetailsProvider.leadDetails![0],
+                        quotationData:
+                            customerDetailsProvider.quotationListByMaster[0]);
+                  }
                   Loader.stopLoader(context);
                 },
                 svgPath: 'assets/images/Print.svg',
@@ -163,6 +258,29 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
               ),
           ],
           if (settingsprovider.menuIsViewMap[32] == 1)
+            CustomOutlinedSvgButton(
+              onPressed: () async {
+                PdfActionHelper.showShareOptions(
+                  context: context,
+                  title: 'Quotation 1',
+                  pdfUrl:
+                      '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${widget.quotationId}',
+                  onGenerate: () async {
+                    await Loader.showLoader(context);
+                    final bytes = await customerDetailsProvider
+                        .getQuotationMasterPdfBytes(widget.quotationId);
+                    Loader.stopLoader(context);
+                    return bytes ?? Uint8List(0);
+                  },
+                );
+              },
+              svgPath: 'assets/images/Share.svg',
+              label: 'Share Quotation 1',
+              breakpoint: 860,
+              foregroundColor: AppColors.primaryBlue,
+              backgroundColor: Colors.white,
+              borderSide: BorderSide(color: AppColors.primaryBlue),
+            ),
             CustomOutlinedSvgButton(
               onPressed: () async {
                 await Loader.showLoader(context);

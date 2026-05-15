@@ -80,7 +80,6 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
         title: 'Followup Report',
         onSearchTap: () {
           searchProvider.startSearch();
-          followUpReportsProvider.toggleFilter();
         },
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
@@ -93,14 +92,12 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
         onClearTap: () {
           searchController.clear();
           searchProvider.stopSearch();
-          followUpReportsProvider.toggleFilter();
-
           followUpReportsProvider.setFollowupSearch(
             '',
-            '',
-            '',
-            '',
-            '',
+            followUpReportsProvider.fromDateS,
+            followUpReportsProvider.toDateS,
+            followUpReportsProvider.Status,
+            followUpReportsProvider.AssignedTo,
           );
           followUpReportsProvider.getFollowupReports(context);
         },
@@ -120,105 +117,133 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
       ),
       body: Container(
         color: Colors.grey[50],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── FILTER PANEL ────────────────────────────────────────────────
-            if (followUpReportsProvider.isFilter)
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 16),
-                      CustomText('Status',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textBlack),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 8.0,
-                        children: [
-                          FilterChipWidget(
-                            label: 'All',
-                            isSelected:
-                                followUpReportsProvider.selectedStatus == 0 ||
-                                    followUpReportsProvider.selectedStatus ==
-                                        null,
-                            onTap: () => followUpReportsProvider.setStatus(0),
+        child: followUpReportsProvider.isFilter
+            ? SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    CustomText('Status',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: [
+                        FilterChipWidget(
+                          label: 'All',
+                          isSelected: followUpReportsProvider.selectedStatus ==
+                                  0 ||
+                              followUpReportsProvider.selectedStatus == null,
+                          onTap: () => followUpReportsProvider.setStatus(0),
+                        ),
+                        ...provider.followUpData.map((s) => FilterChipWidget(
+                              label: s.statusName ?? 'Unknown',
+                              isSelected:
+                                  followUpReportsProvider.selectedStatus ==
+                                      s.statusId,
+                              onTap: () => followUpReportsProvider
+                                  .setStatus(s.statusId ?? 0),
+                            )),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    CustomText('Date Range',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    CommonReportDateFilter(
+                      fromDate: followUpReportsProvider.fromDate?.toString(),
+                      toDate: followUpReportsProvider.toDate?.toString(),
+                      formattedFromDate:
+                          followUpReportsProvider.formattedFromDate,
+                      formattedToDate: followUpReportsProvider.formattedToDate,
+                      onTap: () => onClickTopButton(context),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomText('Assigned Staff',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      children: [
+                        FilterChipWidget(
+                          label: 'All',
+                          isSelected:
+                              followUpReportsProvider.selectedUser == 0 ||
+                                  followUpReportsProvider.selectedUser == null,
+                          onTap: () =>
+                              followUpReportsProvider.setUserFilterStatus(0),
+                        ),
+                        ...provider.searchUserDetails
+                            .map((u) => FilterChipWidget(
+                                  label: u.userDetailsName ?? 'Unknown',
+                                  isSelected:
+                                      followUpReportsProvider.selectedUser ==
+                                          u.userDetailsId,
+                                  onTap: () => followUpReportsProvider
+                                      .setUserFilterStatus(
+                                          u.userDetailsId ?? 0),
+                                )),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    // ── Apply + Reset ────────────────────────────────────
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              followUpReportsProvider.formatDate();
+                              followUpReportsProvider.setFollowupSearch(
+                                followUpReportsProvider.Search,
+                                followUpReportsProvider.formattedFromDate,
+                                followUpReportsProvider.formattedToDate,
+                                followUpReportsProvider.selectedStatus
+                                    .toString(),
+                                followUpReportsProvider.selectedUser.toString(),
+                              );
+                              followUpReportsProvider
+                                  .getFollowupReports(context);
+                              followUpReportsProvider.toggleFilter();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Text(
+                              'Apply',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 15),
+                            ),
                           ),
-                          ...provider.followUpData.map((s) => FilterChipWidget(
-                                label: s.statusName ?? 'Unknown',
-                                isSelected:
-                                    followUpReportsProvider.selectedStatus ==
-                                        s.statusId,
-                                onTap: () => followUpReportsProvider
-                                    .setStatus(s.statusId ?? 0),
-                              )),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      CustomText('Date Range',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textBlack),
-                      const SizedBox(height: 8),
-                      CommonReportDateFilter(
-                        fromDate: followUpReportsProvider.fromDate?.toString(),
-                        toDate: followUpReportsProvider.toDate?.toString(),
-                        formattedFromDate:
-                            followUpReportsProvider.formattedFromDate,
-                        formattedToDate:
-                            followUpReportsProvider.formattedToDate,
-                        onTap: () => onClickTopButton(context),
-                      ),
-                      const SizedBox(height: 16),
-                      CustomText('Assigned Staff',
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textBlack),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 8.0,
-                        children: [
-                          FilterChipWidget(
-                            label: 'All',
-                            isSelected: followUpReportsProvider.selectedUser ==
-                                    0 ||
-                                followUpReportsProvider.selectedUser == null,
-                            onTap: () =>
-                                followUpReportsProvider.setUserFilterStatus(0),
-                          ),
-                          ...provider.searchUserDetails
-                              .map((u) => FilterChipWidget(
-                                    label: u.userDetailsName ?? 'Unknown',
-                                    isSelected:
-                                        followUpReportsProvider.selectedUser ==
-                                            u.userDetailsId,
-                                    onTap: () => followUpReportsProvider
-                                        .setUserFilterStatus(
-                                            u.userDetailsId ?? 0),
-                                  )),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      if (followUpReportsProvider.fromDate != null ||
-                          followUpReportsProvider.toDate != null ||
-                          (followUpReportsProvider.selectedStatus != null &&
-                              followUpReportsProvider.selectedStatus != 0) ||
-                          (followUpReportsProvider.selectedUser != null &&
-                              followUpReportsProvider.selectedUser != 0))
-                        SizedBox(
-                          width: double.infinity,
-                          child: CommonReportResetButton(
-                            label: 'Reset All Filters',
+                        ),
+                        if (followUpReportsProvider.fromDate != null ||
+                            followUpReportsProvider.toDate != null ||
+                            (followUpReportsProvider.selectedStatus != null &&
+                                followUpReportsProvider.selectedStatus != 0) ||
+                            (followUpReportsProvider.selectedUser != null &&
+                                followUpReportsProvider.selectedUser != 0)) ...[
+                          const SizedBox(width: 10),
+                          CommonReportResetButton(
+                            label: 'Reset',
                             onReset: () {
                               followUpReportsProvider
                                   .selectDateFilterOption(null);
                               followUpReportsProvider.removeStatus();
+                              searchController.clear();
                               followUpReportsProvider.setFollowupSearch(
                                   '', '', '', '', '');
                               followUpReportsProvider
@@ -235,94 +260,84 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                                   borderRadius: BorderRadius.circular(20)),
                             ),
                           ),
-                        ),
-                      const SizedBox(height: 80),
-                    ],
-                  ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 80),
+                  ],
                 ),
-              ),
+              )
+            : followUpReportsProvider.pendingFolloWuP.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 80),
+                        Icon(Icons.search_off_outlined,
+                            size: 80, color: Colors.grey[300]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No followup reports found',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.separated(
+                    separatorBuilder: (context, index) {
+                      if (index == 0) return const SizedBox.shrink();
+                      return const SizedBox(height: 12);
+                    },
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                    itemCount:
+                        followUpReportsProvider.pendingFolloWuP.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: CommonReportSummaryBar(
+                            totalLabel: 'Total Followups',
+                            totalCount:
+                                followUpReportsProvider.pendingFolloWuP.length,
+                            showingLabel: 'Showing',
+                            showingCount:
+                                followUpReportsProvider.pendingFolloWuP.length,
+                          ),
+                        );
+                      }
 
-            // ── LIST ────────────────────────────────────────────────────────
-            if (!followUpReportsProvider.isFilter)
-              Expanded(
-                child: followUpReportsProvider.pendingFolloWuP.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 80),
-                            Icon(Icons.search_off_outlined,
-                                size: 80, color: Colors.grey[300]),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No followup reports found',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w500,
+                      var followup =
+                          followUpReportsProvider.pendingFolloWuP[index - 1];
+                      return ReportListItem(
+                        onTap: () {},
+                        onSubtitleTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CustomerDetailPageMobile(
+                                customerId: followup.customerId ?? 0,
+                                fromLead: false,
                               ),
                             ),
-                          ],
-                        ),
-                      )
-                    : Column(
-                        children: [
-                          if (!followUpReportsProvider.isFilter &&
-                              followUpReportsProvider
-                                  .pendingFolloWuP.isNotEmpty)
-                            CommonReportSummaryBar(
-                              totalLabel: 'Total Followups',
-                              totalCount: followUpReportsProvider
-                                  .pendingFolloWuP.length,
-                              showingLabel: 'Showing',
-                              showingCount: followUpReportsProvider
-                                  .pendingFolloWuP.length,
-                            ),
-                          ListView.separated(
-                            separatorBuilder: (context, index) => const SizedBox(
-                              height: 12,
-                            ),
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.all(16),
-                            physics: const ClampingScrollPhysics(),
-                            itemCount: followUpReportsProvider
-                                .pendingFolloWuP.length,
-                            itemBuilder: (context, index) {
-                              var followup = followUpReportsProvider
-                                  .pendingFolloWuP[index];
-                              return ReportListItem(
-                                onTap: () {},
-                                onSubtitleTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          CustomerDetailPageMobile(
-                                        customerId: followup.customerId ?? 0,
-                                        fromLead: false,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                title: followup.customerName ?? '',
-                                subtitle: '${followup.phoneNumber ?? ''} >',
-                                status: followup.statusName ?? '',
-                                statusColor: getAvatarColor(
-                                    followup.statusName ?? ''),
-                                description: followup.remark ?? '',
-                                bottomLeftIcon: Icons.calendar_today_outlined,
-                                bottomLeftText: followup.nextFollowUpDate
-                                    .toString()
-                                    .toFormattedDate(),
-                                bottomRightText: followup.toUserName ?? '',
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-              ),
-          ],
-        ),
+                          );
+                        },
+                        title: followup.customerName ?? '',
+                        subtitle: '${followup.phoneNumber ?? ''} >',
+                        status: followup.statusName ?? '',
+                        statusColor: getAvatarColor(followup.statusName ?? ''),
+                        description: followup.remark ?? '',
+                        bottomLeftIcon: Icons.calendar_today_outlined,
+                        bottomLeftText: followup.nextFollowUpDate
+                            .toString()
+                            .toFormattedDate(),
+                        bottomRightText: followup.toUserName ?? '',
+                      );
+                    },
+                  ),
       ),
     );
   }
@@ -431,22 +446,9 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                       width: double.infinity,
                       height: 40,
                       child: TextButton(
-                        onPressed: () async {
-                          followUprovider.formatDate();
-                          String status =
-                              followUprovider.selectedStatus.toString();
-                          String assignedTo =
-                              followUprovider.selectedUser.toString();
-                          String fromDate = followUprovider.formattedFromDate;
-                          String toDate = followUprovider.formattedToDate;
-                          followUprovider.setFollowupSearch(
-                              followUprovider.Search,
-                              fromDate,
-                              toDate,
-                              status,
-                              assignedTo);
-                          await followUprovider.getFollowupReports(context);
+                        onPressed: () {
                           Navigator.pop(context);
+                          followUprovider.formatDate();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -457,7 +459,29 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                           ),
                         ),
                         child: const Text(
-                          'Apply',
+                          'Select',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          followUprovider.selectDateFilterOption(null);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.textRed.withOpacity(0.1),
+                          foregroundColor: AppColors.textRed,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Clear',
                         ),
                       ),
                     ),
