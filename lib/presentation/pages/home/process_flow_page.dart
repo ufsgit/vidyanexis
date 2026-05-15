@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/process_flow_model.dart';
 import 'package:vidyanexis/controller/process_flow_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_add_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
@@ -86,10 +87,10 @@ class _LeadsPageState extends State<ProcessFlowPage> {
                 padding: const EdgeInsets.only(left: 8),
                 child: IconButton(
                   onPressed: () {
-                    context.pop();
+                    Scaffold.of(context).openDrawer();
                   },
                   icon: Icon(
-                    Icons.arrow_back,
+                    Icons.menu,
                     color: AppColors.textGrey4,
                   ),
                   iconSize: 24,
