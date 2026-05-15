@@ -101,6 +101,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
       backgroundColor: Colors.white,
       drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
+        leadingWidget: const BackButton(color: Colors.black),
         title: 'Work report of ${widget.userName}',
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
