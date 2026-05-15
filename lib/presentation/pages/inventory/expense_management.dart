@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
@@ -125,7 +126,16 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                     : Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: InkWell(
-                          onTap: () => context.pop(),
+                          onTap: () {
+                            final sideProvider = Provider.of<SidebarProvider>(
+                                context,
+                                listen: false);
+                            if (sideProvider.reportPage != null) {
+                              sideProvider.setReportPage(null);
+                            } else {
+                              context.pop();
+                            }
+                          },
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
                             padding: const EdgeInsets.all(8),
@@ -196,6 +206,15 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
       // Desktop/Tablet layout - horizontal
       return Row(
         children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              final sideProvider =
+                  Provider.of<SidebarProvider>(context, listen: false);
+              sideProvider.setSelectedIndex(0);
+              sideProvider.updateSelectedName('DashBoard');
+            },
+          ),
           const Text(
             'Expense Management',
             style: TextStyle(

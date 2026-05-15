@@ -4,6 +4,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/inventory/category_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_Customer_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/item_page.dart';
@@ -45,7 +46,15 @@ class _InventoryPageState extends State<InventoryPage> {
                   fontWeight: FontWeight.w600,
                   color: AppColors.textBlack),
               leadingWidget: IconButton(
-                onPressed: () => context.pop(),
+                onPressed: () {
+                  final sideProvider =
+                      Provider.of<SidebarProvider>(context, listen: false);
+                  if (sideProvider.reportPage != null) {
+                    sideProvider.setReportPage(null);
+                  } else {
+                    context.pop();
+                  }
+                },
                 icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
                 iconSize: 24,
               ),
@@ -135,13 +144,27 @@ class _InventoryPageState extends State<InventoryPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(
-                  'Inventory',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 24,
-                    color: const Color(0xFF152D70),
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        final sideProvider = Provider.of<SidebarProvider>(
+                            context,
+                            listen: false);
+                        sideProvider.setSelectedIndex(0);
+                        sideProvider.updateSelectedName('DashBoard');
+                      },
+                    ),
+                    Text(
+                      'Inventory',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        color: const Color(0xFF152D70),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               ..._getMenuItems(settingsProvider).map((title) => _buildMenuItem(title)),
