@@ -197,11 +197,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     );
                   },
                 ),
-                IconButton(
-                  icon: Icon(Icons.refresh_rounded, color: Colors.black.withOpacity(0.7)),
-                  onPressed: () => dashBoardProvider.refreshDashboardData(context),
-                ),
-                const SizedBox(width: 8),
               ],
             )
           : null,

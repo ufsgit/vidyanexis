@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/payment_reminder_card.dart';
 
 class PaymentReminderTab extends StatefulWidget {
   const PaymentReminderTab({super.key});
@@ -14,6 +14,9 @@ class PaymentReminderTab extends StatefulWidget {
 }
 
 class _PaymentReminderTabState extends State<PaymentReminderTab> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -23,119 +26,131 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
       final dropdownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
 
-      // Initialize filters if needed
-      // Fetch users for filter if not already fetched
       dropdownProvider.getUserDetails(context);
-
       provider.getPaymentReminders(context);
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  double _calculateTotalOutstanding(List items) {
+    double total = 0;
+    for (var item in items) {
+      try {
+        // Handle potential currency symbols or commas
+        String amountStr = item.balanceAmount.replaceAll(',', '').replaceAll('₹', '').trim();
+        total += double.tryParse(amountStr) ?? 0.0;
+      } catch (e) {
+        // Ignore parsing errors
+      }
+    }
+    return total;
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer2<WarrentyReportProvider, DropDownProvider>(
       builder: (context, provider, dropdownProvider, child) {
+        final filteredList = provider.paymentReminderList.where((item) {
+          return item.customerName
+              .toLowerCase()
+              .contains(_searchQuery.toLowerCase());
+        }).toList();
+
+        final totalOutstanding = _calculateTotalOutstanding(provider.paymentReminderList);
+
         return Column(
           children: [
+            // Summary Section
+            Row(
+              children: [
+                Expanded(
+                  child: _buildSummaryCard(
+                    title: "Total Outstanding",
+                    value: "₹${totalOutstanding.toStringAsFixed(2)}",
+                    icon: Icons.account_balance_wallet_rounded,
+                    color: const Color(0xFFF87171),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildSummaryCard(
+                    title: "Pending Reminders",
+                    value: provider.paymentReminderList.length.toString(),
+                    icon: Icons.notifications_active_rounded,
+                    color: AppColors.secondaryBlue,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Search Bar
+            Container(
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: "Search customer name...",
+                  hintStyle: GoogleFonts.plusJakartaSans(
+                    color: AppColors.textGrey3,
+                    fontSize: 14,
+                  ),
+                  prefixIcon: const Icon(Icons.search_rounded, 
+                    color: AppColors.textGrey3, size: 20),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  suffixIcon: _searchQuery.isNotEmpty 
+                    ? IconButton(
+                        icon: const Icon(Icons.close_rounded, size: 18),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                    : null,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
             // List Section
             if (provider.isPaymentReminderLoading)
-              const SizedBox(
-                height: 200,
-                child: Center(child: CircularProgressIndicator()),
-              )
+              _buildShimmerLoading()
             else if (provider.paymentReminderList.isEmpty)
-              Container(
-                height: 200,
-                padding: const EdgeInsets.all(20),
-                alignment: Alignment.center,
-                child: const Text('No Payment Reminders found'),
-              )
+              _buildEmptyState("No Payment Reminders found")
+            else if (filteredList.isEmpty)
+              _buildEmptyState("No results for '$_searchQuery'")
             else
-              ListView.separated(
+              ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: provider.paymentReminderList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
+                padding: const EdgeInsets.only(bottom: 20),
+                itemCount: filteredList.length,
                 itemBuilder: (context, index) {
-                  final item = provider.paymentReminderList[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item.customerName,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textBlack,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Reminder Date : ",
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textGrey3,
-                                    ),
-                                  ),
-                                  Text(
-                                    _formatDate(item.reminderDate),
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      color: AppColors.textGrey3,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                "Balance Amount",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                item.balanceAmount,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ])
-                      ],
-                    ),
-                  );
+                  return PaymentReminderCard(item: filteredList[index]);
                 },
               ),
           ],
@@ -144,234 +159,94 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
     );
   }
 
-  Widget _buildUserFilter(
-      WarrentyReportProvider provider, DropDownProvider dropdownProvider) {
-    if (dropdownProvider.searchUserDetails.isEmpty) {
-      return const SizedBox();
-    }
-
+  Widget _buildSummaryCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 12, vertical: 4), // Adjusted vertical padding
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
         color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<int>(
-          value: provider.selectedUser ?? 0,
-          hint: Text(
-            'All Users',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 20, color: color),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textGrey3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
               color: AppColors.textBlack,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
-          icon: Icon(Icons.arrow_drop_down, color: AppColors.textGrey3),
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 12,
-            color: AppColors.textBlack,
-          ),
-          items: [
-            DropdownMenuItem<int>(
-              value: 0,
-              child: Text('All Users'),
-            ),
-            ...dropdownProvider.searchUserDetails.map((user) {
-              return DropdownMenuItem<int>(
-                value: user.userDetailsId,
-                child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 150),
-                    child: Text(
-                      user.userDetailsName,
-                      overflow: TextOverflow.ellipsis,
-                    )),
-              );
-            }),
-          ],
-          onChanged: (value) {
-            provider.setUserFilterStatus(value ?? 0);
-            provider.getPaymentReminders(context, isFilter: true);
-          },
-          isDense: true,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    return Column(
+      children: List.generate(3, (index) => Container(
+        height: 100,
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
         ),
-      ),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      )),
     );
   }
 
-  void onClickTopButton(BuildContext context) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (contextx) => Consumer<WarrentyReportProvider>(
-        builder: (contextx, provider, child) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+  Widget _buildEmptyState(String message) {
+    return Container(
+      height: 300,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.payments_outlined, size: 64, color: AppColors.textGrey2.withOpacity(0.5)),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textGrey3,
             ),
-            contentPadding: const EdgeInsets.all(10),
-            content: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Center(
-                      child: Text(
-                        'Choose Date',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: List<Widget>.generate(dateButtonTitles.length,
-                          (index) {
-                        String title = dateButtonTitles[index];
-                        return ActionChip(
-                          onPressed: () {
-                            provider.setDateFilter(title);
-                            provider.selectDateFilterOption(index);
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          label: Text(title),
-                          backgroundColor:
-                              provider.selectedDateFilterIndex == index
-                                  ? AppColors.primaryBlue
-                                  : Colors.white,
-                          labelStyle: TextStyle(
-                            color: provider.selectedDateFilterIndex == index
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 15),
-                    const Text(
-                      'Pick a date',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () => provider.selectDate(context, true),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: provider.fromDate != null
-                                  ? '${provider.fromDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'From',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () => provider.selectDate(context, false),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: provider.toDate != null
-                                  ? '${provider.toDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'To',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-
-                          provider.formatDate();
-
-                          print(provider.formattedFromDate);
-                          print(provider.formattedToDate);
-                          provider.getPaymentReminders(context, isFilter: true);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Apply',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          provider.selectDateFilterOption(null);
-                          provider.getPaymentReminders(context, isFilter: true);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.textRed.withOpacity(0.1),
-                          foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Clear',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
+          ),
+        ],
       ),
     );
-  }
-
-  List<String> dateButtonTitles = [
-    'Yesterday',
-    'Today',
-    'Tomorrow',
-    'This Week',
-    'This Month',
-  ];
-
-  String _formatDate(String dateString) {
-    if (dateString.isEmpty) return 'No Date';
-    try {
-      final date = DateTime.parse(dateString);
-      return DateFormat('MMM dd, yyyy').format(date);
-    } catch (e) {
-      return dateString;
-    }
   }
 }

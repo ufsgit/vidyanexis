@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
-
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/models/amc_notification_model.dart';
+
 
 class AmcNotificationTab extends StatefulWidget {
   const AmcNotificationTab({super.key});
@@ -25,471 +26,9 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
           Provider.of<DropDownProvider>(context, listen: false);
 
       dropdownProvider.getUserDetails(context);
-      // Initialize filters if needed, maybe clear them first
       provider.getAmcNotification(context);
     });
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer2<WarrentyReportProvider, DropDownProvider>(
-      builder: (context, provider, dropdownProvider, child) {
-        return Column(
-          children: [
-            // List Section
-            // List Section
-            if (provider.isAmcNotificationLoading)
-              const SizedBox(
-                height: 200,
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else if (provider.amcNotificationList.isEmpty)
-              Container(
-                height: 200,
-                padding: const EdgeInsets.all(20),
-                alignment: Alignment.center,
-                child: const Text('No AMC notifications found'),
-              )
-            else
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: provider.amcNotificationList.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
-                itemBuilder: (context, index) {
-                  final item = provider.amcNotificationList[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                item.customerName,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textBlack,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                _formatDate(item.serviceDate),
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        if (item.amcProductName.isNotEmpty) ...[
-                          Row(
-                            children: [
-                              Text(
-                                "Product Name : ",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                              Text(
-                                item.amcProductName,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                        ],
-                        if (item.serviceName.isNotEmpty) ...[
-                          Row(
-                            children: [
-                              Text(
-                                "Service Name : ",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                              Text(
-                                item.serviceName,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                        ],
-                        if (item.staffName.isNotEmpty) ...[
-                          Row(
-                            children: [
-                              Text(
-                                "Staff Name : ",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                              Text(
-                                item.staffName,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                        if (item.intervalDetails != null &&
-                            item.intervalDetails!.isNotEmpty) ...[
-                          const SizedBox(height: 16),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF8FAFC),
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.calendar_month_outlined,
-                                        size: 16, color: Color(0xFF64748B)),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      "Service Intervals",
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w700,
-                                        color: const Color(0xFF334155),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children:
-                                      item.intervalDetails!.map((interval) {
-                                    bool isCompleted =
-                                        interval.completedStatus == 1;
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: isCompleted
-                                            ? Colors.green.withOpacity(0.1)
-                                            : Colors.orange.withOpacity(0.1),
-                                        border: Border.all(
-                                          color: isCompleted
-                                              ? Colors.green.withOpacity(0.4)
-                                              : Colors.orange.withOpacity(0.4),
-                                        ),
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            isCompleted
-                                                ? Icons.check_circle
-                                                : Icons.schedule,
-                                            size: 14,
-                                            color: isCompleted
-                                                ? Colors.green
-                                                : Colors.orange,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            _formatDate(interval.intervalDate),
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              color: isCompleted
-                                                  ? Colors.green.shade700
-                                                  : Colors.orange.shade800,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ]
-                      ],
-                    ),
-                  );
-                },
-              ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildUserFilter(
-      WarrentyReportProvider provider, DropDownProvider dropdownProvider) {
-    if (dropdownProvider.searchUserDetails.isEmpty) {
-      return const SizedBox();
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 12, vertical: 4), // Adjusted vertical padding
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<int>(
-          value: provider.selectedUser ?? 0,
-          hint: Text(
-            'All Users',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              color: AppColors.textBlack,
-            ),
-          ),
-          icon: Icon(Icons.arrow_drop_down, color: AppColors.textGrey3),
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 12,
-            color: AppColors.textBlack,
-          ),
-          items: [
-            const DropdownMenuItem<int>(
-              value: 0,
-              child: Text('All Users'),
-            ),
-            ...dropdownProvider.searchUserDetails.map((user) {
-              return DropdownMenuItem<int>(
-                value: user.userDetailsId,
-                child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
-                    child: Text(
-                      user.userDetailsName,
-                      overflow: TextOverflow.ellipsis,
-                    )),
-              );
-            }),
-          ],
-          onChanged: (value) {
-            provider.setUserFilterStatus(value ?? 0);
-            provider.getAmcNotification(context, isFilter: true);
-          },
-          isDense: true,
-        ),
-      ),
-    );
-  }
-
-  void onClickTopButton(BuildContext context) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (contextx) => Consumer<WarrentyReportProvider>(
-        builder: (contextx, provider, child) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-            contentPadding: const EdgeInsets.all(10),
-            content: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Center(
-                      child: Text(
-                        'Choose Date',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: List<Widget>.generate(dateButtonTitles.length,
-                          (index) {
-                        String title = dateButtonTitles[index];
-                        return ActionChip(
-                          onPressed: () {
-                            provider.setDateFilter(title);
-                            provider.selectDateFilterOption(index);
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          label: Text(title),
-                          backgroundColor:
-                              provider.selectedDateFilterIndex == index
-                                  ? AppColors.primaryBlue
-                                  : Colors.white,
-                          labelStyle: TextStyle(
-                            color: provider.selectedDateFilterIndex == index
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 15),
-                    const Text(
-                      'Pick a date',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () => provider.selectDate(context, true),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: provider.fromDate != null
-                                  ? '${provider.fromDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'From',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () => provider.selectDate(context, false),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: provider.toDate != null
-                                  ? '${provider.toDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'To',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-
-                          provider.formatDate();
-
-                          print(provider.formattedFromDate);
-                          print(provider.formattedToDate);
-                          provider.getAmcNotification(context, isFilter: true);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Apply',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          provider.selectDateFilterOption(null);
-                          provider.getAmcNotification(context, isFilter: true);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.textRed.withOpacity(0.1),
-                          foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Clear',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  List<String> dateButtonTitles = [
-    'Yesterday',
-    'Today',
-    'Tomorrow',
-    'This Week',
-    'This Month',
-  ];
 
   String _formatDate(String dateString) {
     if (dateString.isEmpty) return 'No Date';
@@ -499,5 +38,377 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
     } catch (e) {
       return dateString;
     }
+  }
+
+  String _getInitials(String name) {
+    if (name.isEmpty) return '??';
+    final parts = name.split(' ');
+    if (parts.length > 1) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<WarrentyReportProvider, DropDownProvider>(
+      builder: (context, provider, dropdownProvider, child) {
+        return Column(
+          children: [
+            // Summary Section
+            Row(
+              children: [
+                Expanded(
+                  child: _buildSummaryCard(
+                    title: "Active Contracts",
+                    value: provider.amcNotificationList.length.toString(),
+                    icon: Icons.description_rounded,
+                    color: AppColors.secondaryBlue,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildSummaryCard(
+                    title: "Upcoming Services",
+                    value: _countUpcomingServices(provider.amcNotificationList).toString(),
+                    icon: Icons.event_available_rounded,
+                    color: const Color(0xFFFBBF24),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // List Section
+            if (provider.isAmcNotificationLoading)
+              _buildShimmerLoading()
+            else if (provider.amcNotificationList.isEmpty)
+              _buildEmptyState("No AMC notifications found")
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(bottom: 20),
+                itemCount: provider.amcNotificationList.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  final item = provider.amcNotificationList[index];
+                  return _buildAmcCard(item);
+                },
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  int _countUpcomingServices(List<AmcNotificationModel> list) {
+    int count = 0;
+    for (var item in list) {
+      if (item.intervalDetails != null) {
+        count += item.intervalDetails!.where((i) => i.completedStatus == 0).length;
+      }
+    }
+    return count;
+  }
+
+  Widget _buildSummaryCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 20, color: color),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textGrey3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textBlack,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAmcCard(dynamic item) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: getAvatarColor(item.customerName).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      _getInitials(item.customerName),
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: getAvatarColor(item.customerName),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.customerName,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textBlack,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          const Icon(Icons.timer_outlined, size: 12, color: AppColors.textRed),
+                          const SizedBox(width: 4),
+                          Text(
+                            "Expiry: ${_formatDate(item.serviceDate)}",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textRed,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Details Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                _buildDetailRow(Icons.inventory_2_outlined, "Product", item.amcProductName),
+                _buildDetailRow(Icons.settings_outlined, "Service", item.serviceName),
+                _buildDetailRow(Icons.person_outline_rounded, "Staff", item.staffName),
+              ],
+            ),
+          ),
+
+          // Intervals Section
+          if (item.intervalDetails != null && item.intervalDetails!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                color: Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+                border: Border(
+                  top: BorderSide(color: Color(0xFFF1F5F9)),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_month_rounded, 
+                        size: 14, color: AppColors.textGrey3),
+                      const SizedBox(width: 6),
+                      Text(
+                        "Service Intervals",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textGrey3,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: item.intervalDetails!.map<Widget>((interval) {
+                      bool isCompleted = interval.completedStatus == 1;
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: isCompleted 
+                              ? const Color(0xFF34C759).withOpacity(0.3)
+                              : const Color(0xFFFB923C).withOpacity(0.3),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.01),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isCompleted ? Icons.check_circle_rounded : Icons.schedule_rounded,
+                              size: 14,
+                              color: isCompleted ? const Color(0xFF34C759) : const Color(0xFFFB923C),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _formatDate(interval.intervalDate),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textBlack,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    if (value.isEmpty) return const SizedBox();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: AppColors.textGrey3),
+          const SizedBox(width: 8),
+          Text(
+            "$label: ",
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textGrey3,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textBlack,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    return Column(
+      children: List.generate(3, (index) => Container(
+        height: 150,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      )),
+    );
+  }
+
+  Widget _buildEmptyState(String message) {
+    return Container(
+      height: 300,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.history_edu_rounded, size: 64, color: AppColors.textGrey2.withOpacity(0.5)),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textGrey3,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
