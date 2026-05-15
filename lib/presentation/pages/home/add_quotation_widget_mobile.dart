@@ -1,12 +1,16 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
+import 'package:vidyanexis/utils/pdf_action_helper.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
@@ -1332,14 +1336,14 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'Print Quotation',
+            'Share Quotation',
             style: TextStyle(
               color: AppColors.appViolet,
               fontWeight: FontWeight.bold,
             ),
           ),
           content: const Text(
-              'Quotation saved successfully. Do you want to print the quotation?'),
+              'Quotation saved successfully. Do you want to share the quotation?'),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -1365,33 +1369,19 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                 final settingsProvider =
                     Provider.of<SettingsProvider>(context, listen: false);
 
-                // Check permission for printing (menuId 32 or 55)
-                bool hasPrintPermission =
-                    (settingsProvider.menuIsViewMap[32] == 1 ||
-                        settingsProvider.menuIsViewMap[55] == 1);
-
-                if (hasPrintPermission) {
-                  try {
-                    await customerDetailsProvider.getQuotationMasterPdf(
-                        masterId, context);
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content:
-                                Text('Printing failed. Please try again.')),
-                      );
-                    }
-                  }
-                } else {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content:
-                              Text('You do not have permission to print.')),
-                    );
-                  }
-                }
+                PdfActionHelper.showShareOptions(
+                  context: context,
+                  title: 'Quotation',
+                  pdfUrl:
+                      '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=$masterId',
+                  onGenerate: () async {
+                    await Loader.showLoader(context);
+                    final bytes = await customerDetailsProvider
+                        .getQuotationMasterPdfBytes(masterId);
+                    Loader.stopLoader(context);
+                    return bytes ?? Uint8List(0);
+                  },
+                );
               },
               child: Text(
                 'Yes',

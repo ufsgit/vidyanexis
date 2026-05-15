@@ -807,4 +807,27 @@ class FormProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<Uint8List?> fetchFormPdfBytes({
+    required String customerId,
+    required int formDataDetailsId,
+  }) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getFormPrintPdf,
+        bodyData: {
+          "customerId": customerId,
+          "Form_Data_Details_Id": formDataDetailsId,
+        },
+        returnBytes: true,
+      );
+      if (response.statusCode == 200) {
+        return response.data is Uint8List
+            ? response.data
+            : Uint8List.fromList(response.data.toString().codeUnits);
+      }
+    } catch (e) {
+      debugPrint("Error in fetchFormPdfBytes: $e");
+    }
+    return null;
+  }
 }

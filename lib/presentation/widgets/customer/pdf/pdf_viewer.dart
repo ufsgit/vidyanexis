@@ -4,6 +4,7 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:printing/printing.dart';
+import 'package:vidyanexis/utils/file_downloader.dart';
 import 'dart:html' as html;
 
 class PdfViewerScreen extends StatefulWidget {
@@ -50,6 +51,15 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
         title: Text(widget.title),
         actions: [
           IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () async {
+              await Printing.sharePdf(
+                bytes: widget.pdfData,
+                filename: '${widget.title}.pdf',
+              );
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.print),
             onPressed: () async {
               await Printing.layoutPdf(
@@ -69,16 +79,30 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
                   ..setAttribute('download', '${widget.title}.pdf')
                   ..click();
                 html.Url.revokeObjectUrl(url);
-              } else {
-                // Handle mobile download to downloads folder
-                final dir = await getExternalStorageDirectory();
-                if (dir != null) {
-                  final file = File('${dir.path}/${widget.title}.pdf');
-                  await file.writeAsBytes(widget.pdfData);
+              } else if (Platform.isAndroid) {
+                // For Android, try to save automatically to the Downloads folder
+                try {
+                  final fileName = '${widget.title.replaceAll(' ', '_')}.pdf';
+                  final path = await FileDownloader.saveFile(widget.pdfData, fileName);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Downloaded to ${file.path}')),
+                    SnackBar(
+                      content: Text('Downloaded to Downloads folder'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } catch (e) {
+                  // Fallback to share sheet if automatic download fails
+                  await Printing.sharePdf(
+                    bytes: widget.pdfData,
+                    filename: '${widget.title}.pdf',
                   );
                 }
+              } else {
+                // On iOS/others, the most reliable 'Download' is using the system share sheet
+                await Printing.sharePdf(
+                  bytes: widget.pdfData,
+                  filename: '${widget.title}.pdf',
+                );
               }
             },
           ),

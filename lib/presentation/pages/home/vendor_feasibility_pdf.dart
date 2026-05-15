@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -5,7 +6,7 @@ import 'package:printing/printing.dart';
 import 'package:vidyanexis/controller/models/lead_details_model.dart';
 
 LeadDetails? customer;
-Future<void> rtsFeasibilityReportPdf({
+Future<Uint8List?> generateRtsFeasibilityReportPdfBytes({
   LeadDetails? customerDetails,
   required BuildContext context,
 }) async {
@@ -136,10 +137,24 @@ Future<void> rtsFeasibilityReportPdf({
       },
     ),
   );
-  await Printing.layoutPdf(
-    onLayout: (PdfPageFormat format) async => pdf.save(),
-  );
+  return await pdf.save();
 }
+
+Future<void> rtsFeasibilityReportPdf({
+  LeadDetails? customerDetails,
+  required BuildContext context,
+}) async {
+  final pdfBytes = await generateRtsFeasibilityReportPdfBytes(
+    customerDetails: customerDetails,
+    context: context,
+  );
+  if (pdfBytes != null) {
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdfBytes,
+    );
+  }
+}
+
 
 pw.Widget buildEHSRequirementHeaderTable() {
   return pw.Table(

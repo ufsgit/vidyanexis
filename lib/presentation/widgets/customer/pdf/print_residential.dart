@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 GetQuotationbyMasterIdmodel? quotation;
 LeadDetails? customer;
 
-Future<void> printResidentialPDFs({
+Future<Uint8List?> generateResidentialPDFBytes({
   required BuildContext context,
   required GetQuotationbyMasterIdmodel quotationData,
   required Company companyDetails,
@@ -32,30 +32,34 @@ Future<void> printResidentialPDFs({
     await _addPlaceholderPage(pdf, 10);
     await _addPaymentTermsPage(pdf, 11);
     await _addTwelthPage(pdf, 12);
-    // await _addPlaceholderPage(pdf, 13);
 
-    final Uint8List pdfBytes = await pdf.save();
-    await Printing.layoutPdf(
-      onLayout: (_) async => pdfBytes,
-      name: 'Commercial.pdf',
-    );
+    return await pdf.save();
   } catch (e) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text('Failed to generate or print PDF: $e'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
     print('PDF error: $e');
+    return null;
   }
 }
+
+Future<void> printResidentialPDFs({
+  required BuildContext context,
+  required GetQuotationbyMasterIdmodel quotationData,
+  required Company companyDetails,
+  required LeadDetails customerDetails,
+}) async {
+  final pdfBytes = await generateResidentialPDFBytes(
+    context: context,
+    quotationData: quotationData,
+    companyDetails: companyDetails,
+    customerDetails: customerDetails,
+  );
+  if (pdfBytes != null) {
+    await Printing.layoutPdf(
+      onLayout: (_) async => pdfBytes,
+      name: 'Residential.pdf',
+    );
+  }
+}
+
 
 Future<void> _addItemPage(pw.Document pdf) async {
   final font = await PdfGoogleFonts.openSansRegular();

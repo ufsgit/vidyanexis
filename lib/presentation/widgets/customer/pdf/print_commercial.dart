@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 GetQuotationbyMasterIdmodel? quotation;
 LeadDetails? customer;
 
-Future<void> printCommercialPDFs({
+Future<Uint8List?> generateCommercialPDFBytes({
   required BuildContext context,
   required GetQuotationbyMasterIdmodel quotationData,
   required Company companyDetails,
@@ -33,28 +33,33 @@ Future<void> printCommercialPDFs({
     await _addEightPage(pdf);
     await _addNinthPage(pdf, 9);
 
-    final Uint8List pdfBytes = await pdf.save();
+    return await pdf.save();
+  } catch (e) {
+    print('PDF error: $e');
+    return null;
+  }
+}
+
+Future<void> printCommercialPDFs({
+  required BuildContext context,
+  required GetQuotationbyMasterIdmodel quotationData,
+  required Company companyDetails,
+  required LeadDetails customerDetails,
+}) async {
+  final pdfBytes = await generateCommercialPDFBytes(
+    context: context,
+    quotationData: quotationData,
+    companyDetails: companyDetails,
+    customerDetails: customerDetails,
+  );
+  if (pdfBytes != null) {
     await Printing.layoutPdf(
       onLayout: (_) async => pdfBytes,
       name: 'Commercial.pdf',
     );
-  } catch (e) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text('Failed to generate or print PDF: $e'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-    print('PDF error: $e');
   }
 }
+
 
 Future<void> _addFirstPage(pw.Document pdf, int pageNumber) async {
   String contentImagePath = 'assets/images/commercial_$pageNumber.jpg';
