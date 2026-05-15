@@ -16,6 +16,16 @@ import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+
+import 'package:vidyanexis/presentation/widgets/inventory/add_item.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/add_supplier_page.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_category_widget.dart';
+import 'package:vidyanexis/presentation/pages/settings/add_unit_page.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/add_customer_page.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/add_stock_use.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/add_stock_return_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/purchase_screen.dart';
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});
@@ -34,81 +44,122 @@ class _InventoryPageState extends State<InventoryPage> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final isMobile = !AppStyles.isWebScreen(context);
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
-      appBar: isMobile
-          ? CustomAppBar(
-              title: 'Inventory',
-              titleStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlack),
-              leadingWidget: IconButton(
-                onPressed: () => context.pop(),
-                icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
-                iconSize: 24,
-              ),
-              showSearch: false,
-              onSearch: (q) {},
-            )
-          : null,
+      drawer: isMobile ? const SidebarDrawer() : null,
       body: isMobile
-          ? _buildMobileLayout(settingsProvider)
+          ? _buildMobileLayout(expenseProvider, settingsProvider)
           : _buildDesktopLayout(settingsProvider),
     );
   }
 
-  Widget _buildMobileLayout(SettingsProvider settingsProvider) {
+  Widget _buildMobileLayout(ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
     final List<String> menuItems = _getMenuItems(settingsProvider);
     return Column(
       children: [
+        // Premium Header Row
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+          child: Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                child: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.sort,
+                    color: Color(0xFF1E293B),
+                    size: 20,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                'Inventory',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1E293B),
+                ),
+              ),
+              const Spacer(),
+              _buildAddButton(context, expenseProvider, settingsProvider),
+            ],
+          ),
+        ),
+        // Futuristic Tab Selector
         Container(
-          color: Colors.white,
-          height: 50,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+          ),
           child: Consumer<ExpenseProvider>(
             builder: (context, expenseProvider, child) {
-              return ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: menuItems.length,
-                itemBuilder: (context, index) {
-                  final title = menuItems[index];
-                  final isSelected = expenseProvider.selectedMenu == title;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(title),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        if (selected) {
-                          expenseProvider.setSelectedMenu(title);
-                        }
-                      },
-                      labelStyle: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                        color: isSelected ? Colors.white : AppColors.textGrey4,
-                      ),
-                      selectedColor: AppColors.primaryBlue,
-                      backgroundColor: Colors.white,
-                      checkmarkColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(
-                          color: isSelected ? AppColors.primaryBlue : AppColors.grey,
+              return Container(
+                height: 44, // Increased height for a better touch target
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                    children: List.generate(menuItems.length, (index) {
+                      final title = menuItems[index];
+                      final isSelected = expenseProvider.selectedMenu == title;
+                      return GestureDetector(
+                        onTap: () => expenseProvider.setSelectedMenu(title),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: const EdgeInsets.symmetric(horizontal: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: isSelected ? Colors.white : Colors.transparent,
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Text(
+                            title,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                              color: isSelected ? AppColors.textBlue800 : const Color(0xFF64748B),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                },
+                      );
+                    }),
+                  ),
+                ),
               );
             },
           ),
         ),
+        const SizedBox(height: 8),
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: _buildContent(),
           ),
         ),
@@ -235,6 +286,167 @@ class _InventoryPageState extends State<InventoryPage> {
             return const SizedBox.shrink();
         }
       },
+    );
+  }
+
+  Widget _buildAddButton(BuildContext context, ExpenseProvider expenseProvider,
+      SettingsProvider settingsProvider) {
+    // Determine the action based on selected tab
+    VoidCallback? onTap;
+    int menuId = 0;
+
+    switch (expenseProvider.selectedMenu) {
+      case 'Item':
+        menuId = 43;
+        onTap = () => _showAddItemDialog(context);
+        break;
+      case 'Purchase':
+        menuId = 44;
+        onTap = () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PurchaseScreen()),
+            );
+        break;
+      case 'Supplier':
+        menuId = 45;
+        onTap = () => _showAddSupplierDialog(context);
+        break;
+      case 'Category':
+        menuId = 46;
+        onTap = () => _showAddCategoryDialog(context);
+        break;
+      case 'Unit':
+        menuId = 47;
+        onTap = () => _showAddUnitDialog(context);
+        break;
+      case 'Customer':
+        menuId = 88; // Inventory Customer
+        onTap = () => _showAddCustomerDialog(context);
+        break;
+      case 'Stock Use':
+        menuId = 78;
+        onTap = () => _showAddStockUseDialog(context);
+        break;
+      case 'Stock Return':
+        menuId = 79;
+        onTap = () => _showAddStockReturnDialog(context);
+        break;
+    }
+
+    if (onTap == null || (menuId != 0 && settingsProvider.menuIsSaveMap[menuId] == 0)) {
+      return const SizedBox(width: 44, height: 44);
+    }
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: AppColors.secondaryBlue,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.secondaryBlue.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.add_rounded,
+          color: Colors.white,
+          size: 26,
+        ),
+      ),
+    );
+  }
+
+  // Helper dialog launchers
+  void _showAddItemDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddItemWidget(
+          isEdit: false,
+          editId: 0,
+          item: null,
+        ),
+      ),
+    );
+  }
+
+  void _showAddSupplierDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddSupplier(
+          editId: '0',
+          isEdit: false,
+        ),
+      ),
+    );
+  }
+
+  void _showAddCategoryDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddCategoryWidget(
+          editId: '0',
+          isEdit: false,
+        ),
+      ),
+    );
+  }
+
+  void _showAddUnitDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddUnitWidget(
+          editId: '0',
+          isEdit: false,
+        ),
+      ),
+    );
+  }
+
+  void _showAddCustomerDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddCustomer(
+          editId: '0',
+          isEdit: false,
+        ),
+      ),
+    );
+  }
+
+  void _showAddStockUseDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddStockUseWidget(
+          isEdit: false,
+          editId: 0,
+          customerId: 0,
+        ),
+      ),
+    );
+  }
+
+  void _showAddStockReturnDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddStockReturnPage(
+          isEdit: false,
+          editId: 0,
+          customerId: 0,
+        ),
+      ),
     );
   }
 }

@@ -123,203 +123,216 @@ class _AddSupplierState extends State<AddSupplier> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
-    return AlertDialog(
-      scrollable: true,
+    return Scaffold(
       backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          Text(
-            widget.isEdit ? 'Edit Supplier' : 'Add Supplier',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        title: Text(
+          widget.isEdit ? 'Edit Supplier' : 'Add Supplier',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textBlue800,
           ),
-          const Spacer(),
-          IconButton(
-            onPressed: () {
-              settingsProvider.supplierClear();
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.close),
-          )
-        ],
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      content: Container(
-        color: Colors.white,
-        width: MediaQuery.sizeOf(context).width / 2,
-        child: SingleChildScrollView(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Row with Supplier Name and Address
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionTitle('Basic Information'),
+                  const SizedBox(height: 16),
+                  CustomTextField(
                     readOnly: false,
-                    height: 54,
+                    height: 56,
                     controller: settingsProvider.supplierNameController,
                     hintText: 'Supplier Name*',
                     labelText: '',
                   ),
-                ),
-                // Space between the text fields
-              ],
-            ),
-            const SizedBox(height: 10), // Space below the row
-
-            // Row with Supplier Address1 and Address2
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    readOnly: false,
-                    height: 54,
-                    controller: settingsProvider.supplierAddressController,
-                    hintText: 'Address*',
-                    labelText: '',
+                  const SizedBox(height: 16),
+                  _buildSectionTitle('Contact Information'),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: settingsProvider.supplierPhoneController,
+                          hintText: 'Phone',
+                          labelText: '',
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: settingsProvider.supplierMobileController,
+                          hintText: 'Mobile',
+                          labelText: '',
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: CustomTextField(
+                  const SizedBox(height: 16),
+                  CustomTextField(
                     readOnly: false,
-                    height: 54,
-                    controller: settingsProvider.supplierAddress1Controller,
-                    hintText: 'Address 1',
-                    labelText: '',
-                  ),
-                ),
-                // Space between the text fields
-              ],
-            ),
-            const SizedBox(height: 10), // Space below the row
-
-            // Row with Supplier Address3
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    readOnly: false,
-                    height: 54,
-                    controller: settingsProvider.supplierAddress2Controller,
-                    hintText: 'Address 2',
-                    labelText: '',
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: CustomTextField(
-                    readOnly: false,
-                    height: 54,
-                    controller: settingsProvider.supplierAddress3Controller,
-                    hintText: 'Address 3',
-                    labelText: '',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10), // Space below the row
-
-            // Row with Supplier Phone and Mobile
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    readOnly: false,
-                    height: 54,
-                    controller: settingsProvider.supplierPhoneController,
-                    hintText: 'Phone',
-                    labelText: '',
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  ),
-                ),
-                const SizedBox(width: 10), // Space between the text fields
-                Expanded(
-                  child: CustomTextField(
-                    readOnly: false,
-                    height: 54,
-                    controller: settingsProvider.supplierMobileController,
-                    hintText: 'Mobile',
-                    labelText: '',
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10), // Space below the row
-
-            // Supplier Email and GST No in a row
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    readOnly: false,
-                    height: 54,
+                    height: 56,
                     controller: settingsProvider.supplierEmailController,
-                    hintText: 'Email',
+                    hintText: 'Email Address',
                     labelText: '',
                   ),
-                ),
-                const SizedBox(width: 10), // Space between the text fields
-                Expanded(
-                  child: CustomTextField(
+                  const SizedBox(height: 16),
+                  CustomTextField(
                     readOnly: false,
-                    height: 54,
+                    height: 56,
                     controller: settingsProvider.supplierGstNoController,
-                    hintText: 'GST No',
+                    hintText: 'GST Number',
                     labelText: '',
+                  ),
+                  const SizedBox(height: 32),
+                  _buildSectionTitle('Address Details'),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 56,
+                    controller: settingsProvider.supplierAddressController,
+                    hintText: 'Primary Address*',
+                    labelText: '',
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 56,
+                    controller: settingsProvider.supplierAddress1Controller,
+                    hintText: 'Address Line 1',
+                    labelText: '',
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 56,
+                    controller: settingsProvider.supplierAddress2Controller,
+                    hintText: 'Address Line 2',
+                    labelText: '',
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 56,
+                    controller: settingsProvider.supplierAddress3Controller,
+                    hintText: 'Address Line 3',
+                    labelText: '',
+                  ),
+                  const SizedBox(height: 32),
+                  _buildSectionTitle('Financial Information'),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 56,
+                    controller: settingsProvider.supplierOpeningBalanceController,
+                    hintText: 'Opening Balance',
+                    labelText: '',
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      settingsProvider.supplierClear();
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      side: const BorderSide(color: Color(0xFFE2E8F0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final validationError = validateInputs(context, settingsProvider);
+                      if (validationError != null) {
+                        showErrorDialog(context, validationError);
+                        return;
+                      }
+                      settingsProvider.addSupplier(
+                        context: context,
+                        statusId: widget.editId,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondaryBlue,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10), // Space below the row
-
-            // Supplier Opening Balance as a single field
-            CustomTextField(
-              readOnly: false,
-              height: 54,
-              controller: settingsProvider.supplierOpeningBalanceController,
-              hintText: 'Opening Balance',
-              labelText: '',
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-          ],
-        )),
+          ),
+        ],
       ),
-      actions: [
-        CustomElevatedButton(
-          buttonText: 'Cancel',
-          onPressed: () {
-            settingsProvider.supplierClear();
-            Navigator.pop(context);
-          },
-          backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
-        ),
-        CustomElevatedButton(
-          buttonText: 'Save',
-          onPressed: () async {
-            final validationError = validateInputs(context, settingsProvider);
-            if (validationError != null) {
-              showErrorDialog(context, validationError);
-              return;
-            }
+    );
+  }
 
-            settingsProvider.addSupplier(
-              context: context,
-              statusId: widget.editId,
-            );
-          },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.whiteColor,
-        ),
-      ],
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.plusJakartaSans(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: const Color(0xFF1E293B),
+      ),
     );
   }
 }

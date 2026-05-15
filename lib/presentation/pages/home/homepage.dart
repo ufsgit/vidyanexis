@@ -408,10 +408,21 @@ class _HomePageState extends State<HomePage> {
           : AppBar(
               backgroundColor: Colors.white,
               surfaceTintColor: Colors.white,
-              elevation: 0,
+              leadingWidth: 56,
               leading: Builder(
                 builder: (context) => IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.black87),
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.sort,
+                      size: 20,
+                      color: AppColors.textBlue800,
+                    ),
+                  ),
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),

@@ -8,7 +8,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/stock_use_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_stock_use.dart';
-import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/inventory_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class StockUsePage extends StatefulWidget {
@@ -43,7 +43,7 @@ class _StockUsePageState extends State<StockUsePage> {
       children: [
         _buildHeader(context, stockuseprovider, settingsProvider, isMobile),
         if (stockuseprovider.isFilter) _buildFilterPanel(context, stockuseprovider),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
         stockuseprovider.stockUseList.isEmpty
             ? _buildEmptyState()
             : ListView.builder(
@@ -54,11 +54,10 @@ class _StockUsePageState extends State<StockUsePage> {
                   final stockUse = stockuseprovider.stockUseList[index];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: ReportListItem(
+                    child: InventoryListItem(
                       title: stockUse.description.isNotEmpty ? stockUse.description : 'Stock Use Entry',
                       subtitle: 'Date: ${stockUse.date}',
-                      description: 'ID: ${stockUse.stockUseId}',
-                      statusColor: AppColors.primaryBlue,
+                      description: 'Entry ID: ${stockUse.stockUseId}',
                       onEdit: settingsProvider.menuIsEditMap[78] == 1 ? () async {
                         stockuseprovider.getStockUseDetails(
                             context: context,
@@ -87,45 +86,17 @@ class _StockUsePageState extends State<StockUsePage> {
   }
 
   Widget _buildHeader(BuildContext context, StockUseProvider provider, SettingsProvider settings, bool isMobile) {
-    return Row(
-      children: [
-        Text(
-          'Stock Use',
-          style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textBlue800),
-        ),
-        const Spacer(),
-        CustomFilterButton(
-          onPressed: () => provider.toggleFilter(),
-          isFilter: provider.isFilter,
-        ),
-        const SizedBox(width: 12),
-        if (settings.menuIsSaveMap[78] == 1)
-          CustomOutlinedSvgButton(
-            onPressed: () {
-              showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (BuildContext context) {
-                  return AddStockUseWidget(
-                    isEdit: false,
-                    editId: 0,
-                    customerId: widget.customerId,
-                  );
-                },
-              );
-            },
-            svgPath: 'assets/images/Plus.svg',
-            label: isMobile ? 'Add' : 'Add Stock Use',
-            breakpoint: 600,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            foregroundColor: Colors.white,
-            backgroundColor: AppColors.primaryBlue,
-            borderSide: BorderSide(color: AppColors.primaryBlue),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          CustomFilterButton(
+            onPressed: () => provider.toggleFilter(),
+            isFilter: provider.isFilter,
           ),
-      ],
+        ],
+      ),
     );
   }
 

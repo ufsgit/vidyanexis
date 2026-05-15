@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_category_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_item_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/campaign_content.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 import 'package:vidyanexis/presentation/pages/settings/form_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,15 +75,35 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final sidebarProvider = Provider.of<SidebarProvider>(context);
     return Scaffold(
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
       appBar: !AppStyles.isWebScreen(context)
           ? AppBar(
               surfaceTintColor: AppColors.scaffoldColor,
               backgroundColor: AppColors.whiteColor,
+              leadingWidth: 56,
+              leading: Builder(
+                builder: (context) => IconButton(
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.sort,
+                      size: 20,
+                      color: AppColors.textGrey4,
+                    ),
+                  ),
+                ),
+              ),
               title: Text(
                 'Settings',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack,
                 ),
               ),
             )

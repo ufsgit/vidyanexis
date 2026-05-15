@@ -295,10 +295,17 @@ class _LeadsPageState extends State<LeadPage> {
                       onTap: () {
                         Navigator.pop(context);
                       },
-                      child: Icon(
-                        Icons.arrow_back,
-                        size: 24,
-                        color: Color(0xFF152D70),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryBlue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          size: 20,
+                          color: AppColors.textGrey4,
+                        ),
                       ),
                     ),
                   if (widget.fromDashBoard)

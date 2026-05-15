@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/sales_widget.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/inventory_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
@@ -43,18 +44,21 @@ class _SalesScreenState extends State<SalesScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SizedBox(
-          width: constraints.maxWidth,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context, expenseProvider, settingsProvider),
-              if (expenseProvider.isFilterSales) _buildFilterPanel(context, expenseProvider, settingsProvider),
-              const SizedBox(height: 10),
-              AppStyles.isWebScreen(context)
-                  ? _buildDesktopTable(expenseProvider, settingsProvider)
-                  : _buildMobileList(expenseProvider, settingsProvider),
-            ],
+        return Material(
+          color: Colors.transparent,
+          child: SizedBox(
+            width: constraints.maxWidth,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context, expenseProvider, settingsProvider),
+                if (expenseProvider.isFilterSales) _buildFilterPanel(context, expenseProvider, settingsProvider),
+                const SizedBox(height: 10),
+                AppStyles.isWebScreen(context)
+                    ? _buildDesktopTable(expenseProvider, settingsProvider)
+                    : _buildMobileList(expenseProvider, settingsProvider),
+              ],
+            ),
           ),
         );
       },
@@ -67,72 +71,19 @@ class _SalesScreenState extends State<SalesScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
-            Text(
-              'Sales',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlue800),
-            ),
-            const Spacer(),
             _buildDesktopSearch(expenseProvider),
             const SizedBox(width: 16),
             CustomFilterButton(
               onPressed: () => expenseProvider.toggleFilterSales(),
               isFilter: expenseProvider.isFilterSales,
             ),
-            const SizedBox(width: 16),
-            if (settingsProvider.menuIsSaveMap[87] == 1)
-              CustomOutlinedSvgButton(
-                onPressed: () => _showSalesDialog(context, false),
-                svgPath: 'assets/images/Plus.svg',
-                label: 'New Sales',
-                breakpoint: 860,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                foregroundColor: Colors.white,
-                backgroundColor: AppColors.primaryBlue,
-                borderSide: BorderSide(color: AppColors.primaryBlue),
-              ),
-            const SizedBox(width: 16),
           ],
         ),
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Sales',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textBlue800,
-                  ),
-                ),
-                const Spacer(),
-                if (settingsProvider.menuIsSaveMap[87] == 1)
-                  SizedBox(
-                    height: 40,
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showSalesDialog(context, false),
-                      icon: const Icon(Icons.add, size: 18),
-                      label: const Text('New'),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryBlue,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildMobileSearch(expenseProvider),
-          ],
-        ),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+        child: _buildMobileSearch(expenseProvider),
       );
     }
   }
@@ -164,24 +115,31 @@ class _SalesScreenState extends State<SalesScreen> {
       children: [
         Expanded(
           child: Container(
-            height: 44,
+            height: 48,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: Colors.grey[300]!),
-              boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 3)],
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: TextField(
               controller: searchController,
               onSubmitted: (query) => _handleSearch(provider, query),
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                color: AppColors.textBlue800,
+                fontWeight: FontWeight.w500,
+              ),
               decoration: InputDecoration(
                 hintText: 'Search invoices...',
-                prefixIcon: const Icon(Icons.search, size: 20),
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  color: const Color(0xFF94A3B8),
+                ),
+                prefixIcon: const Icon(Icons.search_rounded, size: 20, color: Color(0xFF64748B)),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 suffixIcon: provider.searchSales.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, size: 18),
+                        icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFF64748B)),
                         onPressed: () {
                           searchController.clear();
                           _handleSearch(provider, '');
@@ -193,15 +151,21 @@ class _SalesScreenState extends State<SalesScreen> {
           ),
         ),
         const SizedBox(width: 12),
-        IconButton(
-          onPressed: () => provider.toggleFilterSales(),
-          icon: Icon(
-            Icons.filter_list,
-            color: provider.isFilterSales ? Colors.white : AppColors.primaryBlue,
-          ),
-          style: IconButton.styleFrom(
-            backgroundColor: provider.isFilterSales ? AppColors.primaryBlue : Colors.white,
-            side: BorderSide(color: Colors.grey[300]!),
+        InkWell(
+          onTap: () => provider.toggleFilterSales(),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            height: 48,
+            width: 48,
+            decoration: BoxDecoration(
+              color: provider.isFilterSales ? AppColors.textBlue800 : const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.tune_rounded,
+              color: provider.isFilterSales ? Colors.white : const Color(0xFF64748B),
+              size: 20,
+            ),
           ),
         ),
       ],
@@ -338,19 +302,21 @@ class _SalesScreenState extends State<SalesScreen> {
         final sale = expenseProvider.salesList[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ReportListItem(
+          child: InventoryListItem(
             title: sale.customerName ?? 'Unknown Customer',
-            subtitle: 'Invoice: ${sale.invoiceNo}',
-            description: sale.description ?? 'No description provided.',
-            status: NumberFormat.currency(symbol: '₹', decimalDigits: 0).format(double.parse(sale.netTotal ?? '0')),
-            statusColor: AppColors.primaryBlue,
-            bottomLeftText: formatSalesDate(sale.salesDate),
-            bottomLeftIcon: Icons.calendar_today,
-            onEdit: settingsProvider.menuIsEditMap[87] == 1 ? () async {
-              await expenseProvider.searchSalesDetails(sale.salesMasterId.toString(), context);
-              _showSalesDialog(context, true, data: sale);
-            } : null,
-            onDelete: settingsProvider.menuIsDeleteMap[87] == 1 ? () => _showDeleteDialog(context, expenseProvider, sale.salesMasterId) : null,
+            subtitle: 'Inv: ${sale.invoiceNo} • ${formatSalesDate(sale.salesDate)}',
+            description: 'Total Amount: ${NumberFormat.currency(symbol: '₹', decimalDigits: 0).format(double.parse(sale.netTotal ?? '0'))}',
+            onEdit: settingsProvider.menuIsEditMap[87] == 1
+                ? () async {
+                    await expenseProvider.searchSalesDetails(
+                        sale.salesMasterId.toString(), context);
+                    _showSalesDialog(context, true, data: sale);
+                  }
+                : null,
+            onDelete: settingsProvider.menuIsDeleteMap[87] == 1
+                ? () => _showDeleteDialog(
+                    context, expenseProvider, sale.salesMasterId)
+                : null,
           ),
         );
       },

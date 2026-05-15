@@ -75,19 +75,22 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
-        leadingWidth: 40,
-        leading: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.only(left: 8),
-          child: IconButton(
-            onPressed: () {
-              context.pop();
-            },
-            icon: Icon(
+        leadingWidth: 56,
+        leading: IconButton(
+          onPressed: () {
+            context.pop();
+          },
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.secondaryBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
               Icons.arrow_back,
+              size: 20,
               color: AppColors.textGrey4,
             ),
-            iconSize: 24,
           ),
         ),
         title: Text(

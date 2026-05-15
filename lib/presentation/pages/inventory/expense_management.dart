@@ -17,6 +17,7 @@ import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_expense_management.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/purchase_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 class ExpenseManagement extends StatefulWidget {
   const ExpenseManagement({super.key});
@@ -113,6 +114,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
     final responsivePadding = _getResponsivePadding(context);
 
     return Scaffold(
+      drawer: isSmallScreen ? const SidebarDrawer() : null,
       body: Consumer<ExpenseProvider>(
         builder: (context, provider, child) {
           return SingleChildScrollView(
@@ -121,33 +123,40 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppStyles.isWebScreen(context)
-                    ? SizedBox()
+                    ? const SizedBox()
                     : Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: InkWell(
-                          onTap: () => context.pop(),
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.grey[200]!),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: Builder(
+                          builder: (context) => InkWell(
+                            onTap: () => Scaffold.of(context).openDrawer(),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBlue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.sort_rounded,
+                                size: 20,
+                                color: AppColors.secondaryBlue,
+                              ),
                             ),
-                            child: const Icon(Icons.arrow_back,
-                                size: 20, color: Color(0xFF152D70)),
                           ),
                         ),
                       ),
                 // Header section - responsive layout
                 _buildResponsiveHeader(context, isSmallScreen),
+                if (isSmallScreen) ...[
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      _buildSearchField(context),
+                      const SizedBox(width: 12),
+                      _buildFilterButton(),
+                    ],
+                  ),
+                ],
                 SizedBox(height: isSmallScreen ? 16 : 24),
                 if (provider.isFilter)
                   Padding(
@@ -167,41 +176,30 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
 
   Widget _buildResponsiveHeader(BuildContext context, bool isSmallScreen) {
     if (isSmallScreen) {
-      // Mobile layout - stacked vertically
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      return Row(
         children: [
           Text(
             'Expense Management',
             style: GoogleFonts.plusJakartaSans(
-              fontSize: _getResponsiveFontSize(context, 16),
-              fontWeight: FontWeight.w600,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
               color: AppColors.textBlue800,
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(child: _buildSearchField(context)),
-              const SizedBox(width: 12),
-              _buildFilterButton(),
-              const SizedBox(width: 8),
-              if (settingsProvider.menuIsSaveMap[48] == 1)
-                _buildAddButton(context, isCompact: true),
-            ],
-          ),
+          const Spacer(),
+          if (settingsProvider.menuIsSaveMap[48] == 1)
+            _buildAddButton(context, isCompact: true),
         ],
       );
     } else {
-      // Desktop/Tablet layout - horizontal
       return Row(
         children: [
-          const Text(
+          Text(
             'Expense Management',
-            style: TextStyle(
-              fontSize: 24,
-              color: Color(0xFF152D70),
-              fontWeight: FontWeight.w600,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textBlue800,
             ),
           ),
           const Spacer(),
@@ -223,59 +221,41 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
   }
 
   Widget _buildSearchField(BuildContext context) {
-    return Container(
-      width: _getSearchFieldWidth(context),
-      height: 40,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: expenseProvider.searchExpenseController,
-              onSubmitted: (query) {
-                if (kDebugMode) {
-                  print(query);
-                }
-                expenseProvider.searchExpense(query, context);
-              },
-              decoration: const InputDecoration(
-                hintText: 'Search here....',
-                prefixIcon: Icon(Icons.search),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-              ),
+    return Expanded(
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              onPressed: () {
-                final query = expenseProvider.searchExpenseController.text;
-                if (kDebugMode) {
-                  print(query);
-                }
-                expenseProvider.searchExpense(query, context);
-              },
-              icon: const Icon(Icons.search),
-              iconSize: 20,
-              color: AppColors.primaryBlue,
+          ],
+        ),
+        child: TextField(
+          controller: expenseProvider.searchExpenseController,
+          onChanged: (query) => expenseProvider.searchExpense(query, context),
+          decoration: InputDecoration(
+            hintText: 'Search expenses...',
+            hintStyle: GoogleFonts.plusJakartaSans(
+              color: const Color(0xFF94A3B8),
+              fontSize: 14,
             ),
+            prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF64748B)),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildAddButton(BuildContext context, {bool isCompact = false}) {
-    return CustomOutlinedSvgButton(
-      onPressed: () async {
+    return InkWell(
+      onTap: () async {
         showDialog(
           barrierDismissible: false,
           context: context,
@@ -286,16 +266,27 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
             );
           },
         );
-      }, //ggg
-      svgPath: 'assets/images/Plus.svg',
-      label: isCompact ? 'Add' : 'Add Expense Management',
-      breakpoint: 860,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+      },
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: AppColors.secondaryBlue,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.secondaryBlue.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.add_rounded,
+          color: Colors.white,
+          size: 26,
+        ),
       ),
-      foregroundColor: Colors.white,
-      backgroundColor: AppColors.primaryBlue,
-      borderSide: BorderSide(color: AppColors.primaryBlue),
     );
   }
 
@@ -338,9 +329,13 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                 context,
               );
             },
-            child: const Text(
+            child: Text(
               'Reset',
-              style: TextStyle(color: Colors.red),
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.textRed,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
             ),
           )
         ],
@@ -427,7 +422,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                 border: Border.all(
                   color: (expenseProvider.selectedUser != null &&
                           expenseProvider.selectedUser != 0)
-                      ? AppColors.primaryBlue
+                      ? AppColors.secondaryBlue
                       : Colors.grey[300]!,
                 ),
               ),
@@ -481,7 +476,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
         border: Border.all(
           color: (expenseProvider.selectedClient != null &&
                   expenseProvider.selectedClient != 0)
-              ? AppColors.primaryBlue
+              ? AppColors.secondaryBlue
               : Colors.grey[300]!,
         ),
       ),
@@ -545,7 +540,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
             border: Border.all(
               color: (expenseProvider.selectedProjectTypeId != null &&
                       expenseProvider.selectedProjectTypeId != 0)
-                  ? AppColors.primaryBlue
+                  ? AppColors.secondaryBlue
                   : Colors.grey[300]!,
             ),
           ),
@@ -609,7 +604,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
         border: Border.all(
           color: (expenseProvider.selectedExpenseTypeId != null &&
                   expenseProvider.selectedExpenseTypeId != 0)
-              ? AppColors.primaryBlue
+              ? AppColors.secondaryBlue
               : Colors.grey[300]!,
         ),
       ),
@@ -663,113 +658,209 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
 
   Widget _buildMobileCardList(BuildContext context, ExpenseProvider provider) {
     if (provider.expenseModelList.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(32.0),
-          child: Text('No expenses found'),
+      return Container(
+        margin: const EdgeInsets.symmetric(vertical: 32.0),
+        padding: const EdgeInsets.all(24.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.secondaryBlue.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.receipt_long_rounded,
+                    size: 48, color: AppColors.secondaryBlue.withOpacity(0.5)),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No expenses found',
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textBlue800,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Try adjusting your search or filters',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.grey[500],
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
 
     return Column(
-      children: provider.expenseModelList.map((expenseModel) {
-        return Card(
+      children: provider.expenseModelList.asMap().entries.map((entry) {
+        final index = entry.key;
+        final expenseModel = entry.value;
+
+        return Container(
           margin: const EdgeInsets.only(bottom: 12),
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(
+              color: const Color(0xFFF1F5F9),
+              width: 1,
+            ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Expense Head - Primary info
-                // Text(
-                //   expenseModel.expenseHead.toString(),
-                //   style: GoogleFonts.inter(
-                //     fontSize: 16,
-                //     fontWeight: FontWeight.w600,
-                //     color: AppColors.primaryBlue,
-                //   ),
-                // ),
-                Text(
-                  expenseModel.expenseHead ?? '', // Safe fallback
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primaryBlue,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                // Key information in grid
-                _buildInfoGrid([
-                  _InfoItem(
-                      'Customer Name',
-                      expenseModel.userName?.trim().isNotEmpty == true
-                          ? expenseModel.userName!
-                          : ""),
-                  _InfoItem(
-                      'Expense Type',
-                      expenseModel.expenseTypeName?.trim().isNotEmpty == true
-                          ? expenseModel.expenseTypeName!
-                          : ""),
-                  _InfoItem(
-                      'Date',
-                      expenseModel.entryDate != null
-                          ? formatPurchaseDate(expenseModel.entryDate!)
-                          : ""),
-                  _InfoItem('Tax', '${expenseModel.gstPercentage ?? 0}%'),
-
-                  // _InfoItem('User', expenseModel.userName ?? "NA"),
-                  // _InfoItem('Type', expenseModel.expenseTypeName.toString()),
-                  // _InfoItem(
-                  //     'Date', formatPurchaseDate(expenseModel.entryDate!)),
-                  // _InfoItem('Tax', '${expenseModel.gstPercentage ?? 0}%'),
-                ]),
-
-                const SizedBox(height: 12),
-
-                // Amount prominently displayed
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.secondaryBlue.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(
-                    'Amount: ${expenseModel.amount?.toString() ?? '0'}',
-
-                    // 'Amount: ${expenseModel.amount.toString()}',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryBlue,
+                  child: Center(
+                    child: Text(
+                      '${index + 1}',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.secondaryBlue,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 12),
-
-                // Action buttons
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        expenseModel.expenseHead ?? 'Unnamed Expense',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textBlue800,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          const Icon(Icons.info_outline_rounded,
+                              size: 13, color: Color(0xFF64748B)),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '${expenseModel.expenseTypeName ?? "N/A"} | ₹${expenseModel.amount ?? 0}',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                color: const Color(0xFF64748B),
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(Icons.person_outline_rounded,
+                              size: 13, color: Color(0xFF64748B)),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              expenseModel.userName ?? "System",
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                color: const Color(0xFF64748B),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (expenseModel.entryDate != null) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_today_outlined,
+                                size: 12, color: Color(0xFF64748B)),
+                            const SizedBox(width: 4),
+                            Text(
+                              formatPurchaseDate(expenseModel.entryDate!),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11,
+                                color: const Color(0xFF64748B),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     if (settingsProvider.menuIsEditMap[48] == 1)
-                      _buildMobileActionButton(
-                        'Edit',
-                        AppColors.primaryBlue,
-                        () => _showEditDialog(context, expenseModel),
+                      InkWell(
+                        onTap: () => _showEditDialog(context, expenseModel),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.edit_outlined,
+                            color: Colors.blue,
+                            size: 18,
+                          ),
+                        ),
                       ),
                     const SizedBox(width: 8),
                     if (settingsProvider.menuIsDeleteMap[48] == 1)
-                      _buildMobileActionButton(
-                        'Delete',
-                        AppColors.textRed,
-                        () => _showDeleteDialog(context, expenseModel),
+                      InkWell(
+                        onTap: () => _showDeleteDialog(context, expenseModel),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFEF2F2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline_rounded,
+                            color: Color(0xFFEF4444),
+                            size: 18,
+                          ),
+                        ),
                       ),
                   ],
                 ),

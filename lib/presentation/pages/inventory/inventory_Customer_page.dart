@@ -5,6 +5,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_customer_page.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/inventory_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class CustomerPage extends StatefulWidget {
@@ -33,46 +34,6 @@ class _CustomerPageState extends State<CustomerPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header section
-        Row(
-          children: [
-            Text(
-              'Inventory Customers',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlue800),
-            ),
-            const Spacer(),
-            CustomOutlinedSvgButton(
-              onPressed: () async {
-                await showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const AddCustomer(
-                      editId: '0',
-                      isEdit: false,
-                    );
-                  },
-                );
-                if (mounted) {
-                  Provider.of<SettingsProvider>(context, listen: false)
-                      .searchInventoryCustomerApi('', context);
-                }
-              },
-              svgPath: 'assets/images/Plus.svg',
-              label: 'New Customer',
-              breakpoint: 600,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              foregroundColor: Colors.white,
-              backgroundColor: AppColors.primaryBlue,
-              borderSide: BorderSide(color: AppColors.primaryBlue),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
         settingsProvider.searchInventoryCustomer.isEmpty
             ? _buildEmptyState()
             : ListView.builder(
@@ -80,14 +41,14 @@ class _CustomerPageState extends State<CustomerPage> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: settingsProvider.searchInventoryCustomer.length,
                 itemBuilder: (context, index) {
-                  final customer = settingsProvider.searchInventoryCustomer[index];
+                  final customer =
+                      settingsProvider.searchInventoryCustomer[index];
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: ReportListItem(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: InventoryListItem(
                       title: customer.customerName,
                       subtitle: 'ID: ${customer.customerId}',
                       description: 'Inventory customer details.',
-                      statusColor: AppColors.primaryBlue,
                       onEdit: () async {
                         await showDialog(
                           barrierDismissible: false,
@@ -106,7 +67,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         }
                       },
                       onDelete: () {
-                        _showDeleteDialog(context, settingsProvider, customer.customerId);
+                        _showDeleteDialog(
+                            context, settingsProvider, customer.customerId);
                       },
                     ),
                   );

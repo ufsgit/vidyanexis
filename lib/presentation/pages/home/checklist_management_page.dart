@@ -46,9 +46,21 @@ class _CheckListManagementWidgetState extends State<CheckListManagementWidget> {
           ? AppBar(
               backgroundColor: AppColors.whiteColor,
               elevation: 0,
+              leadingWidth: 56,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: AppColors.textBlue800),
                 onPressed: () => Navigator.of(context).pop(),
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 20,
+                    color: AppColors.textGrey4,
+                  ),
+                ),
               ),
               title: Text(
                 'Checklist Management',

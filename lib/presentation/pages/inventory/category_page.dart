@@ -5,6 +5,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_category_widget.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/inventory_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class CategoryPage extends StatefulWidget {
@@ -33,43 +34,6 @@ class _CategoryPageState extends State<CategoryPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header section
-        Row(
-          children: [
-            Text(
-              'Inventory Categories',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlue800),
-            ),
-            const Spacer(),
-            if (settingsProvider.menuIsSaveMap[46] == 1)
-              CustomOutlinedSvgButton(
-                onPressed: () async {
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const AddCategoryWidget(
-                        editId: '0',
-                        isEdit: false,
-                      );
-                    },
-                  );
-                },
-                svgPath: 'assets/images/Plus.svg',
-                label: 'New Category',
-                breakpoint: 600,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                foregroundColor: Colors.white,
-                backgroundColor: AppColors.primaryBlue,
-                borderSide: BorderSide(color: AppColors.primaryBlue),
-              ),
-          ],
-        ),
-        const SizedBox(height: 20),
         settingsProvider.searchCategory.isEmpty
             ? _buildEmptyState()
             : ListView.builder(
@@ -79,12 +43,11 @@ class _CategoryPageState extends State<CategoryPage> {
                 itemBuilder: (context, index) {
                   final category = settingsProvider.searchCategory[index];
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: ReportListItem(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: InventoryListItem(
                       title: category.categoryName,
                       subtitle: 'ID: ${category.categoryId}',
                       description: 'Category for inventory organization.',
-                      statusColor: AppColors.primaryBlue,
                       onEdit: settingsProvider.menuIsEditMap[46] == 1
                           ? () {
                               showDialog(
@@ -102,7 +65,8 @@ class _CategoryPageState extends State<CategoryPage> {
                           : null,
                       onDelete: settingsProvider.menuIsDeleteMap[46] == 1
                           ? () {
-                              _showDeleteDialog(context, settingsProvider, category.categoryId);
+                              _showDeleteDialog(
+                                  context, settingsProvider, category.categoryId);
                             }
                           : null,
                     ),

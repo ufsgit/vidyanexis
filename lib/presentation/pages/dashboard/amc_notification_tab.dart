@@ -36,68 +36,6 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
       builder: (context, provider, dropdownProvider, child) {
         return Column(
           children: [
-            // Filter Section
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _buildUserFilter(provider, dropdownProvider),
-                    const SizedBox(width: 8),
-                    // Date Filter
-                    InkWell(
-                      onTap: () async {
-                        onClickTopButton(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.calendar_today,
-                                size: 16, color: AppColors.textGrey3),
-                            const SizedBox(width: 8),
-                            Text(
-                              provider.fromDate != null &&
-                                      provider.toDate != null
-                                  ? '${DateFormat('dd/MM/yyyy').format(provider.fromDate!)} - ${DateFormat('dd/MM/yyyy').format(provider.toDate!)}'
-                                  : 'Select Date Range',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textBlack,
-                              ),
-                            ),
-                            if (provider.fromDate != null) ...[
-                              const SizedBox(width: 8),
-                              InkWell(
-                                onTap: () {
-                                  provider.selectDateFilterOption(
-                                      null); // Clear dates
-                                  provider.getAmcNotification(context,
-                                      isFilter: true);
-                                },
-                                child: const Icon(Icons.close,
-                                    size: 16, color: Colors.red),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
             // List Section
             // List Section
             if (provider.isAmcNotificationLoading)

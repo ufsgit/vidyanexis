@@ -227,8 +227,18 @@ class _tasksPageReportState extends State<TaskPage> {
               leadingWidget: widget.initialStatusFilter != null
                   ? Builder(
                       builder: (context) => IconButton(
-                        icon:
-                            const Icon(Icons.arrow_back, color: Colors.black87),
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBlue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back,
+                            size: 20,
+                            color: Colors.black87,
+                          ),
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                     )
@@ -240,11 +250,11 @@ class _tasksPageReportState extends State<TaskPage> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
-              showSort: true,
+              showSort: false,
               onSortTap: (value) {
                 reportsProvider.setSortOption(value, context);
               },
-              showOrder: true,
+              showOrder: false,
               sortOrder: reportsProvider.sortOrder,
               onOrderTap: () {
                 reportsProvider.toggleSortOrder(context);

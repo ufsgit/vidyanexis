@@ -213,13 +213,24 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        leadingWidth: 56,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new,
-              size: 20, color: Colors.grey),
           onPressed: () {
             customerDetailsProvider.clearTaskDetails();
             Navigator.pop(context);
           },
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.secondaryBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 20,
+              color: Colors.grey,
+            ),
+          ),
         ),
         title: Text(
           widget.isEdit ? 'Edit Task' : 'Create Task',

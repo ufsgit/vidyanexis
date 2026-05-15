@@ -94,89 +94,128 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
-    return AlertDialog(
+    return Scaffold(
       backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          Text(
-            widget.isEdit ? 'Edit Unit' : 'Add Unit',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        title: Text(
+          widget.isEdit ? 'Edit Unit' : 'Add Unit',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textBlue800,
           ),
-          const Spacer(),
-          IconButton(
-            onPressed: () {
-              settingsProvider.unitNameController.clear();
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.close),
-          )
-        ],
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
-      content: Container(
-        color: Colors.white,
-        width: MediaQuery.sizeOf(context).width / 2,
-        height: MediaQuery.sizeOf(context).height / 6,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.unitNameController,
-                      hintText: 'Unit Name*',
-                      labelText: '',
-                    ),
+                  _buildSectionTitle('Unit Information'),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 56,
+                    controller: settingsProvider.unitNameController,
+                    hintText: 'Unit Name*',
+                    labelText: '',
                   ),
+                  const SizedBox(height: 40),
                 ],
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              const SizedBox(height: 24.0),
-            ],
+            ),
           ),
-        ),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      settingsProvider.unitNameController.clear();
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      side: const BorderSide(color: Color(0xFFE2E8F0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final validationError = validateInputs(context, settingsProvider);
+                      if (validationError != null) {
+                        showErrorDialog(context, validationError);
+                        return;
+                      }
+                      settingsProvider.addUnitName(
+                        context: context,
+                        statusId: widget.editId,
+                        statusName: settingsProvider.unitNameController.text,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondaryBlue,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      actions: [
-        CustomElevatedButton(
-          buttonText: 'Cancel',
-          onPressed: () {
-            settingsProvider.unitNameController.clear();
-            Navigator.pop(context);
-          },
-          backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
-        ),
-        CustomElevatedButton(
-          buttonText: 'Save',
-          onPressed: () async {
-            final validationError = validateInputs(context, settingsProvider);
-            if (validationError != null) {
-              showErrorDialog(context, validationError);
-              return;
-            }
+    );
+  }
 
-            settingsProvider.addUnitName(
-              context: context,
-              statusId: widget.editId,
-              statusName: settingsProvider.unitNameController.text,
-            );
-          },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.whiteColor,
-        ),
-      ],
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.plusJakartaSans(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: const Color(0xFF1E293B),
+      ),
     );
   }
 }

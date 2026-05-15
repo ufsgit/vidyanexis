@@ -5,6 +5,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_supplier_page.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/inventory_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class SupplierPage extends StatefulWidget {
@@ -33,43 +34,6 @@ class _SupplierPageState extends State<SupplierPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header section
-        Row(
-          children: [
-            Text(
-              'Inventory Suppliers',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlue800),
-            ),
-            const Spacer(),
-            if (settingsProvider.menuIsSaveMap[45] == 1)
-              CustomOutlinedSvgButton(
-                onPressed: () async {
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const AddSupplier(
-                        editId: '0',
-                        isEdit: false,
-                      );
-                    },
-                  );
-                },
-                svgPath: 'assets/images/Plus.svg',
-                label: 'New Supplier',
-                breakpoint: 600,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                foregroundColor: Colors.white,
-                backgroundColor: AppColors.primaryBlue,
-                borderSide: BorderSide(color: AppColors.primaryBlue),
-              ),
-          ],
-        ),
-        const SizedBox(height: 20),
         settingsProvider.searchSupplier.isEmpty
             ? _buildEmptyState()
             : ListView.builder(
@@ -79,12 +43,11 @@ class _SupplierPageState extends State<SupplierPage> {
                 itemBuilder: (context, index) {
                   final supplier = settingsProvider.searchSupplier[index];
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: ReportListItem(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: InventoryListItem(
                       title: supplier.supplierName,
                       subtitle: 'Supplier ID: ${supplier.supplierId}',
                       description: 'Supplier for inventory procurement.',
-                      statusColor: AppColors.primaryBlue,
                       onEdit: settingsProvider.menuIsEditMap[45] == 1
                           ? () {
                               showDialog(
@@ -102,7 +65,8 @@ class _SupplierPageState extends State<SupplierPage> {
                           : null,
                       onDelete: settingsProvider.menuIsDeleteMap[45] == 1
                           ? () {
-                              _showDeleteDialog(context, settingsProvider, supplier.supplierId);
+                              _showDeleteDialog(
+                                  context, settingsProvider, supplier.supplierId);
                             }
                           : null,
                     ),

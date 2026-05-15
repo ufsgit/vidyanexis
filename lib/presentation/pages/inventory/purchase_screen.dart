@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/purchase_widget.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/inventory_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
@@ -42,19 +43,22 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SizedBox(
-          width: constraints.maxWidth,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context, expenseProvider, settingsProvider),
-              if (expenseProvider.isFilter)
-                _buildFilterPanel(context, expenseProvider, settingsProvider),
-              const SizedBox(height: 10),
-              AppStyles.isWebScreen(context)
-                  ? _buildDesktopTable(expenseProvider, settingsProvider)
-                  : _buildMobileList(expenseProvider, settingsProvider),
-            ],
+        return Material(
+          color: Colors.transparent,
+          child: SizedBox(
+            width: constraints.maxWidth,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context, expenseProvider, settingsProvider),
+                if (expenseProvider.isFilter)
+                  _buildFilterPanel(context, expenseProvider, settingsProvider),
+                const SizedBox(height: 10),
+                AppStyles.isWebScreen(context)
+                    ? _buildDesktopTable(expenseProvider, settingsProvider)
+                    : _buildMobileList(expenseProvider, settingsProvider),
+              ],
+            ),
           ),
         );
       },
@@ -68,74 +72,19 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
-            Text(
-              'Purchase',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlue800),
-            ),
-            const Spacer(),
             _buildDesktopSearch(expenseProvider),
             const SizedBox(width: 16),
             CustomFilterButton(
               onPressed: () => expenseProvider.toggleFilter(),
               isFilter: expenseProvider.isFilter,
             ),
-            const SizedBox(width: 16),
-            if (settingsProvider.menuIsSaveMap[44] == 1)
-              CustomOutlinedSvgButton(
-                onPressed: () => _showPurchaseDialog(context, false),
-                svgPath: 'assets/images/Plus.svg',
-                label: 'New Purchase',
-                breakpoint: 860,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                foregroundColor: Colors.white,
-                backgroundColor: AppColors.primaryBlue,
-                borderSide: BorderSide(color: AppColors.primaryBlue),
-              ),
-            const SizedBox(width: 16),
           ],
         ),
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Purchases',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textBlue800,
-                  ),
-                ),
-                const Spacer(),
-                if (settingsProvider.menuIsSaveMap[44] == 1)
-                  SizedBox(
-                    height: 40,
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showPurchaseDialog(context, false),
-                      icon: const Icon(Icons.add, size: 18),
-                      label: const Text('New'),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryBlue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildMobileSearch(expenseProvider),
-          ],
-        ),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+        child: _buildMobileSearch(expenseProvider),
       );
     }
   }
@@ -168,27 +117,31 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       children: [
         Expanded(
           child: Container(
-            height: 44,
+            height: 48,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: Colors.grey[300]!),
-              boxShadow: [
-                BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 3)
-              ],
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: TextField(
               controller: searchController,
               onSubmitted: (query) => _handleSearch(provider, query),
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                color: AppColors.textBlue800,
+                fontWeight: FontWeight.w500,
+              ),
               decoration: InputDecoration(
                 hintText: 'Search invoices...',
-                prefixIcon: const Icon(Icons.search, size: 20),
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  color: const Color(0xFF94A3B8),
+                ),
+                prefixIcon: const Icon(Icons.search_rounded, size: 20, color: Color(0xFF64748B)),
                 border: InputBorder.none,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 suffixIcon: provider.search.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, size: 18),
+                        icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFF64748B)),
                         onPressed: () {
                           searchController.clear();
                           _handleSearch(provider, '');
@@ -200,16 +153,21 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           ),
         ),
         const SizedBox(width: 12),
-        IconButton(
-          onPressed: () => provider.toggleFilter(),
-          icon: Icon(
-            Icons.filter_list,
-            color: provider.isFilter ? Colors.white : AppColors.primaryBlue,
-          ),
-          style: IconButton.styleFrom(
-            backgroundColor:
-                provider.isFilter ? AppColors.primaryBlue : Colors.white,
-            side: BorderSide(color: Colors.grey[300]!),
+        InkWell(
+          onTap: () => provider.toggleFilter(),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            height: 48,
+            width: 48,
+            decoration: BoxDecoration(
+              color: provider.isFilter ? AppColors.textBlue800 : const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.tune_rounded,
+              color: provider.isFilter ? Colors.white : const Color(0xFF64748B),
+              size: 20,
+            ),
           ),
         ),
       ],
@@ -409,15 +367,10 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         final purchase = expenseProvider.purchaseList[index];
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ReportListItem(
+          child: InventoryListItem(
             title: purchase.supplierName ?? 'Unknown Supplier',
-            subtitle: 'Invoice: ${purchase.invoiceNo}',
-            description: purchase.descriptions ?? 'No description provided.',
-            status: NumberFormat.currency(symbol: '₹', decimalDigits: 0)
-                .format(double.parse(purchase.netTotal ?? '0')),
-            statusColor: AppColors.primaryBlue,
-            bottomLeftText: formatSalesDate(purchase.purchaseDate),
-            bottomLeftIcon: Icons.calendar_today,
+            subtitle: 'Inv: ${purchase.invoiceNo} • ${formatSalesDate(purchase.purchaseDate)}',
+            description: 'Total Amount: ${NumberFormat.currency(symbol: '₹', decimalDigits: 0).format(double.parse(purchase.netTotal ?? '0'))}',
             onEdit: settingsProvider.menuIsEditMap[44] == 1
                 ? () => _showPurchaseDialog(context, true, data: purchase)
                 : null,
@@ -447,16 +400,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   }
 
   void _showPurchaseDialog(BuildContext context, bool isEdit, {dynamic data}) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return PurchaseWidget(
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PurchaseWidget(
           editId: isEdit ? data.purchaseMasterId.toString() : '0',
           isEdit: isEdit,
           data: data,
-        );
-      },
+        ),
+      ),
     );
   }
 

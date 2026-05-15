@@ -33,141 +33,132 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
     final displayLogo = settingsProvider.displayLogo;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.textBlue800,
-                    AppColors.secondaryBlue,
-                    Colors.lightGreen,
-                  ],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 100),
-                child: Column(
-                  children: [
-                    // Logo at the top
-                    Center(
-                      child: settingsProvider.isLogoLoading &&
-                              settingsProvider.logo.isEmpty
-                          ? const SizedBox(
-                              height: 80,
-                              width: 80,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
-                          : displayLogo.startsWith('http')
-                              ? Image.network(
-                                  displayLogo,
-                                  height: 100,
-                                  width: 140,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset(
-                                      AppStyles.logo(),
-                                      height: 100,
-                                      width: 140,
-                                      fit: BoxFit.contain,
-                                    );
-                                  },
+      body: Container(
+        height: MediaQuery.sizeOf(context).height,
+        width: MediaQuery.sizeOf(context).width,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.secondaryBlue,
+              AppColors.textBlue800,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 80), // Increased top spacing
+                          // Minimal Logo
+                          settingsProvider.isLogoLoading && settingsProvider.logo.isEmpty
+                              ? const SizedBox(
+                                  height: 40,
+                                  width: 40,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                                 )
-                              : Image.asset(
-                                  displayLogo,
-                                  height: 100,
-                                  width: 140,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container();
-                                  },
+                              : Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: displayLogo.startsWith('http')
+                                      ? Image.network(
+                                          displayLogo,
+                                          height: 40,
+                                          fit: BoxFit.contain,
+                                          color: Colors.white,
+                                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.business_center, size: 30, color: Colors.white),
+                                        )
+                                      : Image.asset(
+                                          displayLogo,
+                                          height: 40,
+                                          fit: BoxFit.contain,
+                                          color: Colors.white,
+                                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.business_center, size: 30, color: Colors.white),
+                                        ),
                                 ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // "Welcome to" text
-                    Center(
-                      child: Text(
-                        'Welcome to',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.whiteColor),
+                          
+                          const SizedBox(height: 50),
+            
+                          // Bold Heading
+                          Text(
+                            'Sign in.',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 48,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: -1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Welcome back to ${settingsProvider.displayTitle}',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                          ),
+                          
+                          const SizedBox(height: 50),
+            
+                          // Minimal Form
+                          SignUpForm(
+                            passwordController: loginProvider.passWordController,
+                            userNameController: loginProvider.userNameController,
+                            onPressed: () {
+                              loginProvider.login(
+                                context: context,
+                                passWord: loginProvider.passWordController.text,
+                                userName: loginProvider.userNameController.text,
+                              );
+                            },
+                          ),
+                          
+                          const Spacer(), // Pushes branding to the bottom
+                          
+                          // Bottom Branding
+                          Center(
+                            child: Column(
+                              children: [
+                                Text(
+                                  'SOLARIS',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: Colors.white.withOpacity(0.3),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 4,
+                                  ),
+                                ),
+                                const SizedBox(height: 40), // Space at the very bottom
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-
-                    // Title with proper wrapping
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          settingsProvider.displayTitle,
-                          style: GoogleFonts.plusJakartaSans(
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.whiteColor),
-                          textAlign: TextAlign.center,
-                          maxLines: 3, // Allow up to 3 lines
-                          overflow: TextOverflow.fade,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-          Positioned(
-            bottom: MediaQuery.of(context).viewInsets.bottom > 0
-                ? MediaQuery.of(context).viewInsets.bottom /
-                    800 // Adjust this value as needed
-                : 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.scaffoldColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    height: 405,
-                    decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16))),
-                    child: SignUpForm(
-                      passwordController: loginProvider.passWordController,
-                      userNameController: loginProvider.userNameController,
-                      onPressed: () {
-                        loginProvider.login(
-                          context: context,
-                          passWord: loginProvider.passWordController.text,
-                          userName: loginProvider.userNameController.text,
-                        );
-                      },
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            }
           ),
-        ],
+        ),
       ),
     );
   }
 }
+
 
 class SignUpForm extends StatelessWidget {
   final TextEditingController userNameController;
@@ -183,68 +174,85 @@ class SignUpForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsProvider = Provider.of<SettingsProvider>(context);
     return Form(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 24),
-            Text(
-              'Login to continue',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textBlack),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'USERNAME',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              letterSpacing: 1.5,
             ),
-            const SizedBox(height: 24),
-            textFieldWidget(
+          ),
+          const SizedBox(height: 12),
+          textFieldWidget(
+            context: context,
+            controller: userNameController,
+            labelText: 'user name ',
+            height: 56,
+          ),
+          
+          const SizedBox(height: 32),
+          
+          Text(
+            'PASSWORD',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Consumer<LoginController>(
+            builder: (context, loginProvider, child) {
+              return textFieldWidget(
                 context: context,
-                controller: userNameController,
-                labelText: 'User name',
-                height: 54),
-            const SizedBox(height: 12),
-            Consumer<LoginController>(
-              builder: (context, loginProvider, child) {
-                return textFieldWidget(
-                  context: context,
-                  onSubmitted: (value) {
-                    loginProvider.login(
-                      context: context,
-                      passWord: loginProvider.passWordController.text,
-                      userName: loginProvider.userNameController.text,
-                    );
-                  },
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      loginProvider.passwordVisible
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                      color: AppColors.textGrey3,
-                    ),
-                    onPressed: () => loginProvider.togglePasswordVisibility(),
+                onSubmitted: (value) {
+                  loginProvider.login(
+                    context: context,
+                    passWord: loginProvider.passWordController.text,
+                    userName: loginProvider.userNameController.text,
+                  );
+                },
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    loginProvider.passwordVisible
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                    color: Colors.black54,
+                    size: 20,
                   ),
-                  controller: passwordController,
-                  labelText: 'Password',
-                  height: 54,
-                  obscureText: !loginProvider.passwordVisible,
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-            buttonWidget(
-              context: context,
-              text: 'Log in',
-              backgroundColor: AppColors.appViolet,
-              txtColor: AppColors.scaffoldColor,
-              height: 48,
-              fontSize: 14,
-              onPressed: onPressed,
-            )
-          ],
-        ),
+                  onPressed: () => loginProvider.togglePasswordVisibility(),
+                ),
+                controller: passwordController,
+                labelText: '••••••••',
+                height: 56,
+                obscureText: !loginProvider.passwordVisible,
+              );
+            },
+          ),
+          
+          const SizedBox(height: 48),
+          
+          buttonWidget(
+            context: context,
+            text: 'Sign in',
+            backgroundColor: Colors.white,
+            txtColor: AppColors.textBlue800,
+            height: 56,
+            fontSize: 16,
+            onPressed: onPressed,
+          )
+        ],
       ),
     );
   }
 }
+
+
+

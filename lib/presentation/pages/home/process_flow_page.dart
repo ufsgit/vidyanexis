@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -8,21 +7,20 @@ import 'package:vidyanexis/controller/models/process_flow_model.dart';
 import 'package:vidyanexis/controller/process_flow_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_add_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 class ProcessFlowPage extends StatefulWidget {
   const ProcessFlowPage({super.key});
 
   @override
-  State<ProcessFlowPage> createState() => _LeadsPageState();
+  State<ProcessFlowPage> createState() => _ProcessFlowPageState();
 }
 
-class _LeadsPageState extends State<ProcessFlowPage> {
+class _ProcessFlowPageState extends State<ProcessFlowPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
 
   late ProcessFlowProvider processFlowProvider;
-  bool viewProfile = false;
   late SettingsProvider settingsProvider;
   bool isLoadingData = false;
 
@@ -39,822 +37,373 @@ class _LeadsPageState extends State<ProcessFlowPage> {
   }
 
   Future<void> getData() async {
-    isLoadingData = true;
-    setState(() {});
+    if (!mounted) return;
+    setState(() => isLoadingData = true);
     await processFlowProvider.getProcessFlow(context);
-    isLoadingData = false;
-    setState(() {});
+    if (!mounted) return;
+    setState(() => isLoadingData = false);
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final isMobile = !AppStyles.isWebScreen(context);
+    
     return Scaffold(
-      floatingActionButton: AppStyles.isWebScreen(context)
-          ? const SizedBox.shrink()
-          : (settingsProvider.menuIsSaveMap[36] == 1
-              ? FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (c) => ProcessFlowAddWidget(
-                          isEdit: false,
-                          processFlowModel: ProcessFlowModel(),
-                        ),
-                      ),
-                    );
-                  },
-                  child: Icon(Icons.add),
-                )
-              : null),
-      key: _scaffoldKey,
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppStyles.isWebScreen(context)
-          ? null
-          : AppBar(
-              title: Text(
-                "Process flow",
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.textBlack,
-                  // fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              leading: Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 8),
-                child: IconButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.textGrey4,
-                  ),
-                  iconSize: 24,
-                ),
-              ),
-            ),
-      body: Consumer<ProcessFlowProvider>(builder: (context, provider, child) {
-        return Scrollbar(
-          controller: scrollController,
-          thumbVisibility: true,
-          trackVisibility: true,
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Container(
-              color: Colors.grey[50],
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  AppStyles.isWebScreen(context)
-                      ? Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            children: [
-                              const Text(
-                                'Process Flow',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  color: Color(0xFF152D70),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Flexible(child: Container()),
-                              Container(
-                                width: MediaQuery.of(context).size.width / 4,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colors.grey[300]!),
-                                ),
-                                child: TextField(
-                                  controller: searchController,
-                                  onChanged: (query) {
-                                    processFlowProvider.filterData(query);
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: 'Search here....',
-                                    prefixIcon: const Icon(Icons.search),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 4,
-                                    ),
-                                    suffixIcon: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          // String query = searchController.text;
-                                          // // leadProvider.selectDateFilterOption(null);
-                                          // // leadProvider.removeStatus();
-                                          // print(query);
-                                          // if (leadProvider.search.isNotEmpty) {
-                                          //   searchController.clear();
-                                          //   leadProvider.setSearchCriteria(
-                                          //     '',
-                                          //     leadProvider.fromDateS,
-                                          //     leadProvider.toDateS,
-                                          //     leadProvider.status,
-                                          //     leadProvider.enquiryForS,
-                                          //   );
-                                          //   leadProvider.getSearchLeads(context);
-                                          // } else {
-                                          //   leadProvider.setSearchCriteria(
-                                          //     query,
-                                          //     leadProvider.fromDateS,
-                                          //     leadProvider.toDateS,
-                                          //     leadProvider.status,
-                                          //     leadProvider.enquiryForS,
-                                          //   );
-                                          //   leadProvider.getSearchLeads(context);
-                                          // }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.textGrey4,
-                                          foregroundColor: Colors.white,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 12,
-                                          ),
-                                        ),
-                                        child: Text(
-                                            // leadProvider.search.isNotEmpty
-                                            // ? 'Clear'
-                                            // :
-                                            'Search'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              // OutlinedButton.icon(
-                              //   onPressed: () {
-                              //     leadProvider.toggleFilter();
-                              //     // leadProvider.selectDateFilterOption(null);
-                              //     // leadProvider.removeStatus();
-                              //     // leadProvider.getSearchLeads('', '', '', '', context);
-                              //     print(leadProvider.isFilter);
-                              //   },
-                              //   icon: const Icon(Icons.filter_list),
-                              //   label: const Text('Filter'),
-                              //   style: OutlinedButton.styleFrom(
-                              //     foregroundColor: leadProvider.isFilter
-                              //         ? Colors.white
-                              //         : AppColors
-                              //             .primaryBlue, // Change foreground color
-                              //     backgroundColor: leadProvider.isFilter
-                              //         ? const Color(0xFF5499D9)
-                              //         : Colors.white, // Change background color
-                              //     side: BorderSide(
-                              //         color: leadProvider.isFilter
-                              //             ? const Color(0xFF5499D9)
-                              //             : AppColors
-                              //                 .primaryBlue), // Change border color
-                              //     padding: const EdgeInsets.symmetric(
-                              //       horizontal: 16,
-                              //       vertical: 12,
-                              //     ),
-                              //   ),
-                              // ),
-                              // const SizedBox(width: 16),
-                              // // New Lead Button
-                              if (settingsProvider.menuIsSaveMap[36] == 1)
-                                ElevatedButton.icon(
-                                  onPressed: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                            backgroundColor: Colors.white,
-                                            content: SizedBox(
-                                              width:
-                                                  AppStyles.isWebScreen(context)
-                                                      ? MediaQuery.of(context)
-                                                              .size
-                                                              .width /
-                                                          1.5
-                                                      : MediaQuery.of(context)
-                                                          .size
-                                                          .width,
-                                              height: MediaQuery.of(context)
-                                                  .size
-                                                  .height,
-                                              child: ProcessFlowAddWidget(
-                                                isEdit: false,
-                                                processFlowModel:
-                                                    ProcessFlowModel(),
-                                              ),
-                                            ));
-                                      },
-                                    );
-                                  },
-                                  icon: const Icon(Icons.add),
-                                  label: const Text('New Process Flow'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primaryBlue,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                ),
-                              // const SizedBox(width: 16),
-                              // Excel Import Button
-                              // ElevatedButton.icon(
-                              //   onPressed: () {
-                              //     context.push(BulkImportScreen.route);
-                              //   },
-                              //   icon: const Icon(Icons.document_scanner),
-                              //   label: Text(MediaQuery.of(context).size.width > 860
-                              //       ? 'Import Excel'
-                              //       : ''),
-                              //   style: ElevatedButton.styleFrom(
-                              //     backgroundColor: AppColors.primaryBlue,
-                              //     foregroundColor: Colors.white,
-                              //     padding: const EdgeInsets.symmetric(
-                              //       horizontal: 16,
-                              //       vertical: 12,
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
-                          ),
-                        )
-                      //mobile design
-                      : Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Wrap(
-                            runSpacing: 10,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colors.grey[300]!),
-                                ),
-                                child: TextField(
-                                  controller: searchController,
-                                  onChanged: (query) {
-                                    processFlowProvider.filterData(query);
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: 'Search here....',
-                                    prefixIcon: const Icon(Icons.search),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 0,
-                                    ),
-                                    suffixIcon: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.textGrey4,
-                                          foregroundColor: Colors.white,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 0,
-                                          ),
-                                        ),
-                                        child: Text(
-                                            // leadProvider.search.isNotEmpty
-                                            // ? 'Clear'
-                                            // :
-                                            'Search'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // const SizedBox(width: 16),
-                              // OutlinedButton.icon(
-                              //   onPressed: () {
-                              //     leadProvider.toggleFilter();
-                              //     // leadProvider.selectDateFilterOption(null);
-                              //     // leadProvider.removeStatus();
-                              //     // leadProvider.getSearchLeads('', '', '', '', context);
-                              //     print(leadProvider.isFilter);
-                              //   },
-                              //   icon: const Icon(Icons.filter_list),
-                              //   label: const Text('Filter'),
-                              //   style: OutlinedButton.styleFrom(
-                              //     foregroundColor: leadProvider.isFilter
-                              //         ? Colors.white
-                              //         : AppColors
-                              //             .primaryBlue, // Change foreground color
-                              //     backgroundColor: leadProvider.isFilter
-                              //         ? const Color(0xFF5499D9)
-                              //         : Colors.white, // Change background color
-                              //     side: BorderSide(
-                              //         color: leadProvider.isFilter
-                              //             ? const Color(0xFF5499D9)
-                              //             : AppColors
-                              //                 .primaryBlue), // Change border color
-                              //     padding: const EdgeInsets.symmetric(
-                              //       horizontal: 16,
-                              //       vertical: 0,
-                              //     ),
-                              //   ),
-                              // ),
-                              // const SizedBox(width: 16),
-                              // // New Lead Button
-                              if (settingsProvider.menuIsSaveMap[36] == 1)
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 40,
-                                  child: ElevatedButton.icon(
-                                    onPressed: () async {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return ProcessFlowAddWidget(
-                                            isEdit: false,
-                                            processFlowModel:
-                                                ProcessFlowModel(),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('New Process Flow'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              // const SizedBox(width: 16),
-                              // // Excel Import Button
-                              // // ElevatedButton.icon(
-                              // //   onPressed: () {
-                              // //     context.push(BulkImportScreen.route);
-                              // //   },
-                              // //   icon: const Icon(Icons.document_scanner),
-                              // //   label: Text(MediaQuery.of(context).size.width > 860
-                              // //       ? 'Import Excel'
-                              // //       : ''),
-                              // //   style: ElevatedButton.styleFrom(
-                              // //     backgroundColor: AppColors.primaryBlue,
-                              // //     foregroundColor: Colors.white,
-                              // //     padding: const EdgeInsets.symmetric(
-                              // //       horizontal: 16,
-                              // //       vertical: 12,
-                              // //     ),
-                              // //   ),
-                              // // ),
-                            ],
-                          ),
-                        ),
+      backgroundColor: AppColors.scaffoldColor,
+      drawer: isMobile ? const SidebarDrawer() : null,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(isMobile),
+            _buildSearchBar(),
+            Expanded(
+              child: Consumer<ProcessFlowProvider>(
+                builder: (context, provider, child) {
+                  if (isLoadingData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            // Header Row (Table Column Titles)
-                            // if (AppStyles.isWebScreen(context))
-                            Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFEFF2F5),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 80,
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 12.0, horizontal: 25.0),
-                                      child: Text('No.',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF607185))),
-                                    ),
-                                  ),
-                                  TableWidget(
-                                      flex: 1,
-                                      title: 'Task type',
-                                      color: Color(0xFF607185)),
-                                  TableWidget(
-                                      flex: 1,
-                                      title: 'Enquiry For ',
-                                      color: Color(0xFF607185)),
-                                  TableWidget(
-                                      flex: 1,
-                                      title: 'Status ',
-                                      color: Color(0xFF607185)),
-                                  Container(
-                                    width: 40,
-                                  )
-                                ],
-                              ),
-                            ),
-                            isLoadingData
-                                ? const Center(
-                                    child: CircularProgressIndicator())
-                                : ListView.builder(
-                                    shrinkWrap:
-                                        true, // To avoid scrolling issues when inside a parent widget
-                                    physics:
-                                        const NeverScrollableScrollPhysics(), // Disable scrolling here, as parent scroll handles it
-                                    itemCount: processFlowProvider
-                                        .processFlowFilteredList
-                                        .length, // Number of leads
-                                    itemBuilder: (context, index) {
-                                      ProcessFlowModel processModel =
-                                          processFlowProvider
-                                              .processFlowFilteredList[index];
-                                      return Container(
-                                          decoration: BoxDecoration(
-                                            color: index % 2 == 0
-                                                ? Colors.white
-                                                : const Color(0xFFF6F7F9),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          // Alternate row colors
-                                          child:
-                                              // AppStyles.isWebScreen(context) ?
-                                              Row(
-                                            // mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: 80,
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 12.0,
-                                                      horizontal: 25.0),
-                                                  child: Text(
-                                                      (index + 1).toString(),
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      )),
-                                                ),
-                                              ),
-                                              TableWidget(
-                                                flex: 1,
-                                                data: InkWell(
-                                                  onTap: (settingsProvider
-                                                                  .menuIsEditMap[
-                                                              36] ==
-                                                          1)
-                                                      ? () {
-                                                          if (AppStyles
-                                                              .isWebScreen(
-                                                                  context)) {
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return AlertDialog(
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  content:
-                                                                      SizedBox(
-                                                                    width: AppStyles
-                                                                            .isWebScreen(
-                                                                                context)
-                                                                        ? MediaQuery.of(context).size.width /
-                                                                            1.5
-                                                                        : MediaQuery.of(context)
-                                                                            .size
-                                                                            .width,
-                                                                    height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height,
-                                                                    child:
-                                                                        ProcessFlowAddWidget(
-                                                                      isEdit:
-                                                                          true,
-                                                                      processFlowModel:
-                                                                          processModel
-                                                                              .copyWith(),
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
-                                                          } else {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder: (c) =>
-                                                                    ProcessFlowAddWidget(
-                                                                  isEdit: true,
-                                                                  processFlowModel:
-                                                                      processModel
-                                                                          .copyWith(),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }
-                                                        }
-                                                      : null,
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFFE9EDF1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                    ),
-                                                    child: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width >
-                                                            1700
-                                                        ? Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Text(
-                                                                processModel
-                                                                        .taskTypeName ??
-                                                                    "",
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 14,
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width:
-                                                                      8), // Space between the text and back image
-                                                              // Back image (after text)
-                                                              Image.asset(
-                                                                'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                                width:
-                                                                    12, // Adjust the size of the image
-                                                                height:
-                                                                    12, // Adjust the size of the image
-                                                              ),
-                                                            ],
-                                                          )
-                                                        : Text(
-                                                            processModel
-                                                                    .taskTypeName ??
-                                                                "",
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableWidget(
-                                                  flex: 1,
-                                                  title: processModel
-                                                          .enquiryForName ??
-                                                      ""),
-                                              TableWidget(
-                                                  flex: 1,
-                                                  title:
-                                                      processModel.statusName ??
-                                                          ""),
-                                              if (settingsProvider
-                                                      .menuIsDeleteMap[36] ==
-                                                  1)
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8.0),
-                                                  child: InkWell(
-                                                      onTap: () {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return AlertDialog(
-                                                              title: const Text(
-                                                                  'Confirm Delete'),
-                                                              content: const Text(
-                                                                  'Are you sure you want to delete?'),
-                                                              actions: [
-                                                                TextButton(
-                                                                  onPressed: () =>
-                                                                      Navigator.pop(
-                                                                          context),
-                                                                  child: const Text(
-                                                                      'Cancel'),
-                                                                ),
-                                                                TextButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await processFlowProvider.deleteProcessFlowById(
-                                                                        context,
-                                                                        processModel
-                                                                            .flowId!);
-                                                                    getData();
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  child:
-                                                                      const Text(
-                                                                    'Delete',
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .red),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                      child: const Icon(
-                                                        Icons.delete,
-                                                        color: Colors.red,
-                                                      )),
-                                                )
-                                            ],
-                                          )
-                                          //mobile design
-                                          // : Padding(
-                                          //     padding:
-                                          //         const EdgeInsets.all(8.0),
-                                          //     child: Column(
-                                          //       // mainAxisAlignment: MainAxisAlignment.start,
-                                          //       crossAxisAlignment:
-                                          //           CrossAxisAlignment.start,
-                                          //       children: [
-                                          //         // SizedBox(
-                                          //         //   width: 80,
-                                          //         //   child: Padding(
-                                          //         //     padding:
-                                          //         //         const EdgeInsets.symmetric(
-                                          //         //             vertical: 12.0,
-                                          //         //             horizontal: 25.0),
-                                          //         //     child: Text(
-                                          //         //         ((index + 1) +
-                                          //         //                 leadProvider
-                                          //         //                     .startLimit -
-                                          //         //                 1)
-                                          //         //             .toString(),
-                                          //         //         style: const TextStyle(
-                                          //         //           fontWeight: FontWeight.bold,
-                                          //         //         )),
-                                          //         //   ),
-                                          //         // ),
-                                          //         Row(
-                                          //           children: [
-                                          //             InkWell(
-                                          //               onTap: () {
-                                          //                 showDialog(
-                                          //                   context: context,
-                                          //                   builder: (BuildContext context) {
-                                          //                     return  ProcessFlowAddWidget(
-                                          //                       isEdit: true,processFlowModel: processModel,
-                                          //                     );
-                                          //                   },
-                                          //                 );
-                                          //               },
-                                          //               child: Container(
-                                          //                 padding:
-                                          //                     const EdgeInsets
-                                          //                         .symmetric(
-                                          //                         horizontal:
-                                          //                             8,
-                                          //                         vertical:
-                                          //                             4),
-                                          //                 decoration:
-                                          //                     BoxDecoration(
-                                          //                   color: const Color(
-                                          //                       0xFFE9EDF1),
-                                          //                   borderRadius:
-                                          //                       BorderRadius
-                                          //                           .circular(
-                                          //                               50),
-                                          //                 ),
-                                          //                 constraints:
-                                          //                     const BoxConstraints(
-                                          //                   maxWidth:
-                                          //                       120, // Set your desired max width here
-                                          //                 ),
-                                          //                 child: Text(
-                                          //                   processModel
-                                          //                           .taskTypeName ??
-                                          //                       "",
-                                          //                   overflow:
-                                          //                       TextOverflow
-                                          //                           .ellipsis,
-                                          //                   maxLines: 1,
-                                          //                   style:
-                                          //                       const TextStyle(
-                                          //                     color: Colors
-                                          //                         .black,
-                                          //                     fontWeight:
-                                          //                         FontWeight
-                                          //                             .bold,
-                                          //                     fontSize: 14,
-                                          //                   ),
-                                          //                 ),
-                                          //               ),
-                                          //             ),
-                                          //             Text(
-                                          //               processModel
-                                          //                       .statusName ??
-                                          //                   "",
-                                          //               style: const TextStyle(
-                                          //                   fontWeight:
-                                          //                       FontWeight
-                                          //                           .w600),
-                                          //             ),
-                                          //           ],
-                                          //         ),
-                                          //       ],
-                                          //     ),
-                                          //   ),
-                                          );
-                                    },
-                                  ),
-                            // if (leadProvider.leadData.isEmpty)
-                            //   Container(
-                            //     height: 400,
-                            //     // child: Center(
-                            //     //   child: Text(
-                            //     //     "No Data",
-                            //     //     style: TextStyle(fontWeight: FontWeight.w600),
-                            //     //   ),
-                            //     // ),
-                            //   ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+                  if (provider.processFlowFilteredList.isEmpty) {
+                    return _buildEmptyState();
+                  }
+
+                  return ListView.builder(
+                    controller: scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: provider.processFlowFilteredList.length,
+                    itemBuilder: (context, index) {
+                      return _buildProcessFlowCard(
+                        provider.processFlowFilteredList[index],
+                        index,
+                      );
+                    },
+                  );
+                },
               ),
             ),
-          ),
-        );
-      }),
+          ],
+        ),
+      ),
     );
   }
 
-  List<String> dateButtonTitles = [
-    'Yesterday',
-    'Today',
-    'Tomorrow',
-    'This Week',
-    'This Month',
-  ];
+  Widget _buildHeader(bool isMobile) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
+        children: [
+          // Remove redundant sort icon as it's provided by the parent HomePage AppBar
+          // if (isMobile)
+          //   InkWell(...)
+          Text(
+            'Process Flow',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: isMobile ? 22 : 28,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textBlue800,
+            ),
+          ),
+          const Spacer(),
+          if (settingsProvider.menuIsSaveMap[36] == 1)
+            _buildAddButton(),
+        ],
+      ),
+    );
+  }
 
-  Color parseColor(String colorCode) {
-    try {
-      final hexValue = colorCode.replaceAll("Color(", "").replaceAll(")", "");
-      return Color(
-          int.parse(hexValue)); // Convert the hex string to a Color object
-    } catch (e) {
-      return const Color(0xff34c759); // Default green color
+  Widget _buildAddButton() {
+    return InkWell(
+      onTap: () => _openAddDialog(isEdit: false, model: ProcessFlowModel()),
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: AppColors.secondaryBlue,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.secondaryBlue.withOpacity(0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.add_rounded,
+          color: Colors.white,
+          size: 26,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: TextField(
+          controller: searchController,
+          onChanged: (query) => processFlowProvider.filterData(query),
+          decoration: InputDecoration(
+            hintText: 'Search process flows...',
+            hintStyle: GoogleFonts.plusJakartaSans(
+              color: const Color(0xFF94A3B8),
+              fontSize: 14,
+            ),
+            prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF64748B)),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProcessFlowCard(ProcessFlowModel model, int index) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: const Color(0xFFF1F5F9),
+          width: 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: settingsProvider.menuIsEditMap[36] == 1
+              ? () => _openAddDialog(isEdit: true, model: model.copyWith())
+              : null,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${index + 1}',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.secondaryBlue,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        model.taskTypeName ?? 'Unnamed Task',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textBlue800,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF64748B)),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              model.enquiryForName ?? 'N/A',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: const Color(0xFF64748B),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _buildStatusChip(model.statusName ?? 'Unknown'),
+                    const SizedBox(height: 8),
+                    if (settingsProvider.menuIsDeleteMap[36] == 1)
+                      InkWell(
+                        onTap: () => _confirmDelete(model),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFEF2F2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline_rounded,
+                            color: Color(0xFFEF4444),
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(String status) {
+    Color bgColor;
+    Color textColor;
+
+    switch (status) {
+      case 'Completed':
+        bgColor = const Color(0xFFDCFCE7);
+        textColor = const Color(0xFF166534);
+        break;
+      case 'In Progress':
+        bgColor = const Color(0xFFFEF9C3);
+        textColor = const Color(0xFF854D0E);
+        break;
+      default:
+        bgColor = const Color(0xFFF1F5F9);
+        textColor = const Color(0xFF475569);
     }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        status,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: textColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.assignment_outlined, size: 64, color: Colors.grey[300]),
+          const SizedBox(height: 16),
+          Text(
+            'No process flows found',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              color: Colors.grey[500],
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openAddDialog({required bool isEdit, required ProcessFlowModel model}) {
+    if (AppStyles.isWebScreen(context)) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Colors.white,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width / 1.5,
+            height: MediaQuery.of(context).size.height,
+            child: ProcessFlowAddWidget(
+              isEdit: isEdit,
+              processFlowModel: model,
+            ),
+          ),
+        ),
+      ).then((_) => getData());
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProcessFlowAddWidget(
+            isEdit: isEdit,
+            processFlowModel: model,
+          ),
+        ),
+      ).then((_) => getData());
+    }
+  }
+
+  void _confirmDelete(ProcessFlowModel model) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Confirm Delete',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          'Are you sure you want to delete this process flow?',
+          style: GoogleFonts.plusJakartaSans(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.plusJakartaSans(color: const Color(0xFF64748B)),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await processFlowProvider.deleteProcessFlowById(context, model.flowId!);
+              getData();
+            },
+            child: Text(
+              'Delete',
+              style: GoogleFonts.plusJakartaSans(
+                color: const Color(0xFFEF4444),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

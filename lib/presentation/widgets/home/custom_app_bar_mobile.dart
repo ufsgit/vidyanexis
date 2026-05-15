@@ -71,7 +71,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showUserName = true,
     // Styling defaults
     this.titleStyle,
-    this.leadingWidth = 40,
+    this.leadingWidth = 56,
     this.leadingPadding = const EdgeInsets.only(left: 8),
     this.leadingIconSize = 24,
     this.backgroundColor,
@@ -149,12 +149,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   Widget _defaultLeading(BuildContext context) {
     return Padding(
-      padding: widget.leadingPadding!,
+      padding: widget.leadingPadding ?? EdgeInsets.zero,
       child: IconButton(
-        icon: Icon(
-          Icons.menu,
-          size: widget.leadingIconSize,
-          color: widget.iconColor ?? Colors.black87,
+        icon: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.secondaryBlue.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.sort,
+            size: 20,
+            color: widget.iconColor ?? AppColors.textBlue800,
+          ),
         ),
         onPressed: () {
           Scaffold.of(context).openDrawer();

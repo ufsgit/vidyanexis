@@ -14,6 +14,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
@@ -171,14 +172,25 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     final searchProvider = Provider.of<SidebarProvider>(context);
 
     return Scaffold(
+      drawer: const SidebarDrawer(),
       backgroundColor: AppColors.scaffoldColor,
       appBar: widget.fromDashBoard
           ? CustomAppBar(
-              leadingWidget: InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Icon(Icons.arrow_back)),
+              leadingWidget: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    size: 20,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
               onSearchTap: () {
                 searchProvider.startSearch();
                 leadProvider.toggleFilter();
@@ -201,8 +213,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
-              showSort: true,
-              showOrder: true,
+              showSort: false,
+              showOrder: false,
               sortOrder: leadProvider.sortOrder,
               onOrderTap: () => leadProvider.toggleSortOrder(context),
               onSortTap: (value) {
@@ -238,8 +250,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
-              showSort: true,
-              showOrder: true,
+              showSort: false,
+              showOrder: false,
               sortOrder: leadProvider.sortOrder,
               onOrderTap: () => leadProvider.toggleSortOrder(context),
               onSortTap: (value) {
@@ -254,10 +266,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 );
                 leadProvider.getSearchLeads(context);
               },
-              // onChanged: _onSearchChanged,
               searchController: searchController,
             ),
-      drawer: const SidebarDrawer(),
       body: leadProvider.isLoading
           ? const Center(
               child: LoadingCircle(),

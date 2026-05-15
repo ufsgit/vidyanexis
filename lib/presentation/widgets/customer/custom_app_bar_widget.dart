@@ -50,13 +50,22 @@ class CustomAppBarWidget extends StatelessWidget
     return AppBar(
       backgroundColor: backgroundColor,
       automaticallyImplyLeading: false,
+      leadingWidth: 56,
       leading: IconButton(
         onPressed: onLeadingPressed,
-        icon: leadingIcon ??
-            const Icon(
-              Icons.close,
-              color: Colors.grey,
-            ),
+        icon: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.secondaryBlue.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: leadingIcon ??
+              const Icon(
+                Icons.close,
+                size: 20,
+                color: Colors.grey,
+              ),
+        ),
       ),
       titleSpacing: 0,
       title: RichText(

@@ -239,222 +239,139 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    final isSmallScreen = _isSmallScreen(context);
 
-    return AlertDialog(
+    return Scaffold(
       backgroundColor: Colors.white,
-      contentPadding: EdgeInsets.zero,
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 16 : 40,
-        vertical: isSmallScreen ? 24 : 40,
-      ),
-      content: Container(
-        width: _getDialogWidth(context),
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
-          maxWidth: MediaQuery.of(context).size.width * 0.9,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        title: Text(
+          widget.isEdit ? 'Edit Expense' : 'Add Expense',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textBlue800,
+          ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header
-            Container(
-              padding: _getResponsivePadding(context),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey.shade200,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: Row(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      widget.isEdit
-                          ? 'Edit Expense Management'
-                          : 'Add Expense Management',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: _getResponsiveFontSize(context, 18),
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textBlack,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.close),
-                    iconSize: isSmallScreen ? 20 : 24,
-                  )
+                  _buildSectionTitle('Basic Information'),
+                  const SizedBox(height: 16),
+                  _buildUserDropdown(settingsProvider),
+                  const SizedBox(height: 16),
+                  _buildDateField(),
+                  const SizedBox(height: 32),
+                  
+                  _buildSectionTitle('Project Details'),
+                  const SizedBox(height: 16),
+                  _buildProjectTypeDropdown(),
+                  const SizedBox(height: 16),
+                  _buildProjectDropdown(),
+                  const SizedBox(height: 16),
+                  _buildCustomerDropDown(),
+                  const SizedBox(height: 32),
+                  
+                  _buildSectionTitle('Expense Information'),
+                  const SizedBox(height: 16),
+                  _buildExpenseTypeDropDown(),
+                  const SizedBox(height: 16),
+                  _buildAmountFieldWithGst(),
+                  if (widget.expenseModel.isGst ?? false) ...[
+                    const SizedBox(height: 16),
+                    _buildGstFields(true),
+                  ],
+                  const SizedBox(height: 16),
+                  _buildExpenseHeadField(),
+                  const SizedBox(height: 16),
+                  _buildCommentField(),
+                  const SizedBox(height: 32),
+                  
+                  _buildSectionTitle('Attachments'),
+                  const SizedBox(height: 16),
+                  _buildFileUpload(context),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
-
-            // Content
-            Flexible(
-              child: SingleChildScrollView(
-                padding: _getResponsivePadding(context),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // User and Date Row
-                    isSmallScreen
-                        ? Column(
-                            children: [
-                              _buildUserDropdown(settingsProvider),
-                              SizedBox(height: isSmallScreen ? 12 : 16),
-                              _buildDateField(),
-                            ],
-                          )
-                        : Row(
-                            children: [
-                              Expanded(
-                                  child: _buildUserDropdown(settingsProvider)),
-                              const SizedBox(width: 16),
-                              Expanded(child: _buildDateField()),
-                            ],
-                          ),
-                    SizedBox(height: isSmallScreen ? 12 : 16),
-
-                    // Project Type and Project Row
-                    isSmallScreen
-                        ? Column(
-                            children: [
-                              _buildProjectTypeDropdown(),
-                              SizedBox(height: isSmallScreen ? 12 : 16),
-                              _buildProjectDropdown(),
-                            ],
-                          )
-                        : Row(
-                            children: [
-                              Expanded(child: _buildProjectTypeDropdown()),
-                              const SizedBox(width: 16),
-                              Expanded(child: _buildProjectDropdown()),
-                            ],
-                          ),
-                    SizedBox(height: isSmallScreen ? 12 : 16),
-
-                    // Expense Type and Amount Row
-                    isSmallScreen
-                        ? Column(
-                            children: [
-                              _buildExpenseTypeDropDown(),
-                              SizedBox(height: isSmallScreen ? 12 : 16),
-                              _buildAmountFieldWithGst(),
-                              SizedBox(height: isSmallScreen ? 12 : 16),
-                              _buildCustomerDropDown()
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(child: _buildExpenseTypeDropDown()),
-                                  const SizedBox(width: 16),
-                                  Expanded(child: _buildCustomerDropDown()),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              _buildAmountFieldWithGst(),
-                            ],
-                          ),
-                    SizedBox(height: isSmallScreen ? 12 : 16),
-
-                    // GST Fields (if applicable)
-                    if (widget.expenseModel.isGst ?? false)
-                      _buildGstFields(isSmallScreen),
-
-                    // Expense Head and Comment Row
-                    isSmallScreen
-                        ? Column(
-                            children: [
-                              _buildExpenseHeadField(),
-                              SizedBox(height: isSmallScreen ? 12 : 16),
-                              _buildCommentField(),
-                            ],
-                          )
-                        : Row(
-                            children: [
-                              Expanded(child: _buildExpenseHeadField()),
-                              const SizedBox(width: 16),
-                              Expanded(child: _buildCommentField()),
-                            ],
-                          ),
-                    SizedBox(height: isSmallScreen ? 12 : 16),
-
-                    // File Upload
-                    _buildFileUpload(context),
-                  ],
+          ),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
                 ),
-              ),
+              ],
             ),
-
-            // Action Buttons
-            Container(
-              padding: _getResponsivePadding(context),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  top: BorderSide(
-                    color: Colors.grey.shade200,
-                    width: 1,
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      side: const BorderSide(color: Color(0xFFE2E8F0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              child: isSmallScreen
-                  ? Column(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: CustomElevatedButton(
-                            buttonText: 'Save',
-                            onPressed: _handleSave,
-                            backgroundColor: AppColors.appViolet,
-                            borderColor: AppColors.appViolet,
-                            textColor: AppColors.whiteColor,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: CustomElevatedButton(
-                            buttonText: 'Cancel',
-                            onPressed: () => Navigator.pop(context),
-                            backgroundColor: AppColors.whiteColor,
-                            borderColor: AppColors.appViolet,
-                            textColor: AppColors.appViolet,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CustomElevatedButton(
-                          buttonText: 'Cancel',
-                          onPressed: () => Navigator.pop(context),
-                          backgroundColor: AppColors.whiteColor,
-                          borderColor: AppColors.appViolet,
-                          textColor: AppColors.appViolet,
-                        ),
-                        const SizedBox(width: 16),
-                        CustomElevatedButton(
-                          buttonText: 'Save',
-                          onPressed: _handleSave,
-                          backgroundColor: AppColors.appViolet,
-                          borderColor: AppColors.appViolet,
-                          textColor: AppColors.whiteColor,
-                        ),
-                      ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _handleSave,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondaryBlue,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
+                    child: Text(
+                      'Save',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.plusJakartaSans(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: const Color(0xFF1E293B),
       ),
     );
   }

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_unit_page.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/inventory_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class UnitPage extends StatefulWidget {
@@ -33,43 +33,6 @@ class _UnitPageState extends State<UnitPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header section
-        Row(
-          children: [
-            Text(
-              'Inventory Units',
-              style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlue800),
-            ),
-            const Spacer(),
-            if (settingsProvider.menuIsSaveMap[47] == 1)
-              CustomOutlinedSvgButton(
-                onPressed: () async {
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const AddUnitWidget(
-                        editId: '0',
-                        isEdit: false,
-                      );
-                    },
-                  );
-                },
-                svgPath: 'assets/images/Plus.svg',
-                label: 'New Unit',
-                breakpoint: 600,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                foregroundColor: Colors.white,
-                backgroundColor: AppColors.primaryBlue,
-                borderSide: BorderSide(color: AppColors.primaryBlue),
-              ),
-          ],
-        ),
-        const SizedBox(height: 20),
         settingsProvider.searchUnit.isEmpty
             ? _buildEmptyState()
             : ListView.builder(
@@ -79,12 +42,11 @@ class _UnitPageState extends State<UnitPage> {
                 itemBuilder: (context, index) {
                   final unit = settingsProvider.searchUnit[index];
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: ReportListItem(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: InventoryListItem(
                       title: unit.unitName,
                       subtitle: 'ID: ${unit.unitId}',
                       description: 'Measurement unit for inventory items.',
-                      statusColor: AppColors.primaryBlue,
                       onEdit: settingsProvider.menuIsEditMap[47] == 1
                           ? () {
                               showDialog(
@@ -102,7 +64,8 @@ class _UnitPageState extends State<UnitPage> {
                           : null,
                       onDelete: settingsProvider.menuIsDeleteMap[47] == 1
                           ? () {
-                              _showDeleteDialog(context, settingsProvider, unit.unitId);
+                              _showDeleteDialog(
+                                  context, settingsProvider, unit.unitId);
                             }
                           : null,
                     ),

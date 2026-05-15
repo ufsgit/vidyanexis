@@ -178,10 +178,13 @@
 //   }
 // }
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:provider/provider.dart';
+
 
 class CustomTab extends StatelessWidget {
   const CustomTab({
@@ -196,146 +199,101 @@ class CustomTab extends StatelessWidget {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // Better responsive breakpoints
-    final containerWidth = screenWidth < 400
-        ? screenWidth * 0.95
-        : screenWidth < 800
-            ? screenWidth * 0.95
-            : 900.0;
+    // Accurate available width calculation
+    final containerWidth = screenWidth < 800
+        ? screenWidth - 32 // screenWidth minus horizontal padding (16*2)
+        : 900.0;
 
     final tabOptions = [
-      if (settingsProvider.menuIsViewMap[84].toString() != '0')
-        'Dashboard count',
-      if (settingsProvider.menuIsViewMap[49].toString() != '0')
-        'Leads Overview',
+      if (settingsProvider.menuIsViewMap[84].toString() != '0') 'Dashboard count',
+      if (settingsProvider.menuIsViewMap[49].toString() != '0') 'Leads Overview',
       if (settingsProvider.menuIsViewMap[50].toString() != '0') 'Work Overview',
-      if (settingsProvider.menuIsViewMap[76].toString() != '0')
-        'Amc Notification',
-      if (settingsProvider.menuIsViewMap[77].toString() != '0')
-        'Payment Reminders',
+      if (settingsProvider.menuIsViewMap[76].toString() != '0') 'Amc Notification',
+      if (settingsProvider.menuIsViewMap[77].toString() != '0') 'Payment Reminders',
       if (settingsProvider.menuIsViewMap[51].toString() != '0') 'Task Overview',
       if (settingsProvider.menuIsViewMap[52].toString() != '0') 'Task Summary',
     ];
+
     //change permissions id in dashBoardPage also ----------------
 
     if (tabOptions.isEmpty) {
       return Container();
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Container(
-          height: 40,
-          width: containerWidth,
-          decoration: const BoxDecoration(
-            color: Colors.transparent,
-          ),
-          child: Stack(
-            children: [
-              // Buttons Row
-              Row(
-                children: List.generate(tabOptions.length, (index) {
-                  return Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        _dashBoardProvider.changeTab(index);
-                        // Calculate active tab ID based on permissions
-                        final allowedTabIds = [
-                          if (settingsProvider.menuIsViewMap[84].toString() !=
-                              '0')
-                            6,
-                          if (settingsProvider.menuIsViewMap[49].toString() !=
-                              '0')
-                            0,
-                          if (settingsProvider.menuIsViewMap[50].toString() !=
-                              '0')
-                            1,
-                          if (settingsProvider.menuIsViewMap[76].toString() !=
-                              '0')
-                            4,
-                          if (settingsProvider.menuIsViewMap[77].toString() !=
-                              '0')
-                            5,
-                          if (settingsProvider.menuIsViewMap[51].toString() !=
-                              '0')
-                            2,
-                          if (settingsProvider.menuIsViewMap[52].toString() !=
-                              '0')
-                            3,
-                        ];
+    return Container(
+      height: 38,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(3),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(tabOptions.length, (index) {
+              final isSelected = _dashBoardProvider.tabIndex == index;
+              return GestureDetector(
+                onTap: () {
+                  _dashBoardProvider.changeTab(index);
+                  final allowedTabIds = [
+                    if (settingsProvider.menuIsViewMap[84].toString() != '0') 6,
+                    if (settingsProvider.menuIsViewMap[49].toString() != '0') 0,
+                    if (settingsProvider.menuIsViewMap[50].toString() != '0') 1,
+                    if (settingsProvider.menuIsViewMap[76].toString() != '0') 4,
+                    if (settingsProvider.menuIsViewMap[77].toString() != '0') 5,
+                    if (settingsProvider.menuIsViewMap[51].toString() != '0') 2,
+                    if (settingsProvider.menuIsViewMap[52].toString() != '0') 3,
+                  ];
 
-                        if (index >= 0 && index < allowedTabIds.length) {
-                          _dashBoardProvider.loadDataForTab(
-                              allowedTabIds[index], context);
-                        }
-                      },
-                      borderRadius: BorderRadius.circular(15),
-                      child: Container(
-                        height: 36,
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Text(
-                          screenWidth < 1000
-                              ? _getShortTabName(tabOptions[index])
-                              : tabOptions[index],
-                          style: AppStyles.getBodyTextStyle(
-                            fontSize: screenWidth < 400 ? 11 : 13,
-                            fontColor: const Color(0xFF607085),
-                          ).copyWith(fontWeight: FontWeight.w500),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ),
-              // Animated Selection Indicator
-              Builder(
-                builder: (_) {
-                  final currentIndex = _dashBoardProvider.tabIndex
-                      .clamp(0, tabOptions.length - 1);
-                  final dynamicButtonWidth = containerWidth / tabOptions.length;
-                  return AnimatedPositioned(
-                    duration: const Duration(milliseconds: 600),
-                    curve: Curves.easeInOut,
-                    left: currentIndex * dynamicButtonWidth,
-                    top: 2,
-                    child: Container(
-                      width: dynamicButtonWidth,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color(0xFFE3F2FD),
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Text(
-                            screenWidth < 1000
-                                ? _getShortTabName(tabOptions[currentIndex])
-                                : tabOptions[currentIndex],
-                            style: AppStyles.getBodyTextStyle(
-                              fontSize: screenWidth < 400 ? 11 : 13,
-                              fontColor: const Color(0xFF1A7AE8),
-                            ).copyWith(fontWeight: FontWeight.w700),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
+                  if (index >= 0 && index < allowedTabIds.length) {
+                    _dashBoardProvider.loadDataForTab(allowedTabIds[index], context);
+                  }
                 },
-              ),
-            ],
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: isSelected 
+                      ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2) 
+                      : const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: isSelected ? Colors.white : Colors.transparent,
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+
+                  child: Text(
+                    _getShortTabName(tabOptions[index]),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+                    ),
+                  ),
+                ),
+              );
+            }),
           ),
         ),
-      ],
+      ),
     );
+
+
+
+
   }
 
   String _getShortTabName(String fullName) {
