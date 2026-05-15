@@ -92,6 +92,28 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
         children: [
+          if (isMobile)
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: InkWell(
+                onTap: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.sort_rounded,
+                    size: 20,
+                    color: AppColors.secondaryBlue,
+                  ),
+                ),
+              ),
+            ),
           Text(
             'Process Flow',
             style: GoogleFonts.plusJakartaSans(

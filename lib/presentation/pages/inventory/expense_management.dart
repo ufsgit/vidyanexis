@@ -70,7 +70,9 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                       padding: const EdgeInsets.only(bottom: 12.0),
                       child: Builder(
                         builder: (context) => InkWell(
-                          onTap: () => Scaffold.of(context).openDrawer(),
+                          onTap: () {
+                            Scaffold.of(context).openDrawer();
+                          },
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
                             padding: const EdgeInsets.all(8),

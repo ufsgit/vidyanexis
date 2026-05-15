@@ -52,30 +52,6 @@ class _InventoryPageState extends State<InventoryPage> {
 
       drawer: isMobile ? const SidebarDrawer() : null,
 
-      appBar: isMobile
-          ? CustomAppBar(
-              title: 'Inventory',
-              titleStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textBlack),
-              leadingWidget: IconButton(
-                onPressed: () {
-                  final sideProvider =
-                      Provider.of<SidebarProvider>(context, listen: false);
-                  if (sideProvider.reportPage != null) {
-                    sideProvider.setReportPage(null);
-                  } else {
-                    context.pop();
-                  }
-                },
-                icon: const Icon(Icons.arrow_back, color: AppColors.textGrey4),
-                iconSize: 24,
-              ),
-              showSearch: false,
-              onSearch: (q) {},
-            )
-          : null,
 
       body: isMobile
           ? _buildMobileLayout(expenseProvider, settingsProvider)
@@ -104,7 +80,7 @@ class _InventoryPageState extends State<InventoryPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
-                    Icons.sort,
+                    Icons.sort_rounded,
                     color: Color(0xFF1E293B),
                     size: 20,
                   ),

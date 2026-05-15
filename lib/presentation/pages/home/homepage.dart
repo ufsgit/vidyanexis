@@ -398,12 +398,16 @@ class _HomePageState extends State<HomePage> {
       //   ),
     ];
 
-    bool isCustomerDetailsVisible =
+    bool hideMainAppBar =
         (sideProvider.selectedName == 'Leads' && !sideProvider.replaceLead) ||
             (sideProvider.selectedName == 'Customers' &&
-                !sideProvider.replaceCustomer);
+                !sideProvider.replaceCustomer) ||
+            sideProvider.selectedName == 'Inventory' ||
+            sideProvider.selectedName == 'Process Flow' ||
+            sideProvider.selectedName == 'Expense Management' ||
+            sideProvider.selectedName == 'Settings';
     return Scaffold(
-      appBar: isCustomerDetailsVisible
+      appBar: hideMainAppBar
           ? null
           : AppBar(
               backgroundColor: Colors.white,
