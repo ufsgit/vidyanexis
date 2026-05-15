@@ -1333,7 +1333,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(
             'Share Quotation',
@@ -1350,7 +1350,8 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close dialog
+                Navigator.pop(dialogContext); // Close dialog
+                Navigator.pop(context); // Close page
               },
               child: Text(
                 'No',
@@ -1362,12 +1363,10 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.pop(context); // Close dialog
+                Navigator.pop(dialogContext); // Close dialog
                 final customerDetailsProvider =
                     Provider.of<CustomerDetailsProvider>(context,
                         listen: false);
-                final settingsProvider =
-                    Provider.of<SettingsProvider>(context, listen: false);
 
                 PdfActionHelper.showShareOptions(
                   context: context,
@@ -1382,6 +1381,9 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                     return bytes ?? Uint8List(0);
                   },
                 );
+                if (context.mounted) {
+                  Navigator.pop(context); // Close page
+                }
               },
               child: Text(
                 'Yes',
