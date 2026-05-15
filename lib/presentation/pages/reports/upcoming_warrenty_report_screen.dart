@@ -6,14 +6,13 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
-
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
-
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class UpcomingWarrentyReportScreen extends StatefulWidget {
   const UpcomingWarrentyReportScreen({super.key});
@@ -40,12 +39,15 @@ class _UpcomingWarrentyReportScreen
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final reportsProvider = Provider.of<WarrentyReportProvider>(context);
+    final isWeb = AppStyles.isWebScreen(context);
+
     return Scaffold(
       key: _scaffoldKey,
-      appBar: !AppStyles.isWebScreen(context)
+      appBar: !isWeb
           ? AppBar(
               surfaceTintColor: AppColors.scaffoldColor,
               backgroundColor: AppColors.whiteColor,
@@ -63,613 +65,325 @@ class _UpcomingWarrentyReportScreen
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            AppStyles.isWebScreen(context)
-                ? Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        const Text(
-                          'Upcoming Warranty Reports',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Flexible(child: Container()),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 4,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            onSubmitted: (query) {
-                              reportsProvider.setTaskSearchCriteria(
-                                query,
-                                reportsProvider.fromDateS,
-                                reportsProvider.toDateS,
-                                reportsProvider.Status,
-                                reportsProvider.AssignedTo,
-                              );
-                              reportsProvider
-                                  .getSearchUpcomingWarrantyReport(context);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 4,
-                              ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    String query = searchController.text;
-                                    if (reportsProvider.Search.isNotEmpty) {
-                                      searchController.clear();
-                                      reportsProvider.setTaskSearchCriteria(
-                                        '',
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchUpcomingWarrantyReport(
-                                              context);
-                                    } else {
-                                      reportsProvider.setTaskSearchCriteria(
-                                        query,
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchUpcomingWarrantyReport(
-                                              context);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  child: Text(reportsProvider.Search.isNotEmpty
-                                      ? 'Cancel'
-                                      : 'Search'),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        CustomFilterButton(
-                          onPressed: () {
-                            reportsProvider.toggleFilter();
-                          },
-                          isFilter: reportsProvider.isFilter,
-                        ),
-                        const SizedBox(width: 16),
-                        CustomElevatedButton(
-                          onPressed: () {
-                            exportToExcel(
-                              headers: [
-                                'No',
-                                'Customer Name',
-                                'Project Name',
-                                'Service Name',
-                                'Warranty End Date'
-                              ],
-                              data: reportsProvider.upcomingWarrantyReport
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
-                                var index = entry.key;
-                                var task = entry.value;
-                                return {
-                                  'No': (index + 1).toString(),
-                                  'Customer Name': task.customerName,
-                                  'Project Name': task.projectName,
-                                  'Service Name': task.serviceName,
-                                  'Warranty End Date':
-                                      task.expiryDate.toDayMonthYearFormat(),
-                                };
-                              }).toList(),
-                              fileName: 'Upcoming_Warranty_Report',
-                            );
-                          },
-                          buttonText: 'Export to Excel',
-                          textColor: AppColors.whiteColor,
-                          borderColor: AppColors.appViolet,
-                          backgroundColor: AppColors.appViolet,
-                        ),
-                      ],
+            // ── Header & Basic Filters ─────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  if (isWeb)
+                    Text(
+                      'Upcoming Warranty Reports',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            onSubmitted: (query) {
-                              reportsProvider.setTaskSearchCriteria(
-                                query,
-                                reportsProvider.fromDateS,
-                                reportsProvider.toDateS,
-                                reportsProvider.Status,
-                                reportsProvider.AssignedTo,
-                              );
-                              reportsProvider
-                                  .getSearchUpcomingWarrantyReport(context);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 0,
-                              ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    String query = searchController.text;
-                                    if (reportsProvider.Search.isNotEmpty) {
-                                      searchController.clear();
-                                      reportsProvider.setTaskSearchCriteria(
-                                        '',
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchUpcomingWarrantyReport(
-                                              context);
-                                    } else {
-                                      reportsProvider.setTaskSearchCriteria(
-                                        query,
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchUpcomingWarrantyReport(
-                                              context);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 0,
-                                    ),
-                                  ),
-                                  child: Text(reportsProvider.Search.isNotEmpty
-                                      ? 'Cancel'
-                                      : 'Search'),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            CustomFilterButton(
-                              onPressed: () {
-                                reportsProvider.toggleFilter();
-                              },
-                              isFilter: reportsProvider.isFilter,
-                            ),
-                            const SizedBox(width: 16),
-                            CustomElevatedButton(
-                              onPressed: () {
-                                exportToExcel(
-                                  headers: [
-                                    'No',
-                                    'Customer Name',
-                                    'Project Name',
-                                    'Service Name',
-                                    'Warranty End Date'
-                                  ],
-                                  data: reportsProvider.upcomingWarrantyReport
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
-                                    var index = entry.key;
-                                    var task = entry.value;
-                                    return {
-                                      'No': (index + 1).toString(),
-                                      'Customer Name': task.customerName,
-                                      'Project Name': task.projectName,
-                                      'Service Name': task.serviceName,
-                                      'Warranty End Date': task.expiryDate
-                                          .toDayMonthYearFormat(),
-                                    };
-                                  }).toList(),
-                                  fileName: 'Upcoming_Warranty_Report',
-                                );
-                              },
-                              buttonText: 'Export',
-                              textColor: AppColors.whiteColor,
-                              borderColor: AppColors.appViolet,
-                              backgroundColor: AppColors.appViolet,
-                            )
-                          ],
-                        ),
-                      ],
+                  if (isWeb) const Spacer(),
+                  // Search Bar
+                  Container(
+                    width:
+                        isWeb ? 300 : MediaQuery.of(context).size.width * 0.5,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      onSubmitted: (query) => _applySearch(reportsProvider),
+                      decoration: InputDecoration(
+                        hintText: 'Search here....',
+                        prefixIcon: const Icon(Icons.search, size: 20),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                      ),
                     ),
                   ),
-            if (reportsProvider.isFilter)
-              AppStyles.isWebScreen(context)
-                  ? Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          const Spacer(),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            CommonReportResetButton(
-                              onReset: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider
-                                    .getSearchUpcomingWarrantyReport(context);
-                              },
-                            ),
-                        ],
-                      ),
-                    )
-                    : Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                        padding: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Wrap(
-                          runSpacing: 10,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            CommonReportDateFilter(
-                              fromDate: reportsProvider.fromDate?.toString(),
-                              toDate: reportsProvider.toDate?.toString(),
-                              formattedFromDate:
-                                  reportsProvider.formattedFromDate,
-                              formattedToDate: reportsProvider.formattedToDate,
-                              onTap: () => onClickTopButton(context),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            if (reportsProvider.fromDate != null ||
-                                reportsProvider.toDate != null ||
-                                (reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0) ||
-                                (reportsProvider.selectedUser != null &&
-                                    reportsProvider.selectedUser != 0) ||
-                                reportsProvider.Search.isNotEmpty)
-                              CommonReportResetButton(
-                                onReset: () {
-                                  reportsProvider.selectDateFilterOption(null);
-                                  reportsProvider.removeStatus();
-                                  searchController.clear();
-                                  reportsProvider.setTaskSearchCriteria(
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                  );
-                                  reportsProvider
-                                      .getSearchUpcomingWarrantyReport(context);
-                                },
-                              ),
-                          ],
-                        ),
-                      ),
+                  const SizedBox(width: 12),
+                  CustomFilterButton(
+                    onPressed: () => reportsProvider.toggleFilter(),
+                    isFilter: reportsProvider.isFilter,
+                  ),
+                  const SizedBox(width: 12),
+                  CustomElevatedButton(
+                    onPressed: () => _exportExcel(reportsProvider),
+                    buttonText: isWeb ? 'Export to Excel' : 'Export',
+                    textColor: AppColors.whiteColor,
+                    borderColor: AppColors.appViolet,
+                    backgroundColor: AppColors.appViolet,
+                  ),
+                ],
+              ),
+            ),
 
-            AppStyles.isWebScreen(context)
-                ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 60,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 15.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF607185))),
-                                      ),
-                                    ),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Customer Name',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Project Name',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Service Name',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Warranty End Date',
-                                        color: Color(0xFF607185)),
-                                  ],
-                                ),
-                              ),
-                              // Data Rows
-                              Expanded(
-                                child: reportsProvider
-                                        .upcomingWarrantyReport.isEmpty
-                                    ? Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const SizedBox(height: 80),
-                                            Icon(Icons.search_off_outlined,
-                                                size: 80,
-                                                color: Colors.grey[300]),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              'No upcoming warranty reports found',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey[600],
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : ListView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const AlwaysScrollableScrollPhysics(),
-                                        itemCount: reportsProvider
-                                            .upcomingWarrantyReport.length,
-                                        itemBuilder: (context, index) {
-                                          var item = reportsProvider
-                                              .upcomingWarrantyReport[index];
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              color: index % 2 == 0
-                                                  ? Colors.white
-                                                  : const Color(0xFFF6F7F9),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: 60,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 15.0),
-                                                    child: Text(
-                                                        (index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )),
-                                                  ),
-                                                ),
-                                                TableWidget(
-                                                  flex: 2,
-                                                  data: InkWell(
-                                                    onTap: () {
-                                                      context.push(
-                                                          '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFE9EDF1),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50),
-                                                      ),
-                                                      child: Text(
-                                                        item.customerName,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                TableWidget(
-                                                    flex: 2,
-                                                    title: item.projectName),
-                                                TableWidget(
-                                                    flex: 2,
-                                                    title: item.serviceName),
-                                                TableWidget(
-                                                    flex: 1,
-                                                    title: item.expiryDate
-                                                        .toDayMonthYearFormat()),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                  : Expanded(
-                      child: reportsProvider.upcomingWarrantyReport.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(height: 80),
-                                  Icon(Icons.search_off_outlined,
-                                      size: 80, color: Colors.grey[300]),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'No upcoming warranty reports found',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : ListView.separated(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 6),
-                              separatorBuilder: (context, index) =>
-                                  Divider(height: 2, color: AppColors.grey),
-                              itemCount:
-                                  reportsProvider.upcomingWarrantyReport.length,
-                              itemBuilder: (context, index) {
-                                var item = reportsProvider
-                                    .upcomingWarrantyReport[index];
-                                return ReportListItem(
-                                  title: item.projectName,
-                                  subtitle: '${item.customerName} >',
-                                  onSubtitleTap: () {
-                                    context.push(
-                                        '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
-                                  },
-                                  status:
-                                      'Ends: ${item.expiryDate.toDayMonthYearFormat()}',
-                                  statusColor: AppColors.appViolet,
-                                  description: item.serviceName,
-                                  bottomLeftIcon:
-                                      Icons.medical_services_outlined,
-                                  bottomLeftText: 'Warranty',
-                                );
-                              },
-                            ),
-                    ),
+            // ── Expanded Filter Bar (Web Style) ───────────────────────────
+            if (reportsProvider.isFilter || isWeb)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: isWeb
+                    ? _buildWebFilterBar(reportsProvider)
+                    : _buildMobileFilterBar(reportsProvider),
+              ),
+
+            // ── List/Table View ───────────────────────────────────────────
+            Expanded(
+              child: reportsProvider.upcomingWarrantyReport.isEmpty
+                  ? _buildEmptyState()
+                  : isWeb
+                      ? _buildWebTable(reportsProvider)
+                      : _buildMobileList(reportsProvider),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _applySearch(WarrentyReportProvider reportsProvider) {
+    reportsProvider.setTaskSearchCriteria(
+      searchController.text,
+      reportsProvider.fromDateS,
+      reportsProvider.toDateS,
+      reportsProvider.Status,
+      reportsProvider.AssignedTo,
+    );
+    reportsProvider.getSearchUpcomingWarrantyReport(context);
+  }
+
+  void _exportExcel(WarrentyReportProvider reportsProvider) {
+    exportToExcel(
+      headers: ['No', 'Customer Name', 'Phone Number', 'Warranty Date'],
+      data: reportsProvider.upcomingWarrantyReport.asMap().entries.map((entry) {
+        var index = entry.key;
+        var item = entry.value;
+        return {
+          'No': (index + 1).toString(),
+          'Customer Name': item.customerName,
+          'Phone Number': item.contactNumber,
+          'Warranty Date': item.expiryDate.toDayMonthYearFormat(),
+        };
+      }).toList(),
+      fileName: 'Upcoming_Warranty_Report',
+    );
+  }
+
+  Widget _buildWebFilterBar(WarrentyReportProvider reportsProvider) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        children: [
+          CommonReportDateFilter(
+            fromDate: reportsProvider.fromDate?.toString(),
+            toDate: reportsProvider.toDate?.toString(),
+            formattedFromDate: reportsProvider.formattedFromDate,
+            formattedToDate: reportsProvider.formattedToDate,
+            onTap: () => onClickTopButton(context),
+          ),
+          const SizedBox(width: 16),
+          ElevatedButton(
+            onPressed: () => _applySearch(reportsProvider),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.appViolet,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+            child: const Text('Apply'),
+          ),
+          const SizedBox(width: 12),
+          if (reportsProvider.fromDate != null ||
+              searchController.text.isNotEmpty)
+            CommonReportResetButton(
+              onReset: () {
+                reportsProvider.selectDateFilterOption(null);
+                searchController.clear();
+                reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+                reportsProvider.getSearchUpcomingWarrantyReport(context);
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobileFilterBar(WarrentyReportProvider reportsProvider) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          CommonReportDateFilter(
+            fromDate: reportsProvider.fromDate?.toString(),
+            toDate: reportsProvider.toDate?.toString(),
+            formattedFromDate: reportsProvider.formattedFromDate,
+            formattedToDate: reportsProvider.formattedToDate,
+            onTap: () => onClickTopButton(context),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _applySearch(reportsProvider),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.appViolet,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Apply Filter'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              CommonReportResetButton(
+                onReset: () {
+                  reportsProvider.selectDateFilterOption(null);
+                  searchController.clear();
+                  reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+                  reportsProvider.getSearchUpcomingWarrantyReport(context);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWebTable(WarrentyReportProvider reportsProvider) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            // Header Row
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEFF2F5),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(12)),
+              ),
+              child: Row(
+                children: [
+                  const SizedBox(
+                      width: 60,
+                      child: Text('No.',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  Expanded(
+                      flex: 3,
+                      child: Text('Customer Name',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  Expanded(
+                      flex: 2,
+                      child: Text('Phone Number',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  Expanded(
+                      flex: 2,
+                      child: Text('Warranty Date',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                ],
+              ),
+            ),
+            // Data Rows
+            Expanded(
+              child: ListView.builder(
+                itemCount: reportsProvider.upcomingWarrantyReport.length,
+                itemBuilder: (context, index) {
+                  final item = reportsProvider.upcomingWarrantyReport[index];
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 16),
+                    decoration: BoxDecoration(
+                      border:
+                          Border(bottom: BorderSide(color: Colors.grey[100]!)),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 60, child: Text('${index + 1}')),
+                        Expanded(
+                          flex: 3,
+                          child: InkWell(
+                            onTap: () {
+                              context.push(
+                                  '${CustomerDetailsScreen.route}${item.customerId}/true');
+                            },
+                            child: Text(
+                              item.customerName,
+                              style: const TextStyle(
+                                  color: AppColors.primaryBlue,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Expanded(flex: 2, child: Text(item.contactNumber)),
+                        Expanded(
+                            flex: 2,
+                            child:
+                                Text(item.expiryDate.toDayMonthYearFormat())),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileList(WarrentyReportProvider reportsProvider) {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemCount: reportsProvider.upcomingWarrantyReport.length,
+      itemBuilder: (context, index) {
+        final item = reportsProvider.upcomingWarrantyReport[index];
+        return ReportListItem(
+          title: item.customerName,
+          subtitle: item.contactNumber,
+          bottomRightText:
+              'Warranty Date: ${item.expiryDate.toDayMonthYearFormat()}',
+          status: 'Upcoming Warranty',
+          statusColor: AppColors.appViolet,
+          onTap: () {
+            context
+                .push('${CustomerDetailsScreen.route}${item.customerId}/true');
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[200]),
+          const SizedBox(height: 16),
+          Text(
+            'No upcoming warranty reports found',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -678,181 +392,103 @@ class _UpcomingWarrentyReportScreen
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (contextx) => Consumer<WarrentyReportProvider>(
-        builder: (contextx, reportsProvider, child) {
+      builder: (context) => Consumer<WarrentyReportProvider>(
+        builder: (context, reportsProvider, child) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-            contentPadding: const EdgeInsets.all(10),
-            content: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Center(
-                      child: Text(
-                        'Choose Date',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: List<Widget>.generate(dateButtonTitles.length,
-                          (index) {
-                        String title = dateButtonTitles[index];
-                        return ActionChip(
-                          onPressed: () {
-                            reportsProvider.setDateFilter(title);
-                            reportsProvider.selectDateFilterOption(index);
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          label: Text(title),
-                          backgroundColor:
-                              reportsProvider.selectedDateFilterIndex == index
-                                  ? AppColors.primaryBlue
-                                  : Colors.white,
-                          labelStyle: TextStyle(
-                            color:
-                                reportsProvider.selectedDateFilterIndex == index
-                                    ? Colors.white
-                                    : Colors.black,
-                          ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 15),
-                    const Text(
-                      'Pick a date',
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+            content: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Choose Date',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () =>
-                                reportsProvider.selectDate(context, true),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: reportsProvider.fromDate != null
-                                  ? '${reportsProvider.fromDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'From',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () =>
-                                reportsProvider.selectDate(context, false),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: reportsProvider.toDate != null
-                                  ? '${reportsProvider.toDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'To',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      'Yesterday',
+                      'Today',
+                      'Tomorrow',
+                      'This Week',
+                      'This Month'
+                    ].map((title) {
+                      final index = [
+                        'Yesterday',
+                        'Today',
+                        'Tomorrow',
+                        'This Week',
+                        'This Month'
+                      ].indexOf(title);
+                      return ActionChip(
+                        label: Text(title),
                         onPressed: () {
-                          Navigator.pop(context);
-
-                          reportsProvider.formatDate();
-
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = reportsProvider.formattedFromDate;
-                          String toDate = reportsProvider.formattedToDate;
-                          reportsProvider.setTaskSearchCriteria(
-                              reportsProvider.Search,
-                              fromDate,
-                              toDate,
-                              status,
-                              assignedTo);
-                          reportsProvider
-                              .getSearchUpcomingWarrantyReport(context);
+                          reportsProvider.setDateFilter(title);
+                          reportsProvider.selectDateFilterOption(index);
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                        backgroundColor:
+                            reportsProvider.selectedDateFilterIndex == index
+                                ? AppColors.primaryBlue
+                                : Colors.white,
+                        labelStyle: TextStyle(
+                          color:
+                              reportsProvider.selectedDateFilterIndex == index
+                                  ? Colors.white
+                                  : Colors.black,
                         ),
-                        child: const Text(
-                          'Apply',
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          readOnly: true,
+                          onTap: () =>
+                              reportsProvider.selectDate(context, true),
+                          decoration: InputDecoration(
+                            hintText: reportsProvider.fromDate != null
+                                ? reportsProvider.formattedFromDate
+                                : 'From',
+                            suffixIcon: const Icon(Icons.calendar_month),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          reportsProvider.selectDateFilterOption(null);
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = '';
-                          String toDate = '';
-                          reportsProvider.setTaskSearchCriteria(
-                            reportsProvider.Search,
-                            fromDate,
-                            toDate,
-                            status,
-                            assignedTo,
-                          );
-                          reportsProvider
-                              .getSearchUpcomingWarrantyReport(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.textRed.withOpacity(0.1),
-                          foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          readOnly: true,
+                          onTap: () =>
+                              reportsProvider.selectDate(context, false),
+                          decoration: InputDecoration(
+                            hintText: reportsProvider.toDate != null
+                                ? reportsProvider.formattedToDate
+                                : 'To',
+                            suffixIcon: const Icon(Icons.calendar_month),
                           ),
                         ),
-                        child: const Text(
-                          'Clear',
-                        ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        reportsProvider.formatDate();
+                        _applySearch(reportsProvider);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.appViolet,
+                          foregroundColor: Colors.white),
+                      child: const Text('Apply'),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );
@@ -860,12 +496,4 @@ class _UpcomingWarrentyReportScreen
       ),
     );
   }
-
-  List<String> dateButtonTitles = [
-    'Yesterday',
-    'Today',
-    'Tomorrow',
-    'This Week',
-    'This Month',
-  ];
 }
