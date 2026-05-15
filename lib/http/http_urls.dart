@@ -7,7 +7,7 @@ class HttpUrls {
   // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.ufstech.net.in/';
-  static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
+  // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicaapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
