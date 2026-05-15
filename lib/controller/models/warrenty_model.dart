@@ -127,12 +127,14 @@ class WarrentyModel {
       registeredBy: json['Registered_By']?.toString() ?? "",
       registeredDate: json['Registered_Date']?.toString() ?? "",
       registrationNo: json['Registration_No']?.toString() ?? "",
-      installationDate: json['Installation_Date']?.toString() ??
-          json['From_Date']?.toString() ??
-          "",
-      expiryDate: json['Expiry_Date']?.toString() ??
-          json['Warranty_End_Date']?.toString() ??
-          "",
+      installationDate: (json['Installation_Date']?.toString() ?? "").isNotEmpty
+          ? json['Installation_Date'].toString()
+          : json['From_Date']?.toString() ?? "",
+      expiryDate: (json['Expiry_Date']?.toString() ?? "").isNotEmpty
+          ? json['Expiry_Date'].toString()
+          : (json['Warranty_End_Date']?.toString() ?? "").isNotEmpty
+              ? json['Warranty_End_Date'].toString()
+              : json['Warranty_Date']?.toString() ?? "",
       district:
           json['District']?.toString() ?? json['District_Id']?.toString() ?? "",
       company: json['Company']?.toString() ?? "",
