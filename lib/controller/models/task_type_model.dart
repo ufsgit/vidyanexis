@@ -30,6 +30,8 @@ class TaskTypeModel {
 
   String? departmentName;
   List<Status> statuses;
+  List<EnquiryFor>? enquiryFor;
+  int enquiryForVisible;
 
   TaskTypeModel(
       {required this.taskTypeId,
@@ -48,6 +50,8 @@ class TaskTypeModel {
       required this.orderBy,
       required this.statuses,
       required this.departmentName,
+      this.enquiryFor,
+      required this.enquiryForVisible,
       this.description});
 
   factory TaskTypeModel.fromJson(Map<String, dynamic> json) => TaskTypeModel(
@@ -66,9 +70,7 @@ class TaskTypeModel {
               0,
       locationTracking: json["Location_Tracking"] is bool
           ? (json["Location_Tracking"] as bool ? 1 : 0)
-          : int.tryParse(json["Location_Tracking"]?.toString() ??
-                  json["location_tracking"]?.toString() ??
-                  '0') ??
+          : int.tryParse(json["Location_Tracking"]?.toString() ?? json["location_tracking"]?.toString() ?? '0') ??
               0,
       commissionNumber: json["Commission_Number"] is bool
           ? (json["Commission_Number"] as bool ? 1 : 0)
@@ -101,6 +103,10 @@ class TaskTypeModel {
       statuses: json["Statuses"] == null
           ? []
           : List<Status>.from(json["Statuses"].map((x) => Status.fromJson(x))),
+      enquiryFor: json["Enquiry_For_Ids"] == null
+          ? []
+          : List<EnquiryFor>.from(json["Enquiry_For_Ids"].map((x) => EnquiryFor.fromJson(x))),
+      enquiryForVisible: int.tryParse(json["Enquiry_For_Visible"]?.toString() ?? json["enquiry_for_visible"]?.toString() ?? '0') ?? 0,
       departmentName: json["Department_Name"],
       description: json["Description"]?.toString());
 
@@ -122,8 +128,28 @@ class TaskTypeModel {
         "Manual_Creation": manualCreation,
         "Order_By": orderBy,
         "Statuses": List<dynamic>.from(statuses.map((x) => x.toJson())),
+        "Enquiry_For_Ids": enquiryFor == null
+            ? []
+            : List<dynamic>.from(enquiryFor!.map((x) => x.toJson())),
+        "Enquiry_For_Visible": enquiryForVisible,
         "Department_Name": departmentName,
         "Description": description,
+      };
+}
+
+class EnquiryFor {
+  int enquiryForId;
+
+  EnquiryFor({
+    required this.enquiryForId,
+  });
+
+  factory EnquiryFor.fromJson(Map<String, dynamic> json) => EnquiryFor(
+        enquiryForId: json["EnquiryFor_Id"] ?? 0,
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Enquiry_For_Id": enquiryForId,
       };
 }
 

@@ -50,6 +50,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
       reportsProvider.getSearchConversionReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getEnquiryFor(context);
+      provider.getEnquirySource(context);
       provider.getAllFollowUpStatus(context, "0");
       provider.getUserDetails(context);
     });
@@ -534,67 +535,178 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: reportsProvider.selectedStatus !=
-                                              null &&
-                                          reportsProvider.selectedStatus != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
+                                color: reportsProvider.selectedStatus != null &&
+                                        reportsProvider.selectedStatus != 0
+                                    ? AppColors.primaryBlue
+                                    : Colors.grey[300]!,
+                              ),
                             ),
                             child: Row(
                               children: [
                                 const Text('Enquiry For: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedStatus,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
+                                const SizedBox(width: 8), // Small spacing
+
+                                // Constrain the dropdown width
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                      maxWidth: 130), // ← Adjust this value
+                                  child: DropdownButton<int>(
+                                    value: reportsProvider.selectedStatus,
+                                    hint: const Text('All'),
+                                    isExpanded:
+                                        true, // Important: Makes it fill the constrained width
+                                    items: [
+                                          const DropdownMenuItem<int>(
+                                            value: 0,
+                                            child: Text('All',
+                                                style: TextStyle(fontSize: 14)),
                                           ),
-                                        ),
-                                      ] +
-                                      provider.enquiryForList
-                                          .map(
+                                        ] +
+                                        provider.enquiryForList
+                                            .map(
                                               (status) => DropdownMenuItem<int>(
-                                                    value: status.enquiryForId,
-                                                    child: Text(
-                                                      status.enquiryForName,
-                                                      style: const TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setStatus(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
+                                                value: status.enquiryForId,
+                                                child: Text(
+                                                  status.enquiryForName,
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Prevent overflow
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        reportsProvider.setStatus(newValue);
+                                      }
+
+                                      String status = reportsProvider
+                                          .selectedStatus
+                                          .toString();
+                                      String assignedTo = reportsProvider
+                                          .selectedUser
+                                          .toString();
+                                      String fromDate =
+                                          reportsProvider.formattedFromDate;
+                                      String toDate =
+                                          reportsProvider.formattedToDate;
+
+                                      reportsProvider.setTaskSearchCriteria(
                                         reportsProvider.Search,
                                         fromDate,
                                         toDate,
                                         status,
-                                        assignedTo);
-                                    reportsProvider
-                                        .getSearchConversionReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
+                                        assignedTo,
+                                      );
+                                      reportsProvider
+                                          .getSearchConversionReport(context);
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.black),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color:
+                                    reportsProvider.selectedEnquirySourceId !=
+                                                null &&
+                                            reportsProvider
+                                                    .selectedEnquirySourceId !=
+                                                0
+                                        ? AppColors.primaryBlue
+                                        : Colors.grey[300]!,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text('Enquiry Source: '),
+                                const SizedBox(
+                                    width:
+                                        8), // Spacing between label and dropdown
+
+                                // Constrain dropdown width
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                      maxWidth: 130), // ← You can adjust this
+                                  child: DropdownButton<int>(
+                                    value:
+                                        reportsProvider.selectedEnquirySourceId,
+                                    hint: const Text('All'),
+                                    isExpanded:
+                                        true, // Important for proper width control
+                                    items: [
+                                          const DropdownMenuItem<int>(
+                                            value: 0,
+                                            child: Text(
+                                              'All',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                          ),
+                                        ] +
+                                        provider.enquiryData
+                                            .map(
+                                              (status) => DropdownMenuItem<int>(
+                                                value: status.enquirySourceId,
+                                                child: Text(
+                                                  status.enquirySourceName,
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Prevents overflow
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        reportsProvider
+                                            .setEnquirySource(newValue);
+                                      }
+
+                                      String status = reportsProvider
+                                          .selectedStatus
+                                          .toString();
+                                      String assignedTo = reportsProvider
+                                          .selectedUser
+                                          .toString();
+                                      String fromDate =
+                                          reportsProvider.formattedFromDate;
+                                      String toDate =
+                                          reportsProvider.formattedToDate;
+
+                                      reportsProvider.setTaskSearchCriteria(
+                                        reportsProvider.Search,
+                                        fromDate,
+                                        toDate,
+                                        status,
+                                        assignedTo,
+                                      );
+                                      reportsProvider
+                                          .getSearchConversionReport(context);
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -792,6 +904,10 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                   reportsProvider.selectedStatus != 0) ||
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
+                              (reportsProvider.selectedEnquirySourceId !=
+                                      null &&
+                                  reportsProvider.selectedEnquirySourceId !=
+                                      0) ||
                               (reportsProvider.selectedFollowUpStatusId !=
                                       null &&
                                   reportsProvider.selectedFollowUpStatusId !=
@@ -865,6 +981,45 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                           onTap: () {
                                             reportsProvider
                                                 .setStatus(e.enquiryForId);
+                                            reportsProvider
+                                                .getSearchConversionReport(
+                                                    context);
+                                          },
+                                        )),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            CustomText('Enquiry Source',
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textBlack),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: [
+                                FilterChipWidget(
+                                  label: 'All',
+                                  isSelected: reportsProvider
+                                              .selectedEnquirySourceId ==
+                                          0 ||
+                                      reportsProvider.selectedEnquirySourceId ==
+                                          null,
+                                  onTap: () {
+                                    reportsProvider.setEnquirySource(0);
+                                    reportsProvider
+                                        .getSearchConversionReport(context);
+                                  },
+                                ),
+                                ...provider.enquiryData
+                                    .map((e) => FilterChipWidget(
+                                          label: e.enquirySourceName,
+                                          isSelected: reportsProvider
+                                                  .selectedEnquirySourceId ==
+                                              e.enquirySourceId,
+                                          onTap: () {
+                                            reportsProvider.setEnquirySource(
+                                                e.enquirySourceId);
                                             reportsProvider
                                                 .getSearchConversionReport(
                                                     context);

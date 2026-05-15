@@ -35,6 +35,8 @@ class ConversionReportProvider extends ChangeNotifier {
   int? _selectedAMCStatus;
   int? _selectedUser;
   int? selectedFollowUpStatusId;
+  int? _selectedEnquirySourceId;
+  int? get selectedEnquirySourceId => _selectedEnquirySourceId;
   int? _selectedDateFilterIndex;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
   int? get selectedStatus => _selectedStatus;
@@ -150,6 +152,11 @@ class ConversionReportProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void setEnquirySource(int newSource) {
+    _selectedEnquirySourceId = newSource;
+    notifyListeners();
+  }
+
   void setUserFilterStatus(int newStatus) {
     _selectedUser = newStatus;
     print(_selectedUser.toString());
@@ -158,6 +165,7 @@ class ConversionReportProvider extends ChangeNotifier {
 
   void removeStatus() {
     _selectedStatus = null;
+    _selectedEnquirySourceId = null;
     _selectedUser = null;
     _selectedDateFilterIndex = null;
     selectedFollowUpStatusId = null;
@@ -200,10 +208,11 @@ class ConversionReportProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
       String toUserId = (_selectedUser ?? 0).toString();
+      String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId&Status_Id=${selectedFollowUpStatusId ?? 0}');
+              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId&Status_Id=${selectedFollowUpStatusId ?? 0}&Enquiry_Source_Id=$enquirySourceIdStr');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -253,10 +262,11 @@ class ConversionReportProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       String toUserId = (_selectedUser ?? 0).toString();
+      String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId');
+              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId&Status_Id=${selectedFollowUpStatusId ?? 0}&Enquiry_Source_Id=$enquirySourceIdStr');
 
       if (response.statusCode == 200) {
         final data = response.data;
