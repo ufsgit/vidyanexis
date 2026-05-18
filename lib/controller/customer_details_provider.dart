@@ -4194,7 +4194,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     deliveryController.text = quotation.onDeliveryPercentage;
     workCompletionController.text = quotation.workCompletionPercentage;
     qsubsidyAmountController.text = quotation.subsidyAmount;
-    _isSubsidyChecked = (double.tryParse(quotation.subsidyAmount) ?? 0) > 0;
+    _isSubsidyChecked = quotation.subsidyticked == 1;
     qDiscountController.text = quotation.discountAmount;
     qwarrentyController.text = quotation.warranty;
     qtermsConditionsController.text = quotation.termsAndConditions;

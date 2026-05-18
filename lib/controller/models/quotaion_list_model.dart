@@ -12,6 +12,7 @@ class QuatationListModel {
   final String advancePercentage;
   String totalAmount;
   String subsidyAmount;
+  int? subsidyticked;
   String netTotal;
   String productName;
   String warranty;
@@ -42,6 +43,7 @@ class QuatationListModel {
     required this.paymentTermDescription,
     required this.totalAmount,
     required this.subsidyAmount,
+    this.subsidyticked,
     required this.netTotal,
     required this.productName,
     required this.warranty,
@@ -80,6 +82,7 @@ class QuatationListModel {
         paymentTermDescription: json["Payment_Term_Description"] ?? '',
         totalAmount: json["TotalAmount"] ?? '0.0',
         subsidyAmount: json["Subsidy_Amount"] ?? '0.0',
+        subsidyticked: json["Subsidyticked"] != null ? int.tryParse(json["Subsidyticked"].toString()) : null,
         netTotal: json["NetTotal"] ?? '0.0',
         productName: json["Product_Name"] ?? '',
         warranty: json["Warranty"] ?? '',
@@ -122,6 +125,7 @@ class QuatationListModel {
         "Payment_Term_Description": paymentTermDescription,
         "TotalAmount": totalAmount,
         "Subsidy_Amount": subsidyAmount,
+        "Subsidyticked": subsidyticked,
         "NetTotal": netTotal,
         "Product_Name": productName,
         "Warranty": warranty,
