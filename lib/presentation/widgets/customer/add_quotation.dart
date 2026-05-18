@@ -389,6 +389,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                       ))
                                   .toList(),
                           controllerKey: 'quotation',
+                          showEditButton: true,
                         ),
                         const SizedBox(height: 16),
                       ],

@@ -2340,6 +2340,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "TotalAmount": subtotalController.text,
         "Subsidy_Amount":
             double.tryParse(qsubsidyAmountController.text.toString()) ?? 0,
+        "Subsidyticked": _isSubsidyChecked ? 1 : 0,
         "Discount_Amount":
             double.tryParse(qDiscountController.text.toString()) ?? 0,
         "NetTotal": totalController.text,
@@ -4193,7 +4194,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     deliveryController.text = quotation.onDeliveryPercentage;
     workCompletionController.text = quotation.workCompletionPercentage;
     qsubsidyAmountController.text = quotation.subsidyAmount;
-    _isSubsidyChecked = (double.tryParse(quotation.subsidyAmount) ?? 0) > 0;
+    _isSubsidyChecked = quotation.subsidyticked == 1;
     qDiscountController.text = quotation.discountAmount;
     qwarrentyController.text = quotation.warranty;
     qtermsConditionsController.text = quotation.termsAndConditions;
