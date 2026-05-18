@@ -102,9 +102,10 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                 }
                               }
                             },
+                      radius: 12,
                       backgroundColor: AppColors.whiteColor,
-                      borderColor: AppColors.appViolet,
-                      textColor: AppColors.appViolet,
+                      borderColor: const Color(0xFFE2E8F0),
+                      textColor: const Color(0xFF64748B),
                     ),
                   //save
                   const SizedBox(
@@ -112,8 +113,9 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                   ),
                   if (data.isNotEmpty)
                     CustomElevatedButton(
-                      backgroundColor: AppColors.appViolet,
-                      borderColor: AppColors.appViolet,
+                      radius: 12,
+                      backgroundColor: AppColors.secondaryBlue,
+                      borderColor: AppColors.secondaryBlue,
                       textColor: AppColors.whiteColor,
                       onPressed: leadProvider.isImporting
                           ? null
@@ -221,8 +223,9 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                         // Request permission to access storage
                         leadProvider.downloadExcelFile();
                       },
-                      backgroundColor: AppColors.appViolet,
-                      borderColor: AppColors.whiteColor,
+                      radius: 12,
+                      backgroundColor: AppColors.secondaryBlue,
+                      borderColor: AppColors.secondaryBlue,
                       textColor: AppColors.whiteColor,
                     ),
                   ],
@@ -236,7 +239,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                         leadProvider.importStatusText,
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.appViolet,
+                          color: AppColors.secondaryBlue,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -244,7 +247,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                         value: leadProvider.importProgress,
                         backgroundColor: Colors.grey[200],
                         valueColor: const AlwaysStoppedAnimation<Color>(
-                            AppColors.appViolet),
+                            AppColors.secondaryBlue),
                         minHeight: 10,
                         borderRadius: BorderRadius.circular(5),
                       ),
@@ -540,7 +543,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                             child: Text(
                               'Showing first 50 of ${data.length} records. Total ${data.length} records will be imported.',
                               style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.appViolet,
+                                color: AppColors.secondaryBlue,
                                 fontWeight: FontWeight.w600,
                                 fontStyle: FontStyle.italic,
                               ),
@@ -637,7 +640,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
             title: Text(
               'Cannot save',
               style: TextStyle(
-                color: AppColors.appViolet,
+                color: AppColors.secondaryBlue,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -659,7 +662,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                 child: Text(
                   'OK',
                   style: TextStyle(
-                    color: AppColors.appViolet,
+                    color: AppColors.secondaryBlue,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

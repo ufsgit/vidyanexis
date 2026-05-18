@@ -413,9 +413,10 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                 onPressed: () async {
                   await settingsProvider.addFile();
                 },
+                radius: 12,
                 backgroundColor: AppColors.whiteColor,
-                borderColor: AppColors.appViolet,
-                textColor: AppColors.appViolet,
+                borderColor: const Color(0xFFE2E8F0),
+                textColor: const Color(0xFF64748B),
               ),
               const SizedBox(height: 10),
               settingsProvider.images.isNotEmpty
@@ -475,9 +476,10 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                           settingsProvider.enquiryForController.clear();
                           Navigator.pop(context);
                         },
+                        radius: 12,
                         backgroundColor: AppColors.whiteColor,
-                        borderColor: AppColors.appViolet,
-                        textColor: AppColors.appViolet,
+                        borderColor: const Color(0xFFE2E8F0),
+                        textColor: const Color(0xFF64748B),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -498,8 +500,9 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                             companyId: widget.companyId,
                           );
                         },
-                        backgroundColor: AppColors.appViolet,
-                        borderColor: AppColors.appViolet,
+                        radius: 12,
+                        backgroundColor: AppColors.secondaryBlue,
+                        borderColor: AppColors.secondaryBlue,
                         textColor: AppColors.whiteColor,
                       ),
                     ),
@@ -569,9 +572,10 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
             settingsProvider.enquiryForController.clear();
             Navigator.pop(context);
           },
+          radius: 12,
           backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
+          borderColor: const Color(0xFFE2E8F0),
+          textColor: const Color(0xFF64748B),
         ),
         CustomElevatedButton(
           buttonText: 'Save',
@@ -587,8 +591,9 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
               companyId: widget.companyId,
             );
           },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
+          radius: 12,
+          backgroundColor: AppColors.secondaryBlue,
+          borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
         ),
       ],

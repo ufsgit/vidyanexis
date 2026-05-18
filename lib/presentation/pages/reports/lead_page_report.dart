@@ -2043,9 +2043,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 Navigator.of(context).pop();
                               },
                               backgroundColor: AppColors.whiteColor,
-                              borderColor: const Color(
-                                  0xFFFFB800), // Yellow color from image roughly
-                              textColor: const Color(0xFFFFB800),
+                              borderColor: AppColors.secondaryBlue,
+                              textColor: AppColors.secondaryBlue,
                             ),
                             const SizedBox(width: 8),
                             CustomElevatedButton(
@@ -2103,9 +2102,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       nextFollowUpDateController.text,
                                 );
                               },
-                              backgroundColor:
-                                  const Color(0xFFFFB800), // Yellow filled
-                              borderColor: const Color(0xFFFFB800),
+                              backgroundColor: AppColors.secondaryBlue,
+                              borderColor: AppColors.secondaryBlue,
                               textColor: AppColors.whiteColor,
                             ),
                           ],

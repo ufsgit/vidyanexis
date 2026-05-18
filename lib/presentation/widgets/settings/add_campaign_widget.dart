@@ -106,8 +106,9 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
             title: Text(
               'Select Users',
               style: GoogleFonts.plusJakartaSans(
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryBlue,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textBlack,
               ),
             ),
             content: SizedBox(
@@ -163,9 +164,9 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
             Text(
               widget.isEdit ? 'Edit Campaign' : 'Add New Campaign',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryBlue,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textBlack,
               ),
             ),
             const SizedBox(height: 24),
@@ -247,16 +248,16 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryBlue.withOpacity(0.1),
+                      color: AppColors.secondaryBlue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: AppColors.primaryBlue.withOpacity(0.3)),
+                          color: AppColors.secondaryBlue.withOpacity(0.3)),
                     ),
                     child: Text(
                       displayName,
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.primaryBlue,
+                        color: AppColors.secondaryBlue,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -292,14 +293,19 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(
+                CustomElevatedButton(
+                  buttonText: 'Cancel',
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  radius: 12,
+                  backgroundColor: Colors.white,
+                  borderColor: const Color(0xFFE2E8F0),
+                  textColor: const Color(0xFF64748B),
                 ),
                 const SizedBox(width: 16),
                 CustomElevatedButton(
-                  backgroundColor: AppColors.primaryBlue,
-                  borderColor: AppColors.primaryBlue,
+                  radius: 12,
+                  backgroundColor: AppColors.secondaryBlue,
+                  borderColor: AppColors.secondaryBlue,
                   textColor: Colors.white,
                   onPressed: () {
                     if (settingsProvider.campaignNameController.text.isEmpty) {

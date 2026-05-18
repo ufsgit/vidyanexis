@@ -493,8 +493,11 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.appViolet,
+                    backgroundColor: AppColors.secondaryBlue,
                     foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: const Text('Done'),
                 ),
@@ -808,9 +811,10 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                   settingsProvider.enquiryForController.clear();
                   Navigator.pop(context);
                 },
+                radius: 12,
                 backgroundColor: AppColors.whiteColor,
-                borderColor: AppColors.appViolet,
-                textColor: AppColors.appViolet,
+                borderColor: const Color(0xFFE2E8F0),
+                textColor: const Color(0xFF64748B),
               ),
             ),
             if (isWeb) const SizedBox(width: 8) else const SizedBox(height: 8),
@@ -837,8 +841,9 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     selectedTaskTypes.clear();
                   });
                 },
-                backgroundColor: AppColors.appViolet,
-                borderColor: AppColors.appViolet,
+                radius: 12,
+                backgroundColor: AppColors.secondaryBlue,
+                borderColor: AppColors.secondaryBlue,
                 textColor: AppColors.whiteColor,
               ),
             ),

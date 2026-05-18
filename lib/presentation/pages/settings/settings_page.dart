@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_category_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_item_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/campaign_content.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/pages/settings/form_content.dart';
+import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -44,6 +46,262 @@ class SettingsPageBody extends StatefulWidget {
 }
 
 class _SettingsPageBodyState extends State<SettingsPageBody> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _triggerSearch(SettingsProvider provider, String query) {
+    final activeMenu = provider.selectedMenu;
+    switch (activeMenu) {
+      case 'Users':
+        provider.getUserDetails(query, context);
+        break;
+      case 'Status':
+        provider.getSearchLeadStatus(query, provider.viewInId.toString(), context);
+        break;
+      case 'Enquiry Source':
+        provider.searchEnquiryStatusData(query, context);
+        break;
+      case 'Enquiry For':
+        provider.searchEnquiryForData(query, context);
+        break;
+      case 'Document Type':
+        provider.searchDocumentType(query, context);
+        break;
+      case 'Task Type':
+        provider.searchTaskType(query, context);
+        break;
+      case 'Department':
+        provider.searchDepartment(query, context);
+        break;
+      case 'Branch':
+        provider.searchBranch(context, query: query);
+        break;
+      case 'Stage':
+        provider.searchStageData(query, context);
+        break;
+      case 'Source Category':
+        provider.searchsourceCategoryData(query, context);
+        break;
+      case 'ExpenseType':
+        provider.getExpenseType(query, context);
+        break;
+      case 'Location':
+        provider.searchLocation(query, context);
+        break;
+      case 'Custom Field':
+        provider.searchCustomField(query);
+        break;
+      case 'Forms':
+        Provider.of<FormProvider>(context, listen: false).setSearchQuery(query);
+        break;
+      case 'Campaign':
+        provider.searchCampaignData(query, context);
+        break;
+    }
+  }
+
+  void _showFilterBottomSheet(BuildContext context, SettingsProvider settingsProvider) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Filters',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlue800,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  if (settingsProvider.selectedMenu == 'Users') ...[
+                    Text(
+                      'Branch',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<int>(
+                          value: settingsProvider.selectedFilterBranchId ?? 0,
+                          isExpanded: true,
+                          items: [
+                            const DropdownMenuItem(
+                              value: 0,
+                              child: Text("All Branches"),
+                            ),
+                            ...settingsProvider.branchModel.map((branch) {
+                              return DropdownMenuItem(
+                                value: branch.branchId,
+                                child: Text(branch.branchName ?? "",
+                                    overflow: TextOverflow.ellipsis),
+                              );
+                            }),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              settingsProvider.selectedFilterBranchId = value;
+                            });
+                            settingsProvider.getUserDetails(
+                              _searchController.text,
+                              context,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Department',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<int>(
+                          value: settingsProvider.selectedFilterDepartmentId ?? 0,
+                          isExpanded: true,
+                          items: [
+                            const DropdownMenuItem(
+                              value: 0,
+                              child: Text("All Depts"),
+                            ),
+                            ...settingsProvider.departmentModel.map((dept) {
+                              return DropdownMenuItem(
+                                value: dept.departmentId,
+                                child: Text(dept.departmentName,
+                                    overflow: TextOverflow.ellipsis),
+                              );
+                            }),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              settingsProvider.selectedFilterDepartmentId = value;
+                            });
+                            settingsProvider.getUserDetails(
+                              _searchController.text,
+                              context,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ] else if (settingsProvider.selectedMenu == 'Status') ...[
+                    Text(
+                      'View Status In',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<int>(
+                          value: settingsProvider.viewInId,
+                          isExpanded: true,
+                          items: const [
+                            DropdownMenuItem(value: 0, child: Text('All')),
+                            DropdownMenuItem(value: 1, child: Text('Lead')),
+                            DropdownMenuItem(value: 2, child: Text('Customer')),
+                            DropdownMenuItem(value: 3, child: Text('Task')),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                settingsProvider.setViewInId(value);
+                              });
+                              settingsProvider.getSearchLeadStatus(
+                                _searchController.text,
+                                value.toString(),
+                                context,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'Apply Filters',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -74,35 +332,33 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       backgroundColor: AppColors.scaffoldColor,
       drawer: isMobile ? const SidebarDrawer() : null,
       appBar: isMobile
-          ? AppBar(
-              surfaceTintColor: AppColors.scaffoldColor,
-              backgroundColor: AppColors.whiteColor,
-              leadingWidth: 56,
-              leading: Builder(
-                builder: (context) => IconButton(
-                  onPressed: () => Scaffold.of(context).openDrawer(),
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.sort,
-                      size: 20,
-                      color: AppColors.secondaryBlue,
-                    ),
-                  ),
-                ),
-              ),
-              title: Text(
-                'Settings',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textBlue800,
-                ),
-              ),
+          ? CustomAppBar(
+              title: settingsProvider.selectedMenu,
+              showSearch: true,
+              searchController: _searchController,
+              onSearchTap: () {
+                Provider.of<SidebarProvider>(context, listen: false).startSearch();
+              },
+              onClearTap: () {
+                Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                _searchController.clear();
+                _triggerSearch(settingsProvider, '');
+                setState(() {});
+              },
+              onSearch: (query) {
+                _triggerSearch(settingsProvider, query);
+                setState(() {});
+              },
+              onChanged: (query) {
+                _triggerSearch(settingsProvider, query);
+                setState(() {});
+              },
+              showFilterIcon: settingsProvider.selectedMenu == 'Users' || settingsProvider.selectedMenu == 'Status',
+              onFilterTap: () {
+                _showFilterBottomSheet(context, settingsProvider);
+              },
+              showAddIcon: settingsProvider.onAddPressed != null,
+              onAddTap: settingsProvider.onAddPressed,
             )
           : null,
       body: Row(
@@ -209,7 +465,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                   ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: isMobile
+                        ? const EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 16)
+                        : const EdgeInsets.all(24),
                     child: _buildContent(),
                   ),
                 ),
@@ -227,7 +485,12 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
 
     if (isMobile) {
       return GestureDetector(
-        onTap: () => settings.setSelectedMenu(title),
+        onTap: () {
+          settings.setSelectedMenu(title);
+          Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+          _searchController.clear();
+          _triggerSearch(settings, '');
+        },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           margin: isSelected 
@@ -316,9 +579,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       case 'Source Category':
         return const SourceCategoryPage();
       case 'Checklist Item':
-        return const CheckListItemPage();
+        return CheckListItemPage(searchQuery: _searchController.text);
       case 'Checklist Category':
-        return const CheckListCategoryPage();
+        return CheckListCategoryPage(searchQuery: _searchController.text);
       case 'Custom Field':
         return const CustomField();
       case 'ExpenseType':

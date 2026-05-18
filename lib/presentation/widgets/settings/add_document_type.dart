@@ -154,7 +154,7 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
                         isMandatory = value!;
                       });
                     },
-                    activeColor: AppColors.appViolet,
+                    activeColor: AppColors.secondaryBlue,
                   ),
                   Text(
                     'Mandatory',
@@ -178,9 +178,10 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
             settingsProvider.documentTypeController.clear();
             Navigator.pop(context);
           },
+          radius: 12,
           backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
+          borderColor: const Color(0xFFE2E8F0),
+          textColor: const Color(0xFF64748B),
         ),
         CustomElevatedButton(
           buttonText: 'Save',
@@ -198,8 +199,9 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
               isMandatory: isMandatory ? 1 : 0,
             );
           },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
+          radius: 12,
+          backgroundColor: AppColors.secondaryBlue,
+          borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
         ),
       ],

@@ -15,35 +15,58 @@ class ExpenseType extends StatefulWidget {
 }
 
 class _ExpenseTypeState extends State<ExpenseType> {
+  late SettingsProvider settingsProvider;
+
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-
       settingsProvider.getExpenseType('', context);
       settingsProvider.searchExpenseTypeController.clear();
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return const AddExpenseType(
+          editId: '0',
+          isEdit: false,
+          status: '',
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final isWeb = AppStyles.isWebScreen(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: SizedBox(
-            width: AppStyles.isWebScreen(context)
-                ? constraints.maxWidth < minContentWidth
-                    ? minContentWidth
-                    : constraints.maxWidth
-                : MediaQuery.of(context).size.width - 30,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        final content = SizedBox(
+          width: isWeb
+              ? (constraints.maxWidth < minContentWidth
+                  ? minContentWidth
+                  : constraints.maxWidth)
+              : double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isWeb) ...[
                 // Header section
                 SizedBox(
                   width: double.infinity,
@@ -86,170 +109,161 @@ class _ExpenseTypeState extends State<ExpenseType> {
                       const SizedBox(width: 16),
                       if (settingsProvider.menuIsSaveMap[23] == 1)
                         CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddExpenseType(
-                                  editId: '0',
-                                  isEdit: false,
-                                  status: '',
-                                );
-                              },
-                            );
-                          },
+                          onPressed: _openAddDialog,
                           svgPath: 'assets/images/Plus.svg',
                           label: 'New Expense Type',
                           breakpoint: 860,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
                           foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
+                          backgroundColor: AppColors.secondaryBlue,
+                          borderSide: BorderSide(color: AppColors.secondaryBlue),
                         ),
                       const SizedBox(width: 16),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceGrey,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            height: 12,
-                          );
-                        },
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                        itemCount: settingsProvider.expenseTypeList.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            // height: 40,
-                            decoration: BoxDecoration(
-                              color: AppColors.whiteColor,
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 5,
-                                    child: Container(
-                                      // height: 22,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 8, right: 8),
-                                        child: Text(
-                                          settingsProvider
-                                              .expenseTypeList[index]
-                                              .expenseTypeName,
-                                          maxLines: 4,
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  if (settingsProvider.menuIsEditMap[23] == 1)
-                                    TextButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AddExpenseType(
-                                                editId: settingsProvider
-                                                    .expenseTypeList[index]
-                                                    .expenseTypeId
-                                                    .toString(),
-                                                status: settingsProvider
-                                                    .expenseTypeList[index]
-                                                    .expenseTypeName,
-                                                isEdit: true,
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Edit',
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.primaryBlue),
-                                        )),
-                                  if (settingsProvider.menuIsDeleteMap[23] == 1)
-                                    TextButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                    'Confirm Delete'),
-                                                content: const Text(
-                                                    'Are you sure you want to delete?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    child: const Text('Cancel'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      settingsProvider
-                                                          .deleteExpenseType(
-                                                              context,
-                                                              settingsProvider
-                                                                  .expenseTypeList[
-                                                                      index]
-                                                                  .expenseTypeId);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text(
-                                                      'Delete',
-                                                      style: TextStyle(
-                                                          color: Colors.red),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Delete',
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.textRed),
-                                        ))
-                                ],
+              ],
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceGrey,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ListView.separated(
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 12,
+                    );
+                  },
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: settingsProvider.expenseTypeList.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.whiteColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                    color: AppColors.surfaceGrey,
+                                    borderRadius:
+                                        BorderRadius.circular(12)),
+                                child: Text(
+                                  settingsProvider
+                                      .expenseTypeList[index]
+                                      .expenseTypeName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black),
+                                ),
                               ),
                             ),
-                          );
-                        },
-                      )
-                    ],
-                  ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (settingsProvider.menuIsEditMap[23] == 1)
+                            TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AddExpenseType(
+                                        editId: settingsProvider
+                                            .expenseTypeList[index]
+                                            .expenseTypeId
+                                            .toString(),
+                                        status: settingsProvider
+                                            .expenseTypeList[index]
+                                            .expenseTypeName,
+                                        isEdit: true,
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Text(
+                                  'Edit',
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryBlue),
+                                )),
+                          if (settingsProvider.menuIsDeleteMap[23] == 1)
+                            TextButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                            'Confirm Delete'),
+                                        content: const Text(
+                                            'Are you sure you want to delete?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              settingsProvider
+                                                  .deleteExpenseType(
+                                                      context,
+                                                      settingsProvider
+                                                          .expenseTypeList[
+                                                              index]
+                                                          .expenseTypeId);
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                  color: Colors.red),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Text(
+                                  'Delete',
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textRed),
+                                ))
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
+
+        if (isWeb) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: content,
+          );
+        } else {
+          return content;
+        }
       },
     );
   }

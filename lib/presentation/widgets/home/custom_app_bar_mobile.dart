@@ -51,6 +51,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   final bool showLogo;
   final bool showUserName;
+  final bool showAddIcon;
+  final void Function()? onAddTap;
 
   const CustomAppBar({
     super.key,
@@ -69,6 +71,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onPdfTap,
     this.showLogo = true,
     this.showUserName = true,
+    this.showAddIcon = false,
+    this.onAddTap,
     // Styling defaults
     this.titleStyle,
     this.leadingWidth = 56,
@@ -254,6 +258,34 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   size: widget.searchIconSize,
                 ),
                 onPressed: onSearchTap,
+              ),
+            if (widget.showAddIcon && widget.onAddTap != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                child: InkWell(
+                  onTap: widget.onAddTap,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBlue,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.secondaryBlue.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.add_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ),
+                ),
               ),
             if (widget.showSort)
               PopupMenuButton<int>(

@@ -725,9 +725,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             settingsProvider.setSelectedColor(null);
             Navigator.pop(context);
           },
+          radius: 12,
           backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
+          borderColor: const Color(0xFFE2E8F0),
+          textColor: const Color(0xFF64748B),
         ),
         CustomElevatedButton(
           buttonText: 'Save',
@@ -748,8 +749,9 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                 isRegistered: settingsProvider.isRegister.toString(),
                 colorCode: settingsProvider.selectedColor.toString());
           },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
+          radius: 12,
+          backgroundColor: AppColors.secondaryBlue,
+          borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
         ),
       ],

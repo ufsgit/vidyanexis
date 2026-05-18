@@ -16,16 +16,39 @@ class TaskTypeContent extends StatefulWidget {
 }
 
 class _TaskTypeContentState extends State<TaskTypeContent> {
+  late SettingsProvider settingsProvider;
+
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-
       settingsProvider.searchTaskType('', context);
       settingsProvider.searchTaskTypeController.clear();
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return const AddTaskType(
+          editId: '0',
+          isEdit: false,
+          status: '',
+        );
+      },
+    );
   }
 
   @override
@@ -46,80 +69,70 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
-                // Page Title
-                Text(
-                  'Task Type',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textBlue800,
+                if (isWeb) ...[
+                  const SizedBox(height: 8),
+                  // Page Title
+                  Text(
+                    'Task Type',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textBlue800,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                // Search and New Button
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 3.5,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: TextField(
-                          controller:
-                              settingsProvider.statusPageSearchController,
-                          onChanged: (query) {
-                            settingsProvider.searchTaskType(query, context);
-                          },
-                          decoration: const InputDecoration(
-                            hintText: 'Search here....',
-                            prefixIcon: Icon(Icons.search),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
+                  // Search and New Button
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 3.5,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: TextField(
+                            controller:
+                                settingsProvider.searchTaskTypeController,
+                            onChanged: (query) {
+                              settingsProvider.searchTaskType(query, context);
+                            },
+                            decoration: const InputDecoration(
+                              hintText: 'Search here....',
+                              prefixIcon: Icon(Icons.search),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    if (settingsProvider.menuIsSaveMap[41] == 1)
-                      SizedBox(
-                        height: 48,
-                        child: CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddTaskType(
-                                  editId: '0',
-                                  isEdit: false,
-                                  status: '',
-                                );
-                              },
-                            );
-                          },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New',
-                          breakpoint: 400,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                      const SizedBox(width: 12),
+                      if (settingsProvider.menuIsSaveMap[41] == 1)
+                        SizedBox(
+                          height: 48,
+                          child: CustomOutlinedSvgButton(
+                            onPressed: _openAddDialog,
+                            svgPath: 'assets/images/Plus.svg',
+                            label: 'New',
+                            breakpoint: 400,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.secondaryBlue,
+                            borderSide: BorderSide(color: AppColors.secondaryBlue),
                           ),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
                         ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 24),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
 
                 // The List
                 Container(

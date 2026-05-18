@@ -1306,9 +1306,10 @@ class _AddTaskTypeState extends State<AddTaskType> {
                         settingsProvider.taskTypeDescriptionController.clear();
                         Navigator.pop(context);
                       },
+                      radius: 12,
                       backgroundColor: Colors.white,
-                      borderColor: AppColors.appViolet,
-                      textColor: AppColors.appViolet,
+                      borderColor: const Color(0xFFE2E8F0),
+                      textColor: const Color(0xFF64748B),
                     ),
                     const SizedBox(width: 12),
                     CustomElevatedButton(
@@ -1369,8 +1370,9 @@ class _AddTaskTypeState extends State<AddTaskType> {
                         settingsProvider.addTaskType(
                             context: context, data: requestData);
                       },
-                      backgroundColor: AppColors.appViolet,
-                      borderColor: AppColors.appViolet,
+                      radius: 12,
+                      backgroundColor: AppColors.secondaryBlue,
+                      borderColor: AppColors.secondaryBlue,
                       textColor: Colors.white,
                     ),
                   ],

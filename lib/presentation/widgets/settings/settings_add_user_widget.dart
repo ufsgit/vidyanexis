@@ -145,7 +145,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
               'Select Transfer Departments',
               style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.bold,
-                color: AppColors.appViolet,
+                color: AppColors.secondaryBlue,
               ),
             ),
             content: SizedBox(
@@ -161,7 +161,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     return CheckboxListTile(
                       title: Text(dept.departmentName),
                       value: isSelected,
-                      activeColor: AppColors.appViolet,
+                      activeColor: AppColors.secondaryBlue,
                       onChanged: (bool? value) {
                         settingsProvider.toggleTransferDepartment(dept);
                         setDialogState(() {});
@@ -177,7 +177,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 child: Text(
                   'Done',
                   style: TextStyle(
-                    color: AppColors.appViolet,
+                    color: AppColors.secondaryBlue,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -214,7 +214,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   ),
                 ),
                 Icon(Icons.add_circle_outline,
-                    color: AppColors.appViolet, size: 20),
+                    color: AppColors.secondaryBlue, size: 20),
               ],
             ),
           ),
@@ -230,7 +230,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   dept.departmentName,
                   style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
-                backgroundColor: AppColors.appViolet,
+                backgroundColor: AppColors.secondaryBlue,
                 deleteIcon: Icon(Icons.close, size: 14, color: Colors.white),
                 onDeleted: () {
                   settingsProvider.toggleTransferDepartment(dept);
@@ -239,7 +239,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 labelPadding: const EdgeInsets.symmetric(horizontal: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: AppColors.appViolet),
+                  side: BorderSide(color: AppColors.secondaryBlue),
                 ),
               );
             }).toList(),
@@ -260,7 +260,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
             title: Text(
               'Cannot save',
               style: TextStyle(
-                color: AppColors.appViolet,
+                color: AppColors.secondaryBlue,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -282,7 +282,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 child: Text(
                   'OK',
                   style: TextStyle(
-                    color: AppColors.appViolet,
+                    color: AppColors.secondaryBlue,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -819,7 +819,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                       trackOutlineColor:
                           WidgetStatePropertyAll(AppColors.textGrey3),
                       activeThumbColor: AppColors.whiteColor,
-                      activeTrackColor: AppColors.primaryBlue,
+                      activeTrackColor: AppColors.secondaryBlue,
                       inactiveThumbColor: AppColors.textGrey1,
                       inactiveTrackColor: AppColors.whiteColor,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -839,9 +839,10 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                           settingsProvider.resetStates();
                           Navigator.pop(context);
                         },
+                        radius: 12,
                         backgroundColor: AppColors.whiteColor,
-                        borderColor: AppColors.appViolet,
-                        textColor: AppColors.appViolet,
+                        borderColor: const Color(0xFFE2E8F0),
+                        textColor: const Color(0xFF64748B),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -894,8 +895,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                                   Navigator.pop(context);
                                 }
                               },
-                        backgroundColor: AppColors.appViolet,
-                        borderColor: AppColors.appViolet,
+                        radius: 12,
+                        backgroundColor: AppColors.secondaryBlue,
+                        borderColor: AppColors.secondaryBlue,
                         textColor: AppColors.whiteColor,
                       ),
                     ),
@@ -965,9 +967,10 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
             settingsProvider.resetStates();
             Navigator.pop(context);
           },
+          radius: 12,
           backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
+          borderColor: const Color(0xFFE2E8F0),
+          textColor: const Color(0xFF64748B),
         ),
         CustomElevatedButton(
           buttonText: settingsProvider.isAddingUser ? 'Saving...' : 'Save',
@@ -1004,8 +1007,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     Navigator.pop(context);
                   }
                 },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
+          radius: 12,
+          backgroundColor: AppColors.secondaryBlue,
+          borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
         ),
       ],

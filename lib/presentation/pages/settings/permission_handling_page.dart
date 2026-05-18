@@ -48,100 +48,223 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
           menuId, permissionType, value ? 1 : 0);
     }
 
+    final bool isWeb = AppStyles.isWebScreen(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF334155), size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Permissions',
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textBlack,
               ),
             ),
-            const SizedBox(width: 12),
             Text(
               'User: ${widget.userName}',
               style: GoogleFonts.plusJakartaSans(
-                color: Colors.grey[600],
-                fontSize: 14,
+                color: AppColors.textGrey2,
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
         actions: [
-          Container(
-            width: 250,
-            height: 32,
-            margin: const EdgeInsets.symmetric(vertical: 11),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              style: GoogleFonts.plusJakartaSans(fontSize: 13),
-              decoration: InputDecoration(
-                hintText: 'Search menus...',
-                prefixIcon: const Icon(Icons.search, size: 16),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                hintStyle: GoogleFonts.plusJakartaSans(
-                  color: Colors.grey[500],
-                  fontSize: 13,
+          if (isWeb) ...[
+            Container(
+              width: 250,
+              height: 36,
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+                style: GoogleFonts.plusJakartaSans(fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: 'Search menus...',
+                  prefixIcon: const Icon(Icons.search_rounded,
+                      size: 18, color: Color(0xFF64748B)),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  hintStyle: GoogleFonts.plusJakartaSans(
+                    color: const Color(0xFF94A3B8),
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Row(
-              children: [
-                SizedBox(
-                  height: 28,
-                  child: CustomOutlinedSvgButton(
-                    showIcon: false,
-                    onPressed: () => Navigator.pop(context),
-                    svgPath: 'assets/images/Print.svg',
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    textStyle: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryBlue,
+            const SizedBox(width: 16),
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Row(
+                children: [
+                  SizedBox(
+                    height: 32,
+                    child: CustomOutlinedSvgButton(
+                      showIcon: false,
+                      onPressed: () => Navigator.pop(context),
+                      svgPath: 'assets/images/Print.svg',
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      textStyle: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF64748B),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      label: 'Cancel',
+                      breakpoint: 860,
+                      foregroundColor: const Color(0xFF64748B),
+                      backgroundColor: Colors.white,
+                      borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    height: 32,
+                    child: CustomOutlinedSvgButton(
+                      showIcon: false,
+                      onPressed: () {
+                        final List<UserMenuSelection> permissions =
+                            settingsProvider.getMenu
+                                .map((item) => UserMenuSelection(
+                                      menuId: item.menuId,
+                                      isView: item.isView,
+                                      isSave: item.isSave,
+                                      isEdit: item.isEdit,
+                                      isDelete: item.isDelete,
+                                    ))
+                                .toList();
+
+                        settingsProvider.saveMenuPermission(
+                          context: context,
+                          userId: int.parse(widget.userId),
+                          menuPermissions: permissions,
+                        );
+                      },
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      textStyle: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      svgPath: 'assets/images/Print.svg',
+                      label: 'Save Changes',
+                      breakpoint: 860,
+                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.primaryBlue,
+                      borderSide: BorderSide(color: AppColors.primaryBlue),
                     ),
-                    label: 'Cancel',
-                    breakpoint: 860,
-                    foregroundColor: AppColors.primaryBlue,
-                    backgroundColor: Colors.white,
-                    borderSide: BorderSide(color: AppColors.primaryBlue),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+      body: Column(
+        children: [
+          // On mobile, show the search box at the top of the body
+          if (!isWeb)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.01),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                  style: GoogleFonts.plusJakartaSans(fontSize: 14),
+                  decoration: InputDecoration(
+                    hintText: 'Search menus...',
+                    prefixIcon: const Icon(Icons.search_rounded,
+                        color: Color(0xFF94A3B8), size: 20),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    hintStyle: GoogleFonts.plusJakartaSans(
+                      color: const Color(0xFF94A3B8),
+                      fontSize: 14,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  height: 28,
-                  child: CustomOutlinedSvgButton(
-                    showIcon: false,
+              ),
+            ),
+
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: isWeb ? 24.0 : 16.0,
+                vertical: isWeb ? 24.0 : 8.0,
+              ),
+              child: isWeb
+                  ? _buildWebTable(context, filteredMenus, updatePermission)
+                  : _buildMobileCards(context, filteredMenus, updatePermission),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: isWeb
+          ? null
+          : Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+                border: const Border(
+                  top: BorderSide(color: Color(0xFFF1F5F9)),
+                ),
+              ),
+              child: SafeArea(
+                child: SizedBox(
+                  height: 48,
+                  width: double.infinity,
+                  child: ElevatedButton(
                     onPressed: () {
                       final List<UserMenuSelection> permissions =
                           settingsProvider.getMenu
@@ -160,42 +283,25 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                         menuPermissions: permissions,
                       );
                     },
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    textStyle: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+                    child: Text(
+                      'Save Changes',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
                     ),
-                    svgPath: 'assets/images/Print.svg',
-                    label: 'Save Changes',
-                    breakpoint: 860,
-                    foregroundColor: Colors.white,
-                    backgroundColor: AppColors.primaryBlue,
-                    borderSide: BorderSide(color: AppColors.primaryBlue),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Main Content
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: AppStyles.isWebScreen(context)
-                  ? _buildWebTable(context, filteredMenus, updatePermission)
-                  : _buildMobileCards(context, filteredMenus, updatePermission),
-            ),
-          ),
-          const SizedBox(height: 24),
-        ],
-      ),
     );
   }
 
@@ -212,28 +318,28 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.01),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // Header Title Panel
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF3F6FF),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            decoration: const BoxDecoration(
+              color: Color(0xFFF8FAFC),
+              border: Border(
+                bottom: BorderSide(color: Color(0xFFE2E8F0)),
               ),
             ),
             child: Text(
@@ -241,7 +347,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF1A1F36),
+                color: const Color(0xFF1E293B),
               ),
             ),
           ),
@@ -261,7 +367,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                     // Subtle Divider
                     Container(
                       width: 1,
-                      color: Colors.grey[200],
+                      color: const Color(0xFFE2E8F0),
                     ),
                     // Second Column
                     Expanded(
@@ -290,9 +396,10 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
       children: [
         // Column Header
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: const BoxDecoration(
+            color: Color(0xFFF8FAFC),
+            border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
           ),
           child: Row(
             children: [
@@ -301,7 +408,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                 child: Text('No.', style: _headerStyle),
               ),
               SizedBox(
-                width: 60,
+                width: 70,
                 child: Text('Menu ID', style: _headerStyle),
               ),
               Expanded(
@@ -318,9 +425,11 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
         ...List.generate(menus.length, (index) {
           final item = menus[index];
           return Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey[100]!)),
+              color: index.isEven ? Colors.white : const Color(0xFFF8FAFC),
+              border:
+                  const Border(bottom: BorderSide(color: Color(0xFFF1F5F9))),
             ),
             child: Row(
               children: [
@@ -332,10 +441,12 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                   ),
                 ),
                 SizedBox(
-                  width: 60,
+                  width: 70,
                   child: Text(
                     '${item.menuId}',
-                    style: _rowStyle,
+                    style: _rowStyle.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryBlue),
                   ),
                 ),
                 Expanded(
@@ -377,15 +488,15 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
   }
 
   TextStyle get _headerStyle => GoogleFonts.plusJakartaSans(
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF4F566B),
+        color: const Color(0xFF475569),
       );
 
   TextStyle get _rowStyle => GoogleFonts.plusJakartaSans(
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: FontWeight.w500,
-        color: const Color(0xFF1A1F36),
+        color: const Color(0xFF1E293B),
       );
 
   Widget _buildCheckboxCell(
@@ -394,15 +505,16 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
     return SizedBox(
       width: 60,
       child: Center(
-        child: Transform.scale(
-          scale: 0.85,
+        child: SizedBox(
+          width: 20,
+          height: 20,
           child: Checkbox(
             visualDensity: VisualDensity.compact,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(5),
             ),
-            activeColor: const Color(
-                0xFFF6AD55), // Match the orange/yellow color in screenshot
+            activeColor: AppColors.primaryBlue,
+            side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
             value: value,
             onChanged: onChanged,
           ),
@@ -419,16 +531,23 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
 
     return ListView.builder(
       itemCount: menus.length,
+      padding: const EdgeInsets.only(bottom: 16),
       itemBuilder: (context, index) {
         final item = menus[index];
-        return Card(
-          color: Colors.white,
+        return Container(
           margin: const EdgeInsets.only(bottom: 16),
-          shape: RoundedRectangleBorder(
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.grey[200]!),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.015),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          elevation: 0,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -437,32 +556,37 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                      width: 28,
+                      height: 28,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFEFF6FF),
+                        shape: BoxShape.circle,
                       ),
+                      alignment: Alignment.center,
                       child: Text(
                         '${index + 1}',
-                        style: TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           color: AppColors.primaryBlue,
                           fontWeight: FontWeight.bold,
+                          fontSize: 12,
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        color: const Color(0xFFFFF7ED),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: const Color(0xFFFFEDD5)),
                       ),
                       child: Text(
                         'ID: ${item.menuId}',
-                        style: const TextStyle(
-                          color: Colors.orange,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                        style: GoogleFonts.plusJakartaSans(
+                          color: const Color(0xFFEA580C),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 10,
                         ),
                       ),
                     ),
@@ -471,8 +595,8 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                       child: Text(
                         item.menuName,
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
                           color: AppColors.textBlack,
                         ),
                       ),
@@ -481,10 +605,10 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12.0),
-                  child: Divider(),
+                  child: Divider(color: Color(0xFFF1F5F9), height: 1),
                 ),
                 Wrap(
-                  spacing: 20,
+                  spacing: 12,
                   runSpacing: 12,
                   children: [
                     if (settingsProvider.showView[item.menuId] == 1)
@@ -523,26 +647,47 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
 
   Widget _buildMobileCheckbox(
       String label, bool value, ValueChanged<bool?> onChanged) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Checkbox(
-          visualDensity: VisualDensity.compact,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
-          activeColor: AppColors.primaryBlue,
-          value: value,
-          onChanged: onChanged,
-        ),
-        Text(
-          label,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+    return InkWell(
+      onTap: () => onChanged(!value),
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: value ? const Color(0xFFEFF6FF) : const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: value ? const Color(0xFFBFDBFE) : const Color(0xFFE2E8F0),
           ),
         ),
-      ],
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 18,
+              height: 18,
+              child: Checkbox(
+                visualDensity: VisualDensity.compact,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                activeColor: AppColors.primaryBlue,
+                side: const BorderSide(color: Color(0xFF94A3B8), width: 1.5),
+                value: value,
+                onChanged: onChanged,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: value ? AppColors.primaryBlue : const Color(0xFF475569),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

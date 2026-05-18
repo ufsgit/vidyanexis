@@ -144,9 +144,10 @@ class _AddCheckListCategoryPageState extends State<AddCheckListCategoryPage> {
             categoryController.clear();
             Navigator.pop(context);
           },
+          radius: 12,
           backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
+          borderColor: const Color(0xFFE2E8F0),
+          textColor: const Color(0xFF64748B),
         ),
         CustomElevatedButton(
           buttonText: 'Save',
@@ -163,8 +164,9 @@ class _AddCheckListCategoryPageState extends State<AddCheckListCategoryPage> {
               );
             }
           },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
+          radius: 12,
+          backgroundColor: AppColors.secondaryBlue,
+          borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
         ),
       ],

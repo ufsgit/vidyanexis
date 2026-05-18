@@ -152,9 +152,10 @@ class _AddExpenseTypeState extends State<AddExpenseType> {
             settingsProvider.expenseTypeController.clear();
             Navigator.pop(context);
           },
+          radius: 12,
           backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
+          borderColor: const Color(0xFFE2E8F0),
+          textColor: const Color(0xFF64748B),
         ),
         CustomElevatedButton(
           buttonText: 'Save',
@@ -171,8 +172,9 @@ class _AddExpenseTypeState extends State<AddExpenseType> {
               expenseName: settingsProvider.expenseTypeController.text,
             );
           },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
+          radius: 12,
+          backgroundColor: AppColors.secondaryBlue,
+          borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
         ),
       ],
