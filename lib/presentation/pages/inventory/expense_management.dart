@@ -119,6 +119,40 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
   Widget _buildResponsiveHeader(BuildContext context, bool isSmallScreen) {
     return Row(
       children: [
+        if (!isSmallScreen)
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Builder(
+              builder: (context) => IconButton(
+                onPressed: () {
+                  ScaffoldState? parent;
+                  context.visitAncestorElements((element) {
+                    if (element is StatefulElement && element.state is ScaffoldState) {
+                      ScaffoldState scaffold = element.state as ScaffoldState;
+                      if (scaffold.hasDrawer) {
+                        parent = scaffold;
+                        return false;
+                      }
+                    }
+                    return true;
+                  });
+                  parent?.openDrawer();
+                },
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.sort,
+                    size: 20,
+                    color: AppColors.secondaryBlue,
+                  ),
+                ),
+              ),
+            ),
+          ),
         Text(
           'Expense Management',
           style: GoogleFonts.plusJakartaSans(

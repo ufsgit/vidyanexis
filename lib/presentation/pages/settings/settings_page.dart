@@ -127,6 +127,37 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                     padding: const EdgeInsets.all(24),
                     child: Row(
                       children: [
+                        Builder(
+                          builder: (context) => IconButton(
+                            onPressed: () {
+                              ScaffoldState? parent;
+                              context.visitAncestorElements((element) {
+                                if (element is StatefulElement && element.state is ScaffoldState) {
+                                  ScaffoldState scaffold = element.state as ScaffoldState;
+                                  if (scaffold.hasDrawer) {
+                                    parent = scaffold;
+                                    return false;
+                                  }
+                                }
+                                return true;
+                              });
+                              parent?.openDrawer();
+                            },
+                            icon: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBlue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.sort,
+                                size: 20,
+                                color: AppColors.secondaryBlue,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         Text(
                           'Settings',
                           style: GoogleFonts.plusJakartaSans(
@@ -141,7 +172,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                   Expanded(
                     child: ListView(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
-                      children: tabBar(settingsProvider),
+                      children: tabBar(settingsProvider, isMobile: false),
                     ),
                   ),
                 ],
@@ -154,10 +185,26 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                 if (isMobile)
                   Container(
                     color: Colors.white,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Row(children: tabBar(settingsProvider)),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Container(
+                      height: 38,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.all(3),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: tabBar(settingsProvider, isMobile: true),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 Expanded(
@@ -174,9 +221,44 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, String title, IconData icon) {
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon, {required bool isMobile}) {
     final settings = Provider.of<SettingsProvider>(context);
     final isSelected = settings.selectedMenu == title;
+
+    if (isMobile) {
+      return GestureDetector(
+        onTap: () => settings.setSelectedMenu(title),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          margin: isSelected 
+              ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2) 
+              : const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? Colors.white : Colors.transparent,
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            title,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
@@ -252,45 +334,45 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
     }
   }
 
-  List<Widget> tabBar(SettingsProvider settingsProvider) {
+  List<Widget> tabBar(SettingsProvider settingsProvider, {required bool isMobile}) {
     return [
       if (settingsProvider.menuIsViewMap[1].toString() == '1')
-        _buildMenuItem(context, 'Users', Icons.people),
+        _buildMenuItem(context, 'Users', Icons.people, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[5].toString() == '1')
-        _buildMenuItem(context, 'Status', Icons.trending_up),
+        _buildMenuItem(context, 'Status', Icons.trending_up, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[6].toString() == '1')
-        _buildMenuItem(context, 'Enquiry Source', Icons.trending_up),
+        _buildMenuItem(context, 'Enquiry Source', Icons.trending_up, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[17].toString() == '1')
-        _buildMenuItem(context, 'Enquiry For', Icons.trending_up),
+        _buildMenuItem(context, 'Enquiry For', Icons.trending_up, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[23].toString() == '1')
-        _buildMenuItem(context, 'Document Type', Icons.trending_up),
+        _buildMenuItem(context, 'Document Type', Icons.trending_up, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[41].toString() == '1')
-        _buildMenuItem(context, 'Task Type', Icons.trending_up),
+        _buildMenuItem(context, 'Task Type', Icons.trending_up, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[20].toString() == '1')
-        _buildMenuItem(context, 'Excel Import', Icons.document_scanner),
+        _buildMenuItem(context, 'Excel Import', Icons.document_scanner, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[27].toString() == '1')
-        _buildMenuItem(context, 'Company Details', Icons.document_scanner),
+        _buildMenuItem(context, 'Company Details', Icons.document_scanner, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[42].toString() == '1')
-        _buildMenuItem(context, 'Department', Icons.document_scanner),
+        _buildMenuItem(context, 'Department', Icons.document_scanner, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[57].toString() == '1')
-        _buildMenuItem(context, 'Branch', Icons.category),
+        _buildMenuItem(context, 'Branch', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[58].toString() == '1')
-        _buildMenuItem(context, 'Stage', Icons.category),
+        _buildMenuItem(context, 'Stage', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[59].toString() == '1')
-        _buildMenuItem(context, 'Source Category', Icons.category),
+        _buildMenuItem(context, 'Source Category', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[38].toString() == '1')
-        _buildMenuItem(context, 'Checklist Item', Icons.category),
+        _buildMenuItem(context, 'Checklist Item', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[39].toString() == '1')
-        _buildMenuItem(context, 'Checklist Category', Icons.category),
+        _buildMenuItem(context, 'Checklist Category', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[60].toString() == '1')
-        _buildMenuItem(context, 'Custom Field', Icons.category),
+        _buildMenuItem(context, 'Custom Field', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[64].toString() == '1')
-        _buildMenuItem(context, 'ExpenseType', Icons.category),
+        _buildMenuItem(context, 'ExpenseType', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[86].toString() == '1')
-        _buildMenuItem(context, 'Location', Icons.location_on),
+        _buildMenuItem(context, 'Location', Icons.location_on, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[85].toString() == '1')
-        _buildMenuItem(context, 'Forms', Icons.format_list_bulleted),
-      _buildMenuItem(context, 'Campaign', Icons.campaign),
+        _buildMenuItem(context, 'Forms', Icons.format_list_bulleted, isMobile: isMobile),
+      _buildMenuItem(context, 'Campaign', Icons.campaign, isMobile: isMobile),
     ];
   }
 }

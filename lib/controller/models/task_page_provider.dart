@@ -16,6 +16,7 @@ import 'package:vidyanexis/http/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
 class TaskPageProvider extends ChangeNotifier {
@@ -680,6 +681,11 @@ class TaskPageProvider extends ChangeNotifier {
           if (isSuccess) {
             descriptionController.clear();
             _pageIndex = 1;
+            try {
+              final dbProvider = Provider.of<DashboardProvider>(context, listen: false);
+              dbProvider.clearDashboardFlags();
+              dbProvider.getTaskInfoDashBoard(context, isSilent: true, shouldNotify: true);
+            } catch (_) {}
           }
           return isSuccess;
         } else {
