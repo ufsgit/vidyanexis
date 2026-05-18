@@ -618,6 +618,9 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                 }
                                               });
                                             },
+                                            onSaved: () {
+                                              _fetchLeads();
+                                            },
                                           ),
                                         ],
                                       );
