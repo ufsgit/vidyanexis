@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,10 +40,35 @@ class _leadReportMobile extends State<LeadReportMobile> {
   bool viewProfile = false;
   bool viewFollowUp = false;
   bool isEdit = false;
+  Timer? _debounce;
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      final leadReportProvider = Provider.of<LeadReportProvider>(context, listen: false);
+      leadReportProvider.getSearchLeadReports(
+        searchController.text,
+        leadReportProvider.fromDateS,
+        leadReportProvider.toDateS,
+        leadReportProvider.status,
+        context,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
+    searchController.addListener(_onSearchChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       final leadReportProvider =
@@ -314,12 +340,77 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         color: AppColors.textBlack,
                       ),
                       const SizedBox(height: 8),
-                      CommonReportDateFilter(
-                        fromDate: leadReportProvider.fromDate?.toString(),
-                        toDate: leadReportProvider.toDate?.toString(),
-                        formattedFromDate: leadReportProvider.formattedFromDate,
-                        formattedToDate: leadReportProvider.formattedToDate,
-                        onTap: () => onClickTopButton(context),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        alignment: WrapAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              onClickTopButton(context);
+                            },
+                            child: Container(
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: leadReportProvider.selectedDateFilterIndex != null
+                                    ? AppColors.primaryBlue.withOpacity(0.1)
+                                    : Colors.grey[100],
+                                border: Border.all(
+                                  color: leadReportProvider.selectedDateFilterIndex != null
+                                      ? AppColors.primaryBlue
+                                      : Colors.transparent,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today_outlined,
+                                    size: 14,
+                                    color: leadReportProvider.selectedDateFilterIndex != null
+                                        ? AppColors.primaryBlue
+                                        : Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    leadReportProvider.selectedDateFilterIndex != null
+                                        ? dateButtonTitles[leadReportProvider.selectedDateFilterIndex!]
+                                        : 'Select Date Range',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: leadReportProvider.selectedDateFilterIndex != null
+                                          ? AppColors.primaryBlue
+                                          : Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (leadReportProvider.fromDate != null || leadReportProvider.toDate != null)
+                            Container(
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryBlue.withOpacity(0.05),
+                                border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Center(
+                                child: Text(
+                                  "${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.primaryBlue,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       CustomText(

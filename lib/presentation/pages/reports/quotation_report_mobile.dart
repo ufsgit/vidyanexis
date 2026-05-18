@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,10 +27,35 @@ class QuotationReportMobile extends StatefulWidget {
 class _QuotationReportMobile extends State<QuotationReportMobile> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      final quotationProvider = Provider.of<QuotationReportProvider>(context, listen: false);
+      quotationProvider.setQuotationSearch(
+        searchController.text,
+        quotationProvider.fromDateS,
+        quotationProvider.toDateS,
+        quotationProvider.Status,
+      );
+      quotationProvider.getQuotationReports(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
+    searchController.addListener(_onSearchChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<QuotationReportProvider>(context, listen: false);
@@ -100,6 +126,9 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
         title: 'Quotation Report',
         onSearchTap: () {
           searchProvider.startSearch();
+          if (!quotationProvider.isFilter) {
+            quotationProvider.toggleFilter();
+          }
         },
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
@@ -129,134 +158,215 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
       body: Column(
         children: [
           if (quotationProvider.isFilter)
-            _buildFilterPanel(context, quotationProvider, provider),
-          if (quotationProvider.quotationReports.isNotEmpty &&
-              !quotationProvider.isFilter)
-            CommonReportSummaryBar(
-              totalLabel: 'Total Quotations',
-              totalCount: quotationProvider.quotationReports.length,
-              showingLabel: 'Showing',
-              showingCount: quotationProvider.quotationReports.length,
+            Expanded(
+              child: _buildFilterPanel(context, quotationProvider, provider),
             ),
-          Expanded(
-            child: !quotationProvider.hasFetched
-                ? _buildInitialState()
-                : quotationProvider.quotationReports.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: quotationProvider.quotationReports.length,
-                        itemBuilder: (context, index) {
-                          final quotation = quotationProvider.quotationReports[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: ReportListItem(
-                              title: quotation.customerName ?? 'No Name',
-                              subtitle: quotation.productName ?? 'No Product',
-                              description: 'Phone: ${quotation.phoneNumber ?? "-"}',
-                              status: quotation.quotationStatusName ?? 'Pending',
-                              statusColor: getAvatarColor(quotation.quotationStatusName ?? ''),
-                              bottomLeftIcon: Icons.calendar_today_outlined,
-                              bottomLeftText: quotation.entryDate.toString().toFormattedDate(),
-                              bottomRightText: '₹ ${quotation.totalAmount}',
-                            ),
-                          );
-                        },
-                      ),
-          ),
+          if (!quotationProvider.isFilter) ...[
+            if (quotationProvider.quotationReports.isNotEmpty)
+              CommonReportSummaryBar(
+                totalLabel: 'Total Quotations',
+                totalCount: quotationProvider.quotationReports.length,
+                showingLabel: 'Showing',
+                showingCount: quotationProvider.quotationReports.length,
+              ),
+            Expanded(
+              child: !quotationProvider.hasFetched
+                  ? _buildInitialState()
+                  : quotationProvider.quotationReports.isEmpty
+                      ? _buildEmptyState()
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: quotationProvider.quotationReports.length,
+                          itemBuilder: (context, index) {
+                            final quotation = quotationProvider.quotationReports[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: ReportListItem(
+                                title: quotation.customerName ?? 'No Name',
+                                subtitle: quotation.productName ?? 'No Product',
+                                description: 'Phone: ${quotation.phoneNumber ?? "-"}',
+                                status: quotation.quotationStatusName ?? 'Pending',
+                                statusColor: getAvatarColor(quotation.quotationStatusName ?? ''),
+                                bottomLeftIcon: Icons.calendar_today_outlined,
+                                bottomLeftText: quotation.entryDate.toString().toFormattedDate(),
+                                bottomRightText: '₹ ${quotation.totalAmount}',
+                              ),
+                            );
+                          },
+                        ),
+            ),
+          ],
         ],
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: quotationProvider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_filter_fab',
+                  onPressed: () async {
+                    quotationProvider.formatDate();
+                    quotationProvider.setQuotationSearch(
+                      searchController.text,
+                      quotationProvider.formattedFromDate,
+                      quotationProvider.formattedToDate,
+                      quotationProvider.selectedStatus.toString(),
+                    );
+                    await quotationProvider.getQuotationReports(context);
+                    searchProvider.stopSearch();
+                    quotationProvider.setFilter(false);
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
       ),
     );
   }
 
   Widget _buildFilterPanel(BuildContext context, QuotationReportProvider quotationProvider, DropDownProvider provider) {
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: AppColors.grey, width: 1)),
-      ),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomText('Status',
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textBlack),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: [
-                FilterChipWidget(
-                  label: 'All',
-                  isSelected: quotationProvider.selectedStatus == 0 || quotationProvider.selectedStatus == null,
-                  onTap: () => quotationProvider.setStatus(0),
-                ),
-                FilterChipWidget(
-                  label: 'Pending',
-                  isSelected: quotationProvider.selectedStatus == 1,
-                  onTap: () => quotationProvider.setStatus(1),
-                ),
-                FilterChipWidget(
-                  label: 'Approved',
-                  isSelected: quotationProvider.selectedStatus == 2,
-                  onTap: () => quotationProvider.setStatus(2),
-                ),
-                FilterChipWidget(
-                  label: 'Rejected',
-                  isSelected: quotationProvider.selectedStatus == 3,
-                  onTap: () => quotationProvider.setStatus(3),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            CustomText('Date Range',
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textBlack),
-            const SizedBox(height: 12),
-            CommonReportDateFilter(
-              fromDate: quotationProvider.fromDate?.toString(),
-              toDate: quotationProvider.toDate?.toString(),
-              formattedFromDate: quotationProvider.formattedFromDate,
-              formattedToDate: quotationProvider.formattedToDate,
-              onTap: () => onClickTopButton(context),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      quotationProvider.getQuotationReports(context);
-                      quotationProvider.toggleFilter();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    final searchProvider = Provider.of<SidebarProvider>(context, listen: false);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText('Status',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: [
+              FilterChipWidget(
+                label: 'All',
+                isSelected: quotationProvider.selectedStatus == 0 || quotationProvider.selectedStatus == null,
+                onTap: () => quotationProvider.setStatus(0),
+              ),
+              FilterChipWidget(
+                label: 'Pending',
+                isSelected: quotationProvider.selectedStatus == 1,
+                onTap: () => quotationProvider.setStatus(1),
+              ),
+              FilterChipWidget(
+                label: 'Approved',
+                isSelected: quotationProvider.selectedStatus == 2,
+                onTap: () => quotationProvider.setStatus(2),
+              ),
+              FilterChipWidget(
+                label: 'Rejected',
+                isSelected: quotationProvider.selectedStatus == 3,
+                onTap: () => quotationProvider.setStatus(3),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          CustomText('Date Range',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            alignment: WrapAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  onClickTopButton(context);
+                },
+                child: Container(
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: quotationProvider.selectedDateFilterIndex != null
+                        ? AppColors.primaryBlue.withOpacity(0.1)
+                        : Colors.grey[100],
+                    border: Border.all(
+                      color: quotationProvider.selectedDateFilterIndex != null
+                          ? AppColors.primaryBlue
+                          : Colors.transparent,
                     ),
-                    child: const Text('Apply Filters'),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.calendar_today_outlined,
+                        size: 14,
+                        color: quotationProvider.selectedDateFilterIndex != null
+                            ? AppColors.primaryBlue
+                            : Colors.grey[600],
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        quotationProvider.selectedDateFilterIndex != null
+                            ? dateButtonTitles[quotationProvider.selectedDateFilterIndex!]
+                            : 'Select Date Range',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: quotationProvider.selectedDateFilterIndex != null
+                              ? AppColors.primaryBlue
+                              : Colors.grey[600],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                CommonReportResetButton(
-                  onReset: () {
-                    quotationProvider.selectDateFilterOption(null);
-                    quotationProvider.removeStatus();
-                    searchController.clear();
-                    quotationProvider.setQuotationSearch('', '', '', '');
-                    quotationProvider.getQuotationReports(context);
-                  },
+              ),
+              if (quotationProvider.fromDate != null || quotationProvider.toDate != null)
+                Container(
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryBlue.withOpacity(0.05),
+                    border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Center(
+                    child: Text(
+                      "${quotationProvider.formattedFromDate} - ${quotationProvider.formattedToDate}",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.primaryBlue,
+                      ),
+                    ),
+                  ),
                 ),
-              ],
+            ],
+          ),
+          const SizedBox(height: 24),
+          if (quotationProvider.fromDate != null ||
+              quotationProvider.toDate != null ||
+              (quotationProvider.selectedStatus != null && quotationProvider.selectedStatus != 0))
+            SizedBox(
+              width: double.infinity,
+              child: CommonReportResetButton(
+                onReset: () {
+                  quotationProvider.selectDateFilterOption(null);
+                  quotationProvider.removeStatus();
+                  searchController.clear();
+                  quotationProvider.setQuotationSearch('', '', '', '');
+                  quotationProvider.getQuotationReports(context);
+                  searchProvider.stopSearch();
+                  quotationProvider.setFilter(false);
+                },
+              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

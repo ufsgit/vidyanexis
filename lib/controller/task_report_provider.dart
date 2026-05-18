@@ -114,7 +114,7 @@ class TaskReportProvider extends ChangeNotifier {
   }
 
   void setFilter(bool filter) {
-    _isFilter = false;
+    _isFilter = filter;
     notifyListeners();
   }
 

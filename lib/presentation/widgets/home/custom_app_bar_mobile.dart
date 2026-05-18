@@ -197,6 +197,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
             border: InputBorder.none,
             hintStyle:
                 widget.searchHintStyle ?? const TextStyle(color: Colors.grey),
+            suffixIcon: widget.onFilterTap != null
+                ? IconButton(
+                    icon: Icon(
+                      Icons.filter_list,
+                      color: widget.iconColor ?? Colors.black,
+                      size: widget.filterIconSize,
+                    ),
+                    onPressed: widget.onFilterTap,
+                  )
+                : null,
           ),
       style: widget.searchTextStyle ?? const TextStyle(color: Colors.black),
       textInputAction: TextInputAction.search,
@@ -241,7 +251,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: widget.actionsPadding,
         child: Row(
           children: [
-            if (widget.showFilterIcon && onFilterTap != null)
+            if (widget.showFilterIcon && onFilterTap != null && !widget.showSearch)
               IconButton(
                 icon: Icon(
                   Icons.filter_list,
