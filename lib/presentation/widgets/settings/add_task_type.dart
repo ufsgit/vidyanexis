@@ -51,9 +51,9 @@ class _AddTaskTypeState extends State<AddTaskType> {
     if (_selectedStatusIds.isEmpty) {
       return 'Please select at least one Lead Status';
     }
-    if (_selectedEnquiryForIds.isEmpty) {
-      return 'Please select at least one Enquiry For';
-    }
+    // if (_selectedEnquiryForIds.isEmpty) {
+    //   return 'Please select at least one Enquiry For';
+    // }
 
     // Validate that selected status IDs are all valid (greater than 0)
     for (var statusId in _selectedStatusIds) {
@@ -61,12 +61,12 @@ class _AddTaskTypeState extends State<AddTaskType> {
         return 'One or more selected statuses are invalid';
       }
     }
-    // Validate that selected enquiry for IDs are all valid (greater than 0)
-    for (var enquiryForId in _selectedEnquiryForIds) {
-      if (enquiryForId <= 0) {
-        return 'One or more selected enquiry for are invalid';
-      }
-    }
+    // // Validate that selected enquiry for IDs are all valid (greater than 0)
+    // for (var enquiryForId in _selectedEnquiryForIds) {
+    //   if (enquiryForId <= 0) {
+    //     return 'One or more selected enquiry for are invalid';
+    //   }
+    // }
 
     return null;
   }
