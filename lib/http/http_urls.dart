@@ -32,13 +32,13 @@ class HttpUrls {
 
   // static String baseUrl = 'https://exactsystem.trackbox.net.in/';
 //   static String baseUrl = 'https://jbsolarapi.ufstech.net.in/';
-  static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
+  // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
 
 //dev
 
 //static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
- static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';

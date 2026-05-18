@@ -27,6 +27,7 @@ class LeadCard extends StatefulWidget {
   final bool isExpanded;
   final bool isLead;
   final VoidCallback onTap;
+  final VoidCallback? onSaved;
 
   const LeadCard({
     super.key,
@@ -34,6 +35,7 @@ class LeadCard extends StatefulWidget {
     required this.isLead,
     required this.isExpanded,
     required this.onTap,
+    this.onSaved,
   });
 
   @override
@@ -808,6 +810,7 @@ class _LeadCardState extends State<LeadCard> {
                                                   .messageController.text,
                                               audioFiles: [],
                                             );
+                                            widget.onSaved?.call();
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
