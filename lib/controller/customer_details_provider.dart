@@ -2340,6 +2340,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "TotalAmount": subtotalController.text,
         "Subsidy_Amount":
             double.tryParse(qsubsidyAmountController.text.toString()) ?? 0,
+        "Subsidyticked": _isSubsidyChecked ? 1 : 0,
         "Discount_Amount":
             double.tryParse(qDiscountController.text.toString()) ?? 0,
         "NetTotal": totalController.text,
