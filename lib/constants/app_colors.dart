@@ -12,13 +12,13 @@ class AppColors {
   static const Color textBlue800 = Color(0xFF152D70);
   static const Color textBlack = Color(0xFF172230);
   static const Color primaryViolet = Color(0xFF152D70);
-  static const Color primaryBlue = Color(0xFFEFB60A);
+  static const Color primaryBlue = Color(0xFF5499D9);
 
   static const Color violet = Color(0xFF6A0DAD);
   static const Color buttonBackgroundColor = Color(0xFFA2C6EB);
 
   static const Color secondaryBlue = Color(0xFF5499D9);
-  static const Color appViolet = Color(0xFFEFB60A);
+  static const Color appViolet = Color(0xFF5499D9);
   static const Color lightGreen = Color(0xFFD9FAD9);
   static const Color surfaceGrey = Color(0xFFF4F7FA);
   static const Color techityfyGrey = Color.fromARGB(255, 0, 90, 69);

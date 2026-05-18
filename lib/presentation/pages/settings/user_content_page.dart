@@ -21,12 +21,12 @@ class UsersContent extends StatefulWidget {
 }
 
 class _UsersContentState extends State<UsersContent> {
+  late SettingsProvider settingsProvider;
+
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-
       settingsProvider.getUserDetails(
         '',
         context,
@@ -36,8 +36,31 @@ class _UsersContentState extends State<UsersContent> {
       settingsProvider.searchController.clear();
       settingsProvider.selectedFilterDepartmentId = 0;
       settingsProvider.selectedFilterBranchId = 0;
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    settingsProvider.resetStates();
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return SettingsAddUserWidget(
+          isEdit: false,
+          userId: '0',
+        );
+      },
+    );
   }
 
   @override
@@ -52,156 +75,159 @@ class _UsersContentState extends State<UsersContent> {
             // Header section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
+              child: AppStyles.isWebScreen(context)
+                  ? Row(
+                      children: [
+                        Text(
+                          'Users',
+                          style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textBlue800),
+                        ),
+                        const Spacer(),
+                        Container(
+                          width: 350,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: TextField(
+                            controller: settingsProvider.searchController,
+                            onChanged: (query) {
+                              settingsProvider.getUserDetails(query, context);
+                            },
+                            decoration: const InputDecoration(
+                              hintText: 'Search here....',
+                              prefixIcon: Icon(Icons.search),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        if (settingsProvider.menuIsSaveMap[1] == 1)
+                          CustomOutlinedSvgButton(
+                            onPressed: () async {
+                              settingsProvider.resetStates();
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SettingsAddUserWidget(
+                                    isEdit: false,
+                                    userId: '0',
+                                  );
+                                },
+                              );
+                            },
+                            svgPath: 'assets/images/Plus.svg',
+                            label: 'New User',
+                            breakpoint: 860,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.secondaryBlue,
+                            borderSide:
+                                BorderSide(color: AppColors.secondaryBlue),
+                          ),
+                        const SizedBox(width: 16),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            if (AppStyles.isWebScreen(context)) ...[
+              const SizedBox(height: 12),
+              // Branch Filter
+              Row(
                 children: [
-                  Text(
-                    'Users',
-                    style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlue800),
-                  ),
-                  const Spacer(),
                   Container(
-                    width: AppStyles.isWebScreen(context)
-                        ? 350
-                        : MediaQuery.of(context).size.width / 3.5,
+                    width: 180,
                     height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.grey[300]!),
                     ),
-                    child: TextField(
-                      controller: settingsProvider.searchController,
-                      onChanged: (query) {
-                        settingsProvider.getUserDetails(query, context);
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'Search here....',
-                        prefixIcon: Icon(Icons.search),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 4,
-                        ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: settingsProvider.selectedFilterBranchId ?? 0,
+                        hint: Text("Branch",
+                            style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                        isExpanded: true,
+                        items: [
+                          const DropdownMenuItem(
+                            value: 0,
+                            child: Text("All Branches"),
+                          ),
+                          ...settingsProvider.branchModel.map((branch) {
+                            return DropdownMenuItem(
+                              value: branch.branchId,
+                              child: Text(branch.branchName ?? "",
+                                  overflow: TextOverflow.ellipsis),
+                            );
+                          }),
+                        ],
+                        onChanged: (value) {
+                          settingsProvider.selectedFilterBranchId = value;
+                          settingsProvider.getUserDetails(
+                            settingsProvider.searchController.text,
+                            context,
+                          );
+                        },
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  if (settingsProvider.menuIsSaveMap[1] == 1)
-                    CustomOutlinedSvgButton(
-                      onPressed: () async {
-                        settingsProvider.resetStates();
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return SettingsAddUserWidget(
-                              isEdit: false,
-                              userId: '0',
-                            );
-                          },
-                        );
-                      },
-                      svgPath: 'assets/images/Plus.svg',
-                      label: 'New User',
-                      breakpoint: 860,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      foregroundColor: Colors.white,
-                      backgroundColor: AppColors.primaryBlue,
-                      borderSide: BorderSide(color: AppColors.primaryBlue),
+                  const SizedBox(width: 8),
+                  // Department Filter
+                  Container(
+                    width: 180,
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey[300]!),
                     ),
-                  const SizedBox(width: 16),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: settingsProvider.selectedFilterDepartmentId ?? 0,
+                        hint: Text("Department",
+                            style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                        isExpanded: true,
+                        items: [
+                          const DropdownMenuItem(
+                            value: 0,
+                            child: Text("All Depts"),
+                          ),
+                          ...settingsProvider.departmentModel.map((dept) {
+                            return DropdownMenuItem(
+                              value: dept.departmentId,
+                              child: Text(dept.departmentName,
+                                  overflow: TextOverflow.ellipsis),
+                            );
+                          }),
+                        ],
+                        onChanged: (value) {
+                          settingsProvider.selectedFilterDepartmentId = value;
+                          settingsProvider.getUserDetails(
+                            settingsProvider.searchController.text,
+                            context,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            const SizedBox(height: 12),
-            // Branch Filter
-            Row(
-              children: [
-                Container(
-                  width: 180,
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey[300]!),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<int>(
-                      value: settingsProvider.selectedFilterBranchId ?? 0,
-                      hint: Text("Branch",
-                          style: GoogleFonts.plusJakartaSans(fontSize: 14)),
-                      isExpanded: true,
-                      items: [
-                        const DropdownMenuItem(
-                          value: 0,
-                          child: Text("All Branches"),
-                        ),
-                        ...settingsProvider.branchModel.map((branch) {
-                          return DropdownMenuItem(
-                            value: branch.branchId,
-                            child: Text(branch.branchName ?? "",
-                                overflow: TextOverflow.ellipsis),
-                          );
-                        }),
-                      ],
-                      onChanged: (value) {
-                        settingsProvider.selectedFilterBranchId = value;
-                        settingsProvider.getUserDetails(
-                          settingsProvider.searchController.text,
-                          context,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Department Filter
-                Container(
-                  width: 180,
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey[300]!),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<int>(
-                      value: settingsProvider.selectedFilterDepartmentId ?? 0,
-                      hint: Text("Department",
-                          style: GoogleFonts.plusJakartaSans(fontSize: 14)),
-                      isExpanded: true,
-                      items: [
-                        const DropdownMenuItem(
-                          value: 0,
-                          child: Text("All Depts"),
-                        ),
-                        ...settingsProvider.departmentModel.map((dept) {
-                          return DropdownMenuItem(
-                            value: dept.departmentId,
-                            child: Text(dept.departmentName,
-                                overflow: TextOverflow.ellipsis),
-                          );
-                        }),
-                      ],
-                      onChanged: (value) {
-                        settingsProvider.selectedFilterDepartmentId = value;
-                        settingsProvider.getUserDetails(
-                          settingsProvider.searchController.text,
-                          context,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
+            ],
+            if (AppStyles.isWebScreen(context)) const SizedBox(height: 24),
 
             // Table section
             SingleChildScrollView(
@@ -215,15 +241,30 @@ class _UsersContentState extends State<UsersContent> {
                 child: AppStyles.isWebScreen(context)
                     ? Container(
                         decoration: BoxDecoration(
-                          color: AppColors.techityfyGrey,
-                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.02),
+                              blurRadius: 16,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
+                        clipBehavior: Clip.antiAlias,
                         child: Column(
                           children: [
                             // Table header with fixed widths
                             Container(
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFF8FAFC),
+                                border: Border(
+                                  bottom: BorderSide(color: Color(0xFFE2E8F0)),
+                                ),
+                              ),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
+                                  horizontal: 16, vertical: 14),
                               child: Row(
                                 children: [
                                   SizedBox(
@@ -231,9 +272,9 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Text(
                                       'No',
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textGrey1),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF475569)),
                                     ),
                                   ),
                                   SizedBox(
@@ -241,9 +282,9 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Text(
                                       'User name',
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textGrey1),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF475569)),
                                     ),
                                   ),
                                   SizedBox(
@@ -251,9 +292,9 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Text(
                                       'Department',
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textGrey1),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF475569)),
                                     ),
                                   ),
                                   SizedBox(
@@ -261,9 +302,9 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Text(
                                       'Branch',
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textGrey1),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF475569)),
                                     ),
                                   ),
                                   SizedBox(
@@ -272,35 +313,33 @@ class _UsersContentState extends State<UsersContent> {
                                       child: Text(
                                         'Edit',
                                         style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textGrey1),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
                                       ),
                                     ),
                                   ),
-                                  // const SizedBox(width: 32),
                                   SizedBox(
                                     width: 60,
                                     child: Center(
                                       child: Text(
                                         'Delete',
                                         style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textGrey1),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
                                       ),
                                     ),
                                   ),
-                                  // const SizedBox(width: 32),
                                   SizedBox(
                                     width: 110,
                                     child: Center(
                                       child: Text(
                                         'Team',
                                         style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textGrey1),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
                                       ),
                                     ),
                                   ),
@@ -310,9 +349,9 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Text(
                                       'Status',
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textGrey1),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF475569)),
                                     ),
                                   ),
                                   const SizedBox(width: 16),
@@ -321,9 +360,9 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Text(
                                       'View details',
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textGrey1),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF475569)),
                                     ),
                                   ),
                                   const Expanded(child: SizedBox()),
@@ -339,155 +378,195 @@ class _UsersContentState extends State<UsersContent> {
                                   settingsProvider.searchUserDetails.length,
                               itemBuilder: (context, index) {
                                 return Container(
-                                  color: index.isEven
-                                      ? Colors.white
-                                      : AppColors.surfaceGrey,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 40,
-                                          child: Text(
-                                            (index + 1).toString(),
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColors.textBlack),
-                                          ),
+                                  decoration: BoxDecoration(
+                                    color: index.isEven
+                                        ? Colors.white
+                                        : const Color(0xFFF8FAFC),
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: index ==
+                                                settingsProvider
+                                                        .searchUserDetails
+                                                        .length -
+                                                    1
+                                            ? Colors.transparent
+                                            : const Color(0xFFF1F5F9),
+                                      ),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 40,
+                                        child: Text(
+                                          (index + 1).toString(),
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                              color: AppColors.textBlack),
                                         ),
-                                        SizedBox(
-                                          width: 180,
-                                          child: Row(
-                                            children: [
-                                              const CircleAvatar(
-                                                radius: 12,
-                                                child: Icon(
-                                                    Icons.person_outline,
-                                                    size: 16,
-                                                    color: Colors.grey),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
+                                      ),
+                                      SizedBox(
+                                        width: 180,
+                                        child: Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 14,
+                                              backgroundColor: getAvatarColor(
                                                   settingsProvider
                                                       .searchUserDetails[index]
-                                                      .userDetailsName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: AppColors
-                                                              .textBlack),
+                                                      .userDetailsName),
+                                              child: Text(
+                                                () {
+                                                  final nameStr =
+                                                      settingsProvider
+                                                          .searchUserDetails[
+                                                              index]
+                                                          .userDetailsName
+                                                          .trim();
+                                                  if (nameStr.isEmpty)
+                                                    return 'U';
+                                                  final words = nameStr
+                                                      .split(RegExp(r'\s+'));
+                                                  if (words.length > 1) {
+                                                    return (words[0][0] +
+                                                            words[1][0])
+                                                        .toUpperCase();
+                                                  }
+                                                  return nameStr.length > 1
+                                                      ? nameStr
+                                                          .substring(0, 2)
+                                                          .toUpperCase()
+                                                      : nameStr[0]
+                                                          .toUpperCase();
+                                                }(),
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 11,
                                                 ),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                settingsProvider
+                                                    .searchUserDetails[index]
+                                                    .userDetailsName,
+                                                overflow: TextOverflow.ellipsis,
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: AppColors
+                                                            .textBlack),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(
-                                          width: 140,
-                                          child: (settingsProvider
-                                                      .searchUserDetails[index]
-                                                      .departmentName !=
-                                                  null)
-                                              ? Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Flexible(
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 4),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors
-                                                              .purple.shade50,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4),
-                                                        ),
-                                                        child: Text(
-                                                          settingsProvider
-                                                                  .searchUserDetails[
-                                                                      index]
-                                                                  .departmentName ??
-                                                              "",
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: GoogleFonts
-                                                              .plusJakartaSans(
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color:
-                                                                Colors.purple,
-                                                          ),
+                                      ),
+                                      SizedBox(
+                                        width: 140,
+                                        child: (settingsProvider
+                                                    .searchUserDetails[index]
+                                                    .departmentName !=
+                                                null)
+                                            ? Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Flexible(
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .purple.shade50,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(4),
+                                                      ),
+                                                      child: Text(
+                                                        settingsProvider
+                                                                .searchUserDetails[
+                                                                    index]
+                                                                .departmentName ??
+                                                            "",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .plusJakartaSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.purple,
                                                         ),
                                                       ),
                                                     ),
-                                                  ],
-                                                )
-                                              : const SizedBox(),
-                                        ),
-                                        SizedBox(
-                                          width: 120,
-                                          child: (settingsProvider
-                                                      .searchUserDetails[index]
-                                                      .branchName !=
-                                                  null)
-                                              ? Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Flexible(
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 4),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors
-                                                              .blue.shade50,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4),
-                                                        ),
-                                                        child: Text(
-                                                          settingsProvider
-                                                                  .searchUserDetails[
-                                                                      index]
-                                                                  .branchName ??
-                                                              "",
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: GoogleFonts
-                                                              .plusJakartaSans(
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: Colors.blue,
-                                                          ),
+                                                  ),
+                                                ],
+                                              )
+                                            : const SizedBox(),
+                                      ),
+                                      SizedBox(
+                                        width: 120,
+                                        child: (settingsProvider
+                                                    .searchUserDetails[index]
+                                                    .branchName !=
+                                                null)
+                                            ? Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Flexible(
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.blue.shade50,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(4),
+                                                      ),
+                                                      child: Text(
+                                                        settingsProvider
+                                                                .searchUserDetails[
+                                                                    index]
+                                                                .branchName ??
+                                                            "",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: GoogleFonts
+                                                            .plusJakartaSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.blue,
                                                         ),
                                                       ),
                                                     ),
-                                                  ],
-                                                )
-                                              : const SizedBox(),
-                                        ),
-                                        if (settingsProvider.menuIsEditMap[1] ==
-                                            1)
-                                          SizedBox(
-                                            width: 50,
-                                            child: Center(
+                                                  ),
+                                                ],
+                                              )
+                                            : const SizedBox(),
+                                      ),
+                                      if (settingsProvider.menuIsEditMap[1] ==
+                                          1)
+                                        SizedBox(
+                                          width: 50,
+                                          child: Center(
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFFEFF6FF),
+                                                shape: BoxShape.circle,
+                                              ),
                                               child: IconButton(
                                                 onPressed: () {
                                                   showDialog(
@@ -533,20 +612,29 @@ class _UsersContentState extends State<UsersContent> {
                                                   );
                                                 },
                                                 icon: Icon(
-                                                  Icons.edit,
+                                                  Icons.edit_rounded,
                                                   color: AppColors.primaryBlue,
-                                                  size: 20,
+                                                  size: 18,
                                                 ),
-                                                tooltip: 'Edit',
+                                                constraints:
+                                                    const BoxConstraints(),
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                tooltip: 'Edit User',
                                               ),
                                             ),
                                           ),
-                                        if (settingsProvider
-                                                .menuIsDeleteMap[1] ==
-                                            1)
-                                          SizedBox(
-                                            width: 60,
-                                            child: Center(
+                                        ),
+                                      if (settingsProvider.menuIsDeleteMap[1] ==
+                                          1)
+                                        SizedBox(
+                                          width: 60,
+                                          child: Center(
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFFFEF2F2),
+                                                shape: BoxShape.circle,
+                                              ),
                                               child: IconButton(
                                                 onPressed: () {
                                                   showDialog(
@@ -581,7 +669,6 @@ class _UsersContentState extends State<UsersContent> {
                                                                       userId);
                                                               Navigator.pop(
                                                                   context);
-                                                              print(userId);
                                                             },
                                                             child: const Text(
                                                               'Delete',
@@ -595,146 +682,141 @@ class _UsersContentState extends State<UsersContent> {
                                                     },
                                                   );
                                                 },
-                                                icon: Icon(
-                                                  Icons.delete,
-                                                  color: AppColors.textRed,
-                                                  size: 20,
+                                                icon: const Icon(
+                                                  Icons.delete_outline_rounded,
+                                                  color: Color(0xFFEF4444),
+                                                  size: 18,
                                                 ),
-                                                tooltip: 'Delete',
+                                                constraints:
+                                                    const BoxConstraints(),
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                tooltip: 'Delete User',
                                               ),
                                             ),
                                           ),
-                                        SizedBox(
-                                          width: 110,
-                                          child: Center(
-                                            child: ActionChip(
-                                                shape:
-                                                    const RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  15),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  15),
-                                                        ),
-                                                        side: BorderSide(
-                                                            color: Colors
-                                                                .transparent)),
-                                                color: WidgetStateProperty.all(
-                                                    Colors.blue[50]),
-                                                onPressed: () =>
-                                                    assignTeamDialogue(
-                                                        context,
-                                                        settingsProvider
-                                                                .searchUserDetails[
-                                                            index]),
-                                                avatar: const CircleAvatar(
-                                                  radius: 16,
-                                                  child: Icon(
-                                                      Icons.person_add_outlined,
-                                                      size: 12,
-                                                      color: Colors.grey),
-                                                ),
-                                                label: Text(
-                                                  'Team',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                          fontWeight:
-                                                              FontWeight.w400),
-                                                )),
-                                          ),
                                         ),
-                                        const SizedBox(width: 16),
-                                        SizedBox(
-                                          width: 80,
-                                          child: Container(
+                                      SizedBox(
+                                        width: 110,
+                                        child: Center(
+                                          child: ActionChip(
+                                            onPressed: () => assignTeamDialogue(
+                                                context,
+                                                settingsProvider
+                                                    .searchUserDetails[index]),
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
+                                            backgroundColor:
+                                                const Color(0xFFEFF6FF),
+                                            side: BorderSide.none,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            avatar: Icon(
+                                              Icons.group_add_rounded,
+                                              size: 14,
+                                              color: AppColors.primaryBlue,
+                                            ),
+                                            label: Text(
+                                              'Team',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.primaryBlue,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      SizedBox(
+                                        width: 80,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: settingsProvider
+                                                        .searchUserDetails[
+                                                            index]
+                                                        .workingStatus ==
+                                                    '1'
+                                                ? const Color(0xFFE8F8EE)
+                                                : const Color(0xFFFDECEB),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            settingsProvider
+                                                        .searchUserDetails[
+                                                            index]
+                                                        .workingStatus ==
+                                                    '1'
+                                                ? 'Active'
+                                                : 'Inactive',
+                                            style: GoogleFonts.plusJakartaSans(
                                               color: settingsProvider
                                                           .searchUserDetails[
                                                               index]
                                                           .workingStatus ==
                                                       '1'
-                                                  ? Colors.green.shade50
-                                                  : Colors.red.shade50,
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                            child: Text(
-                                              settingsProvider
-                                                          .searchUserDetails[
-                                                              index]
-                                                          .workingStatus ==
-                                                      '1'
-                                                  ? 'Active'
-                                                  : 'Inactive',
-                                              style: TextStyle(
-                                                color: settingsProvider
-                                                            .searchUserDetails[
-                                                                index]
-                                                            .workingStatus ==
-                                                        '1'
-                                                    ? Colors.green.shade700
-                                                    : Colors.red.shade700,
-                                                fontSize: 13,
-                                              ),
+                                                  ? const Color(0xFF1B7C3D)
+                                                  : const Color(0xFFC53030),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 16),
-                                        SizedBox(
-                                          width: 200,
-                                          child: CustomOutlinedSvgButton(
-                                            showIcon: false,
-                                            onPressed: () async {
-                                              log(settingsProvider
-                                                  .searchUserDetails[index]
-                                                  .userDetailsId
-                                                  .toString());
-                                              await settingsProvider
-                                                  .getMenuPermissionData(
-                                                      settingsProvider
-                                                          .searchUserDetails[
-                                                              index]
-                                                          .userDetailsId
-                                                          .toString(),
-                                                      context);
-                                              settingsProvider
-                                                  .searchPermission(context);
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PermissionHandlingPage(
-                                                    userId: settingsProvider
+                                      ),
+                                      const SizedBox(width: 16),
+                                      SizedBox(
+                                        width: 200,
+                                        child: CustomOutlinedSvgButton(
+                                          showIcon: false,
+                                          onPressed: () async {
+                                            log(settingsProvider
+                                                .searchUserDetails[index]
+                                                .userDetailsId
+                                                .toString());
+                                            await settingsProvider
+                                                .getMenuPermissionData(
+                                                    settingsProvider
                                                         .searchUserDetails[
                                                             index]
                                                         .userDetailsId
                                                         .toString(),
-                                                    userName: settingsProvider
-                                                        .searchUserDetails[
-                                                            index]
-                                                        .userDetailsName,
-                                                  ),
+                                                    context);
+                                            settingsProvider
+                                                .searchPermission(context);
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PermissionHandlingPage(
+                                                  userId: settingsProvider
+                                                      .searchUserDetails[index]
+                                                      .userDetailsId
+                                                      .toString(),
+                                                  userName: settingsProvider
+                                                      .searchUserDetails[index]
+                                                      .userDetailsName,
                                                 ),
-                                              );
-                                            },
-                                            svgPath: 'assets/images/Print.svg',
-                                            label: 'Permissions',
-                                            breakpoint: 860,
-                                            foregroundColor:
-                                                AppColors.primaryBlue,
-                                            backgroundColor: Colors.white,
-                                            borderSide: BorderSide(
-                                                color: AppColors.primaryBlue),
-                                          ),
+                                              ),
+                                            );
+                                          },
+                                          svgPath: 'assets/images/Print.svg',
+                                          label: 'Permissions',
+                                          breakpoint: 860,
+                                          foregroundColor:
+                                              AppColors.primaryBlue,
+                                          backgroundColor: Colors.white,
+                                          borderSide: BorderSide(
+                                              color: AppColors.primaryBlue),
                                         ),
-                                        const Expanded(child: SizedBox()),
-                                      ],
-                                    ),
+                                      ),
+                                      const Expanded(child: SizedBox()),
+                                    ],
                                   ),
                                 );
                               },
@@ -761,118 +843,223 @@ class _UsersContentState extends State<UsersContent> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: AppColors.whiteColor,
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.04),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
                                   ),
                                   margin: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 8),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // User info header
-                                        Row(
-                                          children: [
-                                            const CircleAvatar(
-                                              radius: 20,
-                                              child: Icon(Icons.person_outline,
-                                                  size: 24, color: Colors.grey),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Header Row: Avatar + Details + Status
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          // Circular Initials Avatar
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: getAvatarColor(
+                                                user.userDetailsName),
+                                            child: Text(
+                                              () {
+                                                final nameStr =
+                                                    user.userDetailsName.trim();
+                                                if (nameStr.isEmpty) return 'U';
+                                                final words = nameStr
+                                                    .split(RegExp(r'\s+'));
+                                                if (words.length > 1) {
+                                                  return (words[0][0] +
+                                                          words[1][0])
+                                                      .toUpperCase();
+                                                }
+                                                return nameStr.length > 1
+                                                    ? nameStr
+                                                        .substring(0, 2)
+                                                        .toUpperCase()
+                                                    : nameStr[0].toUpperCase();
+                                              }(),
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                              ),
                                             ),
-                                            const SizedBox(width: 12),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          // Details: Name & Email
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  user.userDetailsName,
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: AppColors.textBlack,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  user.email,
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 13,
+                                                    color: AppColors.textGrey3,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          // Status Badge
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: user.workingStatus == '1'
+                                                  ? const Color(0xFFE8F8EE)
+                                                  : const Color(0xFFFDECEB),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: Text(
+                                              user.workingStatus == '1'
+                                                  ? 'Active'
+                                                  : 'Inactive',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                color: user.workingStatus == '1'
+                                                    ? const Color(0xFF1B7C3D)
+                                                    : const Color(0xFFC53030),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      // Metadata Row: Dept & Branch Badges
+                                      Row(
+                                        children: [
+                                          // Dept Badge
+                                          Expanded(
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 6),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFF8FAFC),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFFE2E8F0)),
+                                              ),
+                                              child: Row(
                                                 children: [
-                                                  Text(
-                                                    user.userDetailsName,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color:
-                                                          AppColors.textBlack,
-                                                    ),
+                                                  const Icon(
+                                                    Icons.work_outline_rounded,
+                                                    size: 14,
+                                                    color: AppColors.textGrey3,
                                                   ),
-                                                  Text(
-                                                    "Department : ${settingsProvider.searchUserDetails[index].departmentName}",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color: AppColors
-                                                                .textGrey1),
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Text(
-                                                    "Branch : ${settingsProvider.searchUserDetails[index].branchName}",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color: AppColors
-                                                                .textGrey1),
-                                                  ),
-                                                  Text(
-                                                    user.email,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 14,
-                                                      color:
-                                                          AppColors.textGrey1,
+                                                  const SizedBox(width: 6),
+                                                  Expanded(
+                                                    child: Text(
+                                                      user.departmentName,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .plusJakartaSans(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            AppColors.textGrey3,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                            // Status indicator
-                                            Container(
+                                          ),
+                                          const SizedBox(width: 8),
+                                          // Branch Badge
+                                          Expanded(
+                                            child: Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 12,
+                                                      horizontal: 10,
                                                       vertical: 6),
                                               decoration: BoxDecoration(
-                                                color: user.workingStatus == '1'
-                                                    ? Colors.green.shade50
-                                                    : Colors.red.shade50,
+                                                color: const Color(0xFFF8FAFC),
                                                 borderRadius:
-                                                    BorderRadius.circular(16),
+                                                    BorderRadius.circular(10),
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFFE2E8F0)),
                                               ),
-                                              child: Text(
-                                                user.workingStatus == '1'
-                                                    ? 'Active'
-                                                    : 'Inactive',
-                                                style: TextStyle(
-                                                  color: user.workingStatus ==
-                                                          '1'
-                                                      ? Colors.green.shade700
-                                                      : Colors.red.shade700,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                              child: Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.location_on_outlined,
+                                                    size: 14,
+                                                    color: AppColors.textGrey3,
+                                                  ),
+                                                  const SizedBox(width: 6),
+                                                  Expanded(
+                                                    child: Text(
+                                                      user.branchName,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: GoogleFonts
+                                                          .plusJakartaSans(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            AppColors.textGrey3,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 0),
-
-                                        // Action buttons
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            if (settingsProvider
-                                                    .menuIsEditMap[1] ==
-                                                1)
-                                              IconButton(
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      // Actions Row: Edit & Delete (Left) + Team & Permissions (Right)
+                                      Row(
+                                        children: [
+                                          // Left: Edit
+                                          if (settingsProvider
+                                                  .menuIsEditMap[1] ==
+                                              1) ...[
+                                            Container(
+                                              height: 36,
+                                              width: 36,
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryBlue
+                                                    .withOpacity(0.1),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: IconButton(
+                                                padding: EdgeInsets.zero,
                                                 onPressed: () {
                                                   showDialog(
                                                     barrierDismissible: false,
@@ -922,17 +1109,30 @@ class _UsersContentState extends State<UsersContent> {
                                                     },
                                                   );
                                                 },
-                                                icon: Icon(
-                                                  Icons.edit,
+                                                icon: const Icon(
+                                                  Icons.edit_rounded,
                                                   color: AppColors.primaryBlue,
-                                                  size: 20,
+                                                  size: 18,
                                                 ),
                                                 tooltip: 'Edit',
                                               ),
-                                            if (settingsProvider
-                                                    .menuIsDeleteMap[1] ==
-                                                1)
-                                              IconButton(
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                          // Left: Delete
+                                          if (settingsProvider
+                                                  .menuIsDeleteMap[1] ==
+                                              1) ...[
+                                            Container(
+                                              height: 36,
+                                              width: 36,
+                                              decoration: BoxDecoration(
+                                                color: AppColors.textRed
+                                                    .withOpacity(0.1),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: IconButton(
+                                                padding: EdgeInsets.zero,
                                                 onPressed: () {
                                                   showDialog(
                                                     context: context,
@@ -980,47 +1180,76 @@ class _UsersContentState extends State<UsersContent> {
                                                     },
                                                   );
                                                 },
-                                                icon: Icon(
-                                                  Icons.delete,
+                                                icon: const Icon(
+                                                  Icons.delete_outline_rounded,
                                                   color: AppColors.textRed,
-                                                  size: 20,
+                                                  size: 18,
                                                 ),
                                                 tooltip: 'Delete',
                                               ),
+                                            ),
                                           ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        ActionChip(
-                                          shape: const RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.only(
-                                                bottomLeft: Radius.circular(15),
-                                                topRight: Radius.circular(15),
-                                              ),
+                                          const Spacer(),
+                                          // Right: Team
+                                          OutlinedButton.icon(
+                                            style: OutlinedButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8),
+                                              minimumSize: Size.zero,
+                                              tapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
                                               side: BorderSide(
-                                                  color: Colors.transparent)),
-                                          color: WidgetStateProperty.all(
-                                              Colors.blue[50]),
-                                          onPressed: () => assignTeamDialogue(
-                                              context,
-                                              settingsProvider
-                                                  .searchUserDetails[index]),
-                                          avatar: const CircleAvatar(
-                                            radius: 16,
-                                            child: Icon(
-                                                Icons.person_add_outlined,
-                                                size: 12,
-                                                color: Colors.grey),
+                                                  color: AppColors.primaryBlue
+                                                      .withOpacity(0.2)),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              backgroundColor: AppColors
+                                                  .primaryBlue
+                                                  .withOpacity(0.05),
+                                            ),
+                                            onPressed: () => assignTeamDialogue(
+                                                context,
+                                                settingsProvider
+                                                    .searchUserDetails[index]),
+                                            icon: const Icon(
+                                                Icons.group_add_rounded,
+                                                size: 15,
+                                                color: AppColors.primaryBlue),
+                                            label: Text(
+                                              'Team',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.primaryBlue,
+                                              ),
+                                            ),
                                           ),
-                                          label: Text(
-                                            'Team',
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        SizedBox(
-                                          child: CustomOutlinedSvgButton(
-                                            showIcon: false,
+                                          const SizedBox(width: 8),
+                                          // Right: Permissions
+                                          OutlinedButton(
+                                            style: OutlinedButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8),
+                                              minimumSize: Size.zero,
+                                              tapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                              side: const BorderSide(
+                                                  color: AppColors.primaryBlue),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              backgroundColor: Colors.white,
+                                            ),
                                             onPressed: () async {
                                               log(settingsProvider
                                                   .searchUserDetails[index]
@@ -1054,18 +1283,19 @@ class _UsersContentState extends State<UsersContent> {
                                                 ),
                                               );
                                             },
-                                            svgPath: 'assets/images/Print.svg',
-                                            label: 'Permissions',
-                                            breakpoint: 860,
-                                            foregroundColor:
-                                                AppColors.primaryBlue,
-                                            backgroundColor: Colors.white,
-                                            borderSide: BorderSide(
-                                                color: AppColors.primaryBlue),
+                                            child: Text(
+                                              'Permissions',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.primaryBlue,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 );
                               },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 
 class CustomOutlinedSvgButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -35,16 +36,26 @@ class CustomOutlinedSvgButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color effectiveBgColor = backgroundColor;
+    Color effectiveBorderColor = borderSide.color;
+
+    if (backgroundColor == AppColors.primaryBlue) {
+      effectiveBgColor = AppColors.secondaryBlue;
+    }
+    if (borderSide.color == AppColors.primaryBlue) {
+      effectiveBorderColor = AppColors.secondaryBlue;
+    }
+
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         foregroundColor: foregroundColor,
-        backgroundColor: backgroundColor,
+        backgroundColor: effectiveBgColor,
         shape: shape ??
             ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
             ),
-        side: borderSide,
+        side: borderSide.copyWith(color: effectiveBorderColor),
         padding: padding,
       ),
       child: showIcon

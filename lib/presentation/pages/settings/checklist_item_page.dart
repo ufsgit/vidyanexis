@@ -9,7 +9,8 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 class CheckListItemPage extends StatefulWidget {
-  const CheckListItemPage({super.key});
+  final String searchQuery;
+  const CheckListItemPage({super.key, this.searchQuery = ''});
 
   @override
   State<CheckListItemPage> createState() => _CheckListItemPageState();
@@ -18,18 +19,53 @@ class CheckListItemPage extends StatefulWidget {
 class _CheckListItemPageState extends State<CheckListItemPage> {
   final searchController = TextEditingController();
   Future<List<CheckListItemModel>>? checkListItemFuture;
+  late SettingsProvider settingsProvider;
 
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      searchController.text = widget.searchQuery;
       getData();
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
   }
 
+  @override
+  void didUpdateWidget(covariant CheckListItemPage oldWidget) {
+    if (widget.searchQuery != oldWidget.searchQuery) {
+      searchController.text = widget.searchQuery;
+      getData();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AddCheckListItemPage(
+            checkListItemModel: CheckListItemModel());
+      },
+    ).then((value) {
+      if (null != value && value) {
+        getData();
+      }
+    });
+  }
+
   void getData() {
-    final settingsProvider =
-        Provider.of<SettingsProvider>(context, listen: false);
     checkListItemFuture =
         settingsProvider.getCheckListItem(searchController.text, context);
   }
@@ -38,19 +74,19 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final isWeb = AppStyles.isWebScreen(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: SizedBox(
-            width: AppStyles.isWebScreen(context)
-                ? constraints.maxWidth < minContentWidth
-                    ? minContentWidth
-                    : constraints.maxWidth
-                : MediaQuery.of(context).size.width - 30,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        final content = SizedBox(
+          width: isWeb
+              ? (constraints.maxWidth < minContentWidth
+                  ? minContentWidth
+                  : constraints.maxWidth)
+              : double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isWeb) ...[
                 // Header section
                 SizedBox(
                   width: double.infinity,
@@ -76,7 +112,9 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
                           controller: searchController,
                           onChanged: (query) {
                             print(query);
-                            getData();
+                            setState(() {
+                              getData();
+                            });
                           },
                           decoration: const InputDecoration(
                             hintText: 'Search here....',
@@ -92,203 +130,179 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
                       const SizedBox(width: 16),
                       if (settingsProvider.menuIsSaveMap[6] == 1)
                         CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AddCheckListItemPage(
-                                    checkListItemModel: CheckListItemModel());
-                              },
-                            ).then((value) {
-                              if (null != value && value) {
-                                getData();
-                              }
-                            });
-                          },
+                          onPressed: _openAddDialog,
                           svgPath: 'assets/images/Plus.svg',
                           label: 'New Checklist Item',
                           breakpoint: 860,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
                           foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
+                          backgroundColor: AppColors.secondaryBlue,
+                          borderSide: BorderSide(color: AppColors.secondaryBlue),
                         ),
                       const SizedBox(width: 16),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceGrey,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      FutureBuilder<List<CheckListItemModel>>(
-                          future: checkListItemFuture,
-                          builder: (contextBuilder, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              // Loading state
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            List<CheckListItemModel> modelList =
-                                snapshot.data ?? [];
-                            return ListView.separated(
-                              separatorBuilder: (context, index) {
-                                return const SizedBox(
-                                  height: 12,
-                                );
-                              },
-                              shrinkWrap: true,
-                              physics: const ClampingScrollPhysics(),
-                              itemCount: modelList.length,
-                              itemBuilder: (context, index) {
-                                CheckListItemModel itemModel = modelList[index];
-                                return Container(
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.whiteColor,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          height: 22,
+              ],
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceGrey,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: [
+                    FutureBuilder<List<CheckListItemModel>>(
+                        future: checkListItemFuture,
+                        builder: (contextBuilder, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            // Loading state
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          List<CheckListItemModel> modelList =
+                              snapshot.data ?? [];
+                          return ListView.separated(
+                            separatorBuilder: (context, index) {
+                              return const SizedBox(
+                                height: 12,
+                              );
+                            },
+                            shrinkWrap: true,
+                            physics: const ClampingScrollPhysics(),
+                            itemCount: modelList.length,
+                            itemBuilder: (context, index) {
+                              CheckListItemModel itemModel = modelList[index];
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: AppColors.whiteColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 6),
                                           decoration: BoxDecoration(
                                               color: AppColors.surfaceGrey,
                                               borderRadius:
                                                   BorderRadius.circular(12)),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 8, right: 8),
-                                              child: Text(
-                                                itemModel.checkListItemName ??
-                                                    "",
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.black),
-                                              ),
-                                            ),
+                                          child: Text(
+                                            itemModel.checkListItemName ?? "",
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black),
                                           ),
                                         ),
-                                        const Spacer(),
-                                        if (settingsProvider
-                                                .menuIsEditMap[38] ==
-                                            1)
-                                          TextButton(
-                                              onPressed: () {
-                                                showDialog(
-                                                  barrierDismissible: false,
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AddCheckListItemPage(
-                                                        checkListItemModel:
-                                                            itemModel);
-                                                  },
-                                                ).then((value) {
-                                                  if (null != value && value) {
-                                                    getData();
-                                                  }
-                                                });
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    if (settingsProvider.menuIsEditMap[38] == 1)
+                                      TextButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AddCheckListItemPage(
+                                                    checkListItemModel:
+                                                        itemModel);
                                               },
-                                              child: Text(
-                                                'Edit',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: AppColors
-                                                            .primaryBlue),
-                                              )),
-                                        if (settingsProvider
-                                                .menuIsDeleteMap[38] ==
-                                            1)
-                                          TextButton(
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                          'Confirm Delete'),
-                                                      content: const Text(
-                                                          'Are you sure you want to delete?'),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () =>
-                                                              Navigator.pop(
-                                                                  context),
-                                                          child: const Text(
-                                                              'Cancel'),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () async {
-                                                            settingsProvider
-                                                                .deleteCheckListItem(
-                                                                    context,
-                                                                    itemModel
-                                                                        .checkListItemId
-                                                                        .toString())
-                                                                .then((value) {
-                                                              if (null !=
-                                                                      value &&
-                                                                  value) {
-                                                                getData();
-                                                              }
-                                                            });
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: const Text(
-                                                            'Delete',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.red),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
+                                            ).then((value) {
+                                              if (null != value && value) {
+                                                getData();
+                                              }
+                                            });
+                                          },
+                                          child: Text(
+                                            'Edit',
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.primaryBlue),
+                                          )),
+                                    if (settingsProvider.menuIsDeleteMap[38] == 1)
+                                      TextButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Confirm Delete'),
+                                                  content: const Text(
+                                                      'Are you sure you want to delete?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(context),
+                                                      child:
+                                                          const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        settingsProvider
+                                                            .deleteCheckListItem(
+                                                                context,
+                                                                itemModel
+                                                                    .checkListItemId
+                                                                    .toString())
+                                                            .then((value) {
+                                                          if (null != value &&
+                                                              value) {
+                                                            getData();
+                                                          }
+                                                        });
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 );
                                               },
-                                              child: Text(
-                                                'Delete',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            AppColors.textRed),
-                                              ))
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          })
-                    ],
-                  ),
+                                            );
+                                          },
+                                          child: Text(
+                                            'Delete',
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.textRed),
+                                          ))
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        })
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
+
+        if (isWeb) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: content,
+          );
+        } else {
+          return content;
+        }
       },
     );
   }

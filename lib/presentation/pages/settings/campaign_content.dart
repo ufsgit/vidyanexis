@@ -15,36 +15,56 @@ class CampaignContent extends StatefulWidget {
 }
 
 class _CampaignContentState extends State<CampaignContent> {
+  late SettingsProvider settingsProvider;
+
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.searchCampaignData('', context);
       settingsProvider.searchCampaignController.clear();
       // Ensure users are loaded for the selection dialog
       settingsProvider.getUserDetails('', context);
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => const AddCampaignWidget(
+        isEdit: false,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final isWeb = AppStyles.isWebScreen(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: SizedBox(
-            width: AppStyles.isWebScreen(context)
-                ? (constraints.maxWidth < minContentWidth
-                    ? minContentWidth
-                    : constraints.maxWidth)
-                : MediaQuery.of(context).size.width - 32,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        final content = SizedBox(
+          width: isWeb
+              ? (constraints.maxWidth < minContentWidth
+                  ? minContentWidth
+                  : constraints.maxWidth)
+              : double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isWeb) ...[
                 // Header section
                 Row(
                   children: [
@@ -82,14 +102,7 @@ class _CampaignContentState extends State<CampaignContent> {
                     ),
                     const SizedBox(width: 16),
                     CustomOutlinedSvgButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => const AddCampaignWidget(
-                            isEdit: false,
-                          ),
-                        );
-                      },
+                      onPressed: _openAddDialog,
                       svgPath: 'assets/images/Plus.svg',
                       label: 'New Campaign',
                       breakpoint: 860,
@@ -102,143 +115,198 @@ class _CampaignContentState extends State<CampaignContent> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                // List section
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceGrey,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: settingsProvider.campaignList.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final campaign = settingsProvider.campaignList[index];
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: AppColors.whiteColor,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            Column(
+              ],
+              // List section
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceGrey,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: settingsProvider.campaignList.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final campaign = settingsProvider.campaignList[index];
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppColors.whiteColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  campaign.campaignName,
-                                  style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600),
-                                ),
                                 Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 6),
+                                        decoration: BoxDecoration(
+                                            color: AppColors.surfaceGrey,
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        child: Text(
+                                          campaign.campaignName,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 4,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
                                     Text(
                                       'ID: ${campaign.campaignIdString}',
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          color: Colors.grey[600]),
+                                          fontSize: 11,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500),
                                     ),
-                                    const SizedBox(width: 12),
-                                    if (campaign.createdDate.isNotEmpty)
+                                    if (campaign.createdDate.isNotEmpty) ...[
+                                      Text(
+                                        '•',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey[400],
+                                        ),
+                                      ),
                                       Text(
                                         'Created: ${campaign.createdDate.split('T').first}',
                                         style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            color: Colors.grey[600]),
+                                            fontSize: 11,
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w500),
                                       ),
+                                    ],
+                                    if (campaign.userIds.isNotEmpty) ...[
+                                      Text(
+                                        '•',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey[400],
+                                        ),
+                                      ),
+                                      Text(
+                                        'Users: ${campaign.userIds.split(',').where((s) => s.isNotEmpty).length}',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 11,
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ],
                             ),
-                            const Spacer(),
-                            if (campaign.userIds.isNotEmpty)
-                              Text(
-                                'Users: ${campaign.userIds.split(',').where((s) => s.isNotEmpty).length}',
-                                style:
-                                    GoogleFonts.plusJakartaSans(fontSize: 12),
-                              ),
-                            const SizedBox(width: 24),
-                            TextButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AddCampaignWidget(
-                                    isEdit: true,
-                                    campaignId: campaign.campaignId,
-                                    campaignName: campaign.campaignName,
-                                    campaignIdString: campaign.campaignIdString,
-                                    userIds: campaign.userIds,
-                                    enquirySourceId: campaign.enquirySourceId,
-                                    enquiryForId: campaign.enquiryForId,
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'Edit',
-                                style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.primaryBlue,
-                                    fontWeight: FontWeight.w600),
-                              ),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: () {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) => AddCampaignWidget(
+                                  isEdit: true,
+                                  campaignId: campaign.campaignId,
+                                  campaignName: campaign.campaignName,
+                                  campaignIdString: campaign.campaignIdString,
+                                  userIds: campaign.userIds,
+                                  enquirySourceId: campaign.enquirySourceId,
+                                  enquiryForId: campaign.enquiryForId,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Edit',
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primaryBlue),
                             ),
-                            IconButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Delete Campaign'),
-                                    content: const Text(
-                                        'Are you sure you want to delete this campaign?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Confirm Delete'),
+                                  content: const Text(
+                                      'Are you sure you want to delete?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        settingsProvider.deleteCampaign(
+                                            context, campaign.campaignId);
+                                      },
+                                      child: const Text(
+                                        'Delete',
+                                        style: TextStyle(color: Colors.red),
                                       ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          settingsProvider.deleteCampaign(
-                                              context, campaign.campaignId);
-                                        },
-                                        child: const Text(
-                                          'Delete',
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.delete_outline,
-                                color: Colors.red,
-                                size: 20,
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Delete',
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textRed),
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                if (settingsProvider.campaignList.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Center(
-                      child: Text(
-                        'No campaigns found',
-                        style: GoogleFonts.plusJakartaSans(
-                            color: Colors.grey, fontSize: 16),
+                          ),
+                        ],
                       ),
+                    );
+                  },
+                ),
+              ),
+              if (settingsProvider.campaignList.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Center(
+                    child: Text(
+                      'No campaigns found',
+                      style: GoogleFonts.plusJakartaSans(
+                          color: Colors.grey, fontSize: 16),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         );
+
+        if (isWeb) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: content,
+          );
+        } else {
+          return content;
+        }
       },
     );
   }

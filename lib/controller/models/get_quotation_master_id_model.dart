@@ -13,6 +13,7 @@ class GetQuotationbyMasterIdmodel {
 
   final String totalAmount;
   final String subsidyAmount;
+  final int subsidyticked;
   final String discountAmount;
   final String netTotal;
 
@@ -100,6 +101,7 @@ class GetQuotationbyMasterIdmodel {
     required this.paymentTermDescription,
     required this.totalAmount,
     required this.subsidyAmount,
+    required this.subsidyticked,
     required this.discountAmount,
     required this.netTotal,
     required this.productName,
@@ -179,6 +181,7 @@ class GetQuotationbyMasterIdmodel {
       paymentTermDescription: toStr(json['Payment_Term_Description']),
       totalAmount: toStr(json['TotalAmount']),
       subsidyAmount: toStr(json['Subsidy_Amount']),
+      subsidyticked: toInt(json['Subsidyticked']),
       discountAmount: toStr(json['Discount_Amount']),
       netTotal: toStr(json['NetTotal']),
       productName: toStr(json['Product_Name']),
@@ -369,7 +372,6 @@ class QuotationDetail {
     );
   }
 }
-
 
 class BillOfMaterial {
   String make;

@@ -15,14 +15,39 @@ class DepartmentPage extends StatefulWidget {
 }
 
 class _DepartmentPageState extends State<DepartmentPage> {
+  late SettingsProvider settingsProvider;
+
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.searchDepartmentController.clear();
+      settingsProvider.searchDepartment('', context);
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return const AddDepartment(
+          editId: '0',
+          isEdit: false,
+          department: '',
+        );
+      },
+    );
   }
 
   @override
@@ -43,79 +68,69 @@ class _DepartmentPageState extends State<DepartmentPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
-                Text(
-                  'Department',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textBlue800,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.grey[200]!),
-                        ),
-                        child: TextField(
-                          controller:
-                              settingsProvider.searchDepartmentController,
-                          onChanged: (query) {
-                            settingsProvider.searchDepartment(query, context);
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Search...',
-                            hintStyle: GoogleFonts.plusJakartaSans(
-                              color: Colors.grey[400],
-                              fontSize: 14,
-                            ),
-                            prefixIcon: Icon(Icons.search,
-                                size: 20, color: Colors.grey[500]),
-                            border: InputBorder.none,
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 0),
-                          ),
-                        ),
-                      ),
+                if (isWeb) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'Department',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textBlue800,
                     ),
-                    const SizedBox(width: 12),
-                    if (settingsProvider.menuIsSaveMap[42] == 1)
-                      SizedBox(
-                        height: 48,
-                        child: CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddDepartment(
-                                  editId: '0',
-                                  isEdit: false,
-                                  department: '',
-                                );
-                              },
-                            );
-                          },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New',
-                          breakpoint: 400,
-                          shape: RoundedRectangleBorder(
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: Colors.grey[200]!),
                           ),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
+                          child: TextField(
+                            controller:
+                                settingsProvider.searchDepartmentController,
+                            onChanged: (query) {
+                              settingsProvider.searchDepartment(query, context);
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search...',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: Colors.grey[400],
+                                fontSize: 14,
+                              ),
+                              prefixIcon: Icon(Icons.search,
+                                  size: 20, color: Colors.grey[500]),
+                              border: InputBorder.none,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 0),
+                            ),
+                          ),
                         ),
                       ),
-                  ],
-                ),
-                const SizedBox(height: 24),
+                      const SizedBox(width: 12),
+                      if (settingsProvider.menuIsSaveMap[42] == 1)
+                        SizedBox(
+                          height: 48,
+                          child: CustomOutlinedSvgButton(
+                            onPressed: _openAddDialog,
+                            svgPath: 'assets/images/Plus.svg',
+                            label: 'New',
+                            breakpoint: 400,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.secondaryBlue,
+                            borderSide: BorderSide(color: AppColors.secondaryBlue),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                ],
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(

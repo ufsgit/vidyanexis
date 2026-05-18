@@ -15,105 +15,119 @@ class SourceCategoryPage extends StatefulWidget {
 }
 
 class _SourceCategoryPageState extends State<SourceCategoryPage> {
+  late SettingsProvider settingsProvider;
+
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-
       settingsProvider.searchsourceCategoryData('', context);
       settingsProvider.searchSourceCategoryController.clear();
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return const AddSourceCategoryPage(
+          editId: '0',
+          isEdit: false,
+          status: '',
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final isWeb = AppStyles.isWebScreen(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: SizedBox(
-            width: AppStyles.isWebScreen(context)
+            width: isWeb
                 ? constraints.maxWidth < minContentWidth
                     ? minContentWidth
                     : constraints.maxWidth
-                : MediaQuery.of(context).size.width - 30,
+                : MediaQuery.of(context).size.width - 32,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header section
-                SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Source Category',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlue800),
-                      ),
-                      const Spacer(),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 3.5,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.grey[300]!),
+                if (isWeb) ...[
+                  // Header section
+                  SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Text(
+                          'Source Category',
+                          style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textBlue800),
                         ),
-                        child: TextField(
-                          controller:
-                              settingsProvider.searchSourceCategoryController,
-                          onChanged: (query) {
-                            print(query);
-                            settingsProvider.searchsourceCategoryData(
-                                query, context);
-                          },
-                          decoration: const InputDecoration(
-                            hintText: 'Search here....',
-                            prefixIcon: Icon(Icons.search),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
+                        const Spacer(),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 3.5,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: TextField(
+                            controller:
+                                settingsProvider.searchSourceCategoryController,
+                            onChanged: (query) {
+                              print(query);
+                              settingsProvider.searchsourceCategoryData(
+                                  query, context);
+                            },
+                            decoration: const InputDecoration(
+                              hintText: 'Search here....',
+                              prefixIcon: Icon(Icons.search),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[6] == 1)
-                        CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddSourceCategoryPage(
-                                  editId: '0',
-                                  isEdit: false,
-                                  status: '',
-                                );
-                              },
-                            );
-                          },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New Source Category',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
-                        ),
-                      const SizedBox(width: 16),
-                    ],
+                        const SizedBox(width: 16),
+                        if (settingsProvider.menuIsSaveMap[6] == 1)
+                          CustomOutlinedSvgButton(
+                            onPressed: _openAddDialog,
+                            svgPath: 'assets/images/Plus.svg',
+                            label: 'New Source Category',
+                            breakpoint: 860,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.secondaryBlue,
+                            borderSide: BorderSide(color: AppColors.secondaryBlue),
+                          ),
+                        const SizedBox(width: 16),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
+                ],
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,

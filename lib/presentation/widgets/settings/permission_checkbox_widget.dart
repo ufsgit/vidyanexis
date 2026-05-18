@@ -14,7 +14,7 @@ Widget buildPermissionCheckbox({
         shape: ContinuousRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        activeColor: AppColors.primaryBlue,
+        activeColor: AppColors.secondaryBlue,
         value: switch (permissionType) {
           'view' => item.isView,
           'edit' => item.isEdit,

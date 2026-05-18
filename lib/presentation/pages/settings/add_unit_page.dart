@@ -109,7 +109,8 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1E293B), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -151,30 +152,25 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
             child: Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
+                  child: CustomElevatedButton(
+                    buttonText: 'Cancel',
                     onPressed: () {
                       settingsProvider.unitNameController.clear();
                       Navigator.pop(context);
                     },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: Color(0xFFE2E8F0)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text(
-                      'Cancel',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF64748B),
-                      ),
-                    ),
+                    radius: 12,
+                    backgroundColor: AppColors.whiteColor,
+                    borderColor: const Color(0xFFE2E8F0),
+                    textColor: const Color(0xFF64748B),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
+                  child: CustomElevatedButton(
+                    buttonText: 'Save',
                     onPressed: () async {
-                      final validationError = validateInputs(context, settingsProvider);
+                      final validationError =
+                          validateInputs(context, settingsProvider);
                       if (validationError != null) {
                         showErrorDialog(context, validationError);
                         return;
@@ -185,19 +181,10 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
                         statusName: settingsProvider.unitNameController.text,
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondaryBlue,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text(
-                      'Save',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    radius: 12,
+                    backgroundColor: AppColors.secondaryBlue,
+                    borderColor: AppColors.secondaryBlue,
+                    textColor: AppColors.whiteColor,
                   ),
                 ),
               ],

@@ -163,11 +163,11 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             color: isSelected
-                                ? AppColors.primaryBlue.withOpacity(0.05)
+                                ? AppColors.secondaryBlue.withOpacity(0.05)
                                 : Colors.transparent,
                             border: Border.all(
                               color: isSelected
-                                  ? AppColors.primaryBlue.withOpacity(0.3)
+                                  ? AppColors.secondaryBlue.withOpacity(0.3)
                                   : Colors.transparent,
                             ),
                           ),
@@ -192,7 +192,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                   ),
                                 ),
                                 value: isSelected,
-                                activeColor: AppColors.primaryBlue,
+                                activeColor: AppColors.secondaryBlue,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4),
                                 ),
@@ -237,7 +237,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                                   .isMandatory,
                                               activeThumbColor: Colors.white,
                                               activeTrackColor:
-                                                  AppColors.primaryBlue,
+                                                  AppColors.secondaryBlue,
                                               onChanged: (bool val) {
                                                 setDialogState(() {
                                                   tempSelected[selectedIndex]
@@ -320,7 +320,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                     Navigator.pop(context);
                   },
                   child: Text('Save',
-                      style: TextStyle(color: AppColors.primaryBlue)),
+                      style: TextStyle(color: AppColors.secondaryBlue)),
                 ),
               ],
               shape: RoundedRectangleBorder(
@@ -624,7 +624,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                     child: Switch(
                                       value: field.isMandatory,
                                       activeThumbColor: Colors.white,
-                                      activeTrackColor: AppColors.primaryBlue,
+                                      activeTrackColor: AppColors.secondaryBlue,
                                       onChanged: (bool value) {
                                         setState(() {
                                           field.isMandatory = value;
@@ -678,7 +678,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                           borderRadius:
                                               BorderRadius.circular(8),
                                           borderSide: BorderSide(
-                                              color: AppColors.primaryBlue),
+                                              color: AppColors.secondaryBlue),
                                         ),
                                       ),
                                       onChanged: (value) {
@@ -702,23 +702,22 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  OutlinedButton(
+                  CustomElevatedButton(
                     onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    child: const Text('Cancel'),
+                    buttonText: 'Cancel',
+                    radius: 12,
+                    backgroundColor: Colors.white,
+                    textColor: const Color(0xFF64748B),
+                    borderColor: const Color(0xFFE2E8F0),
                   ),
                   const SizedBox(width: 16),
-                  SizedBox(
-                    width: 150,
-                    child: CustomElevatedButton(
-                      onPressed: () => _saveForm(formProvider),
-                      buttonText: 'Save',
-                      backgroundColor: AppColors.primaryBlue,
-                      textColor: Colors.white,
-                      borderColor: AppColors.primaryBlue,
-                    ),
+                  CustomElevatedButton(
+                    onPressed: () => _saveForm(formProvider),
+                    buttonText: 'Save',
+                    radius: 12,
+                    backgroundColor: AppColors.secondaryBlue,
+                    textColor: Colors.white,
+                    borderColor: AppColors.secondaryBlue,
                   ),
                 ],
               ),

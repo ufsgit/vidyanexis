@@ -15,97 +15,124 @@ class BranchPage extends StatefulWidget {
 }
 
 class _BranchPageState extends State<BranchPage> {
+  late SettingsProvider settingsProvider;
+
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.searchBranchController.clear();
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return const AddBranch(
+          editId: '0',
+          isEdit: false,
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final isWeb = AppStyles.isWebScreen(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: SizedBox(
-            width: AppStyles.isWebScreen(context)
+            width: isWeb
                 ? constraints.maxWidth < minContentWidth
                     ? minContentWidth
                     : constraints.maxWidth
-                : MediaQuery.of(context).size.width - 30,
+                : MediaQuery.of(context).size.width - 32,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header section
-                SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Branch',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlue800),
-                      ),
-                      const Spacer(),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width / 3.5,
-                      //   height: 40,
-                      //   decoration: BoxDecoration(
-                      //     color: Colors.white,
-                      //     borderRadius: BorderRadius.circular(20),
-                      //     border: Border.all(color: Colors.grey[300]!),
-                      //   ),
-                      //   child: TextField(
-                      //     controller: settingsProvider.searchBranchController,
-                      //     onChanged: (query) {},
-                      //     decoration: const InputDecoration(
-                      //       hintText: 'Search here....',
-                      //       prefixIcon: Icon(Icons.search),
-                      //       border: InputBorder.none,
-                      //       contentPadding: EdgeInsets.symmetric(
-                      //         horizontal: 16,
-                      //         vertical: 4,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[57] == 1)
-                        CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddBranch(
-                                  editId: '0',
-                                  isEdit: false,
-                                );
-                              },
-                            );
-                          },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New Branch',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
+                if (isWeb) ...[
+                  // Header section
+                  SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Text(
+                          'Branch',
+                          style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textBlue800),
                         ),
+                        const Spacer(),
+                        if (settingsProvider.menuIsSaveMap[57] == 1)
+                          CustomOutlinedSvgButton(
+                            onPressed: _openAddDialog,
+                            svgPath: 'assets/images/Plus.svg',
+                            label: 'New Branch',
+                            breakpoint: 860,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.secondaryBlue,
+                            borderSide: BorderSide(color: AppColors.secondaryBlue),
+                          ),
+                        const SizedBox(width: 16),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: Colors.grey[200]!),
+                          ),
+                          child: TextField(
+                            controller:
+                                settingsProvider.searchBranchController,
+                            onChanged: (query) {
+                              settingsProvider.searchBranch(context, query: query);
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search...',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: Colors.grey[400],
+                                fontSize: 14,
+                              ),
+                              prefixIcon: Icon(Icons.search,
+                                  size: 20, color: Colors.grey[500]),
+                              border: InputBorder.none,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 0),
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 16),
                     ],
                   ),
-                ),
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
+                ],
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,

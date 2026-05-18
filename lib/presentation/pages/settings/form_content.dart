@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-// import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 import '../../../controller/models/form_model.dart';
 import '../../widgets/settings/add_form_settings_widget.dart';
@@ -17,12 +17,33 @@ class FormContent extends StatefulWidget {
 }
 
 class _FormContentState extends State<FormContent> {
+  late SettingsProvider settingsProvider;
+
   @override
   void initState() {
     super.initState();
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<FormProvider>(context, listen: false).fetchForms(context);
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return const AddFormSettingsWidget();
+      },
+    );
   }
 
   @override
@@ -31,61 +52,38 @@ class _FormContentState extends State<FormContent> {
     final formProvider = Provider.of<FormProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final filteredForms = formProvider.filteredForms;
+    final isMobile = !AppStyles.isWebScreen(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bool isMobile = constraints.maxWidth < 600;
-
         Widget contentBody = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header section with Search and New Form Button
-            SizedBox(
-              width: double.infinity,
-              child: isMobile
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Forms',
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlue800),
-                            ),
-                            if (settingsProvider.menuIsSaveMap[85].toString() ==
-                                '1')
-                              _buildNewFormButton(context),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        _buildSearchBar(context, formProvider, isMobile: true),
-                      ],
-                    )
-                  : Row(
-                      children: [
-                        Text(
-                          'Forms',
-                          style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textBlue800),
-                        ),
-                        const Spacer(),
-                        // Search Bar
-                        _buildSearchBar(context, formProvider, isMobile: false),
-                        const SizedBox(width: 16),
-                        if (settingsProvider.menuIsSaveMap[85].toString() ==
-                            '1')
-                          _buildNewFormButton(context),
-                        const SizedBox(width: 16),
-                      ],
+            // Header section with Search and New Form Button (Web/Desktop only)
+            if (!isMobile) ...[
+              SizedBox(
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    Text(
+                      'Forms',
+                      style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlue800),
                     ),
-            ),
-            const SizedBox(height: 24),
+                    const Spacer(),
+                    // Search Bar
+                    _buildSearchBar(context, formProvider, isMobile: false),
+                    const SizedBox(width: 16),
+                    if (settingsProvider.menuIsSaveMap[85].toString() == '1')
+                      _buildNewFormButton(context),
+                    const SizedBox(width: 16),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
 
             // Form List
             Container(
@@ -187,18 +185,11 @@ class _FormContentState extends State<FormContent> {
     return Container(
       height: 40,
       decoration: BoxDecoration(
-        color: Colors.orange, // 🔥 Orange theme
+        color: AppColors.secondaryBlue,
         borderRadius: BorderRadius.circular(25),
       ),
       child: TextButton.icon(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (dialogContext) {
-              return const AddFormSettingsWidget();
-            },
-          );
-        },
+        onPressed: _openAddDialog,
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text(
           "New Form",
@@ -220,95 +211,90 @@ class _FormContentState extends State<FormContent> {
   Widget _buildDesktopRow(BuildContext context, FormModel formModel,
       FormProvider formProvider, SettingsProvider settingsProvider) {
     return Container(
-      height: 40,
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          children: [
-            // Form Name Chip
-            SizedBox(
-              width: 250,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  height: 22,
-                  decoration: BoxDecoration(
-                      color: AppColors.surfaceGrey,
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      formModel.name,
-                      style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
-                    ),
-                  ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        children: [
+          // Form Name Chip
+          SizedBox(
+            width: 250,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                    color: AppColors.surfaceGrey,
+                    borderRadius: BorderRadius.circular(12)),
+                child: Text(
+                  formModel.name,
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                 ),
               ),
             ),
+          ),
 
-            // Department
-            Expanded(
-              child: Text(
-                formModel.department,
-                style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black),
-              ),
+          // Department
+          Expanded(
+            child: Text(
+              formModel.department,
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black),
             ),
+          ),
 
-            // Task Type
-            Expanded(
-              child: Text(
-                formModel.taskType,
-                style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black),
-              ),
+          // Task Type
+          Expanded(
+            child: Text(
+              formModel.taskType,
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black),
             ),
+          ),
 
-            // Action Buttons
-            if (settingsProvider.menuIsEditMap[85].toString() == '1')
-              TextButton(
-                  onPressed: () {
-                    showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AddFormSettingsWidget(
-                          existingForm: formModel,
-                        );
-                      },
-                    );
-                  },
-                  child: Text(
-                    'Edit',
-                    style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryBlue),
-                  )),
-            if (settingsProvider.menuIsDeleteMap[85].toString() == '1')
-              TextButton(
-                  onPressed: () {
-                    _showDeleteDialog(context, formModel, formProvider);
-                  },
-                  child: Text(
-                    'Delete',
-                    style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textRed),
-                  ))
-          ],
-        ),
+          // Action Buttons
+          if (settingsProvider.menuIsEditMap[85].toString() == '1')
+            TextButton(
+                onPressed: () {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AddFormSettingsWidget(
+                        existingForm: formModel,
+                      );
+                    },
+                  );
+                },
+                child: Text(
+                  'Edit',
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryBlue),
+                )),
+          if (settingsProvider.menuIsDeleteMap[85].toString() == '1')
+            TextButton(
+                onPressed: () {
+                  _showDeleteDialog(context, formModel, formProvider);
+                },
+                child: Text(
+                  'Delete',
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textRed),
+                ))
+        ],
       ),
     );
   }
@@ -332,28 +318,27 @@ class _FormContentState extends State<FormContent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: Container(
-                  height: 24,
-                  decoration: BoxDecoration(
-                      color: AppColors.surfaceGrey,
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        formModel.name,
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black),
-                      ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                        color: AppColors.surfaceGrey,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Text(
+                      formModel.name,
+                      style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black),
                     ),
                   ),
                 ),
               ),
+              const SizedBox(width: 8),
               if (settingsProvider.menuIsEditMap[85].toString() == '1')
                 IconButton(
                   onPressed: () {

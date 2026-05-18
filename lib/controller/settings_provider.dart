@@ -59,6 +59,13 @@ import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
 class SettingsProvider extends ChangeNotifier {
+  VoidCallback? onAddPressed;
+
+  void setOnAddPressed(VoidCallback? callback) {
+    onAddPressed = callback;
+    notifyListeners();
+  }
+
   SettingsProvider() {
     _initCache();
   }
@@ -268,6 +275,7 @@ class SettingsProvider extends ChangeNotifier {
 
   //lists
   List<BranchModel> _branchModel = [];
+  List<BranchModel> _allBranchModel = [];
   List<BranchModel> get branchModel => _branchModel;
   List<GetUserModel> _searchUserDetails = [];
   List<GetUserModel> get searchUserDetails => _searchUserDetails;
@@ -635,34 +643,34 @@ class SettingsProvider extends ChangeNotifier {
     branchCampaignController.clear();
   }
 
-  void searchBranch(BuildContext context) async {
+  void searchBranch(BuildContext context, {String query = ''}) async {
     try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
+      if (_allBranchModel.isEmpty || query.isEmpty) {
+        final response =
+            await HttpRequest.httpGetRequest(endPoint: HttpUrls.getAllBranch);
 
-      final response =
-          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getAllBranch);
+        if (response.statusCode == 200) {
+          final data = response.data;
 
-      if (response.statusCode == 200) {
-        final data = response.data;
+          if (data != null && data['success'] == true) {
+            List<dynamic> branchList = data['data'];
 
-        if (data != null && data['success'] == true) {
-          List<dynamic> branchList = data['data'];
-
-          _branchModel =
-              branchList.map((item) => BranchModel.fromJson(item)).toList();
-
-          notifyListeners();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No departments found')),
-          );
+            _allBranchModel =
+                branchList.map((item) => BranchModel.fromJson(item)).toList();
+          }
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
       }
+
+      if (query.isEmpty) {
+        _branchModel = List.from(_allBranchModel);
+      } else {
+        _branchModel = _allBranchModel
+            .where((b) => (b.branchName ?? '')
+                .toLowerCase()
+                .contains(query.toLowerCase()))
+            .toList();
+      }
+      notifyListeners();
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -876,6 +884,14 @@ class SettingsProvider extends ChangeNotifier {
           .showSnackBar(const SnackBar(content: Text('An error occured')));
     }
     return customFieldModelList;
+  }
+
+  String _customFieldSearchQuery = '';
+  String get customFieldSearchQuery => _customFieldSearchQuery;
+
+  void searchCustomField(String query) {
+    _customFieldSearchQuery = query;
+    notifyListeners();
   }
 
   Future<bool?> deleteCustomField(
@@ -1623,17 +1639,37 @@ class SettingsProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.searchUser}?Department_Id=$selectedFilterDepartmentId&Branch_Id=$selectedFilterBranchId&user_details_Name=$query');
+      String url = '${HttpUrls.searchUser}?user_details_Name=$query';
+      if (selectedFilterDepartmentId != null && selectedFilterDepartmentId != 0) {
+        url += '&Department_Id=$selectedFilterDepartmentId';
+      }
+      if (selectedFilterBranchId != null && selectedFilterBranchId != 0) {
+        url += '&Branch_Id=$selectedFilterBranchId';
+      }
+
+      final response = await HttpRequest.httpGetRequest(endPoint: url);
 
       if (response.statusCode == 200) {
         final data = response.data;
 
         if (data != null) {
-          _searchUserDetails = (data as List<dynamic>)
+          List<GetUserModel> allUsers = (data as List<dynamic>)
               .map((item) => GetUserModel.fromJson(item))
               .toList();
+
+          if (selectedFilterDepartmentId != null && selectedFilterDepartmentId != 0) {
+            allUsers = allUsers
+                .where((user) =>
+                    user.departmentId == selectedFilterDepartmentId.toString())
+                .toList();
+          }
+          if (selectedFilterBranchId != null && selectedFilterBranchId != 0) {
+            allUsers = allUsers
+                .where((user) =>
+                    user.branchId == selectedFilterBranchId.toString())
+                .toList();
+          }
+          _searchUserDetails = allUsers;
         }
         notifyListeners();
         // Loader.stopLoader(context);
@@ -2756,9 +2792,8 @@ class SettingsProvider extends ChangeNotifier {
 
           notifyListeners();
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No departments found')),
-          );
+          _departmentModel = [];
+          notifyListeners();
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

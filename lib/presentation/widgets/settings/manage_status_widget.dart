@@ -133,17 +133,22 @@ class _ManageStatusWidgetState extends State<ManageStatusWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TextButton(
+                    CustomElevatedButton(
+                      buttonText: 'Cancel',
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      radius: 12,
+                      backgroundColor: Colors.white,
+                      borderColor: const Color(0xFFE2E8F0),
+                      textColor: const Color(0xFF64748B),
                     ),
                     const SizedBox(width: 12),
                     CustomElevatedButton(
                       onPressed: () {
                         // Handle save action
                       },
-                      backgroundColor: AppColors.bluebutton,
-                      borderColor: Colors.transparent,
+                      radius: 12,
+                      backgroundColor: AppColors.secondaryBlue,
+                      borderColor: AppColors.secondaryBlue,
                       textColor: Colors.white,
                       buttonText: 'Save',
                     ),

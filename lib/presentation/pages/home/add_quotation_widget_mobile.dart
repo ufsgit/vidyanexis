@@ -248,6 +248,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                         customFields:
                             customerDetailsProvider.customFieldQuotation,
                         controllerKey: 'quotation',
+                        showEditButton: true,
                       ),
                     ],
                     const SizedBox(height: 16),

@@ -51,9 +51,9 @@ class _AddTaskTypeState extends State<AddTaskType> {
     if (_selectedStatusIds.isEmpty) {
       return 'Please select at least one Lead Status';
     }
-    if (_selectedEnquiryForIds.isEmpty) {
-      return 'Please select at least one Enquiry For';
-    }
+    // if (_selectedEnquiryForIds.isEmpty) {
+    //   return 'Please select at least one Enquiry For';
+    // }
 
     // Validate that selected status IDs are all valid (greater than 0)
     for (var statusId in _selectedStatusIds) {
@@ -61,12 +61,12 @@ class _AddTaskTypeState extends State<AddTaskType> {
         return 'One or more selected statuses are invalid';
       }
     }
-    // Validate that selected enquiry for IDs are all valid (greater than 0)
-    for (var enquiryForId in _selectedEnquiryForIds) {
-      if (enquiryForId <= 0) {
-        return 'One or more selected enquiry for are invalid';
-      }
-    }
+    // // Validate that selected enquiry for IDs are all valid (greater than 0)
+    // for (var enquiryForId in _selectedEnquiryForIds) {
+    //   if (enquiryForId <= 0) {
+    //     return 'One or more selected enquiry for are invalid';
+    //   }
+    // }
 
     return null;
   }
@@ -1306,9 +1306,10 @@ class _AddTaskTypeState extends State<AddTaskType> {
                         settingsProvider.taskTypeDescriptionController.clear();
                         Navigator.pop(context);
                       },
+                      radius: 12,
                       backgroundColor: Colors.white,
-                      borderColor: AppColors.appViolet,
-                      textColor: AppColors.appViolet,
+                      borderColor: const Color(0xFFE2E8F0),
+                      textColor: const Color(0xFF64748B),
                     ),
                     const SizedBox(width: 12),
                     CustomElevatedButton(
@@ -1369,8 +1370,9 @@ class _AddTaskTypeState extends State<AddTaskType> {
                         settingsProvider.addTaskType(
                             context: context, data: requestData);
                       },
-                      backgroundColor: AppColors.appViolet,
-                      borderColor: AppColors.appViolet,
+                      radius: 12,
+                      backgroundColor: AppColors.secondaryBlue,
+                      borderColor: AppColors.secondaryBlue,
                       textColor: Colors.white,
                     ),
                   ],

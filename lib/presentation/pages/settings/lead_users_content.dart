@@ -22,18 +22,43 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
     DropdownItem<int>(id: 2, name: 'Customer'),
     DropdownItem<int>(id: 3, name: 'Task'),
   ];
+  late SettingsProvider settingsProvider;
 
   @override
   void initState() {
+    settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-
       settingsProvider.setViewInId(0);
       settingsProvider.getSearchLeadStatus('', '0', context);
       settingsProvider.searchStatusController.clear();
+      settingsProvider.setOnAddPressed(_openAddDialog);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (settingsProvider.onAddPressed == _openAddDialog) {
+      settingsProvider.setOnAddPressed(null);
+    }
+    super.dispose();
+  }
+
+  void _openAddDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AddNewStatusWidget(
+          editId: '0',
+          followUp: '',
+          isEdit: false,
+          status: '',
+          isRegister: '',
+          colorCode: '',
+        );
+      },
+    );
   }
 
   @override
@@ -56,92 +81,131 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
                 // Header section
                 SizedBox(
                   width: double.infinity,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Status',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlue800),
-                      ),
-                      const Spacer(),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 3.5,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: TextField(
-                          controller: settingsProvider.searchStatusController,
-                          onChanged: (query) {
-                            print(query);
-                            settingsProvider.getSearchLeadStatus(query,
-                                settingsProvider.viewInId.toString(), context);
-                          },
-                          decoration: const InputDecoration(
-                            hintText: 'Search here....',
-                            prefixIcon: Icon(Icons.search),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
+                  child: AppStyles.isWebScreen(context)
+                      ? Row(
+                          children: [
+                            Text(
+                              'Status',
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlue800),
                             ),
+                            const Spacer(),
+                            Container(
+                              width: MediaQuery.of(context).size.width / 3.5,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.grey[300]!),
+                              ),
+                              child: TextField(
+                                controller:
+                                    settingsProvider.searchStatusController,
+                                onChanged: (query) {
+                                  print(query);
+                                  settingsProvider.getSearchLeadStatus(
+                                      query,
+                                      settingsProvider.viewInId.toString(),
+                                      context);
+                                },
+                                decoration: const InputDecoration(
+                                  hintText: 'Search here....',
+                                  prefixIcon: Icon(Icons.search),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 4,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            if (settingsProvider.menuIsSaveMap[5] == 1)
+                              CustomOutlinedSvgButton(
+                                onPressed: () async {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AddNewStatusWidget(
+                                        editId: '0',
+                                        followUp: '',
+                                        isEdit: false,
+                                        status: '',
+                                        isRegister: '',
+                                        colorCode: '',
+                                      );
+                                    },
+                                  );
+                                },
+                                svgPath: 'assets/images/Plus.svg',
+                                label: 'New Status',
+                                breakpoint: 860,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                foregroundColor: Colors.white,
+                                backgroundColor: AppColors.secondaryBlue,
+                                borderSide:
+                                    BorderSide(color: AppColors.secondaryBlue),
+                              ),
+                            const SizedBox(width: 16),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+                if (AppStyles.isWebScreen(context)) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 200,
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: settingsProvider.viewInId,
+                        hint: Text("View",
+                            style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                        isExpanded: true,
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey, size: 20),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Text("All"),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[5] == 1)
-                        CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AddNewStatusWidget(
-                                  editId: '0',
-                                  followUp: '',
-                                  isEdit: false,
-                                  status: '',
-                                  isRegister: '',
-                                  colorCode: '',
-                                );
-                              },
+                          DropdownMenuItem(
+                            value: 1,
+                            child: Text("Lead"),
+                          ),
+                          DropdownMenuItem(
+                            value: 2,
+                            child: Text("Customer"),
+                          ),
+                          DropdownMenuItem(
+                            value: 3,
+                            child: Text("Task"),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) {
+                            settingsProvider.setViewInId(value);
+                            settingsProvider.getSearchLeadStatus(
+                              settingsProvider.searchStatusController.text,
+                              value.toString(),
+                              context,
                             );
-                          },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New Status',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
-                        ),
-                      const SizedBox(width: 16),
-                    ],
+                          }
+                        },
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: 250,
-                  child: CommonDropdown<int>(
-                    hintText: 'View',
-                    selectedValue: settingsProvider.viewInId,
-                    items: viewInOptions,
-                    onItemSelected: (selectedId) {
-                      settingsProvider.setViewInId(selectedId);
-                      settingsProvider.getSearchLeadStatus(
-                        settingsProvider.searchStatusController.text,
-                        selectedId.toString(),
-                        context,
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 24),
+                ],
+                if (AppStyles.isWebScreen(context)) const SizedBox(height: 24),
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,

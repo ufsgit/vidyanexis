@@ -198,9 +198,10 @@ class _AddBranchState extends State<AddBranch> {
               onPressed: () async {
                 await _pickAndUploadLogo(settingsProvider);
               },
+              radius: 12,
               backgroundColor: AppColors.whiteColor,
-              borderColor: AppColors.appViolet,
-              textColor: AppColors.appViolet,
+              borderColor: const Color(0xFFE2E8F0),
+              textColor: const Color(0xFF64748B),
             ),
             const SizedBox(height: 10),
             if (settingsProvider.logoController.text.isNotEmpty)
@@ -395,9 +396,10 @@ class _AddBranchState extends State<AddBranch> {
             settingsProvider.branchController.clear();
             Navigator.pop(context);
           },
+          radius: 12,
           backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
+          borderColor: const Color(0xFFE2E8F0),
+          textColor: const Color(0xFF64748B),
         ),
         CustomElevatedButton(
           buttonText: 'Save',
@@ -410,8 +412,9 @@ class _AddBranchState extends State<AddBranch> {
             settingsProvider.saveBranch(
                 context: context, branchId: widget.editId);
           },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
+          radius: 12,
+          backgroundColor: AppColors.secondaryBlue,
+          borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
         ),
       ],
