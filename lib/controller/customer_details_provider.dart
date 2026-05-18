@@ -24,6 +24,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/bill_of_material_model.dart';
@@ -1862,6 +1863,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
         if (isEdit) {
           getTaskDetails(taskMasterId, context);
         }
+
+        try {
+          final dbProvider = Provider.of<DashboardProvider>(context, listen: false);
+          dbProvider.clearDashboardFlags();
+          dbProvider.getTaskInfoDashBoard(context, isSilent: true, shouldNotify: true);
+        } catch (_) {}
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

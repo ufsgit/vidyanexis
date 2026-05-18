@@ -217,6 +217,7 @@ class DashboardProvider extends ChangeNotifier {
           bodyData: {
             "Page_Index1": pageIndex1,
             "Page_Index2": pageIndex2,
+            "Is_Task_Created": "1",
           });
       if (response.statusCode == 200) {
         final data = response.data;
@@ -588,16 +589,24 @@ class DashboardProvider extends ChangeNotifier {
 
     switch (activeTab) {
       case 0: // Leads Overview
-        await getLeadData();
+        if (!isLeadLoaded) {
+          await getLeadData();
+        }
         break;
       case 1: // Work Overview
-        await getWorkData();
+        if (!isWorkLoaded) {
+          await getWorkData();
+        }
         break;
       case 2: // Task Overview
-        await fetchDashBoardTaskData();
+        if (!isTaskOverviewLoaded) {
+          await fetchDashBoardTaskData();
+        }
         break;
       case 3: // Task Summary
-        await getTaskInfoDashBoard(context, isSilent: isSilent);
+        if (!isTaskInfoLoaded) {
+          await getTaskInfoDashBoard(context, isSilent: isSilent);
+        }
         break;
       case 4: // Amc Notification
         await warrantyProvider.getAmcNotification(context, isFilter: true);
@@ -608,7 +617,9 @@ class DashboardProvider extends ChangeNotifier {
         isPaymentLoaded = true;
         break;
       case 6: // Dashboard count
-        await getLeadDashboardCount();
+        if (!isDashboardCountLoaded) {
+          await getLeadDashboardCount();
+        }
         break;
     }
   }
@@ -726,10 +737,7 @@ class DashboardProvider extends ChangeNotifier {
 
   void setUserFilterStatus(int newStatus) {
     _selectedUser = newStatus;
-    isLeadLoaded = false;
-    isWorkLoaded = false;
-    isDashboardCountLoaded = false;
-    isWorkDashboardCountLoaded = false;
+    clearDashboardFlags();
     print(_selectedUser.toString());
     notifyListeners(); // Notify listeners about the change
   }
@@ -767,6 +775,7 @@ class DashboardProvider extends ChangeNotifier {
       _selectedDateFilterIndex = index; // Set the new selected filter index
       formatDate();
     }
+    clearDashboardFlags();
     notifyListeners();
   }
 
@@ -800,10 +809,7 @@ class DashboardProvider extends ChangeNotifier {
         break;
     }
 
-    isLeadLoaded = false;
-    isWorkLoaded = false;
-    isDashboardCountLoaded = false;
-    isWorkDashboardCountLoaded = false;
+    clearDashboardFlags();
     notifyListeners(); // Notify listeners to rebuild the UI
   }
 
@@ -811,10 +817,7 @@ class DashboardProvider extends ChangeNotifier {
     _fromDate = date;
     _selectedDateFilterIndex = -1;
     formatDate();
-    isLeadLoaded = false;
-    isWorkLoaded = false;
-    isDashboardCountLoaded = false;
-    isWorkDashboardCountLoaded = false;
+    clearDashboardFlags();
     notifyListeners();
   }
 
@@ -822,10 +825,7 @@ class DashboardProvider extends ChangeNotifier {
     _toDate = date;
     _selectedDateFilterIndex = -1;
     formatDate();
-    isLeadLoaded = false;
-    isWorkLoaded = false;
-    isDashboardCountLoaded = false;
-    isWorkDashboardCountLoaded = false;
+    clearDashboardFlags();
     notifyListeners();
   }
 
