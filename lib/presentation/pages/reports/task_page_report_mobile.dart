@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,6 +33,25 @@ class TaskPageReportMobile extends StatefulWidget {
 class _tasksPageReportState extends State<TaskPageReportMobile> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final reportsProvider =
+          Provider.of<TaskReportProvider>(context, listen: false);
+      reportsProvider.setTaskSearchCriteria(
+        query,
+        reportsProvider.fromDateS,
+        reportsProvider.toDateS,
+        reportsProvider.Status,
+        reportsProvider.AssignedTo,
+        reportsProvider.TaskType,
+      );
+      _refreshData();
+    });
+  }
 
   bool isLoadingMore = false;
   bool hasMoreData = true;
@@ -99,6 +119,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     scrollController.dispose();
     super.dispose();
   }
@@ -118,9 +139,10 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
       drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         title: 'Task Report',
+        showFilterIcon: false,
         onSearchTap: () {
           searchProvider.startSearch();
-          reportsProvider.toggleFilter();
+          reportsProvider.setFilter(true);
         },
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
@@ -134,7 +156,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
         onClearTap: () {
           searchController.clear();
           searchProvider.stopSearch();
-          reportsProvider.toggleFilter();
+          reportsProvider.setFilter(false);
 
           reportsProvider.setTaskSearchCriteria(
             '',
@@ -159,6 +181,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
           );
           _refreshData();
         },
+        onChanged: _onSearchChanged,
         onExcelTap: () async {
           final allTasks =
               await reportsProvider.fetchAllTasksForExport(context);
@@ -247,12 +270,55 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           fontWeight: FontWeight.bold,
                           color: AppColors.textBlack),
                       const SizedBox(height: 8),
-                      CommonReportDateFilter(
-                        fromDate: reportsProvider.fromDate?.toString(),
-                        toDate: reportsProvider.toDate?.toString(),
-                        formattedFromDate: reportsProvider.formattedFromDate,
-                        formattedToDate: reportsProvider.formattedToDate,
-                        onTap: () => onClickTopButton(context),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        alignment: WrapAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              onClickTopButton(context);
+                            },
+                            child: Container(
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: AppColors.scaffoldColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                            maxWidth: 200),
+                                        child: CustomText(
+                                          reportsProvider.fromDate == null &&
+                                                  reportsProvider.toDate == null
+                                              ? 'Date'
+                                              : 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textBlack,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       CustomText('Assigned Staff',
@@ -357,8 +423,9 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
 
             // ── LIST ────────────────────────────────────────────────────────
 
-            Expanded(
-              child: reportsProvider.taskReport.isEmpty
+            if (!reportsProvider.isFilter)
+              Expanded(
+                child: reportsProvider.taskReport.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -442,6 +509,39 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
             ),
           ],
         ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: reportsProvider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_task_report_filter_fab',
+                  onPressed: () {
+                    reportsProvider.setTaskSearchCriteria(
+                      searchController.text,
+                      reportsProvider.fromDateS,
+                      reportsProvider.toDateS,
+                      reportsProvider.Status,
+                      reportsProvider.AssignedTo,
+                      reportsProvider.TaskType,
+                    );
+                    searchProvider.stopSearch();
+                    reportsProvider.getSearchTaskReport(context);
+                    reportsProvider.setFilter(false);
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
       ),
     );
   }

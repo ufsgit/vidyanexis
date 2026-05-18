@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,9 +35,27 @@ class _ComplaintPageReportsMobileState
     extends State<ComplaintPageReportsMobile> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final reportsProvider =
+          Provider.of<ServiceReportProvider>(context, listen: false);
+      reportsProvider.setTaskSearchCriteria(
+        query,
+        reportsProvider.fromDateS,
+        reportsProvider.toDateS,
+        reportsProvider.Status,
+        reportsProvider.AssignedTo,
+      );
+      reportsProvider.getSearchServiceReport(context);
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -49,9 +68,17 @@ class _ComplaintPageReportsMobileState
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       searchProvider.stopSearch();
+      reportsProvider.setFilter(false);
 
       provider.getUserDetails(context);
     });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    scrollController.dispose();
+    super.dispose();
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -81,12 +108,12 @@ class _ComplaintPageReportsMobileState
         },
         onSearchTap: () {
           searchProvider.startSearch();
-          reportsProvider.toggleFilter();
+          reportsProvider.setFilter(true);
         },
         onClearTap: () {
           searchController.clear();
           searchProvider.stopSearch();
-          reportsProvider.toggleFilter();
+          reportsProvider.setFilter(false);
           reportsProvider.setTaskSearchCriteria(
             '',
             '',
@@ -97,8 +124,6 @@ class _ComplaintPageReportsMobileState
           reportsProvider.getSearchServiceReport(context);
         },
         onSearch: (query) {
-          // reportsProvider.selectDateFilterOption(null);
-          // reportsProvider.removeStatus();
           reportsProvider.setTaskSearchCriteria(
             query,
             reportsProvider.fromDateS,
@@ -108,239 +133,320 @@ class _ComplaintPageReportsMobileState
           );
           reportsProvider.getSearchServiceReport(context);
         },
+        onChanged: _onSearchChanged,
         searchController: searchController,
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        color: Colors.grey[50],
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── FILTER PANEL ────────────────────────────────────────────────
             if (reportsProvider.isFilter)
-              SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    CustomText('Status',
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textBlack),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                      children: [
-                        FilterChipWidget(
-                          label: 'All',
-                          isSelected: reportsProvider.selectedStatus == 0 ||
-                              reportsProvider.selectedStatus == null,
-                          onTap: () => reportsProvider.setStatus(0),
-                        ),
-                        FilterChipWidget(
-                          label: 'Pending',
-                          isSelected: reportsProvider.selectedStatus == 1,
-                          onTap: () => reportsProvider.setStatus(1),
-                        ),
-                        FilterChipWidget(
-                          label: 'Completed',
-                          isSelected: reportsProvider.selectedStatus == 2,
-                          onTap: () => reportsProvider.setStatus(2),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    CustomText('Date Range',
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textBlack),
-                    const SizedBox(height: 8),
-                    CommonReportDateFilter(
-                      fromDate: reportsProvider.fromDate?.toString(),
-                      toDate: reportsProvider.toDate?.toString(),
-                      formattedFromDate: reportsProvider.formattedFromDate,
-                      formattedToDate: reportsProvider.formattedToDate,
-                      onTap: () => onClickTopButton(context),
-                    ),
-                    const SizedBox(height: 16),
-                    CustomText('Assigned Staff',
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textBlack),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                      children: [
-                        FilterChipWidget(
-                          label: 'All',
-                          isSelected: reportsProvider.selectedUser == 0 ||
-                              reportsProvider.selectedUser == null,
-                          onTap: () => reportsProvider.setUserFilterStatus(0),
-                        ),
-                        ...provider.searchUserDetails.map((u) =>
-                            FilterChipWidget(
-                              label: u.userDetailsName ?? 'Unknown',
-                              isSelected: reportsProvider.selectedUser ==
-                                  u.userDetailsId,
-                              onTap: () => reportsProvider
-                                  .setUserFilterStatus(u.userDetailsId ?? 0),
-                            )),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    if (reportsProvider.fromDate != null ||
-                        reportsProvider.toDate != null ||
-                        (reportsProvider.selectedStatus != null &&
-                            reportsProvider.selectedStatus != 0) ||
-                        (reportsProvider.selectedUser != null &&
-                            reportsProvider.selectedUser != 0) ||
-                        reportsProvider.Search.isNotEmpty)
-                      SizedBox(
-                        width: double.infinity,
-                        child: CommonReportResetButton(
-                          label: 'Reset All Filters',
-                          onReset: () {
-                            reportsProvider.selectDateFilterOption(null);
-                            reportsProvider.removeStatus();
-                            searchController.clear();
-                            reportsProvider.setTaskSearchCriteria(
-                                '', '', '', '', '');
-                            reportsProvider.getSearchServiceReport(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppColors.textRed,
-                            elevation: 0,
-                            side: BorderSide(color: AppColors.textRed),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-
-            // ── LIST ────────────────────────────────────────────────────────
-
-            if (!reportsProvider.isLoading &&
-                reportsProvider.serviceReport.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 100),
-                child: Center(
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.search_off_outlined,
-                          size: 80, color: Colors.grey[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No complaint reports found',
-                        style: TextStyle(
+                      const SizedBox(height: 8),
+                      CustomText('Status',
                           fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: [
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected: reportsProvider.selectedStatus == 0 ||
+                                reportsProvider.selectedStatus == null,
+                            onTap: () => reportsProvider.setStatus(0),
+                          ),
+                          FilterChipWidget(
+                            label: 'Pending',
+                            isSelected: reportsProvider.selectedStatus == 1,
+                            onTap: () => reportsProvider.setStatus(1),
+                          ),
+                          FilterChipWidget(
+                            label: 'Completed',
+                            isSelected: reportsProvider.selectedStatus == 2,
+                            onTap: () => reportsProvider.setStatus(2),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      CustomText('Date Range',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        alignment: WrapAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              onClickTopButton(context);
+                            },
+                            child: Container(
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: AppColors.scaffoldColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                            maxWidth: 200),
+                                        child: CustomText(
+                                          reportsProvider.fromDate == null &&
+                                                  reportsProvider.toDate == null
+                                              ? 'Date'
+                                              : 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textBlack,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      CustomText('Assigned Staff',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: [
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected: reportsProvider.selectedUser == 0 ||
+                                reportsProvider.selectedUser == null,
+                            onTap: () => reportsProvider.setUserFilterStatus(0),
+                          ),
+                          ...provider.searchUserDetails.map((u) =>
+                              FilterChipWidget(
+                                label: u.userDetailsName ?? 'Unknown',
+                                isSelected: reportsProvider.selectedUser ==
+                                    u.userDetailsId,
+                                onTap: () => reportsProvider
+                                    .setUserFilterStatus(u.userDetailsId ?? 0),
+                              )),
+                        ],
                       ),
                       const SizedBox(height: 24),
                       if (reportsProvider.fromDate != null ||
                           reportsProvider.toDate != null ||
                           (reportsProvider.selectedStatus != null &&
                               reportsProvider.selectedStatus != 0) ||
+                          (reportsProvider.selectedUser != null &&
+                              reportsProvider.selectedUser != 0) ||
                           reportsProvider.Search.isNotEmpty)
-                        ElevatedButton(
-                          onPressed: () {
-                            reportsProvider.selectDateFilterOption(null);
-                            reportsProvider.removeStatus();
-                            searchController.clear();
-                            reportsProvider.setTaskSearchCriteria(
-                                '', '', '', '', '');
-                            reportsProvider.getSearchServiceReport(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppColors.primaryBlue,
-                            elevation: 0,
-                            side: BorderSide(color: AppColors.primaryBlue),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                        SizedBox(
+                          width: double.infinity,
+                          child: CommonReportResetButton(
+                            label: 'Reset All Filters',
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                  '', '', '', '', '');
+                              reportsProvider.getSearchServiceReport(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColors.textRed,
+                              elevation: 0,
+                              side: const BorderSide(color: AppColors.textRed),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                             ),
                           ),
-                          child: const Text('Clear All Filters'),
                         ),
                     ],
                   ),
                 ),
               ),
-            if (!reportsProvider.isLoading &&
-                reportsProvider.serviceReport.isNotEmpty)
-              CommonReportSummaryBar(
-                totalLabel: 'Total Complaints',
-                totalCount: reportsProvider.serviceReport.length,
-                showingLabel: 'Showing',
-                showingCount: reportsProvider.serviceReport.length,
-              ),
-            if (!reportsProvider.isLoading &&
-                reportsProvider.serviceReport.isNotEmpty)
-              ListView.separated(
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    height: 2,
-                    color: AppColors.grey,
-                  );
-                },
-                itemCount: reportsProvider.serviceReport.length,
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  var service = reportsProvider.serviceReport[index];
 
-                  Color statusColor = service.serviceStatusName == "Completed"
-                      ? Colors.green
-                      : service.serviceStatusName == "In Progress"
-                          ? Colors.orange
-                          : Colors.red;
-                  return ReportListItem(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return ComplaintsDetailsPageMobile(service: service);
-                        },
-                      ));
-                    },
-                    onSubtitleTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CustomerDetailPageMobile(
-                              customerId: service.customerId,
-                              fromLead: false,
+            // ── LIST / SUMMARY BAR ──────────────────────────────────────────
+            if (!reportsProvider.isFilter) ...[
+              if (!reportsProvider.isLoading &&
+                  reportsProvider.serviceReport.isNotEmpty)
+                CommonReportSummaryBar(
+                  totalLabel: 'Total Complaints',
+                  totalCount: reportsProvider.serviceReport.length,
+                  showingLabel: 'Showing',
+                  showingCount: reportsProvider.serviceReport.length,
+                ),
+              Expanded(
+                child: !reportsProvider.isLoading &&
+                        reportsProvider.serviceReport.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.search_off_outlined,
+                                size: 80, color: Colors.grey[300]),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No complaint reports found',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ));
-                    },
-                    title: service.serviceName,
-                    subtitle: '${service.customerName} >',
-                    status: service.serviceStatusName,
-                    statusColor: statusColor,
-                    description: service.description,
-                    bottomLeftText: (service.amount != "0" &&
-                            service.amount != "0.0" &&
-                            service.amount != "0.000")
-                        ? '₹${service.amount.split('.')[0]}'
-                        : null,
-                    bottomRightText:
-                        'By ${service.createdByName} on ${service.createDate.toMonthDayYearFormat()}',
-                  );
-                },
-              )
+                            const SizedBox(height: 24),
+                            if (reportsProvider.fromDate != null ||
+                                reportsProvider.toDate != null ||
+                                (reportsProvider.selectedStatus != null &&
+                                    reportsProvider.selectedStatus != 0) ||
+                                reportsProvider.Search.isNotEmpty)
+                              ElevatedButton(
+                                onPressed: () {
+                                  reportsProvider.selectDateFilterOption(null);
+                                  reportsProvider.removeStatus();
+                                  searchController.clear();
+                                  reportsProvider.setTaskSearchCriteria(
+                                      '', '', '', '', '');
+                                  reportsProvider.getSearchServiceReport(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: AppColors.primaryBlue,
+                                  elevation: 0,
+                                  side: const BorderSide(
+                                      color: AppColors.primaryBlue),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: const Text('Clear All Filters'),
+                              ),
+                          ],
+                        ),
+                      )
+                    : ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return const Divider(
+                            height: 2,
+                            color: AppColors.grey,
+                          );
+                        },
+                        itemCount: reportsProvider.serviceReport.length,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          var service = reportsProvider.serviceReport[index];
+
+                          Color statusColor =
+                              service.serviceStatusName == "Completed"
+                                  ? Colors.green
+                                  : service.serviceStatusName == "In Progress"
+                                      ? Colors.orange
+                                      : Colors.red;
+                          return ReportListItem(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return ComplaintsDetailsPageMobile(
+                                      service: service);
+                                },
+                              ));
+                            },
+                            onSubtitleTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CustomerDetailPageMobile(
+                                      customerId: service.customerId,
+                                      fromLead: false,
+                                    ),
+                                  ));
+                            },
+                            title: service.serviceName,
+                            subtitle: '${service.customerName} >',
+                            status: service.serviceStatusName,
+                            statusColor: statusColor,
+                            description: service.description,
+                            bottomLeftText: (service.amount != "0" &&
+                                    service.amount != "0.0" &&
+                                    service.amount != "0.000")
+                                ? '₹${service.amount.split('.')[0]}'
+                                : null,
+                            bottomRightText:
+                                'By ${service.createdByName} on ${service.createDate.toMonthDayYearFormat()}',
+                          );
+                        },
+                      ),
+              ),
+            ],
           ],
         ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: reportsProvider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_service_report_filter_fab',
+                  onPressed: () {
+                    reportsProvider.setTaskSearchCriteria(
+                      searchController.text,
+                      reportsProvider.fromDateS,
+                      reportsProvider.toDateS,
+                      reportsProvider.Status,
+                      reportsProvider.AssignedTo,
+                    );
+                    searchProvider.stopSearch();
+                    reportsProvider.getSearchServiceReport(context);
+                    reportsProvider.setFilter(false);
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
       ),
     );
   }
