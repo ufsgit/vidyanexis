@@ -414,9 +414,10 @@ class _AddCustomFieldState extends State<AddCustomField> {
                           customFieldTypeModel.isViewInQuotation =
                               settingsProvider.isViewInQuotation ? 1 : 0;
 
-                          settingsProvider.saveCustomField(
+                          final navigator = Navigator.of(context);
+                          await settingsProvider.saveCustomField(
                               context, customFieldTypeModel);
-                          Navigator.pop(context);
+                          navigator.pop(true);
                         },
                         backgroundColor: AppColors.appViolet,
                         borderColor: AppColors.appViolet,
@@ -515,8 +516,9 @@ class _AddCustomFieldState extends State<AddCustomField> {
             customFieldTypeModel.isViewInQuotation =
                 settingsProvider.isViewInQuotation ? 1 : 0;
 
-            settingsProvider.saveCustomField(context, customFieldTypeModel);
-            Navigator.pop(context);
+            final navigator = Navigator.of(context);
+            await settingsProvider.saveCustomField(context, customFieldTypeModel);
+            navigator.pop(true);
           },
           backgroundColor: AppColors.appViolet,
           borderColor: AppColors.appViolet,

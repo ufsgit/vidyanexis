@@ -14,6 +14,11 @@ import 'package:vidyanexis/utils/file_downloader.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/home/signature_capture_dialog.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/models/custom_field_model.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_custom_field.dart';
 
 // Global keys for specific instances
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldLeadStatusKey =
@@ -33,6 +38,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
   final EdgeInsets? padding;
   final double? spacing;
   final String controllerKey;
+  final bool showEditButton;
   const CustomFieldSectionWidget({
     super.key,
     required this.customFields,
@@ -44,6 +50,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
     this.padding,
     this.spacing,
     required this.controllerKey,
+    this.showEditButton = false,
   });
 
   @override
@@ -65,6 +72,7 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
       widget.controllerKey,
       onFieldChanged: _onFieldChanged,
       enabled: widget.enabled,
+      showEditButton: widget.showEditButton,
     );
     _initializeData();
   }
@@ -104,6 +112,10 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
     // Update enabled state
     if (widget.enabled != oldWidget.enabled) {
       widgetBuilder.updateEnabledState(widget.enabled);
+    }
+
+    if (widget.showEditButton != oldWidget.showEditButton) {
+      widgetBuilder.showEditButton = widget.showEditButton;
     }
   }
 
@@ -287,11 +299,14 @@ class CustomFieldWidgetBuilder {
   final Map<int, Uint8List> _pendingFileBytes = {};
   final Map<int, String> _pendingFileContentType = {};
 
+  bool showEditButton;
+
   CustomFieldWidgetBuilder(
     this.context,
     this.controllerkey, {
     this.onFieldChanged,
     this.enabled = true,
+    this.showEditButton = false,
   });
 
   Widget buildWidget(CustomFieldByStatusId field) {
@@ -303,44 +318,87 @@ class CustomFieldWidgetBuilder {
     final existingValue = _getFieldValue(field.customFieldId!);
     final fieldType = CustomFieldType.fromValue(field.customFieldTypeId);
 
+    Widget fieldWidget;
+
     // For checkbox and file upload, we don't need a text controller
     if (fieldType == CustomFieldType.checkbox) {
-      return Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: _buildCheckboxField(field),
+      fieldWidget = _buildCheckboxField(field);
+    } else if (fieldType == CustomFieldType.fileUpload) {
+      fieldWidget = _buildFileUploadField(field);
+    } else if (fieldType == CustomFieldType.signature) {
+      fieldWidget = _buildSignatureField(field);
+    } else {
+      final initialValue = existingValue?.value ?? '';
+      String key = '${field.customFieldId} $controllerkey';
+      final controller = CustomFieldWidgetHelper.getController(
+        fieldId: field.customFieldId!,
+        key: key,
+        initialValue: initialValue,
       );
+      fieldWidget = _buildFieldWidget(field, controller);
     }
 
-    if (fieldType == CustomFieldType.fileUpload) {
-      return Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: _buildFileUploadField(field),
-      );
-    }
-
-    if (fieldType == CustomFieldType.signature) {
-      return Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: _buildSignatureField(field),
-      );
-    }
-
-    final initialValue = existingValue?.value ?? '';
-    String key = '${field.customFieldId} $controllerkey';
-    final controller = CustomFieldWidgetHelper.getController(
-      fieldId: field.customFieldId!,
-      key: key,
-      initialValue: initialValue,
-    );
-
-    return Container(
+    final contentWidget = Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      child: _buildFieldWidget(field, controller),
+      child: fieldWidget,
     );
+
+    if (showEditButton) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(child: contentWidget),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: IconButton(
+              icon: Icon(Icons.edit_outlined, color: AppColors.primaryBlue),
+              tooltip: 'Edit Custom Field',
+              onPressed: () => _editCustomField(field),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return contentWidget;
+  }
+
+  void _editCustomField(CustomFieldByStatusId field) async {
+    // Map CustomFieldByStatusId to CustomFieldModel
+    final fieldModel = CustomFieldModel(
+      customFieldId: field.customFieldId,
+      customFieldTypeId: field.customFieldTypeId,
+      customFieldName: field.customFieldName,
+      isQuotationCustom: field.isQuotationCustom,
+      isViewInQuotation: field.isViewInQuotation,
+      dropDownValues: field.dropdownValues?.map((x) => x.dropdownValue ?? '').toList() ?? [],
+      checkBoxValues: field.checkboxValues?.map((x) => x.checkBoxValues ?? '').toList() ?? [],
+    );
+
+    final result = await showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AddCustomField(
+          editId: '0',
+          isEdit: true,
+          status: '',
+          customFieldTypeModel: fieldModel,
+        );
+      },
+    );
+
+    if (result == true) {
+      if (context.mounted) {
+        try {
+          final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+          await customerDetailsProvider.getCustomFieldsByQuotationId(context);
+        } catch (e) {
+          debugPrint('Error reloading quotation custom fields: $e');
+        }
+      }
+    }
   }
 
   FieldValueModel? _getFieldValue(int fieldId) {
