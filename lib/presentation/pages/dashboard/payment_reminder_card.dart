@@ -135,89 +135,9 @@ class PaymentReminderCard extends StatelessWidget {
                 ],
               ),
             ),
-            // Bottom Action Bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: const BoxDecoration(
-                color: Color(0xFFF8FAFC),
-                border: Border(
-                  top: BorderSide(color: Color(0xFFF1F5F9)),
-                ),
-              ),
-              child: Row(
-                children: [
-                  _buildActionButton(
-                    icon: Icons.info_outline_rounded,
-                    label: "Details",
-                    onTap: () {
-                      // Navigate to details if needed
-                    },
-                  ),
-                  const Spacer(),
-                  _buildCircleButton(
-                    icon: Icons.phone_in_talk_rounded,
-                    color: const Color(0xFF34C759),
-                    onTap: () {
-                      // Call action
-                    },
-                  ),
-                  const SizedBox(width: 12),
-                  _buildCircleButton(
-                    icon: Icons.message_rounded,
-                    color: const Color(0xFF25D366),
-                    onTap: () {
-                      // WhatsApp action
-                    },
-                  ),
-                ],
-              ),
-            ),
+            // Bottom Action Bar removed as requested
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: AppColors.secondaryBlue),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.secondaryBlue,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCircleButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(50),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, size: 18, color: color),
       ),
     );
   }

@@ -17,7 +17,7 @@ class CustomerDetailCustomTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 44,
+      height: 38,
       width: double.infinity,
       decoration: BoxDecoration(
         color: const Color(0xFFF1F5F9),
@@ -29,7 +29,7 @@ class CustomerDetailCustomTab extends StatelessWidget {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(3),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(tabs.length, (index) {
@@ -38,8 +38,10 @@ class CustomerDetailCustomTab extends StatelessWidget {
                 onTap: () => onTabChanged(index),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.symmetric(horizontal: 2),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  margin: isSelected 
+                      ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2) 
+                      : const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
@@ -57,9 +59,9 @@ class CustomerDetailCustomTab extends StatelessWidget {
                   child: Text(
                     tabs[index],
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
+                      fontSize: 12,
                       fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected ? AppColors.primaryBlue : const Color(0xFF64748B),
+                      color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
                     ),
                   ),
                 ),

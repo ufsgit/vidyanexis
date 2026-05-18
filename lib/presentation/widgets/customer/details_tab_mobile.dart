@@ -58,16 +58,18 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
             )
           : SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // Documents & Actions Section
-                    TileWidget(
-                      title: 'Documents & Actions',
-                      iconAssetPath: 'assets/images/icon_bookmark_details.png',
-                      initiallyExpanded: false,
+                    _buildStyledCard(
+                      child: TileWidget(
+                        title: 'Documents & Actions',
+                        iconAssetPath: 'assets/images/icon_bookmark_details.png',
+                        initiallyExpanded: false,
+                        showDivider: false,
                       children: [
                         Container(
                           height: 60,
@@ -398,11 +400,14 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                         ),
                       ],
                     ),
-                    TileWidget(
-                      initiallyExpanded: true,
-                      title: 'Basic details',
-                      iconAssetPath: 'assets/images/icon_profile_details.png',
-                      children: [
+                  ),
+                  _buildStyledCard(
+                      child: TileWidget(
+                        initiallyExpanded: true,
+                        title: 'Basic details',
+                        iconAssetPath: 'assets/images/icon_profile_details.png',
+                        showDivider: false,
+                        children: [
                         LabelValueWidget(
                           label: 'Name',
                           value:
@@ -450,28 +455,27 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                         const SizedBox(height: 8),
                       ],
                     ),
+                    ),
 
                     // Address
-                    TileWidget(
-                      title: 'Address',
-                      iconAssetPath: 'assets/images/icon_location_details.png',
-                      children: [
+                    _buildStyledCard(
+                      child: TileWidget(
+                        title: 'Address',
+                        iconAssetPath: 'assets/images/icon_location_details.png',
+                        showDivider: false,
+                        children: [
                         LabelValueWidget(
                           label: 'Address',
-                          value:
-                              leadDetailsProvider.leadDetails![0].address ?? "",
+                          value: leadDetailsProvider.leadDetails![0].address,
                         ),
                         SizedBox(height: 8),
                         InkWell(
                           onTap: () => _openMaps(
-                              leadDetailsProvider.leadDetails![0].location ??
-                                  ""),
+                              leadDetailsProvider.leadDetails![0].location),
                           child: LabelValueWidget(
                             label: 'Location',
                             labelColor: AppColors.bluebutton,
-                            value:
-                                leadDetailsProvider.leadDetails![0].location ??
-                                    "",
+                            value: leadDetailsProvider.leadDetails![0].location,
                           ),
                         ),
                         SizedBox(height: 8),
@@ -499,6 +503,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                         // ),
                         SizedBox(height: 8),
                       ],
+                    ),
                     ),
 
                     // Invertor and panel details
@@ -694,6 +699,28 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildStyledCard({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: const Color(0xFFF1F5F9)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: child,
+      ),
     );
   }
 

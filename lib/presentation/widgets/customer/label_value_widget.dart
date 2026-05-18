@@ -24,8 +24,14 @@ class LabelValueWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
+    return Container(
+      margin: padding,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
+      ),
       child: Row(
         mainAxisAlignment: mainAxisAlignment,
         crossAxisAlignment: crossAxisAlignment,
@@ -36,21 +42,21 @@ class LabelValueWidget extends StatelessWidget {
             child: Text(
               label,
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
                 color: labelColor ?? AppColors.textGrey3,
               ),
             ),
           ),
           const SizedBox(
-            width: 100,
+            width: 16,
           ),
-          Flexible(
+          Expanded(
             child: Text(
               value,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w700,
                 color: valueColor ?? AppColors.textBlack,
               ),
               overflow: TextOverflow.visible,
