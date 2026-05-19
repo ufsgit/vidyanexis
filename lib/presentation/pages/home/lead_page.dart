@@ -1,3 +1,4 @@
+import 'package:vidyanexis/controller/models/Sales_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
 import 'dart:typed_data';
@@ -19,9 +20,11 @@ import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/sales_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_multi_level_dropdown.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
@@ -1336,17 +1339,164 @@ class _LeadsPageState extends State<LeadPage> {
                                                   width: 150,
                                                   alignment:
                                                       Alignment.centerLeft,
-                                                  data: Text(
-                                                    dropDownProvider
-                                                        .getEnquiryForNameById(
-                                                            lead.enquiryForId,
-                                                            lead.enquiryFor),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
-                                                    ),
+                                                  data: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          dropDownProvider
+                                                              .getEnquiryForNameById(
+                                                                  lead.enquiryForId,
+                                                                  lead.enquiryFor),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      if (lead.enquiryForId ==
+                                                          25) ...[
+                                                        const SizedBox(
+                                                            width: 4),
+                                                        MouseRegion(
+                                                          cursor:
+                                                              SystemMouseCursors
+                                                                  .click,
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              String
+                                                                  formattedDate =
+                                                                  DateFormat(
+                                                                          'dd MMM yyyy')
+                                                                      .format(DateTime
+                                                                          .now());
+
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                barrierDismissible:
+                                                                    false,
+                                                                builder: (_) =>
+                                                                    SalesWidget(
+                                                                  isEdit: true,
+                                                                  editId: '0',
+                                                                  data:
+                                                                      SalesModel(
+                                                                    customerId:
+                                                                        lead.customerId,
+                                                                    customerName:
+                                                                        lead.customerName,
+                                                                    salesMasterId:
+                                                                        0,
+                                                                    invoiceNo:
+                                                                        '',
+                                                                    entryDate:
+                                                                        '',
+                                                                    salesDate:
+                                                                        formattedDate,
+                                                                    totalAmount:
+                                                                        '',
+                                                                    totalDiscount:
+                                                                        '',
+                                                                    taxableAmount:
+                                                                        '',
+                                                                    totalCgst:
+                                                                        '',
+                                                                    totalSgst:
+                                                                        '',
+                                                                    totalIgst:
+                                                                        '',
+                                                                    netTotal:
+                                                                        '',
+                                                                    description:
+                                                                        '',
+                                                                    address: lead
+                                                                        .address,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          6,
+                                                                      vertical:
+                                                                          3),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                gradient:
+                                                                    const LinearGradient(
+                                                                  colors: [
+                                                                    Color(
+                                                                        0xFF2563EB),
+                                                                    Color(
+                                                                        0xFF1D4ED8),
+                                                                  ],
+                                                                  begin: Alignment
+                                                                      .topLeft,
+                                                                  end: Alignment
+                                                                      .bottomRight,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: const Color(
+                                                                            0xFF2563EB)
+                                                                        .withOpacity(
+                                                                            0.3),
+                                                                    blurRadius:
+                                                                        2,
+                                                                    offset:
+                                                                        const Offset(
+                                                                            0,
+                                                                            1),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: const [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .trending_up_rounded,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    size: 11,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: 3),
+                                                                  Text(
+                                                                    'Sales',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          10,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      letterSpacing:
+                                                                          0.2,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ],
                                                   ),
                                                 ),
                                                 TableWidget(

@@ -108,7 +108,10 @@ class _SalesWidgetState extends State<SalesWidget> {
           (item) => item.customerId == customerId,
         );
 
-        expenseProvider.addressSalesController.text = selectedCustomer.address;
+        expenseProvider.addressSalesController.text =
+            selectedCustomer.address.isEmpty
+                ? widget.data!.address
+                : selectedCustomer.address;
         expenseProvider.invoiceNOSalesControler.text = widget.data!.invoiceNo;
         expenseProvider.invoiceDateSalesController.text =
             formatPurchaseDate(widget.data!.salesDate);
