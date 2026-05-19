@@ -13,6 +13,7 @@ class SalesModel {
   final String totalIgst;
   final String netTotal;
   final String description;
+  final String address;
 
   SalesModel({
     required this.salesMasterId,
@@ -29,6 +30,7 @@ class SalesModel {
     required this.totalIgst,
     required this.netTotal,
     required this.description,
+    required this.address,
   });
 
   factory SalesModel.fromJson(Map<String, dynamic> json) => SalesModel(
@@ -46,6 +48,7 @@ class SalesModel {
         totalIgst: json["Total_IGST"]?.toString() ?? "",
         netTotal: json["NetTotal"]?.toString() ?? "",
         description: json["Description"]?.toString() ?? "",
+        address: json["Address"]?.toString() ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -63,5 +66,6 @@ class SalesModel {
         "Total_IGST": totalIgst,
         "NetTotal": netTotal,
         "Description": description,
+        "Address": address,
       };
 }

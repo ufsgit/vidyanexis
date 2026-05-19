@@ -5084,7 +5084,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           // Generic Share Button
                                           if (settingsprovider
                                                   .menuIsViewMap[32] ==
-                                              1)
+                                              1)...[
                                             IconButton(
                                               tooltip: 'Share Quotation 1',
                                               icon: Icon(Icons.share,
@@ -5119,11 +5119,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 Loader.stopLoader(context);
                                               },
                                             ),
+                                          ],
                                           // Specific Share Button
                                           if (settingsprovider
                                                   .menuIsViewMap[55] ==
                                               1)
-                                            if (task.quotationTypeId == 2)
+                                            if (task.quotationTypeId == 2)...[
                                               IconButton(
                                                 tooltip: 'Share Commercial',
                                                 icon: Icon(
@@ -5197,10 +5198,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   Loader.stopLoader(context);
                                                 },
                                               ),
+                                            ],
                                           if (settingsprovider
                                                   .menuIsViewMap[55] ==
                                               1)
-                                            if (task.quotationTypeId == 1)
+                                            if (task.quotationTypeId == 1)...[
                                               IconButton(
                                                 tooltip: 'Share Residential',
                                                 icon: Icon(
@@ -5274,6 +5276,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   Loader.stopLoader(context);
                                                 },
                                               ),
+                                            ],
                                           if (settingsprovider
                                                   .menuIsEditMap[16] ==
                                               1)

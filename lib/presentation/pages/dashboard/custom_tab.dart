@@ -220,72 +220,74 @@ class CustomTab extends StatelessWidget {
       return Container();
     }
 
-    return Container(
-      height: 38,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.all(3),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(tabOptions.length, (index) {
-              final isSelected = _dashBoardProvider.tabIndex == index;
-              return GestureDetector(
-                onTap: () {
-                  _dashBoardProvider.changeTab(index);
-                  final allowedTabIds = [
-                    if (settingsProvider.menuIsViewMap[84].toString() != '0') 6,
-                    if (settingsProvider.menuIsViewMap[49].toString() != '0') 0,
-                    if (settingsProvider.menuIsViewMap[50].toString() != '0') 1,
-                    if (settingsProvider.menuIsViewMap[76].toString() != '0') 4,
-                    if (settingsProvider.menuIsViewMap[77].toString() != '0') 5,
-                    if (settingsProvider.menuIsViewMap[51].toString() != '0') 2,
-                    if (settingsProvider.menuIsViewMap[52].toString() != '0') 3,
-                  ];
-
-                  if (index >= 0 && index < allowedTabIds.length) {
-                    _dashBoardProvider.loadDataForTab(allowedTabIds[index], context);
-                  }
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: isSelected 
-                      ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2) 
-                      : const EdgeInsets.symmetric(vertical: 4),
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: isSelected ? Colors.white : Colors.transparent,
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : null,
-                  ),
-
-                  child: Text(
-                    _getShortTabName(tabOptions[index]),
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        height: 38,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(3),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(tabOptions.length, (index) {
+                final isSelected = _dashBoardProvider.tabIndex == index;
+                return GestureDetector(
+                  onTap: () {
+                    _dashBoardProvider.changeTab(index);
+                    final allowedTabIds = [
+                      if (settingsProvider.menuIsViewMap[84].toString() != '0') 6,
+                      if (settingsProvider.menuIsViewMap[49].toString() != '0') 0,
+                      if (settingsProvider.menuIsViewMap[50].toString() != '0') 1,
+                      if (settingsProvider.menuIsViewMap[76].toString() != '0') 4,
+                      if (settingsProvider.menuIsViewMap[77].toString() != '0') 5,
+                      if (settingsProvider.menuIsViewMap[51].toString() != '0') 2,
+                      if (settingsProvider.menuIsViewMap[52].toString() != '0') 3,
+                    ];
+  
+                    if (index >= 0 && index < allowedTabIds.length) {
+                      _dashBoardProvider.loadDataForTab(allowedTabIds[index], context);
+                    }
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: isSelected 
+                        ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2) 
+                        : const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: isSelected ? Colors.white : Colors.transparent,
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
+                    ),
+  
+                    child: Text(
+                      _getShortTabName(tabOptions[index]),
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+                      ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
         ),
       ),

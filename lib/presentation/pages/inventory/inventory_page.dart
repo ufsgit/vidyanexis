@@ -21,6 +21,8 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 import 'package:vidyanexis/presentation/widgets/inventory/add_item.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_supplier_page.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/purchase_widget.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/sales_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_category_widget.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_unit_page.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_customer_page.dart';
@@ -55,7 +57,7 @@ class _InventoryPageState extends State<InventoryPage> {
 
       body: isMobile
           ? _buildMobileLayout(expenseProvider, settingsProvider)
-          : _buildDesktopLayout(settingsProvider),
+          : _buildDesktopLayout(expenseProvider, settingsProvider),
     );
   }
 
@@ -171,7 +173,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  Widget _buildDesktopLayout(SettingsProvider settingsProvider) {
+  Widget _buildDesktopLayout(ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -192,16 +194,39 @@ class _InventoryPageState extends State<InventoryPage> {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        final sideProvider = Provider.of<SidebarProvider>(
-                            context,
-                            listen: false);
-                        sideProvider.setSelectedIndex(0);
-                        sideProvider.updateSelectedName('DashBoard');
-                      },
+                    Builder(
+                      builder: (context) => IconButton(
+                        onPressed: () {
+                          ScaffoldState? parent;
+                          context.visitAncestorElements((element) {
+                            if (element is StatefulElement &&
+                                element.state is ScaffoldState) {
+                              ScaffoldState scaffold =
+                                  element.state as ScaffoldState;
+                              if (scaffold.hasDrawer) {
+                                parent = scaffold;
+                                return false;
+                              }
+                            }
+                            return true;
+                          });
+                          parent?.openDrawer();
+                        },
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBlue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.sort,
+                            size: 20,
+                            color: AppColors.secondaryBlue,
+                          ),
+                        ),
+                      ),
                     ),
+                    const SizedBox(width: 16),
                     Text(
                       'Inventory',
                       style: GoogleFonts.plusJakartaSans(
@@ -221,7 +246,16 @@ class _InventoryPageState extends State<InventoryPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: 72),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: _buildAddButton(context, expenseProvider, settingsProvider),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: _buildContent(),
@@ -244,7 +278,7 @@ class _InventoryPageState extends State<InventoryPage> {
     if (settingsProvider.menuIsViewMap[87].toString() == '1') items.add('Sales');
     if (settingsProvider.menuIsViewMap[78].toString() == '1') items.add('Stock Use');
     if (settingsProvider.menuIsViewMap[79].toString() == '1') items.add('Stock Return');
-    items.add('Customer');
+    if (settingsProvider.menuIsViewMap[143].toString() == '1') items.add('Customer');
     return items;
   }
 
@@ -320,10 +354,7 @@ class _InventoryPageState extends State<InventoryPage> {
         break;
       case 'Purchase':
         menuId = 44;
-        onTap = () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PurchaseScreen()),
-            );
+        onTap = () => _showAddPurchaseDialog(context);
         break;
       case 'Supplier':
         menuId = 45;
@@ -338,7 +369,7 @@ class _InventoryPageState extends State<InventoryPage> {
         onTap = () => _showAddUnitDialog(context);
         break;
       case 'Customer':
-        menuId = 88; // Inventory Customer
+        menuId = 143; // Inventory Customer
         onTap = () => _showAddCustomerDialog(context);
         break;
       case 'Stock Use':
@@ -348,6 +379,10 @@ class _InventoryPageState extends State<InventoryPage> {
       case 'Stock Return':
         menuId = 79;
         onTap = () => _showAddStockReturnDialog(context);
+        break;
+      case 'Sales':
+        menuId = 87;
+        onTap = () => _showAddSalesDialog(context);
         break;
     }
 
@@ -389,6 +424,30 @@ class _InventoryPageState extends State<InventoryPage> {
           isEdit: false,
           editId: 0,
           item: null,
+        ),
+      ),
+    );
+  }
+
+  void _showAddPurchaseDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const PurchaseWidget(
+          isEdit: false,
+          editId: '0',
+        ),
+      ),
+    );
+  }
+
+  void _showAddSalesDialog(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SalesWidget(
+          isEdit: false,
+          editId: '0',
         ),
       ),
     );
