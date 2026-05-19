@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,6 +35,8 @@ class _PeriodicServiceReportPageMobileState
     extends State<PeriodicServiceReportPageMobile> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +56,31 @@ class _PeriodicServiceReportPageMobileState
     });
   }
 
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.dispose();
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final reportsProvider =
+          Provider.of<AMCReportProvider>(context, listen: false);
+      reportsProvider.setTaskSearchCriteria(
+        query,
+        reportsProvider.fromDateS,
+        reportsProvider.toDateS,
+        reportsProvider.Status,
+        reportsProvider.AssignedTo,
+      );
+      reportsProvider.getSearchAmcReport(context);
+    });
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -69,6 +97,7 @@ class _PeriodicServiceReportPageMobileState
       drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         title: 'Periodic service Report',
+        showFilterIcon: false,
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -76,7 +105,6 @@ class _PeriodicServiceReportPageMobileState
         searchHintText: 'Search Reports...',
         onFilterTap: () {
           reportsProvider.toggleFilter();
-          print(reportsProvider.isFilter);
         },
         onSearchTap: () {
           searchProvider.startSearch();
@@ -97,8 +125,6 @@ class _PeriodicServiceReportPageMobileState
           reportsProvider.getSearchAmcReport(context);
         },
         onSearch: (query) {
-          // reportsProvider.selectDateFilterOption(null);
-          // reportsProvider.removeStatus();
           reportsProvider.setTaskSearchCriteria(
             query,
             reportsProvider.fromDateS,
@@ -108,15 +134,16 @@ class _PeriodicServiceReportPageMobileState
           );
           reportsProvider.getSearchAmcReport(context);
         },
+        onChanged: _onSearchChanged,
         searchController: searchController,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── FILTER PANEL ────────────────────────────────────────────────
-            if (reportsProvider.isFilter)
-              SingleChildScrollView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── FILTER PANEL ────────────────────────────────────────────────
+          if (reportsProvider.isFilter)
+            Expanded(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +166,6 @@ class _PeriodicServiceReportPageMobileState
                                   reportsProvider.selectedStatus == null,
                               onTap: () {
                                 reportsProvider.setStatus(0);
-                                reportsProvider.getSearchAmcReport(context);
                               },
                             ),
                             ...dropDownProvider.amcStatus.map((s) =>
@@ -149,7 +175,6 @@ class _PeriodicServiceReportPageMobileState
                                       s.amcStatusId,
                                   onTap: () {
                                     reportsProvider.setStatus(s.amcStatusId);
-                                    reportsProvider.getSearchAmcReport(context);
                                   },
                                 )),
                           ],
@@ -162,12 +187,48 @@ class _PeriodicServiceReportPageMobileState
                         fontWeight: FontWeight.bold,
                         color: AppColors.textBlack),
                     const SizedBox(height: 8),
-                    CommonReportDateFilter(
-                      fromDate: reportsProvider.fromDate?.toString(),
-                      toDate: reportsProvider.toDate?.toString(),
-                      formattedFromDate: reportsProvider.formattedFromDate,
-                      formattedToDate: reportsProvider.formattedToDate,
-                      onTap: () => onClickTopButton(context),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      alignment: WrapAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            onClickTopButton(context);
+                          },
+                          child: Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: AppColors.scaffoldColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: ConstrainedBox(
+                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      child: CustomText(
+                                        reportsProvider.fromDate == null && reportsProvider.toDate == null
+                                            ? 'Date'
+                                            : 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.textBlack,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     CustomText('Assigned Staff',
@@ -187,7 +248,6 @@ class _PeriodicServiceReportPageMobileState
                                   reportsProvider.selectedUser == null,
                               onTap: () {
                                 reportsProvider.setUserFilterStatus(0);
-                                reportsProvider.getSearchAmcReport(context);
                               },
                             ),
                             ...dropDownProvider.searchUserDetails.map((u) =>
@@ -198,7 +258,6 @@ class _PeriodicServiceReportPageMobileState
                                   onTap: () {
                                     reportsProvider
                                         .setUserFilterStatus(u.userDetailsId);
-                                    reportsProvider.getSearchAmcReport(context);
                                   },
                                 )),
                           ],
@@ -240,56 +299,108 @@ class _PeriodicServiceReportPageMobileState
                   ],
                 ),
               ),
+            ),
 
-            if (reportsProvider.amcReport.isNotEmpty &&
-                !reportsProvider.isFilter)
-              CommonReportSummaryBar(
-                totalLabel: 'Total Services',
-                totalCount: reportsProvider.amcReport.length,
-                showingLabel: 'Showing',
-                showingCount: reportsProvider.amcReport.length,
+          if (!reportsProvider.isFilter)
+            Expanded(
+              child: Column(
+                children: [
+                  if (reportsProvider.amcReport.isNotEmpty)
+                    CommonReportSummaryBar(
+                      totalLabel: 'Total Services',
+                      totalCount: reportsProvider.amcReport.length,
+                      showingLabel: 'Showing',
+                      showingCount: reportsProvider.amcReport.length,
+                    ),
+                  Expanded(
+                    child: reportsProvider.amcReport.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.assignment_outlined,
+                                    size: 64, color: Colors.grey[400]),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No services found',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.all(16),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemCount: reportsProvider.amcReport.length,
+                            itemBuilder: (context, index) {
+                              var service = reportsProvider.amcReport[index];
+
+                              Color statusColor =
+                                  service.amcStatusName == "Completed"
+                                      ? Colors.green
+                                      : service.amcStatusName == "In Progress"
+                                          ? Colors.orange
+                                          : Colors.red;
+
+                              return ReportListItem(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return PeriodicServiceDetailsPageMobile(
+                                          item: service);
+                                    },
+                                  ));
+                                },
+                                title: service.serviceName,
+                                subtitle: service.customerName,
+                                status: service.amcStatusName,
+                                statusColor: statusColor,
+                                description: service.productName,
+                                bottomLeftIcon: Icons.calendar_month_outlined,
+                                bottomLeftText:
+                                    '${service.fromDate.toString().toMonthDayYearFormat()} - ${service.toDate.toString().toMonthDayYearFormat()}',
+                                bottomRightText: service.amount != "0" &&
+                                        service.amount != "0.0" &&
+                                        service.amount != "0.000"
+                                    ? "₹${service.amount.split('.')[0]}"
+                                    : null,
+                              );
+                            },
+                          ),
+                  ),
+                ],
               ),
-            ListView.separated(
-              padding: const EdgeInsets.all(16),
-              separatorBuilder: (context, index) => const SizedBox(height: 12),
-              itemCount: reportsProvider.amcReport.length,
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
-              itemBuilder: (context, index) {
-                var service = reportsProvider.amcReport[index];
-
-                Color statusColor = service.amcStatusName == "Completed"
-                    ? Colors.green
-                    : service.amcStatusName == "In Progress"
-                        ? Colors.orange
-                        : Colors.red;
-
-                return ReportListItem(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return PeriodicServiceDetailsPageMobile(item: service);
-                      },
-                    ));
+            ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: reportsProvider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_periodic_service_report_filter_fab',
+                  onPressed: () {
+                    reportsProvider.getSearchAmcReport(context);
+                    reportsProvider.toggleFilter();
                   },
-                  title: service.serviceName,
-                  subtitle: service.customerName,
-                  status: service.amcStatusName,
-                  statusColor: statusColor,
-                  description: service.productName,
-                  bottomLeftIcon: Icons.calendar_month_outlined,
-                  bottomLeftText:
-                      '${service.fromDate.toString().toMonthDayYearFormat()} - ${service.toDate.toString().toMonthDayYearFormat()}',
-                  bottomRightText: service.amount != "0" &&
-                          service.amount != "0.0" &&
-                          service.amount != "0.000"
-                      ? "₹${service.amount.split('.')[0]}"
-                      : null,
-                );
-              },
-            )
-          ],
-        ),
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
       ),
     );
   }
@@ -364,8 +475,7 @@ class _PeriodicServiceReportPageMobileState
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                                  borderRadius: BorderRadius.circular(15)),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
                                       .split(' ')[0]
@@ -382,8 +492,7 @@ class _PeriodicServiceReportPageMobileState
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
+                                  borderRadius: BorderRadius.circular(15)),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
                                       .split(' ')[0]
@@ -401,27 +510,7 @@ class _PeriodicServiceReportPageMobileState
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-
                           reportsProvider.formatDate();
-
-                          print(reportsProvider.formattedFromDate);
-                          print(reportsProvider.formattedToDate);
-
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = reportsProvider.formattedFromDate;
-                          String toDate = reportsProvider.formattedToDate;
-                          print(
-                              'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          reportsProvider.setTaskSearchCriteria(
-                              reportsProvider.Search,
-                              fromDate,
-                              toDate,
-                              status,
-                              assignedTo);
-                          reportsProvider.getSearchAmcReport(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -446,22 +535,6 @@ class _PeriodicServiceReportPageMobileState
                         onPressed: () {
                           Navigator.pop(context);
                           reportsProvider.selectDateFilterOption(null);
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = '';
-                          String toDate = '';
-                          print(
-                              'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          reportsProvider.setTaskSearchCriteria(
-                            reportsProvider.Search,
-                            fromDate,
-                            toDate,
-                            status,
-                            assignedTo,
-                          );
-                          reportsProvider.getSearchAmcReport(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),

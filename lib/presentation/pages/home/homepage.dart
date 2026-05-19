@@ -1,6 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
@@ -14,6 +19,7 @@ import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_scree
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/side_bar_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
@@ -430,7 +436,104 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
+              title: sideProvider.selectedName == 'Expense Reports' && AppStyles.isWebScreen(context)
+                  ? Text(
+                      'Expense Report',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack,
+                      ),
+                    )
+                  : null,
               actions: [
+                if (sideProvider.selectedName == 'Expense Reports' && AppStyles.isWebScreen(context))
+                  Consumer<ExpenseProvider>(
+                    builder: (context, provider, child) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 250,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(19),
+                              border: Border.all(color: Colors.grey[200]!),
+                            ),
+                            child: TextField(
+                              controller: provider.searchExpenseController,
+                              onChanged: (query) => provider.searchExpense(query, context),
+                              decoration: InputDecoration(
+                                hintText: 'Search here....',
+                                hintStyle: GoogleFonts.plusJakartaSans(
+                                  color: Colors.grey[400],
+                                  fontSize: 12,
+                                ),
+                                prefixIcon: Icon(Icons.search,
+                                    color: Colors.grey[400], size: 18),
+                                border: InputBorder.none,
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          CustomFilterButton(
+                            onPressed: () => provider.toggleFilter(),
+                            isFilter: provider.isFilter,
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              List<String> headers = [
+                                "Sl No",
+                                "User Name",
+                                "Entry Date",
+                                "Expense Head",
+                                "Category",
+                                "Project Name",
+                                "Amount"
+                              ];
+
+                              List<Map<String, dynamic>> data = [];
+                              for (int i = 0; i < provider.expenseModelList.length; i++) {
+                                var item = provider.expenseModelList[i];
+                                data.add({
+                                  "Sl No": (i + 1).toString(),
+                                  "User Name": item.userName ?? "",
+                                  "Entry Date": item.entryDate ?? "",
+                                  "Expense Head": item.expenseHead ?? "",
+                                  "Category": item.expenseTypeName ?? "",
+                                  "Project Name": item.projectName ?? "",
+                                  "Amount": item.amount.toString()
+                                });
+                              }
+
+                              exportToExcel(
+                                  headers: headers,
+                                  data: data,
+                                  fileName:
+                                      'Expense_Report_${DateFormat('dd-MM-yyyy').format(DateTime.now())}');
+                            },
+                            icon: const Icon(Icons.file_upload_outlined, size: 16),
+                            label: const Text('Export', style: TextStyle(fontSize: 12)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFEAB308),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+                      );
+                    },
+                  ),
                 Consumer<NotificationProvider>(
                   builder: (context, notificationProvider, child) {
                     final count = notificationProvider.totalCount;

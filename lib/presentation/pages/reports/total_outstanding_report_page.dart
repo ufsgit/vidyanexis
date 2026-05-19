@@ -1,6 +1,5 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -11,9 +10,10 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
-
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class TotalOutstandingReportPage extends StatefulWidget {
   const TotalOutstandingReportPage({super.key});
@@ -74,8 +74,12 @@ class _TotalOutstandingReportPageState
           ? null
           : CustomAppBar(
               title: 'Total Outstanding Reports',
+              showFilterIcon: true,
               onSearchTap: () {
                 sideProvider.startSearch();
+              },
+              onFilterTap: () {
+                provider.toggleFilter();
               },
               onSearch: (query) {
                 provider.setSearch(query);
@@ -92,6 +96,30 @@ class _TotalOutstandingReportPageState
               searchController: searchController,
             ),
       body: isWeb ? _buildWebBody(provider) : _buildMobileBody(provider),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: (!isWeb && provider.isFilter)
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 32),
+              child: SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_total_outstanding_filter_fab',
+                  onPressed: () {
+                    provider.getTotalOutstandingReport(context);
+                    provider.toggleFilter();
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              ),
+            )
+          : null,
     );
   }
 
@@ -400,18 +428,12 @@ class _TotalOutstandingReportPageState
       return const Center(child: CircularProgressIndicator());
     }
 
+    if (provider.isFilter) {
+      return _buildMobileFilterPanel(provider);
+    }
+
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CommonReportDateFilter(
-            fromDate: provider.fromDate?.toString(),
-            toDate: provider.toDate?.toString(),
-            formattedFromDate: provider.formattedFromDate,
-            formattedToDate: provider.formattedToDate,
-            onTap: () => onClickTopButton(context),
-          ),
-        ),
         if (provider.totalOutstandingReportList.isNotEmpty)
           CommonReportSummaryBar(
             totalLabel: 'Total Records',
@@ -448,19 +470,104 @@ class _TotalOutstandingReportPageState
                     final item = provider.totalOutstandingReportList[index];
                     return ReportListItem(
                       title: item.customerName,
-                      subtitle:
-                          'Sch: ₹${item.totalScheduleAmount.toStringAsFixed(0)}',
-                      status:
-                          '₹ ${item.totalOutstandingAmount.toStringAsFixed(2)}',
+                      subtitle: '',
+                      status: '₹ ${item.totalOutstandingAmount.toStringAsFixed(2)}',
                       statusColor: AppColors.textRed,
-                      bottomLeftIcon: Icons.payments_outlined,
-                      bottomLeftText:
-                          'Paid: ₹${item.totalPaidAmount.toStringAsFixed(0)}',
+                      description:
+                          'Sch: ₹${item.totalScheduleAmount.toStringAsFixed(0)} | Paid: ₹${item.totalPaidAmount.toStringAsFixed(0)}',
+                      showArrow: false,
                     );
                   },
                 ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMobileFilterPanel(PaymentReportProvider provider) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          CustomText('Date Range',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            alignment: WrapAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  onClickTopButton(context);
+                },
+                child: Container(
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.scaffoldColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 200),
+                            child: CustomText(
+                              provider.fromDate == null && provider.toDate == null
+                                  ? 'Date'
+                                  : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textBlack,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          color: AppColors.textGrey3,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          if (provider.fromDate != null || provider.toDate != null)
+            SizedBox(
+              width: double.infinity,
+              child: CommonReportResetButton(
+                label: 'Reset All Filters',
+                onReset: () {
+                  provider.selectDateFilterOption(null);
+                  provider.getTotalOutstandingReport(context);
+                  provider.toggleFilter();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: AppColors.textRed,
+                  elevation: 0,
+                  side: BorderSide(color: AppColors.textRed),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
+            ),
+          const SizedBox(height: 80),
+        ],
+      ),
     );
   }
 
@@ -567,7 +674,9 @@ class _TotalOutstandingReportPageState
                       child: TextButton(
                         onPressed: () async {
                           await provider.getTotalOutstandingReport(context);
-                          Navigator.pop(context);
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,

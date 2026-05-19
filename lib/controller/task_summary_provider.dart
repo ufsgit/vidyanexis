@@ -13,18 +13,120 @@ class TaskSummaryProvider extends ChangeNotifier {
   DateTime? _fromDate;
   DateTime? _toDate;
   bool _isDateCheck = false;
+  bool _isFilter = false;
+  int? _selectedDateFilterIndex;
+  String _formattedFromDate = '';
+  String _formattedToDate = '';
 
   DateTime? get fromDate => _fromDate;
   DateTime? get to_toDate => _toDate;
   bool get isDateCheck => _isDateCheck;
+  bool get isFilter => _isFilter;
+  int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+  String get formattedFromDate => _formattedFromDate;
+  String get formattedToDate => _formattedToDate;
+
+  void toggleFilter() {
+    _isFilter = !_isFilter;
+    notifyListeners();
+  }
+
+  void selectDateFilterOption(int? index) {
+    if (index == null) {
+      _selectedDateFilterIndex = null;
+      _fromDate = null;
+      _toDate = null;
+      _formattedFromDate = '';
+      _formattedToDate = '';
+      _isDateCheck = false;
+    } else {
+      _selectedDateFilterIndex = index;
+      _isDateCheck = true;
+      formatDate();
+    }
+    notifyListeners();
+  }
+
+  void setDateFilter(String title) {
+    final now = DateTime.now();
+
+    switch (title) {
+      case 'Yesterday':
+        _fromDate = now.subtract(const Duration(days: 1));
+        _toDate = now.subtract(const Duration(days: 1));
+        break;
+      case 'Today':
+        _fromDate = now;
+        _toDate = now;
+        break;
+      case 'Tomorrow':
+        _fromDate = now.add(const Duration(days: 1));
+        _toDate = now.add(const Duration(days: 1));
+        break;
+      case 'This Week':
+        _fromDate = now.subtract(Duration(days: now.weekday - 1));
+        _toDate = now.add(Duration(days: 7 - now.weekday));
+        break;
+      case 'This Month':
+        _fromDate = DateTime(now.year, now.month, 1);
+        _toDate = DateTime(now.year, now.month + 1, 0);
+        break;
+      default:
+        _fromDate = null;
+        _toDate = null;
+        break;
+    }
+
+    notifyListeners();
+  }
 
   void setFromDate(DateTime date) {
     _fromDate = date;
+    _selectedDateFilterIndex = -1;
+    _isDateCheck = true;
+    formatDate();
     notifyListeners();
   }
 
   void setToDate(DateTime date) {
     _toDate = date;
+    _selectedDateFilterIndex = -1;
+    _isDateCheck = true;
+    formatDate();
+    notifyListeners();
+  }
+
+  void formatDate() {
+    if (fromDate != null) {
+      _formattedFromDate = DateFormat('yyyy-MM-dd').format(fromDate!);
+    } else {
+      _formattedFromDate = '';
+    }
+
+    if (to_toDate != null) {
+      _formattedToDate = DateFormat('yyyy-MM-dd').format(to_toDate!);
+    } else {
+      _formattedToDate = '';
+    }
+  }
+
+  Future<void> selectDate(BuildContext context, bool isFromDate) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: isFromDate
+          ? (_fromDate ?? DateTime.now())
+          : (_toDate ?? DateTime.now()),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null) {
+      if (isFromDate) {
+        setFromDate(pickedDate);
+      } else {
+        setToDate(pickedDate);
+      }
+    }
     notifyListeners();
   }
 
@@ -79,6 +181,9 @@ class TaskSummaryProvider extends ChangeNotifier {
     _fromDate = null;
     _toDate = null;
     _isDateCheck = false;
+    _selectedDateFilterIndex = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
     notifyListeners();
   }
 }

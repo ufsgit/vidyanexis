@@ -1,18 +1,19 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/stock_use_report_provider.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
-import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class StockUseReport extends StatefulWidget {
   static const String route = '/stock-use-report';
@@ -36,6 +37,10 @@ class _StockUseReportState extends State<StockUseReport> {
       provider.fetchStockDetails(context);
       provider.fetchCustomers(context);
       provider.searchReport(context);
+
+      final searchProvider =
+          Provider.of<SidebarProvider>(context, listen: false);
+      searchProvider.stopSearch();
     });
   }
 
@@ -46,52 +51,149 @@ class _StockUseReportState extends State<StockUseReport> {
     super.dispose();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<StockUseReportProvider>(context);
+    final searchProvider = Provider.of<SidebarProvider>(context);
     final isSmallScreen = !AppStyles.isWebScreen(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F7F9),
+      key: _scaffoldKey,
+      backgroundColor: const Color(0xFFF8FAFC),
       drawer: isSmallScreen ? const SidebarDrawer() : null,
       appBar: isSmallScreen
-          ? AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              iconTheme: IconThemeData(color: AppColors.textBlue800),
-              title: Text(
-                'Stock Use Report',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textBlue800,
-                ),
+          ? CustomAppBar(
+              title: 'Stock Use Report',
+              titleStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textBlack,
               ),
-              actions: [
-                IconButton(
-                  onPressed: () => provider.toggleFilter(),
-                  icon: Icon(
-                    Icons.filter_list,
-                    color: provider.isFilter
-                        ? AppColors.primaryBlue
-                        : AppColors.textBlue800,
-                  ),
-                ),
-              ],
+              showFilterIcon: false,
+              searchHintText: 'Search by customer...',
+              searchController: customerController,
+              onSearchTap: () {
+                searchProvider.startSearch();
+              },
+              onFilterTap: () {
+                provider.toggleFilter();
+              },
+              onClearTap: () {
+                customerController.clear();
+                searchProvider.stopSearch();
+                provider.setCustomerName('');
+                provider.searchReport(context);
+              },
+              onSearch: (value) {
+                provider.setCustomerName(value);
+                provider.searchReport(context);
+              },
+              onChanged: (value) {
+                provider.setCustomerName(value);
+                provider.searchReport(context);
+              },
+              showExcel: true,
+              onExcelTap: () {
+                exportToExcel(
+                  headers: ['Customer Name', 'Date', 'Item Name', 'Quantity'],
+                  data: provider.reportList.map((item) {
+                    return {
+                      'Customer Name': item.customerName,
+                      'Date': item.entryDate,
+                      'Item Name': item.itemName,
+                      'Quantity': item.quantity,
+                    };
+                  }).toList(),
+                  fileName: 'Stock_Use_Report',
+                );
+              },
             )
           : null,
       body: Column(
         children: [
           if (!isSmallScreen) _buildWebHeader(provider),
-          if (isSmallScreen) _buildMobileSearchHeader(provider),
-          if (provider.isFilter) _buildFilters(provider),
-          Expanded(
-            child: isSmallScreen
-                ? _buildMobileList(provider)
-                : _buildWebTable(provider),
-          ),
+          
+          if (isSmallScreen && !provider.isFilter && provider.reportList.isNotEmpty)
+            CommonReportSummaryBar(
+              totalLabel: 'Total Records',
+              totalCount: provider.reportList.length,
+              showingLabel: 'Showing',
+              showingCount: provider.reportList.length,
+            ),
+            
+          if (!isSmallScreen && provider.isFilter) _buildFilters(provider),
+          if (isSmallScreen && provider.isFilter) _buildMobileFilterPanel(context, provider),
+          
+          if (!provider.isFilter || !isSmallScreen)
+            Expanded(
+              child: isSmallScreen
+                  ? _buildMobileList(provider)
+                  : _buildWebTable(provider),
+            ),
         ],
       ),
+      // ── Floating Action Buttons for Mobile Filters ──
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: (isSmallScreen && provider.isFilter)
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          customerController.clear();
+                          itemController.clear();
+                          provider.clearFilters();
+                          provider.searchReport(context);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.textRed,
+                          side: BorderSide(color: AppColors.textRed),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(
+                          'Reset',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          provider.searchReport(context);
+                          provider.toggleFilter();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(
+                          'Apply Filter',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : null,
     );
   }
 
@@ -99,11 +201,18 @@ class _StockUseReportState extends State<StockUseReport> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
-        height: 48,
+        height: 52,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.grey[300]!),
+          border: Border.all(color: Colors.grey[200]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: TextField(
           controller: customerController,
@@ -133,11 +242,11 @@ class _StockUseReportState extends State<StockUseReport> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
-                child: const Text(
+                child: Text(
                   'Search',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -157,11 +266,10 @@ class _StockUseReportState extends State<StockUseReport> {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: AppColors.textBlue800,
+              color: const Color(0xFF152D70),
             ),
           ),
           const Spacer(),
-          // Top Search Bar
           Container(
             width: MediaQuery.of(context).size.width / 4,
             height: 48,
@@ -199,9 +307,9 @@ class _StockUseReportState extends State<StockUseReport> {
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Search',
-                      style: TextStyle(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -252,7 +360,6 @@ class _StockUseReportState extends State<StockUseReport> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         children: [
-          // Date Filter
           CommonReportDateFilter(
             fromDate: provider.formattedFromDate.isEmpty
                 ? null
@@ -266,9 +373,8 @@ class _StockUseReportState extends State<StockUseReport> {
             label: 'Date',
           ),
           const SizedBox(width: 12),
-          // Customer Name Dropdown
           Container(
-            width: AppStyles.isWebScreen(context) ? 250 : double.infinity,
+            width: 250,
             height: 48,
             child: CommonDropdown<String>(
               hintText: 'Customer Name',
@@ -291,9 +397,8 @@ class _StockUseReportState extends State<StockUseReport> {
             ),
           ),
           const SizedBox(width: 12),
-          // Item Name Dropdown
           Container(
-            width: AppStyles.isWebScreen(context) ? 250 : double.infinity,
+            width: 250,
             height: 48,
             child: CommonDropdown<String>(
               hintText: 'Item Name',
@@ -316,7 +421,6 @@ class _StockUseReportState extends State<StockUseReport> {
             ),
           ),
           const Spacer(),
-          // Apply Button
           ElevatedButton(
             onPressed: () {
               provider.searchReport(context);
@@ -329,13 +433,12 @@ class _StockUseReportState extends State<StockUseReport> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               elevation: 0,
             ),
-            child: const Text(
+            child: Text(
               'Apply',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 8),
-          // Reset Button
           CommonReportResetButton(
             onReset: () {
               customerController.clear();
@@ -349,40 +452,110 @@ class _StockUseReportState extends State<StockUseReport> {
     );
   }
 
-  Widget _buildCapsuleTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required Function(String) onChanged,
-    required IconData icon,
-  }) {
-    return Container(
-      width: AppStyles.isWebScreen(context) ? 250 : double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(
-            color: controller.text.isNotEmpty
-                ? AppColors.primaryBlue
-                : Colors.grey[300]!),
-      ),
-      child: TextField(
-        controller: controller,
-        onChanged: (value) {
-          onChanged(value);
-          setState(() {}); // To update border color
-        },
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(fontSize: 14, color: Colors.grey[400]),
-          prefixIcon: Icon(icon,
-              size: 18,
-              color: controller.text.isNotEmpty
-                  ? AppColors.primaryBlue
-                  : Colors.grey[400]),
-          border: InputBorder.none,
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+  Widget _buildMobileFilterPanel(BuildContext context, StockUseReportProvider provider) {
+    return Expanded(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText(
+              'Customer Filter',
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 48,
+              child: CommonDropdown<String>(
+                hintText: 'Select Customer',
+                selectedValue:
+                    provider.customerName.isEmpty ? null : provider.customerName,
+                items: [
+                  DropdownItem(id: '', name: 'All Customers'),
+                  ...provider.customers.map((c) => DropdownItem(
+                        id: c.name,
+                        name: c.name,
+                      )),
+                ],
+                onItemSelected: (value) {
+                  provider.setCustomerName(value);
+                },
+                borderRadius: 12,
+                borderColor: provider.customerName.isNotEmpty
+                    ? AppColors.primaryBlue
+                    : Colors.grey[200]!,
+              ),
+            ),
+            const SizedBox(height: 20),
+            CustomText(
+              'Item Filter',
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 48,
+              child: CommonDropdown<String>(
+                hintText: 'Select Item',
+                selectedValue:
+                    provider.itemName.isEmpty ? null : provider.itemName,
+                items: [
+                  DropdownItem(id: '', name: 'All Items'),
+                  ...provider.stockItems.map((item) => DropdownItem(
+                        id: item.itemName,
+                        name: item.itemName,
+                      )),
+                ],
+                onItemSelected: (value) {
+                  provider.setItemName(value);
+                },
+                borderRadius: 12,
+                borderColor: provider.itemName.isNotEmpty
+                    ? AppColors.primaryBlue
+                    : Colors.grey[200]!,
+              ),
+            ),
+            const SizedBox(height: 20),
+            CustomText(
+              'Date Range',
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack,
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () {
+                _showDateFilterDialog(context, provider);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primaryBlue),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomText(
+                        provider.formattedFromDate.isEmpty && provider.formattedToDate.isEmpty
+                            ? 'Select Date Range'
+                            : '${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
+                        fontSize: 14,
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -400,84 +573,106 @@ class _StockUseReportState extends State<StockUseReport> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.grey[200]!),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 16,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFFEFF2F5),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(14),
-                  topRight: Radius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEFF2F5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  children: [
+                    TableWidget(title: 'Sl No', width: 80, flex: 0, color: Color(0xFF607185)),
+                    TableWidget(title: 'Customer Name', flex: 3, color: Color(0xFF607185)),
+                    TableWidget(title: 'Date', flex: 2, color: Color(0xFF607185)),
+                    TableWidget(title: 'Item Name', flex: 3, color: Color(0xFF607185)),
+                    TableWidget(title: 'Quantity', flex: 1, color: Color(0xFF607185)),
+                  ],
                 ),
               ),
-              child: const Row(
-                children: [
-                  TableWidget(title: 'Sl No', width: 80, flex: 0),
-                  TableWidget(title: 'Customer Name', flex: 3),
-                  TableWidget(title: 'Date', flex: 2),
-                  TableWidget(title: 'Item Name', flex: 3),
-                  TableWidget(title: 'Quantity', flex: 1),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                itemCount: provider.reportList.length,
-                separatorBuilder: (context, index) =>
-                    Divider(height: 1, color: Colors.grey[200]),
-                itemBuilder: (context, index) {
-                  final item = provider.reportList[index];
-                  return Row(
-                    children: [
-                      TableWidget(
-                        width: 80,
-                        flex: 0,
-                        data: Center(
-                          child: Text((index + 1).toString(),
-                              style: GoogleFonts.plusJakartaSans(
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textBlack,
-                              )),
-                        ),
+              Expanded(
+                child: ListView.separated(
+                  itemCount: provider.reportList.length,
+                  separatorBuilder: (context, index) =>
+                      Divider(height: 1, color: Colors.grey[100]),
+                  itemBuilder: (context, index) {
+                    final item = provider.reportList[index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      TableWidget(title: item.customerName, flex: 3),
-                      TableWidget(title: item.entryDate, flex: 2),
-                      TableWidget(
-                        flex: 3,
-                        data: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE9EDF1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            item.itemName,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
+                      child: Row(
+                        children: [
+                          TableWidget(
+                            width: 80,
+                            flex: 0,
+                            data: Center(
+                              child: Text((index + 1).toString(),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textBlack,
+                                  )),
                             ),
                           ),
-                        ),
+                          TableWidget(
+                            flex: 3,
+                            data: Text(
+                              item.customerName.isEmpty ? 'N/A' : item.customerName,
+                              style: const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          TableWidget(
+                            flex: 2,
+                            data: Text(item.entryDate.toDayMonthYearFormat()),
+                          ),
+                          TableWidget(
+                            flex: 3,
+                            data: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE9EDF1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                item.itemName.isEmpty ? 'Unnamed Item' : item.itemName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                          TableWidget(
+                            flex: 1,
+                            data: Text(
+                              item.quantity,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
-                      TableWidget(title: item.quantity, flex: 1),
-                    ],
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -489,20 +684,132 @@ class _StockUseReportState extends State<StockUseReport> {
     }
     if (provider.reportList.isEmpty) return _buildEmptyState();
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: provider.reportList.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final item = provider.reportList[index];
-        return ReportListItem(
-          title: item.itemName,
-          subtitle: item.customerName,
-          status: 'Qty: ${item.quantity}',
-          statusColor: AppColors.primaryBlue,
-          description: 'Date: ${item.entryDate}',
-          bottomLeftIcon: Icons.calendar_today,
-          bottomLeftText: item.entryDate,
+        final itemName = item.itemName.trim().isEmpty ? 'Unnamed Item' : item.itemName;
+        final customerName = item.customerName.trim().isEmpty ? 'N/A' : item.customerName;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.withOpacity(0.08)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 4,
+                    color: AppColors.primaryBlue,
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  itemName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF0F172A),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFEFF6FF),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: const Color(0xFFDBEAFE)),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.inventory_2_outlined,
+                                      size: 14,
+                                      color: AppColors.primaryBlue,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Qty: ${item.quantity}',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.primaryBlue,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(Icons.person_outline, size: 14, color: Colors.grey[600]),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  customerName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF64748B),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey[400]),
+                              const SizedBox(width: 6),
+                              Text(
+                                item.entryDate.toDayMonthYearFormat(),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF475569),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
@@ -513,7 +820,7 @@ class _StockUseReportState extends State<StockUseReport> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inventory_2_outlined, size: 80, color: Colors.grey[300]),
+          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
           const SizedBox(height: 16),
           Text(
             'No records found',
@@ -533,11 +840,11 @@ class _StockUseReportState extends State<StockUseReport> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Consumer<StockUseReportProvider>(
-        builder: (context, reportsProvider, child) {
+      builder: (contextx) => Consumer<StockUseReportProvider>(
+        builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(24),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -547,49 +854,59 @@ class _StockUseReportState extends State<StockUseReport> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Center(
+                    Center(
                       child: Text(
                         'Choose Date',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF0F172A),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
+                      spacing: 10,
+                      runSpacing: 10,
                       children: List<Widget>.generate(
                           reportsProvider.dateButtonTitles.length, (index) {
                         String title = reportsProvider.dateButtonTitles[index];
-                        return ActionChip(
-                          onPressed: () {
+                        final bool isSelected = reportsProvider.selectedDateFilterIndex == index;
+                        return ChoiceChip(
+                          onSelected: (_) {
                             reportsProvider.setDateFilterByIndex(index);
                             reportsProvider.selectDateFilterOption(index);
                           },
+                          selected: isSelected,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          label: Text(title),
-                          backgroundColor:
-                              reportsProvider.selectedDateFilterIndex == index
-                                  ? AppColors.primaryBlue
-                                  : Colors.white,
-                          labelStyle: TextStyle(
-                            color:
-                                reportsProvider.selectedDateFilterIndex == index
-                                    ? Colors.white
-                                    : Colors.black,
+                          label: Text(
+                            title,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: isSelected ? Colors.white : const Color(0xFF475569),
+                            ),
+                          ),
+                          selectedColor: AppColors.primaryBlue,
+                          backgroundColor: Colors.white,
+                          side: BorderSide(
+                            color: isSelected ? Colors.transparent : Colors.grey[300]!,
                           ),
                         );
                       }),
                     ),
-                    const SizedBox(height: 15),
-                    const Text(
-                      'Pick a date',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Pick a custom date',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF0F172A),
+                      ),
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
@@ -597,15 +914,25 @@ class _StockUseReportState extends State<StockUseReport> {
                             readOnly: true,
                             onTap: () =>
                                 reportsProvider.selectDate(context, true),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.fromDate != null
-                                  ? DateFormat('yyyy-MM-dd')
-                                      .format(reportsProvider.fromDate!)
+                                  ? '${reportsProvider.fromDate!.toLocal()}'.split(' ')[0]
                                   : 'From',
-                              suffixIcon: const Icon(Icons.calendar_month),
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: Colors.grey[500],
+                              ),
+                              suffixIcon: const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),
@@ -615,64 +942,52 @@ class _StockUseReportState extends State<StockUseReport> {
                             readOnly: true,
                             onTap: () =>
                                 reportsProvider.selectDate(context, false),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.toDate != null
-                                  ? DateFormat('yyyy-MM-dd')
-                                      .format(reportsProvider.toDate!)
+                                  ? '${reportsProvider.toDate!.toLocal()}'.split(' ')[0]
                                   : 'To',
-                              suffixIcon: const Icon(Icons.calendar_month),
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: Colors.grey[500],
+                              ),
+                              suffixIcon: const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
-                      height: 40,
-                      child: ElevatedButton(
+                      height: 44,
+                      child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
                           reportsProvider.searchReport(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: TextButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Apply',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          reportsProvider.selectDateFilterOption(-1);
-                          reportsProvider.clearFilters();
-                          reportsProvider.searchReport(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.textRed.withOpacity(0.1),
-                          foregroundColor: AppColors.textRed,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                        child: Text(
+                          'Apply Filter',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
                           ),
-                        ),
-                        child: const Text(
-                          'Clear',
                         ),
                       ),
                     ),

@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class LeadCheckInReportMobile extends StatefulWidget {
   const LeadCheckInReportMobile({super.key});
@@ -66,20 +67,44 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
           children: [
             if (reportProvider.isFilter)
               _buildFilters(context, reportProvider, dropdownProvider),
-            Expanded(
-              child: reportProvider.isLoading && reportProvider.reports.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : reportProvider.reports.isEmpty
-                      ? _buildEmptyState()
-                      : _buildReportList(reportProvider),
-            ),
+            if (!reportProvider.isFilter)
+              Expanded(
+                child: reportProvider.isLoading && reportProvider.reports.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : reportProvider.reports.isEmpty
+                        ? _buildEmptyState()
+                        : _buildReportList(reportProvider),
+              ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => reportProvider.fetchReports(context),
-        backgroundColor: AppColors.primaryBlue,
-        child: const Icon(Icons.refresh, color: Colors.white),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: reportProvider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_lead_check_in_filter_fab',
+                  onPressed: () {
+                    reportProvider.fetchReports(context);
+                    reportProvider.toggleFilter();
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : FloatingActionButton(
+                onPressed: () => reportProvider.fetchReports(context),
+                backgroundColor: AppColors.primaryBlue,
+                child: const Icon(Icons.refresh, color: Colors.white),
+              ),
       ),
     );
   }
@@ -301,31 +326,48 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                 fontWeight: FontWeight.bold,
                 color: AppColors.textBlack),
             const SizedBox(height: 8),
-            CommonReportDateFilter(
-              fromDate: provider.fromDate?.toString(),
-              toDate: provider.toDate?.toString(),
-              formattedFromDate: provider.fromDate != null
-                  ? DateFormat('dd MMM yyyy').format(provider.fromDate!)
-                  : '',
-              formattedToDate: provider.toDate != null
-                  ? DateFormat('dd MMM yyyy').format(provider.toDate!)
-                  : '',
-              onTap: () async {
-                final picked = await showDateRangePicker(
-                  context: context,
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime.now(),
-                  initialDateRange:
-                      provider.fromDate != null && provider.toDate != null
-                          ? DateTimeRange(
-                              start: provider.fromDate!, end: provider.toDate!)
-                          : null,
-                );
-                if (picked != null) {
-                  provider.setDates(picked.start, picked.end);
-                  provider.selectDateFilterOption(null);
-                }
-              },
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              alignment: WrapAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _showDateFilterDialog(context);
+                  },
+                  child: Container(
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.scaffoldColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 200),
+                              child: CustomText(
+                                provider.fromDate == null && provider.toDate == null
+                                    ? 'Date'
+                                    : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textBlack,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             CustomText('Staff',
@@ -357,85 +399,106 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
               ],
             ),
             const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      provider.fetchReports(context);
-                      provider.toggleFilter();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: const Text('Apply Filters',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                CommonReportResetButton(
-                  label: 'Reset All',
+            if (provider.fromDate != null ||
+                provider.toDate != null ||
+                provider.selectedUserId != null)
+              SizedBox(
+                width: double.infinity,
+                child: CommonReportResetButton(
+                  label: 'Reset All Filters',
                   onReset: () {
                     provider.clearFilters();
-                    provider.fetchReports(context);
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: AppColors.textRed,
+                    elevation: 0,
+                    side: BorderSide(color: AppColors.textRed),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDateFilterDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Consumer<LeadCheckInReportProvider>(
+        builder: (context, provider, child) {
+          return AlertDialog(
+            title: const Text('Choose Date'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Wrap(
+                  spacing: 8,
+                  children: List.generate(provider.dateButtonTitles.length, (index) {
+                    return ChoiceChip(
+                      label: Text(provider.dateButtonTitles[index]),
+                      selected: provider.selectedDateFilterIndex == index,
+                      onSelected: (selected) {
+                        provider.setDateFilter(provider.dateButtonTitles[index]);
+                        provider.selectDateFilterOption(index);
+                      },
+                    );
+                  }),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => provider.selectDate(context, true),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(provider.fromDate != null
+                              ? provider.formattedFromDate
+                              : 'From'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => provider.selectDate(context, false),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text(provider.toDate != null
+                              ? provider.formattedToDate
+                              : 'To'),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-
-  Widget _buildFilterLabel(String label) {
-    return Text(
-      label,
-      style: GoogleFonts.plusJakartaSans(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: Colors.grey[700],
-      ),
-    );
-  }
-
-  Widget _buildDateTile(BuildContext context, String label, DateTime? date,
-      Function(DateTime?) onSelected) {
-    return InkWell(
-      onTap: () async {
-        final picked = await showDatePicker(
-          context: context,
-          initialDate: date ?? DateTime.now(),
-          firstDate: DateTime(2020),
-          lastDate: DateTime.now(),
-        );
-        if (picked != null) onSelected(picked);
-      },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label,
-                style: TextStyle(fontSize: 10, color: Colors.grey[500])),
-            const SizedBox(height: 4),
-            Text(
-              date != null
-                  ? DateFormat('dd MMM yyyy').format(date)
-                  : 'Select Date',
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close')),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Apply'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
