@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/work_report_provider.dart';
@@ -82,10 +83,19 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
         Provider.of<CustomerDetailsProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
-      ),
+      appBar: AppStyles.isWebScreen(context)
+          ? null
+          : AppBar(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
+              title: const Text(
+                'Work Details Report',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
       body: Container(
         color: Colors.grey[50],
         child: Column(
@@ -96,20 +106,32 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  // IconButton(
-                  //   onPressed: () {
-                  //     Navigator.pop(context);
-                  //   },
-                  //   icon: Icon(Icons.arrow_back_rounded),
-                  // ),
-                  // SizedBox(
-                  //   width: 10,
-                  // ),
+                  if (AppStyles.isWebScreen(context)) ...[
+                    IconButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryBlue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back,
+                          size: 20,
+                          color: AppColors.secondaryBlue,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   const Text(
                     'Work Details Report',
                     style: TextStyle(
                       fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF152D70),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   Flexible(child: Container()),

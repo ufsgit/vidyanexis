@@ -75,23 +75,84 @@ class _EnquirySourceSummaryReportScreenState
       }
     }
 
+    final isWeb = AppStyles.isWebScreen(context);
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      drawer: const SidebarDrawer(),
-      appBar: CustomAppBar(
-        title: 'Enquiry Source Summary',
-        titleStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textBlack),
-        onFilterTap: () => reportsProvider.toggleFilter(),
-        showSearch: false,
-        onSearch: (p0) {},
-      ),
+      drawer: isWeb ? null : const SidebarDrawer(),
+      appBar: isWeb
+          ? null
+          : CustomAppBar(
+              title: 'Enquiry Source Summary',
+              titleStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textBlack),
+              onFilterTap: () => reportsProvider.toggleFilter(),
+              showSearch: false,
+              onSearch: (p0) {},
+            ),
       body: Container(
         color: Colors.grey[50],
         child: Column(
           children: [
+            if (isWeb) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                child: Row(
+                  children: [
+                    Builder(
+                      builder: (context) => IconButton(
+                        onPressed: () {
+                          ScaffoldState? parent;
+                          context.visitAncestorElements((element) {
+                            if (element is StatefulElement &&
+                                element.state is ScaffoldState) {
+                              ScaffoldState scaffold =
+                                  element.state as ScaffoldState;
+                              if (scaffold.hasDrawer) {
+                                parent = scaffold;
+                                return false;
+                              }
+                            }
+                            return true;
+                          });
+                          parent?.openDrawer();
+                        },
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBlue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.sort,
+                            size: 20,
+                            color: AppColors.secondaryBlue,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Enquiry Source Summary',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                    const Spacer(),
+                    CustomFilterButton(
+                      onPressed: () {
+                        reportsProvider.toggleFilter();
+                      },
+                      isFilter: reportsProvider.isFilter,
+                    ),
+                  ],
+                ),
+              ),
+            ],
             if (reportsProvider.isFilter)
               Expanded(
                 child: _buildFilterPanel(context, reportsProvider),

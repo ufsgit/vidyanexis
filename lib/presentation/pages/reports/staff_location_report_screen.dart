@@ -9,6 +9,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 class EmployeeLocationReportScreen extends StatefulWidget {
   const EmployeeLocationReportScreen({super.key});
@@ -45,17 +46,20 @@ class _EmployeeLocationReportScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
-        title: Text(
-          'Employee Location Report',
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
+      appBar: AppStyles.isWebScreen(context)
+          ? null
+          : AppBar(
+              surfaceTintColor: Colors.white,
+              backgroundColor: Colors.white,
+              title: const Text(
+                'Employee Location Report',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
       body: SafeArea(
         child: Container(
           color: Colors.grey[50],
@@ -68,7 +72,48 @@ class _EmployeeLocationReportScreenState
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
                         children: [
-                          Flexible(child: Container()),
+                          Builder(
+                            builder: (context) => IconButton(
+                              onPressed: () {
+                                ScaffoldState? parent;
+                                context.visitAncestorElements((element) {
+                                  if (element is StatefulElement &&
+                                      element.state is ScaffoldState) {
+                                    ScaffoldState scaffold =
+                                        element.state as ScaffoldState;
+                                    if (scaffold.hasDrawer) {
+                                      parent = scaffold;
+                                      return false;
+                                    }
+                                  }
+                                  return true;
+                                });
+                                parent?.openDrawer();
+                              },
+                              icon: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.secondaryBlue.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.sort,
+                                  size: 20,
+                                  color: AppColors.secondaryBlue,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Employee Location Report',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF152D70),
+                            ),
+                          ),
+                          const Spacer(),
                           Container(
                             width: MediaQuery.of(context).size.width / 4,
                             height: 40,

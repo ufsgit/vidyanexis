@@ -1,4 +1,5 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -91,17 +92,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                 reportsProvider.getSearchTaskReport(context);
               },
             )
-          : AppBar(
-              surfaceTintColor: Colors.white,
-              backgroundColor: Colors.white,
-              title: Text(
-                'Attendance',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+          : null,
       body: Container(
         color: Colors.grey[50],
         child: Column(
@@ -113,7 +104,48 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
-                        Flexible(child: Container()),
+                        Builder(
+                          builder: (context) => IconButton(
+                            onPressed: () {
+                              ScaffoldState? parent;
+                              context.visitAncestorElements((element) {
+                                if (element is StatefulElement &&
+                                    element.state is ScaffoldState) {
+                                  ScaffoldState scaffold =
+                                      element.state as ScaffoldState;
+                                  if (scaffold.hasDrawer) {
+                                    parent = scaffold;
+                                    return false;
+                                  }
+                                }
+                                return true;
+                              });
+                              parent?.openDrawer();
+                            },
+                            icon: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBlue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.sort,
+                                size: 20,
+                                color: AppColors.secondaryBlue,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Attendance',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF152D70),
+                          ),
+                        ),
+                        const Spacer(),
                         Container(
                           width: MediaQuery.of(context).size.width / 4,
                           height: 40,

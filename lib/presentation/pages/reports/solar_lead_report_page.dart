@@ -360,14 +360,49 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          if (AppStyles.isWebScreen(context))
+          if (AppStyles.isWebScreen(context)) ...[
+            Builder(
+              builder: (context) => IconButton(
+                onPressed: () {
+                  ScaffoldState? parent;
+                  context.visitAncestorElements((element) {
+                    if (element is StatefulElement &&
+                        element.state is ScaffoldState) {
+                      ScaffoldState scaffold =
+                          element.state as ScaffoldState;
+                      if (scaffold.hasDrawer) {
+                        parent = scaffold;
+                        return false;
+                      }
+                    }
+                    return true;
+                  });
+                  parent?.openDrawer();
+                },
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.sort,
+                    size: 20,
+                    color: AppColors.secondaryBlue,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
             const Text(
               'Solar Lead Reports',
               style: TextStyle(
                 fontSize: 24,
+                color: Color(0xFF152D70),
                 fontWeight: FontWeight.bold,
               ),
             ),
+          ],
           const Spacer(),
           Container(
             width: AppStyles.isWebScreen(context)

@@ -120,6 +120,41 @@ class _ServicesPageReportState extends State<ServicePageReport> {
         children: [
           Row(
             children: [
+              if (AppStyles.isWebScreen(context)) ...[
+                Builder(
+                  builder: (context) => IconButton(
+                    onPressed: () {
+                      ScaffoldState? parent;
+                      context.visitAncestorElements((element) {
+                        if (element is StatefulElement &&
+                            element.state is ScaffoldState) {
+                          ScaffoldState scaffold =
+                              element.state as ScaffoldState;
+                          if (scaffold.hasDrawer) {
+                            parent = scaffold;
+                            return false;
+                          }
+                        }
+                        return true;
+                      });
+                      parent?.openDrawer();
+                    },
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.sort,
+                        size: 20,
+                        color: AppColors.secondaryBlue,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
               Text(
                 'Complaint Report',
                 style: GoogleFonts.plusJakartaSans(

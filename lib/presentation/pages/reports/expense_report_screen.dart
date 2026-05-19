@@ -16,6 +16,7 @@ import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 
 class ExpenseReportScreen extends StatefulWidget {
   static const String route = "/expense_report";
@@ -75,6 +76,105 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       SettingsProvider settingsProvider) {
     return Column(
       children: [
+        // Web Header Row
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+          child: Row(
+            children: [
+              Builder(
+                builder: (context) => IconButton(
+                  onPressed: () {
+                    ScaffoldState? parent;
+                    context.visitAncestorElements((element) {
+                      if (element is StatefulElement &&
+                          element.state is ScaffoldState) {
+                        ScaffoldState scaffold =
+                            element.state as ScaffoldState;
+                        if (scaffold.hasDrawer) {
+                          parent = scaffold;
+                          return false;
+                        }
+                      }
+                      return true;
+                    });
+                    parent?.openDrawer();
+                  },
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.sort,
+                      size: 20,
+                      color: AppColors.secondaryBlue,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Expense Report',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textBlack,
+                ),
+              ),
+              const Spacer(),
+              // Search Bar
+              Container(
+                width: 250,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(19),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: TextField(
+                  controller: provider.searchExpenseController,
+                  onChanged: (query) => provider.searchExpense(query, context),
+                  decoration: InputDecoration(
+                    hintText: 'Search here....',
+                    hintStyle: GoogleFonts.plusJakartaSans(
+                      color: Colors.grey[400],
+                      fontSize: 12,
+                    ),
+                    prefixIcon: Icon(Icons.search,
+                        color: Colors.grey[400], size: 18),
+                    border: InputBorder.none,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              CustomFilterButton(
+                onPressed: () => provider.toggleFilter(),
+                isFilter: provider.isFilter,
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                onPressed: () => _handleExport(provider),
+                icon: const Icon(Icons.file_upload_outlined, size: 16),
+                label: const Text('Export', style: TextStyle(fontSize: 12)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFEAB308),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
+          ),
+        ),
+
         // Web Filter Panel
         if (provider.isFilter) ...[
           _buildWebFilter(provider, settingsProvider),

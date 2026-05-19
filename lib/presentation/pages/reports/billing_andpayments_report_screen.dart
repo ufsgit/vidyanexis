@@ -13,6 +13,9 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 
 class BillingAndpaymentsReportScreen extends StatefulWidget {
   const BillingAndpaymentsReportScreen({super.key});
@@ -49,47 +52,225 @@ class _BillingAndpaymentsReportScreenState
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
-      drawer: const SidebarDrawer(),
-      appBar: CustomAppBar(
-        onSearchTap: () {
-          searchProvider.startSearch();
-        },
-        title: 'Billing & Payments Report',
-        titleStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textBlack),
-        searchHintText: 'Search Reports...',
-        onFilterTap: () => reportsProvider.toggleFilter(),
-        onClearTap: () {
-          searchController.clear();
-          searchProvider.stopSearch();
-          reportsProvider.setTaskSearchCriteria(
-            '',
-            '',
-            '',
-            '',
-            '',
-            "",
-            "",
-          );
-          reportsProvider.getBillandPaymentsReport(context);
-        },
-        onSearch: (query) {
-          reportsProvider.setTaskSearchCriteria(
-              query,
-              reportsProvider.fromDateS,
-              reportsProvider.toDateS,
-              reportsProvider.Status,
-              reportsProvider.AssignedTo,
-              reportsProvider.enquiryFor,
-              reportsProvider.enquirySource);
-          reportsProvider.getBillandPaymentsReport(context);
-        },
-        searchController: searchController,
-      ),
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
+      appBar: AppStyles.isWebScreen(context)
+          ? null
+          : CustomAppBar(
+              onSearchTap: () {
+                searchProvider.startSearch();
+              },
+              title: 'Billing & Payments Report',
+              titleStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack),
+              searchHintText: 'Search Reports...',
+              onFilterTap: () => reportsProvider.toggleFilter(),
+              onClearTap: () {
+                searchController.clear();
+                searchProvider.stopSearch();
+                reportsProvider.setTaskSearchCriteria(
+                  '',
+                  '',
+                  '',
+                  '',
+                  '',
+                  "",
+                  "",
+                );
+                reportsProvider.getBillandPaymentsReport(context);
+              },
+              onSearch: (query) {
+                reportsProvider.setTaskSearchCriteria(
+                    query,
+                    reportsProvider.fromDateS,
+                    reportsProvider.toDateS,
+                    reportsProvider.Status,
+                    reportsProvider.AssignedTo,
+                    reportsProvider.enquiryFor,
+                    reportsProvider.enquirySource);
+                reportsProvider.getBillandPaymentsReport(context);
+              },
+              searchController: searchController,
+            ),
       body: Column(
         children: [
+          if (AppStyles.isWebScreen(context))
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Builder(
+                    builder: (context) => IconButton(
+                      onPressed: () {
+                        ScaffoldState? parent;
+                        context.visitAncestorElements((element) {
+                          if (element is StatefulElement &&
+                              element.state is ScaffoldState) {
+                            ScaffoldState scaffold =
+                                element.state as ScaffoldState;
+                            if (scaffold.hasDrawer) {
+                              parent = scaffold;
+                              return false;
+                            }
+                          }
+                          return true;
+                        });
+                        parent?.openDrawer();
+                      },
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryBlue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.sort,
+                          size: 20,
+                          color: AppColors.secondaryBlue,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Billing & Payments Report',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF152D70),
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 4,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      onSubmitted: (query) {
+                        reportsProvider.setTaskSearchCriteria(
+                            query,
+                            reportsProvider.fromDateS,
+                            reportsProvider.toDateS,
+                            reportsProvider.Status,
+                            reportsProvider.AssignedTo,
+                            reportsProvider.enquiryFor,
+                            reportsProvider.enquirySource);
+                        reportsProvider.getBillandPaymentsReport(context);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search here....',
+                        prefixIcon: const Icon(Icons.search),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              String query = searchController.text;
+                              if (reportsProvider.Search.isNotEmpty) {
+                                searchController.clear();
+                                reportsProvider.setTaskSearchCriteria(
+                                  '',
+                                  reportsProvider.fromDateS,
+                                  reportsProvider.toDateS,
+                                  reportsProvider.Status,
+                                  reportsProvider.AssignedTo,
+                                  reportsProvider.enquiryFor,
+                                  reportsProvider.enquirySource,
+                                );
+                                reportsProvider.getBillandPaymentsReport(context);
+                              } else {
+                                reportsProvider.setTaskSearchCriteria(
+                                  query,
+                                  reportsProvider.fromDateS,
+                                  reportsProvider.toDateS,
+                                  reportsProvider.Status,
+                                  reportsProvider.AssignedTo,
+                                  reportsProvider.enquiryFor,
+                                  reportsProvider.enquirySource,
+                                );
+                                reportsProvider.getBillandPaymentsReport(context);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: Text(reportsProvider.Search.isNotEmpty
+                                ? 'Cancel'
+                                : 'Search'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  CustomFilterButton(
+                    onPressed: () {
+                      reportsProvider.toggleFilter();
+                    },
+                    isFilter: reportsProvider.isFilter,
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      exportToExcel(
+                        headers: [
+                          'Customer Name',
+                          'Invoice No',
+                          'Invoice Date',
+                          'Invoice Amount',
+                          'Receipt Amount',
+                          'Balance Amount',
+                        ],
+                        data: reportsProvider.taskReport.map((report) {
+                          return {
+                            'Customer Name': report.customerName,
+                            'Invoice No': report.invoiceNo,
+                            'Invoice Date': report.invoiceDate,
+                            'Invoice Amount': report.invoiceAmount,
+                            'Receipt Amount': report.recieptAmount,
+                            'Balance Amount': report.balanceAmount,
+                          };
+                        }).toList(),
+                        fileName: 'Billing_And_Payments_Report',
+                      );
+                    },
+                    icon: const Icon(Icons.download, size: 18),
+                    label: const Text('Export',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 15,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           if (reportsProvider.isFilter)
             _buildFilterPanel(context, reportsProvider),
           Expanded(

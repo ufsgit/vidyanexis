@@ -60,6 +60,39 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
               children: [
                 Row(
                   children: [
+                    Builder(
+                      builder: (context) => IconButton(
+                        onPressed: () {
+                          ScaffoldState? parent;
+                          context.visitAncestorElements((element) {
+                            if (element is StatefulElement &&
+                                element.state is ScaffoldState) {
+                              ScaffoldState scaffold =
+                                  element.state as ScaffoldState;
+                              if (scaffold.hasDrawer) {
+                                parent = scaffold;
+                                return false;
+                              }
+                            }
+                            return true;
+                          });
+                          parent?.openDrawer();
+                        },
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBlue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.sort,
+                            size: 20,
+                            color: AppColors.secondaryBlue,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     Text(
                       'Commission Report',
                       style: GoogleFonts.plusJakartaSans(
