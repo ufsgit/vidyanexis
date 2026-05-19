@@ -41,175 +41,200 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (customerDetailsProvider.amcList.isEmpty) {
-            return Center(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 80,
-                  ),
-                  Text(
-                    'No periodic services found.',
-                    style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textBlack),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    'Start by creating a new Periodic service.',
-                    style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey3),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.separated(
-            separatorBuilder: (_, __) => const Divider(),
-            padding: const EdgeInsets.all(16),
-            itemCount: customerDetailsProvider.amcList.length,
-            itemBuilder: (context, index) {
-              final item = customerDetailsProvider.amcList[index];
-              return InkWell(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return PeriodicServiceDetailsPageMobile(item: item);
-                    },
-                  ));
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 3,
-                          height: 32,
-                          color: StatusUtils.getStatusMobileColor(
-                                  item.amcStatusName)
-                              .withOpacity(.4),
+                    Text(
+                      'Periodic Services',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF1E293B),
+                      ),
+                    ),
+                    if (Provider.of<SettingsProvider>(context, listen: false)
+                            .menuIsSaveMap[15] ==
+                        1)
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (c) => AddPeriodicServiceMobile(
+                                amcId: '0',
+                                customerId: widget.customerId,
+                                isEdit: false),
+                          ),
                         ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item.productName,
-                                style: AppStyles.getBoldTextStyle(
-                                    fontSize: 12, fontColor: Color(0xff7D8B9B)),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                item.serviceName,
-                                style: AppStyles.getBoldTextStyle(fontSize: 14),
-                                overflow: TextOverflow.ellipsis,
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBlue,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.secondaryBlue.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 7),
-                          decoration: BoxDecoration(
-                            color: StatusUtils.getStatusMobileColor(
-                                    item.amcStatusName)
-                                .withOpacity(.1),
-                            borderRadius: BorderRadius.circular(13),
-                          ),
-                          child: Text(
-                            item.amcStatusName,
-                            style: AppStyles.getBoldTextStyle(
-                              fontSize: 12,
-                              fontColor: StatusUtils.getStatusMobileColor(
-                                  item.amcStatusName),
-                            ),
+                          child: const Icon(
+                            Icons.add_rounded,
+                            color: Colors.white,
+                            size: 26,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      item.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppStyles.getRegularTextStyle(
-                        fontSize: 14,
-                        fontColor: Colors.grey.shade700,
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Text(
-                          '₹ ${item.amount}',
-                          style: AppStyles.getBodyTextStyle(
-                              fontSize: 14, fontColor: Colors.grey.shade800),
-                        ),
-                        const SizedBox(width: 5),
-                        const Text('•',
-                            style: TextStyle(fontSize: 14, color: Colors.grey)),
-                        const SizedBox(width: 5),
-                        Expanded(
-                          flex: 4,
-                          child: Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Color(0xffF6F7F9),
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Center(
-                              child: Text(
-                                style: AppStyles.getBoldTextStyle(fontSize: 12),
-                                '${item.fromDate.toDayMonthYearFormat()} - ${item.toDate.toDayMonthYearFormat()}',
-                              ),
-                            ),
-                          ),
-                        ),
-                        // Spacer(),
-                        // const SizedBox(width: 5),
-                        // Text(
-                        //   timeAgo(item.date ?? DateTime.now()),
-                        //   style: AppStyles.getBoldTextStyle(
-                        //       fontSize: 12, fontColor: Colors.grey),
-                        // )
-                      ],
-                    ),
                   ],
                 ),
-              );
-            },
-          );
-        }),
-        floatingActionButton:
-            Provider.of<SettingsProvider>(context, listen: false)
-                        .menuIsSaveMap[15] ==
-                    1
-                ? CustomElevatedButton(
-                    prefixIcon: Icons.add,
-                    radius: 32,
-                    buttonText: 'Add Periodic service',
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (c) => AddPeriodicServiceMobile(
-                            amcId: '0',
-                            customerId: widget.customerId,
-                            isEdit: false),
+              ),
+              Expanded(
+                child: customerDetailsProvider.amcList.isEmpty
+                    ? Center(
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                              height: 80,
+                            ),
+                            Text(
+                              'No periodic services found.',
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlack),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              'Start by creating a new Periodic service.',
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.textGrey3),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.separated(
+                        separatorBuilder: (_, __) => const Divider(),
+                        padding: const EdgeInsets.all(16),
+                        itemCount: customerDetailsProvider.amcList.length,
+                        itemBuilder: (context, index) {
+                          final item = customerDetailsProvider.amcList[index];
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return PeriodicServiceDetailsPageMobile(item: item);
+                                },
+                              ));
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 3,
+                                      height: 32,
+                                      color: StatusUtils.getStatusMobileColor(
+                                              item.amcStatusName)
+                                          .withOpacity(.4),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.productName,
+                                            style: AppStyles.getBoldTextStyle(
+                                                fontSize: 12, fontColor: Color(0xff7D8B9B)),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Text(
+                                            item.serviceName,
+                                            style: AppStyles.getBoldTextStyle(fontSize: 14),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5, horizontal: 7),
+                                      decoration: BoxDecoration(
+                                        color: StatusUtils.getStatusMobileColor(
+                                                item.amcStatusName)
+                                            .withOpacity(.1),
+                                        borderRadius: BorderRadius.circular(13),
+                                      ),
+                                      child: Text(
+                                        item.amcStatusName,
+                                        style: AppStyles.getBoldTextStyle(
+                                          fontSize: 12,
+                                          fontColor: StatusUtils.getStatusMobileColor(
+                                              item.amcStatusName),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 15),
+                                Text(
+                                  item.description,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppStyles.getRegularTextStyle(
+                                    fontSize: 14,
+                                    fontColor: Colors.grey.shade700,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '₹ ${item.amount}',
+                                      style: AppStyles.getBodyTextStyle(
+                                          fontSize: 14, fontColor: Colors.grey.shade800),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    const Text('•',
+                                        style: TextStyle(fontSize: 14, color: Colors.grey)),
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      flex: 4,
+                                      child: Container(
+                                        padding: EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xffF6F7F9),
+                                          borderRadius: BorderRadius.circular(7),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            style: AppStyles.getBoldTextStyle(fontSize: 12),
+                                            '${item.fromDate.toDayMonthYearFormat()} - ${item.toDate.toDayMonthYearFormat()}',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                    ),
-                    backgroundColor: AppColors.bluebutton,
-                    borderColor: AppColors.bluebutton,
-                    textColor: AppColors.whiteColor,
-                  )
-                : null);
+              ),
+            ],
+          );
+        }));
   }
 
   String timeAgo(DateTime date) {

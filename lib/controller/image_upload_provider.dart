@@ -332,6 +332,7 @@ class ImageUploadProvider extends ChangeNotifier {
   // Upload all files (images and PDFs)
   Future<void> uploadAllFiles(BuildContext context,
       {bool shouldPop = true}) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
@@ -365,11 +366,11 @@ class ImageUploadProvider extends ChangeNotifier {
       }
 
       await saveImagesApi(context, shouldPop: shouldPop);
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('All Documents uploaded successfully')),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('Error uploading documents')),
       );
       print('Error uploading documents: $e');
@@ -382,6 +383,7 @@ class ImageUploadProvider extends ChangeNotifier {
   Future<void> _uploadFilesToAws(List<Uint8List> files, String fileType,
       String taskId, BuildContext context,
       {bool shouldPop = true}) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
       Loader.showLoader(context);
       for (var fileData in files) {
@@ -398,11 +400,11 @@ class ImageUploadProvider extends ChangeNotifier {
         }
       }
       await saveImagesApi(context, shouldPop: shouldPop);
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('All Documents uploaded successfully')),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         SnackBar(content: Text('Error uploading $fileType')),
       );
       print('Error uploading $fileType: $e');
@@ -433,6 +435,12 @@ class ImageUploadProvider extends ChangeNotifier {
     print(uploadedFilePaths);
     print(_selectedDocumentType);
     print(customerId);
+    
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
@@ -452,22 +460,22 @@ class ImageUploadProvider extends ChangeNotifier {
         final data = response.data;
         log('Success');
 
-        if (shouldPop) {
-          Navigator.pop(context);
-        }
         clearFiles();
         print(data);
-        final customerDetailsProvider =
-            Provider.of<CustomerDetailsProvider>(context, listen: false);
+        
         customerDetailsProvider.getDocument(customerId, context);
+
+        if (shouldPop) {
+          navigator.pop();
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
     }
@@ -482,6 +490,11 @@ class ImageUploadProvider extends ChangeNotifier {
 
   Future<void> uploadAllDocumentsGrouped(BuildContext context,
       {bool shouldPop = true}) async {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     try {
       if (_fileInfoList.isEmpty) return;
 
@@ -538,25 +551,23 @@ class ImageUploadProvider extends ChangeNotifier {
       Loader.stopLoader(context);
 
       if (anySuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Documents uploaded successfully')),
         );
-        if (shouldPop) {
-          Navigator.pop(context);
-        }
         clearFiles();
-        final customerDetailsProvider =
-            Provider.of<CustomerDetailsProvider>(context, listen: false);
         customerDetailsProvider.getDocument(customerId, context);
+        if (shouldPop) {
+          navigator.pop();
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           const SnackBar(content: Text('Failed to upload some documents')),
         );
       }
     } catch (e) {
       Loader.stopLoader(context);
       print('Error in uploadAllDocumentsGrouped: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('An error occurred during upload')),
       );
     }

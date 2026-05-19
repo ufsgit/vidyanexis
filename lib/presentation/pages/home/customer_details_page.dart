@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
@@ -617,23 +618,42 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     }
                                     return false;
                                   },
-                                  child: TabBar(
-                                    controller: _tabController,
-                                    labelColor: AppColors.primaryBlue,
-                                    unselectedLabelColor: Colors.black54,
-                                    indicatorColor: AppColors.primaryBlue,
-                                    tabAlignment: TabAlignment.start,
-                                    isScrollable: true,
-                                    dividerColor: Colors.transparent,
-                                    labelPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    labelStyle: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13),
-                                    unselectedLabelStyle: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13),
-                                    tabs: _tabs,
+                                  child: Container(
+                                    height: 42,
+                                    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF1F5F9),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: TabBar(
+                                      controller: _tabController,
+                                      labelColor: AppColors.primaryBlue,
+                                      unselectedLabelColor: const Color(0xFF64748B),
+                                      indicator: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.04),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      indicatorPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                                      indicatorSize: TabBarIndicatorSize.tab,
+                                      tabAlignment: TabAlignment.start,
+                                      isScrollable: true,
+                                      dividerColor: Colors.transparent,
+                                      labelPadding: const EdgeInsets.symmetric(horizontal: 14),
+                                      labelStyle: GoogleFonts.plusJakartaSans(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 13),
+                                      unselectedLabelStyle: GoogleFonts.plusJakartaSans(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13),
+                                      tabs: _tabs,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -3699,85 +3719,53 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               images = userData
                                                                   .imageDetails;
 
-                                                          return ExpansionTile(
-                                                            enabled: false,
-                                                            initiallyExpanded:
-                                                                true,
-                                                            shape:
-                                                                const RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .zero,
-                                                            ),
-                                                            title: Wrap(
-                                                              crossAxisAlignment:
-                                                                  WrapCrossAlignment
-                                                                      .center,
-                                                              runSpacing: 10,
+                                                          return Padding(
+                                                            padding: const EdgeInsets.only(bottom: 24.0),
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                const Icon(Icons
-                                                                    .person),
-                                                                Text(
-                                                                  '  Uploaded By ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          14,
-                                                                      color: AppColors
-                                                                          .textGrey4),
+                                                                // Header: Uploaded By
+                                                                Row(
+                                                                  children: [
+                                                                    CircleAvatar(
+                                                                      radius: 14,
+                                                                      backgroundColor: getAvatarColor(userData.userName),
+                                                                      child: Text(
+                                                                        userData.userName.isNotEmpty ? userData.userName[0].toUpperCase() : 'U',
+                                                                        style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(width: 8),
+                                                                    Text(
+                                                                      'Uploaded By ',
+                                                                      style: TextStyle(
+                                                                          fontWeight: FontWeight.w500,
+                                                                          fontSize: 14,
+                                                                          color: AppColors.textGrey4),
+                                                                    ),
+                                                                    Text(
+                                                                      userData.userName,
+                                                                      style: const TextStyle(
+                                                                        fontWeight: FontWeight.bold,
+                                                                        fontSize: 14,
+                                                                        color: Colors.black87,
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                                Text(
-                                                                  userData
-                                                                      .userName,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        14,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            children: [
-                                                              MouseRegion(
-                                                                cursor:
-                                                                    SystemMouseCursors
-                                                                        .click,
-                                                                child: SizedBox(
-                                                                  height: 140,
-                                                                  child:
-                                                                      Scrollbar(
-                                                                    controller:
-                                                                        customerDetailsProvider
-                                                                            .imageScrollController,
-                                                                    thumbVisibility:
-                                                                        true,
-                                                                    child: ListView
-                                                                        .separated(
-                                                                      controller:
-                                                                          customerDetailsProvider
-                                                                              .imageScrollController,
-                                                                      scrollDirection:
-                                                                          Axis.horizontal,
-                                                                      separatorBuilder: (context,
-                                                                              index) =>
-                                                                          const SizedBox(
-                                                                              width: 10),
-                                                                      physics:
-                                                                          const ClampingScrollPhysics(),
-                                                                      itemCount:
-                                                                          images
-                                                                              .length,
-                                                                      itemBuilder:
-                                                                          (context,
-                                                                              index) {
-                                                                        final image =
-                                                                            images[index];
-                                                                        return Column(
+                                                                const SizedBox(height: 12),
+                                                                // Images List
+                                                                Builder(
+                                                                  builder: (context) {
+                                                                    final isWeb = AppStyles.isWebScreen(context);
+                                                                    final imageSize = isWeb ? 140.0 : 100.0;
+                                                                    
+                                                                    final imageWidgets = images.asMap().entries.map((entry) {
+                                                                      final index = entry.key;
+                                                                      final image = entry.value;
+                                                                      return SizedBox(
+                                                                        width: imageSize,
+                                                                        child: Column(
                                                                           children: [
                                                                             Stack(
                                                                               children: [
@@ -3791,17 +3779,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                       borderRadius: BorderRadius.circular(8),
                                                                                       child: Image.network(
                                                                                         image.filePath,
-                                                                                        width: 100,
-                                                                                        height: 100,
-                                                                                        fit: BoxFit.fill,
-                                                                                        // Display a loading indicator while the image is loading
+                                                                                        width: imageSize,
+                                                                                        height: imageSize,
+                                                                                        fit: BoxFit.cover,
                                                                                         loadingBuilder: (context, child, loadingProgress) {
-                                                                                          if (loadingProgress == null) {
-                                                                                            return child; // Image is fully loaded
-                                                                                          }
+                                                                                          if (loadingProgress == null) return child;
                                                                                           return SizedBox(
-                                                                                            height: 100,
-                                                                                            width: 100,
+                                                                                            height: imageSize,
+                                                                                            width: imageSize,
                                                                                             child: Center(
                                                                                               child: CircularProgressIndicator(
                                                                                                 value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
@@ -3809,7 +3794,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                             ),
                                                                                           );
                                                                                         },
-                                                                                        // Display an error image if the image fails to load
                                                                                         errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                                                                                           return GestureDetector(
                                                                                             onTap: () async {
@@ -3822,21 +3806,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                             },
                                                                                             child: Container(
                                                                                               color: Colors.grey[200],
-                                                                                              width: 100,
-                                                                                              height: 100,
+                                                                                              width: imageSize,
+                                                                                              height: imageSize,
                                                                                               child: const Column(
                                                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                                                 children: [
-                                                                                                  Icon(
-                                                                                                    Icons.picture_as_pdf,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 50,
-                                                                                                  ),
+                                                                                                  Icon(Icons.picture_as_pdf, color: Colors.red, size: 40),
                                                                                                   SizedBox(height: 2),
-                                                                                                  Text(
-                                                                                                    'Open PDF',
-                                                                                                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                                                                                                  ),
+                                                                                                  Text('Open PDF', style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 10)),
                                                                                                 ],
                                                                                               ),
                                                                                             ),
@@ -3855,35 +3832,25 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                       GestureDetector(
                                                                                         onTap: () async {
                                                                                           try {
-                                                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                                              const SnackBar(content: Text('Downloading file...')),
-                                                                                            );
+                                                                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Downloading file...')));
                                                                                             final downloadedPath = await FileDownloader.download(image.filePath);
                                                                                             if (context.mounted) {
-                                                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                                                SnackBar(content: Text('Downloaded to $downloadedPath')),
-                                                                                              );
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Downloaded to $downloadedPath')));
                                                                                             }
                                                                                           } catch (e) {
                                                                                             if (context.mounted) {
-                                                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                                                const SnackBar(content: Text('Failed to download file')),
-                                                                                              );
+                                                                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to download file')));
                                                                                             }
                                                                                           }
                                                                                         },
                                                                                         child: const CircleAvatar(
-                                                                                          radius: 15,
+                                                                                          radius: 12,
                                                                                           backgroundColor: AppColors.primaryBlue,
-                                                                                          child: Icon(
-                                                                                            Icons.download,
-                                                                                            size: 18,
-                                                                                            color: Colors.white,
-                                                                                          ),
+                                                                                          child: Icon(Icons.download, size: 14, color: Colors.white),
                                                                                         ),
                                                                                       ),
                                                                                       if (settingsprovider.menuIsDeleteMap[19] == 1) ...[
-                                                                                        const SizedBox(width: 8),
+                                                                                        const SizedBox(width: 4),
                                                                                         GestureDetector(
                                                                                           onTap: () {
                                                                                             showConfirmationDialog(
@@ -3891,9 +3858,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                               context: context,
                                                                                               title: 'Confirm Deletion',
                                                                                               content: 'Are you sure you want to delete this file?',
-                                                                                              onCancel: () {
-                                                                                                Navigator.of(context).pop();
-                                                                                              },
+                                                                                              onCancel: () { Navigator.of(context).pop(); },
                                                                                               onConfirm: () {
                                                                                                 customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
                                                                                                 Navigator.of(context).pop();
@@ -3902,13 +3867,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                             );
                                                                                           },
                                                                                           child: const CircleAvatar(
-                                                                                            radius: 15,
+                                                                                            radius: 12,
                                                                                             backgroundColor: Colors.grey,
-                                                                                            child: Icon(
-                                                                                              Icons.delete,
-                                                                                              size: 18,
-                                                                                              color: Colors.white,
-                                                                                            ),
+                                                                                            child: Icon(Icons.delete, size: 14, color: Colors.white),
                                                                                           ),
                                                                                         ),
                                                                                       ],
@@ -3917,23 +3878,55 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                            const SizedBox(height: 2),
+                                                                            const SizedBox(height: 6),
                                                                             Text(
                                                                               image.documentTypeName,
                                                                               style: TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                              textAlign: TextAlign.center,
+                                                                              maxLines: 2,
+                                                                              overflow: TextOverflow.ellipsis,
                                                                             ),
                                                                             Text(
                                                                               DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.entryDate)),
                                                                               style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
+                                                                              textAlign: TextAlign.center,
                                                                             ),
                                                                           ],
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ],
+                                                                        ),
+                                                                      );
+                                                                    }).toList();
+
+                                                                    return MouseRegion(
+                                                                      cursor: SystemMouseCursors.click,
+                                                                      child: isWeb
+                                                                          ? SizedBox(
+                                                                              width: double.infinity,
+                                                                              child: Wrap(
+                                                                                spacing: 16,
+                                                                                runSpacing: 16,
+                                                                                children: imageWidgets,
+                                                                              ),
+                                                                            )
+                                                                          : SizedBox(
+                                                                              height: 160,
+                                                                              child: Scrollbar(
+                                                                                controller: customerDetailsProvider.imageScrollController,
+                                                                                thumbVisibility: true,
+                                                                                child: ListView.separated(
+                                                                                  controller: customerDetailsProvider.imageScrollController,
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                                                                                  physics: const ClampingScrollPhysics(),
+                                                                                  itemCount: imageWidgets.length,
+                                                                                  itemBuilder: (context, index) => imageWidgets[index],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                    );
+                                                                  }
+                                                                )
+                                                              ],
+                                                            ),
                                                           );
                                                         },
                                                       ),
@@ -5011,331 +5004,40 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                 ),
               )
             : Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: borderColor),
-                      left: BorderSide(color: borderColor),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Wrap(
+                      spacing: 16,
+                      runSpacing: 16,
+                      children: filteredQuotations.map((task) {
+                        return SizedBox(
+                          width: 350,
+                          child: QuotationCard(
+                            category: task.quotationTypeId.toString(),
+                            taskId: task.quotationMasterId.toString(),
+                            title: task.productName,
+                            statusId: task.quotationStatusId.toString(),
+                            status: task.quotationStatusName,
+                            createdBy: task.createdByName,
+                            posted: task.entryDate?.toString() ?? '',
+                            customerId: widget.customerId,
+                            servicename: '',
+                            warranty: task.warranty,
+                            terms: task.termsAndConditions,
+                            subsidy: task.subsidyAmount,
+                            quotation_details: task.quotationDetails ?? [],
+                            bill_of_materials: task.billOfMaterials ?? [],
+                            productionChartModel: task.productionChartModel ?? [],
+                            advancePercentage: task.advancePercentage,
+                            deliveryPercentage: task.onDeliveryPercentage,
+                            completionPercentage: task.workCompletionPercentage,
+                            quotation: task,
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      // Header
-                      IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _buildHeaderCell('#', width: 50.0),
-                            _buildHeaderCell('Product Name', flex: 3),
-                            _buildHeaderCell('Total Amount', flex: 2),
-                            _buildHeaderCell('Created Date', flex: 2),
-                            _buildHeaderCell('Created By', flex: 2),
-                            _buildHeaderCell('Options', flex: 2),
-                          ],
-                        ),
-                      ),
-                      // List
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: filteredQuotations.length,
-                          itemBuilder: (context, index) {
-                            var task = filteredQuotations[index];
-
-                            // Status Color Logic
-                            Color statusColor = task.quotationStatusId == 1
-                                ? Colors.orange
-                                : task.quotationStatusId == 2
-                                    ? Colors.green
-                                    : Colors.red;
-
-                            return GestureDetector(
-                              onTap: () {
-                                if (onTap != null) {
-                                  onTap(task.quotationMasterId);
-                                }
-                              },
-                              child: IntrinsicHeight(
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    _buildDataCell((index + 1).toString(),
-                                        width: 50.0),
-                                    _buildDataCell(task.productName,
-                                        flex: 3, isBold: true),
-                                    _buildDataCell('₹ ${task.netTotal}',
-                                        flex: 2),
-                                    _buildDataCell(
-                                        task.entryDate != null &&
-                                                task.entryDate.toString() !=
-                                                    'null'
-                                            ? DateFormat('dd MMM yyyy').format(
-                                                DateTime.parse(
-                                                    task.entryDate.toString()))
-                                            : '',
-                                        flex: 2),
-                                    _buildDataCell(task.createdByName, flex: 2),
-                                    _buildWidgetCell(
-                                      flex: 2,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          // Generic Share Button
-                                          if (settingsprovider
-                                                  .menuIsViewMap[32] ==
-                                              1)...[
-                                            IconButton(
-                                              tooltip: 'Share Quotation 1',
-                                              icon: Icon(Icons.share,
-                                                  size: 20, color: AppColors.primaryBlue),
-                                              onPressed: () async {
-                                                PdfActionHelper.showShareOptions(
-                                                  context: context,
-                                                  title: 'Quotation 1',
-                                                  pdfUrl:
-                                                      '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${task.quotationMasterId}',
-                                                  onGenerate: () async {
-                                                    await Loader.showLoader(context);
-                                                    final bytes = await customerDetailsProvider
-                                                        .getQuotationMasterPdfBytes(task.quotationMasterId.toString());
-                                                    Loader.stopLoader(context);
-                                                    return bytes ?? Uint8List(0);
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                            IconButton(
-                                              tooltip: 'Print Quotation 1',
-                                              icon: Icon(Icons.print,
-                                                  size: 20, color: AppColors.primaryBlue),
-                                              onPressed: () async {
-                                                await Loader.showLoader(context);
-                                                await customerDetailsProvider
-                                                    .getQuotationMasterPdf(
-                                                        task.quotationMasterId
-                                                            .toString(),
-                                                        context);
-                                                Loader.stopLoader(context);
-                                              },
-                                            ),
-                                          ],
-                                          // Specific Share Button
-                                          if (settingsprovider
-                                                  .menuIsViewMap[55] ==
-                                              1)
-                                            if (task.quotationTypeId == 2)...[
-                                              IconButton(
-                                                tooltip: 'Share Commercial',
-                                                icon: Icon(
-                                                    Icons.share_outlined,
-                                                    size: 20,
-                                                    color: AppColors.primaryBlue),
-                                                onPressed: () async {
-                                                  PdfActionHelper.showShareOptions(
-                                                    context: context,
-                                                    title: 'Commercial PDF',
-                                                    onGenerate: () async {
-                                                      await Loader.showLoader(context);
-                                                      await customerDetailsProvider
-                                                          .getQuatationListByMasterId(
-                                                              task.quotationMasterId
-                                                                  .toString(),
-                                                              context);
-                                                      await customerDetailsProvider
-                                                          .fetchLeadDetails(
-                                                              widget.customerId,
-                                                              context);
-                                                      await settingsprovider
-                                                          .getCompanyDetails();
-                                                      Loader.stopLoader(context);
-
-                                                      if (settingsprovider.companyDetails.isNotEmpty &&
-                                                          (customerDetailsProvider.leadDetails?.isNotEmpty ?? false) &&
-                                                          customerDetailsProvider.quotationListByMaster.isNotEmpty) {
-                                                        return await generateCommercialPDFBytes(
-                                                              context: context,
-                                                              companyDetails: settingsprovider.companyDetails[0],
-                                                              customerDetails: customerDetailsProvider.leadDetails![0],
-                                                              quotationData: customerDetailsProvider.quotationListByMaster[0],
-                                                            ) ??
-                                                            Uint8List(0);
-                                                      }
-                                                      return Uint8List(0);
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                              IconButton(
-                                                tooltip: 'Print Commercial',
-                                                icon: Icon(Icons.print_outlined,
-                                                    size: 20,
-                                                    color: AppColors.primaryBlue),
-                                                onPressed: () async {
-                                                  await Loader.showLoader(context);
-                                                  await customerDetailsProvider
-                                                      .getQuatationListByMasterId(
-                                                          task.quotationMasterId
-                                                              .toString(),
-                                                          context);
-                                                  await customerDetailsProvider
-                                                      .fetchLeadDetails(
-                                                          widget.customerId,
-                                                          context);
-                                                  await settingsprovider
-                                                      .getCompanyDetails();
-                                                  if (settingsprovider.companyDetails.isNotEmpty &&
-                                                      (customerDetailsProvider.leadDetails?.isNotEmpty ?? false) &&
-                                                      customerDetailsProvider
-                                                          .quotationListByMaster.isNotEmpty) {
-                                                    printCommercialPDFs(
-                                                        context: context,
-                                                        companyDetails: settingsprovider.companyDetails[0],
-                                                        customerDetails: customerDetailsProvider.leadDetails![0],
-                                                        quotationData:
-                                                            customerDetailsProvider.quotationListByMaster[0]);
-                                                  }
-                                                  Loader.stopLoader(context);
-                                                },
-                                              ),
-                                            ],
-                                          if (settingsprovider
-                                                  .menuIsViewMap[55] ==
-                                              1)
-                                            if (task.quotationTypeId == 1)...[
-                                              IconButton(
-                                                tooltip: 'Share Residential',
-                                                icon: Icon(
-                                                    Icons.share_outlined,
-                                                    size: 20,
-                                                    color: AppColors.primaryBlue),
-                                                onPressed: () async {
-                                                  PdfActionHelper.showShareOptions(
-                                                    context: context,
-                                                    title: 'Residential PDF',
-                                                    onGenerate: () async {
-                                                      await Loader.showLoader(context);
-                                                      await customerDetailsProvider
-                                                          .getQuatationListByMasterId(
-                                                              task.quotationMasterId
-                                                                  .toString(),
-                                                              context);
-                                                      await customerDetailsProvider
-                                                          .fetchLeadDetails(
-                                                              widget.customerId,
-                                                              context);
-                                                      await settingsprovider
-                                                          .getCompanyDetails();
-                                                      Loader.stopLoader(context);
-
-                                                      if (settingsprovider.companyDetails.isNotEmpty &&
-                                                          (customerDetailsProvider.leadDetails?.isNotEmpty ?? false) &&
-                                                          customerDetailsProvider.quotationListByMaster.isNotEmpty) {
-                                                        return await generateResidentialPDFBytes(
-                                                              context: context,
-                                                              companyDetails: settingsprovider.companyDetails[0],
-                                                              customerDetails: customerDetailsProvider.leadDetails![0],
-                                                              quotationData: customerDetailsProvider.quotationListByMaster[0],
-                                                            ) ??
-                                                            Uint8List(0);
-                                                      }
-                                                      return Uint8List(0);
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                              IconButton(
-                                                tooltip: 'Print Residential',
-                                                icon: Icon(Icons.print_outlined,
-                                                    size: 20,
-                                                    color: AppColors.primaryBlue),
-                                                onPressed: () async {
-                                                  await Loader.showLoader(context);
-                                                  await customerDetailsProvider
-                                                      .getQuatationListByMasterId(
-                                                          task.quotationMasterId
-                                                              .toString(),
-                                                          context);
-                                                  await customerDetailsProvider
-                                                      .fetchLeadDetails(
-                                                          widget.customerId,
-                                                          context);
-                                                  await settingsprovider
-                                                      .getCompanyDetails();
-                                                  if (settingsprovider.companyDetails.isNotEmpty &&
-                                                      (customerDetailsProvider.leadDetails?.isNotEmpty ?? false) &&
-                                                      customerDetailsProvider
-                                                          .quotationListByMaster.isNotEmpty) {
-                                                    printResidentialPDFs(
-                                                        context: context,
-                                                        companyDetails: settingsprovider.companyDetails[0],
-                                                        customerDetails: customerDetailsProvider.leadDetails![0],
-                                                        quotationData:
-                                                            customerDetailsProvider.quotationListByMaster[0]);
-                                                  }
-                                                  Loader.stopLoader(context);
-                                                },
-                                              ),
-                                            ],
-                                          if (settingsprovider
-                                                  .menuIsEditMap[16] ==
-                                              1)
-                                            IconButton(
-                                              tooltip: 'Edit',
-                                              icon: const Icon(Icons.edit,
-                                                  size: 20, color: Colors.blue),
-                                              onPressed: () async {
-                                                await _handleEditQuotation(
-                                                    task.quotationMasterId
-                                                        .toString(),
-                                                    customerDetailsProvider);
-                                              },
-                                            ),
-                                          if (settingsprovider
-                                                  .menuIsDeleteMap[16] ==
-                                              1)
-                                            IconButton(
-                                              tooltip: 'Delete',
-                                              icon: const Icon(Icons.delete,
-                                                  size: 20, color: Colors.red),
-                                              onPressed: () {
-                                                showConfirmationDialog(
-                                                  isLoading:
-                                                      customerDetailsProvider
-                                                          .isDeleteLoading,
-                                                  context: context,
-                                                  title: 'Confirm Deletion',
-                                                  content:
-                                                      'Are you sure you want to delete this Quotation?',
-                                                  onCancel: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  onConfirm: () {
-                                                    customerDetailsProvider
-                                                        .deleteQuotation(
-                                                            task.quotationMasterId
-                                                                .toString(),
-                                                            widget.customerId,
-                                                            context);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  confirmButtonText: 'Delete',
-                                                  confirmButtonColor:
-                                                      Colors.red,
-                                                );
-                                              },
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               );

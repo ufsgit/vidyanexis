@@ -5,6 +5,7 @@ import 'package:vidyanexis/controller/models/task_customer_model.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_history_popup.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 class CustomerTaskOverviewTab extends StatefulWidget {
   final String customerId;
@@ -56,6 +57,21 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
           );
         }
 
+        final isWeb = AppStyles.isWebScreen(context);
+
+        if (isWeb) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: tasks.map((task) {
+                return _buildSummaryCard(task, isWeb: isWeb);
+              }).toList(),
+            ),
+          );
+        }
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -69,7 +85,7 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
                 itemCount: tasks.length,
                 itemBuilder: (context, index) {
                   final task = tasks[index];
-                  return _buildSummaryCard(task);
+                  return _buildSummaryCard(task, isWeb: isWeb);
                 },
               ),
             ),
@@ -79,7 +95,7 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
     );
   }
 
-  Widget _buildSummaryCard(TaskCustomerModel task) {
+  Widget _buildSummaryCard(TaskCustomerModel task, {bool isWeb = false}) {
     return InkWell(
       onTap: () {
         final provider =
@@ -96,7 +112,7 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         width: 220,
-        margin: const EdgeInsets.only(right: 12),
+        margin: isWeb ? EdgeInsets.zero : const EdgeInsets.only(right: 12),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,

@@ -42,7 +42,58 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        body: Consumer<CustomerDetailsProvider>(
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Quotations',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF1E293B),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (c) => QuotationCreationWidget(
+                          customerId: widget.customerId,
+                          quotationId: '0',
+                          isEdit: false,
+                        ),
+                      ),
+                    ),
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryBlue,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.secondaryBlue.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.add_rounded,
+                        color: Colors.white,
+                        size: 26,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Consumer<CustomerDetailsProvider>(
           builder: (context, customerDetailsProvider, child) {
             if (customerDetailsProvider.isQuotationListLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -78,363 +129,387 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
             }
 
             return ListView.separated(
-              separatorBuilder: (_, __) => Divider(
-                thickness: 2,
-                color: Colors.grey.shade200,
-              ),
-              // padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemCount: customerDetailsProvider.quotationList.length,
               itemBuilder: (context, index) {
                 final item = customerDetailsProvider.quotationList[index];
                 final settingsProvider =
                     Provider.of<SettingsProvider>(context, listen: false);
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (c) => QuotationCreationWidget(
-                          isEdit: true,
-                          quotationId: item.quotationMasterId.toString(),
-                          customerId: widget.customerId.toString(),
-                        ),
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.03),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
                       ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 3,
-                              height: 22,
-                              color: StatusUtils.getStatusColor(
-                                  item.quotationStatusId),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                item.productName,
-                                style: AppStyles.getBoldTextStyle(fontSize: 14),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                    ],
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (c) => QuotationCreationWidget(
+                            isEdit: true,
+                            quotationId: item.quotationMasterId.toString(),
+                            customerId: widget.customerId.toString(),
+                          ),
                         ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 7),
-                              decoration: BoxDecoration(
-                                color: StatusUtils.getStatusColor(
-                                    item.quotationStatusId),
-                                borderRadius: BorderRadius.circular(13),
-                              ),
-                              child: Text(
-                                item.quotationStatusName,
-                                style: AppStyles.getBoldTextStyle(
-                                  fontSize: 11,
-                                  fontColor: StatusUtils.getStatusTextColor(
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 4,
+                                height: 18,
+                                decoration: BoxDecoration(
+                                  color: StatusUtils.getStatusColor(
                                       item.quotationStatusId),
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                            // Share 1 — API-generated PDF (menuIsViewMap[32])
-                            if (settingsProvider.menuIsViewMap[32] == 1) ...[
-                              GestureDetector(
-                                onTap: () async {
-                                  PdfActionHelper.showShareOptions(
-                                    context: context,
-                                    title: 'Quotation 1',
-                                    pdfUrl:
-                                        '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${item.quotationMasterId}',
-                                    onGenerate: () async {
-                                      final bytes =
-                                          await customerDetailsProvider
-                                              .getQuotationMasterPdfBytes(item
-                                                  .quotationMasterId
-                                                  .toString());
-                                      return bytes ?? Uint8List(0);
-                                    },
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: Tooltip(
-                                    message: 'Share Quotation 1',
-                                    child: Icon(Icons.share,
-                                        size: 20, color: AppColors.primaryBlue),
-                                  ),
+                                  borderRadius: BorderRadius.circular(2),
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () async {
-                                  await Loader.showLoader(context);
-                                  try {
-                                    final bytes = await customerDetailsProvider
-                                        .getQuotationMasterPdfBytes(
-                                            item.quotationMasterId.toString());
-                                    if (bytes != null && bytes.isNotEmpty) {
-                                      final fileName =
-                                          'Quotation_${item.quotationMasterId}.pdf';
-                                      if (Platform.isAndroid) {
-                                        try {
-                                          await FileDownloader.saveFile(
-                                              bytes, fileName);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                  'Downloaded to Downloads folder'),
-                                              backgroundColor: Colors.green,
-                                            ),
-                                          );
-                                        } catch (e) {
-                                          debugPrint('Download failed, falling back to share: $e');
+                              Expanded(
+                                child: Text(
+                                  item.productName,
+                                  style: AppStyles.getBoldTextStyle(fontSize: 14),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 7),
+                                decoration: BoxDecoration(
+                                  color: StatusUtils.getStatusColor(
+                                          item.quotationStatusId),
+                                  borderRadius: BorderRadius.circular(13),
+                                ),
+                                child: Text(
+                                  item.quotationStatusName,
+                                  style: AppStyles.getBoldTextStyle(
+                                    fontSize: 11,
+                                    fontColor: StatusUtils.getStatusTextColor(
+                                        item.quotationStatusId),
+                                  ),
+                                ),
+                              ),
+                              const Spacer(),
+                              // Share 1 — API-generated PDF (menuIsViewMap[32])
+                              if (settingsProvider.menuIsViewMap[32] == 1) ...[
+                                GestureDetector(
+                                  onTap: () async {
+                                    PdfActionHelper.showShareOptions(
+                                      context: context,
+                                      title: 'Quotation 1',
+                                      pdfUrl:
+                                          '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${item.quotationMasterId}',
+                                      onGenerate: () async {
+                                        final bytes =
+                                            await customerDetailsProvider
+                                                .getQuotationMasterPdfBytes(item
+                                                    .quotationMasterId
+                                                    .toString());
+                                        return bytes ?? Uint8List(0);
+                                      },
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Tooltip(
+                                      message: 'Share Quotation 1',
+                                      child: Icon(Icons.share,
+                                          size: 20, color: AppColors.primaryBlue),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await Loader.showLoader(context);
+                                    try {
+                                      final bytes = await customerDetailsProvider
+                                          .getQuotationMasterPdfBytes(
+                                              item.quotationMasterId.toString());
+                                      if (bytes != null && bytes.isNotEmpty) {
+                                        final fileName =
+                                            'Quotation_${item.quotationMasterId}.pdf';
+                                        if (Platform.isAndroid) {
+                                          try {
+                                            await FileDownloader.saveFile(
+                                                bytes, fileName);
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    'Downloaded to Downloads folder'),
+                                                backgroundColor: Colors.green,
+                                              ),
+                                            );
+                                          } catch (e) {
+                                            debugPrint('Download failed, falling back to share: $e');
+                                            await Printing.sharePdf(
+                                                bytes: bytes, filename: fileName);
+                                          }
+                                        } else {
                                           await Printing.sharePdf(
                                               bytes: bytes, filename: fileName);
                                         }
-                                      } else {
-                                        await Printing.sharePdf(
-                                            bytes: bytes, filename: fileName);
                                       }
+                                    } catch (e) {
+                                      debugPrint('Error downloading PDF: $e');
+                                    } finally {
+                                      Loader.stopLoader(context);
                                     }
-                                  } catch (e) {
-                                    debugPrint('Error downloading PDF: $e');
-                                  } finally {
-                                    Loader.stopLoader(context);
-                                  }
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(4),
-                                  child: Tooltip(
-                                    message: 'Download Quotation',
-                                    child: Icon(Icons.download,
-                                        size: 20, color: Color(0xFF10B981)),
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(4),
+                                    child: Tooltip(
+                                      message: 'Download Quotation',
+                                      child: Icon(Icons.download,
+                                          size: 20, color: Color(0xFF10B981)),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () async {
-                                  await Loader.showLoader(context);
-                                  try {
-                                    final bytes = await customerDetailsProvider
-                                        .getQuotationMasterPdfBytes(
-                                            item.quotationMasterId.toString());
-                                    if (bytes != null && bytes.isNotEmpty) {
-                                      await Printing.layoutPdf(
-                                        onLayout: (format) async => bytes,
-                                        name: 'Quotation_${item.quotationMasterId}',
-                                      );
+                                const SizedBox(width: 8),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await Loader.showLoader(context);
+                                    try {
+                                      final bytes = await customerDetailsProvider
+                                          .getQuotationMasterPdfBytes(
+                                              item.quotationMasterId.toString());
+                                      if (bytes != null && bytes.isNotEmpty) {
+                                        await Printing.layoutPdf(
+                                          onLayout: (format) async => bytes,
+                                          name: 'Quotation_${item.quotationMasterId}',
+                                        );
+                                      }
+                                    } finally {
+                                      Loader.stopLoader(context);
                                     }
-                                  } finally {
-                                    Loader.stopLoader(context);
-                                  }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: Tooltip(
-                                    message: 'Print Quotation 1',
-                                    child: Icon(Icons.print,
-                                        size: 20, color: AppColors.primaryBlue),
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Tooltip(
+                                      message: 'Print Quotation 1',
+                                      child: Icon(Icons.print,
+                                          size: 20, color: AppColors.primaryBlue),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                            // Share 2 — Local Commercial/Residential PDF (menuIsViewMap[55])
-                            if (settingsProvider.menuIsViewMap[55] == 1) ...[
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () async {
-                                  PdfActionHelper.showShareOptions(
-                                    context: context,
-                                    title: item.quotationTypeId == 2
-                                        ? 'Commercial PDF'
-                                        : 'Residential PDF',
-                                    onGenerate: () async {
-                                      await customerDetailsProvider
-                                          .getQuatationListByMasterId(
-                                        item.quotationMasterId.toString(),
-                                        context,
-                                      );
-                                      await customerDetailsProvider
-                                          .fetchLeadDetails(
-                                              widget.customerId, context);
-                                      await settingsProvider.getCompanyDetails();
+                              ],
+                              // Share 2 — Local Commercial/Residential PDF (menuIsViewMap[55])
+                              if (settingsProvider.menuIsViewMap[55] == 1) ...[
+                                const SizedBox(width: 8),
+                                GestureDetector(
+                                  onTap: () async {
+                                    PdfActionHelper.showShareOptions(
+                                      context: context,
+                                      title: item.quotationTypeId == 2
+                                          ? 'Commercial PDF'
+                                          : 'Residential PDF',
+                                      onGenerate: () async {
+                                        await customerDetailsProvider
+                                            .getQuatationListByMasterId(
+                                          item.quotationMasterId.toString(),
+                                          context,
+                                        );
+                                        await customerDetailsProvider
+                                            .fetchLeadDetails(
+                                                widget.customerId, context);
+                                        await settingsProvider.getCompanyDetails();
 
-                                      if (settingsProvider
-                                              .companyDetails.isNotEmpty &&
-                                          (customerDetailsProvider
-                                                  .leadDetails?.isNotEmpty ??
-                                              false) &&
-                                          customerDetailsProvider
-                                              .quotationListByMaster.isNotEmpty) {
-                                        if (item.quotationTypeId == 2) {
-                                          return await generateCommercialPDFBytes(
-                                                context: context,
-                                                companyDetails: settingsProvider
-                                                    .companyDetails[0],
-                                                customerDetails:
-                                                    customerDetailsProvider
-                                                        .leadDetails![0],
-                                                quotationData:
-                                                    customerDetailsProvider
-                                                        .quotationListByMaster[0],
-                                              ) ??
-                                              Uint8List(0);
-                                        } else {
-                                          return await generateResidentialPDFBytes(
-                                                context: context,
-                                                companyDetails: settingsProvider
-                                                    .companyDetails[0],
-                                                customerDetails:
-                                                    customerDetailsProvider
-                                                        .leadDetails![0],
-                                                quotationData:
-                                                    customerDetailsProvider
-                                                        .quotationListByMaster[0],
-                                              ) ??
-                                              Uint8List(0);
+                                        if (settingsProvider
+                                                .companyDetails.isNotEmpty &&
+                                            (customerDetailsProvider
+                                                    .leadDetails?.isNotEmpty ??
+                                                false) &&
+                                            customerDetailsProvider
+                                                .quotationListByMaster.isNotEmpty) {
+                                          if (item.quotationTypeId == 2) {
+                                            return await generateCommercialPDFBytes(
+                                                  context: context,
+                                                  companyDetails: settingsProvider
+                                                      .companyDetails[0],
+                                                  customerDetails:
+                                                      customerDetailsProvider
+                                                          .leadDetails![0],
+                                                  quotationData:
+                                                      customerDetailsProvider
+                                                          .quotationListByMaster[0],
+                                                ) ??
+                                                Uint8List(0);
+                                          } else {
+                                            return await generateResidentialPDFBytes(
+                                                  context: context,
+                                                  companyDetails: settingsProvider
+                                                      .companyDetails[0],
+                                                  customerDetails:
+                                                      customerDetailsProvider
+                                                          .leadDetails![0],
+                                                  quotationData:
+                                                      customerDetailsProvider
+                                                          .quotationListByMaster[0],
+                                                ) ??
+                                                Uint8List(0);
+                                          }
                                         }
-                                      }
-                                      return Uint8List(0);
-                                    },
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: Tooltip(
-                                    message: item.quotationTypeId == 2
-                                        ? 'Share Commercial'
-                                        : 'Share Residential',
-                                    child: Icon(Icons.share_outlined,
-                                        size: 20, color: AppColors.primaryBlue),
+                                        return Uint8List(0);
+                                      },
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Tooltip(
+                                      message: item.quotationTypeId == 2
+                                          ? 'Share Commercial'
+                                          : 'Share Residential',
+                                      child: Icon(Icons.share_outlined,
+                                          size: 20, color: AppColors.primaryBlue),
+                                    ),
                                   ),
+                                ),
+                                const SizedBox(width: 8),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await Loader.showLoader(context);
+                                    await customerDetailsProvider
+                                        .getQuatationListByMasterId(
+                                      item.quotationMasterId.toString(),
+                                      context,
+                                    );
+                                    await customerDetailsProvider
+                                        .fetchLeadDetails(
+                                            widget.customerId, context);
+                                    await settingsProvider.getCompanyDetails();
+
+                                    if (settingsProvider
+                                            .companyDetails.isNotEmpty &&
+                                        (customerDetailsProvider
+                                                .leadDetails?.isNotEmpty ??
+                                            false) &&
+                                        customerDetailsProvider
+                                            .quotationListByMaster.isNotEmpty) {
+                                      if (item.quotationTypeId == 2) {
+                                        printCommercialPDFs(
+                                            context: context,
+                                            companyDetails: settingsProvider
+                                                .companyDetails[0],
+                                            customerDetails:
+                                                customerDetailsProvider
+                                                    .leadDetails![0],
+                                            quotationData:
+                                                customerDetailsProvider
+                                                    .quotationListByMaster[0]);
+                                      } else {
+                                        printResidentialPDFs(
+                                            context: context,
+                                            companyDetails: settingsProvider
+                                                .companyDetails[0],
+                                            customerDetails:
+                                                customerDetailsProvider
+                                                    .leadDetails![0],
+                                            quotationData:
+                                                customerDetailsProvider
+                                                    .quotationListByMaster[0]);
+                                      }
+                                    }
+                                    Loader.stopLoader(context);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Tooltip(
+                                      message: item.quotationTypeId == 2
+                                          ? 'Print Commercial'
+                                          : 'Print Residential',
+                                      child: Icon(Icons.print_outlined,
+                                          size: 20, color: AppColors.primaryBlue),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          if (item.description.trim().isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              item.description,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: const Color(0xFF64748B),
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 16),
+                          const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Text(
+                                '₹ ${item.totalAmount}',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF0F172A),
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () async {
-                                  await Loader.showLoader(context);
-                                  await customerDetailsProvider
-                                      .getQuatationListByMasterId(
-                                    item.quotationMasterId.toString(),
-                                    context,
-                                  );
-                                  await customerDetailsProvider
-                                      .fetchLeadDetails(
-                                          widget.customerId, context);
-                                  await settingsProvider.getCompanyDetails();
-
-                                  if (settingsProvider
-                                          .companyDetails.isNotEmpty &&
-                                      (customerDetailsProvider
-                                              .leadDetails?.isNotEmpty ??
-                                          false) &&
-                                      customerDetailsProvider
-                                          .quotationListByMaster.isNotEmpty) {
-                                    if (item.quotationTypeId == 2) {
-                                      printCommercialPDFs(
-                                          context: context,
-                                          companyDetails: settingsProvider
-                                              .companyDetails[0],
-                                          customerDetails:
-                                              customerDetailsProvider
-                                                  .leadDetails![0],
-                                          quotationData:
-                                              customerDetailsProvider
-                                                  .quotationListByMaster[0]);
-                                    } else {
-                                      printResidentialPDFs(
-                                          context: context,
-                                          companyDetails: settingsProvider
-                                              .companyDetails[0],
-                                          customerDetails:
-                                              customerDetailsProvider
-                                                  .leadDetails![0],
-                                          quotationData:
-                                              customerDetailsProvider
-                                                  .quotationListByMaster[0]);
-                                    }
-                                  }
-                                  Loader.stopLoader(context);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: Tooltip(
-                                    message: item.quotationTypeId == 2
-                                        ? 'Print Commercial'
-                                        : 'Print Residential',
-                                    child: Icon(Icons.print_outlined,
-                                        size: 20, color: AppColors.primaryBlue),
+                              const Text('•',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Color(0xFF94A3B8))),
+                              const SizedBox(width: 8),
+                              CircleAvatar(
+                                radius: 9,
+                                backgroundImage:
+                                    const AssetImage('assets/images/user-circle1.png'),
+                                backgroundColor: Colors.transparent,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  item.createdByName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF64748B),
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                item.entryDate.toString().toTimeAgo(),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF94A3B8),
                                 ),
                               ),
                             ],
-                          ],
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                          item.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppStyles.getRegularTextStyle(
-                            fontSize: 14,
-                            fontColor: Colors.grey.shade700,
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Text(
-                              '₹ ${item.totalAmount}',
-                              style: AppStyles.getBodyTextStyle(
-                                  fontSize: 14,
-                                  fontColor: Colors.grey.shade800),
-                            ),
-                            const SizedBox(width: 5),
-                            const Text('•',
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.grey)),
-                            const SizedBox(width: 5),
-                            Text(
-                              'by',
-                              style: AppStyles.getRegularTextStyle(
-                                  fontSize: 14,
-                                  fontColor: Colors.grey.shade500),
-                            ),
-                            const SizedBox(width: 5),
-                            CircleAvatar(
-                              radius: 10,
-                              backgroundImage:
-                                  AssetImage('assets/images/user-circle1.png'),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              item.createdByName,
-                              style: AppStyles.getBodyTextStyle(
-                                  fontSize: 14,
-                                  fontColor: const Color(0xFF607085)),
-                            ),
-                            const Spacer(),
-                            Text(
-                              item.entryDate.toString().toTimeAgo(),
-                              style: AppStyles.getRegularTextStyle(
-                                  fontColor: Colors.grey.shade500,
-                                  fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -442,29 +517,9 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
             );
           },
         ),
-        floatingActionButton: CustomElevatedButton(
-          prefixIcon: Icons.add,
-          radius: 32,
-          buttonText: 'Add Quotation',
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (c) => QuotationCreationWidget(
-                customerId: widget.customerId,
-                quotationId: '0',
-                isEdit: false,
-              ),
-            ),
-            // MaterialPageRoute(
-            //   builder: (c) => AddQuotationWidgetMobile(
-            //     customerId: widget.customerId,
-            //     quotationId: '0',
-            //   ),
-            // ),
-          ),
-          backgroundColor: AppColors.bluebutton,
-          borderColor: AppColors.bluebutton,
-          textColor: AppColors.whiteColor,
-        ));
+      ),
+    ],
+  ),
+);
   }
 }

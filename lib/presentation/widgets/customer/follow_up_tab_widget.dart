@@ -9,8 +9,6 @@ class FollowUpTabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borderColor = Color(0xFFE9EDF1);
-
     return Consumer<CustomerDetailsProvider>(
       builder: (context, provider, child) {
         if (provider.isFollowUpHistoryLoading) {
@@ -23,189 +21,187 @@ class FollowUpTabWidget extends StatelessWidget {
 
         return Container(
           margin: const EdgeInsets.only(top: 10),
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(color: borderColor),
-              left: BorderSide(color: borderColor),
-            ),
-          ),
-          child: Column(
-            children: [
-              // Header
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildHeaderCell('#', width: 50),
-                    _buildHeaderCell('Date'),
-                    _buildHeaderCell('Assigned To', flex: 1),
-                    _buildHeaderCell('Assigned By', flex: 1),
-                    _buildHeaderCell('Status'),
-                    _buildHeaderCell('Next Follow-up'),
-                    _buildHeaderCell('Remarks', flex: 4),
-                  ],
-                ),
-              ),
-              // List
-              Expanded(
-                child: ListView.builder(
-                  itemCount: provider.followUpHistory.length,
-                  itemBuilder: (context, index) {
-                    final history = provider.followUpHistory[index];
-                    return IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _buildDataCell((index + 1).toString(), width: 50),
-                          _buildDataCell(_formatDate(history.followUpDate)),
-                          _buildWidgetCell(
-                            flex: 1,
-                            child: _buildUserCell(history.assignedToName),
-                          ),
-                          _buildWidgetCell(
-                            flex: 1,
-                            child: _buildUserCell(history.assignedByName),
-                          ),
-                          _buildWidgetCell(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.lightGreen,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                history.statusName ?? 'Follow up',
-                                style: TextStyle(
-                                  color: AppColors.statusGreen,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Determine card width based on screen width for responsive grid
+              double cardWidth = constraints.maxWidth;
+              if (constraints.maxWidth > 1200) {
+                cardWidth = (constraints.maxWidth - 64) / 3; // 3 columns
+              } else if (constraints.maxWidth > 800) {
+                cardWidth = (constraints.maxWidth - 48) / 2; // 2 columns
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: provider.followUpHistory.map((history) {
+                    return SizedBox(
+                      width: cardWidth,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                          border: Border.all(color: const Color(0xFFE9EDF1)),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Top Row: Date & Status
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryBlue.withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(Icons.history, size: 16, color: AppColors.primaryBlue),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      _formatDate(history.followUpDate),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lightGreen,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    history.statusName ?? 'Follow up',
+                                    style: TextStyle(
+                                      color: AppColors.statusGreen,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Divider(color: Color(0xFFE9EDF1), height: 1),
+                            ),
+                            // Middle Row: Assignment & Next Follow up
+                            Wrap(
+                              spacing: 24,
+                              runSpacing: 16,
+                              children: [
+                                _buildInfoColumn('Assigned To', _buildUserCell(history.assignedToName)),
+                                _buildInfoColumn('Assigned By', _buildUserCell(history.assignedByName)),
+                                _buildInfoColumn(
+                                  'Next Follow-up',
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.event, size: 16, color: Colors.blueGrey),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        _formatDate(history.nextFollowUpDate),
+                                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (history.remarks != null && history.remarks!.isNotEmpty) ...[
+                              const SizedBox(height: 16),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF8FAFC),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: const Color(0xFFE9EDF1)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Remarks',
+                                      style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      history.remarks!,
+                                      style: const TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ),
-                          _buildDataCell(_formatDate(history.nextFollowUpDate)),
-                          _buildDataCell(
-                            history.remarks ?? "",
-                            flex: 4,
-                          ),
-                        ],
+                            ],
+                          ],
+                        ),
                       ),
                     );
-                  },
+                  }).toList(),
                 ),
-              ),
-            ],
+              );
+            },
           ),
         );
       },
     );
   }
 
-  Widget _buildHeaderCell(String text, {int flex = 1, double? width}) {
-    const borderColor = Color(0xFFE9EDF1);
-    Widget child = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          right: BorderSide(color: borderColor),
-          bottom: BorderSide(color: borderColor),
-        ),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Color(0xFF7D8B9B),
-          fontWeight: FontWeight.bold,
-          fontSize: 15,
-        ),
-      ),
-    );
-
-    if (width != null) {
-      return SizedBox(width: width, child: child);
-    }
-    return Expanded(
-      flex: flex,
-      child: child,
-    );
-  }
-
-  Widget _buildDataCell(String text,
-      {int flex = 1, bool isBold = false, double? width}) {
-    const borderColor = Color(0xFFE9EDF1);
-    Widget child = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          right: BorderSide(color: borderColor),
-          bottom: BorderSide(color: borderColor),
-        ),
-      ),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          text,
-          style: TextStyle(
-            fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
-            fontSize: 12,
-            color: AppColors.textBlack,
-          ),
-          // overflow: TextOverflow.ellipsis, // Allow text to wrap if needed, or omit ellipsish
-        ),
-      ),
-    );
-
-    if (width != null) {
-      return SizedBox(width: width, child: child);
-    }
-    return Expanded(
-      flex: flex,
-      child: child,
-    );
-  }
-
-  Widget _buildWidgetCell({required Widget child, int flex = 1}) {
-    const borderColor = Color(0xFFE9EDF1);
-    return Expanded(
-      flex: flex,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            right: BorderSide(color: borderColor),
-            bottom: BorderSide(color: borderColor),
+  Widget _buildInfoColumn(String label, Widget child) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            color: Colors.grey,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        child: Align(alignment: Alignment.centerLeft, child: child),
-      ),
+        const SizedBox(height: 6),
+        child,
+      ],
     );
   }
 
   Widget _buildUserCell(String? userName) {
     if (userName == null || userName.isEmpty || userName == 'null') {
-      return const Text("-", style: TextStyle(fontSize: 12));
+      return const Text("-", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500));
     }
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         CircleAvatar(
           radius: 12,
           backgroundColor: getAvatarColor(userName),
           child: Text(
             userName[0].toUpperCase(),
-            style: const TextStyle(fontSize: 10, color: Colors.white),
+            style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            userName,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 12, color: AppColors.textBlack),
-          ),
+        Text(
+          userName,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87),
         ),
       ],
     );

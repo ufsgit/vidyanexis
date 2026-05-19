@@ -7,6 +7,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_receipt_page_phone.
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BillingDetailsPagePhone extends StatefulWidget {
   final String customerId;
@@ -39,205 +40,241 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
         Provider.of<CustomerDetailsProvider>(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ExpansionTile(
-                initiallyExpanded: true,
-                enabled: false,
-                showTrailingIcon: false,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero),
-                backgroundColor: AppColors.whiteColor,
-                title: Column(
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Receipts',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF1E293B),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: _selectedTabIndex == 0
+                        ? () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return AddPaymentPhone(
+                                    invoiceId: "0",
+                                    isEdit: false,
+                                    customerId: widget.customerId);
+                              },
+                            ));
+                          }
+                        : () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return AddReceiptPagePhone(
+                                    recieptId: "0",
+                                    isEdit: false,
+                                    customerId: widget.customerId);
+                              },
+                            ));
+                          },
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryBlue,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.secondaryBlue.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.add_rounded,
+                        color: Colors.white,
+                        size: 26,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomText(
-                      "Total Amount",
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: AppColors.textGrey4,
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    CustomText(
-                      "₹${customerDetailsProvider.balanceTotal}",
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack,
-                      fontSize: 16,
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                  ],
-                ),
-                children: [
-                  Container(
-                    height: 54,
-                    decoration: BoxDecoration(color: AppColors.scaffoldColor),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
-                      child: Column(
+                    ExpansionTile(
+                      initiallyExpanded: true,
+                      enabled: false,
+                      showTrailingIcon: false,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero),
+                      backgroundColor: AppColors.whiteColor,
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                'Total Invoiced',
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textGrey4,
-                                fontSize: 12,
-                              ),
-                              CustomText(
-                                "₹${customerDetailsProvider.invoiceTotal}",
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textBlack,
-                                fontSize: 12,
-                              ),
-                            ],
+                          CustomText(
+                            "Total Amount",
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            color: AppColors.textGrey4,
                           ),
                           const SizedBox(
-                            height: 2,
+                            height: 4,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                'Total Payments Recieved',
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textGrey4,
-                                fontSize: 12,
+                          CustomText(
+                            "₹${customerDetailsProvider.balanceTotal}",
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textBlack,
+                            fontSize: 16,
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                        ],
+                      ),
+                      children: [
+                        Container(
+                          height: 54,
+                          decoration: BoxDecoration(color: AppColors.scaffoldColor),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 6),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CustomText(
+                                      'Total Invoiced',
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textGrey4,
+                                      fontSize: 12,
+                                    ),
+                                    CustomText(
+                                      "₹${customerDetailsProvider.invoiceTotal}",
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textBlack,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 2,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CustomText(
+                                      'Total Payments Recieved',
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textGrey4,
+                                      fontSize: 12,
+                                    ),
+                                    CustomText(
+                                      "₹${customerDetailsProvider.recieptTotal}",
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textBlack,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+
+                    // Tab containers in a row
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          // First Tab
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedTabIndex = 0;
+                              });
+                            },
+                            child: Container(
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: _selectedTabIndex == 0
+                                    ? AppColors.grey300
+                                    : AppColors.whiteColor,
+                                borderRadius: BorderRadius.circular(6),
                               ),
-                              CustomText(
-                                "₹${customerDetailsProvider.recieptTotal}",
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textBlack,
-                                fontSize: 12,
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
+                                  child: CustomText(
+                                    "Invoices",
+                                    color: _selectedTabIndex == 0
+                                        ? AppColors.textBlack
+                                        : AppColors.textGrey4,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ),
-                            ],
-                          )
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          // Second Tab
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedTabIndex = 1;
+                              });
+                            },
+                            child: Container(
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: _selectedTabIndex == 1
+                                    ? AppColors.grey300
+                                    : AppColors.whiteColor,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
+                                  child: CustomText(
+                                    "Receipts",
+                                    color: _selectedTabIndex == 1
+                                        ? AppColors.textBlack
+                                        : AppColors.textGrey4,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 16,
-              ),
 
-              // Tab containers in a row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    // First Tab
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedTabIndex = 0;
-                        });
-                      },
-                      child: Container(
-                        height: 28,
-                        decoration: BoxDecoration(
-                          color: _selectedTabIndex == 0
-                              ? AppColors.grey300
-                              : AppColors.whiteColor,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            child: CustomText(
-                              "Invoices",
-                              color: _selectedTabIndex == 0
-                                  ? AppColors.textBlack
-                                  : AppColors.textGrey4,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    // Second Tab
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedTabIndex = 1;
-                        });
-                      },
-                      child: Container(
-                        height: 28,
-                        decoration: BoxDecoration(
-                          color: _selectedTabIndex == 1
-                              ? AppColors.grey300
-                              : AppColors.whiteColor,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            child: CustomText(
-                              "Receipts",
-                              color: _selectedTabIndex == 1
-                                  ? AppColors.textBlack
-                                  : AppColors.textGrey4,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    const SizedBox(height: 16),
+                    _selectedTabIndex == 0
+                        ? _buildInvoicesContent()
+                        : _buildPaymentsContent(),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 16),
-              _selectedTabIndex == 0
-                  ? _buildInvoicesContent()
-                  : _buildPaymentsContent(),
-            ],
-          ),
-        ),
-        floatingActionButton: CustomElevatedButton(
-          prefixIcon: Icons.add,
-          radius: 32,
-          buttonText: _selectedTabIndex == 0 ? 'Add Invoice' : 'Add Payment',
-          onPressed: _selectedTabIndex == 0
-              ? () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return AddPaymentPhone(
-                          invoiceId: "0",
-                          isEdit: false,
-                          customerId: widget.customerId);
-                    },
-                  ));
-                }
-              : () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return AddReceiptPagePhone(
-                          recieptId: "0",
-                          isEdit: false,
-                          customerId: widget.customerId);
-                    },
-                  ));
-                },
-          backgroundColor: AppColors.bluebutton,
-          borderColor: AppColors.bluebutton,
-          textColor: AppColors.whiteColor,
+            ),
+          ],
         ));
   }
 

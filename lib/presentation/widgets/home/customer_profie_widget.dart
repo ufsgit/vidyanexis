@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 
 class CustomerCard extends StatelessWidget {
   final String title;
@@ -11,7 +13,15 @@ class CustomerCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          )
+        ],
       ),
       margin: const EdgeInsets.only(bottom: 16.0),
       child: Padding(
@@ -19,8 +29,15 @@ class CustomerCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8.0),
+            Text(
+              title,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textBlack,
+              ),
+            ),
+            const SizedBox(height: 12.0),
             ...content,
           ],
         ),
@@ -38,22 +55,35 @@ class DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-              child: Text(
-            "$label: ",
-            overflow: TextOverflow.fade,
-            maxLines: 1,
-            style: const TextStyle(color: Color(0xFF8E97A3), fontSize: 14),
-          )),
+            flex: 4,
+            child: Text(
+              "$label: ",
+              style: GoogleFonts.plusJakartaSans(
+                color: const Color(0xFF64748B),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
           Expanded(
-              child: Text(value,
-                  textAlign: TextAlign.end,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 14))),
+            flex: 6,
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+                color: AppColors.textBlack,
+              ),
+            ),
+          ),
         ],
       ),
     );

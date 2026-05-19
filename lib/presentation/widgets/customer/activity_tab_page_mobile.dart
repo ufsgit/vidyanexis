@@ -200,115 +200,121 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
       length: 2,
       child: Scaffold(
           backgroundColor: AppColors.whiteColor,
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(40),
-            child: Container(
-              color: AppColors.whiteColor,
-              child: TabBar(
-                dividerHeight: 0,
-                indicatorColor: AppColors.primaryBlue,
-                labelColor: AppColors.primaryBlue,
-                unselectedLabelColor: AppColors.textGrey3,
-                labelStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-                indicatorSize: TabBarIndicatorSize.label,
-                tabs: const [
-                  Tab(text: "ACTIVITY"),
-                  Tab(text: "VISITS"),
-                ],
-              ),
-            ),
-          ),
-          body: TabBarView(
+          body: Column(
             children: [
-              _buildActivityFlow(leadDetailsProvider),
-              _buildVisitFlow(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Activity',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF1E293B),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        final settingsProvider =
+                            Provider.of<SettingsProvider>(context, listen: false);
+
+                        final leadsProvider =
+                            Provider.of<LeadsProvider>(context, listen: false);
+                        leadsProvider.statusController.clear();
+                        leadsProvider.assignToFollowUpController.clear();
+                        leadsProvider.messageController.clear();
+                        leadsProvider.nextFollowUpDateController.clear();
+                        final dropDownProvider =
+                            Provider.of<DropDownProvider>(context, listen: false);
+                        dropDownProvider.selectedStatusId = null;
+                        dropDownProvider.selectedUserId = null;
+                        leadsProvider
+                            .setCutomerId(int.parse(widget.customerId.toString()));
+
+                        dropDownProvider.selectedStatusId =
+                            int.parse(widget.lead?.statusId.toString() ?? "0");
+                        dropDownProvider.selectedUserId =
+                            int.parse(widget.lead?.toUserId.toString() ?? "0");
+                        leadsProvider.setCutomerId(widget.customerId);
+                        leadsProvider.statusController.text =
+                            widget.lead?.statusName ?? "";
+                        leadsProvider.branchController.text =
+                            widget.lead?.branchName ?? "";
+                        settingsProvider.selectedBranchId = widget.lead?.branchId ?? 0;
+                        leadsProvider.assignToFollowUpController.text =
+                            widget.lead?.toUserName ?? "";
+                        leadsProvider.departmentController.text =
+                            widget.lead?.departmentName ?? "";
+                        settingsProvider.selectedDepartmentId =
+                            int.parse(widget.lead?.departmentId ?? "0");
+                        leadsProvider.nextFollowUpDateController.text =
+                            (widget.lead?.nextFollowUpDate ?? '').isNotEmpty
+                                ? DateFormat('dd MMM yyyy').format(
+                                    DateTime.tryParse(widget.lead!.nextFollowUpDate) ??
+                                        DateTime(2000, 1, 1))
+                                : '';
+                        leadsProvider.messageController.clear();
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) {
+                            return AddFollowupDialog(
+                              customerName: widget.lead?.customerName ?? '',
+                            );
+                          },
+                        ));
+                      },
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryBlue,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.secondaryBlue.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.add_rounded,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                color: AppColors.whiteColor,
+                child: TabBar(
+                  dividerHeight: 0,
+                  indicatorColor: AppColors.primaryBlue,
+                  labelColor: AppColors.primaryBlue,
+                  unselectedLabelColor: AppColors.textGrey3,
+                  labelStyle: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  tabs: const [
+                    Tab(text: "ACTIVITY"),
+                    Tab(text: "VISITS"),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _buildActivityFlow(leadDetailsProvider),
+                    _buildVisitFlow(),
+                  ],
+                ),
+              ),
             ],
-          ),
-          floatingActionButton: CustomElevatedButton(
-            prefixIcon: Icons.add,
-            radius: 32,
-            buttonText: 'Add Follow-up',
-            onPressed: () {
-              final settingsProvider =
-                  Provider.of<SettingsProvider>(context, listen: false);
-
-              final leadsProvider =
-                  Provider.of<LeadsProvider>(context, listen: false);
-              leadsProvider.statusController.clear();
-              leadsProvider.assignToFollowUpController.clear();
-              leadsProvider.messageController.clear();
-              leadsProvider.nextFollowUpDateController.clear();
-              final dropDownProvider =
-                  Provider.of<DropDownProvider>(context, listen: false);
-              dropDownProvider.selectedStatusId = null;
-              dropDownProvider.selectedUserId = null;
-              leadsProvider
-                  .setCutomerId(int.parse(widget.customerId.toString()));
-
-              dropDownProvider.selectedStatusId =
-                  int.parse(widget.lead?.statusId.toString() ?? "0");
-              dropDownProvider.selectedUserId =
-                  int.parse(widget.lead?.toUserId.toString() ?? "0");
-              leadsProvider.setCutomerId(widget.customerId);
-              leadsProvider.statusController.text =
-                  widget.lead?.statusName ?? "";
-              leadsProvider.branchController.text =
-                  widget.lead?.branchName ?? "";
-              settingsProvider.selectedBranchId = widget.lead?.branchId ?? 0;
-              leadsProvider.assignToFollowUpController.text =
-                  widget.lead?.toUserName ?? "";
-              leadsProvider.departmentController.text =
-                  widget.lead?.departmentName ?? "";
-              settingsProvider.selectedDepartmentId =
-                  int.parse(widget.lead?.departmentId ?? "0");
-              leadsProvider.nextFollowUpDateController.text =
-                  (widget.lead?.nextFollowUpDate ?? '').isNotEmpty
-                      ? DateFormat('dd MMM yyyy').format(
-                          DateTime.tryParse(widget.lead!.nextFollowUpDate) ??
-                              DateTime(2000, 1, 1))
-                      : '';
-              // leadsProvider.messageController.text =
-              //     lead.remark;
-              leadsProvider.messageController.clear();
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return AddFollowupDialog(
-                    customerName: widget.lead?.customerName ?? '',
-                  );
-                },
-              ));
-              // showDialog(
-              //   barrierDismissible: true,
-              //   context: context,
-              //   builder: (BuildContext context) => AddFollowupDialog(
-              //     customerName: '- ${widget.lead?.customerName ?? ''}',
-              //   ),
-              // );
-              // final leadProvider =
-              //     Provider.of<LeadsProvider>(context, listen: false);
-              // leadProvider.statusController.clear();
-              // leadProvider.assignToFollowUpController.clear();
-              // leadProvider.messageController.clear();
-              // leadProvider.nextFollowUpDateController.clear();
-              // final dropDownProvider =
-              //     Provider.of<DropDownProvider>(context, listen: false);
-              // dropDownProvider.selectedStatusId = null;
-              // dropDownProvider.selectedUserId = null;
-              // leadProvider.setCutomerId(int.parse(widget.customerId));
-              // showDialog(
-              //   barrierDismissible: false,
-              //   context: context,
-              //   builder: (BuildContext context) => const AddFollowupDialog(
-              //     customerName: '',
-              //   ),
-              // );
-            },
-            backgroundColor: AppColors.bluebutton,
-            borderColor: AppColors.bluebutton,
-            textColor: AppColors.whiteColor,
           )),
     );
   }
@@ -343,27 +349,30 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ListView.separated(
-            separatorBuilder: (context, index) {
-              return Divider(height: 2, color: AppColors.grey);
-            },
-            itemCount: leadDetailsProvider.followUpHistory!.length,
-            shrinkWrap: true,
-            physics: const ClampingScrollPhysics(),
-            itemBuilder: (context, index) {
-              final lead = leadDetailsProvider.followUpHistory![index];
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemCount: leadDetailsProvider.followUpHistory!.length,
+      itemBuilder: (context, index) {
+        final lead = leadDetailsProvider.followUpHistory![index];
 
-              return Container(
-                width: MediaQuery.sizeOf(context).width,
-                decoration: BoxDecoration(color: AppColors.whiteColor),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Column(
-                    children: [
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+              children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,55 +392,54 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                                 ),
                               )),
                           const SizedBox(width: 4),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                lead.statusName,
-                                style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.textBlack),
-                              ),
-                              const SizedBox(height: 2),
-                              RichText(
-                                text: TextSpan(
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  lead.statusName,
                                   style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.textGrey3,
-                                  ),
-                                  children: [
-                                    const TextSpan(text: 'by '),
-                                    TextSpan(
-                                      text: lead.byUserName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textGrey3,
-                                      ),
-                                    ),
-                                    const TextSpan(text: ' to '),
-                                    TextSpan(
-                                      text: lead.toUserName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textGrey3,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: ' • ${lead.entryDate.toDate()}',
-                                    ),
-                                  ],
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textBlack),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              if (lead.remark.isNotEmpty)
-                                SizedBox(
-                                  width: MediaQuery.sizeOf(context).width - 100,
-                                  child: Text(
+                                const SizedBox(height: 2),
+                                RichText(
+                                  text: TextSpan(
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textGrey3,
+                                    ),
+                                    children: [
+                                      const TextSpan(text: 'by '),
+                                      TextSpan(
+                                        text: lead.byUserName,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textGrey3,
+                                        ),
+                                      ),
+                                      const TextSpan(text: ' to '),
+                                      TextSpan(
+                                        text: lead.toUserName,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textGrey3,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: ' • ${lead.entryDate.toDate()}',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                if (lead.remark.isNotEmpty)
+                                  Text(
                                     lead.remark,
                                     softWrap: true,
                                     style: GoogleFonts.plusJakartaSans(
@@ -440,31 +448,31 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                                       color: AppColors.textBlack,
                                     ),
                                   ),
-                                ),
-                              if (lead.remark.isNotEmpty)
-                                const SizedBox(height: 8),
-                              RichText(
-                                text: TextSpan(
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.textGrey3,
-                                  ),
-                                  children: [
-                                    const TextSpan(text: 'Next Follow-up, '),
-                                    TextSpan(
-                                      text:
-                                          lead.nextFollowUpDate.toWeekdayDate(),
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textGrey3,
-                                      ),
+                                if (lead.remark.isNotEmpty)
+                                  const SizedBox(height: 8),
+                                RichText(
+                                  text: TextSpan(
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textGrey3,
                                     ),
-                                  ],
-                                ),
-                              )
-                            ],
+                                    children: [
+                                      const TextSpan(text: 'Next Follow-up, '),
+                                      TextSpan(
+                                        text:
+                                            lead.nextFollowUpDate.toWeekdayDate(),
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textGrey3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -551,10 +559,7 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                 ),
               );
             },
-          )
-        ],
-      ),
-    );
+          );
   }
 
   Widget _buildVisitFlow() {

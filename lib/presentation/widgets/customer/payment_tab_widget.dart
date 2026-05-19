@@ -6,6 +6,7 @@ import 'package:vidyanexis/presentation/widgets/customer/payment_card.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_payment_widget.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PaymentTabWidget extends StatefulWidget {
   final String customerId;
@@ -40,6 +41,55 @@ class _PaymentTabWidgetState extends State<PaymentTabWidget> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Payments',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF1E293B),
+                        ),
+                      ),
+                      if (Provider.of<SettingsProvider>(context, listen: false)
+                              .menuIsSaveMap[81] ==
+                          1)
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AddPaymentWidget(
+                                customerId: widget.customerId,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: AppColors.secondaryBlue,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.secondaryBlue.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.add_rounded,
+                              color: Colors.white,
+                              size: 26,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: customerDetailsProvider.paymentList.isEmpty
                       ? const Center(
@@ -67,27 +117,6 @@ class _PaymentTabWidgetState extends State<PaymentTabWidget> {
                 ),
               ],
             ),
-      floatingActionButton:
-          Provider.of<SettingsProvider>(context, listen: false)
-                      .menuIsSaveMap[81] ==
-                  1
-              ? CustomElevatedButton(
-                  prefixIcon: Icons.add,
-                  radius: 32,
-                  buttonText: 'Add Payment',
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AddPaymentWidget(
-                        customerId: widget.customerId,
-                      ),
-                    );
-                  },
-                  backgroundColor: AppColors.bluebutton,
-                  borderColor: AppColors.bluebutton,
-                  textColor: AppColors.whiteColor,
-                )
-              : null,
     );
   }
 }
