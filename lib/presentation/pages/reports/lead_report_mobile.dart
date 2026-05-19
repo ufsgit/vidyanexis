@@ -678,8 +678,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                   child: Column(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
+                                        padding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
                                         child: Row(
                                           children: [
                                             Checkbox(
@@ -693,6 +692,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                               activeColor:
                                                   AppColors.primaryBlue,
                                             ),
+                                            const SizedBox(width: 27),
                                             const CustomText(
                                               'Select All Leads',
                                               fontSize: 14,
@@ -724,7 +724,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
 
                                           return Row(
                                             children: [
-                                              const SizedBox(width: 8),
+                                              const SizedBox(width: 16),
                                               Checkbox(
                                                 value: leadReportProvider
                                                     .isLeadSelected(

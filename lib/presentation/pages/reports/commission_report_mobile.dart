@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class CommissionReportMobile extends StatefulWidget {
   const CommissionReportMobile({super.key});
@@ -21,6 +23,7 @@ class CommissionReportMobile extends StatefulWidget {
 
 class _CommissionReportMobileState extends State<CommissionReportMobile> {
   final TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
 
   final List<String> dateButtonTitles = [
     'Yesterday',
@@ -29,6 +32,17 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
     'This Week',
     'This Month'
   ];
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final provider =
+          Provider.of<CommissionReportProvider>(context, listen: false);
+      // Wait, there's no setSearch in CommissionReportProvider, but it uses the search parameter or we can just fetch:
+      provider.getCommissionReport(context);
+    });
+  }
 
   @override
   void initState() {
@@ -46,6 +60,13 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
   }
 
   @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CommissionReportProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
@@ -54,6 +75,7 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
       drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         title: 'Commission Report',
+        showFilterIcon: false,
         onSearchTap: () {
           provider.toggleFilter();
         },
@@ -63,6 +85,7 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
         onSearch: (query) {
           provider.getCommissionReport(context);
         },
+        onChanged: _onSearchChanged,
         searchController: searchController,
         showExcel: true,
         onExcelTap: () {
@@ -111,12 +134,48 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                         fontWeight: FontWeight.bold,
                         color: AppColors.textBlack),
                     const SizedBox(height: 8),
-                    CommonReportDateFilter(
-                      fromDate: provider.fromDate?.toString(),
-                      toDate: provider.toDate?.toString(),
-                      formattedFromDate: provider.formattedFromDate,
-                      formattedToDate: provider.formattedToDate,
-                      onTap: () => _showDateFilterDialog(context),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      alignment: WrapAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _showDateFilterDialog(context);
+                          },
+                          child: Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: AppColors.scaffoldColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: ConstrainedBox(
+                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      child: CustomText(
+                                        provider.fromDate == null && provider.toDate == null
+                                            ? 'Date'
+                                            : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.textBlack,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     CustomText('Enquiry Source',
@@ -134,7 +193,6 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                               provider.selectedEnquirySource == null,
                           onTap: () {
                             provider.setEnquirySourceFilter(0);
-                            provider.getCommissionReport(context);
                           },
                         ),
                         ...dropDownProvider.enquiryData.map((e) =>
@@ -145,7 +203,6 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                               onTap: () {
                                 provider.setEnquirySourceFilter(
                                     e.enquirySourceId);
-                                provider.getCommissionReport(context);
                               },
                             )),
                       ],
@@ -166,7 +223,6 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                               provider.selectedEnquiryFor == null,
                           onTap: () {
                             provider.setEnquiryForFilter(0);
-                            provider.getCommissionReport(context);
                           },
                         ),
                         ...dropDownProvider.enquiryForList.map((e) =>
@@ -176,7 +232,6 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                                   e.enquiryForId,
                               onTap: () {
                                 provider.setEnquiryForFilter(e.enquiryForId);
-                                provider.getCommissionReport(context);
                               },
                             )),
                       ],
@@ -212,106 +267,130 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
 
           // ── LIST ────────────────────────────────────────────────────────
 
-          Expanded(
-            child: provider.commissionReport.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 80),
-                        Icon(Icons.search_off_outlined,
-                            size: 80, color: Colors.grey[300]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No commission reports found',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
+          if (!provider.isFilter)
+            Expanded(
+              child: provider.commissionReport.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 80),
+                          Icon(Icons.search_off_outlined,
+                              size: 80, color: Colors.grey[300]),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No commission reports found',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                : Column(
-                    children: [
-                      if (!provider.isFilter)
+                        ],
+                      ),
+                    )
+                  : Column(
+                      children: [
                         CommonReportSummaryBar(
                           totalLabel: 'Total Records',
                           totalCount: provider.commissionReport.length,
                           showingLabel: 'Showing',
                           showingCount: provider.commissionReport.length,
                         ),
-                      Expanded(
-                        child: ListView.separated(
+                        Expanded(
+                          child: ListView.separated(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: provider.commissionReport.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final item = provider.commissionReport[index];
+                              return ReportListItem(
+                                title: item.customerName,
+                                subtitle: item.contactNumber,
+                                description: 'Source: ${item.enquirySourceName}',
+                                status: item.statusName,
+                                statusColor: Colors.green,
+                                bottomLeftIcon: Icons.calendar_today_outlined,
+                                bottomLeftText: item.entryDate,
+                                bottomRightText: '₹${item.commission}',
+                              );
+                            },
+                          ),
+                        ),
+                        Container(
                           padding: const EdgeInsets.all(16),
-                          itemCount: provider.commissionReport.length,
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final item = provider.commissionReport[index];
-                            return ReportListItem(
-                              title: item.customerName,
-                              subtitle: item.contactNumber,
-                              description: 'Source: ${item.enquirySourceName}',
-                              status: item.statusName,
-                              statusColor: Colors.green,
-                              bottomLeftIcon: Icons.calendar_today_outlined,
-                              bottomLeftText: item.entryDate,
-                              bottomRightText: '₹${item.commission}',
-                            );
-                          },
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, -5),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text('Total Cost',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                  Text('₹${provider.totalProjectCost}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text('Total Commission',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                  Text('₹${provider.totalCommission}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Colors.green)),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, -5),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('Total Cost',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey)),
-                                Text('₹${provider.totalProjectCost}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16)),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('Total Commission',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.grey)),
-                                Text('₹${provider.totalCommission}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Colors.green)),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
+                      ],
+                    ),
+            ),
         ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: provider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_commission_report_filter_fab',
+                  onPressed: () {
+                    provider.getCommissionReport(context);
+                    provider.toggleFilter();
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,8 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class SubContractReportMobile extends StatefulWidget {
   const SubContractReportMobile({super.key});
@@ -21,6 +24,7 @@ class SubContractReportMobile extends StatefulWidget {
 
 class _SubContractReportMobileState extends State<SubContractReportMobile> {
   final TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
 
   final List<String> dateButtonTitles = [
     'Yesterday',
@@ -29,6 +33,17 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
     'This Week',
     'This Month'
   ];
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final provider =
+          Provider.of<SubContractReportProvider>(context, listen: false);
+      provider.setSearch(query);
+      provider.getSubContractReport(context);
+    });
+  }
 
   @override
   void initState() {
@@ -45,6 +60,13 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
   }
 
   @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SubContractReportProvider>(context);
 
@@ -52,6 +74,7 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
       drawer: const SidebarDrawer(),
       appBar: CustomAppBar(
         title: 'Sub Contract Reports',
+        showFilterIcon: false,
         onSearchTap: () {
           provider.toggleFilter();
         },
@@ -62,6 +85,7 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
           provider.setSearch(query);
           provider.getSubContractReport(context);
         },
+        onChanged: _onSearchChanged,
         searchController: searchController,
         showExcel: true,
         onExcelTap: () {
@@ -104,12 +128,48 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
                     const SizedBox(height: 8),
-                    CommonReportDateFilter(
-                      fromDate: provider.fromDate?.toString(),
-                      toDate: provider.toDate?.toString(),
-                      formattedFromDate: provider.formattedFromDate,
-                      formattedToDate: provider.formattedToDate,
-                      onTap: () => _showDateFilterDialog(context),
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                      alignment: WrapAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _showDateFilterDialog(context);
+                          },
+                          child: Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: AppColors.scaffoldColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: ConstrainedBox(
+                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      child: CustomText(
+                                        provider.fromDate == null && provider.toDate == null
+                                            ? 'Date'
+                                            : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.textBlack,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     CustomText('Staff',
@@ -128,7 +188,6 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                               isSelected: provider.selectedUserId == 0,
                               onTap: () {
                                 provider.setUserId(0);
-                                provider.getSubContractReport(context);
                               },
                             ),
                             ...dropDownProvider.searchUserDetails.map((u) =>
@@ -138,7 +197,6 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                                       u.userDetailsId,
                                   onTap: () {
                                     provider.setUserId(u.userDetailsId!);
-                                    provider.getSubContractReport(context);
                                   },
                                 )),
                           ],
@@ -162,7 +220,6 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                               isSelected: provider.selectedEnquiryForId == 0,
                               onTap: () {
                                 provider.setEnquiryForId(0);
-                                provider.getSubContractReport(context);
                               },
                             ),
                             ...dropDownProvider.enquiryForList.map((e) =>
@@ -172,7 +229,6 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                                       e.enquiryForId,
                                   onTap: () {
                                     provider.setEnquiryForId(e.enquiryForId!);
-                                    provider.getSubContractReport(context);
                                   },
                                 )),
                           ],
@@ -180,38 +236,27 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                       },
                     ),
                     const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              provider.getSubContractReport(context);
-                              provider.toggleFilter();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            child: const Text('Apply Filters',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                    if (provider.fromDate != null ||
+                        provider.toDate != null ||
+                        provider.selectedUserId != 0 ||
+                        provider.selectedEnquiryForId != 0)
+                      SizedBox(
+                        width: double.infinity,
+                        child: CommonReportResetButton(
+                          label: 'Reset All Filters',
+                          onReset: () => provider.resetFilters(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textRed,
+                            elevation: 0,
+                            side: BorderSide(color: AppColors.textRed),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        CommonReportResetButton(
-                          label: 'Reset All',
-                          onReset: () {
-                            provider.setSearch('');
-                            provider.setUserId(0);
-                            provider.setEnquiryForId(0);
-                            provider.selectDateFilterOption(null);
-                            provider.getSubContractReport(context);
-                          },
-                        ),
-                      ],
-                    ),
+                      ),
                   ],
                 ),
               ),
@@ -219,89 +264,113 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
 
           // ── LIST ────────────────────────────────────────────────────────
 
-          Expanded(
-            child: provider.subContractReport.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 80),
-                        Icon(Icons.search_off_outlined,
-                            size: 80, color: Colors.grey[300]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No sub contract reports found',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
+          if (!provider.isFilter)
+            Expanded(
+              child: provider.subContractReport.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 80),
+                          Icon(Icons.search_off_outlined,
+                              size: 80, color: Colors.grey[300]),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No sub contract reports found',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                : Column(
-                    children: [
-                      if (!provider.isFilter)
+                        ],
+                      ),
+                    )
+                  : Column(
+                      children: [
                         CommonReportSummaryBar(
                           totalLabel: 'Total Records',
                           totalCount: provider.subContractReport.length,
                           showingLabel: 'Showing',
                           showingCount: provider.subContractReport.length,
                         ),
-                      Expanded(
-                        child: ListView.separated(
+                        Expanded(
+                          child: ListView.separated(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: provider.subContractReport.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final item = provider.subContractReport[index];
+                              return ReportListItem(
+                                title: item.customerName,
+                                subtitle: item.toUserName,
+                                status: item.taskStatusName.isEmpty
+                                    ? 'Pending'
+                                    : item.taskStatusName,
+                                statusColor: Colors.blue,
+                                description: 'Type: ${item.taskTypeName}',
+                                bottomLeftIcon: Icons.calendar_today_outlined,
+                                bottomLeftText: item.entryDate,
+                                bottomRightText: '₹${item.commission}',
+                              );
+                            },
+                          ),
+                        ),
+                        Container(
                           padding: const EdgeInsets.all(16),
-                          itemCount: provider.subContractReport.length,
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final item = provider.subContractReport[index];
-                            return ReportListItem(
-                              title: item.customerName,
-                              subtitle: item.toUserName,
-                              status: item.taskStatusName.isEmpty
-                                  ? 'Pending'
-                                  : item.taskStatusName,
-                              statusColor: Colors.blue,
-                              description: 'Type: ${item.taskTypeName}',
-                              bottomLeftIcon: Icons.calendar_today_outlined,
-                              bottomLeftText: item.entryDate,
-                              bottomRightText: '₹${item.commission}',
-                            );
-                          },
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, -5),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Total Commission',
+                                  style: TextStyle(
+                                      fontSize: 14, fontWeight: FontWeight.w600)),
+                              Text('₹${provider.totalCommission}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: Colors.green)),
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, -5),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Total Commission',
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w600)),
-                            Text('₹${provider.totalCommission}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.green)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
+                      ],
+                    ),
+            ),
         ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: provider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_sub_contract_report_filter_fab',
+                  onPressed: () {
+                    provider.getSubContractReport(context);
+                    provider.toggleFilter();
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
       ),
     );
   }

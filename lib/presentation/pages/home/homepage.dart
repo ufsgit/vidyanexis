@@ -1,6 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
@@ -9,11 +14,12 @@ import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
-import 'package:vidyanexis/presentation/pages/reports/checkin_checkout_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/side_bar_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
@@ -293,7 +299,7 @@ class _HomePageState extends State<HomePage> {
         SidebarOption(
           title: 'Attendance Reports',
           iconPath: 'assets/images/Reports.svg',
-          baseContent: const Center(child: CheckInOutScreen()),
+          baseContent: const Center(child: AttendanceReport()),
         ),
       if (settingsProvider.menuIsViewMap[96].toString() == '1')
         SidebarOption(
@@ -405,7 +411,10 @@ class _HomePageState extends State<HomePage> {
             sideProvider.selectedName == 'Inventory' ||
             sideProvider.selectedName == 'Process Flow' ||
             sideProvider.selectedName == 'Expense Management' ||
-            sideProvider.selectedName == 'Settings';
+            sideProvider.selectedName == 'Settings' ||
+            (AppStyles.isWebScreen(context) &&
+                (sideProvider.selectedName.contains('Report') ||
+                    sideProvider.selectedName == 'Sales Pipeline'));
     return Scaffold(
       appBar: hideMainAppBar
           ? null
@@ -430,6 +439,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
+              title: null,
               actions: [
                 Consumer<NotificationProvider>(
                   builder: (context, notificationProvider, child) {

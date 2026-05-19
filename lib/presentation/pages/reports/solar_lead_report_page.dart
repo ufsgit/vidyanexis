@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -7,8 +9,13 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/solar_lead_report_provider.dart';
-
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class SolarLeadReportPage extends StatefulWidget {
   const SolarLeadReportPage({super.key});
@@ -20,6 +27,24 @@ class SolarLeadReportPage extends StatefulWidget {
 class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
   TextEditingController searchController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Timer? _debounce;
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final provider =
+          Provider.of<SolarLeadReportProvider>(context, listen: false);
+      provider.getSolarLeadReport(
+        context,
+        query,
+        provider.fromDateS,
+        provider.toDateS,
+        provider.Status,
+        provider.AssignedTo,
+      );
+    });
+  }
 
   @override
   void initState() {
@@ -46,21 +71,66 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
   }
 
   @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SolarLeadReportProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
+    final isWeb = AppStyles.isWebScreen(context);
+    final isMobile = !isWeb;
 
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.grey[50],
-      appBar: AppStyles.isWebScreen(context)
-          ? null
-          : AppBar(
-              title: const Text('Solar Lead Reports'),
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              elevation: 0,
-            ),
+      drawer: isMobile ? const SidebarDrawer() : null,
+      appBar: isMobile
+          ? CustomAppBar(
+              title: 'Solar Lead Reports',
+              titleStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack),
+              showFilterIcon: false,
+              searchHintText: 'Search here....',
+              onFilterTap: () {
+                provider.toggleFilter();
+              },
+              onSearchTap: () {
+                Provider.of<SidebarProvider>(context, listen: false).startSearch();
+                provider.toggleFilter();
+              },
+              onClearTap: () {
+                searchController.clear();
+                provider.toggleFilter();
+                Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                provider.getSolarLeadReport(
+                  context,
+                  '',
+                  provider.fromDateS,
+                  provider.toDateS,
+                  provider.Status,
+                  provider.AssignedTo,
+                );
+              },
+              onSearch: (query) {
+                provider.getSolarLeadReport(
+                  context,
+                  query,
+                  provider.fromDateS,
+                  provider.toDateS,
+                  provider.Status,
+                  provider.AssignedTo,
+                );
+              },
+              onChanged: _onSearchChanged,
+              searchController: searchController,
+            )
+          : null,
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : Container(
@@ -68,43 +138,219 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(context, provider, dropDownProvider),
-                  if (provider.isFilter)
-                    _buildFilterContainer(context, provider, dropDownProvider),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildChartCard(
-                            title: 'Leads Created Per Day',
-                            data: provider.leadsCreatedPerDay,
-                            yAxisTitle: 'Lead Count',
-                            lineColor: AppColors.primaryBlue,
-                          ),
-                          const SizedBox(height: 24),
-                          _buildChartCard(
-                            title: 'Lead Conversion Count Per Day',
-                            data: provider.conversionsPerDay,
-                            yAxisTitle: 'Conversion Count',
-                            lineColor: Colors.green,
-                          ),
-                          const SizedBox(height: 24),
-                          _buildChartCard(
-                            title: 'Project Cost by Conversion Date',
-                            data: provider.projectCostPerDay,
-                            yAxisTitle: 'Total Cost',
-                            isCurrency: true,
-                            lineColor: Colors.orange,
-                          ),
-                        ],
+                  if (isWeb) ...[
+                    _buildHeader(context, provider, dropDownProvider),
+                    if (provider.isFilter)
+                      _buildFilterContainer(context, provider, dropDownProvider),
+                  ],
+                  if (isMobile && provider.isFilter)
+                    Expanded(
+                      child: _buildMobileFilterPanel(context, provider, dropDownProvider),
+                    ),
+                  if (isWeb || !provider.isFilter)
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildChartCard(
+                              title: 'Leads Created Per Day',
+                              data: provider.leadsCreatedPerDay,
+                              yAxisTitle: 'Lead Count',
+                              lineColor: AppColors.primaryBlue,
+                            ),
+                            const SizedBox(height: 24),
+                            _buildChartCard(
+                              title: 'Lead Conversion Count Per Day',
+                              data: provider.conversionsPerDay,
+                              yAxisTitle: 'Conversion Count',
+                              lineColor: Colors.green,
+                            ),
+                            const SizedBox(height: 24),
+                            _buildChartCard(
+                              title: 'Project Cost by Conversion Date',
+                              data: provider.projectCostPerDay,
+                              yAxisTitle: 'Total Cost',
+                              isCurrency: true,
+                              lineColor: Colors.orange,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: (isMobile && provider.isFilter)
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_solar_lead_report_filter_fab',
+                  onPressed: () {
+                    provider.getSolarLeadReport(
+                      context,
+                      provider.Search,
+                      provider.formattedFromDate,
+                      provider.formattedToDate,
+                      provider.selectedStatus.toString(),
+                      provider.selectedUser.toString(),
+                    );
+                    provider.toggleFilter();
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildMobileFilterPanel(BuildContext context,
+      SolarLeadReportProvider provider, DropDownProvider dropDownProvider) {
+    final searchProvider = Provider.of<SidebarProvider>(context, listen: false);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          CustomText('Status',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: [
+              FilterChipWidget(
+                label: 'All',
+                isSelected: provider.selectedStatus == 0,
+                onTap: () => provider.setStatus(0),
+              ),
+              ...dropDownProvider.followUpData.map((s) => FilterChipWidget(
+                    label: s.statusName ?? 'Unknown',
+                    isSelected: provider.selectedStatus == s.statusId,
+                    onTap: () => provider.setStatus(s.statusId ?? 0),
+                  )),
+            ],
+          ),
+          const SizedBox(height: 16),
+          CustomText('Date Range',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            alignment: WrapAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  onClickTopButton(context);
+                },
+                child: Container(
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.scaffoldColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 200),
+                            child: CustomText(
+                              provider.fromDate == null && provider.toDate == null
+                                  ? 'Date'
+                                  : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textBlack,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          color: AppColors.textGrey3,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          CustomText('Assigned Staff',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textBlack),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: [
+              FilterChipWidget(
+                label: 'All',
+                isSelected: provider.selectedUser == 0,
+                onTap: () => provider.setUserFilterStatus(0),
+              ),
+              ...dropDownProvider.searchUserDetails.map((u) => FilterChipWidget(
+                    label: u.userDetailsName,
+                    isSelected: provider.selectedUser == u.userDetailsId,
+                    onTap: () => provider.setUserFilterStatus(u.userDetailsId),
+                  )),
+            ],
+          ),
+          const SizedBox(height: 24),
+          if (provider.fromDate != null ||
+              provider.toDate != null ||
+              (provider.selectedStatus != 0) ||
+              (provider.selectedUser != 0))
+            SizedBox(
+              width: double.infinity,
+              child: CommonReportResetButton(
+                label: 'Reset All Filters',
+                onReset: () {
+                  provider.removeStatus();
+                  searchController.clear();
+                  provider.getSolarLeadReport(context, '', '', '', '', '');
+                  searchProvider.stopSearch();
+                  provider.toggleFilter();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: AppColors.textRed,
+                  elevation: 0,
+                  side: BorderSide(color: AppColors.textRed),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+              ),
+            ),
+          const SizedBox(height: 80),
+        ],
+      ),
     );
   }
 
@@ -114,14 +360,49 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          if (AppStyles.isWebScreen(context))
+          if (AppStyles.isWebScreen(context)) ...[
+            Builder(
+              builder: (context) => IconButton(
+                onPressed: () {
+                  ScaffoldState? parent;
+                  context.visitAncestorElements((element) {
+                    if (element is StatefulElement &&
+                        element.state is ScaffoldState) {
+                      ScaffoldState scaffold =
+                          element.state as ScaffoldState;
+                      if (scaffold.hasDrawer) {
+                        parent = scaffold;
+                        return false;
+                      }
+                    }
+                    return true;
+                  });
+                  parent?.openDrawer();
+                },
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.sort,
+                    size: 20,
+                    color: AppColors.secondaryBlue,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
             const Text(
               'Solar Lead Reports',
               style: TextStyle(
                 fontSize: 24,
+                color: Color(0xFF152D70),
                 fontWeight: FontWeight.bold,
               ),
             ),
+          ],
           const Spacer(),
           Container(
             width: AppStyles.isWebScreen(context)
@@ -135,6 +416,9 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
             ),
             child: TextField(
               controller: searchController,
+              onChanged: (val) {
+                setState(() {});
+              },
               onSubmitted: (query) {
                 provider.getSolarLeadReport(
                   context,
@@ -147,50 +431,28 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
               },
               decoration: InputDecoration(
                 hintText: 'Search here....',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search, size: 20),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
+                  vertical: 8,
                 ),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      String query = searchController.text;
-                      if (provider.Search.isNotEmpty) {
-                        searchController.clear();
-                        provider.getSolarLeadReport(
-                          context,
-                          '',
-                          provider.fromDateS,
-                          provider.toDateS,
-                          provider.Status,
-                          provider.AssignedTo,
-                        );
-                      } else {
-                        provider.getSolarLeadReport(
-                          context,
-                          query,
-                          provider.fromDateS,
-                          provider.toDateS,
-                          provider.Status,
-                          provider.AssignedTo,
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.textGrey4,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    child:
-                        Text(provider.Search.isNotEmpty ? 'Cancel' : 'Search'),
-                  ),
-                ),
+                suffixIcon: searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 18),
+                        onPressed: () {
+                          searchController.clear();
+                          provider.getSolarLeadReport(
+                            context,
+                            '',
+                            provider.fromDateS,
+                            provider.toDateS,
+                            provider.Status,
+                            provider.AssignedTo,
+                          );
+                          setState(() {});
+                        },
+                      )
+                    : null,
               ),
             ),
           ),

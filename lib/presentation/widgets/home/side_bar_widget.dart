@@ -260,6 +260,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
       padding: const EdgeInsets.only(left: 54, right: 0, top: 0, bottom: 0),
       child: InkWell(
         onTap: () {
+          provider.updateSelectedName(option.title);
           provider.replaceWidget(true, '');
           provider.replaceWidgetCustomer(true, '');
           context.go(HomePage.route);

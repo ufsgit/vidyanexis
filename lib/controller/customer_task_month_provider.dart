@@ -9,6 +9,19 @@ class CustomerTaskMonthProvider extends ChangeNotifier {
   List<CustomerTaskMonthModel> _taskData = [];
   List<CustomerTaskMonthModel> get taskData => _taskData;
 
+  bool _isFilter = false;
+  bool get isFilter => _isFilter;
+
+  void toggleFilter() {
+    _isFilter = !_isFilter;
+    notifyListeners();
+  }
+
+  void setFilter(bool value) {
+    _isFilter = value;
+    notifyListeners();
+  }
+
   DateTime _selectedMonth = DateTime.now();
   DateTime get selectedMonth => _selectedMonth;
 
