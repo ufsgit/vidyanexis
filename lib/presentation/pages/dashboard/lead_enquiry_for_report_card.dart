@@ -66,6 +66,7 @@ class LeadEnquiryForReportCard extends StatelessWidget {
                       series: <CartesianSeries<LeadEnquiryReportModel, String>>[
                         ColumnSeries<LeadEnquiryReportModel, String>(
                           dataSource: data,
+                          width: AppStyles.isWebScreen(context) ? 0.3 : 0.5,
                           xValueMapper: (LeadEnquiryReportModel data, _) =>
                               data.enquiryForName,
                           yValueMapper: (LeadEnquiryReportModel data, _) =>

@@ -71,6 +71,7 @@ class WeeklyReportCard extends StatelessWidget {
                             String>>[
                           ColumnSeries<LeadProgressReportModel, String>(
                             dataSource: data,
+                            width: AppStyles.isWebScreen(context) ? 0.3 : 0.5,
                             xValueMapper: (LeadProgressReportModel data, _) =>
                                 data.statusName,
                             yValueMapper: (LeadProgressReportModel data, _) =>

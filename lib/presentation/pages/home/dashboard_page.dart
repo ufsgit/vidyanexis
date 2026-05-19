@@ -113,6 +113,182 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
     ];
 
+    Widget dateFilterBtn = Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onClickTopButton(context, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
+        borderRadius: BorderRadius.circular(10),
+        child: Ink(
+          height: AppStyles.isWebScreen(context) ? 38 : 34,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(width: 10),
+              const Icon(Icons.calendar_today_rounded, size: 13, color: AppColors.secondaryBlue),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  dashBoardProvider.fromDate == null &&
+                          dashBoardProvider.toDate == null
+                      ? 'All Dates'
+                      : dashBoardProvider.formattedFromDate ==
+                              dashBoardProvider.formattedToDate
+                          ? dashBoardProvider.formattedFromDate
+                          : '${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.secondaryBlue,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    Widget staffFilterBtn = Material(
+      color: Colors.transparent,
+      child: Ink(
+        height: AppStyles.isWebScreen(context) ? 38 : 34,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: _buildAssignedStaffFilter(dashBoardProvider, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
+      ),
+    );
+
+    Widget attendanceBtn = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 140),
+      child: Consumer<AttendanceReportProvider>(
+        builder: (context, attendanceProvider, child) {
+          if (settingsProvider.menuIsViewMap[26].toString() != '1') {
+            return const SizedBox.shrink();
+          }
+
+          final isWeb = AppStyles.isWebScreen(context);
+          final btnHeight = isWeb ? 38.0 : 74.0;
+
+          if (attendanceProvider.isCompletedToday) {
+            return Container(
+              height: btnHeight,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0FDF4),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFDCFCE7)),
+              ),
+              child: isWeb 
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 16),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Done',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: const Color(0xFF16A34A),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 18),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Done',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: const Color(0xFF16A34A),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+            );
+          }
+
+          return Container(
+            height: btnHeight,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.secondaryBlue,
+                  AppColors.secondaryBlue.withOpacity(0.85),
+                ],
+              ),
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const AddAttendanceWidget(
+                        editId: '0',
+                        isEdit: false,
+                        user: '',
+                        userId: 0);
+                  },
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                shadowColor: Colors.transparent,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(horizontal: isWeb ? 16 : 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: isWeb 
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.fingerprint_rounded, size: 16),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Attendance',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.fingerprint_rounded, size: 20),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Attendance',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+            ),
+          );
+        },
+      ),
+    );
+
     return Scaffold(
       drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
       backgroundColor: AppColors.scaffoldColor,
@@ -224,171 +400,45 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   ),
                 ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomTab(dashBoardProvider: dashBoardProvider),
-                  const SizedBox(height: 12),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Filters Column (Left)
-                      Expanded(
-                        child: Column(
+              child: AppStyles.isWebScreen(context)
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: CustomTab(dashBoardProvider: dashBoardProvider),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(flex: 2, child: dateFilterBtn),
+                        const SizedBox(width: 12),
+                        Expanded(flex: 2, child: staffFilterBtn),
+                        const SizedBox(width: 12),
+                        attendanceBtn,
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomTab(dashBoardProvider: dashBoardProvider),
+                        const SizedBox(height: 12),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Date Filter Button
-                            Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () => onClickTopButton(context, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
-                                borderRadius: BorderRadius.circular(10),
-                                child: Ink(
-                                  height: 34,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF1F5F9),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(width: 10),
-                                      Icon(Icons.calendar_today_rounded, size: 13, color: AppColors.secondaryBlue),
-                                      const SizedBox(width: 8),
-                                      Flexible(
-                                        child: Text(
-                                          dashBoardProvider.fromDate == null &&
-                                                  dashBoardProvider.toDate == null
-                                              ? 'All Dates'
-                                              : dashBoardProvider.formattedFromDate ==
-                                                      dashBoardProvider.formattedToDate
-                                                  ? dashBoardProvider.formattedFromDate
-                                                  : '${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.secondaryBlue,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  dateFilterBtn,
+                                  const SizedBox(height: 6),
+                                  staffFilterBtn,
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            // Staff Filter Button
-                            Material(
-                              color: Colors.transparent,
-                              child: Ink(
-                                height: 34,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF1F5F9),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: _buildAssignedStaffFilter(dashBoardProvider, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
-                              ),
-                            ),
-
-
+                            const SizedBox(width: 10),
+                            attendanceBtn,
                           ],
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      // Attendance Button (Right)
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 140),
-                        child: Consumer<AttendanceReportProvider>(
-                          builder: (context, attendanceProvider, child) {
-                            if (settingsProvider.menuIsViewMap[26].toString() != '1') {
-                              return const SizedBox.shrink();
-                            }
-
-                            if (attendanceProvider.isCompletedToday) {
-                              return Container(
-                                height: 74, // Matches 34+6+34 of filters
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF0FDF4),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: const Color(0xFFDCFCE7)),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 18),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      'Done',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        color: const Color(0xFF16A34A),
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-
-                            return Container(
-                              height: 74, // Matches 34+6+34 of filters
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.secondaryBlue,
-                                    AppColors.secondaryBlue.withOpacity(0.85),
-                                  ],
-                                ),
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return const AddAttendanceWidget(
-                                          editId: '0',
-                                          isEdit: false,
-                                          user: '',
-                                          userId: 0);
-                                    },
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  foregroundColor: Colors.white,
-                                  shadowColor: Colors.transparent,
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.fingerprint_rounded, size: 20),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      'Attendance',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    ),
             ),
 
 

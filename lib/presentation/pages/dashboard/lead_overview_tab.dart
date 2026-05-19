@@ -8,6 +8,7 @@ import 'package:vidyanexis/presentation/pages/dashboard/chart.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_enquiry_for_report_card.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/weekly_report_card.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 class LeadsOverViewTab extends StatefulWidget {
   const LeadsOverViewTab({
@@ -193,31 +194,54 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
         ),
       );
     }
-    return Wrap(
-      runSpacing: 10,
-      spacing: 10,
-      children: [
-        // countsGrid, // Hidden as per user request
-        LeadGraphBarChart(
-          leadData: widget.leadConversionData,
-        ),
-        ConversionGraphBarChart(
-          leadData: widget.leadConversionData,
-        ),
-        LeadDistributionPieChart(
-          leadData: widget.leadConversionData,
-        ),
-        LeadEnquiryForReportCard(
-          dashboardProvider: widget.dashBoardProvider,
-        ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWeb = AppStyles.isWebScreen(context);
+        final double spacing = 10.0;
+        final double chartWidth = isWeb 
+            ? (constraints.maxWidth - spacing) / 2 
+            : constraints.maxWidth;
 
-        WeeklyReportCard(
-          isLeadOverView: true,
-          data: widget.pieData,
-          dashboardProvider: widget.dashBoardProvider,
-        ),
-        // Container(
-        //   padding: const EdgeInsets.all(10),
+        return Wrap(
+          runSpacing: spacing,
+          spacing: spacing,
+          children: [
+            // countsGrid, // Hidden as per user request
+            SizedBox(
+              width: chartWidth,
+              child: LeadGraphBarChart(
+                leadData: widget.leadConversionData,
+              ),
+            ),
+            SizedBox(
+              width: chartWidth,
+              child: ConversionGraphBarChart(
+                leadData: widget.leadConversionData,
+              ),
+            ),
+            SizedBox(
+              width: chartWidth,
+              child: LeadDistributionPieChart(
+                leadData: widget.leadConversionData,
+              ),
+            ),
+            SizedBox(
+              width: chartWidth,
+              child: LeadEnquiryForReportCard(
+                dashboardProvider: widget.dashBoardProvider,
+              ),
+            ),
+
+            SizedBox(
+              width: constraints.maxWidth,
+              child: WeeklyReportCard(
+                isLeadOverView: true,
+                data: widget.pieData,
+                dashboardProvider: widget.dashBoardProvider,
+              ),
+            ),
+            // Container(
+            //   padding: const EdgeInsets.all(10),
         //   decoration: BoxDecoration(boxShadow: const [
         //     BoxShadow(color: Colors.black12, blurRadius: 5)
         //   ], color: Colors.white, borderRadius: BorderRadius.circular(18)),
@@ -350,6 +374,8 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
         //   ),
         // ),
       ],
+    );
+      },
     );
   }
 

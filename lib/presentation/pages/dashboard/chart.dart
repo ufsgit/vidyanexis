@@ -22,7 +22,6 @@ class LeadGraphBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -74,7 +73,7 @@ class LeadGraphBarChart extends StatelessWidget {
                   dataSource: leadData,
                   enableTooltip: true,
                   color: AppColors.primaryBlue,
-                  width: 0.5,
+                  width: AppStyles.isWebScreen(context) ? 0.3 : 0.5,
                   borderRadius: BorderRadius.circular(18),
                   xValueMapper: (LeadCoversionChartModel lead, _) =>
                       lead.enquirySource.toString(),
@@ -157,7 +156,6 @@ class ConversionGraphBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -198,7 +196,7 @@ class ConversionGraphBarChart extends StatelessWidget {
                   dataSource: leadData,
                   enableTooltip: true,
                   color: AppColors.secondaryBlue,
-                  width: 0.5,
+                  width: AppStyles.isWebScreen(context) ? 0.3 : 0.5,
                   borderRadius: BorderRadius.circular(18),
                   xValueMapper: (LeadCoversionChartModel lead, _) =>
                       lead.enquirySource.toString(),
@@ -296,7 +294,6 @@ class LeadDistributionPieChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -318,7 +315,7 @@ class LeadDistributionPieChart extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           SizedBox(
-            height: 300, // Fixed height for the pie chart
+            height: 350, // Fixed height to match adjacent card
             child: SfCircularChart(
               tooltipBehavior: TooltipBehavior(enable: true),
               legend: Legend(
@@ -410,7 +407,6 @@ class TaskAllocationBarChart extends StatelessWidget {
     // final dashboardProvider = Provider.of<DashboardProvider>(context);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -447,7 +443,7 @@ class TaskAllocationBarChart extends StatelessWidget {
               ColumnSeries<TaskAllocationSummaryModel, String>(
                 dataSource: taskData,
                 color: AppColors.primaryBlue,
-                width: 0.5,
+                width: AppStyles.isWebScreen(context) ? 0.3 : 0.5,
                 borderRadius: BorderRadius.circular(18),
                 xValueMapper: (TaskAllocationSummaryModel data, _) =>
                     data.userDetailsName ?? '',
