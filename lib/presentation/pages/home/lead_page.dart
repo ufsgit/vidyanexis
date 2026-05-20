@@ -1,5 +1,6 @@
 import 'package:vidyanexis/controller/models/Sales_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -288,170 +289,351 @@ class _LeadsPageState extends State<LeadPage> {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                children: [
-                  if (widget.fromDashBoard)
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryBlue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+              child: AppStyles.isWebScreen(context)
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            if (widget.fromDashBoard)
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_back,
+                                    size: 20,
+                                    color: AppColors.textGrey4,
+                                  ),
+                                ),
+                              ),
+                            if (widget.fromDashBoard)
+                              const SizedBox(
+                                width: 8,
+                              ),
+                            Text(
+                              'Leads',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 22,
+                                color: const Color(0xFF1E293B),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Icon(
-                          Icons.arrow_back,
-                          size: 20,
-                          color: AppColors.textGrey4,
-                        ),
-                      ),
-                    ),
-                  if (widget.fromDashBoard)
-                    const SizedBox(
-                      width: 8,
-                    ),
-                  const Text(
-                    'Leads',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Color(0xFF152D70),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Flexible(child: Container()),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 4,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.black, width: 1.5),
-                    ),
-                    child: TextField(
-                      controller: searchController,
-                      textAlignVertical: TextAlignVertical.center,
-                      // onChanged: _onSearchChanged,
-                      onSubmitted: (query) {
-                        if (_debounce?.isActive ?? false) _debounce!.cancel();
-                        leadProvider.setSearchCriteria(
-                            query, leadProvider.fromDateS, leadProvider.toDateS,
-                            leadId: leadIdController.text);
-                        leadProvider.getSearchLeads(context);
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Search here....',
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            if (_debounce?.isActive ?? false) {
-                              _debounce!.cancel();
-                            }
-                            leadProvider.setSearchCriteria(
-                                searchController.text,
-                                leadProvider.fromDateS,
-                                leadProvider.toDateS,
-                                leadId: leadIdController.text);
-                            leadProvider.getSearchLeads(context);
-                          },
-                          child: const Icon(Icons.search, color: Colors.black),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  PopupMenuButton<int>(
-                    icon: const Icon(Icons.sort, color: Color(0xFF152D70)),
-                    tooltip: 'Sort By',
-                    onSelected: (int value) {
-                      leadProvider.setSortOption(value, context);
-                    },
-                    itemBuilder: (BuildContext context) => [
-                      const PopupMenuItem(
-                        value: 0,
-                        child: Text('Default'),
-                      ),
-                      const PopupMenuItem(
-                        value: 1,
-                        child: Text('ID No'),
-                      ),
-                      const PopupMenuItem(
-                        value: 2,
-                        child: Text('Creation Date'),
-                      ),
-                      const PopupMenuItem(
-                        value: 3,
-                        child: Text('Followup Date'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    icon: Icon(
-                      leadProvider.sortOrder == 'ASC'
-                          ? Icons.arrow_upward
-                          : Icons.arrow_downward,
-                      color: const Color(0xFF152D70),
-                      size: 20,
-                    ),
-                    onPressed: () => leadProvider.toggleSortOrder(context),
-                    tooltip: leadProvider.sortOrder == 'ASC'
-                        ? 'Ascending'
-                        : 'Descending',
-                  ),
-                  const SizedBox(width: 8),
-                  CustomFilterButton(
-                    onPressed: () {
-                      leadProvider.toggleFilter();
-                      // leadProvider.selectDateFilterOption(null);
-                      // leadProvider.removeStatus();
-                      // leadProvider.getSearchLeads('', '', '', '', context);
-                      print(leadProvider.isFilter);
-                    },
-                    isFilter: leadProvider.isFilter,
-                  ),
-                  const SizedBox(width: 16),
-                  // New Lead Button
-                  if (settingsProvider.menuIsSaveMap[3] == 1)
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        final dropDownProvider = Provider.of<DropDownProvider>(
-                            context,
-                            listen: false);
-                        dropDownProvider.updateEnquiryForName(null, '');
-                        dropDownProvider.updateDistrict(null, '');
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Container(
+                              width: 280,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    color: const Color(0xFFCBD5E1),
+                                    width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                controller: searchController,
+                                textAlignVertical: TextAlignVertical.center,
+                                onSubmitted: (query) {
+                                  if (_debounce?.isActive ?? false) _debounce!.cancel();
+                                  leadProvider.setSearchCriteria(
+                                      query, leadProvider.fromDateS, leadProvider.toDateS,
+                                      leadId: leadIdController.text);
+                                  leadProvider.getSearchLeads(context);
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Search here...',
+                                  hintStyle: GoogleFonts.plusJakartaSans(
+                                    color: const Color(0xFF94A3B8),
+                                    fontSize: 13,
+                                  ),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      if (_debounce?.isActive ?? false) {
+                                        _debounce!.cancel();
+                                      }
+                                      leadProvider.setSearchCriteria(
+                                          searchController.text,
+                                          leadProvider.fromDateS,
+                                          leadProvider.toDateS,
+                                          leadId: leadIdController.text);
+                                      leadProvider.getSearchLeads(context);
+                                    },
+                                    child: const Icon(Icons.search,
+                                        color: Color(0xFF64748B), size: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            PopupMenuButton<int>(
+                              icon: const Icon(Icons.sort, color: Color(0xFF64748B)),
+                              tooltip: 'Sort By',
+                              onSelected: (int value) {
+                                leadProvider.setSortOption(value, context);
+                              },
+                              itemBuilder: (BuildContext context) => [
+                                const PopupMenuItem(
+                                  value: 0,
+                                  child: Text('Default'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 1,
+                                  child: Text('ID No'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 2,
+                                  child: Text('Creation Date'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 3,
+                                  child: Text('Followup Date'),
+                                ),
+                              ],
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                leadProvider.sortOrder == 'ASC'
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward,
+                                color: const Color(0xFF64748B),
+                                size: 20,
+                              ),
+                              onPressed: () => leadProvider.toggleSortOrder(context),
+                              tooltip: leadProvider.sortOrder == 'ASC'
+                                  ? 'Ascending'
+                                  : 'Descending',
+                            ),
+                            CustomFilterButton(
+                              onPressed: () {
+                                leadProvider.toggleFilter();
+                                print(leadProvider.isFilter);
+                              },
+                              isFilter: leadProvider.isFilter,
+                            ),
+                            if (settingsProvider.menuIsSaveMap[3] == 1)
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  final dropDownProvider = Provider.of<DropDownProvider>(
+                                      context,
+                                      listen: false);
+                                  dropDownProvider.updateEnquiryForName(null, '');
+                                  dropDownProvider.updateDistrict(null, '');
 
-                        await leadProvider.getLeadDropdowns(context);
+                                  await leadProvider.getLeadDropdowns(context);
 
-                        // _scaffoldKey.currentState
-                        //     ?.openEndDrawer(); // Open drawer
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const NewLeadDrawerWidget(
-                              isEdit: false,
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('New Lead'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryBlue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const NewLeadDrawerWidget(
+                                        isEdit: false,
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.add, size: 16),
+                                label: Text(
+                                  'New Lead',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryBlue,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                      ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        if (widget.fromDashBoard)
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBlue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                size: 20,
+                                color: AppColors.textGrey4,
+                              ),
+                            ),
+                          ),
+                        if (widget.fromDashBoard)
+                          const SizedBox(
+                            width: 8,
+                          ),
+                        const Text(
+                          'Leads',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Color(0xFF152D70),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Flexible(child: Container()),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 4,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: Colors.black, width: 1.5),
+                          ),
+                          child: TextField(
+                            controller: searchController,
+                            textAlignVertical: TextAlignVertical.center,
+                            onSubmitted: (query) {
+                              if (_debounce?.isActive ?? false) _debounce!.cancel();
+                              leadProvider.setSearchCriteria(
+                                  query, leadProvider.fromDateS, leadProvider.toDateS,
+                                  leadId: leadIdController.text);
+                              leadProvider.getSearchLeads(context);
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Search here....',
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  if (_debounce?.isActive ?? false) {
+                                    _debounce!.cancel();
+                                  }
+                                  leadProvider.setSearchCriteria(
+                                      searchController.text,
+                                      leadProvider.fromDateS,
+                                      leadProvider.toDateS,
+                                      leadId: leadIdController.text);
+                                  leadProvider.getSearchLeads(context);
+                                },
+                                child: const Icon(Icons.search, color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        PopupMenuButton<int>(
+                          icon: const Icon(Icons.sort, color: Color(0xFF152D70)),
+                          tooltip: 'Sort By',
+                          onSelected: (int value) {
+                            leadProvider.setSortOption(value, context);
+                          },
+                          itemBuilder: (BuildContext context) => [
+                            const PopupMenuItem(
+                              value: 0,
+                              child: Text('Default'),
+                            ),
+                            const PopupMenuItem(
+                              value: 1,
+                              child: Text('ID No'),
+                            ),
+                            const PopupMenuItem(
+                              value: 2,
+                              child: Text('Creation Date'),
+                            ),
+                            const PopupMenuItem(
+                              value: 3,
+                              child: Text('Followup Date'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 4),
+                        IconButton(
+                          icon: Icon(
+                            leadProvider.sortOrder == 'ASC'
+                                ? Icons.arrow_upward
+                                : Icons.arrow_downward,
+                            color: const Color(0xFF152D70),
+                            size: 20,
+                          ),
+                          onPressed: () => leadProvider.toggleSortOrder(context),
+                          tooltip: leadProvider.sortOrder == 'ASC'
+                              ? 'Ascending'
+                              : 'Descending',
+                        ),
+                        const SizedBox(width: 8),
+                        CustomFilterButton(
+                          onPressed: () {
+                            leadProvider.toggleFilter();
+                            print(leadProvider.isFilter);
+                          },
+                          isFilter: leadProvider.isFilter,
+                        ),
+                        const SizedBox(width: 16),
+                        if (settingsProvider.menuIsSaveMap[3] == 1)
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final dropDownProvider = Provider.of<DropDownProvider>(
+                                  context,
+                                  listen: false);
+                              dropDownProvider.updateEnquiryForName(null, '');
+                              dropDownProvider.updateDistrict(null, '');
+
+                              await leadProvider.getLeadDropdowns(context);
+
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const NewLeadDrawerWidget(
+                                    isEdit: false,
+                                  );
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('New Lead'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                            ),
+                          ),
+                        const SizedBox(width: 16),
+                      ],
                     ),
-                  const SizedBox(width: 16),
-                ],
-              ),
             ),
             if (leadProvider.isFilter)
               Container(
@@ -547,8 +729,19 @@ class _LeadsPageState extends State<LeadPage> {
                 ),
               ),
             Expanded(
-              child: Scrollbar(
-                controller: _scrollableVerticalController,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 4.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Scrollbar(
+                      controller: _scrollableVerticalController,
                 thumbVisibility: true,
                 trackVisibility: true,
                 interactive: true,
@@ -1755,11 +1948,14 @@ class _LeadsPageState extends State<LeadPage> {
                   ],
                 ),
               ),
-            ),
-            _buildPaginationControls(context),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
+      bottomNavigationBar: _buildPaginationControls(context),
     );
   }
 

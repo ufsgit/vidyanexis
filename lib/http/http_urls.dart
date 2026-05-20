@@ -25,14 +25,14 @@ class HttpUrls {
 
   // static String baseUrl = 'https://ramcoelectronicsapi.trackbox.net.in/';
   // static String baseUrl = 'https://compassenergyapi.trackbox.net.in/';
-  // static String baseUrl = 'https://leotechapi.ufstech.net.in/';
+//   static String baseUrl = 'https://leotechapi.ufstech.net.in/';
 
   // static String baseUrl = 'https://ramcoelectronicsapi.trackbox.net.in/';
   static String baseUrl = 'https://compassenergyapi.trackbox.net.in/';
 
   // static String baseUrl = 'https://exactsystem.trackbox.net.in/';
 //   static String baseUrl = 'https://jbsolarapi.ufstech.net.in/';
-  // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
+  //static String baseUrl = 'https://disunenergyapi.ufstech.net.in/';
 //   static String baseUrl = 'https://demo3api.ufstech.net.in/';
 //dev
 
@@ -376,4 +376,5 @@ class HttpUrls {
   static String saveStructureMaterials =
       "quotation_details/Save_structure_materials";
   static String getLeadCustomerList = "lead/Get_Customer_List";
+  static String getSalesReport = "item/Search_Sales_Report";
 }

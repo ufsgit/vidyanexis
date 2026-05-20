@@ -3680,28 +3680,77 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    if (settingsprovider
-                                                                .menuIsSaveMap[
-                                                            19] ==
-                                                        1)
-                                                      InkWell(
-                                                        onTap: () {
-                                                          showDialog(
-                                                            barrierDismissible:
-                                                                false,
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                ImageUploadAlert(
-                                                                    customerId:
-                                                                        widget
-                                                                            .customerId),
-                                                          );
-                                                        },
-                                                        child: Image.asset(
-                                                          'assets/images/add_photo.png',
-                                                          height: 50,
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          'Documents',
+                                                          style: GoogleFonts
+                                                              .plusJakartaSans(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color: const Color(
+                                                                0xFF1E293B),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        if (settingsprovider
+                                                                    .menuIsSaveMap[
+                                                                19] ==
+                                                            1)
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              showDialog(
+                                                                barrierDismissible:
+                                                                    false,
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) =>
+                                                                        ImageUploadAlert(
+                                                                            customerId:
+                                                                                widget
+                                                                                    .customerId),
+                                                              );
+                                                            },
+                                                            child: Container(
+                                                              width: 44,
+                                                              height: 44,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: AppColors
+                                                                    .secondaryBlue,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                                boxShadow: [
+                                                                  BoxShadow(
+                                                                    color: AppColors
+                                                                        .secondaryBlue
+                                                                        .withOpacity(
+                                                                            0.3),
+                                                                    blurRadius:
+                                                                        8,
+                                                                    offset: const Offset(
+                                                                        0, 4),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              child: const Icon(
+                                                                Icons
+                                                                    .add_rounded,
+                                                                color: Colors
+                                                                    .white,
+                                                                size: 26,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 16),
                                                     Expanded(
                                                       child: ListView.builder(
                                                         itemCount:
