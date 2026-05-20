@@ -1,4 +1,5 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'dart:typed_data';
 
@@ -195,117 +196,131 @@ class _CustomerPageState extends State<CustomerPage> {
                   ? Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
-                          vertical: 4.0), // Further reduced vertical
+                          vertical: 8.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Customers',
-                            style: TextStyle(
-                              fontSize: 24,
-                              color: Color(0xFF152D70),
-                              fontWeight: FontWeight.w600,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 22,
+                              color: const Color(0xFF1E293B),
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
-                          Flexible(child: Container()),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 4,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30),
-                              border:
-                                  Border.all(color: Colors.black, width: 1.5),
-                            ),
-                            child: TextField(
-                              controller: searchController,
-                              textAlignVertical: TextAlignVertical.center,
-                              onChanged: _onSearchChanged,
-                              onSubmitted: (query) {
-                                if (_debounce?.isActive ?? false) {
-                                  _debounce!.cancel();
-                                }
-                                customerProvider.setSearchCriteria(
-                                  query,
-                                  customerProvider.fromDateS,
-                                  customerProvider.toDateS,
-                                );
-                                customerProvider.getSearchCustomers(context,
-                                    isSilent: true);
-                              },
-                              decoration: InputDecoration(
-                                hintText: 'Search here....',
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.only(
-                                    left: 16, right: 16, bottom: 11),
-                                suffixIcon: GestureDetector(
-                                  onTap: () {
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Container(
+                                width: 280,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: const Color(0xFFCBD5E1),
+                                      width: 1.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.02),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: TextField(
+                                  controller: searchController,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  onChanged: _onSearchChanged,
+                                  onSubmitted: (query) {
                                     if (_debounce?.isActive ?? false) {
                                       _debounce!.cancel();
                                     }
                                     customerProvider.setSearchCriteria(
-                                      searchController.text,
+                                      query,
                                       customerProvider.fromDateS,
                                       customerProvider.toDateS,
                                     );
                                     customerProvider.getSearchCustomers(context,
                                         isSilent: true);
                                   },
-                                  child: const Icon(Icons.search,
-                                      color: Colors.black),
+                                  decoration: InputDecoration(
+                                    hintText: 'Search here...',
+                                    hintStyle: GoogleFonts.plusJakartaSans(
+                                      color: const Color(0xFF94A3B8),
+                                      fontSize: 13,
+                                    ),
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 10),
+                                    suffixIcon: GestureDetector(
+                                      onTap: () {
+                                        if (_debounce?.isActive ?? false) {
+                                          _debounce!.cancel();
+                                        }
+                                        customerProvider.setSearchCriteria(
+                                          searchController.text,
+                                          customerProvider.fromDateS,
+                                          customerProvider.toDateS,
+                                        );
+                                        customerProvider.getSearchCustomers(context,
+                                            isSilent: true);
+                                      },
+                                      child: const Icon(Icons.search,
+                                          color: Color(0xFF64748B), size: 18),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          PopupMenuButton<int>(
-                            icon:
-                                const Icon(Icons.sort, color: Color(0xFF152D70)),
-                            tooltip: 'Sort By',
-                            onSelected: (int value) {
-                              customerProvider.setSortOption(value, context);
-                            },
-                            itemBuilder: (BuildContext context) => [
-                              const PopupMenuItem(
-                                value: 0,
-                                child: Text('Default'),
+                              PopupMenuButton<int>(
+                                icon: const Icon(Icons.sort, color: Color(0xFF64748B)),
+                                tooltip: 'Sort By',
+                                onSelected: (int value) {
+                                  customerProvider.setSortOption(value, context);
+                                },
+                                itemBuilder: (BuildContext context) => [
+                                  const PopupMenuItem(
+                                    value: 0,
+                                    child: Text('Default'),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 1,
+                                    child: Text('ID No'),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 2,
+                                    child: Text('Creation Date'),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 3,
+                                    child: Text('Followup Date'),
+                                  ),
+                                ],
                               ),
-                              const PopupMenuItem(
-                                value: 1,
-                                child: Text('ID No'),
+                              IconButton(
+                                icon: Icon(
+                                  customerProvider.sortOrder == 'ASC'
+                                      ? Icons.arrow_upward
+                                      : Icons.arrow_downward,
+                                  color: const Color(0xFF64748B),
+                                  size: 20,
+                                ),
+                                onPressed: () => customerProvider.toggleSortOrder(context),
+                                tooltip: customerProvider.sortOrder == 'ASC'
+                                    ? 'Ascending'
+                                    : 'Descending',
                               ),
-                              const PopupMenuItem(
-                                value: 2,
-                                child: Text('Creation Date'),
-                              ),
-                              const PopupMenuItem(
-                                value: 3,
-                                child: Text('Followup Date'),
+                              CustomFilterButton(
+                                onPressed: () {
+                                  customerProvider.toggleFilter();
+                                },
+                                isFilter: customerProvider.isFilter,
                               ),
                             ],
                           ),
-                          const SizedBox(width: 4),
-                          IconButton(
-                            icon: Icon(
-                              customerProvider.sortOrder == 'ASC'
-                                  ? Icons.arrow_upward
-                                  : Icons.arrow_downward,
-                              color: const Color(0xFF152D70),
-                              size: 20,
-                            ),
-                            onPressed: () => customerProvider.toggleSortOrder(context),
-                            tooltip: customerProvider.sortOrder == 'ASC'
-                                ? 'Ascending'
-                                : 'Descending',
-                          ),
-                          const SizedBox(width: 8),
-                          CustomFilterButton(
-                            onPressed: () {
-                              customerProvider.toggleFilter();
-                              print(customerProvider.isFilter);
-                            },
-                            isFilter: customerProvider.isFilter,
-                          ),
-                          const SizedBox(width: 16),
                         ],
                       ),
                     )
