@@ -167,7 +167,7 @@ class LeadsProvider extends ChangeNotifier {
 
   SaveLeadDropdownModel? _leadDropdownData; // Change from List to single object
 
-  List<SearchLeadModel> _tempData = [];
+  final List<SearchLeadModel> _tempData = [];
 
   bool _isFilter = false;
   bool _isImporting = false;
@@ -627,7 +627,7 @@ class LeadsProvider extends ChangeNotifier {
 
 //.......................................................................
 
-  bool _isScrollInitialized = false;
+  final bool _isScrollInitialized = false;
 
   void scrollListener(BuildContext context) {
     if (scrollController.hasClients &&

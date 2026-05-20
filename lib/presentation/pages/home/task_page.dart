@@ -1,9 +1,7 @@
 // Check line 1776
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
@@ -32,9 +30,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/presentation/widgets/home/hover_action_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
-import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_card.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_multi_level_dropdown.dart';
@@ -44,7 +40,6 @@ import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 

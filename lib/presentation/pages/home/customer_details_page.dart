@@ -1918,7 +1918,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           onPressed:
                                                                               () async {
                                                                             final locStr =
-                                                                                customerDetailsProvider.leadDetails![0].location?.toString() ?? '';
+                                                                                customerDetailsProvider.leadDetails![0].location.toString() ?? '';
                                                                             if (locStr == 'null' ||
                                                                                 locStr.trim().isEmpty) {
                                                                               ScaffoldMessenger.of(context).showSnackBar(
@@ -2760,7 +2760,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     onPressed:
                                                                         () async {
                                                                       final locStr =
-                                                                          customerDetailsProvider.leadDetails![0].location?.toString() ??
+                                                                          customerDetailsProvider.leadDetails![0].location.toString() ??
                                                                               '';
                                                                       if (locStr ==
                                                                               'null' ||

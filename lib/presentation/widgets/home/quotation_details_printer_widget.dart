@@ -468,7 +468,7 @@ class QuotationPDFPrinter {
             pw.Padding(
               padding: const pw.EdgeInsets.all(5),
               child: pw.Text(
-                data.discountAmount?.toString() ?? '0',
+                data.discountAmount.toString() ?? '0',
                 softWrap: false,
               ),
             ),

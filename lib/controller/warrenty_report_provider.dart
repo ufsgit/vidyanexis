@@ -8,7 +8,6 @@ import 'package:vidyanexis/controller/models/payment_reminder_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:vidyanexis/utils/extensions.dart';
 
 // Top-level parsing functions for compute()
 List<AmcNotificationModel> _parseAmcNotification(List<dynamic> data) {

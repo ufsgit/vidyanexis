@@ -110,7 +110,7 @@ class CommonDropdown<T> extends StatelessWidget {
                 const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
           ),
           // Handle selectedValue properly, it should be a valid id in items
-          value: validValue,
+          initialValue: validValue,
           items: items
               .map((item) => DropdownMenuItem<T>(
                     value: item.id,

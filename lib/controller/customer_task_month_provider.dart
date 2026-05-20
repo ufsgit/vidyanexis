@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vidyanexis/controller/models/customer_task_month_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
-import 'package:vidyanexis/http/loader.dart';
 import 'package:intl/intl.dart';
 
 class CustomerTaskMonthProvider extends ChangeNotifier {

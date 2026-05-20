@@ -426,8 +426,9 @@ class _UsersContentState extends State<UsersContent> {
                                                               index]
                                                           .userDetailsName
                                                           .trim();
-                                                  if (nameStr.isEmpty)
+                                                  if (nameStr.isEmpty) {
                                                     return 'U';
+                                                  }
                                                   final words = nameStr
                                                       .split(RegExp(r'\s+'));
                                                   if (words.length > 1) {

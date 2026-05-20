@@ -125,7 +125,7 @@ class DashboardProvider extends ChangeNotifier {
 
   // Pagination for Task Summary
   int _taskCurrentPage = 0;
-  int _taskItemsPerPage = 10;
+  final int _taskItemsPerPage = 10;
   int _taskTotalCount = 0;
   int get taskCurrentPage => _taskCurrentPage;
 

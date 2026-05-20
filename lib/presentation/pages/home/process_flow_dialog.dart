@@ -11,7 +11,6 @@ import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 
 import 'package:vidyanexis/controller/image_upload_provider.dart';
-import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
 

@@ -732,7 +732,7 @@ class _LeadCardState extends State<LeadCard> {
                                                 ),
                                                 child: Text(
                                                   user.userDetailsName
-                                                          ?.toUpperCase() ??
+                                                          .toUpperCase() ??
                                                       '',
                                                   style: GoogleFonts
                                                       .plusJakartaSans(
@@ -925,8 +925,9 @@ class _LeadCardState extends State<LeadCard> {
                             _buildActionButton(
                               onTap: () async {
                                 final url = 'tel:${widget.lead.contactNumber}';
-                                if (await canLaunchUrl(Uri.parse(url)))
+                                if (await canLaunchUrl(Uri.parse(url))) {
                                   await launchUrl(Uri.parse(url));
+                                }
                               },
                               icon: Icons.call,
                               text: 'Call',

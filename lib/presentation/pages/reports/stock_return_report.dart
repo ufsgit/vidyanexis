@@ -612,8 +612,9 @@ class _StockReturnReportState extends State<StockReturnReport> {
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2101),
                               );
-                              if (picked != null)
+                              if (picked != null) {
                                 reportsProvider.setFromDate(picked);
+                              }
                             },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
@@ -638,8 +639,9 @@ class _StockReturnReportState extends State<StockReturnReport> {
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2101),
                               );
-                              if (picked != null)
+                              if (picked != null) {
                                 reportsProvider.setToDate(picked);
+                              }
                             },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(

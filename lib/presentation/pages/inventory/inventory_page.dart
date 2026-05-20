@@ -4,7 +4,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/inventory/category_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_Customer_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/item_page.dart';
@@ -14,9 +13,7 @@ import 'package:vidyanexis/presentation/pages/inventory/supplier_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/unit_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 import 'package:vidyanexis/presentation/widgets/inventory/add_item.dart';
@@ -28,7 +25,6 @@ import 'package:vidyanexis/presentation/pages/settings/add_unit_page.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_customer_page.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_stock_use.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_stock_return_page.dart';
-import 'package:vidyanexis/presentation/pages/inventory/purchase_screen.dart';
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});

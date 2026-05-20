@@ -740,6 +740,7 @@ class FormProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+    return null;
   }
 
   bool isPrinting = false;

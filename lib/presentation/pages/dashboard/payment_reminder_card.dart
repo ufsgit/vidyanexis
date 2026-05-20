@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/models/payment_reminder_model.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PaymentReminderCard extends StatelessWidget {
   final PaymentReminderModel item;

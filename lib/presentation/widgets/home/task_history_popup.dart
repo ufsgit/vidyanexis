@@ -25,7 +25,7 @@ class TaskHistoryPopup extends StatelessWidget {
     );
   }
 
-  contentBox(context) {
+  Container contentBox(context) {
     return Container(
       width: 500,
       constraints: const BoxConstraints(maxHeight: 600),

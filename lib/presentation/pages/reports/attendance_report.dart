@@ -846,7 +846,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                     color: isSelected ? Colors.transparent : Colors.grey[300]!,
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
           const SizedBox(height: 40),

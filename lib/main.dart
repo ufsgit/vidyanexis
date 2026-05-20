@@ -63,7 +63,6 @@ import 'package:vidyanexis/utils/firebase_notification_service.dart';
 import 'package:vidyanexis/controller/sub_contract_report_provider.dart';
 import 'package:vidyanexis/controller/customer_outstanding_report_provider.dart';
 import 'package:vidyanexis/controller/customer_lead_search_provider.dart';
-import 'package:vidyanexis/controller/stock_use_report_provider.dart';
 import 'package:vidyanexis/controller/customer_task_month_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
