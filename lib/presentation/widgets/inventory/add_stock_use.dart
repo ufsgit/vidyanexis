@@ -215,7 +215,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: customerDetailsProvider.selectedStockStatus ?? 'Pending',
+                    initialValue: customerDetailsProvider.selectedStockStatus ?? 'Pending',
                     items: const [
                       DropdownMenuItem<String>(
                         value: 'Pending',

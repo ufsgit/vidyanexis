@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -8,8 +7,6 @@ import 'package:vidyanexis/controller/stockreturn_provider.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../controller/models/stock_return_model.dart';
-import '../home/custom_button_widget.dart';
-import '../home/custom_dropdown_widget.dart';
 import '../home/custom_text_field.dart';
 
 class AddStockReturnPage extends StatefulWidget {

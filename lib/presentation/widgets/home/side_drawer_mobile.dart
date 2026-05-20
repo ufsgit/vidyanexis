@@ -12,7 +12,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -40,14 +39,12 @@ import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.da
 import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/commission_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_mobile.dart';
-import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
 

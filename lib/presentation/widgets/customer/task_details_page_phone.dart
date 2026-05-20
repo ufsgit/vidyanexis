@@ -10,7 +10,6 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/expanded_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_card_mobile_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';

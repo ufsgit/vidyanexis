@@ -160,7 +160,7 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                       reportsProvider.getSearchTaskReport(context);
                     },
                   );
-                }).toList(),
+                }),
               ],
             ),
             const SizedBox(height: 24),

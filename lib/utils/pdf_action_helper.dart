@@ -3,11 +3,9 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
-import 'package:vidyanexis/utils/file_share_function.dart';
 
 class PdfActionHelper {
   /// Shows a modal bottom sheet with PDF actions: View/Print, Share to WhatsApp, Share via Email.

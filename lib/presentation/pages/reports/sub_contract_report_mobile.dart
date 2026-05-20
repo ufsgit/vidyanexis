@@ -196,7 +196,7 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                                   isSelected: provider.selectedUserId ==
                                       u.userDetailsId,
                                   onTap: () {
-                                    provider.setUserId(u.userDetailsId!);
+                                    provider.setUserId(u.userDetailsId);
                                   },
                                 )),
                           ],
@@ -228,7 +228,7 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                                   isSelected: provider.selectedEnquiryForId ==
                                       e.enquiryForId,
                                   onTap: () {
-                                    provider.setEnquiryForId(e.enquiryForId!);
+                                    provider.setEnquiryForId(e.enquiryForId);
                                   },
                                 )),
                           ],

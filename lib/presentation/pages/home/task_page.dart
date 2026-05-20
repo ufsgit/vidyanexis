@@ -1,9 +1,9 @@
 // Check line 1776
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
@@ -32,9 +32,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/presentation/widgets/home/hover_action_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
-import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_card.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_multi_level_dropdown.dart';
@@ -44,7 +42,6 @@ import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 
@@ -330,8 +327,8 @@ class _tasksPageReportState extends State<TaskPage> {
                 children: [
                   // Main row with adaptive layout
 
-                  (AppStyles.isWebScreen(context))
-                      ? LayoutBuilder(
+                  if (AppStyles.isWebScreen(context))
+                    LayoutBuilder(
                           builder: (context, constraints) {
                             final screenWidth =
                                 MediaQuery.of(context).size.width;
@@ -551,7 +548,6 @@ class _tasksPageReportState extends State<TaskPage> {
                             );
                           },
                         )
-                      : const SizedBox(),
                 ],
               ),
             ),
@@ -1972,93 +1968,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     ),
                                                   ),
                                                 ),
-                                                // Expanded(
-                                                //   child: Row(
-                                                //     children: [
-                                                //       OutlinedButton(
-                                                //         onPressed: () async {
-                                                //           final taskId = task
-                                                //                   .taskId
-                                                //                   ?.toString() ??
-                                                //               '';
-                                                //           final customerId = task
-                                                //                   .customerId
-                                                //                   ?.toString() ??
-                                                //               '';
-                                                //           if (taskId.isNotEmpty) {
-                                                //             customerDetailsProvider
-                                                //                 .getTaskDetails(
-                                                //                     taskId,
-                                                //                     context);
-
-                                                //             showDialog(
-                                                //               context: context,
-                                                //               builder:
-                                                //                   (BuildContext
-                                                //                       context) {
-                                                //                 return TaskDetailsWidget(
-                                                //                   taskId: taskId,
-                                                //                   customerId:
-                                                //                       customerId,
-                                                //                   showEdit: false,
-                                                //                 );
-                                                //               },
-                                                //             );
-                                                //           }
-                                                //         },
-                                                //         style: OutlinedButton
-                                                //             .styleFrom(
-                                                //           side: const BorderSide(
-                                                //               color: Color(
-                                                //                   0xFFEAB308)),
-                                                //           foregroundColor:
-                                                //               const Color(
-                                                //                   0xFFEAB308),
-                                                //           padding:
-                                                //               const EdgeInsets
-                                                //                   .symmetric(
-                                                //                   horizontal: 12,
-                                                //                   vertical: 0),
-                                                //           minimumSize:
-                                                //               const Size(0, 32),
-                                                //           shape:
-                                                //               RoundedRectangleBorder(
-                                                //                   borderRadius:
-                                                //                       BorderRadius
-                                                //                           .circular(
-                                                //                               4)),
-                                                //         ),
-                                                //         child: const Text(
-                                                //             'Details',
-                                                //             style: TextStyle(
-                                                //                 fontSize: 12)),
-                                                //       ),
-                                                //       const SizedBox(width: 8),
-                                                //       IconButton(
-                                                //         icon: const Icon(
-                                                //           Icons.edit_outlined,
-                                                //           size: 18,
-                                                //           color:
-                                                //               Color(0xFFEAB308),
-                                                //         ),
-                                                //         tooltip: 'Edit',
-                                                //         padding: EdgeInsets.zero,
-                                                //         constraints:
-                                                //             const BoxConstraints(),
-                                                //         onPressed: () {
-                                                //           showDialog(
-                                                //             context: context,
-                                                //             builder: (_) =>
-                                                //                 AddTaskWidget(
-                                                //               taskId: task
-                                                //                   .taskMasterId,
-                                                //             ),
-                                                //           );
-                                                //         },
-                                                //       ),
-                                                //     ],
-                                                //   ),
-                                                // ),
                                               ],
                                             ),
                                           ),
@@ -2584,74 +2493,117 @@ class _tasksPageReportState extends State<TaskPage> {
             getStatusType(context, task.taskTypeId.toString());
 
         return Dialog(
+          backgroundColor: Colors.transparent
+          
+          ,
+          elevation: 0,
           insetPadding: EdgeInsets.symmetric(
               horizontal: isSmallScreen ? 16 : 40, vertical: 24),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
+            borderRadius: BorderRadius.circular(24.0),
           ),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 900,
-              maxHeight: 700,
-              minHeight: 700,
-              minWidth: 900,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 1. Dialog Header Redesign (Tab Style)
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.darkGreen,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12.0),
-                      topRight: Radius.circular(12.0),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                          ),
-                          child: const Text('Update Status',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            context.push(
-                                '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 16),
-                            child: Text(task.customerName,
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: Colors.white)),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 16),
-                          child: Text(task.taskTypeName ?? '',
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 16)),
-                        ),
-                      ],
-                    ),
-                  ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24.0),
+            child: BackdropFilter(
+              filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+              child: Container(
+                constraints: const BoxConstraints(
+                  maxWidth: 675,
+                  maxHeight: 600,
+                  minHeight: 600,
+                  minWidth: 675,
                 ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.95),
+                  borderRadius: BorderRadius.circular(24.0),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.8),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Update Status',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1E293B),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Task:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    Text(
+                                      task.taskTypeName ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1E293B),
+                                      ),
+                                    ),
+                                    Text(
+                                      'for',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        context.push(
+                                            '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                      },
+                                      child: Text(
+                                        task.customerName,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF1E293B),
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    _buildHeaderPill(
+                                        Icons.person_outline, 'Customer'),
+                                    _buildHeaderPill(
+                                        Icons.description_outlined, 'Document'),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 Flexible(
                   child: FutureBuilder<List<TaskTypeStatusModel>>(
                     future: statusOptionsFuture,
@@ -2780,67 +2732,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                           children: statusOptions.map((status) {
                                             bool isSelected = value.statusId ==
                                                 status.statusId;
-                                            Color statusColor =
-                                                status.colorCode ??
-                                                    Colors.black;
-                                            return ChoiceChip(
-                                              label:
-                                                  Text(status.statusName ?? ''),
-                                              selected: isSelected,
-                                              onSelected:
-                                                  (bool selected) async {
-                                                if (selected) {
-                                                  selectedStatus.value = status;
-                                                  int sId =
-                                                      status.statusId ?? 0;
-                                                  int tId =
-                                                      status.taskTypeId ?? 0;
-                                                  await reportsProvider
-                                                      .fetchTaskTypes(
-                                                          tId,
-                                                          sId,
-                                                          customerId,
-                                                          enquiryForId,
-                                                          context);
-                                                }
+                                            return _buildCustomStatusChip(
+                                              status: status,
+                                              isSelected: isSelected,
+                                              onTap: () async {
+                                                selectedStatus.value = status;
+                                                int sId = status.statusId ?? 0;
+                                                int tId = status.taskTypeId ?? 0;
+                                                await reportsProvider
+                                                    .fetchTaskTypes(
+                                                        tId,
+                                                        sId,
+                                                        customerId,
+                                                        enquiryForId,
+                                                        context);
                                               },
-                                              labelStyle: TextStyle(
-                                                color: isSelected
-                                                    ? Colors.white
-                                                    : const Color(0xFF1E293B),
-                                                fontWeight: isSelected
-                                                    ? FontWeight.w700
-                                                    : FontWeight.w500,
-                                                fontSize: 13,
-                                              ),
-                                              avatar: Container(
-                                                width: 10,
-                                                height: 10,
-                                                decoration: BoxDecoration(
-                                                  color: isSelected
-                                                      ? Colors.white
-                                                      : statusColor,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                              ),
-                                              selectedColor: statusColor,
-                                              backgroundColor: Colors.white,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 8),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                              ),
-                                              side: BorderSide(
-                                                color: isSelected
-                                                    ? statusColor
-                                                    : Colors.grey.shade300,
-                                                width: 1,
-                                              ),
-                                              showCheckmark: false,
-                                              elevation: isSelected ? 2 : 0,
                                             );
                                           }).toList(),
                                         );
@@ -3182,28 +3088,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                       color: Colors.grey.shade600,
                                       fontWeight: FontWeight.w500)),
                               const SizedBox(height: 4),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border:
-                                      Border.all(color: Colors.grey.shade300),
-                                ),
-                                child: TextField(
-                                  controller: Provider.of<TaskPageProvider>(
-                                          context,
-                                          listen: false)
-                                      .descriptionController,
-                                  maxLines: 2,
-                                  minLines: 2,
-                                  decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
-                                    border: InputBorder.none,
-                                    hintText: 'Enter description',
+                              TextField(
+                                controller: Provider.of<TaskPageProvider>(
+                                        context,
+                                        listen: false)
+                                    .descriptionController,
+                                maxLines: 2,
+                                minLines: 2,
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                                  enabledBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Color(0xFF3B82F6), width: 1.5),
                                   ),
-                                  style: const TextStyle(fontSize: 14),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2.0),
+                                  ),
+                                  hintText: 'Enter description',
+                                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
                                 ),
+                                style: const TextStyle(fontSize: 14),
                               ),
                               const SizedBox(height: 20),
                               Consumer<FormProvider>(
@@ -3254,40 +3157,99 @@ class _tasksPageReportState extends State<TaskPage> {
                                               fontWeight: FontWeight.w600)),
                                       const SizedBox(height: 8),
                                       Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 8.0,
+                                        spacing: 12.0,
+                                        runSpacing: 12.0,
                                         children: validForms.map((form) {
-                                          return ElevatedButton.icon(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color(0xFF1A7AE8),
-                                              foregroundColor: Colors.white,
-                                              elevation: 0,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 10),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            icon: const Icon(Icons.description,
-                                                size: 16),
-                                            label: Text(
-                                              (form.name.isNotEmpty
-                                                      ? form.name
-                                                      : "Form")
-                                                  .toUpperCase(),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                            onPressed: () {
+                                          return InkWell(
+                                            onTap: () {
                                               _showWebFormDialog(
                                                   context, form, task);
                                             },
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            child: Container(
+                                              width: 260,
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white
+                                                    .withOpacity(0.4),
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                border: Border.all(
+                                                  color: Colors.white
+                                                      .withOpacity(0.6),
+                                                  width: 1,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.02),
+                                                    blurRadius: 8,
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0xFFEEF2F6),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons
+                                                          .description_outlined,
+                                                      color: Color(0xFF1E293B),
+                                                      size: 20,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 12),
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        const Text(
+                                                          "1",
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Color(
+                                                                0xFF1E293B),
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          form.name.isNotEmpty
+                                                              ? form.name
+                                                              : "Attached Form",
+                                                          style: TextStyle(
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: Colors
+                                                                .grey.shade700,
+                                                          ),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           );
                                         }).toList(),
                                       ),
@@ -3333,13 +3295,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                         children: [
                                           OutlinedButton.icon(
                                             icon: const Icon(Icons.history,
-                                                size: 16),
-                                            label: const Text("History"),
+                                                size: 16, color: Color(0xFF64748B)),
+                                            label: const Text("View History", style: TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
                                             style: OutlinedButton.styleFrom(
+                                              side: BorderSide(color: Colors.grey.shade400),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          20)),
+                                                          24)),
+                                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                                             ),
                                             onPressed: () async {
                                               final provider =
@@ -3461,48 +3425,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                               );
                                             },
                                           ),
-                                          // OutlinedButton(
-                                          //   onPressed: () async {
-                                          //     int statusId = selectedStatus
-                                          //             .value.statusId ??
-                                          //         0;
-                                          //     int tasktypeId = selectedStatus
-                                          //             .value.taskTypeId ??
-                                          //         0;
-                                          //     int customerId =
-                                          //         task.customerId ?? 0;
-                                          //     int enquiryForId =
-                                          //         task.enquiryForId ?? 0;
-                                          //     await showDialog(
-                                          //       barrierDismissible: false,
-                                          //       context: context,
-                                          //       builder: (context) =>
-                                          //           ImageUploadAlert(
-                                          //               customerId: customerId
-                                          //                   .toString()),
-                                          //     );
-                                          //     WidgetsBinding.instance
-                                          //         .addPostFrameCallback((_) {
-                                          //       Provider.of<TaskPageProvider>(
-                                          //               context,
-                                          //               listen: false)
-                                          //           .fetchTaskTypes(
-                                          //               tasktypeId,
-                                          //               statusId,
-                                          //               customerId,
-                                          //               enquiryForId,
-                                          //               context);
-                                          //     });
-                                          //   },
-                                          //   style: OutlinedButton.styleFrom(
-                                          //     shape: RoundedRectangleBorder(
-                                          //         borderRadius:
-                                          //             BorderRadius.circular(
-                                          //                 20)),
-                                          //   ),
-                                          //   child:
-                                          //       const Text("Upload Documents"),
-                                          // ),
                                           OutlinedButton(
                                             onPressed: saving
                                                 ? null
@@ -3511,12 +3433,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         .pop(false);
                                                   },
                                             style: OutlinedButton.styleFrom(
+                                              side: BorderSide(color: Colors.grey.shade400),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          20)),
+                                                          24)),
+                                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                                             ),
-                                            child: const Text("Cancel"),
+                                            child: const Text("Cancel", style: TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
                                           ),
                                           ElevatedButton(
                                             onPressed: saving
@@ -3801,17 +3725,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     }
                                                   },
                                             style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFF3B82F6),
+                                              foregroundColor: Colors.white,
+                                              shadowColor: const Color(0xFF3B82F6).withOpacity(0.4),
+                                              elevation: 4,
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          20)),
+                                                          24)),
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 10),
-                                              backgroundColor:
-                                                  AppColors.darkGreen,
-                                              foregroundColor: Colors.white,
+                                                      horizontal: 28,
+                                                      vertical: 14),
                                             ),
                                             child: saving
                                                 ? const SizedBox(
@@ -3824,7 +3749,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     Color>(
                                                                 Colors.white)),
                                                   )
-                                                : const Text('Save'),
+                                                : const Text('Save', style: TextStyle(fontWeight: FontWeight.bold)),
                                           ),
                                         ],
                                       ),
@@ -3842,7 +3767,9 @@ class _tasksPageReportState extends State<TaskPage> {
               ],
             ),
           ),
-        );
+        ),
+      ),
+    );
       },
     );
   }
@@ -4068,7 +3995,6 @@ class _tasksPageReportState extends State<TaskPage> {
 
   Widget dateFollowUpWidget() {
     final taskProvider = Provider.of<TaskPageProvider>(context, listen: false);
-    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -4081,38 +4007,151 @@ class _tasksPageReportState extends State<TaskPage> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: theme.dividerColor),
-            color: theme.cardColor,
-          ),
-          child: TextField(
-            onTap: () async {
-              final DateTime? picked = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime.now(),
-                lastDate: DateTime.now().add(const Duration(days: 365)),
-              );
-              if (picked != null) {
-                taskProvider.followUpDateController.text =
-                    DateFormat('dd MMM yyyy').format(picked);
-              }
-            },
-            readOnly: true,
-            controller: taskProvider.followUpDateController,
-            decoration: const InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              border: InputBorder.none,
-              hintText: 'Enter Follow-up Date',
-              suffixIcon: Icon(Icons.calendar_today),
+        TextField(
+          onTap: () async {
+            final DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
+            );
+            if (picked != null) {
+              taskProvider.followUpDateController.text =
+                  DateFormat('dd MMM yyyy').format(picked);
+            }
+          },
+          readOnly: true,
+          controller: taskProvider.followUpDateController,
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.symmetric(vertical: 12),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF3B82F6), width: 1.5),
             ),
-            style: const TextStyle(fontSize: 14),
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2.0),
+            ),
+            hintText: 'DD MMM YYYY',
+            hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+            suffixIcon: const Icon(Icons.calendar_today, color: Color(0xFF3B82F6)),
           ),
+          style: const TextStyle(fontSize: 14),
         ),
       ],
+    );
+  }
+
+  Widget _buildLogo(String displayLogo) {
+    if (displayLogo.isEmpty) {
+      return Image.asset(
+        AppStyles.logo(),
+        height: 40,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+      );
+    }
+    if (displayLogo.startsWith('http')) {
+      return Image.network(
+        displayLogo,
+        height: 40,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => Image.asset(
+          AppStyles.logo(),
+          height: 40,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        ),
+      );
+    } else {
+      return Image.asset(
+        displayLogo,
+        height: 40,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => Image.asset(
+          AppStyles.logo(),
+          height: 40,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        ),
+      );
+    }
+  }
+
+  Widget _buildHeaderPill(IconData icon, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300, width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: Colors.grey.shade700),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade700,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomStatusChip({
+    required TaskTypeStatusModel status,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    const Color statusColor = Color(0xFF3B82F6);
+    
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? statusColor : statusColor.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: statusColor,
+            width: 1.5,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: statusColor.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  )
+                ]
+              : [],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+              color: isSelected ? Colors.white : statusColor,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              status.statusName ?? '',
+              style: TextStyle(
+                color: isSelected ? Colors.white : statusColor,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

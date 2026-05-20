@@ -406,7 +406,7 @@ class _StockUseReportState extends State<StockUseReport> {
             label: 'Date',
           ),
           const SizedBox(width: 12),
-          Container(
+          SizedBox(
             width: 250,
             height: 48,
             child: CommonDropdown<String>(
@@ -430,7 +430,7 @@ class _StockUseReportState extends State<StockUseReport> {
             ),
           ),
           const SizedBox(width: 12),
-          Container(
+          SizedBox(
             width: 250,
             height: 48,
             child: CommonDropdown<String>(
@@ -499,7 +499,7 @@ class _StockUseReportState extends State<StockUseReport> {
               color: AppColors.textBlack,
             ),
             const SizedBox(height: 8),
-            Container(
+            SizedBox(
               height: 48,
               child: CommonDropdown<String>(
                 hintText: 'Select Customer',
@@ -529,7 +529,7 @@ class _StockUseReportState extends State<StockUseReport> {
               color: AppColors.textBlack,
             ),
             const SizedBox(height: 8),
-            Container(
+            SizedBox(
               height: 48,
               child: CommonDropdown<String>(
                 hintText: 'Select Item',

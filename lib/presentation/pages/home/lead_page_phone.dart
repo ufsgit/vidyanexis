@@ -335,7 +335,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                         .toggleStatus(status.statusId ?? 0);
                                   },
                                 );
-                              }).toList(),
+                              }),
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -421,7 +421,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                           staff.userDetailsId ?? 0);
                                     },
                                   );
-                                }).toList(),
+                                }),
                               ],
                             ),
                           ],
@@ -455,7 +455,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                         enquiry.enquiryForId ?? 0);
                                   },
                                 );
-                              }).toList(),
+                              }),
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -490,7 +490,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                         source.enquirySourceId ?? 0);
                                   },
                                 );
-                              }).toList(),
+                              }),
                             ],
                           ),
                           const SizedBox(height: 24),

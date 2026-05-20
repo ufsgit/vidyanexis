@@ -222,7 +222,7 @@ class _CustomerOutstandingReportPageState
               child: ConstrainedBox(
                 constraints:
                     BoxConstraints(minWidth: MediaQuery.of(context).size.width),
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width > 1200
                       ? MediaQuery.of(context).size.width
                       : 1200,

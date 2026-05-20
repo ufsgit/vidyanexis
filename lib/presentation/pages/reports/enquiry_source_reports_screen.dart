@@ -229,7 +229,7 @@ class _EnquirySourceReportsScreenState
                       reportsProvider.getSearchTaskReport(widget.userId, context);
                     },
                   );
-                }).toList(),
+                }),
               ],
             ),
             const SizedBox(height: 24),

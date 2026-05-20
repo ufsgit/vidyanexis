@@ -1,15 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_lead_search_provider.dart';
-import 'package:vidyanexis/controller/models/search_lead_by_contact_model.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
-import 'package:vidyanexis/utils/extensions.dart';
 
 class LeadSearchPage extends StatelessWidget {
   static const String route = '/leadSearch';

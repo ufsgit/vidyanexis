@@ -242,7 +242,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                         .toggleStatus(status.statusId ?? 0);
                                   },
                                 );
-                              }).toList(),
+                              }),
                             ],
                           ),
                           const SizedBox(height: 16),
