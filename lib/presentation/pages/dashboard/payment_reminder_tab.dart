@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/models/payment_reminder_model.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 
 class PaymentReminderTab extends StatefulWidget {
   const PaymentReminderTab({super.key});
@@ -38,11 +43,33 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
     super.dispose();
   }
 
+  void _navigateToCustomerDetails(BuildContext context, int customerId) {
+    if (AppStyles.isWebScreen(context)) {
+      final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+
+      int index = 0;
+      if (settingsProvider.menuIsViewMap[12].toString() == '1') {
+        index++;
+      }
+      if (settingsProvider.menuIsViewMap[3].toString() == '1') {
+        index++;
+      }
+
+      sideProvider.updateSelectedName('Customers');
+      sideProvider.setSelectedIndex(index);
+      sideProvider.replaceWidgetCustomer(false, customerId.toString());
+    } else {
+      context.push('${CustomerDetailsScreen.route}$customerId/false');
+    }
+  }
+
   double _calculateTotalOutstanding(List items) {
     double total = 0;
     for (var item in items) {
       try {
-        String amountStr = item.balanceAmount.replaceAll(',', '').replaceAll('₹', '').trim();
+        String amountStr =
+            item.balanceAmount.replaceAll(',', '').replaceAll('₹', '').trim();
         total += double.tryParse(amountStr) ?? 0.0;
       } catch (e) {
         // Ignore parsing errors
@@ -95,17 +122,29 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
     }
   }
 
-  Map<String, List<GroupedInvoiceItem>> _getGroupedRemindersReport(List<PaymentReminderModel> reminders) {
+  Map<String, List<GroupedInvoiceItem>> _getGroupedRemindersReport(
+      List<PaymentReminderModel> reminders) {
     final Map<String, Map<int, GroupedInvoiceItem>> tempGroups = {};
     final Map<String, DateTime> monthToFirstDate = {};
 
     for (var reminder in reminders) {
       final monthStr = _getMonthYearHeader(reminder.reminderDate);
-      
-      final balAmt = double.tryParse(reminder.balanceAmount.replaceAll(',', '').replaceAll('₹', '').trim()) ?? 0.0;
-      // Since we only have balanceAmount, set Budget as balanceAmount and Spent as 0.0
-      final invAmt = balAmt;
-      final recAmt = 0.0;
+
+      final balAmt = double.tryParse(reminder.balanceAmount
+              .replaceAll(',', '')
+              .replaceAll('₹', '')
+              .trim()) ??
+          0.0;
+      final invAmt = double.tryParse(reminder.totalProjectCost
+              .replaceAll(',', '')
+              .replaceAll('₹', '')
+              .trim()) ??
+          0.0;
+      final recAmt = double.tryParse(reminder.receiptAmount
+              .replaceAll(',', '')
+              .replaceAll('₹', '')
+              .trim()) ??
+          0.0;
 
       try {
         DateTime parsedDate;
@@ -123,7 +162,8 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
         } else {
           parsedDate = DateTime.parse(reminder.reminderDate);
         }
-        if (!monthToFirstDate.containsKey(monthStr) || parsedDate.isBefore(monthToFirstDate[monthStr]!)) {
+        if (!monthToFirstDate.containsKey(monthStr) ||
+            parsedDate.isBefore(monthToFirstDate[monthStr]!)) {
           monthToFirstDate[monthStr] = parsedDate;
         }
       } catch (_) {
@@ -137,7 +177,9 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
         final existing = monthMap[reminder.customerId]!;
         monthMap[reminder.customerId] = GroupedInvoiceItem(
           customerId: reminder.customerId,
-          customerName: existing.customerName.isNotEmpty ? existing.customerName : reminder.customerName,
+          customerName: existing.customerName.isNotEmpty
+              ? existing.customerName
+              : reminder.customerName,
           invoiceAmount: existing.invoiceAmount + invAmt,
           recieptAmount: existing.recieptAmount + recAmt,
           balanceAmount: existing.balanceAmount + balAmt,
@@ -154,17 +196,20 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
     }
 
     final Map<String, List<GroupedInvoiceItem>> groupedReport = {};
-    
+
     final sortedMonths = tempGroups.keys.toList();
     sortedMonths.sort((a, b) {
-      final dateA = monthToFirstDate[a] ?? DateTime.fromMillisecondsSinceEpoch(0);
-      final dateB = monthToFirstDate[b] ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final dateA =
+          monthToFirstDate[a] ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final dateB =
+          monthToFirstDate[b] ?? DateTime.fromMillisecondsSinceEpoch(0);
       return dateB.compareTo(dateA); // Newest months first
     });
 
     for (var month in sortedMonths) {
       groupedReport[month] = tempGroups[month]!.values.toList();
-      groupedReport[month]!.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+      groupedReport[month]!.sort((a, b) =>
+          a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
     }
 
     return groupedReport;
@@ -174,7 +219,8 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
   Widget build(BuildContext context) {
     return Consumer2<WarrentyReportProvider, DropDownProvider>(
       builder: (context, provider, dropdownProvider, child) {
-        final totalOutstanding = _calculateTotalOutstanding(provider.paymentReminderList);
+        final totalOutstanding =
+            _calculateTotalOutstanding(provider.paymentReminderList);
 
         // Filter the reminders list based on the search query
         final filteredReminders = provider.paymentReminderList.where((item) {
@@ -193,7 +239,8 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                 Expanded(
                   child: _buildSummaryCard(
                     title: "Total Outstanding",
-                    value: "₹${NumberFormat('#,##,##0.00').format(totalOutstanding)}",
+                    value:
+                        "₹${NumberFormat('#,##,##0.00').format(totalOutstanding)}",
                     icon: Icons.account_balance_wallet_rounded,
                     color: const Color(0xFFF87171),
                   ),
@@ -238,21 +285,21 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                     color: AppColors.textGrey3,
                     fontSize: 14,
                   ),
-                  prefixIcon: const Icon(Icons.search_rounded, 
-                    color: AppColors.textGrey3, size: 20),
+                  prefixIcon: const Icon(Icons.search_rounded,
+                      color: AppColors.textGrey3, size: 20),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                  suffixIcon: _searchQuery.isNotEmpty 
-                    ? IconButton(
-                        icon: const Icon(Icons.close_rounded, size: 18),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _searchQuery = '';
-                          });
-                        },
-                      )
-                    : null,
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.close_rounded, size: 18),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _searchQuery = '';
+                            });
+                          },
+                        )
+                      : null,
                 ),
               ),
             ),
@@ -285,13 +332,16 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
     );
   }
 
-  Widget _buildBudgetReport(Map<String, List<GroupedInvoiceItem>> groupedReport) {
+  Widget _buildBudgetReport(
+      Map<String, List<GroupedInvoiceItem>> groupedReport) {
     if (groupedReport.isEmpty) {
       return Container(
         height: 200,
         alignment: Alignment.center,
         child: Text(
-          _searchQuery.isEmpty ? "No billing records found" : "No results for '$_searchQuery'",
+          _searchQuery.isEmpty
+              ? "No billing records found"
+              : "No results for '$_searchQuery'",
           style: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -301,278 +351,239 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
       );
     }
 
+    // Flatten all items into a single list
+    final List<GroupedInvoiceItem> allItems = [];
+    for (var list in groupedReport.values) {
+      allItems.addAll(list);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Title block matching Hubstaff
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Projects budgets report",
+        // Column Headers Row styled like Hubstaff
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Text(
+                  "PROJECT/LEAD",
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textBlack,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "Billing summary and progress grouped by month",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                     color: AppColors.textGrey3,
-                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.5,
                   ),
                 ),
-              ],
-            ),
-          ],
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  "PROJECT COST",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textGrey3,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  "RECIEIPT",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textGrey3,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  "%",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textGrey3,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  "REMAINING",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textGrey3,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 20),
+        const Divider(height: 1, color: Color(0xFFE2E8F0)),
+        const SizedBox(height: 8),
 
-        // Render each Month block
-        ListView.builder(
+        // List of project budget items
+        ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: groupedReport.keys.length,
-          itemBuilder: (context, monthIndex) {
-            final monthStr = groupedReport.keys.elementAt(monthIndex);
-            final items = groupedReport[monthStr]!;
+          itemCount: allItems.length,
+          separatorBuilder: (context, index) => const Divider(
+            height: 1,
+            color: Color(0xFFF1F5F9),
+            indent: 16,
+            endIndent: 16,
+          ),
+          itemBuilder: (context, itemIndex) {
+            final item = allItems[itemIndex];
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Month Header Bar styled like Hubstaff
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F5F9), // Light slate color
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      monthStr,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1E293B),
+            // Calculate percentage safely
+            double pct = 0.0;
+            if (item.invoiceAmount > 0) {
+              pct = (item.recieptAmount / item.invoiceAmount);
+              if (pct > 1.0) pct = 1.0;
+              if (pct < 0.0) pct = 0.0;
+            }
+            final pctText = "${(pct * 100).toStringAsFixed(0)}%";
+
+            return InkWell(
+              onTap: () => _navigateToCustomerDetails(context, item.customerId),
+              hoverColor: Colors.blue.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    // Project Column: Avatar + Name
+                    Expanded(
+                      flex: 3,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: getAvatarColor(item.customerName)
+                                  .withOpacity(0.15),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                _getInitials(item.customerName),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: getAvatarColor(item.customerName),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              item.customerName,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blue,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
 
-                  // Column Headers Row styled like Hubstaff
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            "PROJECT/LEAD",
+                    // Budget (Cost) Column with Progress Bar
+                    Expanded(
+                      flex: 3,
+                      child: Row(
+                        children: [
+                          // Budget text
+                          Text(
+                            "₹${NumberFormat('#,##,##0.00').format(item.invoiceAmount)}",
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textGrey3,
-                              letterSpacing: 0.5,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textBlack,
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            "SPENT",
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textGrey3,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Text(
-                            "BUDGET",
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textGrey3,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            "REMAINING",
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textGrey3,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 1, color: Color(0xFFE2E8F0)),
-                  const SizedBox(height: 8),
+                          const SizedBox(width: 8),
 
-                  // List of project budget items within this month
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: items.length,
-                    separatorBuilder: (context, index) => const Divider(
-                      height: 1,
-                      color: Color(0xFFF1F5F9),
-                      indent: 16,
-                      endIndent: 16,
-                    ),
-                    itemBuilder: (context, itemIndex) {
-                      final item = items[itemIndex];
-                      
-                      // Calculate percentage safely
-                      double pct = 0.0;
-                      if (item.invoiceAmount > 0) {
-                        pct = (item.recieptAmount / item.invoiceAmount);
-                        if (pct > 1.0) pct = 1.0;
-                        if (pct < 0.0) pct = 0.0;
-                      }
-                      final pctText = "${(pct * 100).toStringAsFixed(0)}%";
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        child: Row(
-                          children: [
-                            // Project Column: Avatar + Name
-                            Expanded(
-                              flex: 3,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      color: getAvatarColor(item.customerName).withOpacity(0.15),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        _getInitials(item.customerName),
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: getAvatarColor(item.customerName),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      item.customerName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textBlack,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Spent (Receipt) Column
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "₹${NumberFormat('#,##,##0.00').format(item.recieptAmount)}",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textBlack,
+                          // Thin progress bar
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: pct,
+                                minHeight: 6,
+                                backgroundColor: const Color(0xFFE2E8F0),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  pct >= 1.0
+                                      ? Colors.green
+                                      : const Color(0xFF3B82F6),
                                 ),
                               ),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                            // Budget (Cost) Column with Progress Bar + Percentage
-                            Expanded(
-                              flex: 4,
-                              child: Row(
-                                children: [
-                                  // Budget text
-                                  Text(
-                                    "₹${NumberFormat('#,##,##0.00').format(item.invoiceAmount)}",
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textBlack,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  
-                                  // Thin progress bar
-                                  Expanded(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: LinearProgressIndicator(
-                                        value: pct,
-                                        minHeight: 6,
-                                        backgroundColor: const Color(0xFFE2E8F0),
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          pct >= 1.0 ? Colors.green : const Color(0xFF3B82F6),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  
-                                  // Percentage
-                                  SizedBox(
-                                    width: 32,
-                                    child: Text(
-                                      pctText,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textGrey3,
-                                      ),
-                                      textAlign: TextAlign.end,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Remaining Column
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "₹${NumberFormat('#,##,##0.00').format(item.balanceAmount)}",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: item.balanceAmount > 0 ? AppColors.textRed : AppColors.textGrey3,
-                                ),
-                              ),
-                            ),
-                          ],
+                    // Spent (Receipt) Column
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "₹${NumberFormat('#,##,##0.00').format(item.recieptAmount)}",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textBlack,
                         ),
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                    ),
+
+                    // Dedicated Percentage Column
+                    Expanded(
+                      flex: 1,
+                      child: Center(
+                        child: Text(
+                          pctText,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textGrey3,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Remaining Column
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "₹${NumberFormat('#,##,##0.00').format(item.balanceAmount)}",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: item.balanceAmount > 0
+                              ? AppColors.textRed
+                              : AppColors.textGrey3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -638,15 +649,18 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
 
   Widget _buildShimmerLoading() {
     return Column(
-      children: List.generate(3, (index) => Container(
-        height: 100,
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      )),
+      children: List.generate(
+          3,
+          (index) => Container(
+                height: 100,
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2)),
+              )),
     );
   }
 }
