@@ -53,6 +53,7 @@ import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_page.d
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/sales_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -397,6 +398,12 @@ class _HomePageState extends State<HomePage> {
       //     iconPath: 'assets/images/location.svg',
       //     baseContent: const Center(child: EmployeeLocationReportScreen()),
       //   ),
+      if (settingsProvider.menuIsViewMap[144].toString() == '1')
+        SidebarOption(
+          title: 'Sales Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: SalesReportScreen()),
+        ),
     ];
 
     bool hideMainAppBar =
