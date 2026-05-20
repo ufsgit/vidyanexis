@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/stockreturn_provider.dart';
 
 import '../../../constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/responsive_button_wrapper.dart';
 import '../../../controller/models/stock_return_model.dart';
 import '../home/custom_text_field.dart';
 
@@ -124,8 +126,11 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
+      body: Center(
+        child: Container(
+          width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
+          child: Column(
+            children: [
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -288,8 +293,9 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
               ],
             ),
             child: Row(
+              mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
               children: [
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
@@ -307,7 +313,7 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: ElevatedButton(
                     onPressed: () async {
                       final validationError = validateInputs(context, expenseProvider);
@@ -340,6 +346,8 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }

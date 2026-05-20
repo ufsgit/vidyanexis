@@ -7,6 +7,8 @@ import 'package:vidyanexis/controller/stock_use_provider.dart';
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
 import '../../../controller/models/stock_model.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/responsive_button_wrapper.dart';
 import '../home/custom_button_widget.dart';
 import '../home/custom_dropdown_widget.dart';
 import '../home/custom_text_field.dart';
@@ -173,8 +175,11 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
+      body: Center(
+        child: Container(
+          width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
+          child: Column(
+            children: [
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -382,8 +387,9 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
               ],
             ),
             child: Row(
+              mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
               children: [
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
@@ -401,7 +407,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: ElevatedButton(
                     onPressed: () async {
                       final validationError = validateInputs(context, expenseProvider);
@@ -434,6 +440,8 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }

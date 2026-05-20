@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/responsive_button_wrapper.dart';
 import 'package:vidyanexis/controller/models/supplier_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
@@ -141,8 +143,11 @@ class _AddSupplierState extends State<AddSupplier> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
+      body: Center(
+        child: Container(
+          width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
+          child: Column(
+            children: [
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -266,8 +271,9 @@ class _AddSupplierState extends State<AddSupplier> {
               ],
             ),
             child: Row(
+              mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
               children: [
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: OutlinedButton(
                     onPressed: () {
                       settingsProvider.supplierClear();
@@ -288,7 +294,7 @@ class _AddSupplierState extends State<AddSupplier> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: ElevatedButton(
                     onPressed: () async {
                       final validationError = validateInputs(context, settingsProvider);
@@ -320,6 +326,8 @@ class _AddSupplierState extends State<AddSupplier> {
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }

@@ -9,6 +9,8 @@ import 'package:vidyanexis/controller/models/purchase_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/responsive_button_wrapper.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class PurchaseWidget extends StatefulWidget {
@@ -128,8 +130,11 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
             ),
             centerTitle: true,
           ),
-          body: Column(
-            children: [
+          body: Center(
+            child: Container(
+              width: double.infinity,
+              child: Column(
+                children: [
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -137,80 +142,47 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionTitle('Basic Information'),
-                      const SizedBox(height: 16),
-                      CommonDropdown<int>(
-                        hintText: 'Select Supplier*',
-                        items: settingsProvider.searchSupplier
-                            .map((status) => DropdownItem<int>(
-                                  id: status.supplierId,
-                                  name: status.supplierName,
-                                ))
-                            .toList(),
-                        controller: TextEditingController(),
-                        onItemSelected: (selectedId) {
-                          final selectedPerson = settingsProvider.searchSupplier.firstWhere(
-                            (item) => item.supplierId == selectedId,
-                          );
-                          expenseProvider.addressPurchaseController.text = selectedPerson.address;
-                          expenseProvider.setSelectedSupplierId(selectedId);
-                        },
-                        selectedValue: expenseProvider.selectedSupplierId,
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        height: 56,
-                        controller: expenseProvider.invoiceNoPurchaseController,
-                        hintText: 'Invoice No*',
-                        labelText: '',
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        readOnly: true,
-                        height: 56,
-                        controller: expenseProvider.addressPurchaseController,
-                        hintText: 'Address',
-                        labelText: '',
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        onTap: () async {
-                          final DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2101),
-                          );
-                          if (picked != null) {
-                            expenseProvider.invoiceDatePurchaseController.text =
-                                DateFormat('dd MMM yyyy').format(picked);
-                          }
-                        },
-                        readOnly: true,
-                        height: 56,
-                        controller: expenseProvider.invoiceDatePurchaseController,
-                        hintText: 'Invoice Date*',
-                        suffixIcon: const Icon(Icons.calendar_today_rounded, size: 20),
-                        labelText: '',
-                      ),
-                      const SizedBox(height: 32),
-                      _buildSectionTitle('Item Details'),
-                      const SizedBox(height: 16),
-                      _buildItemForm(expenseProvider),
-                      const SizedBox(height: 32),
+                      _buildBasicInfoColumn(expenseProvider, settingsProvider),
+                      const SizedBox(height: 24),
+                      _buildAddItemColumn(expenseProvider),
                       if (expenseProvider.purchaseItems.isNotEmpty) ...[
-                        _buildSectionTitle('Added Items'),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildSectionTitle('Added Items (${expenseProvider.purchaseItems.length})'),
+                            TextButton.icon(
+                              onPressed: () {
+                                expenseProvider.purchaseItems.clear();
+                                expenseProvider.calculateGrandTotal();
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.clear_all, color: Colors.red),
+                              label: Text('Clear All', style: GoogleFonts.plusJakartaSans(color: Colors.red)),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 12),
                         _buildAddedItemsList(expenseProvider),
                       ],
-                      const SizedBox(height: 20),
-                      CustomTextField(
-                        controller: expenseProvider.descriptionPurchaseController,
-                        height: 56,
-                        hintText: 'Description',
-                        labelText: '',
-                        keyboardType: TextInputType.multiline,
-                        minLines: 2,
+                      const SizedBox(height: 24),
+                      _buildSectionTitle('Additional Details'),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: CustomTextField(
+                          controller: expenseProvider.descriptionPurchaseController,
+                          height: 56,
+                          hintText: 'Notes / Description',
+                          labelText: '',
+                          keyboardType: TextInputType.multiline,
+                          minLines: 2,
+                        ),
                       ),
                       const SizedBox(height: 40),
                     ],
@@ -220,6 +192,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
               _buildBottomBar(expenseProvider),
             ],
           ),
+        ),
+      ),
         );
       },
     );
@@ -236,179 +210,736 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
     );
   }
 
-  Widget _buildItemForm(ExpenseProvider expenseProvider) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Column(
+  Widget _buildBasicInfoColumn(ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
+    bool isWeb = AppStyles.isWebScreen(context);
+
+    Widget content;
+    if (isWeb) {
+      content = Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CommonDropdown(
-            hintText: "Item*",
-            items: expenseProvider.itemListPurchase
-                .map((status) => DropdownItem<int>(
-                      id: status.itemId,
-                      name: status.itemName,
-                    ))
-                .toList(),
-            controller: expenseProvider.itemNamePurchaseController,
-            onItemSelected: (selectedItem) {
-              final selectedData = expenseProvider.itemListPurchase.firstWhere(
-                (item) => item.itemId == selectedItem,
-              );
-              expenseProvider.setSelectedPurchaseItemId(selectedItem);
-              expenseProvider.categoryPurchaseController.text = selectedData.categoryName.toString();
-              expenseProvider.unitPurchaseController.text = selectedData.unitName;
-              expenseProvider.selectedCategoryId = selectedData.categoryId;
-              expenseProvider.selectedUnitId = selectedData.unitId;
-              expenseProvider.pricePurchaseController.text = selectedData.unitPrice;
-              expenseProvider.updateCalculations();
-              expenseProvider.cgstPerPurchaseController.text = selectedData.cgst;
-              expenseProvider.sgstPerPurchaseController.text = selectedData.sgst;
-              expenseProvider.igstPerPurchaseController.text = selectedData.igst;
-              expenseProvider.gstPerPurchaseController.text = selectedData.gst;
-              expenseProvider.hsnPurchaseController.text = selectedData.hsnCode;
-            },
-            selectedValue: expenseProvider.itemDrop,
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextField(
-                  height: 52,
-                  controller: expenseProvider.categoryPurchaseController,
-                  hintText: 'Category',
-                  readOnly: true,
-                  labelText: '',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomTextField(
-                  height: 52,
-                  controller: expenseProvider.unitPurchaseController,
-                  hintText: 'Unit',
-                  readOnly: true,
-                  labelText: '',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextField(
-                  height: 52,
-                  controller: expenseProvider.pricePurchaseController,
-                  hintText: 'Price',
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => expenseProvider.updateCalculations(),
-                  labelText: '',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomTextField(
-                  height: 52,
-                  controller: expenseProvider.quantityPurchaseController,
-                  hintText: 'Qty*',
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => expenseProvider.updateCalculations(),
-                  labelText: '',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextField(
-                  height: 52,
-                  controller: expenseProvider.discountPurchaseController,
-                  hintText: 'Disc %',
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => expenseProvider.updateCalculations(),
-                  labelText: '',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: CustomTextField(
-                  height: 52,
-                  controller: expenseProvider.totalAmountPurchaseController,
-                  hintText: 'Total',
-                  readOnly: true,
-                  labelText: '',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                if (expenseProvider.itemNamePurchaseController.text.isEmpty ||
-                    expenseProvider.quantityPurchaseController.text.isEmpty ||
-                    expenseProvider.pricePurchaseController.text.isEmpty) {
-                  showErrorDialog(context, 'Please fill in all required fields');
-                  return;
-                }
-                final purchaseItem = PurchaseItemModel(
-                  itemId: expenseProvider.itemDrop.toString(),
-                  itemName: expenseProvider.itemNamePurchaseController.text,
-                  categoryId: expenseProvider.selectedCategoryId.toString(),
-                  categoryName: expenseProvider.categoryPurchaseController.text,
-                  unitId: expenseProvider.selectedUnitId.toString(),
-                  unitName: expenseProvider.unitPurchaseController.text,
-                  quantity: double.tryParse(expenseProvider.quantityPurchaseController.text) ?? 0.0,
-                  price: double.tryParse(expenseProvider.pricePurchaseController.text) ?? 0.0,
-                  amount: double.tryParse(expenseProvider.amountPurchaseController.text) ?? 0.0,
-                  discount: double.tryParse(expenseProvider.discountAmountPurchaseController.text.isEmpty
-                      ? '0'
-                      : expenseProvider.discountAmountPurchaseController.text) ?? 0.0,
-                  discountPercentage: double.tryParse(expenseProvider.discountPurchaseController.text.isEmpty
-                      ? '0'
-                      : expenseProvider.discountPurchaseController.text) ?? 0.0,
-                  netValue: double.tryParse(expenseProvider.netValuePurchaseController.text) ?? 0.0,
-                  cgst: double.tryParse(expenseProvider.cgstPerPurchaseController.text) ?? 0.0,
-                  sgst: double.tryParse(expenseProvider.sgstPerPurchaseController.text) ?? 0.0,
-                  gst: double.tryParse(expenseProvider.gstPerPurchaseController.text) ?? 0.0,
-                  igst: double.tryParse(expenseProvider.igstPerPurchaseController.text) ?? 0.0,
-                  gstAmount: double.tryParse(expenseProvider.gstPurchaseController.text) ?? 0.0,
-                  cgstAmount: double.tryParse(expenseProvider.cgstPurchaseController.text) ?? 0.0,
-                  sgstAmount: double.tryParse(expenseProvider.sgstPurchaseController.text) ?? 0.0,
-                  igstAmount: 0.0,
-                  totalAmount: double.tryParse(expenseProvider.totalAmountPurchaseController.text) ?? 0.0,
-                  hsnCode: expenseProvider.hsnPurchaseController.text,
+          Expanded(
+            flex: 3,
+            child: CommonDropdown<int>(
+              hintText: 'Select Supplier*',
+              items: settingsProvider.searchSupplier
+                  .map((status) => DropdownItem<int>(
+                        id: status.supplierId,
+                        name: status.supplierName,
+                      ))
+                  .toList(),
+              controller: TextEditingController(),
+              onItemSelected: (selectedId) {
+                final selectedPerson = settingsProvider.searchSupplier.firstWhere(
+                  (item) => item.supplierId == selectedId,
                 );
-                expenseProvider.addOrUpdatePurchaseItem(purchaseItem);
-                expenseProvider.clearPurchaseItemFields();
-                expenseProvider.calculateGrandTotal();
+                expenseProvider.addressPurchaseController.text = selectedPerson.address;
+                expenseProvider.setSelectedSupplierId(selectedId);
               },
-              icon: const Icon(Icons.add_rounded),
-              label: const Text('Add Item'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1E293B),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                elevation: 0,
-              ),
+              selectedValue: expenseProvider.selectedSupplierId,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 4,
+            child: CustomTextField(
+              readOnly: true,
+              height: 52,
+              controller: expenseProvider.addressPurchaseController,
+              hintText: 'Address',
+              labelText: '',
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 2,
+            child: CustomTextField(
+              height: 52,
+              controller: expenseProvider.invoiceNoPurchaseController,
+              hintText: 'Invoice No*',
+              labelText: '',
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 2,
+            child: CustomTextField(
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2101),
+                );
+                if (picked != null) {
+                  expenseProvider.invoiceDatePurchaseController.text =
+                      DateFormat('dd MMM yyyy').format(picked);
+                }
+              },
+              readOnly: true,
+              height: 52,
+              controller: expenseProvider.invoiceDatePurchaseController,
+              hintText: 'Invoice Date*',
+              suffixIcon: const Icon(Icons.calendar_today_rounded, size: 20),
+              labelText: '',
             ),
           ),
         ],
-      ),
+      );
+    } else {
+      content = Column(
+        children: [
+          CommonDropdown<int>(
+            hintText: 'Select Supplier*',
+            items: settingsProvider.searchSupplier
+                .map((status) => DropdownItem<int>(
+                      id: status.supplierId,
+                      name: status.supplierName,
+                    ))
+                .toList(),
+            controller: TextEditingController(),
+            onItemSelected: (selectedId) {
+              final selectedPerson = settingsProvider.searchSupplier.firstWhere(
+                (item) => item.supplierId == selectedId,
+              );
+              expenseProvider.addressPurchaseController.text = selectedPerson.address;
+              expenseProvider.setSelectedSupplierId(selectedId);
+            },
+            selectedValue: expenseProvider.selectedSupplierId,
+          ),
+          const SizedBox(height: 12),
+          CustomTextField(
+            readOnly: true,
+            height: 52,
+            controller: expenseProvider.addressPurchaseController,
+            hintText: 'Address',
+            labelText: '',
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  height: 52,
+                  controller: expenseProvider.invoiceNoPurchaseController,
+                  hintText: 'Invoice No*',
+                  labelText: '',
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CustomTextField(
+                  onTap: () async {
+                    final DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (picked != null) {
+                      expenseProvider.invoiceDatePurchaseController.text =
+                          DateFormat('dd MMM yyyy').format(picked);
+                    }
+                  },
+                  readOnly: true,
+                  height: 52,
+                  controller: expenseProvider.invoiceDatePurchaseController,
+                  hintText: 'Invoice Date*',
+                  suffixIcon: const Icon(Icons.calendar_today_rounded, size: 20),
+                  labelText: '',
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Basic Information'),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isWeb ? Colors.white : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: isWeb ? [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ] : null,
+          ),
+          child: content,
+        ),
+      ],
     );
   }
 
+  Widget _buildAddItemColumn(ExpenseProvider expenseProvider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Add Item'),
+        const SizedBox(height: 12),
+        _buildItemForm(expenseProvider),
+      ],
+    );
+  }
+
+  void _addOrUpdateItem(ExpenseProvider expenseProvider) {
+    if (expenseProvider.itemNamePurchaseController.text.isEmpty ||
+        expenseProvider.itemDescriptionPurchaseController.text.isEmpty ||
+        expenseProvider.quantityPurchaseController.text.isEmpty ||
+        expenseProvider.pricePurchaseController.text.isEmpty) {
+      showErrorDialog(context, 'Please fill in all required fields (Item, Description, Sales Rate, Qty)');
+      return;
+    }
+    final purchaseItem = PurchaseItemModel(
+      itemId: expenseProvider.itemDrop.toString(),
+      itemName: expenseProvider.itemNamePurchaseController.text,
+      categoryId: expenseProvider.selectedCategoryId.toString(),
+      categoryName: expenseProvider.categoryPurchaseController.text,
+      unitId: expenseProvider.selectedUnitId.toString(),
+      unitName: expenseProvider.unitPurchaseController.text,
+      quantity: double.tryParse(expenseProvider.quantityPurchaseController.text) ?? 0.0,
+      price: double.tryParse(expenseProvider.pricePurchaseController.text) ?? 0.0,
+      amount: double.tryParse(expenseProvider.amountPurchaseController.text) ?? 0.0,
+      discount: double.tryParse(expenseProvider.discountAmountPurchaseController.text.isEmpty
+          ? '0'
+          : expenseProvider.discountAmountPurchaseController.text) ?? 0.0,
+      discountPercentage: double.tryParse(expenseProvider.discountPurchaseController.text.isEmpty
+          ? '0'
+          : expenseProvider.discountPurchaseController.text) ?? 0.0,
+      netValue: double.tryParse(expenseProvider.netValuePurchaseController.text) ?? 0.0,
+      cgst: double.tryParse(expenseProvider.cgstPerPurchaseController.text) ?? 0.0,
+      sgst: double.tryParse(expenseProvider.sgstPerPurchaseController.text) ?? 0.0,
+      gst: double.tryParse(expenseProvider.gstPerPurchaseController.text) ?? 0.0,
+      igst: double.tryParse(expenseProvider.igstPerPurchaseController.text) ?? 0.0,
+      gstAmount: double.tryParse(expenseProvider.gstPurchaseController.text) ?? 0.0,
+      cgstAmount: double.tryParse(expenseProvider.cgstPurchaseController.text) ?? 0.0,
+      sgstAmount: double.tryParse(expenseProvider.sgstPurchaseController.text) ?? 0.0,
+      igstAmount: 0.0,
+      totalAmount: double.tryParse(expenseProvider.totalAmountPurchaseController.text) ?? 0.0,
+      hsnCode: expenseProvider.hsnPurchaseController.text,
+      description: expenseProvider.itemDescriptionPurchaseController.text,
+      model: expenseProvider.itemModelPurchaseController.text,
+      brand: expenseProvider.itemBrandPurchaseController.text,
+      unitDiscount: double.tryParse(expenseProvider.unitDiscountPurchaseController.text) ?? 0.0,
+    );
+    expenseProvider.addOrUpdatePurchaseItem(purchaseItem);
+    expenseProvider.clearPurchaseItemFields();
+    expenseProvider.calculateGrandTotal();
+    setState(() {});
+  }
+
+  Widget _buildItemForm(ExpenseProvider expenseProvider) {
+    bool isWeb = AppStyles.isWebScreen(context);
+
+    if (isWeb) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Row 1: Item dropdown, Description, Uom, Model
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CommonDropdown(
+                        hintText: "Item*",
+                        items: expenseProvider.itemListPurchase
+                            .map((status) => DropdownItem<int>(
+                                  id: status.itemId,
+                                  name: status.itemName,
+                                ))
+                            .toList(),
+                        controller: expenseProvider.itemNamePurchaseController,
+                        onItemSelected: (selectedItem) {
+                          final selectedData = expenseProvider.itemListPurchase.firstWhere(
+                            (item) => item.itemId == selectedItem,
+                          );
+                          expenseProvider.setSelectedPurchaseItemId(selectedItem);
+                          expenseProvider.categoryPurchaseController.text = selectedData.categoryName.toString();
+                          expenseProvider.unitPurchaseController.text = selectedData.unitName;
+                          expenseProvider.selectedCategoryId = selectedData.categoryId;
+                          expenseProvider.selectedUnitId = selectedData.unitId;
+                          expenseProvider.pricePurchaseController.text = selectedData.unitPrice;
+                          expenseProvider.cgstPerPurchaseController.text = selectedData.cgst;
+                          expenseProvider.sgstPerPurchaseController.text = selectedData.sgst;
+                          expenseProvider.igstPerPurchaseController.text = selectedData.igst;
+                          expenseProvider.gstPerPurchaseController.text = selectedData.gst;
+                          expenseProvider.hsnPurchaseController.text = selectedData.hsnCode;
+                          expenseProvider.updateCalculations();
+                        },
+                        selectedValue: expenseProvider.itemDrop,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 4,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.itemDescriptionPurchaseController,
+                    hintText: 'Description *',
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 1,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.unitPurchaseController,
+                    hintText: 'Uom',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.itemModelPurchaseController,
+                    hintText: 'Model',
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Row 2: Brand, Qty
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.itemBrandPurchaseController,
+                    hintText: 'Brand',
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 3,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.quantityPurchaseController,
+                    hintText: 'Qty *',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(),
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  flex: 4,
+                  child: SizedBox(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Row 3: Sales Rate, Discount %, Unit Discount, Total, Amount, CGST%, SGST%
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.pricePurchaseController,
+                    hintText: 'Sales Rate',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(),
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.discountPurchaseController,
+                    hintText: 'Discount %',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(),
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.unitDiscountPurchaseController,
+                    hintText: 'Unit Discount',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(fromUnitDiscount: true),
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.amountPurchaseController,
+                    hintText: 'Total',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.netValuePurchaseController,
+                    hintText: 'Amount',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 1,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.cgstPerPurchaseController,
+                    hintText: 'CGST%',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 1,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.sgstPerPurchaseController,
+                    hintText: 'SGST%',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Row 4: CGST Amt, SGST Amt, Add/Update button
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.cgstPurchaseController,
+                    hintText: 'CGST Amt',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 3,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.sgstPurchaseController,
+                    hintText: 'SGST Amt',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  flex: 5,
+                  child: SizedBox(),
+                ),
+                const SizedBox(width: 12),
+                SizedBox(
+                  width: 52,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () => _addOrUpdateItem(expenseProvider),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1E293B),
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 0,
+                    ),
+                    child: Icon(
+                      expenseProvider.editItemIndex != null
+                          ? Icons.check_circle_outline
+                          : Icons.add_rounded,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Mobile responsive stacked version
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+        ),
+        child: Column(
+          children: [
+            CommonDropdown(
+              hintText: "Item*",
+              items: expenseProvider.itemListPurchase
+                  .map((status) => DropdownItem<int>(
+                        id: status.itemId,
+                        name: status.itemName,
+                      ))
+                  .toList(),
+              controller: expenseProvider.itemNamePurchaseController,
+              onItemSelected: (selectedItem) {
+                final selectedData = expenseProvider.itemListPurchase.firstWhere(
+                  (item) => item.itemId == selectedItem,
+                );
+                expenseProvider.setSelectedPurchaseItemId(selectedItem);
+                expenseProvider.categoryPurchaseController.text = selectedData.categoryName.toString();
+                expenseProvider.unitPurchaseController.text = selectedData.unitName;
+                expenseProvider.selectedCategoryId = selectedData.categoryId;
+                expenseProvider.selectedUnitId = selectedData.unitId;
+                expenseProvider.pricePurchaseController.text = selectedData.unitPrice;
+                expenseProvider.cgstPerPurchaseController.text = selectedData.cgst;
+                expenseProvider.sgstPerPurchaseController.text = selectedData.sgst;
+                expenseProvider.igstPerPurchaseController.text = selectedData.igst;
+                expenseProvider.gstPerPurchaseController.text = selectedData.gst;
+                expenseProvider.hsnPurchaseController.text = selectedData.hsnCode;
+                expenseProvider.updateCalculations();
+              },
+              selectedValue: expenseProvider.itemDrop,
+            ),
+            const SizedBox(height: 12),
+            CustomTextField(
+              height: 52,
+              controller: expenseProvider.itemDescriptionPurchaseController,
+              hintText: 'Description *',
+              labelText: '',
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.unitPurchaseController,
+                    hintText: 'Uom',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.itemModelPurchaseController,
+                    hintText: 'Model',
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.itemBrandPurchaseController,
+                    hintText: 'Brand',
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.quantityPurchaseController,
+                    hintText: 'Qty *',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(),
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.pricePurchaseController,
+                    hintText: 'Sales Rate',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(),
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.discountPurchaseController,
+                    hintText: 'Discount %',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(),
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.unitDiscountPurchaseController,
+                    hintText: 'Unit Discount',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(fromUnitDiscount: true),
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.amountPurchaseController,
+                    hintText: 'Total',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.netValuePurchaseController,
+                    hintText: 'Amount',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.cgstPerPurchaseController,
+                    hintText: 'CGST %',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.sgstPerPurchaseController,
+                    hintText: 'SGST %',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.cgstPurchaseController,
+                    hintText: 'CGST Amt',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.sgstPurchaseController,
+                    hintText: 'SGST Amt',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(
+                width: 52,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () => _addOrUpdateItem(expenseProvider),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E293B),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 0,
+                  ),
+                  child: Icon(
+                    expenseProvider.editItemIndex != null
+                        ? Icons.check_circle_outline
+                        : Icons.add_rounded,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   Widget _buildAddedItemsList(ExpenseProvider expenseProvider) {
+    bool isWeb = AppStyles.isWebScreen(context);
+
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -416,42 +947,92 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
       separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final item = expenseProvider.purchaseItems[index];
-        return Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.itemName,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: const Color(0xFF1E293B),
-                      ),
+        
+        if (isWeb) {
+          // Web View - Single horizontal row
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Row(
+              children: [
+                // 1. Item Name
+                Expanded(
+                  flex: 4,
+                  child: Text(
+                    item.itemName,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: const Color(0xFF1E293B),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${item.categoryName} • ${item.unitName}',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        color: const Color(0xFF64748B),
-                      ),
-                    ),
-                  ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
+                const SizedBox(width: 12),
+                // 2. Category & Unit
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    '${item.categoryName} • ${item.unitName}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: const Color(0xFF64748B),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 3. Brand & Model & Description
+                Expanded(
+                  flex: 4,
+                  child: Text(
+                    '${(item.description ?? '').isNotEmpty ? 'Desc: ${item.description}' : ''}'
+                    '${(item.brand ?? '').isNotEmpty ? ' • Brand: ${item.brand}' : ''}'
+                    '${(item.model ?? '').isNotEmpty ? ' • Model: ${item.model}' : ''}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      color: const Color(0xFF64748B),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 4. Rate
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    '₹${item.price.toStringAsFixed(2)}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: const Color(0xFF475569),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 5. Quantity
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    '${item.quantity} Qty',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF475569),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 6. Total Amount
+                Expanded(
+                  flex: 3,
+                  child: Text(
                     '₹${item.totalAmount.toStringAsFixed(2)}',
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w700,
@@ -459,27 +1040,120 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                       color: const Color(0xFF1E293B),
                     ),
                   ),
-                  Text(
-                    '${item.quantity} Qty',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      color: const Color(0xFF64748B),
-                    ),
+                ),
+                const SizedBox(width: 12),
+                // 7. Actions (Edit / Delete)
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {
+                    expenseProvider.editPurchaseItem(index);
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(width: 12),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444), size: 20),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {
+                    expenseProvider.purchaseItems.removeAt(index);
+                    expenseProvider.calculateGrandTotal();
+                    setState(() {});
+                  },
+                ),
+              ],
+            ),
+          );
+        } else {
+          // Mobile View - original stacked version
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.itemName,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: const Color(0xFF1E293B),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${item.categoryName} • ${item.unitName}',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                      if ((item.description ?? '').isNotEmpty ||
+                          (item.brand ?? '').isNotEmpty ||
+                          (item.model ?? '').isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          '${(item.description ?? '').isNotEmpty ? 'Desc: ${item.description}' : ''}'
+                          '${(item.brand ?? '').isNotEmpty ? ' • Brand: ${item.brand}' : ''}'
+                          '${(item.model ?? '').isNotEmpty ? ' • Model: ${item.model}' : ''}',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444), size: 20),
-                onPressed: () {
-                  expenseProvider.purchaseItems.removeAt(index);
-                  expenseProvider.calculateGrandTotal();
-                  setState(() {});
-                },
-              ),
-            ],
-          ),
-        );
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '₹${item.totalAmount.toStringAsFixed(2)}',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: const Color(0xFF1E293B),
+                      ),
+                    ),
+                    Text(
+                      '${item.quantity} Qty',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
+                  onPressed: () {
+                    expenseProvider.editPurchaseItem(index);
+                    setState(() {});
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444), size: 20),
+                  onPressed: () {
+                    expenseProvider.purchaseItems.removeAt(index);
+                    expenseProvider.calculateGrandTotal();
+                    setState(() {});
+                  },
+                ),
+              ],
+            ),
+          );
+        }
       },
     );
   }
@@ -523,8 +1197,9 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
           ),
           const SizedBox(height: 16),
           Row(
+            mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
             children: [
-              Expanded(
+              ResponsiveButtonWrapper(
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
@@ -542,7 +1217,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 ),
               ),
               const SizedBox(width: 16),
-              Expanded(
+              ResponsiveButtonWrapper(
                 child: ElevatedButton(
                   onPressed: () async {
                     if (expenseProvider.selectedSupplierId == null ||

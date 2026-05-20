@@ -1371,47 +1371,46 @@ class _LeadsPageState extends State<LeadPage> {
                                                                       .format(DateTime
                                                                           .now());
 
-                                                              showDialog(
-                                                                context:
-                                                                    context,
-                                                                barrierDismissible:
-                                                                    false,
-                                                                builder: (_) =>
-                                                                    SalesWidget(
-                                                                  isEdit: true,
-                                                                  editId: '0',
-                                                                  data:
-                                                                      SalesModel(
-                                                                    customerId:
-                                                                        lead.customerId,
-                                                                    customerName:
-                                                                        lead.customerName,
-                                                                    salesMasterId:
-                                                                        0,
-                                                                    invoiceNo:
-                                                                        '',
-                                                                    entryDate:
-                                                                        '',
-                                                                    salesDate:
-                                                                        formattedDate,
-                                                                    totalAmount:
-                                                                        '',
-                                                                    totalDiscount:
-                                                                        '',
-                                                                    taxableAmount:
-                                                                        '',
-                                                                    totalCgst:
-                                                                        '',
-                                                                    totalSgst:
-                                                                        '',
-                                                                    totalIgst:
-                                                                        '',
-                                                                    netTotal:
-                                                                        '',
-                                                                    description:
-                                                                        '',
-                                                                    address: lead
-                                                                        .address,
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (_) =>
+                                                                      SalesWidget(
+                                                                    isEdit: true,
+                                                                    editId: '0',
+                                                                    data:
+                                                                        SalesModel(
+                                                                      customerId:
+                                                                          lead.customerId,
+                                                                      customerName:
+                                                                          lead.customerName,
+                                                                      salesMasterId:
+                                                                          0,
+                                                                      invoiceNo:
+                                                                          '',
+                                                                      entryDate:
+                                                                          '',
+                                                                      salesDate:
+                                                                          formattedDate,
+                                                                      totalAmount:
+                                                                          '',
+                                                                      totalDiscount:
+                                                                          '',
+                                                                      taxableAmount:
+                                                                          '',
+                                                                      totalCgst:
+                                                                          '',
+                                                                      totalSgst:
+                                                                          '',
+                                                                      totalIgst:
+                                                                          '',
+                                                                      netTotal:
+                                                                          '',
+                                                                      description:
+                                                                          '',
+                                                                      address: lead
+                                                                          .address,
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               );

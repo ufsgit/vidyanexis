@@ -182,6 +182,14 @@ class ExpenseProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController totalAmountPurchaseController =
       TextEditingController();
+  final TextEditingController itemDescriptionPurchaseController =
+      TextEditingController();
+  final TextEditingController itemModelPurchaseController =
+      TextEditingController();
+  final TextEditingController itemBrandPurchaseController =
+      TextEditingController();
+  final TextEditingController unitDiscountPurchaseController =
+      TextEditingController();
   List<ItemListModel> _itemListPurchase = [];
   List<ItemListModel> get itemListPurchase => _itemListPurchase;
   List<ItemListStock> _itemListStock = [];
@@ -204,6 +212,7 @@ class ExpenseProvider extends ChangeNotifier {
   int? _itemDrop;
   int? get itemDrop => _itemDrop;
   int? _editItemIndex;
+  int? get editItemIndex => _editItemIndex;
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   List<ItemListModel> _filteredItemList = [];
@@ -281,6 +290,7 @@ class ExpenseProvider extends ChangeNotifier {
 
   List<SalesItemModel> salesItems = [];
   int? _editSalesItemIndex;
+  int? get editSalesItemIndex => _editSalesItemIndex;
   int? _selectedSalesCustomerId;
   int? get selectedSalesCustomerId => _selectedSalesCustomerId;
   final String _customer = '';
@@ -842,18 +852,29 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners to rebuild the UI
   }
 
-  void updateCalculations() {
+  void updateCalculations({bool fromUnitDiscount = false}) {
     double quantity = double.tryParse(quantityPurchaseController.text) ?? 0;
     double price = double.tryParse(pricePurchaseController.text) ?? 0;
-    double discountPer = double.tryParse(discountPurchaseController.text) ?? 0;
 
+    if (fromUnitDiscount) {
+      double unitDiscount = double.tryParse(unitDiscountPurchaseController.text) ?? 0;
+      double discountPer = price > 0 ? (unitDiscount / price) * 100 : 0;
+      discountPurchaseController.text = discountPer.toStringAsFixed(2);
+    }
+
+    double discountPer = double.tryParse(discountPurchaseController.text) ?? 0;
     double amount = quantity * price;
     amountPurchaseController.text = amount.toStringAsFixed(2);
 
-    double discount = (discountPer * amount) / 100;
-    discountAmountPurchaseController.text = discount.toStringAsFixed(2);
+    double unitDiscount = (discountPer * price) / 100;
+    if (!fromUnitDiscount) {
+      unitDiscountPurchaseController.text = unitDiscount.toStringAsFixed(2);
+    }
 
-    double netValue = amount - discount;
+    double totalDiscount = unitDiscount * quantity;
+    discountAmountPurchaseController.text = totalDiscount.toStringAsFixed(2);
+
+    double netValue = amount - totalDiscount;
     netValuePurchaseController.text = netValue.toStringAsFixed(2);
     double cgstPer = double.tryParse(cgstPerPurchaseController.text) ?? 0.0;
     double sgstPer = double.tryParse(sgstPerPurchaseController.text) ?? 0.0;
@@ -933,6 +954,16 @@ class ExpenseProvider extends ChangeNotifier {
       selectedUnitId = int.tryParse(item.unitId) ?? 0;
       hsnPurchaseController.text = item.hsnCode;
 
+      // New fields
+      itemDescriptionPurchaseController.text = item.description;
+      itemModelPurchaseController.text = item.model;
+      itemBrandPurchaseController.text = item.brand;
+      unitDiscountPurchaseController.text = item.unitDiscount.toString();
+
+      cgstPerPurchaseController.text = item.cgst.toString();
+      sgstPerPurchaseController.text = item.sgst.toString();
+      gstPerPurchaseController.text = item.gst.toString();
+
       // Ensure the selected item ID is updated
       setSelectedPurchaseItemId(int.tryParse(item.itemId) ?? 0);
       notifyListeners();
@@ -975,6 +1006,13 @@ class ExpenseProvider extends ChangeNotifier {
     netValuePurchaseController.clear();
     totalAmountPurchaseController.clear();
     hsnPurchaseController.clear();
+    itemDescriptionPurchaseController.clear();
+    itemModelPurchaseController.clear();
+    itemBrandPurchaseController.clear();
+    unitDiscountPurchaseController.clear();
+    cgstPerPurchaseController.clear();
+    sgstPerPurchaseController.clear();
+    gstPerPurchaseController.clear();
     _itemDrop = null;
     selectedCategoryId = null;
     selectedUnitId = null;
@@ -2282,26 +2320,23 @@ class ExpenseProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       String isDate = "0";
-      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+      if (_fromDateSSales.isEmpty && _toDateSSales.isEmpty) {
         isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
+        _fromDateSSales = "";
+        _toDateSSales = "";
       } else {
         isDate = "1";
       }
 
-      String customer = _customer;
+      String customer = _customerSales;
       if (customer.isEmpty || customer == 'null') {
         customer = '0';
       }
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              "${HttpUrls.getSalesDataMaster}?p_Customer_Id=$customer&p_EntryDate_From=$_fromDateS&p_EntryDate_To=$_toDateS&p_Invoice_No=$_search&Is_Date_Check=$isDate");
+              "${HttpUrls.getSalesDataMaster}?p_Customer_Id=$customer&p_EntryDate_From=$_fromDateSSales&p_EntryDate_To=$_toDateSSales&p_Invoice_No=$_searchSales&Is_Date_Check=$isDate");
+
 
       if (response.statusCode == 200) {
         final data = response.data;

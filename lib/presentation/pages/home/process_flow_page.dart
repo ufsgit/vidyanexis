@@ -55,7 +55,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
         child: Column(
           children: [
             _buildHeader(isMobile),
-            _buildSearchBar(),
+            if (isMobile) _buildSearchBar(isHeader: false),
             Expanded(
               child: Consumer<ProcessFlowProvider>(
                 builder: (context, provider, child) {
@@ -157,6 +157,11 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
             ),
           ),
           const Spacer(),
+          if (!isMobile)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: _buildSearchBar(isHeader: true),
+            ),
           if (settingsProvider.menuIsSaveMap[36] == 1)
             _buildAddButton(),
         ],
@@ -190,38 +195,45 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
     );
   }
 
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: TextField(
-          controller: searchController,
-          onChanged: (query) => processFlowProvider.filterData(query),
-          decoration: InputDecoration(
-            hintText: 'Search process flows...',
-            hintStyle: GoogleFonts.plusJakartaSans(
-              color: const Color(0xFF94A3B8),
-              fontSize: 14,
-            ),
-            prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF64748B)),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  Widget _buildSearchBar({bool isHeader = false}) {
+    Widget searchBar = Container(
+      height: isHeader ? 44 : 50,
+      width: isHeader ? 300 : null,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(isHeader ? 12 : 16),
+        border: isHeader ? Border.all(color: const Color(0xFFF1F5F9)) : null,
+        boxShadow: isHeader ? [] : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
+        ],
+      ),
+      child: TextField(
+        controller: searchController,
+        onChanged: (query) => processFlowProvider.filterData(query),
+        decoration: InputDecoration(
+          hintText: 'Search process flows...',
+          hintStyle: GoogleFonts.plusJakartaSans(
+            color: const Color(0xFF94A3B8),
+            fontSize: 14,
+          ),
+          prefixIcon: Icon(Icons.search_rounded, color: const Color(0xFF64748B), size: isHeader ? 20 : 24),
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: isHeader ? 10 : 12),
         ),
       ),
     );
+
+    if (!isHeader) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: searchBar,
+      );
+    }
+    return searchBar;
   }
 
   Widget _buildProcessFlowCard(ProcessFlowModel model, int index) {
@@ -276,57 +288,68 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        model.taskTypeName ?? 'Unnamed Task',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textBlue800,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFF64748B)),
-                          const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              model.enquiryForName ?? 'N/A',
+                              model.taskTypeName ?? 'Unnamed Task',
                               style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13,
-                                color: const Color(0xFF64748B),
-                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textBlue800,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          const SizedBox(width: 8),
+                          _buildStatusChip(model.statusName ?? 'Unknown'),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                const Icon(Icons.info_outline_rounded,
+                                    size: 14, color: Color(0xFF64748B)),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    model.enquiryForName ?? 'N/A',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 13,
+                                      color: const Color(0xFF64748B),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          if (settingsProvider.menuIsDeleteMap[36] == 1)
+                            InkWell(
+                              onTap: () => _confirmDelete(model),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFEF2F2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.delete_outline_rounded,
+                                  color: Color(0xFFEF4444),
+                                  size: 18,
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ],
                   ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _buildStatusChip(model.statusName ?? 'Unknown'),
-                    const SizedBox(height: 8),
-                    if (settingsProvider.menuIsDeleteMap[36] == 1)
-                      InkWell(
-                        onTap: () => _confirmDelete(model),
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFEF2F2),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.delete_outline_rounded,
-                            color: Color(0xFFEF4444),
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                  ],
                 ),
               ],
             ),

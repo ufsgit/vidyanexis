@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/responsive_button_wrapper.dart';
 import 'package:vidyanexis/controller/models/unit_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -114,8 +116,11 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
+      body: Center(
+        child: Container(
+          width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
+          child: Column(
+            children: [
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -150,8 +155,9 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
               ],
             ),
             child: Row(
+              mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
               children: [
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: CustomElevatedButton(
                     buttonText: 'Cancel',
                     onPressed: () {
@@ -165,7 +171,7 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: CustomElevatedButton(
                     buttonText: 'Save',
                     onPressed: () async {
@@ -191,6 +197,8 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }

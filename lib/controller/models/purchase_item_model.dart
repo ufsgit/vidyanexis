@@ -22,6 +22,10 @@ class PurchaseItemModel {
   final double igstAmount;
   final double totalAmount;
   final String hsnCode;
+  final String description;
+  final String model;
+  final String brand;
+  final double unitDiscount;
 
   PurchaseItemModel({
     required this.itemId,
@@ -47,6 +51,10 @@ class PurchaseItemModel {
     required this.igstAmount,
     required this.totalAmount,
     required this.hsnCode,
+    this.description = '',
+    this.model = '',
+    this.brand = '',
+    this.unitDiscount = 0.0,
   });
 
   // Convert from JSON (useful for JSON parsing)
@@ -81,6 +89,10 @@ class PurchaseItemModel {
       totalAmount:
           double.tryParse(json['Total_Amount']?.toString() ?? '0') ?? 0.0,
       hsnCode: json['HSNCode']?.toString() ?? '0',
+      description: json['Description']?.toString() ?? '',
+      model: json['Model']?.toString() ?? '',
+      brand: json['Brand']?.toString() ?? '',
+      unitDiscount: double.tryParse(json['UnitDiscount']?.toString() ?? '0') ?? 0.0,
     );
   }
 
@@ -110,6 +122,10 @@ class PurchaseItemModel {
       'IGST_Amount': igstAmount,
       'Total_Amount': totalAmount,
       'HSNCode': hsnCode,
+      'Description': description,
+      'Model': model,
+      'Brand': brand,
+      'UnitDiscount': unitDiscount,
     };
   }
 }

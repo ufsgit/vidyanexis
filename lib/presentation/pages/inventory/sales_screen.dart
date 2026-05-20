@@ -65,19 +65,7 @@ class _SalesScreenState extends State<SalesScreen> {
 
   Widget _buildHeader(BuildContext context, ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
     if (AppStyles.isWebScreen(context)) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            _buildDesktopSearch(expenseProvider),
-            const SizedBox(width: 16),
-            CustomFilterButton(
-              onPressed: () => expenseProvider.toggleFilterSales(),
-              isFilter: expenseProvider.isFilterSales,
-            ),
-          ],
-        ),
-      );
+      return const SizedBox.shrink();
     } else {
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
@@ -322,28 +310,171 @@ class _SalesScreenState extends State<SalesScreen> {
   }
 
   Widget _buildDesktopTable(ExpenseProvider provider, SettingsProvider settingsProvider) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.grey),
+    const headerStyle = TextStyle(
+      fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF475569));
+    const cellStyle = TextStyle(fontSize: 13, color: Color(0xFF1E293B));
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            children: [
+              // Header
+              Container(
+                color: const Color(0xFFF8FAFC),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                child: Row(children: [
+                  Expanded(flex: 3, child: Text('Customer Name', style: headerStyle)),
+                  Expanded(flex: 2, child: Text('Invoice No', style: headerStyle)),
+                  Expanded(flex: 2, child: Text('Sales Date', style: headerStyle)),
+                  Expanded(flex: 3, child: Text('Description', style: headerStyle)),
+                  Expanded(flex: 2, child: Text('Total Amount', style: headerStyle)),
+                  Expanded(flex: 1, child: Text('Actions', style: headerStyle)),
+                ]),
+              ),
+              const Divider(height: 1, thickness: 1, color: Color(0xFFE2E8F0)),
+              provider.salesList.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.all(60),
+                      child: Center(
+                        child: Column(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(Icons.receipt_long_outlined, size: 48, color: Color(0xFFCBD5E1)),
+                          SizedBox(height: 12),
+                          Text('No sales data available',
+                              style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14)),
+                        ]),
+                      ),
+                    )
+                  : Column(
+                      children: provider.salesList.asMap().entries.map((entry) {
+                        final i = entry.key;
+                        final s = entry.value;
+                        return Column(children: [
+                          Container(
+                            color: i.isEven ? Colors.white : const Color(0xFFF8FAFC),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                            child: Row(children: [
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  s.customerName.isNotEmpty ? s.customerName : '-',
+                                  style: cellStyle.copyWith(fontWeight: FontWeight.w500),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(s.invoiceNo.isNotEmpty ? s.invoiceNo : '-',
+                                    style: cellStyle, overflow: TextOverflow.ellipsis),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(formatSalesDate(s.salesDate),
+                                    style: cellStyle, overflow: TextOverflow.ellipsis),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  s.description.isNotEmpty ? s.description : '-',
+                                  style: cellStyle, maxLines: 2, overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  NumberFormat.currency(symbol: '\u20b9', decimalDigits: 0)
+                                      .format(double.tryParse(s.netTotal) ?? 0),
+                                  style: cellStyle.copyWith(
+                                    fontWeight: FontWeight.w600, color: const Color(0xFF0F766E)),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                  if (settingsProvider.menuIsEditMap[87] == 1)
+                                    Tooltip(
+                                      message: 'Edit',
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(8),
+                                        onTap: () async {
+                                          await provider.searchSalesDetails(
+                                              s.salesMasterId.toString(), context);
+                                          _showSalesDialog(context, true, data: s);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFEFF6FF),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: const Icon(Icons.edit_outlined,
+                                              color: AppColors.primaryBlue, size: 15),
+                                        ),
+                                      ),
+                                    ),
+                                  if (settingsProvider.menuIsEditMap[87] == 1 &&
+                                      settingsProvider.menuIsDeleteMap[87] == 1)
+                                    const SizedBox(width: 6),
+                                  if (settingsProvider.menuIsDeleteMap[87] == 1)
+                                    Tooltip(
+                                      message: 'Delete',
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(8),
+                                        onTap: () => _showDeleteDialog(
+                                            context, provider, s.salesMasterId),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFFF1F2),
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          child: const Icon(Icons.delete_outline,
+                                              color: Colors.red, size: 15),
+                                        ),
+                                      ),
+                                    ),
+                                ]),
+                              ),
+                            ]),
+                          ),
+                          if (i < provider.salesList.length - 1)
+                            const Divider(height: 1, thickness: 1, color: Color(0xFFE2E8F0)),
+                        ]);
+                      }).toList(),
+                    ),
+            ],
+          ),
+        ),
       ),
-      child: const Center(child: Padding(padding: EdgeInsets.all(40), child: Text('Desktop Table view'))),
     );
   }
 
+
   void _showSalesDialog(BuildContext context, bool isEdit, {dynamic data}) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return SalesWidget(
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SalesWidget(
           editId: isEdit ? data.salesMasterId.toString() : '0',
           isEdit: isEdit,
           data: data,
-        );
-      },
+        ),
+      ),
     );
   }
 

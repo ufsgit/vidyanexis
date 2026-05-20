@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/presentation/widgets/common/responsive_button_wrapper.dart';
 import 'package:vidyanexis/controller/models/item_list_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
@@ -159,8 +161,11 @@ class _AddItemWidgetState extends State<AddItemWidget> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
+      body: Center(
+        child: Container(
+          width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
+          child: Column(
+            children: [
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -480,8 +485,9 @@ class _AddItemWidgetState extends State<AddItemWidget> {
               ],
             ),
             child: Row(
+              mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
               children: [
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: OutlinedButton(
                     onPressed: () {
                       expenseProvider.clearItemAdd();
@@ -503,7 +509,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
+                ResponsiveButtonWrapper(
                   child: ElevatedButton(
                     onPressed: () async {
                       final validationError = validateInputs(context, expenseProvider);
@@ -532,6 +538,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }

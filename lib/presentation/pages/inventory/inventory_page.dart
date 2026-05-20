@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 
 import 'package:vidyanexis/presentation/widgets/inventory/add_item.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_supplier_page.dart';
@@ -34,9 +35,19 @@ class InventoryPage extends StatefulWidget {
 }
 
 class _InventoryPageState extends State<InventoryPage> {
+  final TextEditingController _purchaseSearchController = TextEditingController();
+  final TextEditingController _salesSearchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _purchaseSearchController.dispose();
+    _salesSearchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -245,6 +256,8 @@ class _InventoryPageState extends State<InventoryPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    if (expenseProvider.selectedMenu == 'Purchase' || expenseProvider.selectedMenu == 'Sales')
+                      _buildDesktopSearchAndFilter(expenseProvider),
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: _buildAddButton(context, expenseProvider, settingsProvider),
@@ -334,6 +347,92 @@ class _InventoryPageState extends State<InventoryPage> {
             return const SizedBox.shrink();
         }
       },
+    );
+  }
+
+  Widget _buildDesktopSearchAndFilter(ExpenseProvider provider) {
+    bool isPurchase = provider.selectedMenu == 'Purchase';
+    bool isSales = provider.selectedMenu == 'Sales';
+
+    if (!isPurchase && !isSales) return const SizedBox.shrink();
+
+    TextEditingController controller = isPurchase ? _purchaseSearchController : _salesSearchController;
+
+    // Sync clear if reset from filter panel
+    if (isPurchase && provider.search.isEmpty && controller.text.isNotEmpty && !FocusScope.of(context).hasFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.clear();
+      });
+    } else if (isSales && provider.searchSales.isEmpty && controller.text.isNotEmpty && !FocusScope.of(context).hasFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.clear();
+      });
+    }
+
+    return Row(
+      children: [
+        Container(
+          width: 250,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: TextField(
+            controller: controller,
+            onSubmitted: (query) {
+              if (isPurchase) {
+                provider.setSearchCriteria(
+                    query, provider.fromDateS, provider.toDateS, provider.status, provider.enquiryForS);
+                provider.getPurchaseDataMaster(context);
+              } else if (isSales) {
+                provider.setSearchCriteriaSales(
+                    query, provider.fromDateSSales, provider.toDateSSales, provider.status, provider.enquiryForS);
+                provider.getSalesMaster(context);
+              }
+            },
+            onChanged: (val) {
+              setState(() {});
+            },
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              prefixIcon: const Icon(Icons.search, size: 20),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              suffixIcon: controller.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFF64748B)),
+                      onPressed: () {
+                        controller.clear();
+                        if (isPurchase) {
+                          provider.setSearchCriteria(
+                              '', provider.fromDateS, provider.toDateS, provider.status, provider.enquiryForS);
+                          provider.getPurchaseDataMaster(context);
+                        } else {
+                          provider.setSearchCriteriaSales(
+                              '', provider.fromDateSSales, provider.toDateSSales, provider.status, provider.enquiryForS);
+                          provider.getSalesMaster(context);
+                        }
+                        setState(() {});
+                      },
+                    )
+                  : null,
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        CustomFilterButton(
+          onPressed: () {
+            if (isPurchase) {
+              provider.toggleFilter();
+            } else if (isSales) {
+              provider.toggleFilterSales();
+            }
+          },
+          isFilter: isPurchase ? provider.isFilter : provider.isFilterSales,
+        ),
+      ],
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/responsive_button_wrapper.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:provider/provider.dart';
@@ -276,404 +277,300 @@ class _SalesWidgetState extends State<SalesWidget> {
             expenseProvider.clearSalesItemFields();
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
         ),
         title: Text(
           widget.isEdit ? 'Edit Sales' : 'Add Sales',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textBlack,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Container(
+          width: double.infinity,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(AppStyles.isWebScreen(context) ? 24 : 16),
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildBasicInfoColumn(expenseProvider, settingsProvider),
+                      const SizedBox(height: 24),
+
+                      // Item Form Section - Using the same layout as Purchase
+                      _buildItemFormSection(expenseProvider),
+
+                      const SizedBox(height: 20),
+
+                      // Item List Section
+                      if (expenseProvider.salesItems.isNotEmpty) ...[
+                        _buildItemListSection(expenseProvider),
+                        const SizedBox(height: 20),
+                      ],
+
+                      _buildSectionTitle('Additional Details'),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: CustomTextField(
+                          controller: expenseProvider.descriptionSalesController,
+                          height: 56,
+                          hintText: 'Notes / Description',
+                          labelText: '',
+                          keyboardType: TextInputType.multiline,
+                          minLines: 2,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
+      bottomNavigationBar: _buildBottomBar(expenseProvider),
+    );
+  }
+
+  Widget _buildItemFormSection(ExpenseProvider expenseProvider) {
+    bool isWeb = AppStyles.isWebScreen(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Add Item'),
+        const SizedBox(height: 12),
+        Container(
+          padding: EdgeInsets.all(isWeb ? 20 : 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isWeb) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: _buildItemDropdown(expenseProvider),
+                    ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 3,
+                  child: _buildCategoryField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildUnitField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildHSNField(expenseProvider),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
-                  child: settingsProvider.leadInSales == 1
-                      ? LeadAutocompleteWidget(
-                          labelText: 'Select Lead*',
-                          initialValue: widget.isEdit && widget.data != null
-                              ? widget.data!.customerName
-                              : null,
-                          onSelected: (model) {
-                            expenseProvider.addressSalesController.text =
-                                model.address;
-                            expenseProvider
-                                .setSelectedSalesCustomerId(model.customerId);
-                          },
-                        )
-                      : CommonDropdown<int>(
-                          hintText: 'Select Customer*',
-                          items: settingsProvider.searchInventoryCustomer
-                              .map((status) => DropdownItem<int>(
-                                    id: status.customerId,
-                                    name: status.customerName,
-                                  ))
-                              .toList(),
-                          controller: TextEditingController(),
-                          onItemSelected: (selectedId) {
-                            final selectedPerson = settingsProvider
-                                .searchInventoryCustomer
-                                .firstWhere(
-                              (item) => item.customerId == selectedId,
-                            );
-                            expenseProvider.addressSalesController.text =
-                                selectedPerson.address;
-                            expenseProvider
-                                .setSelectedSalesCustomerId(selectedId);
-                          },
-                          selectedValue:
-                              expenseProvider.selectedSalesCustomerId,
-                        ),
+                  flex: 2,
+                  child: _buildPriceField(expenseProvider),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: CustomTextField(
-                    controller: expenseProvider.invoiceNOSalesControler,
-                    height: 54,
-                    hintText: 'Invoice No*',
-                    labelText: '',
-                    readOnly: true,
-                  ),
+                  flex: 2,
+                  child: _buildQuantityField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildDiscountPercentField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildDiscountAmountField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildAmountField(expenseProvider),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: _buildNetValueField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildCGSTField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildSGSTField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildGSTField(expenseProvider),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: _buildTotalAmountField(expenseProvider),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(
-                  child: CustomTextField(
-                    controller: expenseProvider.addressSalesController,
-                    height: 54,
-                    hintText: 'Address',
-                    labelText: '',
-                    readOnly: true,
-                  ),
+                const Expanded(
+                  flex: 5,
+                  child: SizedBox(),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: CustomTextField(
-                    onTap: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                      );
-                      if (picked != null) {
-                        expenseProvider.invoiceDateSalesController.text =
-                            DateFormat('dd MMM yyyy').format(picked);
-                      }
-                    },
-                    controller: expenseProvider.invoiceDateSalesController,
-                    height: 54,
-                    hintText: 'Invoice Date*',
-                    labelText: '',
-                    readOnly: true,
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () async {
-                        final DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (picked != null) {
-                          expenseProvider.invoiceDateSalesController.text =
-                              DateFormat('dd MMM yyyy').format(picked);
-                        }
-                      },
+                const SizedBox(width: 12),
+                SizedBox(
+                  width: 52,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () => _handleAddItem(expenseProvider),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1E293B),
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 0,
+                    ),
+                    child: Icon(
+                      expenseProvider.editSalesItemIndex != null
+                          ? Icons.check_circle_outline
+                          : Icons.add_rounded,
+                      size: 24,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 32),
-
-            // Item Form Section - Using the same layout as Purchase
-            _buildItemFormSection(expenseProvider),
-
-            const SizedBox(height: 20),
-
-            // Item List Section
-            if (expenseProvider.salesItems.isNotEmpty)
-              _buildItemListSection(expenseProvider),
-
-            const SizedBox(height: 20),
-            CustomTextField(
-              controller: expenseProvider.descriptionSalesController,
-              height: 54,
-              hintText: 'Description',
-              labelText: '',
-              keyboardType: TextInputType.multiline,
-              minLines: 2,
-            ),
-            const SizedBox(height: 20),
+          ] else ...[
+            // Mobile stacked grid view
             Row(
               children: [
-                CustomElevatedButton(
-                  buttonText: 'Cancel',
-                  onPressed: () {
-                    expenseProvider.resetSalesValues();
-                    expenseProvider.resetSalesItems();
-                    expenseProvider.clearSalesItemFields();
-                    Navigator.pop(context);
-                  },
-                  backgroundColor: AppColors.whiteColor,
-                  borderColor: AppColors.appViolet,
-                  textColor: AppColors.appViolet,
-                ),
-                const SizedBox(width: 10),
-                CustomElevatedButton(
-                  buttonText: 'Save',
-                  onPressed: () async {
-                    // Debug: Print current state
-                    print(
-                        'Sales Items count: ${expenseProvider.salesItems.length}');
-                    print(
-                        'Customer ID: ${expenseProvider.selectedSalesCustomerId}');
-                    print(
-                        'Invoice No: ${expenseProvider.invoiceNOSalesControler.text}');
-                    print(
-                        'Invoice Date: ${expenseProvider.invoiceDateSalesController.text}');
-
-                    // Validate input
-                    if (expenseProvider.invoiceNOSalesControler.text.isEmpty ||
-                        expenseProvider
-                            .invoiceDateSalesController.text.isEmpty ||
-                        expenseProvider.selectedSalesCustomerId == null ||
-                        expenseProvider.salesItems.isEmpty) {
-                      String errorMessage =
-                          'Please fill all required fields and add at least one item\n\n';
-                      if (expenseProvider
-                          .invoiceNOSalesControler.text.isEmpty) {
-                        errorMessage += '• Invoice No is required\n';
-                      }
-                      if (expenseProvider
-                          .invoiceDateSalesController.text.isEmpty) {
-                        errorMessage += '• Invoice Date is required\n';
-                      }
-                      if (expenseProvider.selectedSalesCustomerId == null) {
-                        errorMessage += '• Customer is required\n';
-                      }
-                      if (expenseProvider.salesItems.isEmpty) {
-                        errorMessage += '• At least one item is required\n';
-                      }
-
-                      showErrorDialog(context, errorMessage.trim());
-                      return;
-                    }
-
-                    var data = {
-                      "Sales_Master_Id": widget.editId,
-                      "Sales_Date": expenseProvider
-                          .invoiceDateSalesController.text
-                          .toyyyymmdd(),
-                      "Customer_Id": expenseProvider.selectedSalesCustomerId,
-                      "Invoice_No":
-                          expenseProvider.invoiceNOSalesControler.text,
-                      "TotalAmount":
-                          expenseProvider.grandTotal.toStringAsFixed(2),
-                      "TaxableAmount":
-                          expenseProvider.totalTaxableAmount.toStringAsFixed(2),
-                      "Total_CGST":
-                          expenseProvider.totalCGST.toStringAsFixed(2),
-                      "Total_SGST":
-                          expenseProvider.totalSGST.toStringAsFixed(2),
-                      "Total_IGST": 0,
-                      "Total_GST": expenseProvider.totalGST.toStringAsFixed(2),
-                      "TotalDiscount":
-                          expenseProvider.totalDiscount.toStringAsFixed(2),
-                      "NetTotal":
-                          expenseProvider.finalGrandTotal.toStringAsFixed(2),
-                      "Description":
-                          expenseProvider.descriptionSalesController.text,
-                      "sales_details": expenseProvider.salesItems
-                          .map((item) => item.toJson())
-                          .toList(),
-                    };
-
-                    print('Data to be sent: $data');
-
-                    expenseProvider.saveSales(
-                        editId: int.parse(widget.editId),
-                        context: context,
-                        data: data);
-                  },
-                  backgroundColor: AppColors.appViolet,
-                  borderColor: AppColors.appViolet,
-                  textColor: AppColors.whiteColor,
-                ),
+                Expanded(child: _buildItemDropdown(expenseProvider)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildCategoryField(expenseProvider)),
               ],
             ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _buildUnitField(expenseProvider)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildHSNField(expenseProvider)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _buildPriceField(expenseProvider)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildQuantityField(expenseProvider)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _buildDiscountPercentField(expenseProvider)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildDiscountAmountField(expenseProvider)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _buildAmountField(expenseProvider)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildNetValueField(expenseProvider)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _buildCGSTField(expenseProvider)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildSGSTField(expenseProvider)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _buildGSTField(expenseProvider)),
+                const SizedBox(width: 12),
+                Expanded(child: _buildTotalAmountField(expenseProvider)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(
+                width: 52,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () => _handleAddItem(expenseProvider),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E293B),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 0,
+                  ),
+                  child: Icon(
+                    expenseProvider.editSalesItemIndex != null
+                        ? Icons.check_circle_outline
+                        : Icons.add_rounded,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+            ],
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildItemFormSection(ExpenseProvider expenseProvider) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Item Details',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // First Row - Item, Category, Unit, HSN (for web) or Item, Category (for mobile)
-          AppStyles.isWebScreen(context)
-              ? Row(
-                  children: [
-                    Expanded(child: _buildItemDropdown(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildCategoryField(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildUnitField(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildHSNField(expenseProvider)),
-                  ],
-                )
-              : Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(child: _buildItemDropdown(expenseProvider)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildCategoryField(expenseProvider)),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(child: _buildUnitField(expenseProvider)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildHSNField(expenseProvider)),
-                      ],
-                    ),
-                  ],
-                ),
-
-          const SizedBox(height: 16),
-
-          // Second Row - Price, Amount, Discount%, Discount Amount
-          AppStyles.isWebScreen(context)
-              ? Row(
-                  children: [
-                    Expanded(child: _buildPriceField(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildAmountField(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(
-                        child: _buildDiscountPercentField(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildDiscountAmountField(expenseProvider)),
-                  ],
-                )
-              : Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(child: _buildPriceField(expenseProvider)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildAmountField(expenseProvider)),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                            child: _buildDiscountPercentField(expenseProvider)),
-                        const SizedBox(width: 16),
-                        Expanded(
-                            child: _buildDiscountAmountField(expenseProvider)),
-                      ],
-                    ),
-                  ],
-                ),
-
-          const SizedBox(height: 16),
-
-          // Third Row - Net Value, CGST, SGST, GST
-          AppStyles.isWebScreen(context)
-              ? Row(
-                  children: [
-                    Expanded(child: _buildNetValueField(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildCGSTField(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildSGSTField(expenseProvider)),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildGSTField(expenseProvider)),
-                  ],
-                )
-              : Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(child: _buildNetValueField(expenseProvider)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildCGSTField(expenseProvider)),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(child: _buildSGSTField(expenseProvider)),
-                        const SizedBox(width: 16),
-                        Expanded(child: _buildGSTField(expenseProvider)),
-                      ],
-                    ),
-                  ],
-                ),
-
-          const SizedBox(height: 16),
-
-          // Fourth Row - Quantity, Total Amount
-          Row(
-            children: [
-              Expanded(child: _buildQuantityField(expenseProvider)),
-              const SizedBox(width: 16),
-              Expanded(child: _buildTotalAmountField(expenseProvider)),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CustomElevatedButton(
-                buttonText: 'Add Item',
-                onPressed: () => _handleAddItem(expenseProvider),
-                backgroundColor: AppColors.appViolet,
-                borderColor: AppColors.appViolet,
-                textColor: AppColors.whiteColor,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+    ],
+  );
+}
 
   Widget _buildItemDropdown(ExpenseProvider expenseProvider) {
     return CommonDropdown(
@@ -999,88 +896,107 @@ class _SalesWidgetState extends State<SalesWidget> {
           var item = entry.value;
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade200),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: const Offset(0, 2),
-                  blurRadius: 4,
-                ),
-              ],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Row(
               children: [
+                // 1. Item Name
                 Expanded(
                   flex: 4,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.itemName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          '${item.categoryName} (${item.unitName})',
-                          style: TextStyle(
-                            color: Colors.grey.shade700,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
                   child: Text(
-                    '${item.quantity} × ₹${item.price}',
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    'GST: ${item.gstAmount}',
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    '₹${item.totalAmount}',
-                    style: const TextStyle(
+                    item.itemName,
+                    style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
+                      color: const Color(0xFF1E293B),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 2. Category & Unit
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    '${item.categoryName} (${item.unitName})',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: const Color(0xFF64748B),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 3. Price
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    '₹${item.price.toStringAsFixed(2)}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: const Color(0xFF475569),
                     ),
                   ),
                 ),
+                const SizedBox(width: 12),
+                // 4. Quantity
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    '${item.quantity} Qty',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF475569),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 5. GST
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    'GST: ₹${item.gstAmount.toStringAsFixed(2)}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      color: const Color(0xFF475569),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 6. Total Amount
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    '₹${item.totalAmount.toStringAsFixed(2)}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      color: const Color(0xFF1E293B),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // 7. Actions (Edit / Delete)
                 IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.blue),
+                  icon: const Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                   onPressed: () {
                     expenseProvider.editSalesItem(index);
                   },
                 ),
+                const SizedBox(width: 12),
                 IconButton(
-                  icon: Icon(
-                    Icons.delete_outline,
-                    color: Colors.red.shade700,
-                    size: 20,
-                  ),
+                  icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444), size: 20),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                   onPressed: () {
                     expenseProvider.removeSalesItem(index);
                   },
@@ -1257,6 +1173,365 @@ class _SalesWidgetState extends State<SalesWidget> {
                     fontWeight: FontWeight.w700,
                     fontSize: 18,
                     color: AppColors.appViolet,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.plusJakartaSans(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: const Color(0xFF1E293B),
+      ),
+    );
+  }
+
+  Widget _buildBasicInfoColumn(
+      ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
+    bool isWeb = AppStyles.isWebScreen(context);
+
+    Widget content;
+    if (isWeb) {
+      content = Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 3,
+            child: settingsProvider.leadInSales == 1
+                ? LeadAutocompleteWidget(
+                    labelText: 'Select Lead*',
+                    initialValue: widget.isEdit && widget.data != null
+                        ? widget.data!.customerName
+                        : null,
+                    onSelected: (model) {
+                      expenseProvider.addressSalesController.text =
+                          model.address;
+                      expenseProvider
+                          .setSelectedSalesCustomerId(model.customerId);
+                    },
+                  )
+                : CommonDropdown<int>(
+                    hintText: 'Select Customer*',
+                    items: settingsProvider.searchInventoryCustomer
+                        .map((status) => DropdownItem<int>(
+                              id: status.customerId,
+                              name: status.customerName,
+                            ))
+                        .toList(),
+                    controller: TextEditingController(),
+                    onItemSelected: (selectedId) {
+                      final selectedPerson = settingsProvider
+                          .searchInventoryCustomer
+                          .firstWhere(
+                        (item) => item.customerId == selectedId,
+                      );
+                      expenseProvider.addressSalesController.text =
+                          selectedPerson.address;
+                      expenseProvider
+                          .setSelectedSalesCustomerId(selectedId);
+                    },
+                    selectedValue:
+                        expenseProvider.selectedSalesCustomerId,
+                  ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 4,
+            child: CustomTextField(
+              controller: expenseProvider.addressSalesController,
+              height: 52,
+              hintText: 'Address',
+              labelText: '',
+              readOnly: true,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 2,
+            child: CustomTextField(
+              controller: expenseProvider.invoiceNOSalesControler,
+              height: 52,
+              hintText: 'Invoice No*',
+              labelText: '',
+              readOnly: true,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 2,
+            child: CustomTextField(
+              onTap: () async {
+                final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2101),
+                );
+                if (picked != null) {
+                  expenseProvider.invoiceDateSalesController.text =
+                      DateFormat('dd MMM yyyy').format(picked);
+                }
+              },
+              controller: expenseProvider.invoiceDateSalesController,
+              height: 52,
+              hintText: 'Invoice Date*',
+              labelText: '',
+              readOnly: true,
+              suffixIcon: const Icon(Icons.calendar_today_rounded, size: 20),
+            ),
+          ),
+        ],
+      );
+    } else {
+      content = Column(
+        children: [
+          settingsProvider.leadInSales == 1
+              ? LeadAutocompleteWidget(
+                  labelText: 'Select Lead*',
+                  initialValue: widget.isEdit && widget.data != null
+                      ? widget.data!.customerName
+                      : null,
+                  onSelected: (model) {
+                    expenseProvider.addressSalesController.text =
+                        model.address;
+                    expenseProvider
+                        .setSelectedSalesCustomerId(model.customerId);
+                  },
+                )
+              : CommonDropdown<int>(
+                  hintText: 'Select Customer*',
+                  items: settingsProvider.searchInventoryCustomer
+                      .map((status) => DropdownItem<int>(
+                            id: status.customerId,
+                            name: status.customerName,
+                          ))
+                      .toList(),
+                  controller: TextEditingController(),
+                  onItemSelected: (selectedId) {
+                    final selectedPerson = settingsProvider
+                        .searchInventoryCustomer
+                        .firstWhere(
+                      (item) => item.customerId == selectedId,
+                    );
+                    expenseProvider.addressSalesController.text =
+                        selectedPerson.address;
+                    expenseProvider
+                        .setSelectedSalesCustomerId(selectedId);
+                  },
+                  selectedValue:
+                      expenseProvider.selectedSalesCustomerId,
+                ),
+          const SizedBox(height: 16),
+          CustomTextField(
+            controller: expenseProvider.addressSalesController,
+            height: 52,
+            hintText: 'Address',
+            labelText: '',
+            readOnly: true,
+          ),
+          const SizedBox(height: 16),
+          CustomTextField(
+            controller: expenseProvider.invoiceNOSalesControler,
+            height: 52,
+            hintText: 'Invoice No*',
+            labelText: '',
+            readOnly: true,
+          ),
+          const SizedBox(height: 16),
+          CustomTextField(
+            onTap: () async {
+              final DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2101),
+              );
+              if (picked != null) {
+                expenseProvider.invoiceDateSalesController.text =
+                    DateFormat('dd MMM yyyy').format(picked);
+              }
+            },
+            controller: expenseProvider.invoiceDateSalesController,
+            height: 52,
+            hintText: 'Invoice Date*',
+            labelText: '',
+            readOnly: true,
+            suffixIcon: const Icon(Icons.calendar_today_rounded, size: 20),
+          ),
+        ],
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle('Basic Information'),
+        const SizedBox(height: 12),
+        Container(
+          padding: EdgeInsets.all(isWeb ? 20 : 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: content,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomBar(ExpenseProvider expenseProvider) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Grand Total',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF64748B),
+                ),
+              ),
+              Text(
+                '₹${expenseProvider.finalGrandTotal.toStringAsFixed(2)}',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF1E293B),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
+            children: [
+              ResponsiveButtonWrapper(
+                child: OutlinedButton(
+                  onPressed: () {
+                    expenseProvider.resetSalesValues();
+                    expenseProvider.resetSalesItems();
+                    expenseProvider.clearSalesItemFields();
+                    Navigator.pop(context);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: const BorderSide(color: Color(0xFFE2E8F0)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF64748B),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              ResponsiveButtonWrapper(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // Debug: Print current state
+                    print(
+                        'Sales Items count: ${expenseProvider.salesItems.length}');
+                    print(
+                        'Customer ID: ${expenseProvider.selectedSalesCustomerId}');
+                    print(
+                        'Invoice No: ${expenseProvider.invoiceNOSalesControler.text}');
+                    print(
+                        'Invoice Date: ${expenseProvider.invoiceDateSalesController.text}');
+
+                    // Validate input
+                    if (expenseProvider.invoiceNOSalesControler.text.isEmpty ||
+                        expenseProvider.invoiceDateSalesController.text.isEmpty ||
+                        expenseProvider.selectedSalesCustomerId == null ||
+                        expenseProvider.salesItems.isEmpty) {
+                      String errorMessage =
+                          'Please fill all required fields and add at least one item\n\n';
+                      if (expenseProvider.invoiceNOSalesControler.text.isEmpty) {
+                        errorMessage += '• Invoice No is required\n';
+                      }
+                      if (expenseProvider.invoiceDateSalesController.text.isEmpty) {
+                        errorMessage += '• Invoice Date is required\n';
+                      }
+                      if (expenseProvider.selectedSalesCustomerId == null) {
+                        errorMessage += '• Customer is required\n';
+                      }
+                      if (expenseProvider.salesItems.isEmpty) {
+                        errorMessage += '• At least one item is required\n';
+                      }
+
+                      showErrorDialog(context, errorMessage.trim());
+                      return;
+                    }
+
+                    var data = {
+                      "Sales_Master_Id": widget.editId,
+                      "Sales_Date": expenseProvider.invoiceDateSalesController.text.toyyyymmdd(),
+                      "Customer_Id": expenseProvider.selectedSalesCustomerId,
+                      "Invoice_No": expenseProvider.invoiceNOSalesControler.text,
+                      "TotalAmount": expenseProvider.grandTotal.toStringAsFixed(2),
+                      "TaxableAmount": expenseProvider.totalTaxableAmount.toStringAsFixed(2),
+                      "Total_CGST": expenseProvider.totalCGST.toStringAsFixed(2),
+                      "Total_SGST": expenseProvider.totalSGST.toStringAsFixed(2),
+                      "Total_IGST": 0,
+                      "Total_GST": expenseProvider.totalGST.toStringAsFixed(2),
+                      "TotalDiscount": expenseProvider.totalDiscount.toStringAsFixed(2),
+                      "NetTotal": expenseProvider.finalGrandTotal.toStringAsFixed(2),
+                      "Description": expenseProvider.descriptionSalesController.text,
+                      "sales_details": expenseProvider.salesItems.map((item) => item.toJson()).toList(),
+                    };
+
+                    print('Data to be sent: $data');
+
+                    expenseProvider.saveSales(
+                        editId: int.parse(widget.editId),
+                        context: context,
+                        data: data);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondaryBlue,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(
+                    'Save',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
