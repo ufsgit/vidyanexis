@@ -6,6 +6,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_payment_schedule.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_card.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PaymentScheduleTabWidget extends StatefulWidget {
   final String customerId;
@@ -42,11 +43,19 @@ class _PaymentScheduleTabWidgetState extends State<PaymentScheduleTabWidget> {
             children: [
               const SizedBox(height: 10),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Spacer(),
+                  Text(
+                    'Payment Schedule',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF1E293B),
+                    ),
+                  ),
                   if (settingsProvider.menuIsSaveMap[70] == 1)
-                    ElevatedButton.icon(
-                      onPressed: () {
+                    GestureDetector(
+                      onTap: () {
                         paymentScheduleProvider.clearControllers();
                         showDialog(
                           context: context,
@@ -59,16 +68,25 @@ class _PaymentScheduleTabWidgetState extends State<PaymentScheduleTabWidget> {
                           },
                         );
                       },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Schedule'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryBlue,
-                        foregroundColor: Colors.white,
-                        padding: AppStyles.isWebScreen(context)
-                            ? const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12)
-                            : const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 0),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryBlue,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.secondaryBlue.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.add_rounded,
+                          color: Colors.white,
+                          size: 26,
+                        ),
                       ),
                     ),
                 ],

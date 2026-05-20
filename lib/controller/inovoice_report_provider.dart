@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/invoice_report_model.dart';
@@ -226,9 +227,19 @@ class InvoiceReportProvider extends ChangeNotifier {
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
-      final response = await HttpRequest.httpGetRequest(
+      var response = await HttpRequest.httpGetRequest(
           endPoint:
               '${HttpUrls.billPayementReport}?Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Customer_Name=$_Search');
+
+      // Fallback strategy if first endpoint returns 404, 0 or any non-200 status code
+      if (response.statusCode != 200) {
+        if (kDebugMode) {
+          print("Billing_Payment_Report returned ${response.statusCode}, falling back to Search_Invoice_Report...");
+        }
+        response = await HttpRequest.httpGetRequest(
+            endPoint:
+                '${HttpUrls.searchInvoiceReport}?Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Customer_Name=$_Search');
+      }
 
       if (response.statusCode == 200) {
         final data = response.data;
