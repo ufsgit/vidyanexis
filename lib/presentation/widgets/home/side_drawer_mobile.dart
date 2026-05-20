@@ -46,6 +46,7 @@ import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_mobile
 import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/sales_report_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
 
 class SidebarDrawer extends StatefulWidget {
@@ -140,6 +141,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Receipt Reports', 'page': const ReceiptReportPage()},
       if (settingsProvider.menuIsViewMap[123].toString() == '1')
         {'title': 'Customer Task Month Report', 'page': const CustomerTaskMonthReportScreen()},
+      if (settingsProvider.menuIsViewMap[144].toString() == '1')
+        {'title': 'Sales Reports', 'page': const SalesReportScreenPhone()},
       if (settingsProvider.menuIsViewMap[116].toString() == '1')
         {'title': 'Customer Outstanding Reports', 'page': const CustomerOutstandingReportMobile()},
     ];
