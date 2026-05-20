@@ -45,12 +45,12 @@ class _HomePageMobileState extends State<HomePageMobile> {
       if (!kIsWeb && userId.isNotEmpty) {
         try {
           //
-          String? topicName_local =
+          String? topicnameLocal =
               preferences.getString('cached_company_notification_topic');
-          print("Subscribing to topic12: $topicName_local");
+          print("Subscribing to topic12: $topicnameLocal");
           // final String topicName = '${topicNames}-$userId';
-          String topicName = topicName_local ?? '';
-          topicName = topicName + '-' + userId.toString();
+          String topicName = topicnameLocal ?? '';
+          topicName = '$topicName-$userId';
           print("Subscribing to topic: $topicName");
           await FirebaseMessaging.instance.subscribeToTopic(topicName);
         } catch (e) {

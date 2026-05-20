@@ -27,7 +27,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
   int? _selectedDepartmentId;
   String _selectedTaskType = '';
   int? _selectedTaskTypeId;
-  String _selectedCustomerName = '';
+  final String _selectedCustomerName = '';
   int? _selectedCustomerId;
 
   List<FieldModel> _selectedFields = [];

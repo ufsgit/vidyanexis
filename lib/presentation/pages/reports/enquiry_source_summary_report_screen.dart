@@ -6,13 +6,9 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/controller/customer_details_provider.dart';
-import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/enquiry_source_provider.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
-import 'package:go_router/go_router.dart';
-import 'package:vidyanexis/utils/extensions.dart';
 
 class EnquirySourceSummaryReportScreen extends StatefulWidget {
   const EnquirySourceSummaryReportScreen({super.key});

@@ -10,7 +10,6 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
@@ -18,7 +17,6 @@ import 'package:vidyanexis/utils/pdf_action_helper.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
 class QuotationMobileView extends StatefulWidget {
   const QuotationMobileView({super.key, required this.customerId});

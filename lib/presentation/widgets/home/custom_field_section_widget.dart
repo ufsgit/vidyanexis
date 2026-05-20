@@ -15,7 +15,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/home/signature_capture_dialog.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_custom_field.dart';

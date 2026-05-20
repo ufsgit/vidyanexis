@@ -7,9 +7,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/document_list_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_document_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/full_screen_image_view.dart';
-import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DocumentsListPagePhone extends StatefulWidget {

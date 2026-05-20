@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,7 +18,6 @@ import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_item_card.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
 
 class AddQuotationWidgetMobile extends StatefulWidget {
   const AddQuotationWidgetMobile(

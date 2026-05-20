@@ -329,7 +329,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                     .setStatus(status.statusId ?? 0);
                               },
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -442,7 +442,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                     user.userDetailsId ?? 0);
                               },
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -477,7 +477,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                     enquiry.enquiryForId ?? 0);
                               },
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -513,7 +513,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                     source.enquirySourceId ?? 0);
                               },
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                       const SizedBox(height: 24),

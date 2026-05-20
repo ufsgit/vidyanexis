@@ -26,7 +26,7 @@ class CommissionReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
 
-  String _search = '';
+  final String _search = '';
   String _fromDateS = '2025-01-01';
   String _toDateS = '2025-12-31';
 
