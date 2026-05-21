@@ -247,11 +247,11 @@ class _tasksPageReportState extends State<TaskPage> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
-              showSort: false,
+              showSort: true,
               onSortTap: (value) {
                 reportsProvider.setSortOption(value, context);
               },
-              showOrder: false,
+              showOrder: true,
               sortOrder: reportsProvider.sortOrder,
               onOrderTap: () {
                 reportsProvider.toggleSortOrder(context);
