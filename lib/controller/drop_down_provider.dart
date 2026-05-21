@@ -6,6 +6,8 @@ import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/duration_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
+import 'package:vidyanexis/controller/models/user_enquiry_for_model.dart';
+import 'package:vidyanexis/controller/models/user_enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_status_model.dart';
 import 'package:vidyanexis/controller/models/interval_model.dart';
 import 'package:vidyanexis/controller/models/location_model.dart';
@@ -581,9 +583,41 @@ class DropDownProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          _enquiryData = (data as List<dynamic>)
+          List<Enquirysourcemodel> allSources = (data as List<dynamic>)
               .map((item) => Enquirysourcemodel.fromJson(item))
               .toList();
+
+          if (userId.isNotEmpty) {
+            try {
+              final userResponse = await HttpRequest.httpGetRequest(
+                endPoint: '${HttpUrls.getUserEnquirySource}/$userId',
+              );
+              if (userResponse.statusCode == 200 &&
+                  userResponse.data != null &&
+                  userResponse.data['data'] != null) {
+                final List<dynamic> dataList = userResponse.data['data'];
+                final userSources = dataList
+                    .map((item) => UserEnquirySourceModel.fromJson(item))
+                    .toList();
+
+                allSources = allSources.where((source) {
+                  final matched = userSources.firstWhere(
+                    (u) => u.enquirySourceId == source.enquirySourceId,
+                    orElse: () => UserEnquirySourceModel(isview: 0),
+                  );
+                  return matched.isview == 1;
+                }).toList();
+              } else {
+                allSources = [];
+              }
+            } catch (e) {
+              print(
+                  'Exception occurred while fetching user enquiry sources: $e');
+              allSources = [];
+            }
+          }
+
+          _enquiryData = allSources;
           notifyListeners();
         }
       } else {
@@ -657,9 +691,40 @@ class DropDownProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          _enquiryForList = (data as List<dynamic>)
+          List<EnquiryForModel> allEnquiryFor = (data as List<dynamic>)
               .map((item) => EnquiryForModel.fromJson(item))
               .toList();
+
+          if (userId.isNotEmpty) {
+            try {
+              final userResponse = await HttpRequest.httpGetRequest(
+                endPoint: '${HttpUrls.getUserEnquiryFor}/$userId',
+              );
+              if (userResponse.statusCode == 200 &&
+                  userResponse.data != null &&
+                  userResponse.data['data'] != null) {
+                final List<dynamic> dataList = userResponse.data['data'];
+                final userEnquiryFor = dataList
+                    .map((item) => UserEnquiryForModel.fromJson(item))
+                    .toList();
+
+                allEnquiryFor = allEnquiryFor.where((enquiry) {
+                  final matched = userEnquiryFor.firstWhere(
+                    (u) => u.enquiryForId == enquiry.enquiryForId,
+                    orElse: () => UserEnquiryForModel(isview: 0),
+                  );
+                  return matched.isview == 1;
+                }).toList();
+              } else {
+                allEnquiryFor = [];
+              }
+            } catch (e) {
+              print('Exception occurred while fetching user enquiry for: $e');
+              allEnquiryFor = [];
+            }
+          }
+
+          _enquiryForList = allEnquiryFor;
           notifyListeners();
         }
       } else {
