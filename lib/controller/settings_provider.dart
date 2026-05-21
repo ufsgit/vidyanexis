@@ -28,6 +28,8 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
+import 'package:vidyanexis/controller/models/user_enquiry_for_model.dart';
+import 'package:vidyanexis/controller/models/user_enquiry_source_model.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -130,6 +132,10 @@ class SettingsProvider extends ChangeNotifier {
   bool _allowAppLogin = false;
 
   bool _isSavingTeam = false;
+  bool _isSavingUserEnquiryFor = false;
+  bool get isSavingUserEnquiryFor => _isSavingUserEnquiryFor;
+  bool _isSavingUserEnquirySource = false;
+  bool get isSavingUserEnquirySource => _isSavingUserEnquirySource;
   bool _isAddingUser = false;
   bool get isAddingUser => _isAddingUser;
   String _selectedMenu = 'Users';
@@ -1640,7 +1646,8 @@ class SettingsProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       String url = '${HttpUrls.searchUser}?user_details_Name=$query';
-      if (selectedFilterDepartmentId != null && selectedFilterDepartmentId != 0) {
+      if (selectedFilterDepartmentId != null &&
+          selectedFilterDepartmentId != 0) {
         url += '&Department_Id=$selectedFilterDepartmentId';
       }
       if (selectedFilterBranchId != null && selectedFilterBranchId != 0) {
@@ -1657,7 +1664,8 @@ class SettingsProvider extends ChangeNotifier {
               .map((item) => GetUserModel.fromJson(item))
               .toList();
 
-          if (selectedFilterDepartmentId != null && selectedFilterDepartmentId != 0) {
+          if (selectedFilterDepartmentId != null &&
+              selectedFilterDepartmentId != 0) {
             allUsers = allUsers
                 .where((user) =>
                     user.departmentId == selectedFilterDepartmentId.toString())
@@ -2446,6 +2454,230 @@ class SettingsProvider extends ChangeNotifier {
       );
       _isSavingTeam = false;
       notifyListeners();
+    }
+  }
+
+  Future<List<UserEnquiryForModel>> getUserEnquiryFor(
+      String userId, BuildContext context) async {
+    List<UserEnquiryForModel> list = [];
+    try {
+      List<EnquiryForModel> masterList = [];
+      try {
+        final masterResponse = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchEnquiryFor}?Enquiry_For_Name=',
+        );
+        if (masterResponse.statusCode == 200 && masterResponse.data != null) {
+          masterList = (masterResponse.data as List<dynamic>)
+              .map((item) => EnquiryForModel.fromJson(item))
+              .toList();
+        }
+      } catch (e) {
+        print('Error fetching master Enquiry For: $e');
+      }
+
+      List<UserEnquiryForModel> userList = [];
+      try {
+        final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getUserEnquiryFor}/$userId',
+        );
+        if (response.statusCode == 200 && response.data != null && response.data['data'] != null) {
+          final List<dynamic> dataList = response.data['data'];
+          userList = dataList
+              .map((item) => UserEnquiryForModel.fromJson(item))
+              .toList();
+        }
+      } catch (e) {
+        print('Error fetching user Enquiry For: $e');
+      }
+
+      for (var master in masterList) {
+        final matchedUserItem = userList.firstWhere(
+          (u) => u.enquiryForId == master.enquiryForId,
+          orElse: () => UserEnquiryForModel(
+            isview: 0,
+            enquiryForId: master.enquiryForId,
+            enquiryForName: master.enquiryForName,
+            userId: int.tryParse(userId),
+          ),
+        );
+        
+        list.add(UserEnquiryForModel(
+          userEnquiryForId: matchedUserItem.userEnquiryForId,
+          userId: int.tryParse(userId),
+          userDetailsName: matchedUserItem.userDetailsName,
+          enquiryForId: master.enquiryForId,
+          enquiryForName: master.enquiryForName,
+          isview: matchedUserItem.isview,
+          deleteStatus: master.deleteStatus,
+        ));
+      }
+    } catch (e) {
+      print('Exception occurred in getUserEnquiryFor: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred loading settings')),
+      );
+    }
+    return list;
+  }
+
+  Future<List<UserEnquirySourceModel>> getUserEnquirySource(
+      String userId, BuildContext context) async {
+    List<UserEnquirySourceModel> list = [];
+    try {
+      List<EnquirySourceModel> masterList = [];
+      try {
+        final masterResponse = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchEnquiryStatus}?Enquiry_Source_Name=',
+        );
+        if (masterResponse.statusCode == 200 && masterResponse.data != null) {
+          masterList = (masterResponse.data as List<dynamic>)
+              .map((item) => EnquirySourceModel.fromJson(item))
+              .toList();
+        }
+      } catch (e) {
+        print('Error fetching master Enquiry Source: $e');
+      }
+
+      List<UserEnquirySourceModel> userList = [];
+      try {
+        final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getUserEnquirySource}/$userId',
+        );
+        if (response.statusCode == 200 && response.data != null && response.data['data'] != null) {
+          final List<dynamic> dataList = response.data['data'];
+          userList = dataList
+              .map((item) => UserEnquirySourceModel.fromJson(item))
+              .toList();
+        }
+      } catch (e) {
+        print('Error fetching user Enquiry Source: $e');
+      }
+
+      for (var master in masterList) {
+        final matchedUserItem = userList.firstWhere(
+          (u) => u.enquirySourceId == master.enquirySourceId,
+          orElse: () => UserEnquirySourceModel(
+            isview: 0,
+            enquirySourceId: master.enquirySourceId,
+            enquirySourceName: master.enquirySourceName,
+            userId: int.tryParse(userId),
+          ),
+        );
+        
+        list.add(UserEnquirySourceModel(
+          userEnquirySourceId: matchedUserItem.userEnquirySourceId,
+          userId: int.tryParse(userId),
+          userDetailsName: matchedUserItem.userDetailsName,
+          enquirySourceId: master.enquirySourceId,
+          enquirySourceName: master.enquirySourceName,
+          isview: matchedUserItem.isview,
+          deleteStatus: master.deleteStatus,
+        ));
+      }
+    } catch (e) {
+      print('Exception occurred in getUserEnquirySource: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred loading settings')),
+      );
+    }
+    return list;
+  }
+
+  Future<void> saveUserEnquiryForList({
+    required BuildContext context,
+    required String userId,
+    required List<UserEnquiryForModel> updatedList,
+  }) async {
+    _isSavingUserEnquiryFor = true;
+    notifyListeners();
+
+    try {
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveUserEnquiryFor,
+        bodyData: {
+          "user_id": int.parse(userId),
+          "enquiry_for_list": updatedList
+              .map((item) => {
+                    "enquiry_for_id": item.enquiryForId ?? 0,
+                    "isview": item.isview,
+                  })
+              .toList(),
+        },
+      );
+
+      _isSavingUserEnquiryFor = false;
+      notifyListeners();
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to save')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      _isSavingUserEnquiryFor = false;
+      notifyListeners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred during save')),
+      );
+    }
+  }
+
+  Future<void> saveUserEnquirySourceList({
+    required BuildContext context,
+    required String userId,
+    required List<UserEnquirySourceModel> updatedList,
+  }) async {
+    _isSavingUserEnquirySource = true;
+    notifyListeners();
+
+    try {
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveUserEnquirySource,
+        bodyData: {
+          "user_id": int.parse(userId),
+          "enquiry_source_list": updatedList
+              .map((item) => {
+                    "enquiry_source_id": item.enquirySourceId ?? 0,
+                    "isview": item.isview,
+                  })
+              .toList(),
+        },
+      );
+
+      _isSavingUserEnquirySource = false;
+      notifyListeners();
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true) {
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to save')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      _isSavingUserEnquirySource = false;
+      notifyListeners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred during save')),
+      );
     }
   }
 
