@@ -151,8 +151,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         showLogo: false,
         showUserName: false,
         showFilterIcon: false,
-        showSort: false,
-        showOrder: false,
+        showSort: true,
+        showOrder: true,
         sortOrder: customerProvider.sortOrder,
         onOrderTap: () => customerProvider.toggleSortOrder(context),
         onSortTap: (value) {

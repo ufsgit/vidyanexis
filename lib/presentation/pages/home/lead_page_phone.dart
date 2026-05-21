@@ -213,8 +213,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
-              showSort: false,
-              showOrder: false,
+              showSort: true,
+              showOrder: true,
               sortOrder: leadProvider.sortOrder,
               onOrderTap: () => leadProvider.toggleSortOrder(context),
               onSortTap: (value) {
@@ -250,8 +250,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
-              showSort: false,
-              showOrder: false,
+              showSort: true,
+              showOrder: true,
               sortOrder: leadProvider.sortOrder,
               onOrderTap: () => leadProvider.toggleSortOrder(context),
               onSortTap: (value) {
