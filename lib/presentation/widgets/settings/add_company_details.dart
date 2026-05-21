@@ -407,6 +407,22 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Quotation Item :   ${settingsProvider.quotationItem == 1 ? "On" : "Off"}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 10),
+                  Switch(
+                    value: settingsProvider.quotationItem == 1,
+                    onChanged: (bool value) {
+                      settingsProvider.setQuotationItem(value ? 1 : 0);
+                    },
+                  ),
+                ],
+              ),
               const SizedBox(height: 10),
               CustomElevatedButton(
                 buttonText: 'Upload Image',
