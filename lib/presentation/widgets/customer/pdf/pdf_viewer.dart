@@ -50,15 +50,16 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () async {
-              await Printing.sharePdf(
-                bytes: widget.pdfData,
-                filename: '${widget.title}.pdf',
-              );
-            },
-          ),
+          if (!kIsWeb)
+            IconButton(
+              icon: Icon(Icons.share),
+              onPressed: () async {
+                await Printing.sharePdf(
+                  bytes: widget.pdfData,
+                  filename: '${widget.title}.pdf',
+                );
+              },
+            ),
           IconButton(
             icon: Icon(Icons.print),
             onPressed: () async {

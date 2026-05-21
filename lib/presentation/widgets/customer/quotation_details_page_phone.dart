@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -116,7 +117,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
         ),
         actions: [
           if (settingsprovider.menuIsViewMap[55] == 1) ...[
-            if (widget.quotation.quotationTypeId == 2)
+            if (widget.quotation.quotationTypeId == 2 && !kIsWeb)
               CustomOutlinedSvgButton(
                 onPressed: () async {
                   PdfActionHelper.showShareOptions(
@@ -186,7 +187,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                 backgroundColor: Colors.white,
                 borderSide: BorderSide(color: AppColors.primaryBlue),
               ),
-            if (widget.quotation.quotationTypeId == 1)
+            if (widget.quotation.quotationTypeId == 1 && !kIsWeb)
               CustomOutlinedSvgButton(
                 onPressed: () async {
                   PdfActionHelper.showShareOptions(
@@ -257,7 +258,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                 borderSide: BorderSide(color: AppColors.primaryBlue),
               ),
           ],
-          if (settingsprovider.menuIsViewMap[32] == 1)
+          if (settingsprovider.menuIsViewMap[32] == 1 && !kIsWeb)
             CustomOutlinedSvgButton(
               onPressed: () async {
                 PdfActionHelper.showShareOptions(

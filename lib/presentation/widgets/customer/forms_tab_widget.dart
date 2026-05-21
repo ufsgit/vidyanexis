@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
@@ -187,29 +188,31 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
                     constraints: const BoxConstraints(),
                   ),
                 const SizedBox(height: 8),
-                IconButton(
-                  icon: const Icon(Icons.share, color: Color(0xFF2563EB)),
-                  onPressed: () async {
-                    if (form.instanceId != null) {
-                      PdfActionHelper.showShareOptions(
-                        context: context,
-                        title: 'Form ${form.name}',
-                        onGenerate: () async {
-                          await Loader.showLoader(context);
-                          final bytes = await formProvider.fetchFormPdfBytes(
-                            customerId: widget.customerId,
-                            formDataDetailsId: form.instanceId!,
-                          );
-                          Loader.stopLoader(context);
-                          return bytes ?? Uint8List(0);
-                        },
-                      );
-                    }
-                  },
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-                const SizedBox(height: 8),
+                if (!kIsWeb) ...[
+                  IconButton(
+                    icon: const Icon(Icons.share, color: Color(0xFF2563EB)),
+                    onPressed: () async {
+                      if (form.instanceId != null) {
+                        PdfActionHelper.showShareOptions(
+                          context: context,
+                          title: 'Form ${form.name}',
+                          onGenerate: () async {
+                            await Loader.showLoader(context);
+                            final bytes = await formProvider.fetchFormPdfBytes(
+                              customerId: widget.customerId,
+                              formDataDetailsId: form.instanceId!,
+                            );
+                            Loader.stopLoader(context);
+                            return bytes ?? Uint8List(0);
+                          },
+                        );
+                      }
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  const SizedBox(height: 8),
+                ],
                 IconButton(
                   icon: formProvider.isPrinting
                       ? const SizedBox(
