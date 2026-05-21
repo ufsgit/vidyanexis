@@ -318,6 +318,9 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                 }
                                 customerDetailsProvider.updateTaskType(
                                     taskType.taskTypeId, taskType.taskTypeName);
+                                customerDetailsProvider.taskChoosedateController.text =
+                                    DateFormat('dd MMM yyyy').format(
+                                        DateTime.now().add(Duration(days: taskType.duration)));
 
                                 final defaultStatusId =
                                     taskType.defaultStatusId;

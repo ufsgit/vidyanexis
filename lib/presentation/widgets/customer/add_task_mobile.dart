@@ -310,6 +310,10 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                         taskType.taskTypeId,
                                         taskType.taskTypeName);
 
+                                    customerDetailsProvider.taskChoosedateController.text =
+                                        DateFormat('dd MMM yyyy').format(
+                                            DateTime.now().add(Duration(days: taskType.duration)));
+
                                     final defaultStatusId =
                                         taskType.defaultStatusId;
                                     customerDetailsProvider.updateAMCStatus(

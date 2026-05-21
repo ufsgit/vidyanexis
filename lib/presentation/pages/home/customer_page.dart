@@ -1521,7 +1521,8 @@ class _CustomerPageState extends State<CustomerPage> {
       '0',
       taskType.taskTypeId.toString(),
       '', // description
-      DateFormat('dd MMM yyyy').format(DateTime.now()), // date
+      DateFormat('dd MMM yyyy')
+          .format(DateTime.now().add(Duration(days: taskType.duration))), // date
       DateFormat('HH:mm').format(DateTime.now()), // time
       user.userDetailsId.toString(), // assignedWorker
       context,
