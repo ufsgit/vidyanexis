@@ -88,6 +88,7 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController gstController = TextEditingController();
   final TextEditingController itemMaterialController = TextEditingController();
   final TextEditingController itemQuantityController = TextEditingController();
+  final TextEditingController itemPriceController = TextEditingController();
   List<ItemSettings> _items = [];
   List<ItemSettings> get items => _items;
   List<ItemSettings> _RealItems = [];
@@ -857,7 +858,8 @@ class ExpenseProvider extends ChangeNotifier {
     double price = double.tryParse(pricePurchaseController.text) ?? 0;
 
     if (fromUnitDiscount) {
-      double unitDiscount = double.tryParse(unitDiscountPurchaseController.text) ?? 0;
+      double unitDiscount =
+          double.tryParse(unitDiscountPurchaseController.text) ?? 0;
       double discountPer = price > 0 ? (unitDiscount / price) * 100 : 0;
       discountPurchaseController.text = discountPer.toStringAsFixed(2);
     }
@@ -1221,7 +1223,7 @@ class ExpenseProvider extends ChangeNotifier {
   void addOrEditItem(BuildContext context) {
     // Validate input fields
     if (itemMaterialController.text.isEmpty ||
-        itemQuantityController.text.isEmpty) {
+        itemPriceController.text.isEmpty) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -1267,7 +1269,8 @@ class ExpenseProvider extends ChangeNotifier {
     final newItem = ItemSettings(
       subItemId: subItemId ?? 0,
       itemMaterialName: itemMaterialController.text,
-      quantity: double.parse(itemQuantityController.text),
+      quantity: double.tryParse(itemQuantityController.text) ?? 0,
+      price: double.tryParse(itemPriceController.text) ?? 0,
       itemMaterialId: 0,
       deleteStatus: 0,
     );
@@ -1295,6 +1298,7 @@ class ExpenseProvider extends ChangeNotifier {
   void clearItemFields() {
     itemMaterialController.clear();
     itemQuantityController.clear();
+    itemPriceController.clear();
     setSubId(-1);
     _subItemId = null;
     notifyListeners();
@@ -1307,7 +1311,7 @@ class ExpenseProvider extends ChangeNotifier {
 
       itemMaterialController.text = itemToEdit.itemMaterialName;
       itemQuantityController.text = itemToEdit.quantity.toString();
-
+      itemPriceController.text = itemToEdit.price.toString();
       setSubId(itemToEdit.subItemId);
       setEditItemIndex(index);
       notifyListeners();
@@ -1326,6 +1330,7 @@ class ExpenseProvider extends ChangeNotifier {
     itemNameController.clear();
     itemCategoryController.clear();
     itemUnitController.clear();
+    itemUnitPriceController.clear();
     cgstController.clear();
     sgstController.clear();
     igstController.clear();
@@ -1838,6 +1843,7 @@ class ExpenseProvider extends ChangeNotifier {
           itemMaterialId: realItem.itemMaterialId,
           itemMaterialName: realItem.itemMaterialName,
           quantity: realItem.quantity,
+          price: realItem.price,
           deleteStatus: 1, // Set deleteStatus to 1 as per the requirement
         ));
       }
@@ -1867,7 +1873,8 @@ class ExpenseProvider extends ChangeNotifier {
                       subItemId: 0,
                       itemMaterialId: 0,
                       itemMaterialName: '',
-                      quantity: 0,
+                      quantity: 0.0,
+                      price: 0.0,
                       deleteStatus: 0);
                 }
               }).toList() ??
@@ -1882,7 +1889,8 @@ class ExpenseProvider extends ChangeNotifier {
                       subItemId: 0,
                       itemMaterialId: 0,
                       itemMaterialName: '',
-                      quantity: 0,
+                      quantity: 0.0,
+                      price: 0.0,
                       deleteStatus: 0);
                 }
               }).toList() ??

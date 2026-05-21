@@ -682,9 +682,11 @@ class TaskPageProvider extends ChangeNotifier {
             descriptionController.clear();
             _pageIndex = 1;
             try {
-              final dbProvider = Provider.of<DashboardProvider>(context, listen: false);
+              final dbProvider =
+                  Provider.of<DashboardProvider>(context, listen: false);
               dbProvider.clearDashboardFlags();
-              dbProvider.getTaskInfoDashBoard(context, isSilent: true, shouldNotify: true);
+              dbProvider.getTaskInfoDashBoard(context,
+                  isSilent: true, shouldNotify: true);
             } catch (_) {}
           }
           return isSuccess;
@@ -905,6 +907,15 @@ class TaskPageProvider extends ChangeNotifier {
       _selectedTaskTypeIds.remove(taskTypeId);
     } else {
       _selectedTaskTypeIds.add(taskTypeId);
+      try {
+        final selectedType = _taskTypeModel.firstWhere(
+          (t) => t.taskTypeId.toString() == taskTypeId,
+        );
+        followUpDateController.text = DateFormat('dd MMM yyyy')
+            .format(DateTime.now().add(Duration(days: selectedType.duration)));
+      } catch (e) {
+        debugPrint("Error updating follow-up date in toggle: $e");
+      }
     }
     print(_selectedTaskTypeIds);
     notifyListeners();
@@ -965,6 +976,12 @@ class TaskPageProvider extends ChangeNotifier {
               .toList();
 
           initializeSelectedTaskTypes(); // deafult checkbox
+
+          if (_taskTypeModel.isNotEmpty) {
+            followUpDateController.text = DateFormat('dd MMM yyyy').format(
+                DateTime.now()
+                    .add(Duration(days: _taskTypeModel.first.duration)));
+          }
 
           _documentTypeModel = (documentData as List<dynamic>)
               .map((item) => DocumentTypeModel.fromJson(item))

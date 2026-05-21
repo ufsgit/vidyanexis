@@ -229,6 +229,10 @@ class HttpUrls {
       "process_flow/Delete_Process_Flow_By_Id";
   static String saveSubUsers = "user_details/Save_Sub_Users";
   static String getUsersSub = "user_details/Get_Sub_Users";
+  static String getUserEnquiryFor = "user_details/get_user_enquiry_for";
+  static String getUserEnquirySource = "user_details/get_user_enquiry_source";
+  static String saveUserEnquiryFor = "user_details/save_user_enquiry_for";
+  static String saveUserEnquirySource = "user_details/save_user_enquiry_source";
   static String getTaskTypesOfProcessFlow =
       "process_flow/Get_Task_Types_Of_Process_Flow";
 

@@ -1807,8 +1807,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     String assignedWorker,
     BuildContext context,
     bool isEdit,
-    List<Map<String, String>>? audioFiles, // Add this parameter
-  ) async {
+    List<Map<String, String>>? audioFiles, { // Add this parameter
+    bool dismissDialog = true,
+  }) async {
     try {
       if (date.isNotEmpty) {
         DateTime parsedDate;
@@ -1890,7 +1891,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
               margin: const EdgeInsets.all(10),
             ),
           );
-          Navigator.pop(context);
+          if (dismissDialog) {
+            Navigator.pop(context);
+          }
         }
       } else {
         if (context.mounted) {
