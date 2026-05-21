@@ -3,7 +3,7 @@ class HttpUrls {
 //live
 
   // static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
-//   static String baseUrl = 'https://suryaprabhaapi.trackbox.net.in/';
+  // static String baseUrl = 'https://suryaprabhaapi.trackbox.net.in/';
   // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.ufstech.net.in/';
@@ -17,28 +17,23 @@ class HttpUrls {
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
   // static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
-  //  static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
+  // static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
   // static String baseUrl = 'https://framesolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
   // static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
   // static String baseUrl = 'https://sunxpertapi.trackbox.net.in/';
-
   // static String baseUrl = 'https://ramcoelectronicsapi.trackbox.net.in/';
   // static String baseUrl = 'https://compassenergyapi.trackbox.net.in/';
-//   static String baseUrl = 'https://leotechapi.ufstech.net.in/';
-
-  // static String baseUrl = 'https://ramcoelectronicsapi.trackbox.net.in/';
-  static String baseUrl = 'https://compassenergyapi.trackbox.net.in/';
-
+  // static String baseUrl = 'https://leotechapi.ufstech.net.in/';
   // static String baseUrl = 'https://exactsystem.trackbox.net.in/';
-//   static String baseUrl = 'https://jbsolarapi.ufstech.net.in/';
-  //static String baseUrl = 'https://disunenergyapi.ufstech.net.in/';
-//   static String baseUrl = 'https://demo3api.ufstech.net.in/';
+  // static String baseUrl = 'https://jbsolarapi.ufstech.net.in/';
+  // static String baseUrl = 'https://disunenergyapi.ufstech.net.in/';
+  // static String baseUrl = 'https://demo3api.ufstech.net.in/';
 //dev
 
 //static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -234,6 +229,10 @@ class HttpUrls {
       "process_flow/Delete_Process_Flow_By_Id";
   static String saveSubUsers = "user_details/Save_Sub_Users";
   static String getUsersSub = "user_details/Get_Sub_Users";
+  static String getUserEnquiryFor = "user_details/get_user_enquiry_for";
+  static String getUserEnquirySource = "user_details/get_user_enquiry_source";
+  static String saveUserEnquiryFor = "user_details/save_user_enquiry_for";
+  static String saveUserEnquirySource = "user_details/save_user_enquiry_source";
   static String getTaskTypesOfProcessFlow =
       "process_flow/Get_Task_Types_Of_Process_Flow";
 

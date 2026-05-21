@@ -20,6 +20,7 @@ class Company {
   final int consumerNameMandatory;
   final int consumerContactNoMandatory;
   final int leadInSales;
+  final int quotationItemValue;
 
   Company({
     required this.companyId,
@@ -43,6 +44,7 @@ class Company {
     required this.consumerNameMandatory,
     required this.consumerContactNoMandatory,
     required this.leadInSales,
+    required this.quotationItemValue,
   });
 
   // Factory constructor for creating an instance from JSON with null checks
@@ -69,6 +71,7 @@ class Company {
       consumerNameMandatory: json['Consumer_Name_Mandatory'] ?? 0,
       consumerContactNoMandatory: json['Contact_Number_Mandatory'] ?? 0,
       leadInSales: json['Lead_In_Sales'] ?? 0,
+      quotationItemValue: json['Quotation_Item_Value'] ?? 0,
     );
   }
 

@@ -3,6 +3,7 @@ class ItemSettings {
   int itemMaterialId;
   String itemMaterialName; // Name of the material
   double quantity; // Quantity of the material
+  double price;
   int deleteStatus; // Deletion status (0 for active, 1 for deleted)
 
   // Constructor
@@ -11,6 +12,7 @@ class ItemSettings {
     required this.itemMaterialId,
     required this.itemMaterialName,
     required this.quantity,
+    required this.price,
     required this.deleteStatus,
   });
 
@@ -21,6 +23,7 @@ class ItemSettings {
       itemMaterialId: json["itemMaterialId"] ?? 0,
       itemMaterialName: json['itemMaterialName'] ?? '',
       quantity: json['quantity'] ?? 0.0,
+      price: json['price'] ?? 0.0,
       deleteStatus: json['Delete_Status'] ?? 0,
     );
   }
@@ -32,6 +35,7 @@ class ItemSettings {
       "itemMaterialId": itemMaterialId,
       'itemMaterialName': itemMaterialName,
       'quantity': quantity,
+      "price": price,
       'Delete_Status': deleteStatus,
     };
   }

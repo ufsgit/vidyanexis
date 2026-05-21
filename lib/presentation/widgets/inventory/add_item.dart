@@ -326,6 +326,23 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 16),
+                  CheckboxListTile(
+                        title: Text(
+                          'Add Item Materials',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF1E293B),
+                          ),
+                        ),
+                        value: expenseProvider.isPrimaryItem == 1,
+                        checkColor: Colors.white,
+                        contentPadding: EdgeInsets.zero,
+                        onChanged: (p0) {
+                          expenseProvider.togglePrimaryCheckbox(p0 ?? false);
+                        },
+                      ),
                   if (expenseProvider.isPrimaryItem == 1) ...[
                     const SizedBox(height: 32),
                     _buildSectionTitle('Item Material'),
@@ -345,16 +362,6 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                 child: CommonDropdown(
                                   hintText: "Select Material",
                                   items: expenseProvider.itemList
-                                      .where((status) {
-                                        if (widget.isEdit &&
-                                            widget.item != null) {
-                                          return status.primaryCheckBox == 0 &&
-                                              widget.item!.itemId !=
-                                                  status.itemId;
-                                        } else {
-                                          return status.primaryCheckBox == 0;
-                                        }
-                                      })
                                       .map((status) => DropdownItem<int>(
                                             id: status.itemId,
                                             name: status.itemName,
@@ -379,8 +386,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                   readOnly: false,
                                   height: 56,
                                   controller:
-                                      expenseProvider.itemQuantityController,
-                                  hintText: 'Quantity',
+                                      expenseProvider.itemPriceController,
+                                  hintText: 'Price',
                                   labelText: '',
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
@@ -438,9 +445,17 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                                 color: const Color(0xFF1E293B),
                                               ),
                                             ),
+                                            // const SizedBox(height: 4),
+                                            // Text(
+                                            //   'Qty: ${item.quantity}',
+                                            //   style: GoogleFonts.plusJakartaSans(
+                                            //     fontSize: 12,
+                                            //     color: const Color(0xFF64748B),
+                                            //   ),
+                                            // ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              'Qty: ${item.quantity}',
+                                              'Price: ${item.price}',
                                               style: GoogleFonts.plusJakartaSans(
                                                 fontSize: 12,
                                                 color: const Color(0xFF64748B),

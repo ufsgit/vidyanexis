@@ -12,6 +12,8 @@ import 'package:vidyanexis/presentation/pages/settings/permission_handling_page.
 import 'package:vidyanexis/presentation/widgets/settings/settings_add_user_widget.dart';
 
 import '../../widgets/settings/add_team_widget.dart';
+import '../../widgets/settings/assign_enquiry_for_widget.dart';
+import '../../widgets/settings/assign_enquiry_source_widget.dart';
 
 class UsersContent extends StatefulWidget {
   const UsersContent({super.key});
@@ -336,6 +338,32 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Center(
                                       child: Text(
                                         'Team',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  SizedBox(
+                                    width: 120,
+                                    child: Center(
+                                      child: Text(
+                                        'Enquiry For',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  SizedBox(
+                                    width: 130,
+                                    child: Center(
+                                      child: Text(
+                                        'Enquiry Source',
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -726,6 +754,76 @@ class _UsersContentState extends State<UsersContent> {
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color: AppColors.primaryBlue,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      SizedBox(
+                                        width: 120,
+                                        child: Center(
+                                          child: ActionChip(
+                                            onPressed: () => assignEnquiryForDialogue(
+                                                context,
+                                                settingsProvider
+                                                    .searchUserDetails[index]),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 4),
+                                            backgroundColor:
+                                                const Color(0xFFF5F3FF),
+                                            side: BorderSide.none,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            avatar: const Icon(
+                                              Icons.assignment_rounded,
+                                              size: 14,
+                                              color: Color(0xFF6D28D9),
+                                            ),
+                                            label: Text(
+                                              'Enquiry For',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF6D28D9),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      SizedBox(
+                                        width: 130,
+                                        child: Center(
+                                          child: ActionChip(
+                                            onPressed: () => assignEnquirySourceDialogue(
+                                                context,
+                                                settingsProvider
+                                                    .searchUserDetails[index]),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 4),
+                                            backgroundColor:
+                                                const Color(0xFFECFDF5),
+                                            side: BorderSide.none,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            avatar: const Icon(
+                                              Icons.campaign_rounded,
+                                              size: 14,
+                                              color: Color(0xFF059669),
+                                            ),
+                                            label: Text(
+                                              'Enquiry Source',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF059669),
                                               ),
                                             ),
                                           ),
@@ -1190,111 +1288,195 @@ class _UsersContentState extends State<UsersContent> {
                                               ),
                                             ),
                                           ],
-                                          const Spacer(),
-                                          // Right: Team
-                                          OutlinedButton.icon(
-                                            style: OutlinedButton.styleFrom(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 8),
-                                              minimumSize: Size.zero,
-                                              tapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              side: BorderSide(
-                                                  color: AppColors.primaryBlue
-                                                      .withOpacity(0.2)),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              backgroundColor: AppColors
-                                                  .primaryBlue
-                                                  .withOpacity(0.05),
-                                            ),
-                                            onPressed: () => assignTeamDialogue(
-                                                context,
-                                                settingsProvider
-                                                    .searchUserDetails[index]),
-                                            icon: const Icon(
-                                                Icons.group_add_rounded,
-                                                size: 15,
-                                                color: AppColors.primaryBlue),
-                                            label: Text(
-                                              'Team',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.primaryBlue,
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          alignment: WrapAlignment.end,
+                                          crossAxisAlignment: WrapCrossAlignment.center,
+                                          children: [
+                                            OutlinedButton.icon(
+                                              style: OutlinedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 8),
+                                                minimumSize: Size.zero,
+                                                tapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                side: BorderSide(
+                                                    color: AppColors.primaryBlue
+                                                        .withOpacity(0.2)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                backgroundColor: AppColors
+                                                    .primaryBlue
+                                                    .withOpacity(0.05),
+                                              ),
+                                              onPressed: () => assignTeamDialogue(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchUserDetails[index]),
+                                              icon: const Icon(
+                                                  Icons.group_add_rounded,
+                                                  size: 15,
+                                                  color: AppColors.primaryBlue),
+                                              label: Text(
+                                                'Team',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.primaryBlue,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          // Right: Permissions
-                                          OutlinedButton(
-                                            style: OutlinedButton.styleFrom(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 8),
-                                              minimumSize: Size.zero,
-                                              tapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                              side: const BorderSide(
-                                                  color: AppColors.primaryBlue),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              backgroundColor: Colors.white,
+                                            OutlinedButton.icon(
+                                              style: OutlinedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 8),
+                                                minimumSize: Size.zero,
+                                                tapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                side: BorderSide(
+                                                    color: const Color(0xFF6D28D9)
+                                                        .withOpacity(0.2)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                backgroundColor: const Color(0xFF6D28D9)
+                                                    .withOpacity(0.05),
+                                              ),
+                                              onPressed: () => assignEnquiryForDialogue(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchUserDetails[index]),
+                                              icon: const Icon(
+                                                  Icons.assignment_rounded,
+                                                  size: 15,
+                                                  color: Color(0xFF6D28D9)),
+                                              label: Text(
+                                                'Enquiry For',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color(0xFF6D28D9),
+                                                ),
+                                              ),
                                             ),
-                                            onPressed: () async {
-                                              log(settingsProvider
-                                                  .searchUserDetails[index]
-                                                  .userDetailsId
-                                                  .toString());
-                                              await settingsProvider
-                                                  .getMenuPermissionData(
-                                                      settingsProvider
+                                            OutlinedButton.icon(
+                                              style: OutlinedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 8),
+                                                minimumSize: Size.zero,
+                                                tapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                side: BorderSide(
+                                                    color: const Color(0xFF059669)
+                                                        .withOpacity(0.2)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                backgroundColor: const Color(0xFF059669)
+                                                    .withOpacity(0.05),
+                                              ),
+                                              onPressed: () => assignEnquirySourceDialogue(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchUserDetails[index]),
+                                              icon: const Icon(
+                                                  Icons.campaign_rounded,
+                                                  size: 15,
+                                                  color: Color(0xFF059669)),
+                                              label: Text(
+                                                'Enquiry Src',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color(0xFF059669),
+                                                ),
+                                              ),
+                                            ),
+                                            OutlinedButton(
+                                              style: OutlinedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 8),
+                                                minimumSize: Size.zero,
+                                                tapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                side: const BorderSide(
+                                                    color: AppColors.primaryBlue),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                backgroundColor: Colors.white,
+                                              ),
+                                              onPressed: () async {
+                                                log(settingsProvider
+                                                    .searchUserDetails[index]
+                                                    .userDetailsId
+                                                    .toString());
+                                                await settingsProvider
+                                                    .getMenuPermissionData(
+                                                        settingsProvider
+                                                            .searchUserDetails[
+                                                                index]
+                                                            .userDetailsId
+                                                            .toString(),
+                                                        context);
+                                                settingsProvider
+                                                    .searchPermission(context);
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PermissionHandlingPage(
+                                                      userId: settingsProvider
                                                           .searchUserDetails[
                                                               index]
                                                           .userDetailsId
                                                           .toString(),
-                                                      context);
-                                              settingsProvider
-                                                  .searchPermission(context);
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PermissionHandlingPage(
-                                                    userId: settingsProvider
-                                                        .searchUserDetails[
-                                                            index]
-                                                        .userDetailsId
-                                                        .toString(),
-                                                    userName: settingsProvider
-                                                        .searchUserDetails[
-                                                            index]
-                                                        .userDetailsName,
+                                                      userName: settingsProvider
+                                                          .searchUserDetails[
+                                                              index]
+                                                          .userDetailsName,
+                                                    ),
                                                   ),
+                                                );
+                                              },
+                                              child: Text(
+                                                'Permissions',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.primaryBlue,
                                                 ),
-                                              );
-                                            },
-                                            child: Text(
-                                              'Permissions',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.primaryBlue,
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1319,6 +1501,32 @@ class _UsersContentState extends State<UsersContent> {
       context: context,
       builder: (BuildContext context) {
         return AssignTeamWidget(
+          userModel: searchUserDetail,
+        );
+      },
+    );
+  }
+
+  Future<dynamic> assignEnquiryForDialogue(
+      BuildContext context, GetUserModel searchUserDetail) {
+    return showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AssignEnquiryForWidget(
+          userModel: searchUserDetail,
+        );
+      },
+    );
+  }
+
+  Future<dynamic> assignEnquirySourceDialogue(
+      BuildContext context, GetUserModel searchUserDetail) {
+    return showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AssignEnquirySourceWidget(
           userModel: searchUserDetail,
         );
       },
