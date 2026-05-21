@@ -5,6 +5,9 @@ class ItemSettings {
   double quantity; // Quantity of the material
   double price;
   int deleteStatus; // Deletion status (0 for active, 1 for deleted)
+  String specification;
+  String manufacture;
+  String unit;
 
   // Constructor
   ItemSettings({
@@ -14,6 +17,10 @@ class ItemSettings {
     required this.quantity,
     required this.price,
     required this.deleteStatus,
+    required this.specification,
+    required this.manufacture,
+    required this.unit,
+
   });
 
   // Factory method to create an instance from a JSON object
@@ -25,6 +32,9 @@ class ItemSettings {
       quantity: json['quantity'] ?? 0.0,
       price: json['price'] ?? 0.0,
       deleteStatus: json['Delete_Status'] ?? 0,
+      specification: json['Specification'] ?? '',
+      manufacture: json['Manufacture'] ?? '',
+      unit: json['Unit'] ?? '',
     );
   }
 
@@ -37,6 +47,9 @@ class ItemSettings {
       'quantity': quantity,
       "price": price,
       'Delete_Status': deleteStatus,
+      'Specification': specification,
+      'Manufacture': manufacture,
+      'Unit': unit,
     };
   }
 }

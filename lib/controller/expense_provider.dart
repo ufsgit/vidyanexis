@@ -89,6 +89,12 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController itemMaterialController = TextEditingController();
   final TextEditingController itemQuantityController = TextEditingController();
   final TextEditingController itemPriceController = TextEditingController();
+  final TextEditingController itemMaterialSpecificationController =
+      TextEditingController();
+  final TextEditingController itemMaterialManufactureController =
+      TextEditingController();
+  final TextEditingController itemMaterialUnitController =
+      TextEditingController();
   List<ItemSettings> _items = [];
   List<ItemSettings> get items => _items;
   List<ItemSettings> _RealItems = [];
@@ -1273,6 +1279,9 @@ class ExpenseProvider extends ChangeNotifier {
       price: double.tryParse(itemPriceController.text) ?? 0,
       itemMaterialId: 0,
       deleteStatus: 0,
+      specification: itemMaterialSpecificationController.text,
+      manufacture: itemMaterialManufactureController.text,
+      unit: itemMaterialUnitController.text,
     );
 
     if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
@@ -1299,6 +1308,9 @@ class ExpenseProvider extends ChangeNotifier {
     itemMaterialController.clear();
     itemQuantityController.clear();
     itemPriceController.clear();
+    itemMaterialSpecificationController.clear();
+    itemMaterialManufactureController.clear();
+    itemMaterialUnitController.clear();
     setSubId(-1);
     _subItemId = null;
     notifyListeners();
@@ -1312,6 +1324,9 @@ class ExpenseProvider extends ChangeNotifier {
       itemMaterialController.text = itemToEdit.itemMaterialName;
       itemQuantityController.text = itemToEdit.quantity.toString();
       itemPriceController.text = itemToEdit.price.toString();
+      itemMaterialSpecificationController.text = itemToEdit.specification;
+      itemMaterialManufactureController.text = itemToEdit.manufacture;
+      itemMaterialUnitController.text = itemToEdit.unit;
       setSubId(itemToEdit.subItemId);
       setEditItemIndex(index);
       notifyListeners();
@@ -1845,6 +1860,9 @@ class ExpenseProvider extends ChangeNotifier {
           quantity: realItem.quantity,
           price: realItem.price,
           deleteStatus: 1, // Set deleteStatus to 1 as per the requirement
+          specification: realItem.specification,
+          manufacture: realItem.manufacture,
+          unit: realItem.unit,
         ));
       }
     }
@@ -1870,12 +1888,16 @@ class ExpenseProvider extends ChangeNotifier {
                 } catch (e) {
                   print("Error parsing item: $e");
                   return ItemSettings(
-                      subItemId: 0,
-                      itemMaterialId: 0,
-                      itemMaterialName: '',
-                      quantity: 0.0,
-                      price: 0.0,
-                      deleteStatus: 0);
+                    subItemId: 0,
+                    itemMaterialId: 0,
+                    itemMaterialName: '',
+                    quantity: 0.0,
+                    price: 0.0,
+                    deleteStatus: 0,
+                    specification: '',
+                    manufacture: '',
+                    unit: '',
+                  );
                 }
               }).toList() ??
               [];
@@ -1886,12 +1908,16 @@ class ExpenseProvider extends ChangeNotifier {
                 } catch (e) {
                   print("Error parsing item: $e");
                   return ItemSettings(
-                      subItemId: 0,
-                      itemMaterialId: 0,
-                      itemMaterialName: '',
-                      quantity: 0.0,
-                      price: 0.0,
-                      deleteStatus: 0);
+                    subItemId: 0,
+                    itemMaterialId: 0,
+                    itemMaterialName: '',
+                    quantity: 0.0,
+                    price: 0.0,
+                    deleteStatus: 0,
+                    specification: '',
+                    manufacture: '',
+                    unit: '',
+                  );
                 }
               }).toList() ??
               [];
@@ -2344,7 +2370,6 @@ class ExpenseProvider extends ChangeNotifier {
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               "${HttpUrls.getSalesDataMaster}?p_Customer_Id=$customer&p_EntryDate_From=$_fromDateSSales&p_EntryDate_To=$_toDateSSales&p_Invoice_No=$_searchSales&Is_Date_Check=$isDate");
-
 
       if (response.statusCode == 200) {
         final data = response.data;
