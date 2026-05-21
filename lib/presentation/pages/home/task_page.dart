@@ -136,6 +136,48 @@ class _tasksPageReportState extends State<TaskPage> {
     }
   }
 
+  Future<void> _quickSaveTask(
+      TaskReportModel task, TaskTypeModel taskType, SearchUserDetails user) async {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    customerDetailsProvider.customerId = task.customerId.toString();
+    customerDetailsProvider.clearTaskDetails();
+
+    // Set task type
+    customerDetailsProvider.updateTaskType(
+        taskType.taskTypeId, taskType.taskTypeName);
+
+    // Set default AMC status if any
+    final defaultStatusId = taskType.defaultStatusId;
+    customerDetailsProvider.updateAMCStatus(
+        defaultStatusId != 0 ? defaultStatusId : 1, '');
+
+    // Set user
+    final userInTask = UserInTaskModel(
+        userDetailsId: user.userDetailsId,
+        userDetailsName: user.userDetailsName);
+    customerDetailsProvider.addAssignedWorker(userInTask);
+
+    // Perform save task
+    await customerDetailsProvider.saveTask(
+      '0',
+      '0',
+      taskType.taskTypeId.toString(),
+      '', // description
+      DateFormat('dd MMM yyyy').format(DateTime.now()), // date
+      DateFormat('HH:mm').format(DateTime.now()), // time
+      user.userDetailsId.toString(), // assignedWorker
+      context,
+      false, // isEdit
+      [], // audioFiles
+      dismissDialog: false,
+    );
+
+    if (mounted) {
+      reportsProvider.searchTaskByCustomer(context);
+    }
+  }
+
   void _updateScreenType() {
     _isMobile = !AppStyles.isWebScreen(context);
   }
@@ -1480,7 +1522,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         return MenuItemButton(
                                                                           onPressed:
                                                                               () {
-                                                                            _openTaskDialog(
+                                                                            _quickSaveTask(
                                                                                 task,
                                                                                 taskType,
                                                                                 user);

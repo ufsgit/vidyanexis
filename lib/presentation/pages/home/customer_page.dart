@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
@@ -787,7 +788,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                       return MenuItemButton(
                                                                         onPressed:
                                                                             () {
-                                                                          _openTaskDialog(
+                                                                          _quickSaveTask(
                                                                               lead,
                                                                               taskType,
                                                                               user);
@@ -1489,6 +1490,50 @@ class _CustomerPageState extends State<CustomerPage> {
           }
         },
       );
+    }
+  }
+
+  Future<void> _quickSaveTask(
+      SearchLeadModel lead, TaskTypeModel taskType, SearchUserDetails user) async {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    customerDetailsProvider.customerId = lead.customerId.toString();
+    customerDetailsProvider.clearTaskDetails();
+
+    // Set task type
+    customerDetailsProvider.updateTaskType(
+        taskType.taskTypeId, taskType.taskTypeName);
+
+    // Set default AMC status if any
+    final defaultStatusId = taskType.defaultStatusId;
+    customerDetailsProvider.updateAMCStatus(
+        defaultStatusId != 0 ? defaultStatusId : 1, '');
+
+    // Set user
+    final userInTask = UserInTaskModel(
+        userDetailsId: user.userDetailsId,
+        userDetailsName: user.userDetailsName);
+    customerDetailsProvider.addAssignedWorker(userInTask);
+
+    // Perform save task
+    await customerDetailsProvider.saveTask(
+      '0',
+      '0',
+      taskType.taskTypeId.toString(),
+      '', // description
+      DateFormat('dd MMM yyyy').format(DateTime.now()), // date
+      DateFormat('HH:mm').format(DateTime.now()), // time
+      user.userDetailsId.toString(), // assignedWorker
+      context,
+      false, // isEdit
+      [], // audioFiles
+      dismissDialog: false,
+    );
+
+    // Refresh customer list
+    if (mounted) {
+      final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
+      customerProvider.getSearchCustomers(context, isSilent: true);
     }
   }
 
