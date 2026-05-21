@@ -449,6 +449,7 @@ class SettingsProvider extends ChangeNotifier {
   int _consumerNameMandatory = 0;
   int _consumerContactNoMandatory = 0;
   int _leadInSales = 0;
+  int _quotationItem = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -456,6 +457,7 @@ class SettingsProvider extends ChangeNotifier {
   int get consumerNameMandatory => _consumerNameMandatory;
   int get consumerContactNoMandatory => _consumerContactNoMandatory;
   int get leadInSales => _leadInSales;
+  int get quotationItem => _quotationItem;
 
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
@@ -991,6 +993,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setLeadInSales(int value) {
     _leadInSales = value;
+    notifyListeners();
+  }
+
+  void setQuotationItem(int value) {
+    _quotationItem = value;
     notifyListeners();
   }
 
@@ -1640,7 +1647,8 @@ class SettingsProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       String url = '${HttpUrls.searchUser}?user_details_Name=$query';
-      if (selectedFilterDepartmentId != null && selectedFilterDepartmentId != 0) {
+      if (selectedFilterDepartmentId != null &&
+          selectedFilterDepartmentId != 0) {
         url += '&Department_Id=$selectedFilterDepartmentId';
       }
       if (selectedFilterBranchId != null && selectedFilterBranchId != 0) {
@@ -1657,7 +1665,8 @@ class SettingsProvider extends ChangeNotifier {
               .map((item) => GetUserModel.fromJson(item))
               .toList();
 
-          if (selectedFilterDepartmentId != null && selectedFilterDepartmentId != 0) {
+          if (selectedFilterDepartmentId != null &&
+              selectedFilterDepartmentId != 0) {
             allUsers = allUsers
                 .where((user) =>
                     user.departmentId == selectedFilterDepartmentId.toString())
@@ -3146,6 +3155,7 @@ class SettingsProvider extends ChangeNotifier {
               _consumerContactNoMandatory =
                   _companyDetails[0].consumerContactNoMandatory;
               _leadInSales = _companyDetails[0].leadInSales;
+              _quotationItem = _companyDetails[0].quotationItemValue;
             }
           } catch (e) {
             print(
@@ -3194,6 +3204,7 @@ class SettingsProvider extends ChangeNotifier {
           _consumerNameMandatory = data['Consumer_Name_Mandatory'] ?? 0;
           _consumerContactNoMandatory = data['Contact_Number_Mandatory'] ?? 0;
           _leadInSales = data['Lead_In_Sales'] ?? 0;
+          _quotationItem = data['Quotation_Item_Value'] ?? 0;
 
           if (newLogo != logo ||
               newTitle != title ||
@@ -3264,7 +3275,8 @@ class SettingsProvider extends ChangeNotifier {
             "Enquiry_For_Mandatory": _enquiryForMandatory,
             "Consumer_Name_Mandatory": _consumerNameMandatory,
             "Contact_Number_Mandatory": _consumerContactNoMandatory,
-            "Lead_In_Sales": _leadInSales
+            "Lead_In_Sales": _leadInSales,
+            "Quotation_Item_Value": _quotationItem
           });
 
       if (response!.statusCode == 200) {
