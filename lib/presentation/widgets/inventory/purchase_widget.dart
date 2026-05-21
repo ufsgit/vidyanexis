@@ -393,10 +393,9 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
 
   void _addOrUpdateItem(ExpenseProvider expenseProvider) {
     if (expenseProvider.itemNamePurchaseController.text.isEmpty ||
-        expenseProvider.itemDescriptionPurchaseController.text.isEmpty ||
         expenseProvider.quantityPurchaseController.text.isEmpty ||
         expenseProvider.pricePurchaseController.text.isEmpty) {
-      showErrorDialog(context, 'Please fill in all required fields (Item, Description, Sales Rate, Qty)');
+      showErrorDialog(context, 'Please fill in all required fields (Item, Unit Price, Qty)');
       return;
     }
     final purchaseItem = PurchaseItemModel(
@@ -426,10 +425,10 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
       igstAmount: 0.0,
       totalAmount: double.tryParse(expenseProvider.totalAmountPurchaseController.text) ?? 0.0,
       hsnCode: expenseProvider.hsnPurchaseController.text,
-      description: expenseProvider.itemDescriptionPurchaseController.text,
-      model: expenseProvider.itemModelPurchaseController.text,
-      brand: expenseProvider.itemBrandPurchaseController.text,
-      unitDiscount: double.tryParse(expenseProvider.unitDiscountPurchaseController.text) ?? 0.0,
+      description: '',
+      model: '',
+      brand: '',
+      unitDiscount: 0.0,
     );
     expenseProvider.addOrUpdatePurchaseItem(purchaseItem);
     expenseProvider.clearPurchaseItemFields();
@@ -457,52 +456,48 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
         ),
         child: Column(
           children: [
-            // Row 1: Item dropdown, Description, Uom, Model
+            // Row 1: Item dropdown, Category, Unit, HSN Code
             Row(
               children: [
                 Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonDropdown(
-                        hintText: "Item*",
-                        items: expenseProvider.itemListPurchase
-                            .map((status) => DropdownItem<int>(
-                                  id: status.itemId,
-                                  name: status.itemName,
-                                ))
-                            .toList(),
-                        controller: expenseProvider.itemNamePurchaseController,
-                        onItemSelected: (selectedItem) {
-                          final selectedData = expenseProvider.itemListPurchase.firstWhere(
-                            (item) => item.itemId == selectedItem,
-                          );
-                          expenseProvider.setSelectedPurchaseItemId(selectedItem);
-                          expenseProvider.categoryPurchaseController.text = selectedData.categoryName.toString();
-                          expenseProvider.unitPurchaseController.text = selectedData.unitName;
-                          expenseProvider.selectedCategoryId = selectedData.categoryId;
-                          expenseProvider.selectedUnitId = selectedData.unitId;
-                          expenseProvider.pricePurchaseController.text = selectedData.unitPrice;
-                          expenseProvider.cgstPerPurchaseController.text = selectedData.cgst;
-                          expenseProvider.sgstPerPurchaseController.text = selectedData.sgst;
-                          expenseProvider.igstPerPurchaseController.text = selectedData.igst;
-                          expenseProvider.gstPerPurchaseController.text = selectedData.gst;
-                          expenseProvider.hsnPurchaseController.text = selectedData.hsnCode;
-                          expenseProvider.updateCalculations();
-                        },
-                        selectedValue: expenseProvider.itemDrop,
-                      ),
-                    ],
+                  flex: 4,
+                  child: CommonDropdown(
+                    hintText: "Item*",
+                    items: expenseProvider.itemListPurchase
+                        .map((status) => DropdownItem<int>(
+                              id: status.itemId,
+                              name: status.itemName,
+                            ))
+                        .toList(),
+                    controller: expenseProvider.itemNamePurchaseController,
+                    onItemSelected: (selectedItem) {
+                      final selectedData = expenseProvider.itemListPurchase.firstWhere(
+                        (item) => item.itemId == selectedItem,
+                      );
+                      expenseProvider.setSelectedPurchaseItemId(selectedItem);
+                      expenseProvider.categoryPurchaseController.text = selectedData.categoryName.toString();
+                      expenseProvider.unitPurchaseController.text = selectedData.unitName;
+                      expenseProvider.selectedCategoryId = selectedData.categoryId;
+                      expenseProvider.selectedUnitId = selectedData.unitId;
+                      expenseProvider.pricePurchaseController.text = selectedData.unitPrice;
+                      expenseProvider.cgstPerPurchaseController.text = selectedData.cgst;
+                      expenseProvider.sgstPerPurchaseController.text = selectedData.sgst;
+                      expenseProvider.igstPerPurchaseController.text = selectedData.igst;
+                      expenseProvider.gstPerPurchaseController.text = selectedData.gst;
+                      expenseProvider.hsnPurchaseController.text = selectedData.hsnCode;
+                      expenseProvider.updateCalculations();
+                    },
+                    selectedValue: expenseProvider.itemDrop,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  flex: 4,
+                  flex: 2,
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.itemDescriptionPurchaseController,
-                    hintText: 'Description *',
+                    controller: expenseProvider.categoryPurchaseController,
+                    hintText: 'Category',
+                    readOnly: true,
                     labelText: '',
                   ),
                 ),
@@ -512,7 +507,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   child: CustomTextField(
                     height: 52,
                     controller: expenseProvider.unitPurchaseController,
-                    hintText: 'Uom',
+                    hintText: 'Unit',
                     readOnly: true,
                     labelText: '',
                   ),
@@ -522,8 +517,9 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   flex: 2,
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.itemModelPurchaseController,
-                    hintText: 'Model',
+                    controller: expenseProvider.hsnPurchaseController,
+                    hintText: 'HSN Code',
+                    readOnly: true,
                     labelText: '',
                   ),
                 ),
@@ -531,50 +527,28 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
             ),
             const SizedBox(height: 12),
 
-            // Row 2: Brand, Qty
+            // Row 2: Unit Price, Amount, Discount %, Discount Amount
             Row(
               children: [
                 Expanded(
                   flex: 3,
-                  child: CustomTextField(
-                    height: 52,
-                    controller: expenseProvider.itemBrandPurchaseController,
-                    hintText: 'Brand',
-                    labelText: '',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 3,
-                  child: CustomTextField(
-                    height: 52,
-                    controller: expenseProvider.quantityPurchaseController,
-                    hintText: 'Qty *',
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) => expenseProvider.updateCalculations(),
-                    labelText: '',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  flex: 4,
-                  child: SizedBox(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Row 3: Sales Rate, Discount %, Unit Discount, Total, Amount, CGST%, SGST%
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
                   child: CustomTextField(
                     height: 52,
                     controller: expenseProvider.pricePurchaseController,
-                    hintText: 'Sales Rate',
+                    hintText: 'Unit Price',
                     keyboardType: TextInputType.number,
                     onChanged: (value) => expenseProvider.updateCalculations(),
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 3,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.amountPurchaseController,
+                    hintText: 'Amount',
+                    readOnly: true,
                     labelText: '',
                   ),
                 ),
@@ -592,56 +566,11 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.unitDiscountPurchaseController,
-                    hintText: 'Unit Discount',
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) => expenseProvider.updateCalculations(fromUnitDiscount: true),
-                    labelText: '',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: CustomTextField(
-                    height: 52,
-                    controller: expenseProvider.amountPurchaseController,
-                    hintText: 'Total',
-                    readOnly: true,
-                    labelText: '',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: CustomTextField(
-                    height: 52,
-                    controller: expenseProvider.netValuePurchaseController,
-                    hintText: 'Amount',
-                    readOnly: true,
-                    labelText: '',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 1,
-                  child: CustomTextField(
-                    height: 52,
-                    controller: expenseProvider.cgstPerPurchaseController,
-                    hintText: 'CGST%',
-                    readOnly: true,
-                    labelText: '',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 1,
-                  child: CustomTextField(
-                    height: 52,
-                    controller: expenseProvider.sgstPerPurchaseController,
-                    hintText: 'SGST%',
+                    controller: expenseProvider.discountAmountPurchaseController,
+                    hintText: 'Discount Amount',
                     readOnly: true,
                     labelText: '',
                   ),
@@ -650,33 +579,84 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
             ),
             const SizedBox(height: 12),
 
-            // Row 4: CGST Amt, SGST Amt, Add/Update button
+            // Row 3: Net Value, CGST, SGST, GST
             Row(
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.cgstPurchaseController,
-                    hintText: 'CGST Amt',
+                    controller: expenseProvider.netValuePurchaseController,
+                    hintText: 'Net Value',
                     readOnly: true,
                     labelText: '',
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  flex: 3,
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.cgstPurchaseController,
+                    hintText: 'CGST',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
                   child: CustomTextField(
                     height: 52,
                     controller: expenseProvider.sgstPurchaseController,
-                    hintText: 'SGST Amt',
+                    hintText: 'SGST',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.gstPurchaseController,
+                    hintText: 'GST',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Row 4: Quantity*, Total Amount, Add/Update button
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.quantityPurchaseController,
+                    hintText: 'Quantity *',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(),
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 2,
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.totalAmountPurchaseController,
+                    hintText: 'Total Amount',
                     readOnly: true,
                     labelText: '',
                   ),
                 ),
                 const SizedBox(width: 12),
                 const Expanded(
-                  flex: 5,
+                  flex: 7,
                   child: SizedBox(),
                 ),
                 const SizedBox(width: 12),
@@ -716,6 +696,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
         ),
         child: Column(
           children: [
+            // Item dropdown
             CommonDropdown(
               hintText: "Item*",
               items: expenseProvider.itemListPurchase
@@ -745,20 +726,14 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
               selectedValue: expenseProvider.itemDrop,
             ),
             const SizedBox(height: 12),
-            CustomTextField(
-              height: 52,
-              controller: expenseProvider.itemDescriptionPurchaseController,
-              hintText: 'Description *',
-              labelText: '',
-            ),
-            const SizedBox(height: 12),
+            // Row: Category, Unit, HSN Code
             Row(
               children: [
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.unitPurchaseController,
-                    hintText: 'Uom',
+                    controller: expenseProvider.categoryPurchaseController,
+                    hintText: 'Category',
                     readOnly: true,
                     labelText: '',
                   ),
@@ -767,21 +742,9 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.itemModelPurchaseController,
-                    hintText: 'Model',
-                    labelText: '',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    height: 52,
-                    controller: expenseProvider.itemBrandPurchaseController,
-                    hintText: 'Brand',
+                    controller: expenseProvider.unitPurchaseController,
+                    hintText: 'Unit',
+                    readOnly: true,
                     labelText: '',
                   ),
                 ),
@@ -789,29 +752,44 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.quantityPurchaseController,
-                    hintText: 'Qty *',
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) => expenseProvider.updateCalculations(),
+                    controller: expenseProvider.hsnPurchaseController,
+                    hintText: 'HSN Code',
+                    readOnly: true,
                     labelText: '',
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
+            // Row: Unit Price, Amount
             Row(
               children: [
                 Expanded(
                   child: CustomTextField(
                     height: 52,
                     controller: expenseProvider.pricePurchaseController,
-                    hintText: 'Sales Rate',
+                    hintText: 'Unit Price',
                     keyboardType: TextInputType.number,
                     onChanged: (value) => expenseProvider.updateCalculations(),
                     labelText: '',
                   ),
                 ),
                 const SizedBox(width: 12),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.amountPurchaseController,
+                    hintText: 'Amount',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Row: Discount %, Discount Amount
+            Row(
+              children: [
                 Expanded(
                   child: CustomTextField(
                     height: 52,
@@ -822,27 +800,12 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                     labelText: '',
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    height: 52,
-                    controller: expenseProvider.unitDiscountPurchaseController,
-                    hintText: 'Unit Discount',
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) => expenseProvider.updateCalculations(fromUnitDiscount: true),
-                    labelText: '',
-                  ),
-                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.amountPurchaseController,
-                    hintText: 'Total',
+                    controller: expenseProvider.discountAmountPurchaseController,
+                    hintText: 'Discount Amount',
                     readOnly: true,
                     labelText: '',
                   ),
@@ -850,13 +813,14 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
               ],
             ),
             const SizedBox(height: 12),
+            // Row: Net Value, CGST, SGST, GST
             Row(
               children: [
                 Expanded(
                   child: CustomTextField(
                     height: 52,
                     controller: expenseProvider.netValuePurchaseController,
-                    hintText: 'Amount',
+                    hintText: 'Net Value',
                     readOnly: true,
                     labelText: '',
                   ),
@@ -865,8 +829,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.cgstPerPurchaseController,
-                    hintText: 'CGST %',
+                    controller: expenseProvider.cgstPurchaseController,
+                    hintText: 'CGST',
                     readOnly: true,
                     labelText: '',
                   ),
@@ -875,8 +839,18 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.sgstPerPurchaseController,
-                    hintText: 'SGST %',
+                    controller: expenseProvider.sgstPurchaseController,
+                    hintText: 'SGST',
+                    readOnly: true,
+                    labelText: '',
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomTextField(
+                    height: 52,
+                    controller: expenseProvider.gstPurchaseController,
+                    hintText: 'GST',
                     readOnly: true,
                     labelText: '',
                   ),
@@ -884,14 +858,16 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
               ],
             ),
             const SizedBox(height: 12),
+            // Row: Quantity*, Total Amount
             Row(
               children: [
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.cgstPurchaseController,
-                    hintText: 'CGST Amt',
-                    readOnly: true,
+                    controller: expenseProvider.quantityPurchaseController,
+                    hintText: 'Quantity *',
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => expenseProvider.updateCalculations(),
                     labelText: '',
                   ),
                 ),
@@ -899,8 +875,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.sgstPurchaseController,
-                    hintText: 'SGST Amt',
+                    controller: expenseProvider.totalAmountPurchaseController,
+                    hintText: 'Total Amount',
                     readOnly: true,
                     labelText: '',
                   ),
