@@ -74,11 +74,13 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Manage Enquiry Source of ${widget.userModel.userDetailsName}',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        'Manage Enquiry Source of ${widget.userModel.userDetailsName}',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     IconButton(
