@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/utils/file_downloader.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -50,24 +54,67 @@ class QuotationDetailsWidget extends StatelessWidget {
         ),
         actions: [
           if (settingsprovider.menuIsViewMap[32] == 1) ...[
+            if (!kIsWeb)
+              IconButton(
+                onPressed: () async {
+                  PdfActionHelper.showShareOptions(
+                    context: context,
+                    title: 'Quotation 1',
+                    pdfUrl:
+                        '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=$serviceId',
+                    onGenerate: () async {
+                      await Loader.showLoader(context);
+                      final bytes = await customerDetailsProvider
+                          .getQuotationMasterPdfBytes(serviceId);
+                      Loader.stopLoader(context);
+                      return bytes ?? Uint8List(0);
+                    },
+                  );
+                },
+                icon: Icon(Icons.share, color: AppColors.primaryBlue),
+                tooltip: 'Share Quotation 1',
+              ),
             IconButton(
               onPressed: () async {
-                PdfActionHelper.showShareOptions(
-                  context: context,
-                  title: 'Quotation 1',
-                  pdfUrl:
-                      '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=$serviceId',
-                  onGenerate: () async {
-                    await Loader.showLoader(context);
-                    final bytes = await customerDetailsProvider
-                        .getQuotationMasterPdfBytes(serviceId);
-                    Loader.stopLoader(context);
-                    return bytes ?? Uint8List(0);
-                  },
-                );
+                await Loader.showLoader(context);
+                try {
+                  final bytes = await customerDetailsProvider
+                      .getQuotationMasterPdfBytes(serviceId);
+                  if (bytes != null && bytes.isNotEmpty) {
+                    final fileName = 'Quotation_$serviceId.pdf';
+                    if (kIsWeb) {
+                      await FileDownloader.saveFile(bytes, fileName);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Downloaded successfully'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } else if (Platform.isAndroid) {
+                      try {
+                        await FileDownloader.saveFile(bytes, fileName);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Downloaded to Downloads folder'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      } catch (e) {
+                        await Printing.sharePdf(
+                            bytes: bytes, filename: fileName);
+                      }
+                    } else {
+                      await Printing.sharePdf(bytes: bytes, filename: fileName);
+                    }
+                  }
+                } catch (e) {
+                  debugPrint('Error downloading PDF: $e');
+                } finally {
+                  Loader.stopLoader(context);
+                }
               },
-              icon: Icon(Icons.share, color: AppColors.primaryBlue),
-              tooltip: 'Share Quotation 1',
+              icon: const Icon(Icons.download, color: Color(0xFF10B981)),
+              tooltip: 'Download PDF',
             ),
             IconButton(
               onPressed: () async {

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -143,28 +144,30 @@ class QuotationCard extends StatelessWidget {
                       children: [
                         // Actions Group
                         if (settingsprovider.menuIsViewMap[32] == 1) ...[
-                          IconButton(
-                            tooltip: 'Share Quotation 1',
-                            icon: Icon(Icons.share,
-                                size: 22, color: AppColors.primaryBlue),
-                            onPressed: () async {
-                              PdfActionHelper.showShareOptions(
-                                context: context,
-                                title: 'Quotation',
-                                pdfUrl:
-                                    '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${quotation!.quotationMasterId}',
-                                onGenerate: () async {
-                                  final bytes = await customerDetailsProvider
-                                      .getQuotationMasterPdfBytes(
-                                          quotation!.quotationMasterId.toString());
-                                  return bytes ?? Uint8List(0);
-                                },
-                              );
-                            },
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                          const SizedBox(width: 8),
+                          if (!kIsWeb) ...[
+                            IconButton(
+                              tooltip: 'Share Quotation 1',
+                              icon: Icon(Icons.share,
+                                  size: 22, color: AppColors.primaryBlue),
+                              onPressed: () async {
+                                PdfActionHelper.showShareOptions(
+                                  context: context,
+                                  title: 'Quotation',
+                                  pdfUrl:
+                                      '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${quotation!.quotationMasterId}',
+                                  onGenerate: () async {
+                                    final bytes = await customerDetailsProvider
+                                        .getQuotationMasterPdfBytes(
+                                            quotation!.quotationMasterId.toString());
+                                    return bytes ?? Uint8List(0);
+                                  },
+                                );
+                              },
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
                           IconButton(
                             tooltip: 'Download PDF',
                             icon: const Icon(Icons.download,
@@ -178,7 +181,17 @@ class QuotationCard extends StatelessWidget {
                                 if (bytes != null && bytes.isNotEmpty) {
                                   final fileName =
                                       'Quotation_${quotation!.quotationMasterId}.pdf';
-                                  if (Platform.isAndroid) {
+                                  if (kIsWeb) {
+                                    await FileDownloader.saveFile(
+                                        bytes, fileName);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'Downloaded successfully'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                  } else if (Platform.isAndroid) {
                                     try {
                                       await FileDownloader.saveFile(
                                           bytes, fileName);
@@ -222,66 +235,156 @@ class QuotationCard extends StatelessWidget {
                           ),
                         ],
                         if (settingsprovider.menuIsViewMap[55] == 1) ...[
-                          IconButton(
-                            tooltip: 'Share Secondary PDF',
-                            icon: Icon(Icons.share_outlined,
-                                size: 22, color: AppColors.primaryBlue),
-                            onPressed: () async {
-                              PdfActionHelper.showShareOptions(
-                                context: context,
-                                title: quotation?.quotationTypeId == 2
-                                    ? 'Commercial PDF'
-                                    : 'Residential PDF',
-                                onGenerate: () async {
-                                  await Loader.showLoader(context);
-                                  await customerDetailsProvider
-                                      .getQuatationListByMasterId(
-                                          quotation!.quotationMasterId
-                                              .toString(),
-                                          context);
-                                  await customerDetailsProvider
-                                      .fetchLeadDetails(customerId, context);
-                                  await settingsprovider.getCompanyDetails();
-                                  Loader.stopLoader(context);
+                          if (!kIsWeb)
+                            IconButton(
+                              tooltip: 'Share Secondary PDF',
+                              icon: Icon(Icons.share_outlined,
+                                  size: 22, color: AppColors.primaryBlue),
+                              onPressed: () async {
+                                PdfActionHelper.showShareOptions(
+                                  context: context,
+                                  title: quotation?.quotationTypeId == 2
+                                      ? 'Commercial PDF'
+                                      : 'Residential PDF',
+                                  onGenerate: () async {
+                                    await Loader.showLoader(context);
+                                    await customerDetailsProvider
+                                        .getQuatationListByMasterId(
+                                            quotation!.quotationMasterId
+                                                .toString(),
+                                            context);
+                                    await customerDetailsProvider
+                                        .fetchLeadDetails(customerId, context);
+                                    await settingsprovider.getCompanyDetails();
+                                    Loader.stopLoader(context);
 
-                                  if (settingsprovider
-                                          .companyDetails.isNotEmpty &&
-                                      (customerDetailsProvider
-                                              .leadDetails?.isNotEmpty ??
-                                          false) &&
-                                      customerDetailsProvider
-                                          .quotationListByMaster.isNotEmpty) {
-                                    if (quotation?.quotationTypeId == 2) {
-                                      return await generateCommercialPDFBytes(
-                                            context: context,
-                                            companyDetails: settingsprovider
-                                                .companyDetails[0],
-                                            customerDetails:
-                                                customerDetailsProvider
-                                                    .leadDetails![0],
-                                            quotationData:
-                                                customerDetailsProvider
-                                                    .quotationListByMaster[0],
-                                          ) ??
-                                          Uint8List(0);
+                                    if (settingsprovider
+                                            .companyDetails.isNotEmpty &&
+                                        (customerDetailsProvider
+                                                .leadDetails?.isNotEmpty ??
+                                            false) &&
+                                        customerDetailsProvider
+                                            .quotationListByMaster.isNotEmpty) {
+                                      if (quotation?.quotationTypeId == 2) {
+                                        return await generateCommercialPDFBytes(
+                                              context: context,
+                                              companyDetails: settingsprovider
+                                                  .companyDetails[0],
+                                              customerDetails:
+                                                  customerDetailsProvider
+                                                      .leadDetails![0],
+                                              quotationData:
+                                                  customerDetailsProvider
+                                                      .quotationListByMaster[0],
+                                            ) ??
+                                            Uint8List(0);
+                                      } else {
+                                        return await generateResidentialPDFBytes(
+                                              context: context,
+                                              companyDetails: settingsprovider
+                                                  .companyDetails[0],
+                                              customerDetails:
+                                                  customerDetailsProvider
+                                                      .leadDetails![0],
+                                              quotationData:
+                                                  customerDetailsProvider
+                                                      .quotationListByMaster[0],
+                                            ) ??
+                                            Uint8List(0);
+                                      }
+                                    }
+                                    return Uint8List(0);
+                                  },
+                                );
+                              },
+                            ),
+                          IconButton(
+                            tooltip: quotation?.quotationTypeId == 2
+                                ? 'Download Commercial PDF'
+                                : 'Download Residential PDF',
+                            icon: const Icon(Icons.download_outlined,
+                                size: 22, color: Color(0xFF10B981)),
+                            onPressed: () async {
+                              await Loader.showLoader(context);
+                              try {
+                                await customerDetailsProvider
+                                    .getQuatationListByMasterId(
+                                        quotation!.quotationMasterId.toString(),
+                                        context);
+                                await customerDetailsProvider
+                                    .fetchLeadDetails(customerId, context);
+                                await settingsprovider.getCompanyDetails();
+
+                                if (settingsprovider.companyDetails.isNotEmpty &&
+                                    (customerDetailsProvider
+                                            .leadDetails?.isNotEmpty ??
+                                        false) &&
+                                    customerDetailsProvider
+                                        .quotationListByMaster.isNotEmpty) {
+                                  Uint8List? bytes;
+                                  if (quotation?.quotationTypeId == 2) {
+                                    bytes = await generateCommercialPDFBytes(
+                                      context: context,
+                                      companyDetails:
+                                          settingsprovider.companyDetails[0],
+                                      customerDetails: customerDetailsProvider
+                                          .leadDetails![0],
+                                      quotationData: customerDetailsProvider
+                                          .quotationListByMaster[0],
+                                    );
+                                  } else {
+                                    bytes = await generateResidentialPDFBytes(
+                                      context: context,
+                                      companyDetails:
+                                          settingsprovider.companyDetails[0],
+                                      customerDetails: customerDetailsProvider
+                                          .leadDetails![0],
+                                      quotationData: customerDetailsProvider
+                                          .quotationListByMaster[0],
+                                    );
+                                  }
+
+                                  if (bytes != null && bytes.isNotEmpty) {
+                                    final fileName = quotation?.quotationTypeId == 2
+                                        ? 'Commercial_${quotation!.quotationMasterId}.pdf'
+                                        : 'Residential_${quotation!.quotationMasterId}.pdf';
+
+                                    if (kIsWeb) {
+                                      await FileDownloader.saveFile(
+                                          bytes, fileName);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Downloaded successfully'),
+                                          backgroundColor: Colors.green,
+                                        ),
+                                      );
+                                    } else if (Platform.isAndroid) {
+                                      try {
+                                        await FileDownloader.saveFile(
+                                            bytes, fileName);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                'Downloaded to Downloads folder'),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        );
+                                      } catch (e) {
+                                        await Printing.sharePdf(
+                                            bytes: bytes, filename: fileName);
+                                      }
                                     } else {
-                                      return await generateResidentialPDFBytes(
-                                            context: context,
-                                            companyDetails: settingsprovider
-                                                .companyDetails[0],
-                                            customerDetails:
-                                                customerDetailsProvider
-                                                    .leadDetails![0],
-                                            quotationData:
-                                                customerDetailsProvider
-                                                    .quotationListByMaster[0],
-                                          ) ??
-                                          Uint8List(0);
+                                      await Printing.sharePdf(
+                                          bytes: bytes, filename: fileName);
                                     }
                                   }
-                                  return Uint8List(0);
-                                },
-                              );
+                                }
+                              } catch (e) {
+                                debugPrint('Error downloading PDF: $e');
+                              } finally {
+                                Loader.stopLoader(context);
+                              }
                             },
                           ),
                           IconButton(
