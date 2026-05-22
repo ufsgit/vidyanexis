@@ -1,5 +1,6 @@
 class SalesItemModel {
   final String itemId;
+  final String stockId;
   final String itemName;
   final String categoryId;
   final String categoryName;
@@ -24,6 +25,7 @@ class SalesItemModel {
 
   SalesItemModel({
     required this.itemId,
+    required this.stockId,
     required this.itemName,
     required this.categoryId,
     required this.categoryName,
@@ -51,6 +53,7 @@ class SalesItemModel {
   Map<String, dynamic> toJson() {
     return {
       "Item_Id": itemId,
+      "Stock_Id": stockId,
       "Item_Name": itemName,
       "Category_Id": categoryId,
       "Category_Name": categoryName,
@@ -78,6 +81,7 @@ class SalesItemModel {
   factory SalesItemModel.fromJson(Map<String, dynamic> json) {
     return SalesItemModel(
       itemId: json['Item_Id']?.toString() ?? '',
+      stockId: json['Stock_Id']?.toString() ?? '',
       itemName: json['Item_Name']?.toString() ?? '',
       categoryId: json['Category_Id']?.toString() ?? '',
       categoryName: json['Category_Name']?.toString() ?? '',
