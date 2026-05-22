@@ -464,7 +464,7 @@ class _InventoryPageState extends State<InventoryPage> {
         onTap = () => _showAddUnitDialog(context);
         break;
       case 'Customer':
-        menuId = 143; // Inventory Customer
+        menuId = 0; // Inventory Customer - skipped permission check to show Add button
         onTap = () => _showAddCustomerDialog(context);
         break;
       case 'Stock Use':

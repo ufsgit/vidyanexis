@@ -7,15 +7,29 @@ class TimeTrackModel {
     required this.entryDate,
   });
 
-  // Factory method to create a TimeTrackModel from JSON using ?? operator
   factory TimeTrackModel.fromJson(Map<String, dynamic> json) {
+    int parsedCount = 0;
+    if (json['Count'] != null) {
+      parsedCount = int.tryParse(json['Count'].toString()) ?? 0;
+    } else if (json['count'] != null) {
+      parsedCount = int.tryParse(json['count'].toString()) ?? 0;
+    }
+
+    String parsedDate = '';
+    if (json['Entry_Date'] != null) {
+      parsedDate = json['Entry_Date'].toString();
+    } else if (json['entry_date'] != null) {
+      parsedDate = json['entry_date'].toString();
+    } else if (json['entryDate'] != null) {
+      parsedDate = json['entryDate'].toString();
+    }
+
     return TimeTrackModel(
-      count: json['Count'] ?? 0, // Default to 0 if value is null or missing
-      entryDate: json['Entry_Date'] ?? '', // Default to empty string
+      count: parsedCount,
+      entryDate: parsedDate,
     );
   }
 
-  // Method to convert a TimeTrackModel to JSON
   Map<String, dynamic> toJson() {
     return {
       'Count': count,

@@ -83,7 +83,7 @@ class _SalesWidgetState extends State<SalesWidget> {
 
       final expenseProvider =
           Provider.of<ExpenseProvider>(listen: false, context);
-      await expenseProvider.searchItemListPurchase(context);
+      await expenseProvider.searchItemListSales(context);
 
       if (widget.isEdit && widget.data != null) {
         print('=== EDIT MODE ===');
@@ -125,6 +125,7 @@ class _SalesWidgetState extends State<SalesWidget> {
             print('Mapping item: ${item.itemName}');
             return SalesItemModel(
               itemId: item.itemId,
+              stockId: item.stockId,
               itemName: item.itemName,
               categoryId: item.categoryId,
               categoryName: item.categoryName,
@@ -575,7 +576,7 @@ class _SalesWidgetState extends State<SalesWidget> {
   Widget _buildItemDropdown(ExpenseProvider expenseProvider) {
     return CommonDropdown(
       hintText: "Item*",
-      items: expenseProvider.itemListPurchase
+      items: expenseProvider.itemListSales
           .where((element) => element.primaryCheckBox == 0)
           .map((status) => DropdownItem<int>(
                 id: status.itemId,
@@ -584,7 +585,7 @@ class _SalesWidgetState extends State<SalesWidget> {
           .toList(),
       controller: expenseProvider.itemNameSalesController,
       onItemSelected: (selectedItem) {
-        final selectedData = expenseProvider.itemListPurchase
+        final selectedData = expenseProvider.itemListSales
             .firstWhere((item) => item.itemId == selectedItem);
         expenseProvider.setSelectedPurchaseItemId(selectedItem);
 
@@ -778,9 +779,17 @@ class _SalesWidgetState extends State<SalesWidget> {
       return;
     }
 
+    String stockId = '';
+    try {
+      final selectedItem = expenseProvider.itemListSales.firstWhere(
+          (item) => item.itemId.toString() == expenseProvider.itemDrop.toString());
+      stockId = selectedItem.stockId.toString();
+    } catch (e) {}
+
     // Add the item to the list
     final salesItem = SalesItemModel(
       itemId: expenseProvider.itemDrop.toString(),
+      stockId: stockId,
       itemName: expenseProvider.itemNameSalesController.text,
       categoryId: expenseProvider.selectedCategoryId.toString(),
       categoryName: expenseProvider.categorySalesController.text,

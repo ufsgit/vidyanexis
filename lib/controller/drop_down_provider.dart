@@ -571,7 +571,8 @@ class DropDownProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getEnquirySource(BuildContext context) async {
+  Future<void> getEnquirySource(BuildContext context,
+      {bool fetchUserSpecific = false}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -587,7 +588,7 @@ class DropDownProvider extends ChangeNotifier {
               .map((item) => Enquirysourcemodel.fromJson(item))
               .toList();
 
-          if (userId.isNotEmpty) {
+          if (fetchUserSpecific && userId.isNotEmpty) {
             try {
               final userResponse = await HttpRequest.httpGetRequest(
                 endPoint: '${HttpUrls.getUserEnquirySource}/$userId',
@@ -595,13 +596,7 @@ class DropDownProvider extends ChangeNotifier {
               if (userResponse.statusCode == 200 &&
                   userResponse.data != null &&
                   userResponse.data['data'] != null) {
-                final rawData = userResponse.data['data'];
-                List<dynamic> dataList = [];
-                if (rawData is List) {
-                  dataList = rawData;
-                } else if (rawData is Map && rawData['enquiry_source_list'] != null) {
-                  dataList = rawData['enquiry_source_list'];
-                }
+                final List<dynamic> dataList = userResponse.data['data'];
                 final userSources = dataList
                     .map((item) => UserEnquirySourceModel.fromJson(item))
                     .toList();
@@ -685,7 +680,8 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getEnquiryFor(BuildContext context) async {
+  Future<void> getEnquiryFor(BuildContext context,
+      {bool fetchUserSpecific = false}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -701,7 +697,7 @@ class DropDownProvider extends ChangeNotifier {
               .map((item) => EnquiryForModel.fromJson(item))
               .toList();
 
-          if (userId.isNotEmpty) {
+          if (fetchUserSpecific && userId.isNotEmpty) {
             try {
               final userResponse = await HttpRequest.httpGetRequest(
                 endPoint: '${HttpUrls.getUserEnquiryFor}/$userId',
@@ -709,12 +705,15 @@ class DropDownProvider extends ChangeNotifier {
               if (userResponse.statusCode == 200 &&
                   userResponse.data != null &&
                   userResponse.data['data'] != null) {
-                final rawData = userResponse.data['data'];
-                List<dynamic> dataList = [];
-                if (rawData is List) {
-                  dataList = rawData;
-                } else if (rawData is Map && rawData['enquiry_for_list'] != null) {
-                  dataList = rawData['enquiry_for_list'];
+                final responseData = userResponse.data['data'];
+                List<dynamic> dataList;
+                if (responseData is Map &&
+                    responseData['enquiry_for_list'] != null) {
+                  dataList = responseData['enquiry_for_list'] as List<dynamic>;
+                } else if (responseData is List) {
+                  dataList = responseData;
+                } else {
+                  dataList = [];
                 }
                 final userEnquiryFor = dataList
                     .map((item) => UserEnquiryForModel.fromJson(item))

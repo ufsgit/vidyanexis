@@ -135,10 +135,6 @@ class _LeadsPageState extends State<LeadPage> {
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
       userType = preferences.getString('userType') ?? "";
-      //not admin type assign user filter
-      if (userType != "1") {
-        leadProvider.setUserFilterStatus(userId);
-      }
 
       provider.getEnquirySource(context);
       settingsProvider.searchBranch(context);
@@ -1574,8 +1570,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            if (lead.enquiryForId ==
-                                                                25) ...[
+                                                            if (lead.enquiryForId == 25 && settingsProvider.leadInSales == 1) ...[
                                                               const SizedBox(
                                                                   width: 4),
                                                               MouseRegion(
@@ -2749,8 +2744,8 @@ class _LeadsPageState extends State<LeadPage> {
       '0',
       taskType.taskTypeId.toString(),
       '', // description
-      DateFormat('dd MMM yyyy')
-          .format(DateTime.now().add(Duration(days: taskType.duration))), // date
+      DateFormat('dd MMM yyyy').format(
+          DateTime.now().add(Duration(days: taskType.duration))), // date
       DateFormat('HH:mm').format(DateTime.now()), // time
       user.userDetailsId.toString(), // assignedWorker
       context,

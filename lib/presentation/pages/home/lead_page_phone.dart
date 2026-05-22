@@ -109,10 +109,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
       userType = preferences.getString('userType') ?? "";
-      //not admin type assign user filter
-      if (userType != "1") {
-        leadProvider.setUserFilterStatus(userId);
-      }
+
       // leadProvider.leadData.clear();
       leadProvider.setFilter(false);
       settingsProvider.searchBranch(context);

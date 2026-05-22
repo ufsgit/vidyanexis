@@ -182,14 +182,10 @@ class TimeTrackReportProvider extends ChangeNotifier {
       String toUserId = (_selectedUser ?? 0).toString();
       String fromDateStr = _formattedFromDate;
       String toDateStr = _formattedToDate;
-
-      // Handle "All" date case if strings are empty
-      // If assumed logic: if empty send empty string or something else?
-      // FollowupReport logic: if empty string, sends empty string.
-      // API url construction:
+      String isDate = (fromDateStr.isNotEmpty && toDateStr.isNotEmpty) ? "1" : "0";
 
       String url =
-          '${HttpUrls.timeTrack}?Fromdate=$fromDateStr&By_User_Id=$toUserId';
+          '${HttpUrls.timeTrack}?Fromdate=$fromDateStr&Todate=$toDateStr&Is_Date=$isDate&By_User_Id=$toUserId';
 
       final response = await HttpRequest.httpGetRequest(endPoint: url);
 

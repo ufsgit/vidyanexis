@@ -33,7 +33,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
 
       providerTimeTrack.clearFilters();
       await providerTimeTrack.initializeWithLoggedInUser();
-      providerTimeTrack.setFromDate(DateTime.now());
+      providerTimeTrack.setDateFilter('Today'); // Set both from and to dates
+      providerTimeTrack.selectDateFilterOption(1); // Optional: highlight "Today" chip if there's an index 1
       providerTimeTrack.getTimeTrackReport(context);
 
       Provider.of<DropDownProvider>(context, listen: false)
