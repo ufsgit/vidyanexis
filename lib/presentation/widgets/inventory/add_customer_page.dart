@@ -195,116 +195,238 @@ class _AddCustomerState extends State<AddCustomer> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center(
-        child: Container(
-          width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
+      body: Container(
+        width: double.infinity,
           child: Column(
             children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(24),
               physics: const BouncingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionTitle('Basic Information'),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.inventoryCustomerNameController,
-                    hintText: 'Customer Name*',
-                    labelText: '',
-                  ),
+                  AppStyles.isWebScreen(context) 
+                    ? Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller: settingsProvider.inventoryCustomerNameController,
+                              hintText: 'Customer Name*',
+                            ),
+                          ),
+                          const Spacer(flex: 2),
+                        ],
+                      )
+                    : CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.inventoryCustomerNameController,
+                        hintText: 'Customer Name*',
+                      ),
+                      
                   const SizedBox(height: 32),
                   _buildSectionTitle('Contact Information'),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextField(
-                          readOnly: false,
-                          height: 56,
-                          controller: settingsProvider.inventoryCustomerPhoneController,
-                          hintText: 'Phone',
-                          labelText: '',
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        ),
+                  AppStyles.isWebScreen(context)
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller: settingsProvider.inventoryCustomerPhoneController,
+                              hintText: 'Phone',
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller: settingsProvider.inventoryCustomerMobileController,
+                              hintText: 'Mobile',
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller: settingsProvider.inventoryCustomerEmailController,
+                              hintText: 'Email Address',
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller: settingsProvider.inventoryCustomerGstNoController,
+                              hintText: 'GST Number',
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 56,
+                                  controller: settingsProvider.inventoryCustomerPhoneController,
+                                  hintText: 'Phone',
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 56,
+                                  controller: settingsProvider.inventoryCustomerMobileController,
+                                  hintText: 'Mobile',
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            readOnly: false,
+                            height: 56,
+                            controller: settingsProvider.inventoryCustomerEmailController,
+                            hintText: 'Email Address',
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            readOnly: false,
+                            height: 56,
+                            controller: settingsProvider.inventoryCustomerGstNoController,
+                            hintText: 'GST Number',
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: CustomTextField(
-                          readOnly: false,
-                          height: 56,
-                          controller: settingsProvider.inventoryCustomerMobileController,
-                          hintText: 'Mobile',
-                          labelText: '',
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.inventoryCustomerEmailController,
-                    hintText: 'Email Address',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.inventoryCustomerGstNoController,
-                    hintText: 'GST Number',
-                    labelText: '',
-                  ),
+                      
                   const SizedBox(height: 32),
                   _buildSectionTitle('Address Details'),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.inventoryCustomerAddressController,
-                    hintText: 'Primary Address*',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.inventoryCustomerAddress1Controller,
-                    hintText: 'Address Line 1',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.inventoryCustomerAddress2Controller,
-                    hintText: 'Address Line 2',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.inventoryCustomerAddress3Controller,
-                    hintText: 'Address Line 3',
-                    labelText: '',
-                  ),
+                  AppStyles.isWebScreen(context)
+                    ? Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 56,
+                                  controller: settingsProvider.inventoryCustomerAddressController,
+                                  hintText: 'Primary Address*',
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 56,
+                                  controller: settingsProvider.inventoryCustomerAddress1Controller,
+                                  hintText: 'Address Line 1',
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 56,
+                                  controller: settingsProvider.inventoryCustomerAddress2Controller,
+                                  hintText: 'Address Line 2',
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 56,
+                                  controller: settingsProvider.inventoryCustomerAddress3Controller,
+                                  hintText: 'Address Line 3',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          CustomTextField(
+                            readOnly: false,
+                            height: 56,
+                            controller: settingsProvider.inventoryCustomerAddressController,
+                            hintText: 'Primary Address*',
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            readOnly: false,
+                            height: 56,
+                            controller: settingsProvider.inventoryCustomerAddress1Controller,
+                            hintText: 'Address Line 1',
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            readOnly: false,
+                            height: 56,
+                            controller: settingsProvider.inventoryCustomerAddress2Controller,
+                            hintText: 'Address Line 2',
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            readOnly: false,
+                            height: 56,
+                            controller: settingsProvider.inventoryCustomerAddress3Controller,
+                            hintText: 'Address Line 3',
+                          ),
+                        ],
+                      ),
+                      
                   const SizedBox(height: 32),
                   _buildSectionTitle('Financial Information'),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.inventoryCustomerOpeningBalanceController,
-                    hintText: 'Opening Balance',
-                    labelText: '',
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  ),
+                  AppStyles.isWebScreen(context)
+                    ? Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller: settingsProvider.inventoryCustomerOpeningBalanceController,
+                              hintText: 'Opening Balance',
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            ),
+                          ),
+                          const Spacer(flex: 3),
+                        ],
+                      )
+                    : CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.inventoryCustomerOpeningBalanceController,
+                        hintText: 'Opening Balance',
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      ),
+                      
                   const SizedBox(height: 40),
                 ],
               ),
@@ -378,7 +500,6 @@ class _AddCustomerState extends State<AddCustomer> {
             ),
           ),
         ],
-      ),
       ),
       ),
     );

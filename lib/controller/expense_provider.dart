@@ -193,6 +193,8 @@ class ExpenseProvider extends ChangeNotifier {
       TextEditingController();
   List<ItemListModel> _itemListPurchase = [];
   List<ItemListModel> get itemListPurchase => _itemListPurchase;
+  List<ItemListModel> _itemListSales = [];
+  List<ItemListModel> get itemListSales => _itemListSales;
   List<ItemListStock> _itemListStock = [];
   List<ItemListStock> get itemListStock => _itemListStock;
 //purchase
@@ -1049,6 +1051,37 @@ class ExpenseProvider extends ChangeNotifier {
         if (data != null) {
           final dataitem = data['data'];
           _itemListPurchase = (dataitem as List<dynamic>)
+              .map((item) => ItemListModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<void> searchItemListSales(BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getAllItemsSales);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final dataitem = data['data'];
+          _itemListSales = (dataitem as List<dynamic>)
               .map((item) => ItemListModel.fromJson(item))
               .toList();
           notifyListeners();

@@ -12,7 +12,7 @@ class HttpUrls {
   // static String baseUrl = 'https://ecoamicaapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
-  // static String baseUrl = 'https://demo3api.trackbox.net.in/';
+  static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://uniquesolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
@@ -33,7 +33,7 @@ class HttpUrls {
 
 //static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
-  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -339,6 +339,7 @@ class HttpUrls {
   static String saveTaskFormData = "settings/Save_Form_Data_Details";
   static String getFormPrintPdf = "settings/get_form_print_pdf";
   static String saveSales = "item/Save_sales_master";
+  static String getAllItemsSales = "item/get_all_items_sales";
   static String getSalesCustomers = "item/get_all_customers";
   static String getSalesDataMaster = "item/get_sales_master";
   static String getSalesDataDetails = "item/Get_Sales_Details";
