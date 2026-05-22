@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
 import 'package:vidyanexis/utils/pdf_action_helper.dart';
@@ -557,6 +558,43 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                                           : 'Print Residential',
                                       child: Icon(Icons.print_outlined,
                                           size: 20, color: AppColors.primaryBlue),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              // Delete button — only shown when user has delete permission
+                              if (settingsProvider.menuIsDeleteMap[16] == 1) ...[
+                                const SizedBox(width: 8),
+                                GestureDetector(
+                                  onTap: () {
+                                    showConfirmationDialog(
+                                      context: context,
+                                      title: 'Delete Quotation',
+                                      content:
+                                          'Are you sure you want to delete this quotation?',
+                                      isLoading:
+                                          customerDetailsProvider.isDeleteLoading,
+                                      onCancel: () {
+                                        Navigator.pop(context);
+                                      },
+                                      onConfirm: () async {
+                                        await customerDetailsProvider.deleteQuotation(
+                                          item.quotationMasterId.toString(),
+                                          widget.customerId.toString(),
+                                          context,
+                                        );
+                                        if (context.mounted) Navigator.pop(context);
+                                      },
+                                      confirmButtonText: 'Delete',
+                                      confirmButtonColor: Colors.red,
+                                    );
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(4),
+                                    child: Tooltip(
+                                      message: 'Delete Quotation',
+                                      child: Icon(Icons.delete_outline,
+                                          size: 20, color: Colors.red),
                                     ),
                                   ),
                                 ),

@@ -296,9 +296,12 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
               backgroundColor: Colors.white,
               borderSide: BorderSide(color: AppColors.primaryBlue),
             ),
-          CustomPopMenuButtonWidget(
-            onOptionSelected: (PopupMenuOptions option) async {
-              // Add async keyword here
+          if (settingsprovider.menuIsEditMap[16] == 1 ||
+              settingsprovider.menuIsDeleteMap[16] == 1)
+            CustomPopMenuButtonWidget(
+              showEdit: settingsprovider.menuIsEditMap[16] == 1,
+              showDelete: settingsprovider.menuIsDeleteMap[16] == 1,
+              onOptionSelected: (PopupMenuOptions option) async {
               switch (option) {
                 case PopupMenuOptions.edit:
                   await customerDetailsProvider.getQuatationListByMasterId(
