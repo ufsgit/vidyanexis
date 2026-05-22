@@ -261,6 +261,10 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
     dropDownProvider.updateEnquiryForName(null, '');
     leadProvider.customFieldList.clear();
     leadProvider.customFieldEnquiryFor.clear();
+
+    // Restore unfiltered master lists so that list page lookup remains fully populated
+    dropDownProvider.getEnquirySource(context, fetchUserSpecific: false);
+    dropDownProvider.getEnquiryFor(context, fetchUserSpecific: false);
   }
 
   // late CustomFieldWidgetBuilder widgetBuilder;
@@ -284,6 +288,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
 
       settingsProvider.getCompanyDetails();
       await leadProvider.loadLoginDetails();
+      await dropDownProvider.getEnquirySource(context, fetchUserSpecific: true);
+      await dropDownProvider.getEnquiryFor(context, fetchUserSpecific: true);
 
       if (widget.isEdit) {
         leadProvider.getCustomFieldsByEnquiryForId(

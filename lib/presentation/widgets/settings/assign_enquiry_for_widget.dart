@@ -72,11 +72,13 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Manage Enquiry For of ${widget.userModel.userDetailsName}',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        'Manage Enquiry For of ${widget.userModel.userDetailsName}',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     IconButton(
@@ -194,20 +196,10 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                       CustomElevatedButton(
                         isLoading: settingsProvider.isSavingUserEnquiryFor,
                         onPressed: () async {
-                          List<UserEnquiryForModel> changedItems = [];
-                          for (int i = 0; i < _items.length; i++) {
-                            if (_items[i].isview != _initialStates[i]) {
-                              changedItems.add(_items[i]);
-                            }
-                          }
-                          if (changedItems.isEmpty) {
-                            Navigator.pop(context);
-                            return;
-                          }
                           await settingsProvider.saveUserEnquiryForList(
                             context: context,
                             userId: widget.userModel.userDetailsId.toString(),
-                            updatedList: changedItems,
+                            updatedList: _items,
                           );
                         },
                         radius: 12,

@@ -12,7 +12,8 @@ class AssignEnquirySourceWidget extends StatefulWidget {
   final GetUserModel userModel;
 
   @override
-  _AssignEnquirySourceWidgetState createState() => _AssignEnquirySourceWidgetState();
+  _AssignEnquirySourceWidgetState createState() =>
+      _AssignEnquirySourceWidgetState();
 }
 
 class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
@@ -32,7 +33,8 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
       setState(() {
         _items = loadedList;
         _initialStates = loadedList.map((e) => e.isview).toList();
-        _selectAll = _items.isNotEmpty && _items.every((item) => item.isview == 1);
+        _selectAll =
+            _items.isNotEmpty && _items.every((item) => item.isview == 1);
         _isLoading = false;
       });
     });
@@ -72,11 +74,13 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Manage Enquiry Source of ${widget.userModel.userDetailsName}',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Text(
+                        'Manage Enquiry Source of ${widget.userModel.userDetailsName}',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     IconButton(
@@ -150,7 +154,8 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                                 children: [
                                   SizedBox(
                                       width: 48,
-                                      child: Center(child: Text('${index + 1}'))),
+                                      child:
+                                          Center(child: Text('${index + 1}'))),
                                   Expanded(
                                       child: Text(
                                           item.enquirySourceName ?? 'Unknown')),
@@ -194,20 +199,10 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                       CustomElevatedButton(
                         isLoading: settingsProvider.isSavingUserEnquirySource,
                         onPressed: () async {
-                          List<UserEnquirySourceModel> changedItems = [];
-                          for (int i = 0; i < _items.length; i++) {
-                            if (_items[i].isview != _initialStates[i]) {
-                              changedItems.add(_items[i]);
-                            }
-                          }
-                          if (changedItems.isEmpty) {
-                            Navigator.pop(context);
-                            return;
-                          }
                           await settingsProvider.saveUserEnquirySourceList(
                             context: context,
                             userId: widget.userModel.userDetailsId.toString(),
-                            updatedList: changedItems,
+                            updatedList: _items,
                           );
                         },
                         radius: 12,
