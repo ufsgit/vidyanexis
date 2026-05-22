@@ -329,6 +329,10 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     dropDownProvider.setSelectedFollowUPId(0);
     dropDownProvider.setSelectedUserId(0);
     dropDownProvider.updateEnquiryForName(null, '');
+
+    // Restore unfiltered master lists so that list page lookup remains fully populated
+    dropDownProvider.getEnquirySource(context, fetchUserSpecific: false);
+    dropDownProvider.getEnquiryFor(context, fetchUserSpecific: false);
   }
 
   late CustomFieldWidgetBuilder widgetBuilder;
@@ -366,6 +370,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
       settingsProvider.getCompanyDetails();
       await leadProvider.loadLoginDetails();
+      await dropDownProvider.getEnquirySource(context, fetchUserSpecific: true);
+      await dropDownProvider.getEnquiryFor(context, fetchUserSpecific: true);
 
       if (widget.isEdit) {
         leadProvider.getCustomFieldsByEnquiryForId(
