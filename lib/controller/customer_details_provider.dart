@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 import 'package:vidyanexis/controller/models/get_refund_model.dart';
+import 'package:vidyanexis/controller/models/item_settings_model.dart';
 import 'package:vidyanexis/controller/models/maintenance_model.dart';
 import 'package:vidyanexis/controller/models/quotation_type_model.dart';
 import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
@@ -429,6 +430,66 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController(text: '200');
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
+
+  // when qutaion item is tick in company
+  TextEditingController newItemNameController = TextEditingController();
+  int _newItemId = 0;
+  int get newItemId => _newItemId;
+  set newItemId(int value) {
+    _newItemId = value;
+    notifyListeners();
+  }
+
+  final TextEditingController billpriceController = TextEditingController();
+  final TextEditingController billamountController = TextEditingController();
+
+  double _billTotalAmount = 0.0;
+  double get billTotalAmount => _billTotalAmount;
+  set billTotalAmount(double value) {
+    _billTotalAmount = value;
+    notifyListeners();
+  }
+
+  void updatebillOfMaterialsItems(List<ItemSettings> expenseItems) {
+    // Map each ItemSettings to BillOfMaterialItem and replace the current list
+    _billOfMaterialsItems = expenseItems
+        .map(
+          (item) => BillOfMaterialItem(
+            description: item.itemMaterialName,
+            brand: item.specification,
+            quantity: item.quantity.toString(),
+            uom: item.unit,
+            distributor: item.manufacture,
+            price: item.price.toString(),
+            amount: (item.price * item.quantity).toStringAsFixed(2),
+          ),
+        )
+        .toList();
+    notifyListeners();
+  }
+
+  void companyQuotationItemsCalulate(BuildContext context) {
+    try {
+      double quantity = double.tryParse(billquantityController.text) ?? 0;
+      double price = double.tryParse(billpriceController.text) ?? 0;
+      double total = quantity * price;
+      billamountController.text = total.toStringAsFixed(2);
+      billTotalAmount = _billOfMaterialsItems.fold(
+        0.0,
+        (total, item) {
+          final amountStr = item.amount ?? '0.0';
+          final amount = double.tryParse(amountStr) ?? 0.0;
+          return total + amount;
+        },
+      );
+      print(billTotalAmount);
+      print(_billOfMaterialsItems.map((item) => item.toJson()).toList());
+    } catch (e) {
+      print('Error calculating total: $e');
+    }
+    notifyListeners();
+  }
+  //
 
   List<QuotationTypeModel> _quotationTypeData = [];
   List<QuotationTypeModel> get quotationTypeData => _quotationTypeData;
@@ -1369,6 +1430,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       distributor: billdistributorController.text,
       comments: billinvoiceController.text,
       uom: billuomController.text,
+      price: billpriceController.text,
+      amount: billamountController.text,
     );
 
     // Check if we're editing an existing item or adding a new one
@@ -1438,6 +1501,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     billinvoiceController.clear();
     billuomController.clear();
     _editBillOfMaterialsIndex = null;
+    billpriceController.clear();
+    billamountController.clear();
     notifyListeners();
   }
 
@@ -1467,6 +1532,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       billdistributorController.text = itemToEdit.distributor ?? '';
       billinvoiceController.text = itemToEdit.comments ?? '';
       billuomController.text = itemToEdit.uom;
+      billpriceController.text = itemToEdit.price ?? '0';
+      billamountController.text = itemToEdit.amount ?? '0';
       seteditBillOfMaterialsIndex(index);
       notifyListeners();
     }
@@ -2340,13 +2407,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Branch_Id": _selectedBranchId ?? 0,
         "PaymentTerms": 0,
         "Payment_Term_Description": "",
-        "TotalAmount": subtotalController.text,
+        "TotalAmount": double.tryParse(subtotalController.text) ?? 0,
         "Subsidy_Amount":
             double.tryParse(qsubsidyAmountController.text.toString()) ?? 0,
         "Subsidyticked": _isSubsidyChecked ? 1 : 0,
         "Discount_Amount":
             double.tryParse(qDiscountController.text.toString()) ?? 0,
-        "NetTotal": totalController.text,
+        "NetTotal": double.tryParse(totalController.text) ?? 0,
         "Product_Name": qproductnameController.text.toString(),
         "Warranty": qwarrentyController.text.toString(),
         "Terms_And_Conditions": qtermsConditionsController.text.toString(),
@@ -2419,6 +2486,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
             customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
         "Description_2": quotationDescription2Controller.text.toString(),
         "Description_3": quotationDescription3Controller.text.toString(),
+        "Purchase_Total": _billTotalAmount.toStringAsFixed(2),
       });
 
       if (response!.statusCode == 200) {
@@ -2598,6 +2666,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     quotationDescription3Controller.clear();
     qEntryDateController.clear();
     _selectedBranchId = null;
+    billpriceController.clear();
+    billamountController.clear();
+    notifyListeners();
   }
 
   void setAmcDropDown(int amcStatusId, String amcStatusName) {
@@ -4204,6 +4275,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     quotationDescriptionController.text = quotation.description;
     quotationDescription2Controller.text = quotation.description2;
     quotationDescription3Controller.text = quotation.description3;
+    _billTotalAmount = double.tryParse(quotation.purchaseTotal) ?? 0.0;
 
     // ---- STATUS ----
     selectedQuotationStatus = quotation.quotationStatusId;

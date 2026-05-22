@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_commercial_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -40,6 +41,7 @@ class QuotationCreationWidget extends StatefulWidget {
 
 class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool companyQuotationItems = false;
 
   @override
   void initState() {
@@ -49,6 +51,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+      final expenseProvider =
+          Provider.of<ExpenseProvider>(context, listen: false);
+      expenseProvider.searchItemList(context: context, isFilter: false);
+      companyQuotationItems =
+          settingsProvider.companyDetails.first.quotationItemValue == 1;
 
       // Always clear first to ensure a clean state
       customerDetailsProvider.clearQuotationDetails();
@@ -80,6 +87,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
     // String? _validateTotal() {
     //   int advance =
     //       int.tryParse(customerDetailsProvider.advanceController.text) ?? 0;
@@ -374,6 +382,38 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         selectedValue:
                             customerDetailsProvider.selectedQuotationType,
                       ),
+                      if (companyQuotationItems) ...[
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CommonDropdown(
+                                hintText: "Select Item",
+                                items: expenseProvider.itemList
+                                    .map((status) => DropdownItem<int>(
+                                          id: status.itemId,
+                                          name: status.itemName,
+                                        ))
+                                    .toList(),
+                                controller: customerDetailsProvider
+                                    .newItemNameController,
+                                onItemSelected: (selectedItem) async {
+                                  final selectedData = expenseProvider.itemList
+                                      .firstWhere((item) =>
+                                          item.itemId == selectedItem);
+                                  await expenseProvider.getItemMaterialList(
+                                      selectedData.itemId, context);
+                                  customerDetailsProvider
+                                      .updatebillOfMaterialsItems(
+                                          expenseProvider.items);
+                                },
+                                selectedValue:
+                                    customerDetailsProvider.newItemId,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 16),
                       if (customerDetailsProvider
                           .customFieldQuotation.isNotEmpty) ...[
@@ -2354,6 +2394,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               ),
             ),
           ),
+        if (companyQuotationItems) ...[
+          SizedBox(height: 8),
+          Text(
+            'Total Amount: ${customerDetailsProvider.billTotalAmount.toStringAsFixed(2)}',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primaryBlue,
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -6,6 +6,8 @@ class BillOfMaterialItem {
   String uom;
   String? distributor;
   String? comments;
+  String? price;
+  String? amount;
 
   BillOfMaterialItem({
     this.id,
@@ -15,6 +17,8 @@ class BillOfMaterialItem {
     required this.uom,
     this.distributor,
     this.comments,
+    this.price,
+    this.amount,
   });
 
   // Convert to JSON
@@ -27,6 +31,8 @@ class BillOfMaterialItem {
       'Distributor': distributor,
       'Invoice_No': comments,
       'UOM': uom,
+      'Price': price,
+      'Amount': amount,
     };
   }
 
@@ -42,6 +48,8 @@ class BillOfMaterialItem {
       distributor: json['Distributor'],
       comments: json['Invoice_No'],
       uom: json['UOM'] ?? '',
+      price: json['Price']?.toString() ?? '',
+      amount: json['Amount']?.toString() ?? '',
     );
   }
 }
