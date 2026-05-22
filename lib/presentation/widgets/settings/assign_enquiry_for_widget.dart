@@ -194,20 +194,10 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                       CustomElevatedButton(
                         isLoading: settingsProvider.isSavingUserEnquiryFor,
                         onPressed: () async {
-                          List<UserEnquiryForModel> changedItems = [];
-                          for (int i = 0; i < _items.length; i++) {
-                            if (_items[i].isview != _initialStates[i]) {
-                              changedItems.add(_items[i]);
-                            }
-                          }
-                          if (changedItems.isEmpty) {
-                            Navigator.pop(context);
-                            return;
-                          }
                           await settingsProvider.saveUserEnquiryForList(
                             context: context,
                             userId: widget.userModel.userDetailsId.toString(),
-                            updatedList: changedItems,
+                            updatedList: _items,
                           );
                         },
                         radius: 12,

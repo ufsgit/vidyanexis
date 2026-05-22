@@ -2487,8 +2487,19 @@ class SettingsProvider extends ChangeNotifier {
         final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.getUserEnquiryFor}/$userId',
         );
-        if (response.statusCode == 200 && response.data != null && response.data['data'] != null) {
-          final List<dynamic> dataList = response.data['data'];
+        if (response.statusCode == 200 &&
+            response.data != null &&
+            response.data['data'] != null) {
+          final responseData = response.data['data'];
+          // API returns either {enquiry_for_list: [...]} or a flat list
+          List<dynamic> dataList;
+          if (responseData is Map && responseData['enquiry_for_list'] != null) {
+            dataList = responseData['enquiry_for_list'] as List<dynamic>;
+          } else if (responseData is List) {
+            dataList = responseData;
+          } else {
+            dataList = [];
+          }
           userList = dataList
               .map((item) => UserEnquiryForModel.fromJson(item))
               .toList();
@@ -2507,7 +2518,7 @@ class SettingsProvider extends ChangeNotifier {
             userId: int.tryParse(userId),
           ),
         );
-        
+
         list.add(UserEnquiryForModel(
           userEnquiryForId: matchedUserItem.userEnquiryForId,
           userId: int.tryParse(userId),
@@ -2550,8 +2561,19 @@ class SettingsProvider extends ChangeNotifier {
         final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.getUserEnquirySource}/$userId',
         );
-        if (response.statusCode == 200 && response.data != null && response.data['data'] != null) {
-          final List<dynamic> dataList = response.data['data'];
+        if (response.statusCode == 200 &&
+            response.data != null &&
+            response.data['data'] != null) {
+          final responseData = response.data['data'];
+          // API returns either {enquiry_source_list: [...]} or a flat list
+          List<dynamic> dataList;
+          if (responseData is Map && responseData['enquiry_source_list'] != null) {
+            dataList = responseData['enquiry_source_list'] as List<dynamic>;
+          } else if (responseData is List) {
+            dataList = responseData;
+          } else {
+            dataList = [];
+          }
           userList = dataList
               .map((item) => UserEnquirySourceModel.fromJson(item))
               .toList();
@@ -2570,7 +2592,7 @@ class SettingsProvider extends ChangeNotifier {
             userId: int.tryParse(userId),
           ),
         );
-        
+
         list.add(UserEnquirySourceModel(
           userEnquirySourceId: matchedUserItem.userEnquirySourceId,
           userId: int.tryParse(userId),
@@ -2617,12 +2639,12 @@ class SettingsProvider extends ChangeNotifier {
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-        if (data['success'] == true) {
-          Navigator.pop(context);
-        } else {
+        if (data['success'] == false || data['success'] == 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Failed to save')),
           );
+        } else {
+          Navigator.pop(context);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -2666,12 +2688,12 @@ class SettingsProvider extends ChangeNotifier {
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-        if (data['success'] == true) {
-          Navigator.pop(context);
-        } else {
+        if (data['success'] == false || data['success'] == 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Failed to save')),
           );
+        } else {
+          Navigator.pop(context);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
