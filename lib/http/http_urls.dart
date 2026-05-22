@@ -33,7 +33,7 @@ class HttpUrls {
 
 //static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
-  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -242,6 +242,9 @@ class HttpUrls {
 
   static String getLeadReportByEnquirySource =
       "lead/Get_Lead_Report_By_Enquiry_Source";
+
+  static String employeeSummaryReport = "lead/Employee_Summary_Report";
+  static String enquiryForSummaryReport = "lead/Enquiry_For_Summary_Report";
 
   static String searchCategory = "item/Get_All_category";
   static String saveCheckListCategory = "category/Save_Check_List_Category";

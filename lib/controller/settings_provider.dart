@@ -2488,7 +2488,13 @@ class SettingsProvider extends ChangeNotifier {
           endPoint: '${HttpUrls.getUserEnquiryFor}/$userId',
         );
         if (response.statusCode == 200 && response.data != null && response.data['data'] != null) {
-          final List<dynamic> dataList = response.data['data'];
+          final rawData = response.data['data'];
+          List<dynamic> dataList = [];
+          if (rawData is List) {
+            dataList = rawData;
+          } else if (rawData is Map && rawData['enquiry_for_list'] != null) {
+            dataList = rawData['enquiry_for_list'];
+          }
           userList = dataList
               .map((item) => UserEnquiryForModel.fromJson(item))
               .toList();
@@ -2551,7 +2557,13 @@ class SettingsProvider extends ChangeNotifier {
           endPoint: '${HttpUrls.getUserEnquirySource}/$userId',
         );
         if (response.statusCode == 200 && response.data != null && response.data['data'] != null) {
-          final List<dynamic> dataList = response.data['data'];
+          final rawData = response.data['data'];
+          List<dynamic> dataList = [];
+          if (rawData is List) {
+            dataList = rawData;
+          } else if (rawData is Map && rawData['enquiry_source_list'] != null) {
+            dataList = rawData['enquiry_source_list'];
+          }
           userList = dataList
               .map((item) => UserEnquirySourceModel.fromJson(item))
               .toList();

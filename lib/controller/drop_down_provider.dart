@@ -595,7 +595,13 @@ class DropDownProvider extends ChangeNotifier {
               if (userResponse.statusCode == 200 &&
                   userResponse.data != null &&
                   userResponse.data['data'] != null) {
-                final List<dynamic> dataList = userResponse.data['data'];
+                final rawData = userResponse.data['data'];
+                List<dynamic> dataList = [];
+                if (rawData is List) {
+                  dataList = rawData;
+                } else if (rawData is Map && rawData['enquiry_source_list'] != null) {
+                  dataList = rawData['enquiry_source_list'];
+                }
                 final userSources = dataList
                     .map((item) => UserEnquirySourceModel.fromJson(item))
                     .toList();
@@ -703,7 +709,13 @@ class DropDownProvider extends ChangeNotifier {
               if (userResponse.statusCode == 200 &&
                   userResponse.data != null &&
                   userResponse.data['data'] != null) {
-                final List<dynamic> dataList = userResponse.data['data'];
+                final rawData = userResponse.data['data'];
+                List<dynamic> dataList = [];
+                if (rawData is List) {
+                  dataList = rawData;
+                } else if (rawData is Map && rawData['enquiry_for_list'] != null) {
+                  dataList = rawData['enquiry_for_list'];
+                }
                 final userEnquiryFor = dataList
                     .map((item) => UserEnquiryForModel.fromJson(item))
                     .toList();

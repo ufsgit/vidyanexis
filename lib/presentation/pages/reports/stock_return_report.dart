@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 
 class StockReturnReport extends StatefulWidget {
   static const String route = '/stock-return-report';
@@ -55,29 +56,18 @@ class _StockReturnReportState extends State<StockReturnReport> {
       backgroundColor: const Color(0xFFF6F7F9),
       drawer: isSmallScreen ? const SidebarDrawer() : null,
       appBar: isSmallScreen
-          ? AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              iconTheme: IconThemeData(color: AppColors.textBlue800),
-              title: Text(
-                'Stock Return Report',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textBlue800,
-                ),
+          ? CustomAppBar(
+              title: 'Stock Return Report',
+              titleStyle: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textBlack,
               ),
-              actions: [
-                IconButton(
-                  onPressed: () => provider.toggleFilter(),
-                  icon: Icon(
-                    Icons.filter_list,
-                    color: provider.isFilter
-                        ? AppColors.primaryBlue
-                        : AppColors.textBlue800,
-                  ),
-                ),
-              ],
+              onFilterTap: () {
+                provider.toggleFilter();
+              },
+              showSearch: false,
+              onSearch: (q) {},
             )
           : null,
       body: Column(

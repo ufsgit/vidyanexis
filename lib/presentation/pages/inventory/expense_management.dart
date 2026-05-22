@@ -58,30 +58,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (!AppStyles.isWebScreen(context))
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: Builder(
-                        builder: (context) => InkWell(
-                          onTap: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppColors.secondaryBlue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.sort_rounded,
-                              size: 20,
-                              color: AppColors.secondaryBlue,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+
                   _buildResponsiveHeader(context, isSmallScreen),
                   if (isSmallScreen) ...[
                     const SizedBox(height: 16),

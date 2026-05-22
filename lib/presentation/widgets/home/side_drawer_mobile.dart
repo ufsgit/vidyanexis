@@ -21,6 +21,8 @@ import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/employee_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/enquiry_for_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/periodic_service_report_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_return_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.dart';
@@ -101,6 +103,10 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Expense Reports', 'page': const ExpenseReportScreen()},
       if (settingsProvider.menuIsViewMap[119].toString() == '1')
         {'title': 'Enquiry Source Reports', 'page': const EnquirySourceSummaryReportScreen()},
+      if (settingsProvider.menuIsViewMap[119].toString() == '1' || settingsProvider.menuIsViewMap[89].toString() == '1')
+        {'title': 'Employee Summary Reports', 'page': const EmployeeSummaryReportScreen()},
+      if (settingsProvider.menuIsViewMap[119].toString() == '1' || settingsProvider.menuIsViewMap[89].toString() == '1')
+        {'title': 'Enquiry For Summary Reports', 'page': const EnquiryForSummaryReportScreen()},
       if (settingsProvider.menuIsViewMap[26].toString() == '1')
         {'title': 'Attendance Reports', 'page': const AttendanceReport()},
       if (settingsProvider.menuIsViewMap[96].toString() == '1')

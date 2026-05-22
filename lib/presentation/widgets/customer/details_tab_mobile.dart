@@ -71,12 +71,11 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                         initiallyExpanded: false,
                         showDivider: false,
                       children: [
-                        Container(
-                          height: 60,
-                          margin: const EdgeInsets.symmetric(vertical: 12.0),
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+                          child: Wrap(
+                            spacing: 6.0,
+                            runSpacing: 6.0,
                             children: [
                               if (settingsProvider.menuIsViewMap[61] == 1)
                                 _buildActionBtn(
@@ -792,17 +791,35 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: CustomElevatedButton(
-        backgroundColor: AppColors.whiteColor,
-        borderColor: AppColors.bluebutton,
-        textColor: AppColors.bluebutton,
-        buttonText: text,
-        prefixIcon: icon,
-        textSize: 12,
-        radius: 10,
-        onPressed: onTap,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.bluebutton, width: 1.1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: AppColors.bluebutton,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              text,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.bluebutton,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
