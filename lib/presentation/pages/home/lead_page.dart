@@ -1570,8 +1570,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            if (lead.enquiryForId ==
-                                                                25) ...[
+                                                            if (lead.enquiryForId == 25 && settingsProvider.leadInSales == 1) ...[
                                                               const SizedBox(
                                                                   width: 4),
                                                               MouseRegion(
