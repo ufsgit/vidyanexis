@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -26,6 +27,8 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
   Widget build(BuildContext context) {
     final provider = Provider.of<CustomerDetailsProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final companyQuotationItems =
+        settingsProvider.companyDetails.first.quotationItemValue == 1;
 
     // Find the selected unit ID based on the text in the controller
     int? selectedUnitId;
@@ -103,6 +106,15 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                       borderColor: const Color(0xFFD0D5DD),
                       focusedBorderColor: AppColors.bluebutton,
                       keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d+\.?\d{0,2}')),
+                      ],
+                      onChanged: (value) {
+                        if (companyQuotationItems) {
+                          provider.companyQuotationItemsCalulate(context);
+                        }
+                      },
                     ),
                   ),
                   // const SizedBox(width: 16),
@@ -142,15 +154,58 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                 focusedBorderColor: AppColors.bluebutton,
               ),
               const SizedBox(height: 16),
-              CustomTextField(
-                controller: provider.billinvoiceController,
-                labelText: provider.getQuotationFieldName(14, 'Comments'),
-                hintText: provider.getQuotationFieldName(14, 'Comments'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
+              if (companyQuotationItems) ...[
+                CustomTextField(
+                  controller: provider.billuomController,
+                  labelText: provider.getQuotationFieldName(17, 'Unit'),
+                  hintText: provider.getQuotationFieldName(17, 'Unit'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  controller: provider.billpriceController,
+                  labelText: provider.getQuotationFieldName(15, 'Price'),
+                  hintText: provider.getQuotationFieldName(15, 'Price'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d+\.?\d{0,2}')),
+                  ],
+                  onChanged: (value) {
+                    if (companyQuotationItems) {
+                      provider.companyQuotationItemsCalulate(context);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  controller: provider.billamountController,
+                  labelText: provider.getQuotationFieldName(16, 'Amount'),
+                  hintText: provider.getQuotationFieldName(16, 'Amount'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  readOnly: true,
+                ),
+              ] else ...[
+                CustomTextField(
+                  controller: provider.billinvoiceController,
+                  labelText: provider.getQuotationFieldName(14, 'Comments'),
+                  hintText: provider.getQuotationFieldName(14, 'Comments'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+              ],
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -172,6 +227,9 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                       buttonText: 'Save',
                       onPressed: () {
                         provider.addOrEditBillOfMaterialsItem();
+                        if (companyQuotationItems) {
+                          provider.companyQuotationItemsCalulate(context);
+                        }
                         Navigator.pop(context);
                       },
                       backgroundColor: AppColors.appViolet,

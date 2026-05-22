@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/bill_of_material_model.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class BomItemCard extends StatelessWidget {
   final BillOfMaterialItem item;
@@ -67,6 +68,9 @@ class BomItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.read<CustomerDetailsProvider>();
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+    final companyQuotationItems =
+        settingsProvider.companyDetails.first.quotationItemValue == 1;
     return GestureDetector(
       onTap: onEdit,
       child: Container(
@@ -119,10 +123,22 @@ class BomItemCard extends StatelessWidget {
               const SizedBox(height: 12),
 
               // Details
-              _buildDetailRow(
-                provider.getQuotationFieldName(12, 'Quantity'),
-                '${item.quantity} ${item.uom}',
-              ),
+              if (companyQuotationItems) ...[
+                _buildDetailRow(
+                  provider.getQuotationFieldName(12, 'Quantity'),
+                  item.quantity,
+                ),
+                SizedBox(height: 8),
+                _buildDetailRow(
+                  provider.getQuotationFieldName(17, 'Unit'),
+                  item.uom,
+                ),
+              ] else ...[
+                _buildDetailRow(
+                  provider.getQuotationFieldName(12, 'Quantity'),
+                  '${item.quantity} ${item.uom}',
+                ),
+              ],
               const SizedBox(height: 8),
               _buildDetailRow(
                 provider.getQuotationFieldName(11, 'Specification'),
@@ -135,11 +151,24 @@ class BomItemCard extends StatelessWidget {
                     ? item.distributor!
                     : '-',
               ),
-              const SizedBox(height: 8),
-              _buildDetailRow(
-                provider.getQuotationFieldName(14, 'Comments'),
-                (item.comments?.isNotEmpty ?? false) ? item.comments! : '-',
-              ),
+              if (companyQuotationItems) ...[
+                const SizedBox(height: 8),
+                _buildDetailRow(
+                  provider.getQuotationFieldName(15, 'Price'),
+                  (item.price?.isNotEmpty ?? false) ? item.price! : '-',
+                ),
+                const SizedBox(height: 8),
+                _buildDetailRow(
+                  provider.getQuotationFieldName(16, 'Amount'),
+                  (item.amount?.isNotEmpty ?? false) ? item.amount! : '-',
+                ),
+              ] else ...[
+                const SizedBox(height: 8),
+                _buildDetailRow(
+                  provider.getQuotationFieldName(14, 'Comments'),
+                  (item.comments?.isNotEmpty ?? false) ? item.comments! : '-',
+                ),
+              ],
             ],
           ),
         ),
