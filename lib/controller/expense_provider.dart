@@ -2451,6 +2451,7 @@ class ExpenseProvider extends ChangeNotifier {
             _salesDetails = (dataitem as List<dynamic>)
                 .map((item) => SalesItemModel(
                       itemId: item['Item_Id']?.toString() ?? '',
+                      stockId: item['Stock_Id']?.toString() ?? '',
                       itemName: item['Item_Name']?.toString() ?? '',
                       categoryId: item['Category_Id']?.toString() ?? '',
                       categoryName: item['Category_Name']?.toString() ?? '',
