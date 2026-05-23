@@ -22,6 +22,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/home/lead_history_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/sales_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -1286,7 +1287,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 controller: _horizontalScrollController,
                                 scrollDirection: Axis.horizontal,
                                 child: SizedBox(
-                                  width: 2000,
+                                  width: 2120,
                                   child: Column(
                                     children: [
                                       // Header row
@@ -1336,6 +1337,20 @@ class _LeadsPageState extends State<LeadPage> {
                                               alignment: Alignment.centerLeft,
                                               data: Text(
                                                 'Remark',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                              width: 120,
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 4.0,
+                                                  horizontal: 12.0),
+                                              alignment: Alignment.centerLeft,
+                                              data: const Text(
+                                                'History',
                                                 style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
@@ -1795,6 +1810,42 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 const TextStyle(
                                                                     fontSize:
                                                                         13),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      TableWidget(
+                                                        padding: const EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 4.0,
+                                                                horizontal:
+                                                                    12.0),
+                                                        width: 120,
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        data: TextButton.icon(
+                                                          onPressed: () {
+                                                            LeadHistoryDialog.show(
+                                                              context,
+                                                              customerId: lead.customerId.toString(),
+                                                              customerName: lead.customerName,
+                                                            );
+                                                          },
+                                                          icon: const Icon(
+                                                            Icons.history_rounded,
+                                                            size: 15,
+                                                            color: AppColors.primaryBlue,
+                                                          ),
+                                                          label: const Text(
+                                                            'History',
+                                                            style: TextStyle(
+                                                              fontSize: 13,
+                                                              color: AppColors.primaryBlue,
+                                                              fontWeight: FontWeight.w600,
+                                                            ),
+                                                          ),
+                                                          style: TextButton.styleFrom(
+                                                            padding: EdgeInsets.zero,
+                                                            alignment: Alignment.centerLeft,
                                                           ),
                                                         ),
                                                       ),

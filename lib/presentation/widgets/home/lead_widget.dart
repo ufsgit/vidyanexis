@@ -21,6 +21,7 @@ import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/lead_history_dialog.dart';
 
 class LeadCard extends StatefulWidget {
   final SearchLeadModel lead;
@@ -1065,6 +1066,32 @@ class _LeadCardState extends State<LeadCard> {
                               text: 'Convert',
                               color: Colors.green,
                             ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      // Action Buttons Row 3
+                      Row(
+                        children: [
+                          _buildActionButton(
+                            onTap: () {
+                              LeadHistoryDialog.show(
+                                context,
+                                customerId: widget.lead.customerId.toString(),
+                                customerName: widget.lead.customerName,
+                              );
+                            },
+                            icon: Icons.history_rounded,
+                            text: 'History',
+                            color: Colors.blueGrey,
+                          ),
+                          const SizedBox(width: 4),
+                          const Expanded(child: SizedBox()),
+                          const SizedBox(width: 4),
+                          const Expanded(child: SizedBox()),
+                          const SizedBox(width: 4),
+                          const Expanded(child: SizedBox()),
+                          const SizedBox(width: 4),
+                          const Expanded(child: SizedBox()),
                         ],
                       ),
                     ],
