@@ -4387,4 +4387,97 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  List<ProfitModel> _profitList = [];
+  List<ProfitModel> get profitList => _profitList;
+
+  int? _selectedProfitId;
+  int? get selectedProfitId => _selectedProfitId;
+
+  String? _selectedProfitName;
+  String? get selectedProfitName => _selectedProfitName;
+
+  void setSelectedProfitId(int? id, {String? name}) {
+    _selectedProfitId = id;
+    if (name != null) _selectedProfitName = name;
+    notifyListeners();
+  }
+
+  bool _isProfitLoading = false;
+  bool get isProfitLoading => _isProfitLoading;
+
+  Future<void> getProfitList(BuildContext context) async {
+    try {
+      _isProfitLoading = true;
+      notifyListeners();
+
+      final response = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getProfit);
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<dynamic> items = [];
+          if (data is List) {
+            items = data;
+          } else if (data is Map) {
+            if (data['data'] != null && data['data'] is List) {
+              items = data['data'];
+            } else {
+              // Try to find any list in the response map
+              for (var v in data.values) {
+                if (v is List) {
+                  items = v;
+                  break;
+                }
+              }
+            }
+          }
+
+          if (items.isEmpty) {
+             _profitList = [ProfitModel(id: -1, name: "Empty List from API")];
+          } else {
+            List<ProfitModel> temp = [];
+            for (int i = 0; i < items.length; i++) {
+              var item = items[i];
+              if (item is Map<String, dynamic> || item is Map) {
+                var map = item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
+                var model = ProfitModel.fromJson(map);
+                if (model.id == 0) {
+                   temp.add(ProfitModel(id: i + 1, name: model.name.isEmpty ? 'Item ${i+1}' : model.name));
+                } else {
+                   temp.add(model);
+                }
+              } else {
+                temp.add(ProfitModel(id: i + 1, name: item.toString()));
+              }
+            }
+            _profitList = temp;
+          }
+        } else {
+           _profitList = [ProfitModel(id: -1, name: "API returned null data")];
+        }
+      } else {
+         _profitList = [ProfitModel(id: -1, name: "API Error ${response.statusCode}")];
+      }
+    } catch (e) {
+      print('Exception in getProfitList: $e');
+      _profitList = [ProfitModel(id: -1, name: "API Exception")];
+    } finally {
+      _isProfitLoading = false;
+      notifyListeners();
+    }
+  }
+}
+
+class ProfitModel {
+  final int id;
+  final String name;
+
+  ProfitModel({required this.id, required this.name});
+
+  factory ProfitModel.fromJson(Map<String, dynamic> json) {
+    return ProfitModel(
+      id: int.tryParse(json['id']?.toString() ?? json['Id']?.toString() ?? json['profitId']?.toString() ?? json['ProfitId']?.toString() ?? json['profit_id']?.toString() ?? json['Profit_Id']?.toString() ?? '0') ?? 0,
+      name: json['name']?.toString() ?? json['Name']?.toString() ?? json['profitName']?.toString() ?? json['ProfitName']?.toString() ?? json['profit_name']?.toString() ?? json['Profit_Name']?.toString() ?? '',
+    );
+  }
 }

@@ -62,6 +62,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
       settingsProvider.searchBranch(context);
       customerDetailsProvider.getQuotationTypes(context);
+      customerDetailsProvider.getProfitList(context);
 
       // Fetch custom field definitions for quotations
       await customerDetailsProvider.getCustomFieldsByQuotationId(context);
@@ -409,6 +410,20 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                 },
                                 selectedValue:
                                     customerDetailsProvider.newItemId,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: CommonDropdown<int>(
+                                hintText: 'Profit',
+                                items: customerDetailsProvider.profitList
+                                    .map((e) => DropdownItem<int>(id: e.id, name: e.name))
+                                    .toList(),
+                                onItemSelected: (value) {
+                                  final selected = customerDetailsProvider.profitList.firstWhere((e) => e.id == value);
+                                  customerDetailsProvider.setSelectedProfitId(value, name: selected.name);
+                                },
+                                selectedValue: customerDetailsProvider.selectedProfitId,
                               ),
                             ),
                           ],
