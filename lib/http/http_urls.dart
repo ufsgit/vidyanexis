@@ -380,5 +380,5 @@ class HttpUrls {
       "quotation_details/Save_structure_materials";
   static String getLeadCustomerList = "lead/Get_Customer_List";
   static String getSalesReport = "item/Search_Sales_Report";
-  static String getProfit = "Get_Profit";
+  static String getProfit = "quotation_master/Get_Profit";
 }
