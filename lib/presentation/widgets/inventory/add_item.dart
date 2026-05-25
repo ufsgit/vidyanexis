@@ -374,27 +374,37 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               Row(
                                 children: [
                                   Expanded(
-                                    child: CommonDropdown(
-                                      hintText: "Select Material",
-                                      items: expenseProvider.itemList
-                                          .map((status) => DropdownItem<int>(
-                                                id: status.itemId,
-                                                name: status.itemName,
-                                              ))
-                                          .toList(),
+                                    child: CustomTextField(
+                                      readOnly: false,
+                                      height: 56,
                                       controller: expenseProvider
                                           .itemMaterialController,
-                                      onItemSelected: (selectedItem) {
-                                        final selectedData = expenseProvider
-                                            .itemList
-                                            .firstWhere((item) =>
-                                                item.itemId == selectedItem);
-                                        expenseProvider
-                                            .setSubId(selectedData.itemId);
-                                      },
-                                      selectedValue: expenseProvider.subItemId,
+                                      hintText: 'Item Material',
+                                      labelText: '',
                                     ),
                                   ),
+                                  // Expanded(
+                                  //   child: CommonDropdown(
+                                  //     hintText: "Select Material",
+                                  //     items: expenseProvider.itemList
+                                  //         .map((status) => DropdownItem<int>(
+                                  //               id: status.itemId,
+                                  //               name: status.itemName,
+                                  //             ))
+                                  //         .toList(),
+                                  //     controller: expenseProvider
+                                  //         .itemMaterialController,
+                                  //     onItemSelected: (selectedItem) {
+                                  //       final selectedData = expenseProvider
+                                  //           .itemList
+                                  //           .firstWhere((item) =>
+                                  //               item.itemId == selectedItem);
+                                  //       expenseProvider
+                                  //           .setSubId(selectedData.itemId);
+                                  //     },
+                                  //     selectedValue: expenseProvider.subItemId,
+                                  //   ),
+                                  // ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: CustomTextField(
