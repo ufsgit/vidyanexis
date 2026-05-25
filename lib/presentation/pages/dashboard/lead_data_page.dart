@@ -1465,8 +1465,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         width:
                                                                             150,
                                                                         data: Text(
-                                                                            _formatDateSafely(lead.closedDate ??
-                                                                                ''),
+                                                                            _formatDateSafely(lead.registeredDate),
                                                                             maxLines:
                                                                                 1,
                                                                             overflow:
