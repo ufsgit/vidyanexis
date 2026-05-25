@@ -39,13 +39,24 @@ class _CampaignContentState extends State<CampaignContent> {
   }
 
   void _openAddDialog() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (context) => const AddCampaignWidget(
-        isEdit: false,
-      ),
-    );
+    if (!AppStyles.isWebScreen(context)) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AddCampaignWidget(
+            isEdit: false,
+          ),
+        ),
+      );
+    } else {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => const AddCampaignWidget(
+          isEdit: false,
+        ),
+      );
+    }
   }
 
   @override
@@ -220,19 +231,36 @@ class _CampaignContentState extends State<CampaignContent> {
                           const SizedBox(width: 8),
                           TextButton(
                             onPressed: () {
-                              showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) => AddCampaignWidget(
-                                  isEdit: true,
-                                  campaignId: campaign.campaignId,
-                                  campaignName: campaign.campaignName,
-                                  campaignIdString: campaign.campaignIdString,
-                                  userIds: campaign.userIds,
-                                  enquirySourceId: campaign.enquirySourceId,
-                                  enquiryForId: campaign.enquiryForId,
-                                ),
-                              );
+                              if (!AppStyles.isWebScreen(context)) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddCampaignWidget(
+                                      isEdit: true,
+                                      campaignId: campaign.campaignId,
+                                      campaignName: campaign.campaignName,
+                                      campaignIdString: campaign.campaignIdString,
+                                      userIds: campaign.userIds,
+                                      enquirySourceId: campaign.enquirySourceId,
+                                      enquiryForId: campaign.enquiryForId,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) => AddCampaignWidget(
+                                    isEdit: true,
+                                    campaignId: campaign.campaignId,
+                                    campaignName: campaign.campaignName,
+                                    campaignIdString: campaign.campaignIdString,
+                                    userIds: campaign.userIds,
+                                    enquirySourceId: campaign.enquirySourceId,
+                                    enquiryForId: campaign.enquiryForId,
+                                  ),
+                                );
+                              }
                             },
                             child: Text(
                               'Edit',

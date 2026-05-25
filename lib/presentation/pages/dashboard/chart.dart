@@ -21,6 +21,56 @@ class LeadGraphBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWeb = AppStyles.isWebScreen(context);
+
+    Future<void> handlePointTap(ChartPointDetails details) async {
+      if (details.pointIndex != null) {
+        final item = leadData[details.pointIndex!];
+        final leadReportProvider =
+            Provider.of<LeadReportProvider>(context, listen: false);
+        final dashBoardProvider =
+            Provider.of<DashboardProvider>(context, listen: false);
+        final dropDownProvider =
+            Provider.of<DropDownProvider>(context, listen: false);
+
+        int? resolvedSourceId = item.enquirySourceId;
+        if ((resolvedSourceId == null || resolvedSourceId == 0) &&
+            item.enquirySource != null) {
+          final sourceStr = item.enquirySource!.trim().toLowerCase();
+          final matches = dropDownProvider.enquiryData
+              .where((e) =>
+                  (e.enquirySourceName ?? '').trim().toLowerCase() == sourceStr)
+              .toList();
+          if (matches.isNotEmpty) {
+            resolvedSourceId = matches.first.enquirySourceId;
+          }
+        }
+
+        // leadReportProvider.setFilter(true);
+        leadReportProvider.setStatus(0);
+        leadReportProvider.setEnquirySourceFilter(resolvedSourceId ?? 0);
+        leadReportProvider.setUserFilterStatus(dashBoardProvider.selectedUser);
+        leadReportProvider.setEnquiryForFilter(0);
+        leadReportProvider.setFromandToDate(
+            dashBoardProvider.formattedFromDate,
+            dashBoardProvider.formattedToDate);
+        await leadReportProvider.getSearchLeadReports(
+            '',
+            dashBoardProvider.formattedFromDate,
+            dashBoardProvider.formattedToDate,
+            '0',
+            context);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LeadPageReport(
+              fromDashBoard: true,
+            ),
+          ),
+        );
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -54,14 +104,14 @@ class LeadGraphBarChart extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           SizedBox(
-            height: 250, // Fixed height for the bar chart
+            height: isWeb ? 250 : 350, // Slightly taller on mobile for vertical category lists
             child: SfCartesianChart(
-              primaryXAxis: AppStyles.isWebScreen(context)
+              primaryXAxis: isWeb
                   ? const CategoryAxis(labelRotation: 270)
                   : CategoryAxis(
-                      labelRotation: 90,
+                      labelRotation: 0,
                       labelIntersectAction: AxisLabelIntersectAction.none,
-                      labelStyle: const TextStyle(fontSize: 7),
+                      labelStyle: const TextStyle(fontSize: 8, fontWeight: FontWeight.w500),
                       interval: 1,
                       maximumLabels: leadData.length,
                       labelAlignment: LabelAlignment.center,
@@ -69,73 +119,37 @@ class LeadGraphBarChart extends StatelessWidget {
               borderColor: Colors.white,
               tooltipBehavior: TooltipBehavior(enable: true, header: ''),
               series: <CartesianSeries<LeadCoversionChartModel, String>>[
-                ColumnSeries<LeadCoversionChartModel, String>(
-                  dataSource: leadData,
-                  enableTooltip: true,
-                  color: AppColors.primaryBlue,
-                  width: AppStyles.isWebScreen(context) ? 0.3 : 0.5,
-                  borderRadius: BorderRadius.circular(18),
-                  xValueMapper: (LeadCoversionChartModel lead, _) =>
-                      lead.enquirySource.toString(),
-                  yValueMapper: (LeadCoversionChartModel lead, _) =>
-                      lead.leadCount ?? 0,
-                  dataLabelSettings: const DataLabelSettings(isVisible: true),
-                  onPointTap: (ChartPointDetails details) async {
-                    if (details.pointIndex != null) {
-                      final item = leadData[details.pointIndex!];
-                      final leadReportProvider =
-                          Provider.of<LeadReportProvider>(context,
-                              listen: false);
-                      final dashBoardProvider = Provider.of<DashboardProvider>(
-                          context,
-                          listen: false);
-                      final dropDownProvider =
-                          Provider.of<DropDownProvider>(context, listen: false);
-
-                      int? resolvedSourceId = item.enquirySourceId;
-                      if ((resolvedSourceId == null || resolvedSourceId == 0) &&
-                          item.enquirySource != null) {
-                        final sourceStr =
-                            item.enquirySource!.trim().toLowerCase();
-                        final matches = dropDownProvider.enquiryData
-                            .where((e) =>
-                                (e.enquirySourceName ?? '')
-                                    .trim()
-                                    .toLowerCase() ==
-                                sourceStr)
-                            .toList();
-                        if (matches.isNotEmpty) {
-                          resolvedSourceId = matches.first.enquirySourceId;
-                        }
-                      }
-
-                      // leadReportProvider.setFilter(true);
-                      leadReportProvider.setStatus(0);
-                      leadReportProvider
-                          .setEnquirySourceFilter(resolvedSourceId ?? 0);
-                      leadReportProvider
-                          .setUserFilterStatus(dashBoardProvider.selectedUser);
-                      leadReportProvider.setEnquiryForFilter(0);
-                      leadReportProvider.setFromandToDate(
-                          dashBoardProvider.formattedFromDate,
-                          dashBoardProvider.formattedToDate);
-                      await leadReportProvider.getSearchLeadReports(
-                          '',
-                          dashBoardProvider.formattedFromDate,
-                          dashBoardProvider.formattedToDate,
-                          '0',
-                          context);
-
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => LeadPageReport(
-                            fromDashBoard: true,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
+                if (isWeb)
+                  ColumnSeries<LeadCoversionChartModel, String>(
+                    dataSource: leadData,
+                    enableTooltip: true,
+                    color: AppColors.primaryBlue,
+                    width: 0.3,
+                    borderRadius: BorderRadius.circular(18),
+                    xValueMapper: (LeadCoversionChartModel lead, _) =>
+                        lead.enquirySource.toString(),
+                    yValueMapper: (LeadCoversionChartModel lead, _) =>
+                        lead.leadCount ?? 0,
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                    onPointTap: handlePointTap,
+                  )
+                else
+                  BarSeries<LeadCoversionChartModel, String>(
+                    dataSource: leadData,
+                    enableTooltip: true,
+                    color: AppColors.primaryBlue,
+                    width: 0.5,
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(18),
+                      bottomRight: Radius.circular(18),
+                    ),
+                    xValueMapper: (LeadCoversionChartModel lead, _) =>
+                        lead.enquirySource.toString(),
+                    yValueMapper: (LeadCoversionChartModel lead, _) =>
+                        lead.leadCount ?? 0,
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                    onPointTap: handlePointTap,
+                  ),
               ],
             ),
           ),
@@ -155,6 +169,70 @@ class ConversionGraphBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWeb = AppStyles.isWebScreen(context);
+
+    Future<void> handlePointTap(ChartPointDetails details) async {
+      if (details.pointIndex != null) {
+        final item = leadData[details.pointIndex!];
+        final leadReportProvider =
+            Provider.of<LeadReportProvider>(context, listen: false);
+        final dashBoardProvider =
+            Provider.of<DashboardProvider>(context, listen: false);
+        final dropDownProvider =
+            Provider.of<DropDownProvider>(context, listen: false);
+
+        int? resolvedSourceId = item.enquirySourceId;
+        if ((resolvedSourceId == null || resolvedSourceId == 0) &&
+            item.enquirySource != null) {
+          final sourceStr = item.enquirySource!.trim().toLowerCase();
+          final matches = dropDownProvider.enquiryData
+              .where((e) =>
+                  (e.enquirySourceName ?? '').trim().toLowerCase() == sourceStr)
+              .toList();
+          if (matches.isNotEmpty) {
+            resolvedSourceId = matches.first.enquirySourceId;
+          }
+        }
+
+        // Find "Converted" or "Confirm" status ID from leadProgressReport
+        int convertedStatusId = 0;
+        try {
+          convertedStatusId = dashBoardProvider.leadProgressReport
+              .firstWhere((element) =>
+                  element.statusName?.toLowerCase() == "converted" ||
+                  element.statusName?.toLowerCase() == "confirm")
+              .statusId;
+        } catch (e) {
+          // Fallback to 0 (All) if not found or empty
+          convertedStatusId = 0;
+        }
+
+        // leadReportProvider.setFilter(true);
+        leadReportProvider.setStatus(convertedStatusId);
+        leadReportProvider.setEnquirySourceFilter(resolvedSourceId ?? 0);
+        leadReportProvider.setUserFilterStatus(dashBoardProvider.selectedUser);
+        leadReportProvider.setEnquiryForFilter(0);
+        leadReportProvider.setFromandToDate(
+            dashBoardProvider.formattedFromDate,
+            dashBoardProvider.formattedToDate);
+
+        await leadReportProvider.getSearchLeadReports(
+            '',
+            dashBoardProvider.formattedFromDate,
+            dashBoardProvider.formattedToDate,
+            convertedStatusId.toString(),
+            context);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LeadPageReport(
+              fromDashBoard: true,
+            ),
+          ),
+        );
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -177,14 +255,14 @@ class ConversionGraphBarChart extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           SizedBox(
-            height: 250, // Fixed height for the bar chart
+            height: isWeb ? 250 : 350, // Slightly taller on mobile
             child: SfCartesianChart(
-              primaryXAxis: AppStyles.isWebScreen(context)
+              primaryXAxis: isWeb
                   ? const CategoryAxis(labelRotation: 270)
                   : CategoryAxis(
-                      labelRotation: 90,
+                      labelRotation: 0,
                       labelIntersectAction: AxisLabelIntersectAction.none,
-                      labelStyle: const TextStyle(fontSize: 7),
+                      labelStyle: const TextStyle(fontSize: 8, fontWeight: FontWeight.w500),
                       interval: 1,
                       maximumLabels: leadData.length,
                       labelAlignment: LabelAlignment.center,
@@ -192,88 +270,37 @@ class ConversionGraphBarChart extends StatelessWidget {
               borderColor: Colors.white,
               tooltipBehavior: TooltipBehavior(enable: true, header: ''),
               series: <CartesianSeries<LeadCoversionChartModel, String>>[
-                ColumnSeries<LeadCoversionChartModel, String>(
-                  dataSource: leadData,
-                  enableTooltip: true,
-                  color: AppColors.secondaryBlue,
-                  width: AppStyles.isWebScreen(context) ? 0.3 : 0.5,
-                  borderRadius: BorderRadius.circular(18),
-                  xValueMapper: (LeadCoversionChartModel lead, _) =>
-                      lead.enquirySource.toString(),
-                  yValueMapper: (LeadCoversionChartModel lead, _) =>
-                      int.tryParse(lead.convertedCount ?? "0") ?? 0,
-                  dataLabelSettings: const DataLabelSettings(isVisible: true),
-                  onPointTap: (ChartPointDetails details) async {
-                    if (details.pointIndex != null) {
-                      final item = leadData[details.pointIndex!];
-                      final leadReportProvider =
-                          Provider.of<LeadReportProvider>(context,
-                              listen: false);
-                      final dashBoardProvider = Provider.of<DashboardProvider>(
-                          context,
-                          listen: false);
-                      final dropDownProvider =
-                          Provider.of<DropDownProvider>(context, listen: false);
-
-                      int? resolvedSourceId = item.enquirySourceId;
-                      if ((resolvedSourceId == null || resolvedSourceId == 0) &&
-                          item.enquirySource != null) {
-                        final sourceStr =
-                            item.enquirySource!.trim().toLowerCase();
-                        final matches = dropDownProvider.enquiryData
-                            .where((e) =>
-                                (e.enquirySourceName ?? '')
-                                    .trim()
-                                    .toLowerCase() ==
-                                sourceStr)
-                            .toList();
-                        if (matches.isNotEmpty) {
-                          resolvedSourceId = matches.first.enquirySourceId;
-                        }
-                      }
-
-                      // Find "Converted" or "Confirm" status ID from leadProgressReport
-                      int convertedStatusId = 0;
-                      try {
-                        convertedStatusId = dashBoardProvider.leadProgressReport
-                            .firstWhere((element) =>
-                                element.statusName?.toLowerCase() ==
-                                    "converted" ||
-                                element.statusName?.toLowerCase() == "confirm")
-                            .statusId;
-                      } catch (e) {
-                        // Fallback to 0 (All) if not found or empty
-                        convertedStatusId = 0;
-                      }
-
-                      // leadReportProvider.setFilter(true);
-                      leadReportProvider.setStatus(convertedStatusId);
-                      leadReportProvider
-                          .setEnquirySourceFilter(resolvedSourceId ?? 0);
-                      leadReportProvider
-                          .setUserFilterStatus(dashBoardProvider.selectedUser);
-                      leadReportProvider.setEnquiryForFilter(0);
-                      leadReportProvider.setFromandToDate(
-                          dashBoardProvider.formattedFromDate,
-                          dashBoardProvider.formattedToDate);
-
-                      await leadReportProvider.getSearchLeadReports(
-                          '',
-                          dashBoardProvider.formattedFromDate,
-                          dashBoardProvider.formattedToDate,
-                          convertedStatusId.toString(),
-                          context);
-
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => LeadPageReport(
-                            fromDashBoard: true,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
+                if (isWeb)
+                  ColumnSeries<LeadCoversionChartModel, String>(
+                    dataSource: leadData,
+                    enableTooltip: true,
+                    color: AppColors.secondaryBlue,
+                    width: 0.3,
+                    borderRadius: BorderRadius.circular(18),
+                    xValueMapper: (LeadCoversionChartModel lead, _) =>
+                        lead.enquirySource.toString(),
+                    yValueMapper: (LeadCoversionChartModel lead, _) =>
+                        int.tryParse(lead.convertedCount ?? "0") ?? 0,
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                    onPointTap: handlePointTap,
+                  )
+                else
+                  BarSeries<LeadCoversionChartModel, String>(
+                    dataSource: leadData,
+                    enableTooltip: true,
+                    color: AppColors.secondaryBlue,
+                    width: 0.5,
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(18),
+                      bottomRight: Radius.circular(18),
+                    ),
+                    xValueMapper: (LeadCoversionChartModel lead, _) =>
+                        lead.enquirySource.toString(),
+                    yValueMapper: (LeadCoversionChartModel lead, _) =>
+                        int.tryParse(lead.convertedCount ?? "0") ?? 0,
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                    onPointTap: handlePointTap,
+                  ),
               ],
             ),
           ),

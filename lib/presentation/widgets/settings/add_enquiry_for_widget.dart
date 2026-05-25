@@ -588,7 +588,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
         color: Colors.white,
         width: isWeb
             ? MediaQuery.sizeOf(context).width / 2
-            : MediaQuery.sizeOf(context).width * 0.9,
+            : MediaQuery.sizeOf(context).width,
         constraints: BoxConstraints(
           maxHeight:
               MediaQuery.of(context).size.height * 0.7, // Prevent overflow

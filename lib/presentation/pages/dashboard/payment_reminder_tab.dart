@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/models/payment_reminder_model.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 
 class PaymentReminderTab extends StatefulWidget {
   const PaymentReminderTab({super.key});
@@ -60,7 +61,7 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
       sideProvider.setSelectedIndex(index);
       sideProvider.replaceWidgetCustomer(false, customerId.toString());
     } else {
-      context.push('${CustomerDetailsScreen.route}$customerId/false');
+      context.push('${CustomerDetailPageMobile.route}$customerId/true?tab=Payment');
     }
   }
 
@@ -324,7 +325,15 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                     ),
                   ],
                 ),
-                child: _buildBudgetReport(groupedReport),
+                child: AppStyles.isWebScreen(context)
+                    ? _buildBudgetReport(groupedReport)
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SizedBox(
+                          width: 600,
+                          child: _buildBudgetReport(groupedReport),
+                        ),
+                      ),
               ),
           ],
         );
