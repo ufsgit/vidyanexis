@@ -1029,7 +1029,10 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                 _horizontalScrollController,
                                             scrollDirection: Axis.horizontal,
                                             child: SizedBox(
-                                              width: 1520,
+                                              width: widget.source ==
+                                                      'Closed_Leads'
+                                                  ? 1670
+                                                  : 1520,
                                               child: Column(
                                                 children: [
                                                   // Header row
@@ -1047,7 +1050,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                       .circular(
                                                                           8)),
                                                     ),
-                                                    child: const Row(
+                                                    child: Row(
                                                       children: [
                                                         TableWidget(
                                                             width: 150,
@@ -1221,6 +1224,25 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         13)),
                                                             color: Color(
                                                                 0xFF607185)),
+                                                        if (widget.source ==
+                                                            'Closed_Leads')
+                                                          TableWidget(
+                                                              width: 150,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          6.0,
+                                                                      horizontal:
+                                                                          8.0),
+                                                              data: Text(
+                                                                  'Closed Date',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          13)),
+                                                              color: Color(
+                                                                  0xFF607185)),
                                                       ],
                                                     ),
                                                   ),
@@ -1430,6 +1452,26 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               .ellipsis,
                                                                           style:
                                                                               const TextStyle(fontSize: 13))),
+                                                                  if (widget
+                                                                          .source ==
+                                                                      'Closed_Leads')
+                                                                    TableWidget(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            vertical:
+                                                                                6.0,
+                                                                            horizontal:
+                                                                                8.0),
+                                                                        width:
+                                                                            150,
+                                                                        data: Text(
+                                                                            _formatDateSafely(lead.closedDate ??
+                                                                                ''),
+                                                                            maxLines:
+                                                                                1,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                            style: const TextStyle(fontSize: 13))),
                                                                 ],
                                                               ),
                                                             ),
