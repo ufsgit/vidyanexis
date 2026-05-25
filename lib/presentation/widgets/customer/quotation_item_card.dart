@@ -7,50 +7,51 @@ class QuotationItemCard extends StatelessWidget {
   final Item item;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
+  final bool showActions;
 
   const QuotationItemCard({
     super.key,
     required this.item,
     required this.onDelete,
     required this.onEdit,
+    this.showActions = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onEdit,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header: Title and Delete Button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      item.ItemName,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textBlack,
-                      ),
+    final cardContent = Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header: Title and Delete Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    item.ItemName,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack,
                     ),
                   ),
+                ),
+                if (showActions)
                   GestureDetector(
                     onTap: onDelete,
                     child: Text(
@@ -62,24 +63,32 @@ class QuotationItemCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
+              ],
+            ),
+            const SizedBox(height: 12),
 
-              // Details
-              _buildDetailRow('Quantity', '${item.Quantity} ${item.Unit}'),
-              const SizedBox(height: 8),
-              _buildDetailRow(
-                  'Unit Price', '₹${item.UnitPrice.toStringAsFixed(2)}'),
-              const SizedBox(height: 8),
-              _buildDetailRow('GST', '₹${item.GST.toStringAsFixed(2)}'),
-              const SizedBox(height: 8),
-              _buildDetailRow('Total', '₹${item.Amount.toStringAsFixed(2)}'),
-            ],
-          ),
+            // Details
+            _buildDetailRow('Quantity', '${item.Quantity} ${item.Unit}'),
+            const SizedBox(height: 8),
+            _buildDetailRow(
+                'Unit Price', '₹${item.UnitPrice.toStringAsFixed(2)}'),
+            const SizedBox(height: 8),
+            _buildDetailRow('GST', '₹${item.GST.toStringAsFixed(2)}'),
+            const SizedBox(height: 8),
+            _buildDetailRow('Total', '₹${item.Amount.toStringAsFixed(2)}'),
+          ],
         ),
       ),
     );
+
+    if (showActions) {
+      return GestureDetector(
+        onTap: onEdit,
+        child: cardContent,
+      );
+    } else {
+      return cardContent;
+    }
   }
 
   Widget _buildDetailRow(String label, String value) {

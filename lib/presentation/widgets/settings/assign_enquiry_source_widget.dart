@@ -52,142 +52,166 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth <= 600;
 
-    return Dialog(
-      backgroundColor: Colors.white,
-      surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            width:
-                constraints.maxWidth > 600 ? 800 : constraints.maxWidth * 0.9,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header Section
-                Row(
+    if (isMobile) {
+      return Dialog.fullscreen(
+        backgroundColor: Colors.white,
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Pinned Header Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Text(
                         'Manage Enquiry Source of ${widget.userModel.userDetailsName}',
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack,
                         ),
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(Icons.close, color: AppColors.textBlack),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+              ),
+              const Divider(height: 1, color: Color(0xFFE2E8F0)),
 
-                // Loader or Content
-                if (_isLoading)
-                  const SizedBox(
-                    height: 200,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                else ...[
-                  // Table Header
-                  if (constraints.maxWidth > 600)
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
+              // Select All action bar for mobile
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Select All Options',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF64748B),
                       ),
-                      child: Row(
-                        children: [
-                          const SizedBox(
-                              width: 48, child: Center(child: Text('No.'))),
-                          const Expanded(child: Text('Enquiry Source')),
-                          SizedBox(
-                            width: 48,
-                            child: Center(
-                              child: Checkbox(
-                                value: _selectAll,
-                                onChanged: (value) => _toggleSelectAll(),
+                    ),
+                    Checkbox(
+                      value: _selectAll,
+                      activeColor: AppColors.secondaryBlue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      onChanged: (value) => _toggleSelectAll(),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1, color: Color(0xFFE2E8F0)),
+
+              // Scrollable Content / Options list
+              Expanded(
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : _items.isNotEmpty
+                        ? ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                            itemCount: _items.length,
+                            itemBuilder: (context, index) {
+                              final item = _items[index];
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 6.0),
+                                padding: const EdgeInsets.all(12.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color(0xFFE2E8F0),
+                                    width: 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.02),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 32,
+                                      height: 32,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFF1F5F9),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          '${index + 1}',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: const Color(0xFF64748B),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        item.enquirySourceName ?? 'Unknown',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textBlack,
+                                        ),
+                                      ),
+                                    ),
+                                    Checkbox(
+                                      value: item.isview == 1,
+                                      activeColor: AppColors.secondaryBlue,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          item.isview = (value == true) ? 1 : 0;
+                                          _selectAll = _items.every(
+                                              (selected) => selected.isview == 1);
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          )
+                        : Center(
+                            child: Text(
+                              'No options available',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                color: const Color(0xFF64748B),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+              ),
 
-                  // List of options
-                  if (_items.isNotEmpty)
-                    Flexible(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxHeight: 400),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _items.length,
-                          itemBuilder: (context, index) {
-                            final item = _items[index];
-                            return Container(
-                              margin: const EdgeInsets.symmetric(vertical: 4),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 4,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                      width: 48,
-                                      child:
-                                          Center(child: Text('${index + 1}'))),
-                                  Expanded(
-                                      child: Text(
-                                          item.enquirySourceName ?? 'Unknown')),
-                                  Checkbox(
-                                    value: item.isview == 1,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        item.isview = (value == true) ? 1 : 0;
-                                        _selectAll = _items.every(
-                                            (selected) => selected.isview == 1);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                  else
-                    const SizedBox(
-                      height: 100,
-                      child: Center(
-                        child: Text('No options available'),
-                      ),
-                    ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CustomElevatedButton(
+              // Bottom Pinned Actions
+              const Divider(height: 1, color: Color(0xFFE2E8F0)),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomElevatedButton(
                         buttonText: 'Cancel',
                         onPressed: () => Navigator.pop(context),
                         radius: 12,
@@ -195,8 +219,10 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                         borderColor: const Color(0xFFE2E8F0),
                         textColor: const Color(0xFF64748B),
                       ),
-                      const SizedBox(width: 12),
-                      CustomElevatedButton(
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CustomElevatedButton(
                         isLoading: settingsProvider.isSavingUserEnquirySource,
                         onPressed: () async {
                           await settingsProvider.saveUserEnquirySourceList(
@@ -211,13 +237,218 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                         textColor: Colors.white,
                         buttonText: 'Save',
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Dialog(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        width: 600,
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Manage Enquiry Source of ${widget.userModel.userDetailsName}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textBlack,
+                    ),
                   ),
-                ],
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: AppColors.textBlack),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
               ],
             ),
-          );
-        },
+            const SizedBox(height: 16),
+
+            // Loader or Content
+            if (_isLoading)
+              const SizedBox(
+                height: 200,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            else ...[
+              // Table Header
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 48,
+                      child: Center(
+                        child: Text(
+                          'No.',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Enquiry Source Option',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 48,
+                      child: Center(
+                        child: Checkbox(
+                          value: _selectAll,
+                          activeColor: AppColors.secondaryBlue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          onChanged: (value) => _toggleSelectAll(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // List of options
+              if (_items.isNotEmpty)
+                Flexible(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 400),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _items.length,
+                      itemBuilder: (context, index) {
+                        final item = _items[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFFE2E8F0),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 48,
+                                child: Center(
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: const Color(0xFF64748B),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  item.enquirySourceName ?? 'Unknown',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.textBlack,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Checkbox(
+                                value: item.isview == 1,
+                                activeColor: AppColors.secondaryBlue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    item.isview = (value == true) ? 1 : 0;
+                                    _selectAll = _items.every(
+                                        (selected) => selected.isview == 1);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                )
+              else
+                SizedBox(
+                  height: 100,
+                  child: Center(
+                    child: Text(
+                      'No options available',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: const Color(0xFF64748B),
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CustomElevatedButton(
+                    buttonText: 'Cancel',
+                    onPressed: () => Navigator.pop(context),
+                    radius: 12,
+                    backgroundColor: Colors.white,
+                    borderColor: const Color(0xFFE2E8F0),
+                    textColor: const Color(0xFF64748B),
+                  ),
+                  const SizedBox(width: 12),
+                  CustomElevatedButton(
+                    isLoading: settingsProvider.isSavingUserEnquirySource,
+                    onPressed: () async {
+                      await settingsProvider.saveUserEnquirySourceList(
+                        context: context,
+                        userId: widget.userModel.userDetailsId.toString(),
+                        updatedList: _items,
+                      );
+                    },
+                    radius: 12,
+                    backgroundColor: AppColors.secondaryBlue,
+                    borderColor: AppColors.secondaryBlue,
+                    textColor: Colors.white,
+                    buttonText: 'Save',
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

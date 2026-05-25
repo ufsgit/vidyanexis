@@ -89,6 +89,7 @@ class SearchLeadModel {
   String? locations;
   int? locationId;
   String? locationName;
+  String? closedDate;
 
   String get displayAddress {
     final List<String> parts = [
@@ -183,6 +184,7 @@ class SearchLeadModel {
     this.locations,
     this.locationId,
     this.locationName,
+    this.closedDate,
     required this.totalProjectCost,
     required this.commission,
     required this.consumerName,
@@ -283,6 +285,7 @@ class SearchLeadModel {
       locations: parseString(json["locations"]),
       locationId: parseInt(json["Location_Id"]),
       locationName: parseString(json["Location_Name"]),
+      closedDate: json["Closed_Date"]?.toString() ?? "",
       audioFiles: (json['Audio_Files'] != null && json['Audio_Files'] is List)
           ? (json['Audio_Files'] as List<dynamic>)
               .map((item) => AudioFileLead.fromJson(item))
@@ -378,6 +381,7 @@ class SearchLeadModel {
       "locations": locations,
       "Location_Id": locationId,
       "Location_Name": locationName,
+      "Closed_Date": closedDate,
       "Total_Project_Cost": totalProjectCost,
       "Commission": commission,
       "Consumer_Name": consumerName,
@@ -467,6 +471,7 @@ class SearchLeadModel {
     String? locations,
     int? locationId,
     String? locationName,
+    String? closedDate,
     String? totalProjectCost,
     String? commission,
     String? consumerName,
@@ -557,6 +562,7 @@ class SearchLeadModel {
       locations: locations ?? this.locations,
       locationId: locationId ?? this.locationId,
       locationName: locationName ?? this.locationName,
+      closedDate: closedDate ?? this.closedDate,
       totalProjectCost: totalProjectCost ?? this.totalProjectCost,
       commission: commission ?? this.commission,
       consumerName: consumerName ?? this.consumerName,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -6,7 +7,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/bill_of_material_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 
-class BomItemCard extends StatelessWidget {
+class BomItemCard extends StatefulWidget {
   final BillOfMaterialItem item;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
@@ -17,6 +18,26 @@ class BomItemCard extends StatelessWidget {
     required this.onDelete,
     required this.onEdit,
   });
+
+  @override
+  State<BomItemCard> createState() => _BomItemCardState();
+}
+
+class _BomItemCardState extends State<BomItemCard> {
+  late TextEditingController _qtyController;
+
+  @override
+  void initState() {
+    super.initState();
+    _qtyController =
+        TextEditingController(text: widget.item.quantity.toString());
+  }
+
+  @override
+  void dispose() {
+    _qtyController.dispose();
+    super.dispose();
+  }
 
   void _showDeleteConfirmation(BuildContext context) {
     showDialog(
@@ -48,7 +69,7 @@ class BomItemCard extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                onDelete();
+                widget.onDelete();
                 Navigator.pop(context);
               },
               child: Text(
@@ -72,7 +93,7 @@ class BomItemCard extends StatelessWidget {
     final companyQuotationItems =
         settingsProvider.companyDetails.first.quotationItemValue == 1;
     return GestureDetector(
-      onTap: onEdit,
+      onTap: widget.onEdit,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
@@ -97,7 +118,7 @@ class BomItemCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      item.description,
+                      widget.item.description,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -124,55 +145,116 @@ class BomItemCard extends StatelessWidget {
 
               // Details
               if (companyQuotationItems) ...[
-                _buildDetailRow(
+                // Quantity row (editable)
+                _buildEditableQuantityRow(
                   provider.getQuotationFieldName(12, 'Quantity'),
-                  item.quantity,
+                  _qtyController,
                 ),
                 SizedBox(height: 8),
                 _buildDetailRow(
                   provider.getQuotationFieldName(17, 'Unit'),
-                  item.uom,
+                  widget.item.uom,
                 ),
               ] else ...[
-                _buildDetailRow(
+                // Quantity row (editable) – same as above, using the controller
+                _buildEditableQuantityRow(
                   provider.getQuotationFieldName(12, 'Quantity'),
-                  '${item.quantity} ${item.uom}',
+                  _qtyController,
                 ),
+                const SizedBox(height: 8),
               ],
               const SizedBox(height: 8),
               _buildDetailRow(
                 provider.getQuotationFieldName(11, 'Specification'),
-                item.brand.isNotEmpty ? item.brand : '-',
+                widget.item.brand.isNotEmpty ? widget.item.brand : '-',
               ),
               const SizedBox(height: 8),
               _buildDetailRow(
                 provider.getQuotationFieldName(13, 'Manufacturer'),
-                (item.distributor?.isNotEmpty ?? false)
-                    ? item.distributor!
+                (widget.item.distributor?.isNotEmpty ?? false)
+                    ? widget.item.distributor!
                     : '-',
               ),
               if (companyQuotationItems) ...[
                 const SizedBox(height: 8),
                 _buildDetailRow(
                   provider.getQuotationFieldName(15, 'Price'),
-                  (item.price?.isNotEmpty ?? false) ? item.price! : '-',
+                  (widget.item.price?.isNotEmpty ?? false)
+                      ? widget.item.price!
+                      : '-',
                 ),
                 const SizedBox(height: 8),
                 _buildDetailRow(
                   provider.getQuotationFieldName(16, 'Amount'),
-                  (item.amount?.isNotEmpty ?? false) ? item.amount! : '-',
+                  (widget.item.amount?.isNotEmpty ?? false)
+                      ? widget.item.amount!
+                      : '-',
                 ),
               ] else ...[
                 const SizedBox(height: 8),
                 _buildDetailRow(
                   provider.getQuotationFieldName(14, 'Comments'),
-                  (item.comments?.isNotEmpty ?? false) ? item.comments! : '-',
+                  (widget.item.comments?.isNotEmpty ?? false)
+                      ? widget.item.comments!
+                      : '-',
                 ),
               ],
             ],
           ),
         ),
       ),
+    );
+  }
+
+  // Helper widget to build an editable quantity row
+  Widget _buildEditableQuantityRow(
+      String label, TextEditingController controller) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 100,
+          child: Text(
+            '$label :',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textGrey2,
+            ),
+          ),
+        ),
+        Expanded(
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textBlack.withValues(alpha: 0.8),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+            ],
+            onChanged: (value) {
+              final newQty = double.tryParse(value) ?? 0.0;
+              final price = double.tryParse(widget.item.price ?? '0') ?? 0.0;
+              final newAmount = price * newQty;
+              setState(() {
+                widget.item.quantity = newQty.toString();
+                widget.item.amount = newAmount.toStringAsFixed(2);
+              });
+              context
+                  .read<CustomerDetailsProvider>()
+                  .companyQuotationItemsCalulate(context);
+            },
+          ),
+        ),
+      ],
     );
   }
 

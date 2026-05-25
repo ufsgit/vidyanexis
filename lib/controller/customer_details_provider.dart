@@ -440,6 +440,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String _selectedItemName = '';
+  String get selectedItemName => _selectedItemName;
+  void setSelectedItemName(String name) {
+    _selectedItemName = name;
+    notifyListeners();
+  }
+
   final TextEditingController billpriceController = TextEditingController();
   final TextEditingController billamountController = TextEditingController();
 
@@ -465,6 +472,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           ),
         )
         .toList();
+    recalculateCompanyQuotationItem();
     notifyListeners();
   }
 
@@ -488,6 +496,72 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print('Error calculating total: $e');
     }
     notifyListeners();
+  }
+
+  /// Recalculates the single auto-managed quotation item whenever the BOM
+  /// list or the selected profit changes (company-quotation mode only).
+  void recalculateCompanyQuotationItem() {
+    if (_billOfMaterialsItems.isEmpty) return;
+
+    // 1. Sum BOM amounts
+    final bomTotal = _billOfMaterialsItems.fold(0.0, (sum, item) {
+      final amount = double.tryParse(item.amount ?? '0') ?? 0.0;
+      return sum + amount;
+    });
+    _billTotalAmount = bomTotal;
+
+    // 2. Parse profit % from the profit name (e.g. "15%" → 15.0)
+    double profitPercent = 0.0;
+    if (_selectedProfitName != null && _selectedProfitName!.isNotEmpty) {
+      final match = RegExp(r'[\d.]+').firstMatch(_selectedProfitName!);
+      if (match != null) {
+        profitPercent = double.tryParse(match.group(0)!) ?? 0.0;
+      }
+    }
+
+    final profitAmount = bomTotal * profitPercent / 100;
+    final finalTotal = bomTotal + profitAmount;
+    final itemName =
+        _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
+
+    // 3. Inject exactly one auto-item depending on quotation type
+    if (_selectedQuotationType == 1) {
+      // Residential
+      final autoItem = Item(
+        ItemName: itemName,
+        Hsn: '',
+        UnitPrice: finalTotal,
+        Quantity: 1,
+        MRP: '',
+        GST: 0,
+        GSTPercent: 0,
+        AdCESS: 0,
+        Unit: '',
+        Amount: finalTotal,
+      );
+      _items = [autoItem];
+      subtotalController.text = finalTotal.toStringAsFixed(2);
+      totalController.text = finalTotal.toStringAsFixed(2);
+      gstTaxableAmountController.text = finalTotal.toStringAsFixed(2);
+      cgstTaxableAmountController.text = (finalTotal / 2).toStringAsFixed(2);
+      sgstTaxableAmountController.text = (finalTotal / 2).toStringAsFixed(2);
+      totalGstAmountController.text = "0.00";
+      totalCgstAmountController.text = "0.00";
+      totalSgstAmountController.text = "0.00";
+      totalGstPerController.text = "0.00";
+      totalCgstPerController.text = "0.00";
+      totalSgstPerController.text = "0.00";
+      totalAdCESSController.text = "0.00";
+    } else if (_selectedQuotationType == 2) {
+      // Commercial
+      final autoItem = CommercialItemModel(
+        description: itemName,
+        unitPrice: finalTotal.toStringAsFixed(2),
+        total: finalTotal.toStringAsFixed(2),
+      );
+      _commercialItems = [autoItem];
+      totalController.text = finalTotal.toStringAsFixed(2);
+    }
   }
   //
 
@@ -1448,6 +1522,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     // Clear the text fields
     _editBillOfMaterialsIndex = null;
     clearBOMFields();
+    recalculateCompanyQuotationItem();
     notifyListeners();
   }
 
@@ -1549,6 +1624,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void deleteBillOfMaterialsItem(int index) {
     if (index >= 0 && index < _billOfMaterialsItems.length) {
       _billOfMaterialsItems.removeAt(index);
+      recalculateCompanyQuotationItem();
       notifyListeners();
     }
   }
@@ -4277,6 +4353,40 @@ class CustomerDetailsProvider extends ChangeNotifier {
     quotationDescription3Controller.text = quotation.description3;
     _billTotalAmount = double.tryParse(quotation.purchaseTotal) ?? 0.0;
 
+    String nameOfItem = '';
+    if (quotation.quotationTypeId == 1 && quotation.quotationDetails.isNotEmpty) {
+      nameOfItem = quotation.quotationDetails.first.itemName;
+    } else if (quotation.quotationTypeId == 2 && quotation.commercialItems.isNotEmpty) {
+      nameOfItem = quotation.commercialItems.first.description ?? '';
+    }
+
+    if (nameOfItem.isNotEmpty) {
+      _selectedItemName = nameOfItem;
+      newItemNameController.text = nameOfItem;
+    }
+
+    if (_billTotalAmount > 0) {
+      final totalAmt = double.tryParse(quotation.totalAmount) ?? 0.0;
+      double targetProfitPercent = ((totalAmt - _billTotalAmount) / _billTotalAmount) * 100;
+      ProfitModel? bestMatch;
+      double minDiff = 999999.0;
+      for (var profit in _profitList) {
+        final match = RegExp(r'[\d.]+').firstMatch(profit.name);
+        if (match != null) {
+          double pVal = double.tryParse(match.group(0)!) ?? 0.0;
+          double diff = (pVal - targetProfitPercent).abs();
+          if (diff < minDiff && diff < 0.5) { // within 0.5% tolerance
+            minDiff = diff;
+            bestMatch = profit;
+          }
+        }
+      }
+      if (bestMatch != null) {
+        _selectedProfitId = bestMatch.id;
+        _selectedProfitName = bestMatch.name;
+      }
+    }
+
     // ---- STATUS ----
     selectedQuotationStatus = quotation.quotationStatusId;
     selectedQuotationStatusName = quotation.quotationStatusName;
@@ -4386,5 +4496,99 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  List<ProfitModel> _profitList = [];
+  List<ProfitModel> get profitList => _profitList;
+
+  int? _selectedProfitId;
+  int? get selectedProfitId => _selectedProfitId;
+
+  String? _selectedProfitName;
+  String? get selectedProfitName => _selectedProfitName;
+
+  void setSelectedProfitId(int? id, {String? name}) {
+    _selectedProfitId = id;
+    if (name != null) _selectedProfitName = name;
+    recalculateCompanyQuotationItem();
+    notifyListeners();
+  }
+
+  bool _isProfitLoading = false;
+  bool get isProfitLoading => _isProfitLoading;
+
+  Future<void> getProfitList(BuildContext context) async {
+    try {
+      _isProfitLoading = true;
+      notifyListeners();
+
+      final response = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getProfit);
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<dynamic> items = [];
+          if (data is List) {
+            items = data;
+          } else if (data is Map) {
+            if (data['data'] != null && data['data'] is List) {
+              items = data['data'];
+            } else {
+              // Try to find any list in the response map
+              for (var v in data.values) {
+                if (v is List) {
+                  items = v;
+                  break;
+                }
+              }
+            }
+          }
+
+          if (items.isEmpty) {
+             _profitList = [ProfitModel(id: -1, name: "Empty List from API")];
+          } else {
+            List<ProfitModel> temp = [];
+            for (int i = 0; i < items.length; i++) {
+              var item = items[i];
+              if (item is Map<String, dynamic> || item is Map) {
+                var map = item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
+                var model = ProfitModel.fromJson(map);
+                if (model.id == 0) {
+                   temp.add(ProfitModel(id: i + 1, name: model.name.isEmpty ? 'Item ${i+1}' : model.name));
+                } else {
+                   temp.add(model);
+                }
+              } else {
+                temp.add(ProfitModel(id: i + 1, name: item.toString()));
+              }
+            }
+            _profitList = temp;
+          }
+        } else {
+           _profitList = [ProfitModel(id: -1, name: "API returned null data")];
+        }
+      } else {
+         _profitList = [ProfitModel(id: -1, name: "API Error ${response.statusCode}")];
+      }
+    } catch (e) {
+      print('Exception in getProfitList: $e');
+      _profitList = [ProfitModel(id: -1, name: "API Exception")];
+    } finally {
+      _isProfitLoading = false;
+      notifyListeners();
+    }
+  }
+}
+
+class ProfitModel {
+  final int id;
+  final String name;
+
+  ProfitModel({required this.id, required this.name});
+
+  factory ProfitModel.fromJson(Map<String, dynamic> json) {
+    return ProfitModel(
+      id: int.tryParse(json['id']?.toString() ?? json['Id']?.toString() ?? json['profitId']?.toString() ?? json['ProfitId']?.toString() ?? json['profit_id']?.toString() ?? json['Profit_Id']?.toString() ?? '0') ?? 0,
+      name: json['name']?.toString() ?? json['Name']?.toString() ?? json['profitName']?.toString() ?? json['ProfitName']?.toString() ?? json['profit_name']?.toString() ?? json['Profit_Name']?.toString() ?? '',
+    );
   }
 }
