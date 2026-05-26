@@ -248,6 +248,13 @@ class LeadsProvider extends ChangeNotifier {
   String _loginUserName = '';
   String get loginUserName => _loginUserName;
 
+  String _entryType = 'myown';
+  String get entryType => _entryType;
+  void setEntryType(String value) {
+    _entryType = value;
+    notifyListeners();
+  }
+
   //from login details
   int _loginBranchId = 0;
   int get loginBranchId => _loginBranchId;
@@ -757,6 +764,7 @@ class LeadsProvider extends ChangeNotifier {
     _leadId = '0';
     _status = '';
     _enquiryForS = '';
+    _entryType = 'myown';
     _isFilter = false;
     _selectedDateFilterIndex = null;
     notifyListeners();
@@ -986,7 +994,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1152,7 +1160,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         final data = response.data;

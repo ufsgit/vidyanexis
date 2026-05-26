@@ -821,6 +821,50 @@ class _tasksPageReportState extends State<TaskPage> {
                       ),
                     ),
 
+                    // Entry Type Filter
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: reportsProvider.entryType != 'all'
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Entry Type: ',
+                              style: TextStyle(fontSize: 14)),
+                          DropdownButton<String>(
+                            value: reportsProvider.entryType,
+                            items: const [
+                              DropdownMenuItem<String>(
+                                value: 'all',
+                                child: Text('All', style: TextStyle(fontSize: 14)),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'myown',
+                                child: Text('My Own', style: TextStyle(fontSize: 14)),
+                              ),
+                            ],
+                            onChanged: (String? newValue) {
+                              if (newValue != null) {
+                                reportsProvider.setEntryType(newValue);
+                                reportsProvider.goToPage(1);
+                                reportsProvider.searchTaskByCustomer(context);
+                              }
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+
                     // Enquiry For Filter
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -896,6 +940,7 @@ class _tasksPageReportState extends State<TaskPage> {
                         onPressed: () {
                           reportsProvider.selectDateFilterOption(null);
                           reportsProvider.removeStatus();
+                          reportsProvider.setEntryType('myown');
                           searchController.clear();
                           reportsProvider.setTaskSearchCriteria(
                               '', '', '', '', '', '', '');
@@ -1052,6 +1097,30 @@ class _tasksPageReportState extends State<TaskPage> {
                         ],
                       ),
                       const SizedBox(height: 16),
+                      const CustomText('Entry Type',
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected: reportsProvider.entryType == 'all',
+                            onTap: () {
+                              reportsProvider.setEntryType('all');
+                            },
+                          ),
+                          FilterChipWidget(
+                            label: 'My Own',
+                            isSelected: reportsProvider.entryType == 'myown',
+                            onTap: () {
+                              reportsProvider.setEntryType('myown');
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
                       const CustomText('Enquiry For',
                           fontSize: 16, fontWeight: FontWeight.bold),
                       const SizedBox(height: 10),
@@ -1096,6 +1165,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             onPressed: () {
                               reportsProvider.selectDateFilterOption(null);
                               reportsProvider.removeStatus();
+                              reportsProvider.setEntryType('myown');
                               searchController.clear();
                               reportsProvider.setTaskSearchCriteria(
                                   '', '', '', '', '', '', '');
