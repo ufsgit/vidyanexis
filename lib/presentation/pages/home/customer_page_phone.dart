@@ -81,8 +81,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
       final searchProvider =
           Provider.of<SidebarProvider>(context, listen: false);
       searchProvider.stopSearch();
-      _customerProvider =
-          Provider.of<CustomerProvider>(context, listen: false);
+      _customerProvider = Provider.of<CustomerProvider>(context, listen: false);
       final customerProvider = _customerProvider!;
       customerProvider.setSearchCriteria(
         '',
@@ -319,7 +318,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                               ),
                               FilterChipWidget(
                                 label: 'My Own',
-                                isSelected: customerProvider.entryType == 'myown',
+                                isSelected:
+                                    customerProvider.entryType == 'myown',
                                 onTap: () {
                                   customerProvider.setEntryType('myown');
                                 },
@@ -364,7 +364,6 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                       child: CustomScrollView(
                         controller: customerProvider.scrollController,
                         slivers: [
-
                           SliverToBoxAdapter(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -385,16 +384,17 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                           SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                                  if (index == customerProvider.customerData.length) {
-                                   return customerProvider.isLoadingMore
-                                       ? const Padding(
-                                           padding: EdgeInsets.all(16),
-                                           child: Center(
-                                             child: CircularProgressIndicator(),
-                                           ),
-                                         )
-                                       : const SizedBox.shrink();
-                                 }
+                                if (index ==
+                                    customerProvider.customerData.length) {
+                                  return customerProvider.isLoadingMore
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink();
+                                }
                                 var customer =
                                     customerProvider.customerData[index];
                                 return Column(
@@ -428,7 +428,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   ],
                                 );
                               },
-                              childCount: customerProvider.customerData.length + 1,
+                              childCount:
+                                  customerProvider.customerData.length + 1,
                             ),
                           ),
                         ],
