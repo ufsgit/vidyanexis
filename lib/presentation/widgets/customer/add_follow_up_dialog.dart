@@ -255,7 +255,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       );
     }
 
-    leadProvider.saveFollowUp(
+    final success = await leadProvider.saveFollowUp(
       statusId: dropDownProvider.selectedStatusId ?? 0,
       statusName: selectedStatus.statusName ?? '',
       branchId: settingsProvider.selectedBranchId!,
@@ -271,6 +271,10 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       message: leadProvider.messageController.text,
       audioFiles: uploadedAudioFiles,
     );
+
+    if (success && mounted) {
+      Navigator.of(context).pop();
+    }
 
     // Clear audio files after successful save
     audioProvider.clearAudios();

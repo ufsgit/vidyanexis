@@ -411,7 +411,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
       );
     }
 
-    await leadProvider.saveFollowUp(
+    final success = await leadProvider.saveFollowUp(
       context: context,
       statusId: dropDownProvider.selectedStatusId ?? 0,
       statusName: selectedStatus.statusName ?? '',
@@ -427,6 +427,10 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
       message: leadProvider.messageController.text,
       audioFiles: uploadedAudioFiles,
     );
+
+    if (success && mounted) {
+      Navigator.of(context).pop();
+    }
 
     // Clear audio files after successful save
     audioProvider.clearAudios();

@@ -939,7 +939,8 @@ class LeadsProvider extends ChangeNotifier {
       if (isWebPagination) {
         _leadData.clear();
       }
-      pageSize = 20; // Set pageSize to 20 for both web and mobile as per user request
+      pageSize =
+          20; // Set pageSize to 20 for both web and mobile as per user request
 
       _startLimit = ((currentPage - 1) * pageSize) + 1;
       _endLimit = currentPage * pageSize;
@@ -1482,7 +1483,7 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveFollowUp({
+  Future<bool> saveFollowUp({
     required BuildContext context,
     required int statusId,
     required String statusName,
@@ -1575,11 +1576,13 @@ class LeadsProvider extends ChangeNotifier {
 
         notifyListeners();
         print(data);
+        return true;
       } else {
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
+        return false;
       }
     } catch (e) {
       Loader.stopLoader(context);
@@ -1587,6 +1590,7 @@ class LeadsProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+      return false;
     } finally {
       Loader.stopLoader(context);
     }

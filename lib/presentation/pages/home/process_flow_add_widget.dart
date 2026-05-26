@@ -13,6 +13,10 @@ import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/task_flow_model.dart';
 import 'package:vidyanexis/controller/process_flow_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/models/custom_field_model.dart';
+import 'package:vidyanexis/constants/enums.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -54,6 +58,11 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   int? selectedTaskFlowIndex;
   bool isEditingTaskFlow = false;
 
+  // For Custom Fields
+  final List<CustomFieldModel> _selectedCustomFields = [];
+  final Map<int, String> _customFieldValues = {};
+  final Map<int, TextEditingController> _customFieldControllers = {};
+
   void _onDrawerClosed(BuildContext context) {
     // Also reset the process flow provider
     // processFlowProvider.reset();
@@ -70,11 +79,16 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     }
     _taskDataFuture = processFlowProvider.getAllTskTypeStatus(context);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final settingsProv =
+          Provider.of<SettingsProvider>(context, listen: false);
+      await settingsProv.getCustomField(context);
+
       if (null != widget.processFlowModel.flowId &&
           widget.processFlowModel.flowId! > 0) {
-        processFlowProvider.getProcessFlowById(
+        await processFlowProvider.getProcessFlowById(
             context, widget.processFlowModel.flowId!);
+        _initializeSavedCustomFields(settingsProv.customFieldModelList);
       }
     });
   }
@@ -83,6 +97,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   void dispose() {
     taskTypeController.dispose();
     taskStatusController.dispose();
+    for (var controller in _customFieldControllers.values) {
+      controller.dispose();
+    }
     processFlowProvider.clearData();
     super.dispose();
   }
@@ -138,7 +155,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
               const SizedBox(width: 12),
               isSavingData
                   ? const SizedBox(
-                      width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : CustomElevatedButton(
                       buttonText: 'Save',
                       onPressed: saveData,
@@ -188,29 +207,29 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       snapshot.data?.$6 ?? [];
 
                   final isWeb = AppStyles.isWebScreen(context);
+                  final settingsProvider =
+                      Provider.of<SettingsProvider>(context);
 
                   final enquiryForDropdown = CommonDropdown<EnquiryForModel>(
                     hintText: 'Enquiry For *',
                     items: enquiryForList
-                        .map(
-                            (status) => DropdownItem<EnquiryForModel>(
-                                  id: status,
-                                  name: status.enquiryForName,
-                                ))
+                        .map((status) => DropdownItem<EnquiryForModel>(
+                              id: status,
+                              name: status.enquiryForName,
+                            ))
                         .toList(),
                     controller: enquiryForController,
                     selectedValue: enquiryForList
                         .where((element) =>
                             element.enquiryForId ==
-                            processFlowProvider
-                                .processFlowModel.enquiryForId)
+                            processFlowProvider.processFlowModel.enquiryForId)
                         .firstOrNull,
                     onItemSelected: (EnquiryForModel? newValue) {
                       if (newValue != null) {
-                        processFlowProvider.processFlowModel
-                            .enquiryForId = newValue.enquiryForId;
-                        processFlowProvider.processFlowModel
-                            .enquiryForName = newValue.enquiryForName;
+                        processFlowProvider.processFlowModel.enquiryForId =
+                            newValue.enquiryForId;
+                        processFlowProvider.processFlowModel.enquiryForName =
+                            newValue.enquiryForName;
 
                         processFlowProvider.setProcessFlowModel(
                             processFlowProvider.processFlowModel);
@@ -231,20 +250,17 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                     selectedValue: taskTypeList
                         .where((element) =>
                             element.taskTypeId ==
-                            processFlowProvider
-                                .processFlowModel.taskTypeId)
+                            processFlowProvider.processFlowModel.taskTypeId)
                         .firstOrNull,
                     onItemSelected: (TaskTypeModel? newValue) {
                       if (newValue != null) {
-                        processFlowProvider.processFlowModel
-                            .taskTypeId = newValue.taskTypeId;
-                        processFlowProvider.processFlowModel
-                            .taskTypeName = newValue.taskTypeName;
+                        processFlowProvider.processFlowModel.taskTypeId =
+                            newValue.taskTypeId;
+                        processFlowProvider.processFlowModel.taskTypeName =
+                            newValue.taskTypeName;
 
-                        processFlowProvider
-                            .processFlowModel.statusId = 0;
-                        processFlowProvider
-                            .processFlowModel.statusName = "";
+                        processFlowProvider.processFlowModel.statusId = 0;
+                        processFlowProvider.processFlowModel.statusName = "";
 
                         processFlowProvider.setProcessFlowModel(
                             processFlowProvider.processFlowModel);
@@ -256,28 +272,27 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                     },
                   );
 
-                  final taskTypeStatusDropdown = CommonDropdown<TaskTypeStatusModel>(
+                  final taskTypeStatusDropdown =
+                      CommonDropdown<TaskTypeStatusModel>(
                     hintText: 'Task type status *',
                     items: taskTypeStatusList
                         .where((element) =>
-                            processFlowProvider
-                                .processFlowModel.taskTypeId ==
+                            processFlowProvider.processFlowModel.taskTypeId ==
                             element.taskTypeId)
-                        .map((status) =>
-                            DropdownItem<TaskTypeStatusModel>(
+                        .map((status) => DropdownItem<TaskTypeStatusModel>(
                               id: status,
                               name: status.statusName ?? "NA",
                             ))
                         .toList(),
                     controller: taskStatusController,
-                    key: ValueKey(processFlowProvider
-                        .processFlowModel.taskTypeId),
+                    key: ValueKey(
+                        processFlowProvider.processFlowModel.taskTypeId),
                     onItemSelected: (TaskTypeStatusModel? newValue) {
                       if (newValue != null) {
-                        processFlowProvider.processFlowModel
-                            .statusId = newValue.statusId;
-                        processFlowProvider.processFlowModel
-                            .statusName = newValue.statusName;
+                        processFlowProvider.processFlowModel.statusId =
+                            newValue.statusId;
+                        processFlowProvider.processFlowModel.statusName =
+                            newValue.statusName;
                         processFlowProvider.setProcessFlowModel(
                             processFlowProvider.processFlowModel);
                         setState(() {});
@@ -288,8 +303,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 processFlowProvider
                                     .processFlowModel.taskTypeId &&
                             element.statusId ==
-                                processFlowProvider
-                                    .processFlowModel.statusId))
+                                processFlowProvider.processFlowModel.statusId))
                         .firstOrNull,
                   );
 
@@ -304,14 +318,12 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         .toList(),
                     onItemSelected: (int? newValue) {
                       if (newValue != null) {
-                        processFlowProvider.taskFlowModel.branchId =
-                            newValue;
+                        processFlowProvider.taskFlowModel.branchId = newValue;
                         processFlowProvider.setTaskFlowModel(
                             processFlowProvider.taskFlowModel);
                       }
                     },
-                    selectedValue:
-                        processFlowProvider.taskFlowModel.branchId,
+                    selectedValue: processFlowProvider.taskFlowModel.branchId,
                   );
 
                   final departmentDropdown = CommonDropdown<int>(
@@ -324,53 +336,52 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         .toList(),
                     onItemSelected: (int? newValue) {
                       if (newValue != null) {
-                        processFlowProvider
-                            .taskFlowModel.departmentId = newValue;
+                        processFlowProvider.taskFlowModel.departmentId =
+                            newValue;
                         processFlowProvider.setTaskFlowModel(
                             processFlowProvider.taskFlowModel);
                       }
-                      processFlowProvider.taskFlowModel.taskTypeId =
-                          0;
-                      processFlowProvider.setTaskFlowModel(
-                          processFlowProvider.taskFlowModel);
+                      processFlowProvider.taskFlowModel.taskTypeId = 0;
+                      processFlowProvider
+                          .setTaskFlowModel(processFlowProvider.taskFlowModel);
                       _taskTypeByDepartmentFuture =
                           processFlowProvider.getTaskTypeByDepartment(
                               context, newValue.toString());
                     },
-                    selectedValue: processFlowProvider
-                            .taskFlowModel.departmentId ??
-                        0,
+                    selectedValue:
+                        processFlowProvider.taskFlowModel.departmentId ?? 0,
                   );
 
-                  final departmentTaskTypeDropdown = FutureBuilder<List<TaskTypeModel>>(
-                      future: _taskTypeByDepartmentFuture,
-                      builder: (contextBuilder, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        return CommonDropdown<int>(
-                          hintText: 'Task type *',
-                          items: (snapshot.data ?? [])
-                              .map((status) => DropdownItem<int>(
-                                    id: status.taskTypeId,
-                                    name: status.taskTypeName,
-                                  ))
-                              .toList(),
-                          onItemSelected: (int? newValue) {
-                            if (newValue != null) {
-                              processFlowProvider.taskFlowModel
-                                  .taskTypeId = newValue;
-                              processFlowProvider.setTaskFlowModel(
-                                  processFlowProvider.taskFlowModel);
+                  final departmentTaskTypeDropdown =
+                      FutureBuilder<List<TaskTypeModel>>(
+                          future: _taskTypeByDepartmentFuture,
+                          builder: (contextBuilder, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             }
-                          },
-                          selectedValue: processFlowProvider
-                                  .taskFlowModel.taskTypeId ??
-                              0,
-                        );
-                      });
+                            return CommonDropdown<int>(
+                              hintText: 'Task type *',
+                              items: (snapshot.data ?? [])
+                                  .map((status) => DropdownItem<int>(
+                                        id: status.taskTypeId,
+                                        name: status.taskTypeName,
+                                      ))
+                                  .toList(),
+                              onItemSelected: (int? newValue) {
+                                if (newValue != null) {
+                                  processFlowProvider.taskFlowModel.taskTypeId =
+                                      newValue;
+                                  processFlowProvider.setTaskFlowModel(
+                                      processFlowProvider.taskFlowModel);
+                                }
+                              },
+                              selectedValue: processFlowProvider
+                                      .taskFlowModel.taskTypeId ??
+                                  0,
+                            );
+                          });
 
                   final mandatoryTaskTypeDropdown = IgnorePointer(
                     ignoring: isEditingMandatoryTask,
@@ -384,21 +395,18 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                           .toList(),
                       onItemSelected: (int? newValue) {
                         if (newValue != null) {
-                          int existIndex = processFlowProvider
-                              .mandatoryTaskList
-                              .indexWhere((element) =>
-                                  element.taskTypeId == newValue);
+                          int existIndex = processFlowProvider.mandatoryTaskList
+                              .indexWhere(
+                                  (element) => element.taskTypeId == newValue);
 
                           if (existIndex == -1) {
-                            MandatoryTaskModel model =
-                                MandatoryTaskModel(
+                            MandatoryTaskModel model = MandatoryTaskModel(
                               taskTypeId: newValue,
                               statusIds: processFlowProvider
                                       .mandatoryTaskModel.statusIds ??
                                   [],
                             );
-                            processFlowProvider
-                                .setMandatoryTaskModel(model);
+                            processFlowProvider.setMandatoryTaskModel(model);
                             setState(() {});
                           } else {
                             showToastInDialog(
@@ -411,15 +419,14 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                           }
                         }
                       },
-                      selectedValue: processFlowProvider
-                              .mandatoryTaskModel.taskTypeId ??
-                          0,
+                      selectedValue:
+                          processFlowProvider.mandatoryTaskModel.taskTypeId ??
+                              0,
                     ),
                   );
 
                   final assignStatusButton = TextButton.icon(
-                    icon:
-                        const Icon(Icons.add_circle_outline, size: 16),
+                    icon: const Icon(Icons.add_circle_outline, size: 16),
                     label: const Text('Assign Status'),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.secondaryBlue,
@@ -429,15 +436,12 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       ),
                     ),
                     onPressed: () {
-                      if (processFlowProvider
-                          .mandatoryTaskModel.taskTypeId
+                      if (processFlowProvider.mandatoryTaskModel.taskTypeId
                           .isGreaterThanZero()) {
-                        showStatusTypeDialog(
-                            selectedMandatoryTaskIndex ?? -1,
+                        showStatusTypeDialog(selectedMandatoryTaskIndex ?? -1,
                             taskTypeStatusList);
                       } else {
-                        showToastInDialog(
-                            'Please select a task type', context);
+                        showToastInDialog('Please select a task type', context);
                       }
                     },
                   );
@@ -464,6 +468,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 taskTypeStatusDropdown,
                               ],
                             ),
+                      const SizedBox(height: 16),
+                      _buildCustomFieldsSection(
+                          settingsProvider.customFieldModelList),
                       const SizedBox(height: 16),
                       Text(
                         'Create task',
@@ -602,17 +609,20 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: documentTypeList.length,
-                            separatorBuilder: (context, index) => const SizedBox(height: 8),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 8),
                             itemBuilder: (context, index) {
                               final doc = documentTypeList[index];
-                              bool isSelected = provider.selectedDocuments
-                                  .any((selected) =>
+                              bool isSelected = provider.selectedDocuments.any(
+                                  (selected) =>
                                       selected.documentTypeId ==
                                       doc.documentTypeId);
                               return InkWell(
-                                onTap: () => provider.toggleDocumentSelection(doc),
+                                onTap: () =>
+                                    provider.toggleDocumentSelection(doc),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4),
                                   child: Row(
                                     children: [
                                       Expanded(
@@ -632,10 +642,12 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                           value: isSelected,
                                           activeColor: AppColors.secondaryBlue,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(4),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
                                           ),
                                           onChanged: (bool? value) {
-                                            provider.toggleDocumentSelection(doc);
+                                            provider
+                                                .toggleDocumentSelection(doc);
                                           },
                                         ),
                                       ),
@@ -708,7 +720,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         const SizedBox(height: 16),
         Row(
           children: [
-            Icon(Icons.check_circle_rounded, color: AppColors.secondaryBlue, size: 20),
+            Icon(Icons.check_circle_rounded,
+                color: AppColors.secondaryBlue, size: 20),
             const SizedBox(width: 8),
             Text(
               'Mandatory Tasks',
@@ -814,7 +827,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                               const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
-                                  statusNames.isEmpty ? 'No statuses assigned' : statusNames,
+                                  statusNames.isEmpty
+                                      ? 'No statuses assigned'
+                                      : statusNames,
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     color: const Color(0xFF64748B),
@@ -865,8 +880,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                   ),
                                   TextButton(
                                     child: const Text('Delete',
-                                        style:
-                                            TextStyle(color: Colors.red)),
+                                        style: TextStyle(color: Colors.red)),
                                     onPressed: () {
                                       processFlowProvider
                                           .removeMandatory(index);
@@ -1042,6 +1056,241 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     setState(() {});
   }
 
+  void _initializeSavedCustomFields(List<CustomFieldModel> allCustomFields) {
+    if (processFlowProvider.savedCustomFields.isEmpty) return;
+
+    _selectedCustomFields.clear();
+    _customFieldValues.clear();
+
+    for (var saved in processFlowProvider.savedCustomFields) {
+      final int? fieldId =
+          int.tryParse(saved["custom_field_id"]?.toString() ?? '');
+      if (fieldId == null) continue;
+
+      final fieldModel = allCustomFields.firstWhere(
+        (element) => element.customFieldId == fieldId,
+        orElse: () => CustomFieldModel(
+            customFieldId: fieldId, customFieldName: "Field $fieldId"),
+      );
+
+      _selectedCustomFields.add(fieldModel);
+      _customFieldValues[fieldId] = saved["value"]?.toString() ?? '';
+
+      // Initialize controller if applicable
+      final type = CustomFieldType.fromValue(fieldModel.customFieldTypeId);
+      if (type != CustomFieldType.dropdown &&
+          type != CustomFieldType.checkbox) {
+        _customFieldControllers[fieldId] =
+            TextEditingController(text: saved["value"]?.toString() ?? '');
+      }
+    }
+    setState(() {});
+  }
+
+  Widget _buildCustomFieldsSection(List<CustomFieldModel> allCustomFields) {
+    final availableCustomFields = allCustomFields
+        .where((field) => !_selectedCustomFields
+            .any((selected) => selected.customFieldId == field.customFieldId))
+        .toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Custom Fields',
+          style: GoogleFonts.plusJakartaSans(
+            color: AppColors.textBlue800,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 12),
+        CommonDropdown<CustomFieldModel>(
+          key: ValueKey(
+              'custom_fields_dropdown_${_selectedCustomFields.length}'),
+          hintText: 'Select custom field to add',
+          items: availableCustomFields
+              .map((field) => DropdownItem<CustomFieldModel>(
+                    id: field,
+                    name: field.customFieldName ?? 'Unnamed Field',
+                  ))
+              .toList(),
+          onItemSelected: (CustomFieldModel? selectedField) {
+            if (selectedField != null) {
+              setState(() {
+                _selectedCustomFields.add(selectedField);
+                _customFieldValues[selectedField.customFieldId!] = '';
+                final type =
+                    CustomFieldType.fromValue(selectedField.customFieldTypeId);
+                if (type != CustomFieldType.dropdown &&
+                    type != CustomFieldType.checkbox) {
+                  _customFieldControllers[selectedField.customFieldId!] =
+                      TextEditingController();
+                }
+              });
+            }
+          },
+        ),
+        if (_selectedCustomFields.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _selectedCustomFields.length,
+            itemBuilder: (context, index) {
+              final field = _selectedCustomFields[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFF1F5F9)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildCustomFieldInputWidget(field),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          _selectedCustomFields.removeWhere((element) =>
+                              element.customFieldId == field.customFieldId);
+                          _customFieldValues.remove(field.customFieldId);
+                          _customFieldControllers[field.customFieldId]
+                              ?.dispose();
+                          _customFieldControllers.remove(field.customFieldId);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCustomFieldInputWidget(CustomFieldModel field) {
+    final type = CustomFieldType.fromValue(field.customFieldTypeId);
+    final value = _customFieldValues[field.customFieldId] ?? '';
+
+    if (type == CustomFieldType.dropdown) {
+      return CommonDropdown<String>(
+        hintText: field.customFieldName ?? 'Select value',
+        items: (field.dropDownValues ?? [])
+            .map((val) => DropdownItem<String>(id: val, name: val))
+            .toList(),
+        selectedValue: value.isNotEmpty ? value : null,
+        onItemSelected: (String? newValue) {
+          if (newValue != null) {
+            setState(() {
+              _customFieldValues[field.customFieldId!] = newValue;
+            });
+          }
+        },
+      );
+    } else if (type == CustomFieldType.checkbox) {
+      final options = field.checkBoxValues ?? [];
+      List<String> selectedList =
+          value.split(',').where((e) => e.isNotEmpty).toList();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            field.customFieldName ?? 'Select values',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textBlue800,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 12,
+            children: options.map((opt) {
+              final isChecked = selectedList.contains(opt);
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Checkbox(
+                    value: isChecked,
+                    activeColor: AppColors.secondaryBlue,
+                    onChanged: (bool? checked) {
+                      setState(() {
+                        if (checked == true) {
+                          if (!selectedList.contains(opt)) {
+                            selectedList.add(opt);
+                          }
+                        } else {
+                          selectedList.remove(opt);
+                        }
+                        _customFieldValues[field.customFieldId!] =
+                            selectedList.join(',');
+                      });
+                    },
+                  ),
+                  Text(
+                    opt,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ],
+      );
+    } else if (type == CustomFieldType.datePicker) {
+      final controller = _customFieldControllers[field.customFieldId] ??
+          TextEditingController(text: value);
+      return CustomTextField(
+        controller: controller,
+        hintText: field.customFieldName ?? 'Select Date',
+        readOnly: true,
+        suffixIcon: const Icon(Icons.calendar_today, size: 18),
+        onTap: () async {
+          final DateTime? picked = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime(2100),
+          );
+          if (picked != null) {
+            final formattedDate = "${picked.year.toString().padLeft(4, '0')}-"
+                "${picked.month.toString().padLeft(2, '0')}-"
+                "${picked.day.toString().padLeft(2, '0')}";
+            setState(() {
+              _customFieldValues[field.customFieldId!] = formattedDate;
+              controller.text = formattedDate;
+            });
+          }
+        },
+      );
+    } else {
+      final controller = _customFieldControllers[field.customFieldId] ??
+          TextEditingController(text: value);
+      return CustomTextField(
+        controller: controller,
+        hintText: field.customFieldName ?? 'Enter value',
+        keyboardType: type == CustomFieldType.numberOnly
+            ? TextInputType.number
+            : TextInputType.text,
+        onChanged: (val) {
+          _customFieldValues[field.customFieldId!] = val;
+        },
+      );
+    }
+  }
+
   void saveData() async {
     // Validate necessary conditions
     if (processFlowProvider.processFlowModel.enquiryForId.isNullOrZero()) {
@@ -1066,6 +1315,15 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
 
       return;
     }
+
+    // Save custom fields
+    processFlowProvider.savedCustomFields = _selectedCustomFields.map((field) {
+      final value = _customFieldValues[field.customFieldId] ?? '';
+      return {
+        "custom_field_id": field.customFieldId,
+        "value": value,
+      };
+    }).toList();
 
     isSavingData = true;
     setState(() {});
@@ -1201,7 +1459,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         const SizedBox(height: 16),
         Row(
           children: [
-            Icon(Icons.assignment_rounded, color: AppColors.secondaryBlue, size: 20),
+            Icon(Icons.assignment_rounded,
+                color: AppColors.secondaryBlue, size: 20),
             const SizedBox(width: 8),
             Text(
               'Added Tasks',
@@ -1236,8 +1495,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                     ?.branchName ??
                 "N/A";
             final deptName = departments
-                    .where((element) =>
-                        element.departmentId == task.departmentId)
+                    .where(
+                        (element) => element.departmentId == task.departmentId)
                     .firstOrNull
                     ?.departmentName ??
                 "N/A";
@@ -1326,8 +1585,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       children: [
                         InkWell(
                           onTap: () {
-                            _editTaskFlow(index, task, branches,
-                                departments, taskTypes);
+                            _editTaskFlow(
+                                index, task, branches, departments, taskTypes);
                             _taskTypeByDepartmentFuture =
                                 processFlowProvider.getTaskTypeByDepartment(
                                     context, task.departmentId.toString());
@@ -1362,11 +1621,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                   ),
                                   TextButton(
                                     child: const Text('Delete',
-                                        style:
-                                            TextStyle(color: Colors.red)),
+                                        style: TextStyle(color: Colors.red)),
                                     onPressed: () {
-                                      processFlowProvider
-                                          .removeTaskFlow(index);
+                                      processFlowProvider.removeTaskFlow(index);
                                       Navigator.of(context).pop();
                                       setState(() {});
                                     },
