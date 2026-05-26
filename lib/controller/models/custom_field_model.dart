@@ -99,4 +99,14 @@ class CustomFieldModel {
             ? []
             : List<dynamic>.from(checkBoxValues!.map((x) => x)),
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CustomFieldModel &&
+          runtimeType == other.runtimeType &&
+          customFieldId == other.customFieldId;
+
+  @override
+  int get hashCode => customFieldId.hashCode;
 }
