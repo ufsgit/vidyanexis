@@ -253,6 +253,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                                       ),
                                       borderColor: AppColors.primaryBlue,
                                       borderWidth: 2,
+                                      markerSettings: const MarkerSettings(isVisible: true),
                                     ),
                                   ],
                                 ),
