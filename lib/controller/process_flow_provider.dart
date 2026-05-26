@@ -20,6 +20,7 @@ class ProcessFlowProvider extends ChangeNotifier {
   MandatoryTaskModel mandatoryTaskModel = MandatoryTaskModel();
   List<ProcessFlowModel> processFlowFilteredList = [];
   List<ProcessFlowModel> processFlowList = [];
+  List<Map<String, dynamic>> savedCustomFields = [];
 
   void filterData(String searchText) {
     processFlowFilteredList = processFlowList
@@ -37,6 +38,7 @@ class ProcessFlowProvider extends ChangeNotifier {
     taskFlowModel = TaskFlowModel();
     mandatoryTaskModel = MandatoryTaskModel();
     _selectedDocuments = [];
+    savedCustomFields = [];
   }
 
   void removeTaskFlow(int index) {
@@ -257,10 +259,15 @@ class ProcessFlowProvider extends ChangeNotifier {
           var flowData = data["data"]["flow_tasks"] as List;
           var mandatoryData = data["data"]["mandatory_tasks"] ?? [];
           var documentsData = data["data"]["flow_documents"] ?? [];
+          var customFieldsData = data["data"]["custom_fields"] ??
+              data["data"]["flow_custom_fields"] ??
+              data["data"]["custom_field"] ??
+              [];
           int taskTypeId = data["data"]["task_type_id"];
 
           taskFlowList =
               flowData.map((item) => TaskFlowModel.fromJson(item)).toList();
+          savedCustomFields = List<Map<String, dynamic>>.from(customFieldsData);
           if (mandatoryData.isNotEmpty) {
             mandatoryTaskList = (mandatoryData as List)
                 .map((item) => MandatoryTaskModel.fromJson(item))
@@ -315,6 +322,8 @@ class ProcessFlowProvider extends ChangeNotifier {
                 mandatoryTaskList.map((item) => item.toJson()).toList(),
             "documents":
                 _selectedDocuments.map((item) => item.toJson()).toList(),
+            "custom_fields": savedCustomFields,
+            "custom_field": savedCustomFields,
           });
 
       if (response!.statusCode == 200) {
