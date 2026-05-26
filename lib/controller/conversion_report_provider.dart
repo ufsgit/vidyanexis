@@ -36,6 +36,8 @@ class ConversionReportProvider extends ChangeNotifier {
   int? _selectedStatus;
   int? _selectedAMCStatus;
   int? _selectedUser;
+  int? _selectedToUserId;
+  int? _selectedByUserId;
   int? selectedFollowUpStatusId;
   int? _selectedEnquirySourceId;
   int? get selectedEnquirySourceId => _selectedEnquirySourceId;
@@ -44,6 +46,8 @@ class ConversionReportProvider extends ChangeNotifier {
   int? get selectedStatus => _selectedStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
+  int? get selectedToUserId => _selectedToUserId;
+  int? get selectedByUserId => _selectedByUserId;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -64,6 +68,8 @@ class ConversionReportProvider extends ChangeNotifier {
       _selectedDateFilterIndex = index; // Set the new selected filter index
       formatDate();
     }
+    _fromDateS = _formattedFromDate;
+    _toDateS = _formattedToDate;
     notifyListeners();
   }
 
@@ -96,7 +102,9 @@ class ConversionReportProvider extends ChangeNotifier {
         _toDate = null;
         break;
     }
-
+    formatDate();
+    _fromDateS = _formattedFromDate;
+    _toDateS = _formattedToDate;
     notifyListeners(); // Notify listeners to rebuild the UI
   }
 
@@ -104,6 +112,7 @@ class ConversionReportProvider extends ChangeNotifier {
     _fromDate = date;
     _selectedDateFilterIndex = -1;
     formatDate();
+    _fromDateS = _formattedFromDate;
     notifyListeners();
   }
 
@@ -111,6 +120,7 @@ class ConversionReportProvider extends ChangeNotifier {
     _toDate = date;
     _selectedDateFilterIndex = -1;
     formatDate();
+    _toDateS = _formattedToDate;
     notifyListeners();
   }
 
@@ -150,6 +160,7 @@ class ConversionReportProvider extends ChangeNotifier {
 
   void setStatus(int newStatus) {
     _selectedStatus = newStatus;
+    _Status = newStatus.toString();
     print(_selectedStatus.toString());
     notifyListeners(); // Notify listeners about the change
   }
@@ -161,8 +172,20 @@ class ConversionReportProvider extends ChangeNotifier {
 
   void setUserFilterStatus(int? value) {
     _selectedUser = value;
+    _selectedByUserId = value;
     print(_selectedUser.toString());
     notifyListeners(); // Notify listeners about the change
+  }
+
+  void setToUserFilterStatus(int? value) {
+    _selectedToUserId = value;
+    notifyListeners();
+  }
+
+  void setByUserFilterStatus(int? value) {
+    _selectedByUserId = value;
+    _selectedUser = value;
+    notifyListeners();
   }
 
   void setLeadId(String value) {
@@ -174,11 +197,18 @@ class ConversionReportProvider extends ChangeNotifier {
     _selectedStatus = null;
     _selectedEnquirySourceId = null;
     _selectedUser = null;
+    _selectedToUserId = null;
+    _selectedByUserId = null;
     _selectedDateFilterIndex = null;
     selectedFollowUpStatusId = null;
+    _fromDate = null;
+    _toDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
     _fromDateS = '';
     _toDateS = '';
     _leadId = '0';
+    _Status = '0';
     notifyListeners();
   }
 
@@ -217,12 +247,14 @@ class ConversionReportProvider extends ChangeNotifier {
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
-      String toUserId = (_selectedUser ?? 0).toString();
+      String toUserIdStr = (_selectedToUserId ?? 0).toString();
+      String byUserIdStr = (_selectedByUserId ?? 0).toString();
+      String registeredByStr = (_selectedByUserId ?? _selectedUser ?? 0).toString();
       String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId&Status_Id=${selectedFollowUpStatusId ?? 0}&Enquiry_Source_Id=$enquirySourceIdStr&Lead_Id=$_leadId');
+              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$registeredByStr&Status_Id=${selectedFollowUpStatusId ?? 0}&Enquiry_Source_Id=$enquirySourceIdStr&Lead_Id=$_leadId&To_User_Id=$toUserIdStr&By_User_Id=$byUserIdStr');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -271,12 +303,14 @@ class ConversionReportProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      String toUserId = (_selectedUser ?? 0).toString();
+      String toUserIdStr = (_selectedToUserId ?? 0).toString();
+      String byUserIdStr = (_selectedByUserId ?? 0).toString();
+      String registeredByStr = (_selectedByUserId ?? _selectedUser ?? 0).toString();
       String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$toUserId&Status_Id=${selectedFollowUpStatusId ?? 0}&Enquiry_Source_Id=$enquirySourceIdStr&Lead_Id=$_leadId');
+              '${HttpUrls.searchConversionReport}?Customer_Name=$_Search&Fromdate=$_fromDateS&Todate=$_toDateS&Is_Date_Check=$isDate&Enquiry_For_Id=$_Status&Registered_By=$registeredByStr&Status_Id=${selectedFollowUpStatusId ?? 0}&Enquiry_Source_Id=$enquirySourceIdStr&Lead_Id=$_leadId&To_User_Id=$toUserIdStr&By_User_Id=$byUserIdStr');
 
       if (response.statusCode == 200) {
         final data = response.data;

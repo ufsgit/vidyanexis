@@ -48,6 +48,10 @@ class AppColors {
 
   static Color parseColor(String colorCode) {
     try {
+      if (colorCode.isEmpty || colorCode == 'null' || colorCode == 'Color(null)') {
+        return const Color(0xFF8E97A3); // Neutral dark grey fallback
+      }
+
       // Handle format: Color(0xFFFFFFFF)
       if (colorCode.contains("0x")) {
         final hexString =
