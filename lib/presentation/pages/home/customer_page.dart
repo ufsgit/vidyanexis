@@ -213,6 +213,52 @@ class _CustomerPageState extends State<CustomerPage> {
                             runSpacing: 8,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
+                              // Entry Type Filter
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: customerProvider.entryType != 'all'
+                                          ? AppColors.primaryBlue
+                                          : const Color(0xFFCBD5E1),
+                                      width: 1.0),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text('Entry Type: ',
+                                        style: TextStyle(fontSize: 14)),
+                                    DropdownButton<String>(
+                                      value: customerProvider.entryType,
+                                      items: const [
+                                        DropdownMenuItem<String>(
+                                          value: 'all',
+                                          child: Text('All',
+                                              style: TextStyle(fontSize: 14)),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'myown',
+                                          child: Text('My Own',
+                                              style: TextStyle(fontSize: 14)),
+                                        ),
+                                      ],
+                                      onChanged: (String? newValue) {
+                                        if (newValue != null) {
+                                          customerProvider.setEntryType(newValue);
+                                          customerProvider.getSearchCustomers(context,
+                                              isSilent: true);
+                                        }
+                                      },
+                                      underline: Container(),
+                                      isDense: true,
+                                      iconSize: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
                               Container(
                                 width: 280,
                                 height: 38,
@@ -502,50 +548,7 @@ class _CustomerPageState extends State<CustomerPage> {
                       _buildAssignedStaffFilter(customerProvider),
                       _buildEnquiryForFilter(customerProvider),
                       _buildEnquirySourceFilter(customerProvider),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: customerProvider.entryType != 'all'
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('Entry Type: ',
-                                style: TextStyle(fontSize: 14)),
-                            DropdownButton<String>(
-                              value: customerProvider.entryType,
-                              items: const [
-                                DropdownMenuItem<String>(
-                                  value: 'all',
-                                  child: Text('All',
-                                      style: TextStyle(fontSize: 14)),
-                                ),
-                                DropdownMenuItem<String>(
-                                  value: 'myown',
-                                  child: Text('My Own',
-                                      style: TextStyle(fontSize: 14)),
-                                ),
-                              ],
-                              onChanged: (String? newValue) {
-                                if (newValue != null) {
-                                  customerProvider.setEntryType(newValue);
-                                  customerProvider.getSearchCustomers(context,
-                                      isSilent: true);
-                                }
-                              },
-                              underline: Container(),
-                              isDense: true,
-                              iconSize: 18,
-                            ),
-                          ],
-                        ),
-                      ),
+
                       if (customerProvider.fromDate != null ||
                           customerProvider.toDate != null ||
                           (customerProvider.selectedStatusIds.isNotEmpty &&
