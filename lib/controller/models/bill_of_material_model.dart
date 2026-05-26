@@ -24,15 +24,15 @@ class BillOfMaterialItem {
   // Convert to JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'id': id ?? 0,
       'Items_And_Description': description,
       'make': brand,
       'Quantity': quantity,
-      'Distributor': distributor,
-      'Invoice_No': comments,
+      'Distributor': distributor ?? '',
+      'Invoice_No': comments ?? '',
       'UOM': uom,
-      'Price': price,
-      'Amount': amount,
+      'Price': price ?? '',
+      'Amount': amount ?? '',
     };
   }
 

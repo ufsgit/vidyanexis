@@ -196,8 +196,7 @@ class _CustomerPageState extends State<CustomerPage> {
               AppStyles.isWebScreen(context)
                   ? Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 8.0),
+                          horizontal: 16.0, vertical: 8.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -214,6 +213,52 @@ class _CustomerPageState extends State<CustomerPage> {
                             runSpacing: 8,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
+                              // Entry Type Filter
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: customerProvider.entryType != 'all'
+                                          ? AppColors.primaryBlue
+                                          : const Color(0xFFCBD5E1),
+                                      width: 1.0),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text('Entry Type: ',
+                                        style: TextStyle(fontSize: 14)),
+                                    DropdownButton<String>(
+                                      value: customerProvider.entryType,
+                                      items: const [
+                                        DropdownMenuItem<String>(
+                                          value: 'all',
+                                          child: Text('All',
+                                              style: TextStyle(fontSize: 14)),
+                                        ),
+                                        DropdownMenuItem<String>(
+                                          value: 'myown',
+                                          child: Text('My Own',
+                                              style: TextStyle(fontSize: 14)),
+                                        ),
+                                      ],
+                                      onChanged: (String? newValue) {
+                                        if (newValue != null) {
+                                          customerProvider.setEntryType(newValue);
+                                          customerProvider.getSearchCustomers(context,
+                                              isSilent: true);
+                                        }
+                                      },
+                                      underline: Container(),
+                                      isDense: true,
+                                      iconSize: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
                               Container(
                                 width: 280,
                                 height: 38,
@@ -267,7 +312,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                           customerProvider.fromDateS,
                                           customerProvider.toDateS,
                                         );
-                                        customerProvider.getSearchCustomers(context,
+                                        customerProvider.getSearchCustomers(
+                                            context,
                                             isSilent: true);
                                       },
                                       child: const Icon(Icons.search,
@@ -277,10 +323,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                 ),
                               ),
                               PopupMenuButton<int>(
-                                icon: const Icon(Icons.sort, color: Color(0xFF64748B)),
+                                icon: const Icon(Icons.sort,
+                                    color: Color(0xFF64748B)),
                                 tooltip: 'Sort By',
                                 onSelected: (int value) {
-                                  customerProvider.setSortOption(value, context);
+                                  customerProvider.setSortOption(
+                                      value, context);
                                 },
                                 itemBuilder: (BuildContext context) => [
                                   const PopupMenuItem(
@@ -309,7 +357,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                   color: const Color(0xFF64748B),
                                   size: 20,
                                 ),
-                                onPressed: () => customerProvider.toggleSortOrder(context),
+                                onPressed: () =>
+                                    customerProvider.toggleSortOrder(context),
                                 tooltip: customerProvider.sortOrder == 'ASC'
                                     ? 'Ascending'
                                     : 'Descending',
@@ -392,8 +441,8 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                           ),
                           PopupMenuButton<int>(
-                            icon:
-                                const Icon(Icons.sort, color: Color(0xFF152D70)),
+                            icon: const Icon(Icons.sort,
+                                color: Color(0xFF152D70)),
                             tooltip: 'Sort By',
                             onSelected: (int value) {
                               customerProvider.setSortOption(value, context);
@@ -499,47 +548,7 @@ class _CustomerPageState extends State<CustomerPage> {
                       _buildAssignedStaffFilter(customerProvider),
                       _buildEnquiryForFilter(customerProvider),
                       _buildEnquirySourceFilter(customerProvider),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: customerProvider.entryType != 'all'
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('Entry Type: ',
-                                style: TextStyle(fontSize: 14)),
-                            DropdownButton<String>(
-                              value: customerProvider.entryType,
-                              items: const [
-                                DropdownMenuItem<String>(
-                                  value: 'all',
-                                  child: Text('All', style: TextStyle(fontSize: 14)),
-                                ),
-                                DropdownMenuItem<String>(
-                                  value: 'myown',
-                                  child: Text('My Own', style: TextStyle(fontSize: 14)),
-                                ),
-                              ],
-                              onChanged: (String? newValue) {
-                                if (newValue != null) {
-                                  customerProvider.setEntryType(newValue);
-                                  customerProvider.getSearchCustomers(context, isSilent: true);
-                                }
-                              },
-                              underline: Container(),
-                              isDense: true,
-                              iconSize: 18,
-                            ),
-                          ],
-                        ),
-                      ),
+
                       if (customerProvider.fromDate != null ||
                           customerProvider.toDate != null ||
                           (customerProvider.selectedStatusIds.isNotEmpty &&
@@ -794,7 +803,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                 children: provider
                                                                     .taskType
                                                                     .where((taskType) =>
-                                                                        taskType.manualCreation ==
+                                                                        taskType
+                                                                            .manualCreation ==
                                                                         1)
                                                                     .map(
                                                                         (taskType) {
@@ -1057,16 +1067,18 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       ? lead.nextFollowUpDate
                                                           .toDayMonthYearFormat()
                                                       : ''),
-                                              if (settingsProvider.menuIsViewMap[142] == 1)
+                                              if (settingsProvider
+                                                      .menuIsViewMap[142] ==
+                                                  1)
                                                 TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
-                                                  title:
-                                                      lead.locationName ?? ''),
+                                                    flex: 2,
+                                                    fontSize: 12,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 4.0,
+                                                        horizontal: 8.0),
+                                                    title: lead.locationName ??
+                                                        ''),
                                             ],
                                           )
                                         //Mobile Design
@@ -1535,8 +1547,8 @@ class _CustomerPageState extends State<CustomerPage> {
     }
   }
 
-  Future<void> _quickSaveTask(
-      SearchLeadModel lead, TaskTypeModel taskType, SearchUserDetails user) async {
+  Future<void> _quickSaveTask(SearchLeadModel lead, TaskTypeModel taskType,
+      SearchUserDetails user) async {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
     customerDetailsProvider.customerId = lead.customerId.toString();
@@ -1563,8 +1575,8 @@ class _CustomerPageState extends State<CustomerPage> {
       '0',
       taskType.taskTypeId.toString(),
       '', // description
-      DateFormat('dd MMM yyyy')
-          .format(DateTime.now().add(Duration(days: taskType.duration))), // date
+      DateFormat('dd MMM yyyy').format(
+          DateTime.now().add(Duration(days: taskType.duration))), // date
       DateFormat('HH:mm').format(DateTime.now()), // time
       user.userDetailsId.toString(), // assignedWorker
       context,
@@ -1575,7 +1587,8 @@ class _CustomerPageState extends State<CustomerPage> {
 
     // Refresh customer list
     if (mounted) {
-      final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
+      final customerProvider =
+          Provider.of<CustomerProvider>(context, listen: false);
       customerProvider.getSearchCustomers(context, isSilent: true);
     }
   }

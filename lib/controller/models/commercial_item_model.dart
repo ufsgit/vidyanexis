@@ -25,11 +25,11 @@ class CommercialItemModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'description': description,
-      'dcCapacity': dcCapacity,
-      'acCapacity': acCapacity,
-      'unitPrice': unitPrice,
-      'total': total,
+      'description': description ?? '',
+      'dcCapacity': dcCapacity ?? '',
+      'acCapacity': acCapacity ?? '',
+      'unitPrice': unitPrice ?? '',
+      'total': total ?? '',
     };
   }
 }

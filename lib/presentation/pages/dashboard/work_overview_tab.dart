@@ -37,9 +37,8 @@ class _WorkOverViewTabState extends State<WorkOverViewTab> {
       builder: (context, constraints) {
         final isWeb = AppStyles.isWebScreen(context);
         final double spacing = 10.0;
-        final double chartWidth = isWeb 
-            ? (constraints.maxWidth - spacing) / 2 
-            : constraints.maxWidth;
+        final double chartWidth =
+            isWeb ? (constraints.maxWidth - spacing) / 2 : constraints.maxWidth;
 
         return Wrap(
           runSpacing: spacing,

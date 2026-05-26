@@ -19,9 +19,9 @@ class ScopeOfWorkModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'designAndEngineering': designAndEngineering,
-      'a3SScope': a3SScope,
-      'clientScope': clientScope,
+      'designAndEngineering': designAndEngineering ?? '',
+      'a3SScope': a3SScope ?? '',
+      'clientScope': clientScope ?? '',
     };
   }
 }

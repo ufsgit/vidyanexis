@@ -2874,26 +2874,17 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _billOfMaterialsItems = List.generate(
       billOfMaterials.length,
       (index) => BillOfMaterialItem(
-          description: '',
-          brand: '',
-          quantity: '0',
-          uom: '',
-          distributor: '',
-          comments: ''),
+        id: billOfMaterials[index].billOfMaterialsId,
+        description: billOfMaterials[index].itemsAndDescription,
+        brand: billOfMaterials[index].make,
+        quantity: billOfMaterials[index].quantity.toString(),
+        uom: billOfMaterials[index].uom,
+        distributor: billOfMaterials[index].distributor,
+        comments: billOfMaterials[index].invoiceNo,
+        price: billOfMaterials[index].price,
+        amount: billOfMaterials[index].amount,
+      ),
     );
-
-    print("Bill Details Length: ${billOfMaterials.length}");
-
-    for (int i = 0; i < billOfMaterials.length; i++) {
-      // Update the item fields
-      billOfMaterialsItems[i].description =
-          billOfMaterials[i].itemsAndDescription;
-      billOfMaterialsItems[i].quantity = billOfMaterials[i].quantity.toString();
-      billOfMaterialsItems[i].brand = billOfMaterials[i].make;
-      billOfMaterialsItems[i].distributor = billOfMaterials[i].distributor;
-      billOfMaterialsItems[i].comments = billOfMaterials[i].invoiceNo;
-      billOfMaterialsItems[i].uom = billOfMaterials[i].uom;
-    }
 
     // Notify listeners about the change
     notifyListeners();

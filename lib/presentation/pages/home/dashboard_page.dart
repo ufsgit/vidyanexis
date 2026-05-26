@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -134,10 +135,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   dashBoardProvider.fromDate == null &&
                           dashBoardProvider.toDate == null
                       ? 'All Dates'
-                      : dashBoardProvider.formattedFromDate ==
-                              dashBoardProvider.formattedToDate
-                          ? dashBoardProvider.formattedFromDate
-                          : '${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}',
+                      : '${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -592,7 +590,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
-                    const SizedBox(height: 15),
+                     const SizedBox(height: 15),
                     Row(
                       children: [
                         Expanded(
@@ -608,7 +606,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
                               );
                               if (pickedDate != null) {
                                 dashBoardProvider.setFromDate(pickedDate);
-                                dashBoardProvider.setToDate(pickedDate);
                               }
                             },
                             decoration: InputDecoration(
@@ -616,9 +613,37 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               hintText: dashBoardProvider.fromDate != null
-                                  ? '${dashBoardProvider.fromDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'Select Date',
+                                  ? DateFormat('yyyy-MM-dd')
+                                      .format(dashBoardProvider.fromDate!)
+                                  : 'From Date',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: dashBoardProvider.toDate ??
+                                    DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101),
+                              );
+                              if (pickedDate != null) {
+                                dashBoardProvider.setToDate(pickedDate);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              hintText: dashBoardProvider.toDate != null
+                                  ? DateFormat('yyyy-MM-dd')
+                                      .format(dashBoardProvider.toDate!)
+                                  : 'To Date',
                               suffixIcon: const Icon(Icons.calendar_month),
                             ),
                           ),
@@ -826,10 +851,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         dashBoardProvider.fromDate == null &&
                                 dashBoardProvider.toDate == null
                             ? 'All Dates'
-                            : dashBoardProvider.formattedFromDate ==
-                                    dashBoardProvider.formattedToDate
-                                ? dashBoardProvider.formattedFromDate
-                                : '${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}',
+                            : '${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,

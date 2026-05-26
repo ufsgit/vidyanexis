@@ -136,8 +136,8 @@ class _tasksPageReportState extends State<TaskPage> {
     }
   }
 
-  Future<void> _quickSaveTask(
-      TaskReportModel task, TaskTypeModel taskType, SearchUserDetails user) async {
+  Future<void> _quickSaveTask(TaskReportModel task, TaskTypeModel taskType,
+      SearchUserDetails user) async {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
     customerDetailsProvider.customerId = task.customerId.toString();
@@ -164,8 +164,8 @@ class _tasksPageReportState extends State<TaskPage> {
       '0',
       taskType.taskTypeId.toString(),
       '', // description
-      DateFormat('dd MMM yyyy')
-          .format(DateTime.now().add(Duration(days: taskType.duration))), // date
+      DateFormat('dd MMM yyyy').format(
+          DateTime.now().add(Duration(days: taskType.duration))), // date
       DateFormat('HH:mm').format(DateTime.now()), // time
       user.userDetailsId.toString(), // assignedWorker
       context,
@@ -372,83 +372,161 @@ class _tasksPageReportState extends State<TaskPage> {
 
                   if (AppStyles.isWebScreen(context))
                     LayoutBuilder(
-                          builder: (context, constraints) {
-                            final screenWidth =
-                                MediaQuery.of(context).size.width;
-                            final isMobile = !AppStyles.isWebScreen(context);
+                      builder: (context, constraints) {
+                        final screenWidth = MediaQuery.of(context).size.width;
+                        final isMobile = !AppStyles.isWebScreen(context);
 
-                            return Column(
+                        return Column(
+                          children: [
+                            // Top row with Tasks title on left, everything else on right
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                // Top row with Tasks title on left, everything else on right
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    // Left side: Tasks title only
-                                    if (!isMobile)
-                                      Row(
-                                        children: [
-                                          if (widget.initialStatusFilter !=
-                                              null) ...[
-                                            IconButton(
-                                              icon: const Icon(Icons.arrow_back,
-                                                  color: Color(0xFF152D70)),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                            const SizedBox(width: 8),
-                                          ],
-                                          const Text(
-                                            'Tasks',
-                                            style: TextStyle(
-                                              fontSize: 24,
-                                              color: Color(0xFF152D70),
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
+                                // Left side: Tasks title only
+                                if (!isMobile)
+                                  Row(
+                                    children: [
+                                      if (widget.initialStatusFilter !=
+                                          null) ...[
+                                        IconButton(
+                                          icon: const Icon(Icons.arrow_back,
+                                              color: Color(0xFF152D70)),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        const SizedBox(width: 8),
+                                      ],
+                                      const Text(
+                                        'Tasks',
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          color: Color(0xFF152D70),
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
+                                    ],
+                                  ),
 
-                                    // Right side: Search, Filter, and Export
-                                    Expanded(
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            // Search container
-                                            Container(
-                                              width: isMobile
-                                                  ? constraints.maxWidth * 0.4
-                                                  : MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      (screenWidth > 860
-                                                          ? 5
-                                                          : 4),
-                                              height: 38,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                                border: Border.all(
-                                                    color: Colors.black,
-                                                    width: 1.5),
+                                Expanded(
+                                  child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        // Entry Type Filter
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            border: Border.all(
+                                                color: reportsProvider
+                                                            .entryType !=
+                                                        'all'
+                                                    ? AppColors.primaryBlue
+                                                    : const Color(0xFFCBD5E1)),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Text('Entry Type: ',
+                                                  style:
+                                                      TextStyle(fontSize: 14)),
+                                              DropdownButton<String>(
+                                                value:
+                                                    reportsProvider.entryType,
+                                                items: const [
+                                                  DropdownMenuItem<String>(
+                                                    value: 'all',
+                                                    child: Text('All',
+                                                        style: TextStyle(
+                                                            fontSize: 14)),
+                                                  ),
+                                                  DropdownMenuItem<String>(
+                                                    value: 'myown',
+                                                    child: Text('My Own',
+                                                        style: TextStyle(
+                                                            fontSize: 14)),
+                                                  ),
+                                                ],
+                                                onChanged: (String? newValue) {
+                                                  if (newValue != null) {
+                                                    reportsProvider
+                                                        .setEntryType(newValue);
+                                                    reportsProvider.goToPage(1);
+                                                    reportsProvider
+                                                        .searchTaskByCustomer(
+                                                            context);
+                                                  }
+                                                },
+                                                underline: Container(),
+                                                isDense: true,
+                                                iconSize: 18,
                                               ),
-                                              child: TextField(
-                                                controller: searchController,
-                                                textAlignVertical:
-                                                    TextAlignVertical.center,
-                                                onChanged: _onSearchChanged,
-                                                onSubmitted: (query) {
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        // Search container
+                                        Container(
+                                          width: isMobile
+                                              ? constraints.maxWidth * 0.4
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  (screenWidth > 860 ? 5 : 4),
+                                          height: 38,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            border: Border.all(
+                                                color: Colors.black,
+                                                width: 1.5),
+                                          ),
+                                          child: TextField(
+                                            controller: searchController,
+                                            textAlignVertical:
+                                                TextAlignVertical.center,
+                                            onChanged: _onSearchChanged,
+                                            onSubmitted: (query) {
+                                              if (_debounce?.isActive ??
+                                                  false) {
+                                                _debounce!.cancel();
+                                              }
+                                              reportsProvider
+                                                  .setTaskSearchCriteria(
+                                                query,
+                                                reportsProvider.fromDateS,
+                                                reportsProvider.toDateS,
+                                                reportsProvider.Status,
+                                                reportsProvider.AssignedTo,
+                                                reportsProvider.TaskType,
+                                                reportsProvider.enquiryForS,
+                                              );
+                                              reportsProvider
+                                                  .searchTaskByCustomer(
+                                                      context);
+                                            },
+                                            decoration: InputDecoration(
+                                              hintText: 'Search here....',
+                                              border: InputBorder.none,
+                                              contentPadding:
+                                                  const EdgeInsets.only(
+                                                      left: 16,
+                                                      right: 16,
+                                                      bottom: 11),
+                                              suffixIcon: GestureDetector(
+                                                onTap: () {
                                                   if (_debounce?.isActive ??
                                                       false) {
                                                     _debounce!.cancel();
                                                   }
                                                   reportsProvider
                                                       .setTaskSearchCriteria(
-                                                    query,
+                                                    searchController.text,
                                                     reportsProvider.fromDateS,
                                                     reportsProvider.toDateS,
                                                     reportsProvider.Status,
@@ -456,141 +534,105 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     reportsProvider.TaskType,
                                                     reportsProvider.enquiryForS,
                                                   );
+                                                  reportsProvider.goToPage(1);
                                                   reportsProvider
                                                       .searchTaskByCustomer(
                                                           context);
                                                 },
-                                                decoration: InputDecoration(
-                                                  hintText: 'Search here....',
-                                                  border: InputBorder.none,
-                                                  contentPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 16,
-                                                          right: 16,
-                                                          bottom: 11),
-                                                  suffixIcon: GestureDetector(
-                                                    onTap: () {
-                                                      if (_debounce?.isActive ??
-                                                          false) {
-                                                        _debounce!.cancel();
-                                                      }
-                                                      reportsProvider
-                                                          .setTaskSearchCriteria(
-                                                        searchController.text,
-                                                        reportsProvider
-                                                            .fromDateS,
-                                                        reportsProvider.toDateS,
-                                                        reportsProvider.Status,
-                                                        reportsProvider
-                                                            .AssignedTo,
-                                                        reportsProvider
-                                                            .TaskType,
-                                                        reportsProvider
-                                                            .enquiryForS,
-                                                      );
-                                                      reportsProvider
-                                                          .goToPage(1);
-                                                      reportsProvider
-                                                          .searchTaskByCustomer(
-                                                              context);
-                                                    },
-                                                    child: const Icon(
-                                                        Icons.search,
-                                                        color: Colors.black),
-                                                  ),
-                                                ),
+                                                child: const Icon(Icons.search,
+                                                    color: Colors.black),
                                               ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        const SizedBox(width: 16),
+                                        PopupMenuButton<int>(
+                                          icon: const Icon(Icons.sort,
+                                              color: Color(0xFF152D70)),
+                                          tooltip: 'Sort By',
+                                          onSelected: (int value) {
+                                            reportsProvider.setSortOption(
+                                                value, context);
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                              [
+                                            const PopupMenuItem(
+                                              value: 0,
+                                              child: Text('Default'),
+                                            ),
+                                            const PopupMenuItem(
+                                              value: 1,
+                                              child: Text('ID No'),
+                                            ),
+                                            const PopupMenuItem(
+                                              value: 2,
+                                              child: Text('Creation Date'),
+                                            ),
+                                            const PopupMenuItem(
+                                              value: 3,
+                                              child: Text('Followup Date'),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(width: 4),
+                                        IconButton(
+                                          icon: Icon(
+                                            reportsProvider.sortOrder == 'ASC'
+                                                ? Icons.arrow_upward
+                                                : Icons.arrow_downward,
+                                            color: const Color(0xFF152D70),
+                                            size: 20,
+                                          ),
+                                          onPressed: () => reportsProvider
+                                              .toggleSortOrder(context),
+                                          tooltip:
+                                              reportsProvider.sortOrder == 'ASC'
+                                                  ? 'Ascending'
+                                                  : 'Descending',
+                                        ),
+                                        const SizedBox(width: 8),
+
+                                        Row(
+                                          children: [
+                                            // FILTER BUTTON
+                                            CustomFilterButton(
+                                              onPressed: () {
+                                                reportsProvider.toggleFilter();
+                                              },
+                                              isFilter:
+                                                  reportsProvider.isFilter,
                                             ),
 
                                             const SizedBox(width: 16),
-                                            PopupMenuButton<int>(
-                                              icon: const Icon(Icons.sort,
-                                                  color: Color(0xFF152D70)),
-                                              tooltip: 'Sort By',
-                                              onSelected: (int value) {
-                                                reportsProvider.setSortOption(
-                                                    value, context);
-                                              },
-                                              itemBuilder:
-                                                  (BuildContext context) => [
-                                                const PopupMenuItem(
-                                                  value: 0,
-                                                  child: Text('Default'),
-                                                ),
-                                                const PopupMenuItem(
-                                                  value: 1,
-                                                  child: Text('ID No'),
-                                                ),
-                                                const PopupMenuItem(
-                                                  value: 2,
-                                                  child: Text('Creation Date'),
-                                                ),
-                                                const PopupMenuItem(
-                                                  value: 3,
-                                                  child: Text('Followup Date'),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(width: 4),
-                                            IconButton(
-                                              icon: Icon(
-                                                reportsProvider.sortOrder == 'ASC'
-                                                    ? Icons.arrow_upward
-                                                    : Icons.arrow_downward,
-                                                color: const Color(0xFF152D70),
-                                                size: 20,
-                                              ),
-                                              onPressed: () => reportsProvider.toggleSortOrder(context),
-                                              tooltip: reportsProvider.sortOrder == 'ASC'
-                                                  ? 'Ascending'
-                                                  : 'Descending',
-                                            ),
-                                            const SizedBox(width: 8),
 
-                                            Row(
-                                              children: [
-                                                // FILTER BUTTON
-                                                CustomFilterButton(
-                                                  onPressed: () {
-                                                    reportsProvider
-                                                        .toggleFilter();
-                                                  },
-                                                  isFilter:
-                                                      reportsProvider.isFilter,
-                                                ),
-
-                                                const SizedBox(width: 16),
-
-                                                // Export button
-                                                if (!isMobile ||
-                                                    screenWidth > 400)
-                                                  CustomElevatedButton(
-                                                    onPressed: () async {
-                                                      await reportsProvider
-                                                          .fetchTasksForExport(
-                                                              context);
-                                                    },
-                                                    buttonText:
-                                                        screenWidth > 600
-                                                            ? 'Export to Excel'
-                                                            : 'Export',
-                                                    textColor:
-                                                        AppColors.whiteColor,
-                                                    borderColor:
-                                                        AppColors.appViolet,
-                                                    backgroundColor:
-                                                        AppColors.appViolet,
-                                                  )
-                                              ],
-                                            ),
-                                          ]),
-                                    ),
-                                  ],
+                                            // Export button
+                                            if (!isMobile || screenWidth > 400)
+                                              CustomElevatedButton(
+                                                onPressed: () async {
+                                                  await reportsProvider
+                                                      .fetchTasksForExport(
+                                                          context);
+                                                },
+                                                buttonText: screenWidth > 600
+                                                    ? 'Export to Excel'
+                                                    : 'Export',
+                                                textColor: AppColors.whiteColor,
+                                                borderColor:
+                                                    AppColors.appViolet,
+                                                backgroundColor:
+                                                    AppColors.appViolet,
+                                              )
+                                          ],
+                                        ),
+                                      ]),
                                 ),
                               ],
-                            );
-                          },
-                        )
+                            ),
+                          ],
+                        );
+                      },
+                    )
                 ],
               ),
             ),
@@ -809,50 +851,6 @@ class _tasksPageReportState extends State<TaskPage> {
                             onChanged: (int? newValue) {
                               if (newValue != null) {
                                 reportsProvider.setTaskType(newValue);
-                                reportsProvider.goToPage(1);
-                                reportsProvider.searchTaskByCustomer(context);
-                              }
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Entry Type Filter
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: reportsProvider.entryType != 'all'
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Entry Type: ',
-                              style: TextStyle(fontSize: 14)),
-                          DropdownButton<String>(
-                            value: reportsProvider.entryType,
-                            items: const [
-                              DropdownMenuItem<String>(
-                                value: 'all',
-                                child: Text('All', style: TextStyle(fontSize: 14)),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'myown',
-                                child: Text('My Own', style: TextStyle(fontSize: 14)),
-                              ),
-                            ],
-                            onChanged: (String? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setEntryType(newValue);
                                 reportsProvider.goToPage(1);
                                 reportsProvider.searchTaskByCustomer(context);
                               }
@@ -2606,9 +2604,7 @@ class _tasksPageReportState extends State<TaskPage> {
             getStatusType(context, task.taskTypeId.toString());
 
         return Dialog(
-          backgroundColor: Colors.transparent
-          
-          ,
+          backgroundColor: Colors.transparent,
           elevation: 0,
           insetPadding: EdgeInsets.symmetric(
               horizontal: isSmallScreen ? 16 : 40, vertical: 24),
@@ -2717,1172 +2713,1237 @@ class _tasksPageReportState extends State<TaskPage> {
                         ],
                       ),
                     ),
-                Flexible(
-                  child: FutureBuilder<List<TaskTypeStatusModel>>(
-                    future: statusOptionsFuture,
-                    builder: (contextBuilder, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 40.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const CircularProgressIndicator(),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Loading status options...',
-                                style: TextStyle(
-                                  color: theme.textTheme.bodyMedium?.color,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else if (snapshot.hasError ||
-                          !snapshot.hasData ||
-                          snapshot.data!.isEmpty) {
-                        return Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.error_outline,
-                                  color: Colors.red, size: 48),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Error loading status options',
-                                style:
-                                    TextStyle(color: theme.colorScheme.error),
-                              ),
-                              const SizedBox(height: 24),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Close'),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        final statusOptions = snapshot.data!;
-                        TaskTypeStatusModel defaultStatus =
-                            statusOptions.firstWhere(
-                          (status) => status.statusId == task.taskStatusId,
-                          orElse: () => statusOptions.first,
-                        );
-
-                        int statusId = defaultStatus.statusId ?? 0;
-                        int tasktypeId = defaultStatus.taskTypeId ?? 0;
-                        int customerId = task.customerId ?? 0;
-                        int enquiryForId = task.enquiryForId ?? 0;
-                        final reportsProvider = Provider.of<TaskPageProvider>(
-                            context,
-                            listen: false);
-
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          reportsProvider.fetchTaskTypes(tasktypeId, statusId,
-                              customerId, enquiryForId, context);
-                          reportsProvider.clearDescription();
-
-                          // Also fetch forms for this customer
-                          final formProvider =
-                              Provider.of<FormProvider>(context, listen: false);
-                          formProvider.getFormDataByCustomer(
-                            task.customerId.toString(),
-                            enquiryForId: task.enquiryForId.toString(),
-                          );
-                          formProvider.fetchAvailableFields(context);
-
-                          // Pre-fill Description and Follow-Up Date if available
-                          reportsProvider.descriptionController.clear();
-                          if (task.nextFollowupDate != null &&
-                              task.nextFollowupDate!.isNotEmpty) {
-                            try {
-                              DateTime parsedDate =
-                                  DateTime.parse(task.nextFollowupDate!);
-                              reportsProvider.followUpDateController.text =
-                                  DateFormat('dd MMM yyyy').format(parsedDate);
-                            } catch (e) {
-                              reportsProvider.followUpDateController.text =
-                                  task.nextFollowupDate!;
-                            }
-                          } else {
-                            reportsProvider.followUpDateController.clear();
-                          }
-                        });
-
-                        final ValueNotifier<TaskTypeStatusModel>
-                            selectedStatus = ValueNotifier(defaultStatus);
-                        final ValueNotifier<bool> isSaving =
-                            ValueNotifier(false);
-
-                        Widget formFields = Container(
-                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Row 1: Current Status Dropdown
-                              // Row 1: Current Status Chips Selection
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Select Status',
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                            color: Color(0xFF64748B))),
-                                    const SizedBox(height: 12),
-                                    ValueListenableBuilder<TaskTypeStatusModel>(
-                                      valueListenable: selectedStatus,
-                                      builder: (context, value, _) {
-                                        return Wrap(
-                                          spacing: 12,
-                                          runSpacing: 12,
-                                          children: statusOptions.map((status) {
-                                            bool isSelected = value.statusId ==
-                                                status.statusId;
-                                            return _buildCustomStatusChip(
-                                              status: status,
-                                              isSelected: isSelected,
-                                              onTap: () async {
-                                                selectedStatus.value = status;
-                                                int sId = status.statusId ?? 0;
-                                                int tId = status.taskTypeId ?? 0;
-                                                await reportsProvider
-                                                    .fetchTaskTypes(
-                                                        tId,
-                                                        sId,
-                                                        customerId,
-                                                        enquiryForId,
-                                                        context);
-                                              },
-                                            );
-                                          }).toList(),
-                                        );
-                                      },
+                    Flexible(
+                      child: FutureBuilder<List<TaskTypeStatusModel>>(
+                        future: statusOptionsFuture,
+                        builder: (contextBuilder, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 40.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const CircularProgressIndicator(),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Loading status options...',
+                                    style: TextStyle(
+                                      color: theme.textTheme.bodyMedium?.color,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 10),
+                            );
+                          } else if (snapshot.hasError ||
+                              !snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.error_outline,
+                                      color: Colors.red, size: 48),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Error loading status options',
+                                    style: TextStyle(
+                                        color: theme.colorScheme.error),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Close'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            final statusOptions = snapshot.data!;
+                            TaskTypeStatusModel defaultStatus =
+                                statusOptions.firstWhere(
+                              (status) => status.statusId == task.taskStatusId,
+                              orElse: () => statusOptions.first,
+                            );
 
-                              // Row 2: New Task + Department
-                              Consumer<TaskPageProvider>(
-                                builder: (context, reportsProvider, child) {
-                                  if (reportsProvider.taskTypeModel.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFF9FAFB),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          border: Border.all(
-                                              color: Colors.grey.shade300),
+                            int statusId = defaultStatus.statusId ?? 0;
+                            int tasktypeId = defaultStatus.taskTypeId ?? 0;
+                            int customerId = task.customerId ?? 0;
+                            int enquiryForId = task.enquiryForId ?? 0;
+                            final reportsProvider =
+                                Provider.of<TaskPageProvider>(context,
+                                    listen: false);
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              reportsProvider.fetchTaskTypes(tasktypeId,
+                                  statusId, customerId, enquiryForId, context);
+                              reportsProvider.clearDescription();
+
+                              // Also fetch forms for this customer
+                              final formProvider = Provider.of<FormProvider>(
+                                  context,
+                                  listen: false);
+                              formProvider.getFormDataByCustomer(
+                                task.customerId.toString(),
+                                enquiryForId: task.enquiryForId.toString(),
+                              );
+                              formProvider.fetchAvailableFields(context);
+
+                              // Pre-fill Description and Follow-Up Date if available
+                              reportsProvider.descriptionController.clear();
+                              if (task.nextFollowupDate != null &&
+                                  task.nextFollowupDate!.isNotEmpty) {
+                                try {
+                                  DateTime parsedDate =
+                                      DateTime.parse(task.nextFollowupDate!);
+                                  reportsProvider.followUpDateController.text =
+                                      DateFormat('dd MMM yyyy')
+                                          .format(parsedDate);
+                                } catch (e) {
+                                  reportsProvider.followUpDateController.text =
+                                      task.nextFollowupDate!;
+                                }
+                              } else {
+                                reportsProvider.followUpDateController.clear();
+                              }
+                            });
+
+                            final ValueNotifier<TaskTypeStatusModel>
+                                selectedStatus = ValueNotifier(defaultStatus);
+                            final ValueNotifier<bool> isSaving =
+                                ValueNotifier(false);
+
+                            Widget formFields = Container(
+                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Row 1: Current Status Dropdown
+                                  // Row 1: Current Status Chips Selection
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 12),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('Select Status',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF64748B))),
+                                        const SizedBox(height: 12),
+                                        ValueListenableBuilder<
+                                            TaskTypeStatusModel>(
+                                          valueListenable: selectedStatus,
+                                          builder: (context, value, _) {
+                                            return Wrap(
+                                              spacing: 12,
+                                              runSpacing: 12,
+                                              children:
+                                                  statusOptions.map((status) {
+                                                bool isSelected =
+                                                    value.statusId ==
+                                                        status.statusId;
+                                                return _buildCustomStatusChip(
+                                                  status: status,
+                                                  isSelected: isSelected,
+                                                  onTap: () async {
+                                                    selectedStatus.value =
+                                                        status;
+                                                    int sId =
+                                                        status.statusId ?? 0;
+                                                    int tId =
+                                                        status.taskTypeId ?? 0;
+                                                    await reportsProvider
+                                                        .fetchTaskTypes(
+                                                            tId,
+                                                            sId,
+                                                            customerId,
+                                                            enquiryForId,
+                                                            context);
+                                                  },
+                                                );
+                                              }).toList(),
+                                            );
+                                          },
                                         ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+
+                                  // Row 2: New Task + Department
+                                  Consumer<TaskPageProvider>(
+                                    builder: (context, reportsProvider, child) {
+                                      if (reportsProvider
+                                          .taskTypeModel.isEmpty) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFF9FAFB),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: Colors.grey.shade300),
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 16,
                                                       vertical: 8),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text('New Task',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          color: Colors
-                                                              .grey.shade600,
-                                                          fontWeight:
-                                                              FontWeight.w600)),
-                                                  Text('Department',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          color: Colors
-                                                              .grey.shade600,
-                                                          fontWeight:
-                                                              FontWeight.w600)),
-                                                ],
-                                              ),
-                                            ),
-                                            const Divider(height: 1),
-                                            ListView.builder(
-                                              padding: EdgeInsets.zero,
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const NeverScrollableScrollPhysics(),
-                                              itemCount: reportsProvider
-                                                  .taskTypeModel.length,
-                                              itemBuilder: (context, index) {
-                                                final taskItem = reportsProvider
-                                                    .taskTypeModel[index];
-                                                bool selected = reportsProvider
-                                                    .selectedTaskTypeIds
-                                                    .contains(taskItem
-                                                        .taskTypeId
-                                                        .toString());
-                                                return InkWell(
-                                                  onTap: () {
-                                                    reportsProvider
-                                                        .toggleTaskTypeSelection(
-                                                            taskItem.taskTypeId
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text('New Task',
+                                                          style: TextStyle(
+                                                              fontSize: 13,
+                                                              color: Colors.grey
+                                                                  .shade600,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600)),
+                                                      Text('Department',
+                                                          style: TextStyle(
+                                                              fontSize: 13,
+                                                              color: Colors.grey
+                                                                  .shade600,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600)),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const Divider(height: 1),
+                                                ListView.builder(
+                                                  padding: EdgeInsets.zero,
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  itemCount: reportsProvider
+                                                      .taskTypeModel.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final taskItem =
+                                                        reportsProvider
+                                                                .taskTypeModel[
+                                                            index];
+                                                    bool selected =
+                                                        reportsProvider
+                                                            .selectedTaskTypeIds
+                                                            .contains(taskItem
+                                                                .taskTypeId
                                                                 .toString());
-                                                  },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 10),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Row(
+                                                    return InkWell(
+                                                      onTap: () {
+                                                        reportsProvider
+                                                            .toggleTaskTypeSelection(
+                                                                taskItem
+                                                                    .taskTypeId
+                                                                    .toString());
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 10),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
                                                           children: [
-                                                            Container(
-                                                              width: 18,
-                                                              height: 18,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: selected
-                                                                    ? AppColors
-                                                                        .darkGreen
-                                                                    : Colors
-                                                                        .white,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            4),
-                                                                border: Border.all(
+                                                            Row(
+                                                              children: [
+                                                                Container(
+                                                                  width: 18,
+                                                                  height: 18,
+                                                                  decoration:
+                                                                      BoxDecoration(
                                                                     color: selected
                                                                         ? AppColors
                                                                             .darkGreen
                                                                         : Colors
-                                                                            .grey
-                                                                            .shade400),
-                                                              ),
-                                                              child: selected
-                                                                  ? const Icon(
-                                                                      Icons
-                                                                          .check,
-                                                                      size: 14,
-                                                                      color: Colors
-                                                                          .white)
-                                                                  : null,
+                                                                            .white,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(4),
+                                                                    border: Border.all(
+                                                                        color: selected
+                                                                            ? AppColors.darkGreen
+                                                                            : Colors.grey.shade400),
+                                                                  ),
+                                                                  child: selected
+                                                                      ? const Icon(
+                                                                          Icons
+                                                                              .check,
+                                                                          size:
+                                                                              14,
+                                                                          color:
+                                                                              Colors.white)
+                                                                      : null,
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 10),
+                                                                Text(
+                                                                    taskItem.taskTypeName ??
+                                                                        '',
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight.w500)),
+                                                              ],
                                                             ),
-                                                            const SizedBox(
-                                                                width: 10),
                                                             Text(
-                                                                taskItem.taskTypeName ??
+                                                                taskItem.departmentName ??
                                                                     '',
-                                                                style: const TextStyle(
+                                                                style: TextStyle(
                                                                     fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500)),
+                                                                        13,
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade700)),
                                                           ],
                                                         ),
-                                                        Text(
-                                                            taskItem.departmentName ??
-                                                                '',
-                                                            style: TextStyle(
-                                                                fontSize: 13,
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade700)),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                    ],
-                                  );
-                                },
-                              ),
-
-                              // Row 3: Follow-up Date + Pending Docs
-                              ValueListenableBuilder<TaskTypeStatusModel>(
-                                valueListenable: selectedStatus,
-                                builder: (ctx, status, child) {
-                                  return Consumer<TaskPageProvider>(
-                                    builder: (context, reportsProvider, child) {
-                                      bool showDate = status.followup == 1;
-                                      bool hasDocs = reportsProvider
-                                          .documentTypeModel.isNotEmpty;
-                                      bool hasMandatory =
-                                          reportsProvider.statusData.isNotEmpty;
-                                      bool showRightList =
-                                          hasDocs || hasMandatory;
-
-                                      Widget leftSide = showDate
-                                          ? dateFollowUpWidget()
-                                          : const SizedBox.shrink();
-
-                                      Widget rightSide = showRightList
-                                          ? Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text('Pending Documents',
-                                                    style: TextStyle(
-                                                        fontSize: 13,
-                                                        color: Colors
-                                                            .grey.shade600,
-                                                        fontWeight:
-                                                            FontWeight.w500)),
-                                                const SizedBox(height: 4),
-                                                Container(
-                                                  width: double.infinity,
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                        color: Colors
-                                                            .grey.shade300),
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      if (hasDocs)
-                                                        ...reportsProvider
-                                                            .documentTypeModel
-                                                            .map(
-                                                                (doc) =>
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              4),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceBetween,
-                                                                        children: [
-                                                                          Expanded(
-                                                                            child:
-                                                                                Text(doc.documentTypeName ?? '', style: const TextStyle(fontSize: 13)),
-                                                                          ),
-                                                                          InkWell(
-                                                                            onTap:
-                                                                                () async {
-                                                                              await showDialog(
-                                                                                barrierDismissible: false,
-                                                                                context: context,
-                                                                                builder: (context) => ImageUploadAlert(
-                                                                                  customerId: task.customerId.toString(),
-                                                                                  initialDocumentTypeId: doc.documentTypeId,
-                                                                                  initialDocumentTypeName: doc.documentTypeName,
-                                                                                ),
-                                                                              );
-                                                                              // Refresh data after upload
-                                                                              int sId = selectedStatus.value.statusId ?? 0;
-                                                                              int tId = selectedStatus.value.taskTypeId ?? 0;
-                                                                              int cId = task.customerId ?? 0;
-                                                                              int eId = task.enquiryForId ?? 0;
-                                                                              reportsProvider.fetchTaskTypes(tId, sId, cId, eId, context);
-                                                                            },
-                                                                            child:
-                                                                                Container(
-                                                                              padding: const EdgeInsets.all(4),
-                                                                              decoration: BoxDecoration(
-                                                                                color: AppColors.darkGreen.withOpacity(0.1),
-                                                                                borderRadius: BorderRadius.circular(4),
-                                                                              ),
-                                                                              child: Icon(
-                                                                                Icons.upload_rounded,
-                                                                                size: 16,
-                                                                                color: AppColors.darkGreen,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    )),
-                                                      if (hasMandatory)
-                                                        ...reportsProvider
-                                                            .statusData
-                                                            .asMap()
-                                                            .entries
-                                                            .map((e) => Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4),
-                                                                  child: Text(
-                                                                      '${e.key + 1 + (hasDocs ? reportsProvider.documentTypeModel.length : 0)}. ${e.value.taskTypeName}-${e.value.requiredStatuses}',
-                                                                      style: const TextStyle(
-                                                                          fontSize:
-                                                                              13)),
-                                                                )),
-                                                    ],
-                                                  ),
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
-                                              ],
-                                            )
-                                          : const SizedBox.shrink();
-
-                                      if (!showDate && !showRightList) {
-                                        return const SizedBox.shrink();
-                                      }
-
-                                      if (isSmallScreen) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (showDate) ...[
-                                              leftSide,
-                                              const SizedBox(height: 10)
-                                            ],
-                                            if (showRightList) ...[
-                                              rightSide,
-                                              const SizedBox(height: 10)
-                                            ],
-                                          ],
-                                        );
-                                      } else {
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 10),
-                                          child: IntrinsicHeight(
-                                            child: Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                if (showDate)
-                                                  Expanded(child: leftSide),
-                                                if (showDate && showRightList)
-                                                  const SizedBox(width: 16),
-                                                if (showRightList)
-                                                  Expanded(child: rightSide),
-                                                if (!showRightList && showDate)
-                                                  const Expanded(
-                                                      child: SizedBox()),
                                               ],
                                             ),
                                           ),
-                                        );
-                                      }
+                                          const SizedBox(height: 10),
+                                        ],
+                                      );
                                     },
-                                  );
-                                },
-                              ),
-
-                              // Row 4: Description text area
-                              Text('Description',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.w500)),
-                              const SizedBox(height: 4),
-                              TextField(
-                                controller: Provider.of<TaskPageProvider>(
-                                        context,
-                                        listen: false)
-                                    .descriptionController,
-                                maxLines: 2,
-                                minLines: 2,
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(vertical: 12),
-                                  enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0xFF3B82F6), width: 1.5),
                                   ),
-                                  focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2.0),
-                                  ),
-                                  hintText: 'Enter description',
-                                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-                                ),
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              const SizedBox(height: 20),
-                              Consumer<FormProvider>(
-                                builder: (context, formProvider, child) {
-                                  if (formProvider.isFetchingCustomerForms) {
-                                    return const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 20),
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  final rawForms =
-                                      formProvider.customerForms.where((form) {
-                                    return form.id.isNotEmpty &&
-                                        form.id != '0' &&
-                                        form.name.isNotEmpty;
-                                  }).toList();
 
-                                  // Deduplicate locally to ensure "One button per form type"
-                                  // We prefer the "Definition" (instanceId == null) so the button opens a fresh form.
-                                  final Map<String, FormModel> uniqueForms = {};
-                                  for (var f in rawForms) {
-                                    if (!uniqueForms.containsKey(f.id)) {
-                                      uniqueForms[f.id] = f;
-                                    } else if (f.instanceId == null &&
-                                        uniqueForms[f.id]!.instanceId != null) {
-                                      uniqueForms[f.id] = f;
-                                    }
-                                  }
-                                  final validForms =
-                                      uniqueForms.values.toList();
+                                  // Row 3: Follow-up Date + Pending Docs
+                                  ValueListenableBuilder<TaskTypeStatusModel>(
+                                    valueListenable: selectedStatus,
+                                    builder: (ctx, status, child) {
+                                      return Consumer<TaskPageProvider>(
+                                        builder:
+                                            (context, reportsProvider, child) {
+                                          bool showDate = status.followup == 1;
+                                          bool hasDocs = reportsProvider
+                                              .documentTypeModel.isNotEmpty;
+                                          bool hasMandatory = reportsProvider
+                                              .statusData.isNotEmpty;
+                                          bool showRightList =
+                                              hasDocs || hasMandatory;
 
-                                  if (validForms.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('FORMS',
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.grey.shade600,
-                                              fontWeight: FontWeight.w600)),
-                                      const SizedBox(height: 8),
-                                      Wrap(
-                                        spacing: 12.0,
-                                        runSpacing: 12.0,
-                                        children: validForms.map((form) {
-                                          return InkWell(
-                                            onTap: () {
-                                              _showWebFormDialog(
-                                                  context, form, task);
-                                            },
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                            child: Container(
-                                              width: 260,
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white
-                                                    .withOpacity(0.4),
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                                border: Border.all(
-                                                  color: Colors.white
-                                                      .withOpacity(0.6),
-                                                  width: 1,
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.02),
-                                                    blurRadius: 8,
-                                                    offset: const Offset(0, 2),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFFEEF2F6),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                    ),
-                                                    child: const Icon(
-                                                      Icons
-                                                          .description_outlined,
-                                                      color: Color(0xFF1E293B),
-                                                      size: 20,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        const Text(
-                                                          "1",
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Color(
-                                                                0xFF1E293B),
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          form.name.isNotEmpty
-                                                              ? form.name
-                                                              : "Attached Form",
-                                                          style: TextStyle(
+                                          Widget leftSide = showDate
+                                              ? dateFollowUpWidget()
+                                              : const SizedBox.shrink();
+
+                                          Widget rightSide = showRightList
+                                              ? Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text('Pending Documents',
+                                                        style: TextStyle(
                                                             fontSize: 13,
-                                                            fontWeight:
-                                                                FontWeight.w500,
                                                             color: Colors
-                                                                .grey.shade700,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                      const SizedBox(height: 20),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-
-                        return ListView(
-                          shrinkWrap: true,
-                          children: [
-                            isSmallScreen
-                                ? Flexible(
-                                    child: SingleChildScrollView(
-                                        child: formFields))
-                                : formFields, // No scrolling if large screen!
-
-                            // Row 5: Action buttons aligned to right
-                            ValueListenableBuilder<bool>(
-                              valueListenable: isSaving,
-                              builder: (ctx, saving, child) {
-                                return Container(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        top: BorderSide(
-                                            color: Colors.grey.shade200)),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Wrap(
-                                        spacing: 12,
-                                        runSpacing: 12,
-                                        alignment: WrapAlignment.end,
-                                        crossAxisAlignment:
-                                            WrapCrossAlignment.center,
-                                        children: [
-                                          OutlinedButton.icon(
-                                            icon: const Icon(Icons.history,
-                                                size: 16, color: Color(0xFF64748B)),
-                                            label: const Text("View History", style: TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
-                                            style: OutlinedButton.styleFrom(
-                                              side: BorderSide(color: Colors.grey.shade400),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          24)),
-                                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                                            ),
-                                            onPressed: () async {
-                                              final provider =
-                                                  Provider.of<TaskPageProvider>(
-                                                      context,
-                                                      listen: false);
-                                              await provider.fetchTaskHistory(
-                                                  task.userDetailsId ?? 0,
-                                                  task.taskId ?? 0);
-                                              showDialog(
-                                                context: context,
-                                                builder: (_) {
-                                                  return Dialog(
-                                                    insetPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 16,
-                                                            vertical: 24),
-                                                    child: Container(
-                                                      width: 500,
-                                                      height: 400,
+                                                                .grey.shade600,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500)),
+                                                    const SizedBox(height: 4),
+                                                    Container(
+                                                      width: double.infinity,
                                                       padding:
                                                           const EdgeInsets.all(
-                                                              20),
+                                                              8),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .grey.shade300),
+                                                      ),
                                                       child: Column(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
-                                                          const Text(
-                                                            "Task History",
-                                                            style: TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 16),
-                                                          Expanded(
-                                                            child: Consumer<
-                                                                TaskPageProvider>(
-                                                              builder: (_,
-                                                                  provider,
-                                                                  __) {
-                                                                if (provider
-                                                                    .isHistoryLoading) {
-                                                                  return const Center(
-                                                                      child:
-                                                                          CircularProgressIndicator());
-                                                                }
-                                                                if (provider
-                                                                    .taskHistoryList
-                                                                    .isEmpty) {
-                                                                  return const Center(
-                                                                      child: Text(
-                                                                          "No history found."));
-                                                                }
-                                                                return ListView
-                                                                    .builder(
-                                                                  itemCount: provider
-                                                                      .taskHistoryList
-                                                                      .length,
-                                                                  itemBuilder:
-                                                                      (_, index) {
-                                                                    final item =
-                                                                        provider
-                                                                            .taskHistoryList[index];
-                                                                    return Card(
-                                                                      margin: const EdgeInsets
-                                                                          .only(
-                                                                          bottom:
-                                                                              12),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            12),
-                                                                        child:
-                                                                            Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Text(item.statusName ?? '',
-                                                                                style: const TextStyle(fontWeight: FontWeight.bold)),
-                                                                            const SizedBox(height: 6),
-                                                                            Text(item.description ??
-                                                                                ''),
-                                                                            const SizedBox(height: 6),
-                                                                            Text("By: ${item.byUserName ?? ''}",
-                                                                                style: const TextStyle(fontSize: 12)),
-                                                                            Text(item.entryDate ?? '',
-                                                                                style: const TextStyle(fontSize: 11, color: Colors.grey)),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
-                                                          Align(
-                                                            alignment: Alignment
-                                                                .centerRight,
-                                                            child: TextButton(
-                                                              onPressed: () =>
-                                                                  Navigator.pop(
-                                                                      context),
-                                                              child: const Text(
-                                                                  "Close"),
-                                                            ),
-                                                          )
+                                                          if (hasDocs)
+                                                            ...reportsProvider
+                                                                .documentTypeModel
+                                                                .map(
+                                                                    (doc) =>
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              Expanded(
+                                                                                child: Text(doc.documentTypeName ?? '', style: const TextStyle(fontSize: 13)),
+                                                                              ),
+                                                                              InkWell(
+                                                                                onTap: () async {
+                                                                                  await showDialog(
+                                                                                    barrierDismissible: false,
+                                                                                    context: context,
+                                                                                    builder: (context) => ImageUploadAlert(
+                                                                                      customerId: task.customerId.toString(),
+                                                                                      initialDocumentTypeId: doc.documentTypeId,
+                                                                                      initialDocumentTypeName: doc.documentTypeName,
+                                                                                    ),
+                                                                                  );
+                                                                                  // Refresh data after upload
+                                                                                  int sId = selectedStatus.value.statusId ?? 0;
+                                                                                  int tId = selectedStatus.value.taskTypeId ?? 0;
+                                                                                  int cId = task.customerId ?? 0;
+                                                                                  int eId = task.enquiryForId ?? 0;
+                                                                                  reportsProvider.fetchTaskTypes(tId, sId, cId, eId, context);
+                                                                                },
+                                                                                child: Container(
+                                                                                  padding: const EdgeInsets.all(4),
+                                                                                  decoration: BoxDecoration(
+                                                                                    color: AppColors.darkGreen.withOpacity(0.1),
+                                                                                    borderRadius: BorderRadius.circular(4),
+                                                                                  ),
+                                                                                  child: Icon(
+                                                                                    Icons.upload_rounded,
+                                                                                    size: 16,
+                                                                                    color: AppColors.darkGreen,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                          if (hasMandatory)
+                                                            ...reportsProvider
+                                                                .statusData
+                                                                .asMap()
+                                                                .entries
+                                                                .map(
+                                                                    (e) =>
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              vertical: 4),
+                                                                          child: Text(
+                                                                              '${e.key + 1 + (hasDocs ? reportsProvider.documentTypeModel.length : 0)}. ${e.value.taskTypeName}-${e.value.requiredStatuses}',
+                                                                              style: const TextStyle(fontSize: 13)),
+                                                                        )),
                                                         ],
                                                       ),
                                                     ),
+                                                  ],
+                                                )
+                                              : const SizedBox.shrink();
+
+                                          if (!showDate && !showRightList) {
+                                            return const SizedBox.shrink();
+                                          }
+
+                                          if (isSmallScreen) {
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                if (showDate) ...[
+                                                  leftSide,
+                                                  const SizedBox(height: 10)
+                                                ],
+                                                if (showRightList) ...[
+                                                  rightSide,
+                                                  const SizedBox(height: 10)
+                                                ],
+                                              ],
+                                            );
+                                          } else {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 10),
+                                              child: IntrinsicHeight(
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    if (showDate)
+                                                      Expanded(child: leftSide),
+                                                    if (showDate &&
+                                                        showRightList)
+                                                      const SizedBox(width: 16),
+                                                    if (showRightList)
+                                                      Expanded(
+                                                          child: rightSide),
+                                                    if (!showRightList &&
+                                                        showDate)
+                                                      const Expanded(
+                                                          child: SizedBox()),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      );
+                                    },
+                                  ),
+
+                                  // Row 4: Description text area
+                                  Text('Description',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey.shade600,
+                                          fontWeight: FontWeight.w500)),
+                                  const SizedBox(height: 4),
+                                  TextField(
+                                    controller: Provider.of<TaskPageProvider>(
+                                            context,
+                                            listen: false)
+                                        .descriptionController,
+                                    maxLines: 2,
+                                    minLines: 2,
+                                    decoration: const InputDecoration(
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 12),
+                                      enabledBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xFF3B82F6),
+                                            width: 1.5),
+                                      ),
+                                      focusedBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xFF3B82F6),
+                                            width: 2.0),
+                                      ),
+                                      hintText: 'Enter description',
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey, fontSize: 14),
+                                    ),
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Consumer<FormProvider>(
+                                    builder: (context, formProvider, child) {
+                                      if (formProvider
+                                          .isFetchingCustomerForms) {
+                                        return const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 20),
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      final rawForms = formProvider
+                                          .customerForms
+                                          .where((form) {
+                                        return form.id.isNotEmpty &&
+                                            form.id != '0' &&
+                                            form.name.isNotEmpty;
+                                      }).toList();
+
+                                      // Deduplicate locally to ensure "One button per form type"
+                                      // We prefer the "Definition" (instanceId == null) so the button opens a fresh form.
+                                      final Map<String, FormModel> uniqueForms =
+                                          {};
+                                      for (var f in rawForms) {
+                                        if (!uniqueForms.containsKey(f.id)) {
+                                          uniqueForms[f.id] = f;
+                                        } else if (f.instanceId == null &&
+                                            uniqueForms[f.id]!.instanceId !=
+                                                null) {
+                                          uniqueForms[f.id] = f;
+                                        }
+                                      }
+                                      final validForms =
+                                          uniqueForms.values.toList();
+
+                                      if (validForms.isEmpty) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('FORMS',
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.grey.shade600,
+                                                  fontWeight: FontWeight.w600)),
+                                          const SizedBox(height: 8),
+                                          Wrap(
+                                            spacing: 12.0,
+                                            runSpacing: 12.0,
+                                            children: validForms.map((form) {
+                                              return InkWell(
+                                                onTap: () {
+                                                  _showWebFormDialog(
+                                                      context, form, task);
+                                                },
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                child: Container(
+                                                  width: 260,
+                                                  padding:
+                                                      const EdgeInsets.all(12),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white
+                                                        .withOpacity(0.4),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16),
+                                                    border: Border.all(
+                                                      color: Colors.white
+                                                          .withOpacity(0.6),
+                                                      width: 1,
+                                                    ),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.02),
+                                                        blurRadius: 8,
+                                                        offset:
+                                                            const Offset(0, 2),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xFFEEF2F6),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons
+                                                              .description_outlined,
+                                                          color:
+                                                              Color(0xFF1E293B),
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            const Text(
+                                                              "1",
+                                                              style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Color(
+                                                                    0xFF1E293B),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              form.name
+                                                                      .isNotEmpty
+                                                                  ? form.name
+                                                                  : "Attached Form",
+                                                              style: TextStyle(
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade700,
+                                                              ),
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                          const SizedBox(height: 20),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            return ListView(
+                              shrinkWrap: true,
+                              children: [
+                                isSmallScreen
+                                    ? Flexible(
+                                        child: SingleChildScrollView(
+                                            child: formFields))
+                                    : formFields, // No scrolling if large screen!
+
+                                // Row 5: Action buttons aligned to right
+                                ValueListenableBuilder<bool>(
+                                  valueListenable: isSaving,
+                                  builder: (ctx, saving, child) {
+                                    return Container(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          20, 12, 20, 20),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                            top: BorderSide(
+                                                color: Colors.grey.shade200)),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Wrap(
+                                            spacing: 12,
+                                            runSpacing: 12,
+                                            alignment: WrapAlignment.end,
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.center,
+                                            children: [
+                                              OutlinedButton.icon(
+                                                icon: const Icon(Icons.history,
+                                                    size: 16,
+                                                    color: Color(0xFF64748B)),
+                                                label: const Text(
+                                                    "View History",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFF64748B),
+                                                        fontWeight:
+                                                            FontWeight.w600)),
+                                                style: OutlinedButton.styleFrom(
+                                                  side: BorderSide(
+                                                      color:
+                                                          Colors.grey.shade400),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              24)),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 14),
+                                                ),
+                                                onPressed: () async {
+                                                  final provider = Provider.of<
+                                                          TaskPageProvider>(
+                                                      context,
+                                                      listen: false);
+                                                  await provider
+                                                      .fetchTaskHistory(
+                                                          task.userDetailsId ??
+                                                              0,
+                                                          task.taskId ?? 0);
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (_) {
+                                                      return Dialog(
+                                                        insetPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 24),
+                                                        child: Container(
+                                                          width: 500,
+                                                          height: 400,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(20),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              const Text(
+                                                                "Task History",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 16),
+                                                              Expanded(
+                                                                child: Consumer<
+                                                                    TaskPageProvider>(
+                                                                  builder: (_,
+                                                                      provider,
+                                                                      __) {
+                                                                    if (provider
+                                                                        .isHistoryLoading) {
+                                                                      return const Center(
+                                                                          child:
+                                                                              CircularProgressIndicator());
+                                                                    }
+                                                                    if (provider
+                                                                        .taskHistoryList
+                                                                        .isEmpty) {
+                                                                      return const Center(
+                                                                          child:
+                                                                              Text("No history found."));
+                                                                    }
+                                                                    return ListView
+                                                                        .builder(
+                                                                      itemCount: provider
+                                                                          .taskHistoryList
+                                                                          .length,
+                                                                      itemBuilder:
+                                                                          (_, index) {
+                                                                        final item =
+                                                                            provider.taskHistoryList[index];
+                                                                        return Card(
+                                                                          margin: const EdgeInsets
+                                                                              .only(
+                                                                              bottom: 12),
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                const EdgeInsets.all(12),
+                                                                            child:
+                                                                                Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text(item.statusName ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                                                                const SizedBox(height: 6),
+                                                                                Text(item.description ?? ''),
+                                                                                const SizedBox(height: 6),
+                                                                                Text("By: ${item.byUserName ?? ''}", style: const TextStyle(fontSize: 12)),
+                                                                                Text(item.entryDate ?? '', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              ),
+                                                              Align(
+                                                                alignment: Alignment
+                                                                    .centerRight,
+                                                                child:
+                                                                    TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                  child: const Text(
+                                                                      "Close"),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
                                                   );
                                                 },
-                                              );
-                                            },
-                                          ),
-                                          OutlinedButton(
-                                            onPressed: saving
-                                                ? null
-                                                : () {
-                                                    Navigator.of(context)
-                                                        .pop(false);
-                                                  },
-                                            style: OutlinedButton.styleFrom(
-                                              side: BorderSide(color: Colors.grey.shade400),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          24)),
-                                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                                            ),
-                                            child: const Text("Cancel", style: TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: saving
-                                                ? null
-                                                : () async {
-                                                    final provider = Provider
-                                                        .of<TaskPageProvider>(
-                                                            context,
-                                                            listen: false);
-                                                    if (provider.statusData
-                                                        .isNotEmpty) {
-                                                      List<String>
-                                                          incompleteStatuses =
-                                                          provider.statusData
-                                                              .map((status) =>
-                                                                  "${status.taskTypeName}-${status.requiredStatuses}")
-                                                              .toList();
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
+                                              ),
+                                              OutlinedButton(
+                                                onPressed: saving
+                                                    ? null
+                                                    : () {
+                                                        Navigator.of(context)
+                                                            .pop(false);
+                                                      },
+                                                style: OutlinedButton.styleFrom(
+                                                  side: BorderSide(
+                                                      color:
+                                                          Colors.grey.shade400),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              24)),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 14),
+                                                ),
+                                                child: const Text("Cancel",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFF64748B),
+                                                        fontWeight:
+                                                            FontWeight.w600)),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: saving
+                                                    ? null
+                                                    : () async {
+                                                        final provider = Provider
+                                                            .of<TaskPageProvider>(
+                                                                context,
+                                                                listen: false);
+                                                        if (provider.statusData
+                                                            .isNotEmpty) {
+                                                          List<String>
+                                                              incompleteStatuses =
+                                                              provider
+                                                                  .statusData
+                                                                  .map((status) =>
+                                                                      "${status.taskTypeName}-${status.requiredStatuses}")
+                                                                  .toList();
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return AlertDialog(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             15)),
-                                                            titlePadding:
-                                                                const EdgeInsets
-                                                                    .fromLTRB(
-                                                                    24,
-                                                                    24,
-                                                                    24,
-                                                                    8),
-                                                            contentPadding:
-                                                                const EdgeInsets
-                                                                    .fromLTRB(
-                                                                    24,
-                                                                    0,
-                                                                    24,
-                                                                    16),
-                                                            actionsPadding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        16,
-                                                                    vertical:
-                                                                        10),
-                                                            title: Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .warning_amber_rounded,
-                                                                    color: AppColors
-                                                                        .darkGreen),
-                                                                const SizedBox(
-                                                                    width: 10),
-                                                                const Text(
-                                                                    "Required Status Incomplete",
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            20)),
-                                                              ],
-                                                            ),
-                                                            content: Container(
-                                                              width: 450,
-                                                              constraints:
-                                                                  const BoxConstraints(
+                                                                titlePadding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        24,
+                                                                        24,
+                                                                        24,
+                                                                        8),
+                                                                contentPadding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        24,
+                                                                        0,
+                                                                        24,
+                                                                        16),
+                                                                actionsPadding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                        horizontal:
+                                                                            16,
+                                                                        vertical:
+                                                                            10),
+                                                                title: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .warning_amber_rounded,
+                                                                        color: AppColors
+                                                                            .darkGreen),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
+                                                                    const Text(
+                                                                        "Required Status Incomplete",
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize: 20)),
+                                                                  ],
+                                                                ),
+                                                                content:
+                                                                    Container(
+                                                                  width: 450,
+                                                                  constraints: const BoxConstraints(
                                                                       maxWidth:
                                                                           400,
                                                                       maxHeight:
                                                                           700),
-                                                              child: ListView(
-                                                                shrinkWrap:
-                                                                    true,
-                                                                children: [
-                                                                  const Text(
-                                                                      "Any one of the following required statuses must be completed for the corresponding task before saving:",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              16)),
-                                                                  const SizedBox(
-                                                                      height:
-                                                                          10),
-                                                                  ...incompleteStatuses
-                                                                      .map((s) =>
-                                                                          Padding(
-                                                                            padding:
-                                                                                const EdgeInsets.only(bottom: 8.0),
-                                                                            child:
-                                                                                Row(
-                                                                              children: [
-                                                                                const Icon(Icons.error_outline, color: Colors.red, size: 18),
-                                                                                const SizedBox(width: 8),
-                                                                                Expanded(child: Text(s)),
-                                                                              ],
-                                                                            ),
-                                                                          )),
+                                                                  child:
+                                                                      ListView(
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    children: [
+                                                                      const Text(
+                                                                          "Any one of the following required statuses must be completed for the corresponding task before saving:",
+                                                                          style:
+                                                                              TextStyle(fontSize: 16)),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              10),
+                                                                      ...incompleteStatuses.map(
+                                                                          (s) =>
+                                                                              Padding(
+                                                                                padding: const EdgeInsets.only(bottom: 8.0),
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    const Icon(Icons.error_outline, color: Colors.red, size: 18),
+                                                                                    const SizedBox(width: 8),
+                                                                                    Expanded(child: Text(s)),
+                                                                                  ],
+                                                                                ),
+                                                                              )),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    style: TextButton
+                                                                        .styleFrom(
+                                                                      foregroundColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      backgroundColor:
+                                                                          AppColors
+                                                                              .darkGreen,
+                                                                      shape: RoundedRectangleBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8)),
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              20,
+                                                                          vertical:
+                                                                              10),
+                                                                    ),
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(),
+                                                                    child:
+                                                                        const Text(
+                                                                            "OK"),
+                                                                  ),
                                                                 ],
-                                                              ),
-                                                            ),
-                                                            actions: [
-                                                              TextButton(
-                                                                style: TextButton
-                                                                    .styleFrom(
-                                                                  foregroundColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  backgroundColor:
-                                                                      AppColors
-                                                                          .darkGreen,
-                                                                  shape: RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8)),
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          20,
-                                                                      vertical:
-                                                                          10),
-                                                                ),
-                                                                onPressed: () =>
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(),
-                                                                child:
-                                                                    const Text(
-                                                                        "OK"),
-                                                              ),
-                                                            ],
+                                                              );
+                                                            },
                                                           );
-                                                        },
-                                                      );
-                                                      return;
-                                                    }
-
-                                                    if (provider
-                                                        .documentTypeModel
-                                                        .isEmpty) {
-                                                      isSaving.value = true;
-                                                      try {
-                                                        bool isSuccess = await provider
-                                                            .changeTaskStatus(
-                                                                context,
-                                                                selectedStatus
-                                                                    .value,
-                                                                task.taskId,
-                                                                task.locationTracking ==
-                                                                        1
-                                                                    ? await provider
-                                                                        .getCurrentLocation()
-                                                                    : null);
-
-                                                        if (!context.mounted) {
                                                           return;
                                                         }
 
-                                                        if (isSuccess) {
-                                                          Navigator.pop(
-                                                              context, true);
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                                  const SnackBar(
-                                                                      content: Text(
-                                                                          "Task status updated successfully")));
+                                                        if (provider
+                                                            .documentTypeModel
+                                                            .isEmpty) {
+                                                          isSaving.value = true;
+                                                          try {
+                                                            bool isSuccess = await provider
+                                                                .changeTaskStatus(
+                                                                    context,
+                                                                    selectedStatus
+                                                                        .value,
+                                                                    task.taskId,
+                                                                    task.locationTracking ==
+                                                                            1
+                                                                        ? await provider
+                                                                            .getCurrentLocation()
+                                                                        : null);
+
+                                                            if (!context
+                                                                .mounted) {
+                                                              return;
+                                                            }
+
+                                                            if (isSuccess) {
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  true);
+                                                              ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      const SnackBar(
+                                                                          content:
+                                                                              Text("Task status updated successfully")));
+                                                            } else {
+                                                              isSaving.value =
+                                                                  false;
+                                                              ScaffoldMessenger
+                                                                      .of(
+                                                                          context)
+                                                                  .showSnackBar(
+                                                                      const SnackBar(
+                                                                          content:
+                                                                              Text("Failed to update status")));
+                                                            }
+                                                          } catch (e) {
+                                                            if (!context
+                                                                .mounted) {
+                                                              return;
+                                                            }
+                                                            isSaving.value =
+                                                                false;
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    const SnackBar(
+                                                                        content:
+                                                                            Text("Server timeout. Try again")));
+                                                          }
                                                         } else {
-                                                          isSaving.value =
-                                                              false;
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                                  const SnackBar(
-                                                                      content: Text(
-                                                                          "Failed to update status")));
-                                                        }
-                                                      } catch (e) {
-                                                        if (!context.mounted) {
-                                                          return;
-                                                        }
-                                                        isSaving.value = false;
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                                const SnackBar(
-                                                                    content: Text(
-                                                                        "Server timeout. Try again")));
-                                                      }
-                                                    } else {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return AlertDialog(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             15)),
-                                                            titlePadding:
-                                                                const EdgeInsets
-                                                                    .fromLTRB(
-                                                                    24,
-                                                                    24,
-                                                                    24,
-                                                                    8),
-                                                            contentPadding:
-                                                                const EdgeInsets
-                                                                    .fromLTRB(
-                                                                    24,
-                                                                    0,
-                                                                    24,
-                                                                    16),
-                                                            actionsPadding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        16,
-                                                                    vertical:
-                                                                        10),
-                                                            title: Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .warning_amber_rounded,
-                                                                    color: AppColors
-                                                                        .darkGreen),
-                                                                const SizedBox(
-                                                                    width: 10),
-                                                                const Text(
-                                                                    "Unable to Save",
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            20)),
-                                                              ],
-                                                            ),
-                                                            content: const Text(
-                                                                "Documents Not Uploaded",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16)),
-                                                            actions: [
-                                                              TextButton(
-                                                                style: TextButton
-                                                                    .styleFrom(
-                                                                  foregroundColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  backgroundColor:
-                                                                      AppColors
-                                                                          .darkGreen,
-                                                                  shape: RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8)),
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          20,
-                                                                      vertical:
-                                                                          10),
-                                                                ),
-                                                                onPressed: () =>
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(),
-                                                                child:
+                                                                titlePadding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        24,
+                                                                        24,
+                                                                        24,
+                                                                        8),
+                                                                contentPadding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        24,
+                                                                        0,
+                                                                        24,
+                                                                        16),
+                                                                actionsPadding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                        horizontal:
+                                                                            16,
+                                                                        vertical:
+                                                                            10),
+                                                                title: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .warning_amber_rounded,
+                                                                        color: AppColors
+                                                                            .darkGreen),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10),
                                                                     const Text(
-                                                                        "OK"),
-                                                              ),
-                                                            ],
+                                                                        "Unable to Save",
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize: 20)),
+                                                                  ],
+                                                                ),
+                                                                content: const Text(
+                                                                    "Documents Not Uploaded",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16)),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    style: TextButton
+                                                                        .styleFrom(
+                                                                      foregroundColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      backgroundColor:
+                                                                          AppColors
+                                                                              .darkGreen,
+                                                                      shape: RoundedRectangleBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8)),
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              20,
+                                                                          vertical:
+                                                                              10),
+                                                                    ),
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(),
+                                                                    child:
+                                                                        const Text(
+                                                                            "OK"),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
                                                           );
-                                                        },
-                                                      );
-                                                    }
-                                                  },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: const Color(0xFF3B82F6),
-                                              foregroundColor: Colors.white,
-                                              shadowColor: const Color(0xFF3B82F6).withOpacity(0.4),
-                                              elevation: 4,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          24)),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                                        }
+                                                      },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      const Color(0xFF3B82F6),
+                                                  foregroundColor: Colors.white,
+                                                  shadowColor:
+                                                      const Color(0xFF3B82F6)
+                                                          .withOpacity(0.4),
+                                                  elevation: 4,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              24)),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 28,
                                                       vertical: 14),
-                                            ),
-                                            child: saving
-                                                ? const SizedBox(
-                                                    width: 16,
-                                                    height: 16,
-                                                    child: CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        valueColor:
-                                                            AlwaysStoppedAnimation<
-                                                                    Color>(
-                                                                Colors.white)),
-                                                  )
-                                                : const Text('Save', style: TextStyle(fontWeight: FontWeight.bold)),
+                                                ),
+                                                child: saving
+                                                    ? const SizedBox(
+                                                        width: 16,
+                                                        height: 16,
+                                                        child: CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            valueColor:
+                                                                AlwaysStoppedAnimation<
+                                                                        Color>(
+                                                                    Colors
+                                                                        .white)),
+                                                      )
+                                                    : const Text('Save',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      }
-                    },
-                  ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    );
+        );
       },
     );
   }
@@ -4145,7 +4206,8 @@ class _tasksPageReportState extends State<TaskPage> {
             ),
             hintText: 'DD MMM YYYY',
             hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-            suffixIcon: const Icon(Icons.calendar_today, color: Color(0xFF3B82F6)),
+            suffixIcon:
+                const Icon(Icons.calendar_today, color: Color(0xFF3B82F6)),
           ),
           style: const TextStyle(fontSize: 14),
         ),
@@ -4221,7 +4283,7 @@ class _tasksPageReportState extends State<TaskPage> {
     required VoidCallback onTap,
   }) {
     const Color statusColor = Color(0xFF3B82F6);
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(24),

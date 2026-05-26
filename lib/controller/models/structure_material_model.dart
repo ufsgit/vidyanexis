@@ -14,7 +14,7 @@ class StructureMaterialItem {
   // Convert to JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'id': id ?? 0,
       'Items': items,
       'Qty': qty,
       'Brand': brand,
