@@ -428,19 +428,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   .toList();
 
                               if (forms.isEmpty) {
-                                return const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  child: Center(
-                                    child: Text(
-                                      'No forms available for this status',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 13,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ),
-                                );
+                                return const SizedBox.shrink();
                               }
 
                               // Deduplicate forms locally for this dialog to ensure "One button per form type"

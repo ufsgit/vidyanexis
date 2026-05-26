@@ -22,6 +22,7 @@ import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_history_dialog.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LeadCard extends StatefulWidget {
   final SearchLeadModel lead;
@@ -900,9 +901,9 @@ class _LeadCardState extends State<LeadCard> {
                                   );
                                 }
                               },
-                              icon: Icons.chat_bubble_outline,
+                              icon: FontAwesomeIcons.whatsapp,
                               text: 'Chat',
-                              color: Colors.blue,
+                              color: AppColors.textGreen,
                             ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsViewMap[95] == 1)
@@ -1107,7 +1108,7 @@ class _LeadCardState extends State<LeadCard> {
 
   Widget _buildActionButton(
       {required VoidCallback onTap,
-      required IconData icon,
+      required dynamic icon,
       required String text,
       required Color color}) {
     return Expanded(
