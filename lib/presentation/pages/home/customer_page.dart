@@ -499,6 +499,47 @@ class _CustomerPageState extends State<CustomerPage> {
                       _buildAssignedStaffFilter(customerProvider),
                       _buildEnquiryForFilter(customerProvider),
                       _buildEnquirySourceFilter(customerProvider),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: customerProvider.entryType != 'all'
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('Entry Type: ',
+                                style: TextStyle(fontSize: 14)),
+                            DropdownButton<String>(
+                              value: customerProvider.entryType,
+                              items: const [
+                                DropdownMenuItem<String>(
+                                  value: 'all',
+                                  child: Text('All', style: TextStyle(fontSize: 14)),
+                                ),
+                                DropdownMenuItem<String>(
+                                  value: 'myown',
+                                  child: Text('My Own', style: TextStyle(fontSize: 14)),
+                                ),
+                              ],
+                              onChanged: (String? newValue) {
+                                if (newValue != null) {
+                                  customerProvider.setEntryType(newValue);
+                                  customerProvider.getSearchCustomers(context, isSilent: true);
+                                }
+                              },
+                              underline: Container(),
+                              isDense: true,
+                              iconSize: 18,
+                            ),
+                          ],
+                        ),
+                      ),
                       if (customerProvider.fromDate != null ||
                           customerProvider.toDate != null ||
                           (customerProvider.selectedStatusIds.isNotEmpty &&
@@ -514,6 +555,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           onPressed: () {
                             customerProvider.selectDateFilterOption(null);
                             customerProvider.removeStatus();
+                            customerProvider.setEntryType('myown');
                             searchController.clear();
                             customerProvider.setSearchCriteria('', '', '');
                             customerProvider.getSearchCustomers(context,

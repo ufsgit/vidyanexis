@@ -62,6 +62,14 @@ class TaskPageProvider extends ChangeNotifier {
   String get AssignedTo => _AssignedTo;
   String get TaskType => _TaskType;
   String get enquiryForS => _enquiryForS;
+
+  String _entryType = 'myown';
+  String get entryType => _entryType;
+  void setEntryType(String value) {
+    _entryType = value;
+    notifyListeners();
+  }
+
   int? _selectedStatus;
   int? _selectedAMCStatus;
   int? _selectedUser;
@@ -474,6 +482,7 @@ class TaskPageProvider extends ChangeNotifier {
     _AssignedTo = '';
     _TaskType = '';
     _enquiryForS = '';
+    _entryType = 'myown';
     _isFilter = false;
     _pageIndex = 1;
     notifyListeners();
@@ -537,7 +546,7 @@ class TaskPageProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Page_Index=$_pageIndex&PageSize=$_pageSize&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -613,7 +622,7 @@ class TaskPageProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.exportTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS',
+              '${HttpUrls.exportTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Entry_Type_=$_entryType',
           returnBytes: true);
 
       Loader.stopLoader(context);

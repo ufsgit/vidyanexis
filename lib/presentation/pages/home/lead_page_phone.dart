@@ -424,6 +424,34 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           ],
                           const SizedBox(height: 16),
                           CustomText(
+                            'Entry Type',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlack,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              FilterChipWidget(
+                                label: 'All',
+                                isSelected: leadProvider.entryType == 'all',
+                                onTap: () {
+                                  leadProvider.setEntryType('all');
+                                },
+                              ),
+                              FilterChipWidget(
+                                label: 'My Own',
+                                isSelected: leadProvider.entryType == 'myown',
+                                onTap: () {
+                                  leadProvider.setEntryType('myown');
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          CustomText(
                             'Enquiry For',
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

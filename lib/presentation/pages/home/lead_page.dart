@@ -700,6 +700,49 @@ class _LeadsPageState extends State<LeadPage> {
                     ],
                     _buildEnquiryForFilter(leadProvider),
                     _buildEnquirySourceFilter(leadProvider),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: leadProvider.entryType != 'all'
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Entry Type: ',
+                              style: TextStyle(fontSize: 14)),
+                          DropdownButton<String>(
+                            value: leadProvider.entryType,
+                            hint: const Text('All',
+                                style: TextStyle(fontSize: 14)),
+                            items: const [
+                              DropdownMenuItem<String>(
+                                value: 'all',
+                                child: Text('All', style: TextStyle(fontSize: 14)),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'myown',
+                                child: Text('My Own', style: TextStyle(fontSize: 14)),
+                              ),
+                            ],
+                            onChanged: (String? newValue) {
+                              if (newValue != null) {
+                                leadProvider.setEntryType(newValue);
+                                leadProvider.getSearchLeads(context);
+                              }
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
                     if (leadProvider.fromDate != null ||
                         leadProvider.toDate != null ||
                         (leadProvider.selectedStatus != null &&
@@ -715,6 +758,7 @@ class _LeadsPageState extends State<LeadPage> {
                         onPressed: () {
                           leadProvider.selectDateFilterOption(null);
                           leadProvider.toggleStatus(0); // Reset status to [0]
+                          leadProvider.setEntryType('myown');
                           searchController.clear();
                           leadIdController.clear();
                           leadProvider.setSearchCriteria('', '', '',

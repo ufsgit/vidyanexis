@@ -70,6 +70,14 @@ class CustomerProvider extends ChangeNotifier {
   String get fromDateS => _fromDateS;
   String get toDateS => _toDateS;
   String get status => _status;
+  
+  String _entryType = 'myown';
+  String get entryType => _entryType;
+  void setEntryType(String value) {
+    _entryType = value;
+    notifyListeners();
+  }
+
   int? expandedIndex;
 
   int _selectedSortOption = 0; // 0: Default, 1: ID, 2: Creation Date, 3: Followup Date
@@ -150,7 +158,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -236,6 +244,7 @@ class CustomerProvider extends ChangeNotifier {
     _toDateS = '';
     _search = '';
     _status = '0';
+    _entryType = 'myown';
     _selectedDateFilterIndex = null;
     _isFilter = false;
     notifyListeners();
@@ -442,7 +451,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -505,7 +514,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;

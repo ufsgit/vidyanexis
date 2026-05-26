@@ -298,6 +298,34 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 16),
+                          CustomText(
+                            'Entry Type',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlack,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              FilterChipWidget(
+                                label: 'All',
+                                isSelected: customerProvider.entryType == 'all',
+                                onTap: () {
+                                  customerProvider.setEntryType('all');
+                                },
+                              ),
+                              FilterChipWidget(
+                                label: 'My Own',
+                                isSelected: customerProvider.entryType == 'myown',
+                                onTap: () {
+                                  customerProvider.setEntryType('myown');
+                                },
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 24),
                           if (customerProvider.fromDate != null ||
                               customerProvider.toDate != null ||
