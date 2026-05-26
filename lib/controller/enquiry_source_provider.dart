@@ -13,6 +13,8 @@ class EnquirySourceProvider extends ChangeNotifier {
 
   List<EnquirySourceReportModel> _enquiryReport = [];
   List<EnquirySourceReportModel> get enquiryReport => _enquiryReport;
+
+  // Creation Date variables
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -22,24 +24,42 @@ class EnquirySourceProvider extends ChangeNotifier {
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
 
+  // Conversion Date variables
+  DateTime? _conversionFromDate;
+  DateTime? _conversionToDate;
+  String _formattedConversionFromDate = '';
+  String _formattedConversionToDate = '';
+  String get formattedConversionFromDate => _formattedConversionFromDate;
+  String get formattedConversionToDate => _formattedConversionToDate;
+  DateTime? get conversionFromDate => _conversionFromDate;
+  DateTime? get conversionToDate => _conversionToDate;
+
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
   String _fromDateS = '';
   String _toDateS = '';
+  String _conversionFromDateS = '';
+  String _conversionToDateS = '';
   String _Status = '';
   String _AssignedTo = '';
 
   String get Search => _Search;
   String get fromDateS => _fromDateS;
   String get toDateS => _toDateS;
+  String get conversionFromDateS => _conversionFromDateS;
+  String get conversionToDateS => _conversionToDateS;
   String get Status => _Status;
   String get AssignedTo => _AssignedTo;
+
   int? _selectedStatus;
   int? _selectedAMCStatus;
   int? _selectedUser;
   int? _selectedDateFilterIndex;
+  int? _selectedConversionDateFilterIndex;
+
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+  int? get selectedConversionDateFilterIndex => _selectedConversionDateFilterIndex;
   int? get selectedStatus => _selectedStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
@@ -60,64 +80,96 @@ class EnquirySourceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectDateFilterOption(int? index) {
-    if (index == null) {
-      // If the index is null, we are clearing the filter
-      _selectedDateFilterIndex = null; // Reset to the default "no filter" state
-      _fromDate = null;
-      _toDate = null;
-      _formattedFromDate = '';
-      _formattedToDate = '';
+  void selectDateFilterOption(int? index, {bool isConversion = false}) {
+    if (isConversion) {
+      if (index == null) {
+        _selectedConversionDateFilterIndex = null;
+        _conversionFromDate = null;
+        _conversionToDate = null;
+        _formattedConversionFromDate = '';
+        _formattedConversionToDate = '';
+      } else {
+        _selectedConversionDateFilterIndex = index;
+        formatDate();
+      }
     } else {
-      _selectedDateFilterIndex = index; // Set the new selected filter index
-      formatDate();
+      if (index == null) {
+        _selectedDateFilterIndex = null;
+        _fromDate = null;
+        _toDate = null;
+        _formattedFromDate = '';
+        _formattedToDate = '';
+      } else {
+        _selectedDateFilterIndex = index;
+        formatDate();
+      }
     }
     notifyListeners();
   }
 
-  void setDateFilter(String title) {
+  void setDateFilter(String title, {bool isConversion = false}) {
     final now = DateTime.now();
+    DateTime? from;
+    DateTime? to;
 
     switch (title) {
       case 'Yesterday':
-        _fromDate = now.subtract(const Duration(days: 1));
-        _toDate = now.subtract(const Duration(days: 1));
+        from = now.subtract(const Duration(days: 1));
+        to = now.subtract(const Duration(days: 1));
         break;
       case 'Today':
-        _fromDate = now;
-        _toDate = now;
+        from = now;
+        to = now;
         break;
       case 'Tomorrow':
-        _fromDate = now.add(const Duration(days: 1));
-        _toDate = now.add(const Duration(days: 1));
+        from = now.add(const Duration(days: 1));
+        to = now.add(const Duration(days: 1));
         break;
       case 'This Week':
-        _fromDate = now.subtract(Duration(days: now.weekday - 1));
-        _toDate = now.add(Duration(days: 7 - now.weekday));
+        from = now.subtract(Duration(days: now.weekday - 1));
+        to = now.add(Duration(days: 7 - now.weekday));
         break;
       case 'This Month':
-        _fromDate = DateTime(now.year, now.month, 1);
-        _toDate = DateTime(now.year, now.month + 1, 0);
+        from = DateTime(now.year, now.month, 1);
+        to = DateTime(now.year, now.month + 1, 0);
         break;
       default:
-        _fromDate = null;
-        _toDate = null;
+        from = null;
+        to = null;
         break;
     }
 
-    notifyListeners(); // Notify listeners to rebuild the UI
+    if (isConversion) {
+      _conversionFromDate = from;
+      _conversionToDate = to;
+    } else {
+      _fromDate = from;
+      _toDate = to;
+    }
+
+    notifyListeners();
   }
 
-  void setFromDate(DateTime date) {
-    _fromDate = date;
-    _selectedDateFilterIndex = -1;
+  void setFromDate(DateTime date, {bool isConversion = false}) {
+    if (isConversion) {
+      _conversionFromDate = date;
+      _selectedConversionDateFilterIndex = -1;
+    } else {
+      _fromDate = date;
+      _selectedDateFilterIndex = -1;
+    }
     formatDate();
     notifyListeners();
   }
 
-  void setToDate(DateTime date) {
-    _toDate = date;
-    _selectedDateFilterIndex = -1;
+  void setToDate(DateTime date, {bool isConversion = false}) {
+    if (isConversion) {
+      _conversionToDate = date;
+      _selectedConversionDateFilterIndex = -1;
+    } else {
+      _toDate = date;
+      _selectedDateFilterIndex = -1;
+    }
     formatDate();
     notifyListeners();
   }
@@ -134,23 +186,44 @@ class EnquirySourceProvider extends ChangeNotifier {
     } else {
       _formattedToDate = '';
     }
+
+    if (conversionFromDate != null) {
+      _formattedConversionFromDate = DateFormat('yyyy-MM-dd').format(conversionFromDate!);
+    } else {
+      _formattedConversionFromDate = '';
+    }
+
+    if (conversionToDate != null) {
+      _formattedConversionToDate = DateFormat('yyyy-MM-dd').format(conversionToDate!);
+    } else {
+      _formattedConversionToDate = '';
+    }
   }
 
-  Future<void> selectDate(BuildContext context, bool isFromDate) async {
+  Future<void> selectDate(BuildContext context, bool isFromDate, {bool isConversion = false}) async {
+    DateTime? initialDate;
+    if (isConversion) {
+      initialDate = isFromDate
+          ? (_conversionFromDate ?? DateTime.now())
+          : (_conversionToDate ?? DateTime.now());
+    } else {
+      initialDate = isFromDate
+          ? (_fromDate ?? DateTime.now())
+          : (_toDate ?? DateTime.now());
+    }
+
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: isFromDate
-          ? (_fromDate ?? DateTime.now())
-          : (_toDate ?? DateTime.now()),
-      firstDate: DateTime(2000), // Minimum date
-      lastDate: DateTime(2101), // Maximum date
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
     );
 
     if (pickedDate != null) {
       if (isFromDate) {
-        setFromDate(pickedDate); // Set the 'from' date in provider
+        setFromDate(pickedDate, isConversion: isConversion);
       } else {
-        setToDate(pickedDate); // Set the 'to' date in provider
+        setToDate(pickedDate, isConversion: isConversion);
       }
     }
     notifyListeners();
@@ -159,32 +232,45 @@ class EnquirySourceProvider extends ChangeNotifier {
   void setStatus(int newStatus) {
     _selectedStatus = newStatus;
     print(_selectedStatus.toString());
-    notifyListeners(); // Notify listeners about the change
+    notifyListeners();
   }
 
   void setUserFilterStatus(int newStatus) {
     _selectedUser = newStatus;
     print(_selectedUser.toString());
-    notifyListeners(); // Notify listeners about the change
+    notifyListeners();
   }
 
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
     _selectedDateFilterIndex = null;
+    _selectedConversionDateFilterIndex = null;
     _fromDateS = '';
     _toDateS = '';
+    _conversionFromDateS = '';
+    _conversionToDateS = '';
+    _fromDate = null;
+    _toDate = null;
+    _conversionFromDate = null;
+    _conversionToDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
+    _formattedConversionFromDate = '';
+    _formattedConversionToDate = '';
     notifyListeners();
   }
 
   void setTaskSearchCriteria(String search, String fromDate, String toDate,
-      String status, String assignedTo) {
+      String status, String assignedTo, {String conversionFromDate = '', String conversionToDate = ''}) {
     _Search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
     _Status = status;
     _AssignedTo = assignedTo;
-    notifyListeners(); // Notify listeners so that UI can rebuild
+    _conversionFromDateS = conversionFromDate;
+    _conversionToDateS = conversionToDate;
+    notifyListeners();
   }
 
   //work report
@@ -221,8 +307,6 @@ class EnquirySourceProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          // log(data.toString());
-
           _taskReport = (data as List<dynamic>)
               .map((item) => WorkSummaryModel.fromJson(item))
               .toList();
@@ -253,21 +337,12 @@ class EnquirySourceProvider extends ChangeNotifier {
       }
       print(_fromDateS);
       print(_toDateS);
-      String isDate = "0";
-      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
-      }
+      print(_conversionFromDateS);
+      print(_conversionToDateS);
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.getLeadReportByEnquirySource}?from_date=$_fromDateS&to_date=$_toDateS');
+              '${HttpUrls.getLeadReportByEnquirySource}?from_date=$_fromDateS&to_date=$_toDateS&conversion_from_date=$_conversionFromDateS&conversion_to_date=$_conversionToDateS');
       if (response.statusCode == 200) {
         final data = response.data;
 
@@ -325,8 +400,6 @@ class EnquirySourceProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          // log(data.toString());
-
           _taskReport = (data as List<dynamic>)
               .map((item) => WorkSummaryModel.fromJson(item))
               .toList();

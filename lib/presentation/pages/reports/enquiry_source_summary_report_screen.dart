@@ -30,7 +30,7 @@ class _EnquirySourceSummaryReportScreenState
       final reportsProvider =
           Provider.of<EnquirySourceProvider>(context, listen: false);
       reportsProvider.resetExpandedStates();
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+      reportsProvider.setTaskSearchCriteria('', '', '', '', '', conversionFromDate: '', conversionToDate: '');
       reportsProvider.getEnquirySummary(context);
     });
   }
@@ -184,6 +184,8 @@ class _EnquirySourceSummaryReportScreenState
                       reportsProvider.formattedToDate,
                       reportsProvider.Status,
                       reportsProvider.AssignedTo,
+                      conversionFromDate: reportsProvider.formattedConversionFromDate,
+                      conversionToDate: reportsProvider.formattedConversionToDate,
                     );
                     reportsProvider.getEnquirySummary(context);
                     reportsProvider.toggleFilter();
@@ -212,7 +214,7 @@ class _EnquirySourceSummaryReportScreenState
         children: [
           const SizedBox(height: 8),
           CustomText(
-            'Date Range',
+            'Creation Date (Entry Date)',
             fontSize: 16,
             fontWeight: FontWeight.bold,
             color: AppColors.textBlack,
@@ -226,7 +228,7 @@ class _EnquirySourceSummaryReportScreenState
                   toDate: reportsProvider.toDate?.toString(),
                   formattedFromDate: reportsProvider.formattedFromDate,
                   formattedToDate: reportsProvider.formattedToDate,
-                  onTap: () => onClickTopButton(context),
+                  onTap: () => onClickTopButton(context, isConversion: false),
                   label: 'Entry Date',
                 ),
               ),
@@ -235,15 +237,56 @@ class _EnquirySourceSummaryReportScreenState
                 const SizedBox(width: 12),
                 CommonReportResetButton(
                   onReset: () {
-                    reportsProvider.selectDateFilterOption(null);
-                    reportsProvider.removeStatus();
-                    searchController.clear();
+                    reportsProvider.selectDateFilterOption(null, isConversion: false);
                     reportsProvider.setTaskSearchCriteria(
+                      searchController.text,
                       '',
                       '',
-                      '',
-                      '',
-                      '',
+                      reportsProvider.Status,
+                      reportsProvider.AssignedTo,
+                      conversionFromDate: reportsProvider.formattedConversionFromDate,
+                      conversionToDate: reportsProvider.formattedConversionToDate,
+                    );
+                    reportsProvider.getEnquirySummary(context);
+                  },
+                ),
+              ]
+            ],
+          ),
+          const SizedBox(height: 24),
+          CustomText(
+            'Conversion Date (Registered Date)',
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textBlack,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: CommonReportDateFilter(
+                  fromDate: reportsProvider.conversionFromDate?.toString(),
+                  toDate: reportsProvider.conversionToDate?.toString(),
+                  formattedFromDate: reportsProvider.formattedConversionFromDate,
+                  formattedToDate: reportsProvider.formattedToDate,
+                  onTap: () => onClickTopButton(context, isConversion: true),
+                  label: 'Registered Date',
+                ),
+              ),
+              if (reportsProvider.conversionFromDate != null ||
+                  reportsProvider.conversionToDate != null) ...[
+                const SizedBox(width: 12),
+                CommonReportResetButton(
+                  onReset: () {
+                    reportsProvider.selectDateFilterOption(null, isConversion: true);
+                    reportsProvider.setTaskSearchCriteria(
+                      searchController.text,
+                      reportsProvider.formattedFromDate,
+                      reportsProvider.formattedToDate,
+                      reportsProvider.Status,
+                      reportsProvider.AssignedTo,
+                      conversionFromDate: '',
+                      conversionToDate: '',
                     );
                     reportsProvider.getEnquirySummary(context);
                   },
@@ -252,16 +295,18 @@ class _EnquirySourceSummaryReportScreenState
             ],
           ),
           const SizedBox(height: 40),
-          if (reportsProvider.fromDate != null || reportsProvider.toDate != null)
+          if (reportsProvider.fromDate != null ||
+              reportsProvider.toDate != null ||
+              reportsProvider.conversionFromDate != null ||
+              reportsProvider.conversionToDate != null)
             SizedBox(
               width: double.infinity,
               child: CommonReportResetButton(
                 label: 'Reset All Filters',
                 onReset: () {
-                  reportsProvider.selectDateFilterOption(null);
                   reportsProvider.removeStatus();
                   searchController.clear();
-                  reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+                  reportsProvider.setTaskSearchCriteria('', '', '', '', '', conversionFromDate: '', conversionToDate: '');
                   reportsProvider.getEnquirySummary(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -651,12 +696,24 @@ class _EnquirySourceSummaryReportScreenState
     );
   }
 
-  void onClickTopButton(BuildContext context) {
+  void onClickTopButton(BuildContext context, {bool isConversion = false}) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (contextx) => Consumer<EnquirySourceProvider>(
         builder: (contextx, reportsProvider, child) {
+          final isSelectedOption = isConversion
+              ? reportsProvider.selectedConversionDateFilterIndex
+              : reportsProvider.selectedDateFilterIndex;
+          
+          final currentFromDate = isConversion
+              ? reportsProvider.conversionFromDate
+              : reportsProvider.fromDate;
+          
+          final currentToDate = isConversion
+              ? reportsProvider.conversionToDate
+              : reportsProvider.toDate;
+
           return AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
@@ -686,12 +743,11 @@ class _EnquirySourceSummaryReportScreenState
                       children: List<Widget>.generate(dateButtonTitles.length,
                           (index) {
                         String title = dateButtonTitles[index];
-                        final bool isSelected =
-                            reportsProvider.selectedDateFilterIndex == index;
+                        final bool isSelected = isSelectedOption == index;
                         return ChoiceChip(
                           onSelected: (_) {
-                            reportsProvider.setDateFilter(title);
-                            reportsProvider.selectDateFilterOption(index);
+                            reportsProvider.setDateFilter(title, isConversion: isConversion);
+                            reportsProvider.selectDateFilterOption(index, isConversion: isConversion);
                           },
                           selected: isSelected,
                           shape: RoundedRectangleBorder(
@@ -734,7 +790,7 @@ class _EnquirySourceSummaryReportScreenState
                           child: TextField(
                             readOnly: true,
                             onTap: () =>
-                                reportsProvider.selectDate(context, true),
+                                reportsProvider.selectDate(context, true, isConversion: isConversion),
                             style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
@@ -747,8 +803,8 @@ class _EnquirySourceSummaryReportScreenState
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
-                              hintText: reportsProvider.fromDate != null
-                                  ? '${reportsProvider.fromDate!.toLocal()}'
+                              hintText: currentFromDate != null
+                                  ? '${currentFromDate.toLocal()}'
                                       .split(' ')[0]
                                   : 'From',
                               hintStyle: GoogleFonts.plusJakartaSans(
@@ -765,7 +821,7 @@ class _EnquirySourceSummaryReportScreenState
                           child: TextField(
                             readOnly: true,
                             onTap: () =>
-                                reportsProvider.selectDate(context, false),
+                                reportsProvider.selectDate(context, false, isConversion: isConversion),
                             style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
@@ -778,8 +834,8 @@ class _EnquirySourceSummaryReportScreenState
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
-                              hintText: reportsProvider.toDate != null
-                                  ? '${reportsProvider.toDate!.toLocal()}'
+                              hintText: currentToDate != null
+                                  ? '${currentToDate.toLocal()}'
                                       .split(' ')[0]
                                   : 'To',
                               hintStyle: GoogleFonts.plusJakartaSans(
@@ -807,12 +863,16 @@ class _EnquirySourceSummaryReportScreenState
                               reportsProvider.selectedUser.toString();
                           String fromDate = reportsProvider.formattedFromDate;
                           String toDate = reportsProvider.formattedToDate;
+                          String convFromDate = reportsProvider.formattedConversionFromDate;
+                          String convToDate = reportsProvider.formattedConversionToDate;
                           reportsProvider.setTaskSearchCriteria(
                               reportsProvider.Search,
                               fromDate,
                               toDate,
                               status,
-                              assignedTo);
+                              assignedTo,
+                              conversionFromDate: convFromDate,
+                              conversionToDate: convToDate);
                           reportsProvider.getEnquirySummary(context);
                         },
                         style: TextButton.styleFrom(
@@ -838,7 +898,7 @@ class _EnquirySourceSummaryReportScreenState
                       child: TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          reportsProvider.selectDateFilterOption(null);
+                          reportsProvider.selectDateFilterOption(null, isConversion: isConversion);
                           reportsProvider.getEnquirySummary(context);
                         },
                         style: TextButton.styleFrom(
