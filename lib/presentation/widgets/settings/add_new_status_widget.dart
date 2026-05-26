@@ -443,8 +443,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
       ),
       content: Container(
         color: Colors.white,
-        width: MediaQuery.sizeOf(context).width / 2,
-        // height: MediaQuery.sizeOf(context).height / 4,
+        width: AppStyles.isWebScreen(context)
+            ? MediaQuery.sizeOf(context).width / 2
+            : MediaQuery.sizeOf(context).width,
+        height: MediaQuery.sizeOf(context).height / 4,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

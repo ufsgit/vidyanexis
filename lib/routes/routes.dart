@@ -117,9 +117,11 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) {
         final customerId = int.parse(state.pathParameters['customerId']!);
         final fromLead = state.pathParameters['fromLead']! == 'true';
+        final initialTab = state.uri.queryParameters['tab'];
         return fadeTransition(CustomerDetailPageMobile(
           customerId: customerId,
           fromLead: fromLead,
+          initialTab: initialTab,
         ));
       },
     ),

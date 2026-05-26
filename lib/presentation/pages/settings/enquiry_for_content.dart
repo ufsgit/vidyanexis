@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_enquiry_for_widget.dart';
+import 'package:vidyanexis/presentation/pages/settings/add_enquiry_for_mobile_page.dart';
 
 class EnquiryForContent extends StatefulWidget {
   const EnquiryForContent({super.key});
@@ -37,20 +38,37 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
   }
 
   void _openAddDialog() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return const AddEnquiryFor(
-          editId: '0',
-          isEdit: false,
-          sourceId: '0',
-          sourceName: '',
-          status: '',
-          data: null,
-        );
-      },
-    );
+    final isWeb = AppStyles.isWebScreen(context);
+    if (isWeb) {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return const AddEnquiryFor(
+            editId: '0',
+            isEdit: false,
+            sourceId: '0',
+            sourceName: '',
+            status: '',
+            data: null,
+          );
+        },
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AddEnquiryForMobilePage(
+            editId: '0',
+            isEdit: false,
+            sourceId: '0',
+            sourceName: '',
+            status: '',
+            data: null,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -180,32 +198,61 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
                           if (settingsProvider.menuIsEditMap[17].toString() == '1')
                             TextButton(
                                 onPressed: () {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AddEnquiryFor(
-                                        editId: settingsProvider
-                                            .searchEnquiryFor[index]
-                                            .enquiryForId
-                                            .toString(),
-                                        sourceId: settingsProvider
-                                            .searchEnquiryFor[index]
-                                            .sourceCategoryId
-                                            .toString(),
-                                        sourceName: settingsProvider
-                                            .searchEnquiryFor[index]
-                                            .sourceCategoryName
-                                            .toString(),
-                                        status: settingsProvider
-                                            .searchEnquiryFor[index]
-                                            .enquiryForName,
-                                        isEdit: true,
-                                        data: settingsProvider
-                                            .searchEnquiryFor[index],
-                                      );
-                                    },
-                                  );
+                                  final isWeb = AppStyles.isWebScreen(context);
+                                  if (isWeb) {
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AddEnquiryFor(
+                                          editId: settingsProvider
+                                              .searchEnquiryFor[index]
+                                              .enquiryForId
+                                              .toString(),
+                                          sourceId: settingsProvider
+                                              .searchEnquiryFor[index]
+                                              .sourceCategoryId
+                                              .toString(),
+                                          sourceName: settingsProvider
+                                              .searchEnquiryFor[index]
+                                              .sourceCategoryName
+                                              .toString(),
+                                          status: settingsProvider
+                                              .searchEnquiryFor[index]
+                                              .enquiryForName,
+                                          isEdit: true,
+                                          data: settingsProvider
+                                              .searchEnquiryFor[index],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AddEnquiryForMobilePage(
+                                          editId: settingsProvider
+                                              .searchEnquiryFor[index]
+                                              .enquiryForId
+                                              .toString(),
+                                          sourceId: settingsProvider
+                                              .searchEnquiryFor[index]
+                                              .sourceCategoryId
+                                              .toString(),
+                                          sourceName: settingsProvider
+                                              .searchEnquiryFor[index]
+                                              .sourceCategoryName
+                                              .toString(),
+                                          status: settingsProvider
+                                              .searchEnquiryFor[index]
+                                              .enquiryForName,
+                                          isEdit: true,
+                                          data: settingsProvider
+                                              .searchEnquiryFor[index],
+                                        ),
+                                      ),
+                                    );
+                                  }
                                 },
                                 child: Text(
                                   'Edit',

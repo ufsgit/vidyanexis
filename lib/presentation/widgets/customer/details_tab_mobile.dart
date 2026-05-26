@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
@@ -791,31 +792,30 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        height: 34,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.grey300,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.bluebutton, width: 1.1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              size: 14,
+              size: 16,
               color: AppColors.bluebutton,
             ),
             const SizedBox(width: 4),
             Text(
               text,
-              style: const TextStyle(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: AppColors.bluebutton,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textBlack,
               ),
             ),
           ],

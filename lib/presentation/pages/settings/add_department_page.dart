@@ -117,7 +117,7 @@ class _AddDepartmentState extends State<AddDepartment> {
         width: AppStyles.isWebScreen(context)
             ? MediaQuery.sizeOf(context).width / 2
             : MediaQuery.sizeOf(context).width,
-        height: MediaQuery.sizeOf(context).height / 10,
+        height: MediaQuery.sizeOf(context).height / 6,
         child: SingleChildScrollView(
             child: Column(
           mainAxisSize: MainAxisSize.min,

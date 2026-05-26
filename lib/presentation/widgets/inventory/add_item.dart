@@ -373,6 +373,16 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                             children: [
                               Row(
                                 children: [
+                                  // Expanded(
+                                  //   child: CustomTextField(
+                                  //     readOnly: false,
+                                  //     height: 56,
+                                  //     controller: expenseProvider
+                                  //         .itemMaterialController,
+                                  //     hintText: 'Item Material',
+                                  //     labelText: '',
+                                  //   ),
+                                  // ),
                                   Expanded(
                                     child: CommonDropdown(
                                       hintText: "Select Material",

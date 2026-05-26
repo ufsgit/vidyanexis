@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
-class AddEnquiryFor extends StatefulWidget {
+class AddEnquiryForMobilePage extends StatefulWidget {
   final bool isEdit;
   final String status;
   final String sourceName;
@@ -18,7 +18,7 @@ class AddEnquiryFor extends StatefulWidget {
   final String editId;
   final EnquiryForModel? data;
 
-  const AddEnquiryFor({
+  const AddEnquiryForMobilePage({
     super.key,
     required this.isEdit,
     required this.status,
@@ -29,73 +29,38 @@ class AddEnquiryFor extends StatefulWidget {
   });
 
   @override
-  State<AddEnquiryFor> createState() => _AddEnquiryForState();
+  State<AddEnquiryForMobilePage> createState() => _AddEnquiryForMobilePageState();
 }
 
-class _AddEnquiryForState extends State<AddEnquiryFor> {
+class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
   List<Map<String, dynamic>> selectedFields = [];
   List<Map<String, dynamic>> selectedTaskTypes = [];
 
-  String? validateInputs(
-      BuildContext context, SettingsProvider settingsProvider) {
+  String? _validateInputs(SettingsProvider settingsProvider) {
     if (settingsProvider.sourceCategoryEnquiryController.text.trim().isEmpty) {
       return 'Please enter Source Category';
     }
     if (settingsProvider.enquiryForController.text.trim().isEmpty) {
       return 'Please enter Enquiry For';
     }
-    // // Validate order by values in custom fields
-    // for (var field in selectedFields) {
-    //   if (field['orderBy'] != null && field['orderBy'] is! int) {
-    //     return 'Order by must be a valid number for all custom fields';
-    //   }
-    // }
-
-    // if (settingsProvider.selectedColor == null) {
-    //   return 'Please select a category color';
-    // }
     return null;
   }
 
-  void showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Cannot save',
-            style: TextStyle(
-              color: AppColors.appViolet,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            message,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 16,
-            ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(
-                'OK',
-                style: TextStyle(
-                  color: AppColors.appViolet,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 10),
+            Expanded(child: Text(message)),
           ],
-        );
-      },
+        ),
+        backgroundColor: Colors.red[700],
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(12),
+      ),
     );
   }
 
@@ -109,14 +74,16 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
           builder: (context, setStateDialog) {
             return AlertDialog(
               backgroundColor: Colors.white,
-              title: const Text('Select Custom Fields '),
+              title: Text(
+                'Select Custom Fields',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
+              ),
               content: SizedBox(
-                width: AppStyles.isWebScreen(context)
-                    ? MediaQuery.of(context).size.width / 3
-                    : MediaQuery.of(context).size.width *
-                        0.9, // Better mobile width
-                height: MediaQuery.of(context).size.height *
-                    0.6, // Fixed height instead of full screen
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.6,
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: settingsProvider.customFieldModelList.length,
@@ -176,10 +143,8 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Main row with selection indicator and field name
                             Row(
                               children: [
-                                // Selection indicator
                                 Container(
                                   width: 20,
                                   height: 20,
@@ -204,7 +169,6 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                       : null,
                                 ),
                                 const SizedBox(width: 12),
-                                // Field name
                                 Expanded(
                                   child: Text(
                                     field.customFieldName.toString(),
@@ -221,13 +185,11 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                 ),
                               ],
                             ),
-                            // Mandatory option (show below on mobile if selected)
                             if (isSelected) ...[
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  const SizedBox(
-                                      width: 32), // Align with text above
+                                  const SizedBox(width: 32),
                                   Icon(
                                     Icons.star_border,
                                     size: 18,
@@ -244,7 +206,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                     ),
                                   ),
                                   Transform.scale(
-                                    scale: 0.8, // Smaller switch for mobile
+                                    scale: 0.8,
                                     child: Switch(
                                       value:
                                           selectedFields[f]['isMandatory'] == 1,
@@ -266,11 +228,9 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              // Order by field
                               Row(
                                 children: [
-                                  const SizedBox(
-                                      width: 32), // Align with text above
+                                  const SizedBox(width: 32),
                                   Icon(
                                     Icons.sort,
                                     size: 18,
@@ -361,7 +321,6 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    print(selectedFields);
                     setState(() {});
                     Navigator.pop(context);
                   },
@@ -389,11 +348,15 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
           builder: (context, setStateDialog) {
             return AlertDialog(
               backgroundColor: Colors.white,
-              title: const Text('Select Task Types'),
+              title: Text(
+                'Select Task Types',
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
+              ),
               content: SizedBox(
-                width: AppStyles.isWebScreen(context)
-                    ? MediaQuery.of(context).size.width / 3
-                    : MediaQuery.of(context).size.width * 0.9,
+                width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.6,
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -521,11 +484,9 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
         settingsProvider.sourceCategoryEnquiryController.text =
             widget.sourceName;
         settingsProvider.setSourceId(int.parse(widget.sourceId));
-        // Load existing custom fields if editing
         if (widget.data?.customFields != null) {
           setState(() {
             selectedFields = widget.data!.customFields!.map((e) {
-              // Ensure all required fields are present
               Map<String, dynamic> field = Map<String, dynamic>.from(e);
               if (!field.containsKey('dropdown_values')) {
                 field['dropdown_values'] = [];
@@ -540,7 +501,6 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
             }).toList();
           });
         }
-        // Load existing task types if editing
         if (widget.data?.taskTypes != null) {
           setState(() {
             selectedTaskTypes = widget.data!.taskTypes!
@@ -558,298 +518,332 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    final isWeb = AppStyles.isWebScreen(context);
 
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      title: Row(
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FB),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leadingWidth: 56,
+        leading: IconButton(
+          onPressed: () {
+            settingsProvider.enquiryForController.clear();
+            Navigator.pop(context);
+          },
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.secondaryBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 18,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+        title: Text(
+          widget.isEdit ? 'Edit Enquiry For' : 'Add Enquiry For',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF1E232C),
+          ),
+        ),
+      ),
+      body: Column(
         children: [
           Expanded(
-            // Make title responsive
-            child: Text(
-              widget.isEdit ? 'Edit Enquiry For' : 'Add Enquiry For',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: isWeb ? 18 : 16, // Smaller font on mobile
-                fontWeight: FontWeight.w500,
-                color: AppColors.textBlack,
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              settingsProvider.enquiryForController.clear();
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.close),
-          )
-        ],
-      ),
-      content: Container(
-        color: Colors.white,
-        width: isWeb
-            ? MediaQuery.sizeOf(context).width / 2
-            : MediaQuery.sizeOf(context).width,
-        constraints: BoxConstraints(
-          maxHeight:
-              MediaQuery.of(context).size.height * 0.7, // Prevent overflow
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: CommonDropdown<int>(
-                      hintText: 'Source Category',
-                      selectedValue: widget.isEdit
-                          ? settingsProvider.sourceCategoryId
-                          : null,
-                      items: settingsProvider.searchSourceCategory
-                          .map((source) => DropdownItem<int>(
-                                id: source.sourceId,
-                                name: source.sourceName ?? '',
-                              ))
-                          .toList(),
-                      controller:
-                          settingsProvider.sourceCategoryEnquiryController,
-                      onItemSelected: (selectedId) {
-                        settingsProvider.setSourceId(selectedId);
-                        final selectedItem =
-                            settingsProvider.searchSourceCategory.firstWhere(
-                          (user) => user.sourceId == selectedId,
-                        );
-                        settingsProvider.sourceCategoryEnquiryController.text =
-                            selectedItem.sourceName ?? '';
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.enquiryForController,
-                      hintText: 'Enquiry For Name*',
-                      labelText: '',
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: _showCustomFieldDialog,
-                      child: AbsorbPointer(
-                        child: CustomTextField(
-                          readOnly: true,
-                          controller: TextEditingController(),
-                          height: 54,
-                          hintText: 'Custom Field',
-                          labelText: '',
-                          suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                  _Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SectionLabel('DETAILS'),
+                        const SizedBox(height: 16),
+                        CommonDropdown<int>(
+                          hintText: 'Source Category *',
+                          selectedValue: widget.isEdit
+                              ? settingsProvider.sourceCategoryId
+                              : null,
+                          items: settingsProvider.searchSourceCategory
+                              .map((source) => DropdownItem<int>(
+                                    id: source.sourceId,
+                                    name: source.sourceName ?? '',
+                                  ))
+                              .toList(),
+                          controller:
+                              settingsProvider.sourceCategoryEnquiryController,
+                          onItemSelected: (selectedId) {
+                            settingsProvider.setSourceId(selectedId);
+                            final selectedItem =
+                                settingsProvider.searchSourceCategory.firstWhere(
+                              (user) => user.sourceId == selectedId,
+                            );
+                            settingsProvider.sourceCategoryEnquiryController.text =
+                                selectedItem.sourceName ?? '';
+                          },
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: _showTaskTypeDialog,
-                      child: AbsorbPointer(
-                        child: CustomTextField(
-                          readOnly: true,
-                          controller: TextEditingController(),
+                        const SizedBox(height: 14),
+                        CustomTextField(
+                          readOnly: false,
                           height: 54,
-                          hintText: 'Task Type',
+                          controller: settingsProvider.enquiryForController,
+                          hintText: 'Enquiry For Name *',
                           labelText: '',
-                          suffixIcon: const Icon(Icons.keyboard_arrow_down),
                         ),
-                      ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              if (selectedTaskTypes.isNotEmpty) ...[
-                const SizedBox(height: 10),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade50.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.green.shade200),
-                  ),
-                  child: Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: selectedTaskTypes.asMap().entries.map((entry) {
-                      final idx = entry.key;
-                      final task = entry.value;
-                      return Chip(
-                        label: Text(
-                          task['task_type_name'],
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
+                  const SizedBox(height: 12),
+                  _Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SectionLabel('ASSOCIATED CUSTOM FIELDS & TASK TYPES'),
+                        const SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: _showCustomFieldDialog,
+                          child: AbsorbPointer(
+                            child: CustomTextField(
+                              readOnly: true,
+                              controller: TextEditingController(),
+                              height: 54,
+                              hintText: 'Select Custom Fields',
+                              labelText: '',
+                              suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                            ),
                           ),
                         ),
-                        backgroundColor: Colors.green.shade600,
-                        deleteIcon: const Icon(Icons.close,
-                            size: 14, color: Colors.white),
-                        onDeleted: () {
-                          setState(() {
-                            selectedTaskTypes.removeAt(idx);
-                          });
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                        const SizedBox(height: 14),
+                        GestureDetector(
+                          onTap: _showTaskTypeDialog,
+                          child: AbsorbPointer(
+                            child: CustomTextField(
+                              readOnly: true,
+                              controller: TextEditingController(),
+                              height: 54,
+                              hintText: 'Select Task Types',
+                              labelText: '',
+                              suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                            ),
+                          ),
                         ),
-                      );
-                    }).toList(),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-              const SizedBox(height: 10),
-              if (selectedFields.isNotEmpty) ...[
-                const SizedBox(height: 10),
-                // Improved selected fields display with better mobile layout
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 6,
-                        children: selectedFields.asMap().entries.map((entry) {
-                          final idx = entry.key;
-                          final field = entry.value;
-                          return Container(
-                            constraints: BoxConstraints(
-                              maxWidth: isWeb
-                                  ? double.infinity
-                                  : MediaQuery.of(context).size.width * 0.7,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: AppColors.appViolet,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    field['custom_field_name'],
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedFields.removeAt(idx);
-                                    });
-                                  },
-                                  child: const Icon(
-                                    Icons.close,
-                                    size: 16,
+                  if (selectedTaskTypes.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _Card(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionLabel('SELECTED TASK TYPES'),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: selectedTaskTypes.asMap().entries.map((entry) {
+                              final idx = entry.key;
+                              final task = entry.value;
+                              return Chip(
+                                label: Text(
+                                  task['task_type_name'],
+                                  style: const TextStyle(
                                     color: Colors.white,
+                                    fontSize: 12,
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
+                                backgroundColor: Colors.green.shade600,
+                                deleteIcon: const Icon(Icons.close,
+                                    size: 14, color: Colors.white),
+                                onDeleted: () {
+                                  setState(() {
+                                    selectedTaskTypes.removeAt(idx);
+                                  });
+                                },
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
+                  ],
+                  if (selectedFields.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    _Card(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionLabel('SELECTED CUSTOM FIELDS'),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: selectedFields.asMap().entries.map((entry) {
+                              final idx = entry.key;
+                              final field = entry.value;
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.appViolet,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      field['custom_field_name'],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedFields.removeAt(idx);
+                                        });
+                                      },
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 10,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CustomElevatedButton(
+                    buttonText: 'Cancel',
+                    onPressed: () {
+                      settingsProvider.enquiryForController.clear();
+                      Navigator.pop(context);
+                    },
+                    radius: 12,
+                    backgroundColor: Colors.white,
+                    borderColor: const Color(0xFFE2E8F0),
+                    textColor: const Color(0xFF64748B),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CustomElevatedButton(
+                    buttonText: 'Save',
+                    onPressed: () async {
+                      final error = _validateInputs(settingsProvider);
+                      if (error != null) {
+                        _showErrorSnackBar(error);
+                        return;
+                      }
+
+                      await settingsProvider.addEnquiryForName(
+                        context: context,
+                        forId: widget.editId,
+                        forName: settingsProvider.enquiryForController.text,
+                        customFields: selectedFields,
+                        taskTypes: selectedTaskTypes,
+                      );
+                      setState(() {
+                        selectedFields.clear();
+                        selectedTaskTypes.clear();
+                      });
+                      if (mounted) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    radius: 12,
+                    backgroundColor: AppColors.secondaryBlue,
+                    borderColor: AppColors.secondaryBlue,
+                    textColor: Colors.white,
                   ),
                 ),
               ],
-              const SizedBox(height: 24.0),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
-      actions: [
-        // Responsive button layout
-        Flex(
-          direction: isWeb ? Axis.horizontal : Axis.vertical,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isWeb) const SizedBox(height: 8),
-            Flexible(
-              child: CustomElevatedButton(
-                buttonText: 'Cancel',
-                onPressed: () {
-                  settingsProvider.enquiryForController.clear();
-                  Navigator.pop(context);
-                },
-                radius: 12,
-                backgroundColor: AppColors.whiteColor,
-                borderColor: const Color(0xFFE2E8F0),
-                textColor: const Color(0xFF64748B),
-              ),
-            ),
-            if (isWeb) const SizedBox(width: 8) else const SizedBox(height: 8),
-            Flexible(
-              child: CustomElevatedButton(
-                buttonText: 'Save',
-                onPressed: () async {
-                  final validationError =
-                      validateInputs(context, settingsProvider);
-                  if (validationError != null) {
-                    showErrorDialog(context, validationError);
-                    return;
-                  }
+    );
+  }
+}
 
-                  await settingsProvider.addEnquiryForName(
-                    context: context,
-                    forId: widget.editId,
-                    forName: settingsProvider.enquiryForController.text,
-                    customFields: selectedFields,
-                    taskTypes: selectedTaskTypes,
-                  );
-                  setState(() {
-                    selectedFields.clear();
-                    selectedTaskTypes.clear();
-                  });
-                },
-                radius: 12,
-                backgroundColor: AppColors.secondaryBlue,
-                borderColor: AppColors.secondaryBlue,
-                textColor: AppColors.whiteColor,
-              ),
-            ),
-          ],
-        ),
-      ],
+class _Card extends StatelessWidget {
+  final Widget child;
+  const _Card({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  final String text;
+  const _SectionLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: GoogleFonts.plusJakartaSans(
+        fontSize: 12,
+        fontWeight: FontWeight.w800,
+        color: Colors.grey[500],
+        letterSpacing: 1.2,
+      ),
     );
   }
 }

@@ -53,7 +53,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           Provider.of<SettingsProvider>(context, listen: false);
       final expenseProvider =
           Provider.of<ExpenseProvider>(context, listen: false);
-      expenseProvider.searchItemList(context: context, isFilter: false);
+      await expenseProvider.searchItemList(context: context, isFilter: false);
       companyQuotationItems =
           settingsProvider.companyDetails.first.quotationItemValue == 1;
 
@@ -62,7 +62,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
       settingsProvider.searchBranch(context);
       customerDetailsProvider.getQuotationTypes(context);
-      customerDetailsProvider.getProfitList(context);
+      await customerDetailsProvider.getProfitList(context);
 
       // Fetch custom field definitions for quotations
       await customerDetailsProvider.getCustomFieldsByQuotationId(context);
@@ -77,6 +77,20 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           final quotation = customerDetailsProvider.quotationListByMaster.first;
           customerDetailsProvider.populateAllQuotationFields(
               quotation, widget.customerId);
+
+          // Pre-populate newItemId if companyQuotationItems is active
+          if (companyQuotationItems) {
+            final nameOfItem = customerDetailsProvider.selectedItemName;
+            if (nameOfItem.isNotEmpty) {
+              try {
+                final matchItem = expenseProvider.itemList.firstWhere(
+                  (item) =>
+                      item.itemName.toLowerCase() == nameOfItem.toLowerCase(),
+                );
+                customerDetailsProvider.newItemId = matchItem.itemId;
+              } catch (_) {}
+            }
+          }
         }
       }
     });
@@ -179,7 +193,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       CustomTextField(
                         readOnly: false,
                         height: 54,
-                        controller: customerDetailsProvider.qEntryDateController,
+                        controller:
+                            customerDetailsProvider.qEntryDateController,
                         hintText: 'Entry Date',
                         labelText: '',
                       ),
@@ -402,6 +417,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   final selectedData = expenseProvider.itemList
                                       .firstWhere((item) =>
                                           item.itemId == selectedItem);
+                                  customerDetailsProvider.newItemId =
+                                      selectedData.itemId;
+                                  customerDetailsProvider.setSelectedItemName(
+                                      selectedData.itemName);
                                   await expenseProvider.getItemMaterialList(
                                       selectedData.itemId, context);
                                   customerDetailsProvider
@@ -417,13 +436,19 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                               child: CommonDropdown<int>(
                                 hintText: 'Profit',
                                 items: customerDetailsProvider.profitList
-                                    .map((e) => DropdownItem<int>(id: e.id, name: e.name))
+                                    .map((e) => DropdownItem<int>(
+                                        id: e.id, name: e.name))
                                     .toList(),
                                 onItemSelected: (value) {
-                                  final selected = customerDetailsProvider.profitList.firstWhere((e) => e.id == value);
-                                  customerDetailsProvider.setSelectedProfitId(value, name: selected.name);
+                                  final selected = customerDetailsProvider
+                                      .profitList
+                                      .firstWhere((e) => e.id == value);
+                                  customerDetailsProvider.setSelectedProfitId(
+                                      value,
+                                      name: selected.name);
                                 },
-                                selectedValue: customerDetailsProvider.selectedProfitId,
+                                selectedValue:
+                                    customerDetailsProvider.selectedProfitId,
                               ),
                             ),
                           ],
@@ -1444,33 +1469,34 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 ),
               ),
               const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    customerDetailsProvider.clearItemFields();
-                    showDialog(
-                      context: context,
-                      builder: (context) => const AddItemDialog(
-                        index: -1,
-                        isEdit: false,
+              if (!companyQuotationItems)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      customerDetailsProvider.clearItemFields();
+                      showDialog(
+                        context: context,
+                        builder: (context) => const AddItemDialog(
+                          index: -1,
+                          isEdit: false,
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add Item'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primaryBlue,
+                      backgroundColor: Colors.white,
+                      side: BorderSide(color: AppColors.primaryBlue),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Item'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primaryBlue,
-                    backgroundColor: Colors.white,
-                    side: BorderSide(color: AppColors.primaryBlue),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                 ),
-              ),
               const SizedBox(height: 16),
               ListView.separated(
                 shrinkWrap: true,
@@ -1481,6 +1507,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 itemBuilder: (context, index) {
                   final item = customerDetailsProvider.items[index];
                   return QuotationItemCard(
+                    showActions: !companyQuotationItems,
                     item: item,
                     onEdit: () {
                       customerDetailsProvider
@@ -1891,33 +1918,35 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             ),
           ),
           const SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: () {
-              customerDetailsProvider.clearCommercialItemFields();
-              showDialog(
-                context: context,
-                builder: (context) => const AddCommercialItemDialog(
-                  index: -1,
-                  isEdit: false,
+          if (!companyQuotationItems)
+            OutlinedButton.icon(
+              onPressed: () {
+                customerDetailsProvider.clearCommercialItemFields();
+                showDialog(
+                  context: context,
+                  builder: (context) => const AddCommercialItemDialog(
+                    index: -1,
+                    isEdit: false,
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Add item'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor:
+                    AppColors.primaryBlue, // Change foreground color
+                backgroundColor: Colors.white, // Change background color
+                side: BorderSide(
+                    color: AppColors.primaryBlue), // Change border color
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 0,
                 ),
-              );
-            },
-            icon: const Icon(Icons.add),
-            label: const Text('Add item'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.primaryBlue, // Change foreground color
-              backgroundColor: Colors.white, // Change background color
-              side: BorderSide(
-                  color: AppColors.primaryBlue), // Change border color
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 0,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8), // Add border radius
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8), // Add border radius
+                ),
               ),
             ),
-          ),
           const SizedBox(height: 16),
           ListView.separated(
             shrinkWrap: true,
@@ -1927,6 +1956,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             itemBuilder: (context, index) {
               final item = customerDetailsProvider.commercialItems[index];
               return CommercialItemCard(
+                showActions: !companyQuotationItems,
                 item: item,
                 onEdit: () {
                   customerDetailsProvider

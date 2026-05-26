@@ -137,7 +137,9 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
       ),
       content: Container(
         color: Colors.white,
-        width: MediaQuery.sizeOf(context).width / 2,
+        width: AppStyles.isWebScreen(context)
+            ? MediaQuery.sizeOf(context).width / 2
+            : MediaQuery.sizeOf(context).width,
         height: MediaQuery.sizeOf(context).height / 4,
         child: SingleChildScrollView(
           child: Column(

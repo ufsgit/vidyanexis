@@ -152,15 +152,14 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        width: AppStyles.isWebScreen(context) ? 500 : double.infinity,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    final isMobile = !AppStyles.isWebScreen(context);
+
+    Widget buildFormContent(BuildContext context) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isMobile) ...[
             Text(
               widget.isEdit ? 'Edit Campaign' : 'Add New Campaign',
               style: GoogleFonts.plusJakartaSans(
@@ -170,192 +169,230 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
               ),
             ),
             const SizedBox(height: 24),
-            CustomTextField(
-              controller: settingsProvider.campaignNameController,
-              hintText: 'Campaign Name',
-              labelText: 'Campaign Name',
-              readOnly: false,
+          ],
+          CustomTextField(
+            controller: settingsProvider.campaignNameController,
+            hintText: 'Campaign Name',
+            labelText: 'Campaign Name',
+            readOnly: false,
+          ),
+          const SizedBox(height: 16),
+          CustomTextField(
+            controller: settingsProvider.campaignIdStringController,
+            hintText: 'Campaign ID String (e.g. CMP001)',
+            labelText: 'Campaign ID String',
+            readOnly: false,
+          ),
+          const SizedBox(height: 16),
+          Consumer<DropDownProvider>(
+            builder: (context, dropDownProvider, child) {
+              return CommonDropdown<int>(
+                hintText: 'Enquiry Source',
+                items: dropDownProvider.enquiryData
+                    .map((source) => DropdownItem<int>(
+                          id: source.enquirySourceId,
+                          name: source.enquirySourceName,
+                        ))
+                    .toList(),
+                onItemSelected: (selectedId) {
+                  setState(() {
+                    selectedEnquirySourceId = selectedId;
+                  });
+                },
+                selectedValue: selectedEnquirySourceId,
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          Consumer<DropDownProvider>(
+            builder: (context, dropDownProvider, child) {
+              return CommonDropdown<int>(
+                hintText: 'Enquiry For',
+                items: dropDownProvider.enquiryForList
+                    .map((source) => DropdownItem<int>(
+                          id: source.enquiryForId,
+                          name: source.enquiryForName,
+                        ))
+                    .toList(),
+                onItemSelected: (selectedId) {
+                  setState(() {
+                    selectedEnquiryForId = selectedId;
+                  });
+                },
+                selectedValue: selectedEnquiryForId,
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Selected Users: ${selectedUserIds.length}',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
-            const SizedBox(height: 16),
-            CustomTextField(
-              controller: settingsProvider.campaignIdStringController,
-              hintText: 'Campaign ID String (e.g. CMP001)',
-              labelText: 'Campaign ID String',
-              readOnly: false,
-            ),
-            const SizedBox(height: 16),
-            Consumer<DropDownProvider>(
-              builder: (context, dropDownProvider, child) {
-                return CommonDropdown<int>(
-                  hintText: 'Enquiry Source',
-                  items: dropDownProvider.enquiryData
-                      .map((source) => DropdownItem<int>(
-                            id: source.enquirySourceId,
-                            name: source.enquirySourceName,
-                          ))
-                      .toList(),
-                  onItemSelected: (selectedId) {
-                    setState(() {
-                      selectedEnquirySourceId = selectedId;
-                    });
-                  },
-                  selectedValue: selectedEnquirySourceId,
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            Consumer<DropDownProvider>(
-              builder: (context, dropDownProvider, child) {
-                return CommonDropdown<int>(
-                  hintText: 'Enquiry For',
-                  items: dropDownProvider.enquiryForList
-                      .map((source) => DropdownItem<int>(
-                            id: source.enquiryForId,
-                            name: source.enquiryForName,
-                          ))
-                      .toList(),
-                  onItemSelected: (selectedId) {
-                    setState(() {
-                      selectedEnquiryForId = selectedId;
-                    });
-                  },
-                  selectedValue: selectedEnquiryForId,
-                );
-              },
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Selected Users: ${selectedUserIds.length}',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (selectedUserIds.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: selectedUserIds.map((id) {
-                  final userIndex = settingsProvider.searchUserDetails
-                      .indexWhere((u) => u.userDetailsId == id);
-                  String displayName = 'User $id';
-                  if (userIndex != -1) {
-                    displayName = settingsProvider
-                        .searchUserDetails[userIndex].userDetailsName;
-                  }
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: AppColors.secondaryBlue.withOpacity(0.3)),
-                    ),
-                    child: Text(
-                      displayName,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.secondaryBlue,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
+          ),
+          if (selectedUserIds.isNotEmpty) ...[
             const SizedBox(height: 8),
-            InkWell(
-              onTap: _showUserSelectionDialog,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      selectedUserIds.isEmpty
-                          ? 'Select Users'
-                          : 'Change Selected Users',
-                      style: TextStyle(color: Colors.grey[600]),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: selectedUserIds.map((id) {
+                final userIndex = settingsProvider.searchUserDetails
+                    .indexWhere((u) => u.userDetailsId == id);
+                String displayName = 'User $id';
+                if (userIndex != -1) {
+                  displayName = settingsProvider
+                      .searchUserDetails[userIndex].userDetailsName;
+                }
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: AppColors.secondaryBlue.withOpacity(0.3)),
+                  ),
+                  child: Text(
+                    displayName,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.secondaryBlue,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const Icon(Icons.people, size: 20),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CustomElevatedButton(
-                  buttonText: 'Cancel',
-                  onPressed: () => Navigator.pop(context),
-                  radius: 12,
-                  backgroundColor: Colors.white,
-                  borderColor: const Color(0xFFE2E8F0),
-                  textColor: const Color(0xFF64748B),
-                ),
-                const SizedBox(width: 16),
-                CustomElevatedButton(
-                  radius: 12,
-                  backgroundColor: AppColors.secondaryBlue,
-                  borderColor: AppColors.secondaryBlue,
-                  textColor: Colors.white,
-                  onPressed: () {
-                    if (settingsProvider.campaignNameController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Please enter campaign name')),
-                      );
-                      return;
-                    }
-                    if (selectedEnquirySourceId == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Please select enquiry source')),
-                      );
-                      return;
-                    }
-
-                    if (selectedEnquiryForId == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Please select enquiry for')),
-                      );
-                      return;
-                    }
-
-                    final dropDownProvider =
-                        Provider.of<DropDownProvider>(context, listen: false);
-                    final selectedSource = dropDownProvider.enquiryData
-                        .firstWhere((element) =>
-                            element.enquirySourceId == selectedEnquirySourceId);
-                    final selectedFor = dropDownProvider.enquiryForList
-                        .firstWhere((element) =>
-                            element.enquiryForId == selectedEnquiryForId);
-
-                    settingsProvider.saveCampaign(
-                      context: context,
-                      campaignId: widget.campaignId.toString(),
-                      userIds: selectedUserIds.join(','),
-                      enquirySourceId: selectedEnquirySourceId ?? 0,
-                      enquirySourceName: selectedSource.enquirySourceName,
-                      enquiryForId: selectedEnquiryForId ?? 0,
-                      enquiryForName: selectedFor.enquiryForName,
-                    );
-                  },
-                  buttonText: widget.isEdit ? 'Update' : 'Save',
-                ),
-              ],
+                  ),
+                );
+              }).toList(),
             ),
           ],
+          const SizedBox(height: 8),
+          InkWell(
+            onTap: _showUserSelectionDialog,
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    selectedUserIds.isEmpty
+                        ? 'Select Users'
+                        : 'Change Selected Users',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                  const Icon(Icons.people, size: 20),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CustomElevatedButton(
+                buttonText: 'Cancel',
+                onPressed: () => Navigator.pop(context),
+                radius: 12,
+                backgroundColor: Colors.white,
+                borderColor: const Color(0xFFE2E8F0),
+                textColor: const Color(0xFF64748B),
+              ),
+              const SizedBox(width: 16),
+              CustomElevatedButton(
+                radius: 12,
+                backgroundColor: AppColors.secondaryBlue,
+                borderColor: AppColors.secondaryBlue,
+                textColor: Colors.white,
+                onPressed: () {
+                  if (settingsProvider.campaignNameController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Please enter campaign name')),
+                    );
+                    return;
+                  }
+                  if (selectedEnquirySourceId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Please select enquiry source')),
+                    );
+                    return;
+                  }
+
+                  if (selectedEnquiryForId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Please select enquiry for')),
+                    );
+                    return;
+                  }
+
+                  final dropDownProvider =
+                      Provider.of<DropDownProvider>(context, listen: false);
+                  final selectedSource = dropDownProvider.enquiryData
+                      .firstWhere((element) =>
+                          element.enquirySourceId == selectedEnquirySourceId);
+                  final selectedFor = dropDownProvider.enquiryForList
+                      .firstWhere((element) =>
+                          element.enquiryForId == selectedEnquiryForId);
+
+                  settingsProvider.saveCampaign(
+                    context: context,
+                    campaignId: widget.campaignId.toString(),
+                    userIds: selectedUserIds.join(','),
+                    enquirySourceId: selectedEnquirySourceId ?? 0,
+                    enquirySourceName: selectedSource.enquirySourceName,
+                    enquiryForId: selectedEnquiryForId ?? 0,
+                    enquiryForName: selectedFor.enquiryForName,
+                  );
+                },
+                buttonText: widget.isEdit ? 'Update' : 'Save',
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+
+    if (isMobile) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.textBlack),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(
+            widget.isEdit ? 'Edit Campaign' : 'Add New Campaign',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textBlack,
+            ),
+          ),
         ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: buildFormContent(context),
+          ),
+        ),
+      );
+    }
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        width: 500,
+        child: buildFormContent(context),
       ),
     );
   }

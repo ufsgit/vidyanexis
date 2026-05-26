@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/settings/add_task_type_mobile_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_task_type.dart';
 import 'package:vidyanexis/presentation/widgets/settings/manage_status_widget.dart';
@@ -38,17 +39,31 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
   }
 
   void _openAddDialog() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return const AddTaskType(
-          editId: '0',
-          isEdit: false,
-          status: '',
-        );
-      },
-    );
+    final isWeb = AppStyles.isWebScreen(context);
+    if (isWeb) {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return const AddTaskType(
+            editId: '0',
+            isEdit: false,
+            status: '',
+          );
+        },
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AddTaskTypeMobilePage(
+            editId: '0',
+            isEdit: false,
+            status: '',
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -246,19 +261,35 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
         if (settingsProvider.menuIsEditMap[41] == 1)
           IconButton(
             onPressed: () {
-              showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (BuildContext context) {
-                  return AddTaskType(
-                    editId:
-                        settingsProvider.taskType[index].taskTypeId.toString(),
-                    status: settingsProvider.taskType[index].taskTypeName,
-                    isEdit: true,
-                    taskType: settingsProvider.taskType[index],
-                  );
-                },
-              );
+              final isWeb = AppStyles.isWebScreen(context);
+              if (isWeb) {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AddTaskType(
+                      editId: settingsProvider.taskType[index].taskTypeId
+                          .toString(),
+                      status: settingsProvider.taskType[index].taskTypeName,
+                      isEdit: true,
+                      taskType: settingsProvider.taskType[index],
+                    );
+                  },
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddTaskTypeMobilePage(
+                      editId: settingsProvider.taskType[index].taskTypeId
+                          .toString(),
+                      status: settingsProvider.taskType[index].taskTypeName,
+                      isEdit: true,
+                      taskType: settingsProvider.taskType[index],
+                    ),
+                  ),
+                );
+              }
             },
             icon: Icon(Icons.edit_outlined,
                 color: AppColors.primaryBlue, size: 20),

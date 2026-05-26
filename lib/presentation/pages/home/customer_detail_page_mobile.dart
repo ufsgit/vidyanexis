@@ -36,9 +36,10 @@ class CustomerDetailPageMobile extends StatefulWidget {
 
   final bool fromLead;
   final int customerId;
+  final String? initialTab;
 
   const CustomerDetailPageMobile(
-      {super.key, this.lead, required this.fromLead, required this.customerId});
+      {super.key, this.lead, required this.fromLead, required this.customerId, this.initialTab});
 
   @override
   State<CustomerDetailPageMobile> createState() =>
@@ -58,6 +59,14 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
         Provider.of<SettingsProvider>(context, listen: false);
     
     _buildTabs(settingsprovider);
+
+    if (widget.initialTab != null) {
+      final index = tabLabels.indexWhere(
+          (label) => label.toLowerCase() == widget.initialTab!.toLowerCase());
+      if (index != -1) {
+        _selectedIndex = index;
+      }
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dropDownProvider =

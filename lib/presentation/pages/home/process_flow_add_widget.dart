@@ -187,126 +187,283 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   List<EnquiryForModel> enquiryForList =
                       snapshot.data?.$6 ?? [];
 
+                  final isWeb = AppStyles.isWebScreen(context);
+
+                  final enquiryForDropdown = CommonDropdown<EnquiryForModel>(
+                    hintText: 'Enquiry For *',
+                    items: enquiryForList
+                        .map(
+                            (status) => DropdownItem<EnquiryForModel>(
+                                  id: status,
+                                  name: status.enquiryForName,
+                                ))
+                        .toList(),
+                    controller: enquiryForController,
+                    selectedValue: enquiryForList
+                        .where((element) =>
+                            element.enquiryForId ==
+                            processFlowProvider
+                                .processFlowModel.enquiryForId)
+                        .firstOrNull,
+                    onItemSelected: (EnquiryForModel? newValue) {
+                      if (newValue != null) {
+                        processFlowProvider.processFlowModel
+                            .enquiryForId = newValue.enquiryForId;
+                        processFlowProvider.processFlowModel
+                            .enquiryForName = newValue.enquiryForName;
+
+                        processFlowProvider.setProcessFlowModel(
+                            processFlowProvider.processFlowModel);
+                        setState(() {});
+                      }
+                    },
+                  );
+
+                  final taskTypeDropdown = CommonDropdown<TaskTypeModel>(
+                    hintText: 'Task type *',
+                    items: taskTypeList
+                        .map((status) => DropdownItem<TaskTypeModel>(
+                              id: status,
+                              name: status.taskTypeName,
+                            ))
+                        .toList(),
+                    controller: taskTypeController,
+                    selectedValue: taskTypeList
+                        .where((element) =>
+                            element.taskTypeId ==
+                            processFlowProvider
+                                .processFlowModel.taskTypeId)
+                        .firstOrNull,
+                    onItemSelected: (TaskTypeModel? newValue) {
+                      if (newValue != null) {
+                        processFlowProvider.processFlowModel
+                            .taskTypeId = newValue.taskTypeId;
+                        processFlowProvider.processFlowModel
+                            .taskTypeName = newValue.taskTypeName;
+
+                        processFlowProvider
+                            .processFlowModel.statusId = 0;
+                        processFlowProvider
+                            .processFlowModel.statusName = "";
+
+                        processFlowProvider.setProcessFlowModel(
+                            processFlowProvider.processFlowModel);
+                        // Clear task status when task type changes
+
+                        taskStatusController.clear();
+                        setState(() {});
+                      }
+                    },
+                  );
+
+                  final taskTypeStatusDropdown = CommonDropdown<TaskTypeStatusModel>(
+                    hintText: 'Task type status *',
+                    items: taskTypeStatusList
+                        .where((element) =>
+                            processFlowProvider
+                                .processFlowModel.taskTypeId ==
+                            element.taskTypeId)
+                        .map((status) =>
+                            DropdownItem<TaskTypeStatusModel>(
+                              id: status,
+                              name: status.statusName ?? "NA",
+                            ))
+                        .toList(),
+                    controller: taskStatusController,
+                    key: ValueKey(processFlowProvider
+                        .processFlowModel.taskTypeId),
+                    onItemSelected: (TaskTypeStatusModel? newValue) {
+                      if (newValue != null) {
+                        processFlowProvider.processFlowModel
+                            .statusId = newValue.statusId;
+                        processFlowProvider.processFlowModel
+                            .statusName = newValue.statusName;
+                        processFlowProvider.setProcessFlowModel(
+                            processFlowProvider.processFlowModel);
+                        setState(() {});
+                      }
+                    },
+                    selectedValue: taskTypeStatusList
+                        .where((element) => (element.taskTypeId ==
+                                processFlowProvider
+                                    .processFlowModel.taskTypeId &&
+                            element.statusId ==
+                                processFlowProvider
+                                    .processFlowModel.statusId))
+                        .firstOrNull,
+                  );
+
+                  final branchDropdown = CommonDropdown<int>(
+                    hintText: 'Branch *',
+                    isMultiLine: true,
+                    items: branchList
+                        .map((status) => DropdownItem<int>(
+                              id: status.branchId!,
+                              name: status.branchName!,
+                            ))
+                        .toList(),
+                    onItemSelected: (int? newValue) {
+                      if (newValue != null) {
+                        processFlowProvider.taskFlowModel.branchId =
+                            newValue;
+                        processFlowProvider.setTaskFlowModel(
+                            processFlowProvider.taskFlowModel);
+                      }
+                    },
+                    selectedValue:
+                        processFlowProvider.taskFlowModel.branchId,
+                  );
+
+                  final departmentDropdown = CommonDropdown<int>(
+                    hintText: 'Department *',
+                    items: departmentList
+                        .map((status) => DropdownItem<int>(
+                              id: status.departmentId,
+                              name: status.departmentName,
+                            ))
+                        .toList(),
+                    onItemSelected: (int? newValue) {
+                      if (newValue != null) {
+                        processFlowProvider
+                            .taskFlowModel.departmentId = newValue;
+                        processFlowProvider.setTaskFlowModel(
+                            processFlowProvider.taskFlowModel);
+                      }
+                      processFlowProvider.taskFlowModel.taskTypeId =
+                          0;
+                      processFlowProvider.setTaskFlowModel(
+                          processFlowProvider.taskFlowModel);
+                      _taskTypeByDepartmentFuture =
+                          processFlowProvider.getTaskTypeByDepartment(
+                              context, newValue.toString());
+                    },
+                    selectedValue: processFlowProvider
+                            .taskFlowModel.departmentId ??
+                        0,
+                  );
+
+                  final departmentTaskTypeDropdown = FutureBuilder<List<TaskTypeModel>>(
+                      future: _taskTypeByDepartmentFuture,
+                      builder: (contextBuilder, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        return CommonDropdown<int>(
+                          hintText: 'Task type *',
+                          items: (snapshot.data ?? [])
+                              .map((status) => DropdownItem<int>(
+                                    id: status.taskTypeId,
+                                    name: status.taskTypeName,
+                                  ))
+                              .toList(),
+                          onItemSelected: (int? newValue) {
+                            if (newValue != null) {
+                              processFlowProvider.taskFlowModel
+                                  .taskTypeId = newValue;
+                              processFlowProvider.setTaskFlowModel(
+                                  processFlowProvider.taskFlowModel);
+                            }
+                          },
+                          selectedValue: processFlowProvider
+                                  .taskFlowModel.taskTypeId ??
+                              0,
+                        );
+                      });
+
+                  final mandatoryTaskTypeDropdown = IgnorePointer(
+                    ignoring: isEditingMandatoryTask,
+                    child: CommonDropdown<int>(
+                      hintText: 'Task type',
+                      items: taskTypeList
+                          .map((status) => DropdownItem<int>(
+                                id: status.taskTypeId,
+                                name: status.taskTypeName,
+                              ))
+                          .toList(),
+                      onItemSelected: (int? newValue) {
+                        if (newValue != null) {
+                          int existIndex = processFlowProvider
+                              .mandatoryTaskList
+                              .indexWhere((element) =>
+                                  element.taskTypeId == newValue);
+
+                          if (existIndex == -1) {
+                            MandatoryTaskModel model =
+                                MandatoryTaskModel(
+                              taskTypeId: newValue,
+                              statusIds: processFlowProvider
+                                      .mandatoryTaskModel.statusIds ??
+                                  [],
+                            );
+                            processFlowProvider
+                                .setMandatoryTaskModel(model);
+                            setState(() {});
+                          } else {
+                            showToastInDialog(
+                                'Task type already exist', context);
+
+                            processFlowProvider.setMandatoryTaskModel(
+                                MandatoryTaskModel(
+                                    taskTypeId: null, statusIds: []));
+                            setState(() {});
+                          }
+                        }
+                      },
+                      selectedValue: processFlowProvider
+                              .mandatoryTaskModel.taskTypeId ??
+                          0,
+                    ),
+                  );
+
+                  final assignStatusButton = TextButton.icon(
+                    icon:
+                        const Icon(Icons.add_circle_outline, size: 16),
+                    label: const Text('Assign Status'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.secondaryBlue,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                    ),
+                    onPressed: () {
+                      if (processFlowProvider
+                          .mandatoryTaskModel.taskTypeId
+                          .isGreaterThanZero()) {
+                        showStatusTypeDialog(
+                            selectedMandatoryTaskIndex ?? -1,
+                            taskTypeStatusList);
+                      } else {
+                        showToastInDialog(
+                            'Please select a task type', context);
+                      }
+                    },
+                  );
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CommonDropdown<EnquiryForModel>(
-                              hintText: 'Enquiry For *',
-                              items: enquiryForList
-                                  .map(
-                                      (status) => DropdownItem<EnquiryForModel>(
-                                            id: status,
-                                            name: status.enquiryForName,
-                                          ))
-                                  .toList(),
-                              controller: enquiryForController,
-                              selectedValue: enquiryForList
-                                  .where((element) =>
-                                      element.enquiryForId ==
-                                      processFlowProvider
-                                          .processFlowModel.enquiryForId)
-                                  .firstOrNull,
-                              onItemSelected: (EnquiryForModel? newValue) {
-                                if (newValue != null) {
-                                  processFlowProvider.processFlowModel
-                                      .enquiryForId = newValue.enquiryForId;
-                                  processFlowProvider.processFlowModel
-                                      .enquiryForName = newValue.enquiryForName;
-
-                                  processFlowProvider.setProcessFlowModel(
-                                      processFlowProvider.processFlowModel);
-                                  setState(() {});
-                                }
-                              },
+                      isWeb
+                          ? Row(
+                              children: [
+                                Expanded(child: enquiryForDropdown),
+                                const SizedBox(width: 10),
+                                Expanded(child: taskTypeDropdown),
+                                const SizedBox(width: 10),
+                                Expanded(child: taskTypeStatusDropdown),
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                enquiryForDropdown,
+                                const SizedBox(height: 16),
+                                taskTypeDropdown,
+                                const SizedBox(height: 16),
+                                taskTypeStatusDropdown,
+                              ],
                             ),
-                          ),
-                          Container(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: CommonDropdown<TaskTypeModel>(
-                              hintText: 'Task type *',
-                              items: taskTypeList
-                                  .map((status) => DropdownItem<TaskTypeModel>(
-                                        id: status,
-                                        name: status.taskTypeName,
-                                      ))
-                                  .toList(),
-                              controller: taskTypeController,
-                              selectedValue: taskTypeList
-                                  .where((element) =>
-                                      element.taskTypeId ==
-                                      processFlowProvider
-                                          .processFlowModel.taskTypeId)
-                                  .firstOrNull,
-                              onItemSelected: (TaskTypeModel? newValue) {
-                                if (newValue != null) {
-                                  processFlowProvider.processFlowModel
-                                      .taskTypeId = newValue.taskTypeId;
-                                  processFlowProvider.processFlowModel
-                                      .taskTypeName = newValue.taskTypeName;
-
-                                  processFlowProvider
-                                      .processFlowModel.statusId = 0;
-                                  processFlowProvider
-                                      .processFlowModel.statusName = "";
-
-                                  processFlowProvider.setProcessFlowModel(
-                                      processFlowProvider.processFlowModel);
-                                  // Clear task status when task type changes
-
-                                  taskStatusController.clear();
-                                  setState(() {});
-                                }
-                              },
-                            ),
-                          ),
-                          Container(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: CommonDropdown<TaskTypeStatusModel>(
-                              hintText: 'Task type status *',
-                              items: taskTypeStatusList
-                                  .where((element) =>
-                                      processFlowProvider
-                                          .processFlowModel.taskTypeId ==
-                                      element.taskTypeId)
-                                  .map((status) =>
-                                      DropdownItem<TaskTypeStatusModel>(
-                                        id: status,
-                                        name: status.statusName ?? "NA",
-                                      ))
-                                  .toList(),
-                              controller: taskStatusController,
-                              key: ValueKey(processFlowProvider
-                                  .processFlowModel.taskTypeId),
-                              onItemSelected: (TaskTypeStatusModel? newValue) {
-                                if (newValue != null) {
-                                  processFlowProvider.processFlowModel
-                                      .statusId = newValue.statusId;
-                                  processFlowProvider.processFlowModel
-                                      .statusName = newValue.statusName;
-                                  processFlowProvider.setProcessFlowModel(
-                                      processFlowProvider.processFlowModel);
-                                  setState(() {});
-                                }
-                              },
-                              selectedValue: taskTypeStatusList
-                                  .where((element) => (element.taskTypeId ==
-                                          processFlowProvider
-                                              .processFlowModel.taskTypeId &&
-                                      element.statusId ==
-                                          processFlowProvider
-                                              .processFlowModel.statusId))
-                                  .firstOrNull,
-                            ),
-                          ),
-                        ],
-                      ),
                       const SizedBox(height: 16),
                       Text(
                         'Create task',
@@ -317,101 +474,25 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CommonDropdown<int>(
-                              hintText: 'Branch *',
-                              isMultiLine: true,
-                              items: branchList
-                                  .map((status) => DropdownItem<int>(
-                                        id: status.branchId!,
-                                        name: status.branchName!,
-                                      ))
-                                  .toList(),
-                              onItemSelected: (int? newValue) {
-                                if (newValue != null) {
-                                  processFlowProvider.taskFlowModel.branchId =
-                                      newValue;
-                                  processFlowProvider.setTaskFlowModel(
-                                      processFlowProvider.taskFlowModel);
-                                }
-                              },
-                              selectedValue:
-                                  processFlowProvider.taskFlowModel.branchId,
+                      isWeb
+                          ? Row(
+                              children: [
+                                Expanded(child: branchDropdown),
+                                const SizedBox(width: 10),
+                                Expanded(child: departmentDropdown),
+                                const SizedBox(width: 10),
+                                Expanded(child: departmentTaskTypeDropdown),
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                branchDropdown,
+                                const SizedBox(height: 16),
+                                departmentDropdown,
+                                const SizedBox(height: 16),
+                                departmentTaskTypeDropdown,
+                              ],
                             ),
-                          ),
-                          Container(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: CommonDropdown<int>(
-                              hintText: 'Department *',
-                              items: departmentList
-                                  .map((status) => DropdownItem<int>(
-                                        id: status.departmentId,
-                                        name: status.departmentName,
-                                      ))
-                                  .toList(),
-                              // controller: departmentController,
-                              onItemSelected: (int? newValue) {
-                                if (newValue != null) {
-                                  processFlowProvider
-                                      .taskFlowModel.departmentId = newValue;
-                                  processFlowProvider.setTaskFlowModel(
-                                      processFlowProvider.taskFlowModel);
-                                }
-                                processFlowProvider.taskFlowModel.taskTypeId =
-                                    0;
-                                processFlowProvider.setTaskFlowModel(
-                                    processFlowProvider.taskFlowModel);
-                                _taskTypeByDepartmentFuture =
-                                    processFlowProvider.getTaskTypeByDepartment(
-                                        context, newValue.toString());
-                              },
-                              selectedValue: processFlowProvider
-                                      .taskFlowModel.departmentId ??
-                                  0,
-                            ),
-                          ),
-                          Container(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: FutureBuilder<List<TaskTypeModel>>(
-                                future: _taskTypeByDepartmentFuture,
-                                builder: (contextBuilder, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    // Loading state
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  }
-                                  return CommonDropdown<int>(
-                                    hintText: 'Task type *',
-                                    items: (snapshot.data ?? [])
-                                        .map((status) => DropdownItem<int>(
-                                              id: status.taskTypeId,
-                                              name: status.taskTypeName,
-                                            ))
-                                        .toList(),
-                                    // controller: flowTaskTypeController,
-                                    onItemSelected: (int? newValue) {
-                                      if (newValue != null) {
-                                        processFlowProvider.taskFlowModel
-                                            .taskTypeId = newValue;
-                                        processFlowProvider.setTaskFlowModel(
-                                            processFlowProvider.taskFlowModel);
-                                      }
-                                    },
-                                    selectedValue: processFlowProvider
-                                            .taskFlowModel.taskTypeId ??
-                                        0,
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -433,9 +514,6 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 // Cancel editing mode
                                 isEditingTaskFlow = false;
                                 selectedTaskFlowIndex = null;
-                                // branchController.clear();
-                                // departmentController.clear();
-                                // flowTaskTypeController.clear();
                                 processFlowProvider.taskFlowModel =
                                     TaskFlowModel();
                                 setState(() {});
@@ -456,81 +534,25 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: IgnorePointer(
-                              ignoring: isEditingMandatoryTask,
-                              child: CommonDropdown<int>(
-                                hintText: 'Task type',
-                                items: taskTypeList
-                                    .map((status) => DropdownItem<int>(
-                                          id: status.taskTypeId,
-                                          name: status.taskTypeName,
-                                        ))
-                                    .toList(),
-                                onItemSelected: (int? newValue) {
-                                  if (newValue != null) {
-                                    int existIndex = processFlowProvider
-                                        .mandatoryTaskList
-                                        .indexWhere((element) =>
-                                            element.taskTypeId == newValue);
-
-                                    if (existIndex == -1) {
-                                      MandatoryTaskModel model =
-                                          MandatoryTaskModel(
-                                        taskTypeId: newValue,
-                                        statusIds: processFlowProvider
-                                                .mandatoryTaskModel.statusIds ??
-                                            [],
-                                      );
-                                      processFlowProvider
-                                          .setMandatoryTaskModel(model);
-                                      setState(() {});
-                                    } else {
-                                      showToastInDialog(
-                                          'Task type already exist', context);
-
-                                      processFlowProvider.setMandatoryTaskModel(
-                                          MandatoryTaskModel(
-                                              taskTypeId: null, statusIds: []));
-                                      setState(() {});
-                                    }
-                                  }
-                                },
-                                selectedValue: processFlowProvider
-                                        .mandatoryTaskModel.taskTypeId ??
-                                    0,
-                              ),
+                      isWeb
+                          ? Row(
+                              children: [
+                                Expanded(child: mandatoryTaskTypeDropdown),
+                                const SizedBox(width: 10),
+                                assignStatusButton,
+                              ],
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                mandatoryTaskTypeDropdown,
+                                const SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: assignStatusButton,
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          TextButton.icon(
-                            icon:
-                                const Icon(Icons.add_circle_outline, size: 16),
-                            label: const Text('Assign Status'),
-                            style: TextButton.styleFrom(
-                              foregroundColor: AppColors.secondaryBlue,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                            onPressed: () {
-                              if (processFlowProvider
-                                  .mandatoryTaskModel.taskTypeId
-                                  .isGreaterThanZero()) {
-                                showStatusTypeDialog(
-                                    selectedMandatoryTaskIndex ?? -1,
-                                    taskTypeStatusList);
-                              } else {
-                                showToastInDialog(
-                                    'Please select a task type', context);
-                              }
-                            },
-                          ),
-                        ],
-                      ),
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Row(
