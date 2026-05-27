@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/controller/models/branch_model.dart';
+import 'package:vidyanexis/controller/models/custom_field_model.dart';
 import 'package:vidyanexis/controller/models/department_model.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
@@ -21,6 +22,7 @@ class ProcessFlowProvider extends ChangeNotifier {
   List<ProcessFlowModel> processFlowFilteredList = [];
   List<ProcessFlowModel> processFlowList = [];
   List<Map<String, dynamic>> savedCustomFields = [];
+  List<CustomFieldModel> showCustomFields = [];
 
   void filterData(String searchText) {
     processFlowFilteredList = processFlowList
@@ -39,6 +41,7 @@ class ProcessFlowProvider extends ChangeNotifier {
     mandatoryTaskModel = MandatoryTaskModel();
     _selectedDocuments = [];
     savedCustomFields = [];
+    showCustomFields = [];
   }
 
   void removeTaskFlow(int index) {
@@ -276,6 +279,13 @@ class ProcessFlowProvider extends ChangeNotifier {
           _selectedDocuments = (documentsData as List)
               .map((item) => DocumentTypeModel.fromJson(item))
               .toList();
+          processFlowModel.templateId = data["data"]["template_id"]?.toString();
+          var showCustomFieldsData = data["data"]["show_custom_fields"] ??
+              data["data"]["show_custom_field"] ??
+              [];
+          showCustomFields = (showCustomFieldsData as List)
+              .map((item) => CustomFieldModel.fromJson(item))
+              .toList();
           print(documentsData);
 
           // departmentList = departmentData
@@ -317,6 +327,7 @@ class ProcessFlowProvider extends ChangeNotifier {
             "status_id": processFlowModel.statusId,
             "enquiry_for_id": processFlowModel.enquiryForId ?? 0,
             "enquiry_for_name": processFlowModel.enquiryForName ?? '',
+            "template_id": processFlowModel.templateId ?? '',
             "flow_tasks": taskFlowList.map((item) => item.toJson()).toList(),
             "mandatory_tasks":
                 mandatoryTaskList.map((item) => item.toJson()).toList(),
@@ -324,6 +335,18 @@ class ProcessFlowProvider extends ChangeNotifier {
                 _selectedDocuments.map((item) => item.toJson()).toList(),
             "custom_fields": savedCustomFields,
             "custom_field": savedCustomFields,
+            "show_custom_fields": showCustomFields
+                .map((item) => {
+                      "custom_field_id": item.customFieldId,
+                      "custom_field_name": item.customFieldName,
+                    })
+                .toList(),
+            "show_custom_field": showCustomFields
+                .map((item) => {
+                      "custom_field_id": item.customFieldId,
+                      "custom_field_name": item.customFieldName,
+                    })
+                .toList(),
           });
 
       if (response!.statusCode == 200) {
