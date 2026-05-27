@@ -40,6 +40,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   final TextEditingController taskTypeController = TextEditingController();
   final TextEditingController taskStatusController = TextEditingController();
   final TextEditingController enquiryForController = TextEditingController();
+  final TextEditingController templateIdController = TextEditingController();
   bool isEditingMandatoryTask = false;
   bool isSavingData = false;
   int? selectedMandatoryTaskIndex;
@@ -62,6 +63,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   final List<CustomFieldModel> _selectedCustomFields = [];
   final Map<int, String> _customFieldValues = {};
   final Map<int, TextEditingController> _customFieldControllers = {};
+
+  // For Show Custom Fields
+  final List<CustomFieldModel> _showCustomFields = [];
 
   void _onDrawerClosed(BuildContext context) {
     // Also reset the process flow provider
@@ -89,6 +93,10 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         await processFlowProvider.getProcessFlowById(
             context, widget.processFlowModel.flowId!);
         _initializeSavedCustomFields(settingsProv.customFieldModelList);
+        templateIdController.text =
+            processFlowProvider.processFlowModel.templateId ?? '';
+        _showCustomFields.clear();
+        _showCustomFields.addAll(processFlowProvider.showCustomFields);
       }
     });
   }
@@ -97,6 +105,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   void dispose() {
     taskTypeController.dispose();
     taskStatusController.dispose();
+    templateIdController.dispose();
     for (var controller in _customFieldControllers.values) {
       controller.dispose();
     }
@@ -473,6 +482,91 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       const SizedBox(height: 16),
                       _buildCustomFieldsSection(
                           settingsProvider.customFieldModelList),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Show Custom Fields',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.textBlue800,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () => _showShowCustomFieldsDialog(
+                            settingsProvider.customFieldModelList),
+                        child: AbsorbPointer(
+                          child: CustomTextField(
+                            readOnly: true,
+                            controller: TextEditingController(),
+                            height: 54,
+                            hintText: 'Select Custom Fields',
+                            labelText: '',
+                            suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                          ),
+                        ),
+                      ),
+                      if (_showCustomFields.isNotEmpty) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children:
+                                _showCustomFields.asMap().entries.map((entry) {
+                              final idx = entry.key;
+                              final field = entry.value;
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.appViolet,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      field.customFieldName ?? '',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _showCustomFields.removeAt(idx);
+                                        });
+                                      },
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        controller: templateIdController,
+                        hintText: 'Template ID',
+                        keyboardType: TextInputType.text,
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         'Create task',
@@ -1304,6 +1398,128 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     }
   }
 
+  void _showShowCustomFieldsDialog(List<CustomFieldModel> allCustomFields) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: const Text('Select Custom Fields'),
+              content: SizedBox(
+                width: AppStyles.isWebScreen(context)
+                    ? MediaQuery.of(context).size.width / 3
+                    : MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: allCustomFields.length,
+                  itemBuilder: (context, index) {
+                    final field = allCustomFields[index];
+                    bool isSelected = _showCustomFields
+                        .any((e) => e.customFieldId == field.customFieldId);
+
+                    return InkWell(
+                      onTap: () {
+                        setStateDialog(() {
+                          if (isSelected) {
+                            _showCustomFields.removeWhere(
+                                (e) => e.customFieldId == field.customFieldId);
+                          } else {
+                            _showCustomFields.add(field);
+                          }
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: isSelected
+                              ? Colors.blue.shade50
+                              : Colors.grey.shade50,
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.blue.shade400
+                                : Colors.grey.shade300,
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isSelected
+                                    ? Colors.blue.shade400
+                                    : Colors.transparent,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Colors.blue.shade400
+                                      : Colors.grey.shade400,
+                                  width: 2,
+                                ),
+                              ),
+                              child: isSelected
+                                  ? const Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: Colors.white,
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                field.customFieldName ?? '',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? Colors.blue.shade700
+                                      : Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel',
+                      style: TextStyle(color: Colors.grey.shade600)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue.shade600,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Done'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   void saveData() async {
     // Validate necessary conditions
     if (processFlowProvider.processFlowModel.enquiryForId.isNullOrZero()) {
@@ -1337,6 +1553,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         "value": value,
       };
     }).toList();
+
+    processFlowProvider.processFlowModel.templateId = templateIdController.text;
+    processFlowProvider.showCustomFields = _showCustomFields;
 
     isSavingData = true;
     setState(() {});

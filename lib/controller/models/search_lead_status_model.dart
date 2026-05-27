@@ -26,6 +26,7 @@ class SearchLeadStatusModel {
   int? progressValue;
   String? colorCode;
   List<CustomFieldByStatusId>? customFields;
+  String? whatsappTemplateId;
 
   SearchLeadStatusModel({
     this.statusId,
@@ -40,6 +41,7 @@ class SearchLeadStatusModel {
     this.progressValue,
     this.colorCode,
     this.customFields,
+    this.whatsappTemplateId,
   });
 
   SearchLeadStatusModel copyWith({
@@ -55,6 +57,7 @@ class SearchLeadStatusModel {
     int? progressValue,
     String? colorCode,
     List<CustomFieldByStatusId>? customFields,
+    String? whatsappTemplateId,
   }) =>
       SearchLeadStatusModel(
         statusId: statusId ?? this.statusId,
@@ -69,6 +72,7 @@ class SearchLeadStatusModel {
         progressValue: progressValue ?? this.progressValue,
         colorCode: colorCode ?? this.colorCode,
         customFields: customFields ?? this.customFields,
+        whatsappTemplateId: whatsappTemplateId ?? this.whatsappTemplateId,
       );
 
   factory SearchLeadStatusModel.fromJson(Map<String, dynamic> json) =>
@@ -88,6 +92,9 @@ class SearchLeadStatusModel {
             ? []
             : List<CustomFieldByStatusId>.from(json["custom_fields"]!
                 .map((x) => CustomFieldByStatusId.fromJson(x))),
+        whatsappTemplateId: json["Whatsapp_Template_Id"]?.toString() ??
+            json["whatsapp_template_id"]?.toString() ??
+            json["WhatsApp_Template_Id"]?.toString(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -105,5 +112,6 @@ class SearchLeadStatusModel {
         "custom_fields": customFields == null
             ? []
             : List<dynamic>.from(customFields!.map((x) => x.toJson())),
+        "Whatsapp_Template_Id": whatsappTemplateId,
       };
 }

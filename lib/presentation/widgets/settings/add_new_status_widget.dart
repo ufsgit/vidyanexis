@@ -367,6 +367,8 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             widget.data!.statusName ?? "";
         settingsProvider.progressValueController.text =
             widget.data!.progressValue.toString();
+        settingsProvider.whatsappTemplateIdController.text =
+            widget.data!.whatsappTemplateId ?? "";
 
         settingsProvider.viewInController.text = widget.data!.viewInName ?? "";
       } else {
@@ -383,6 +385,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.stageStatusController.text = '';
         settingsProvider.viewInController.text = '';
         settingsProvider.progressValueController.text = '';
+        settingsProvider.whatsappTemplateIdController.clear();
       }
     });
   }
@@ -435,6 +438,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
               settingsProvider.folloupController.clear();
               settingsProvider.isRegisterController.clear();
               settingsProvider.setSelectedColor(null);
+              settingsProvider.whatsappTemplateIdController.clear();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.close),
@@ -582,7 +586,17 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
+                height: 10,
+              ),
+              CustomTextField(
+                readOnly: false,
+                height: 54,
+                controller: settingsProvider.whatsappTemplateIdController,
+                hintText: 'Whatsapp Template Id',
+                labelText: '',
+              ),
+              const SizedBox(
                 height: 10,
               ),
               GestureDetector(
@@ -725,6 +739,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             settingsProvider.folloupController.clear();
             settingsProvider.isRegisterController.clear();
             settingsProvider.setSelectedColor(null);
+            settingsProvider.whatsappTemplateIdController.clear();
             Navigator.pop(context);
           },
           radius: 4,
@@ -749,7 +764,9 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                 statusOrder: '0',
                 followUp: settingsProvider.selectedFollowUp.toString(),
                 isRegistered: settingsProvider.isRegister.toString(),
-                colorCode: settingsProvider.selectedColor.toString());
+                colorCode: settingsProvider.selectedColor.toString(),
+                whatsappTemplateId:
+                    settingsProvider.whatsappTemplateIdController.text);
           },
           radius: 4,
           backgroundColor: AppColors.secondaryBlue,

@@ -18,6 +18,7 @@ class ProcessFlowModel {
   String? statusName;
   int? enquiryForId;
   String? enquiryForName;
+  String? templateId;
 
   ProcessFlowModel({
     this.flowId,
@@ -27,6 +28,7 @@ class ProcessFlowModel {
     this.statusName,
     this.enquiryForId,
     this.enquiryForName,
+    this.templateId,
   });
 
   ProcessFlowModel copyWith({
@@ -37,6 +39,7 @@ class ProcessFlowModel {
     String? statusName,
     int? enquiryForId,
     String? enquiryForName,
+    String? templateId,
   }) =>
       ProcessFlowModel(
         flowId: flowId ?? this.flowId,
@@ -46,6 +49,7 @@ class ProcessFlowModel {
         statusName: statusName ?? this.statusName,
         enquiryForId: enquiryForId ?? this.enquiryForId,
         enquiryForName: enquiryForName ?? this.enquiryForName,
+        templateId: templateId ?? this.templateId,
       );
 
   factory ProcessFlowModel.fromJson(Map<String, dynamic> json) =>
@@ -57,6 +61,7 @@ class ProcessFlowModel {
         statusName: json["status_name"],
         enquiryForId: json["enquiry_for_id"],
         enquiryForName: json["enquiry_for_name"],
+        templateId: json["template_id"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -67,5 +72,6 @@ class ProcessFlowModel {
         "status_name": statusName,
         "enquiry_for_id": enquiryForId,
         "enquiry_for_name": enquiryForName,
+        "template_id": templateId,
       };
 }

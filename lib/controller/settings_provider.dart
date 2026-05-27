@@ -186,6 +186,8 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController dateOfJoinController = TextEditingController();
   //status controllers
   final TextEditingController statusController = TextEditingController();
+  final TextEditingController whatsappTemplateIdController =
+      TextEditingController();
 
   final TextEditingController folloupController = TextEditingController();
 
@@ -2701,6 +2703,7 @@ class SettingsProvider extends ChangeNotifier {
     required String isRegistered,
     required String colorCode,
     required final customFields,
+    required String whatsappTemplateId,
   }) async {
     try {
       Loader.showLoader(context);
@@ -2723,6 +2726,7 @@ class SettingsProvider extends ChangeNotifier {
                 ? "0"
                 : progressValueController.text,
             "Custom_Fields": customFields,
+            "Whatsapp_Template_Id": whatsappTemplateId,
           });
 
       if (response!.statusCode == 200) {
