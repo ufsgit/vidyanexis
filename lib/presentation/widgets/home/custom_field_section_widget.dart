@@ -26,6 +26,8 @@ final GlobalKey<_CustomFieldSectionWidgetState> customFieldEnquirySourceKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldQuotationKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
+final GlobalKey<_CustomFieldSectionWidgetState> customFieldTaskStatusKey =
+    GlobalKey<_CustomFieldSectionWidgetState>();
 
 class CustomFieldSectionWidget extends StatefulWidget {
   final List<CustomFieldByStatusId> customFields;
@@ -38,6 +40,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
   final double? spacing;
   final String controllerKey;
   final bool showEditButton;
+  final bool showMore;
   const CustomFieldSectionWidget({
     super.key,
     required this.customFields,
@@ -50,6 +53,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
     this.spacing,
     required this.controllerKey,
     this.showEditButton = false,
+    this.showMore = true,
   });
 
   @override
@@ -174,45 +178,61 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
               ),
             ],
             if (nonMandatoryFields.isNotEmpty) ...[
-              Theme(
-                data: Theme.of(context)
-                    .copyWith(dividerColor: Colors.transparent),
-                child: ExpansionTile(
-                  showTrailingIcon: false,
-                  onExpansionChanged: (expanded) {
-                    setState(() => _isExpanded = expanded);
-                  },
-                  title: Text(
-                    _isExpanded ? 'Less options' : 'More options',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.bluebutton,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+              if (widget.showMore) ...[
+                Theme(
+                  data: Theme.of(context)
+                      .copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    showTrailingIcon: false,
+                    onExpansionChanged: (expanded) {
+                      setState(() => _isExpanded = expanded);
+                    },
+                    title: Text(
+                      _isExpanded ? 'Less options' : 'More options',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.bluebutton,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                  tilePadding: EdgeInsets.symmetric(horizontal: 10),
-                  children: [
-                    const SizedBox(height: 10),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final spacing = widget.spacing ?? 16.0;
-                        return Column(
-                          children: nonMandatoryFields
-                              .map((field) => Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: spacing / 2),
-                                    child: widgetBuilder.buildWidget(field),
-                                  ))
-                              .toList(),
-                        );
-                      },
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
                     ),
-                  ],
+                    tilePadding: EdgeInsets.symmetric(horizontal: 10),
+                    children: [
+                      const SizedBox(height: 10),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final spacing = widget.spacing ?? 16.0;
+                          return Column(
+                            children: nonMandatoryFields
+                                .map((field) => Padding(
+                                      padding:
+                                          EdgeInsets.only(bottom: spacing / 2),
+                                      child: widgetBuilder.buildWidget(field),
+                                    ))
+                                .toList(),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ] else ...[
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final spacing = widget.spacing ?? 16.0;
+                    return Column(
+                      children: nonMandatoryFields
+                          .map((field) => Padding(
+                                padding: EdgeInsets.only(bottom: spacing / 2),
+                                child: widgetBuilder.buildWidget(field),
+                              ))
+                          .toList(),
+                    );
+                  },
+                ),
+              ]
             ],
           ],
         ),
@@ -371,8 +391,12 @@ class CustomFieldWidgetBuilder {
       customFieldName: field.customFieldName,
       isQuotationCustom: field.isQuotationCustom,
       isViewInQuotation: field.isViewInQuotation,
-      dropDownValues: field.dropdownValues?.map((x) => x.dropdownValue ?? '').toList() ?? [],
-      checkBoxValues: field.checkboxValues?.map((x) => x.checkBoxValues ?? '').toList() ?? [],
+      dropDownValues:
+          field.dropdownValues?.map((x) => x.dropdownValue ?? '').toList() ??
+              [],
+      checkBoxValues:
+          field.checkboxValues?.map((x) => x.checkBoxValues ?? '').toList() ??
+              [],
     );
 
     final result = await showDialog<bool>(
@@ -391,7 +415,8 @@ class CustomFieldWidgetBuilder {
     if (result == true) {
       if (context.mounted) {
         try {
-          final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+          final customerDetailsProvider =
+              Provider.of<CustomerDetailsProvider>(context, listen: false);
           await customerDetailsProvider.getCustomFieldsByQuotationId(context);
         } catch (e) {
           debugPrint('Error reloading quotation custom fields: $e');

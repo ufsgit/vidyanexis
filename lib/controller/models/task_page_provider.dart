@@ -3,6 +3,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
@@ -33,6 +35,9 @@ class TaskPageProvider extends ChangeNotifier {
 
   List<TaskHistoryModel> _taskHistoryList = [];
   List<TaskHistoryModel> get taskHistoryList => _taskHistoryList;
+
+  List<CustomFieldByStatusId> _showCustomFields = [];
+  List<CustomFieldByStatusId> get showCustomFields => _showCustomFields;
 
   bool _isHistoryLoading = false;
   bool get isHistoryLoading => _isHistoryLoading;
@@ -665,6 +670,13 @@ class TaskPageProvider extends ChangeNotifier {
       double latitude = locationData?['latitude'] ?? 0.0;
       double longitude = locationData?['longitude'] ?? 0.0;
 
+      List<Map<String, dynamic>> customFieldsData = [];
+      if (customFieldTaskStatusKey.currentState != null) {
+        final fieldValues =
+            customFieldTaskStatusKey.currentState!.getFieldValues();
+        customFieldsData = fieldValues.map((field) => field.toJson()).toList();
+      }
+
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.changeTaskStatus,
           bodyData: {
@@ -679,7 +691,8 @@ class TaskPageProvider extends ChangeNotifier {
             // "Next_FollowUp_Date":
             //     DateFormat('yyyy-MM-dd').format(DateTime.now()),
             "Next_FollowUp_Date": followUpDateController.text.toyyyymmdd(),
-            "Tasks": _selectedTaskTypeIds.join(",")
+            "Tasks": _selectedTaskTypeIds.join(","),
+            "CustomFields": customFieldsData,
           });
 
       if (response?.statusCode == 200) {
@@ -976,6 +989,7 @@ class TaskPageProvider extends ChangeNotifier {
           final documentData = data['document_types'] ?? [];
           final statusData = data['mandatory_status'] ?? [];
           final formsData = data['forms'] ?? [];
+          final customFieldData = data['show_custom_field'] ?? [];
 
           debugPrint(
               "DEBUG: fetchTaskTypes received ${formsData.length} forms");
@@ -997,6 +1011,10 @@ class TaskPageProvider extends ChangeNotifier {
               .toList();
           _statusData = (statusData as List<dynamic>)
               .map((item) => MandatoryStatusModel.fromJson(item))
+              .toList();
+
+          _showCustomFields = (customFieldData as List)
+              .map((e) => CustomFieldByStatusId.fromJson(e))
               .toList();
 
           // Update forms in FormProvider if present

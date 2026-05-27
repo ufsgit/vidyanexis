@@ -13,6 +13,7 @@ import 'package:vidyanexis/controller/models/form_model.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 
 class ProcessFlowDialog extends StatefulWidget {
   final TaskReportModel task;
@@ -406,6 +407,42 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             ),
                           ),
 
+                          const SizedBox(height: 8),
+                          // CustomField
+                          Consumer<TaskPageProvider>(
+                            builder: (context, reportsProvider, child) {
+                              if (reportsProvider.showCustomFields.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    'CUSTOM FIELDS',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey.shade600,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  CustomFieldSectionWidget(
+                                    key:
+                                        customFieldTaskStatusKey, // Make sure this GlobalKey is defined
+                                    customFields:
+                                        reportsProvider.showCustomFields,
+                                    controllerKey:
+                                        'task_status_${widget.task.taskId}', // Unique key
+                                    showEditButton: false,
+                                    enabled: true,
+                                    showMore: false,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
                           const SizedBox(height: 8),
 
                           Consumer<FormProvider>(
