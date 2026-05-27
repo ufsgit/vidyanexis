@@ -1173,6 +1173,24 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                             color: Color(
                                                                 0xFF607185)),
                                                         TableWidget(
+                                                            width: 120,
+                                                            padding: const EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        6.0,
+                                                                    horizontal:
+                                                                        8.0),
+                                                            alignment: Alignment.centerLeft,
+                                                            data: const Text(
+                                                                'History',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        13)),
+                                                            color: const Color(
+                                                                0xFF607185)),
+                                                        TableWidget(
                                                             width: 150,
                                                             padding: EdgeInsets
                                                                 .symmetric(
@@ -1242,24 +1260,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                           13)),
                                                               color: Color(
                                                                   0xFF607185)),
-                                                         TableWidget(
-                                                             width: 120,
-                                                             padding: const EdgeInsets
-                                                                 .symmetric(
-                                                                     vertical:
-                                                                         6.0,
-                                                                     horizontal:
-                                                                         8.0),
-                                                             alignment: Alignment.centerLeft,
-                                                             data: const Text(
-                                                                 'History',
-                                                                 style: TextStyle(
-                                                                     color: Colors
-                                                                         .white,
-                                                                     fontSize:
-                                                                         13)),
-                                                             color: const Color(
-                                                                 0xFF607185)),
+
                                                       ],
                                                     ),
                                                   ),
