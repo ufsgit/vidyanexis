@@ -603,7 +603,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             Container(
                               height: tableHeaderHeight,
                               decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 0, 90, 69),
+                                color: AppColors.primaryBlue,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(

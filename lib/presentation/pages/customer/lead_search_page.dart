@@ -119,7 +119,7 @@ class LeadSearchPage extends StatelessWidget {
           Container(
             height: tableHeaderHeight,
             decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 0, 90, 69),
+              color: AppColors.primaryBlue,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
