@@ -648,8 +648,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                             Container(
                                               height: tableHeaderHeight,
                                               decoration: const BoxDecoration(
-                                                color: Color.fromARGB(
-                                                    255, 0, 90, 69),
+                                                color: AppColors.primaryBlue,
                                                 borderRadius: BorderRadius.only(
                                                     topLeft: Radius.circular(8),
                                                     bottomLeft:
@@ -1039,8 +1038,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                   Container(
                                                     height: tableHeaderHeight,
                                                     decoration: BoxDecoration(
-                                                      color: Color.fromARGB(
-                                                          255, 0, 90, 69),
+                                                      color: AppColors.primaryBlue,
                                                       borderRadius:
                                                           BorderRadius.only(
                                                               topRight: Radius

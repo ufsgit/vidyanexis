@@ -1225,7 +1225,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           else
                             Container(
                               decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 0, 90, 69),
+                                color: AppColors.primaryBlue,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Row(
