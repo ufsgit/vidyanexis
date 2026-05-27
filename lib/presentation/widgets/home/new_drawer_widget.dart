@@ -222,7 +222,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
               ),
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
             actions: [
               TextButton(
@@ -444,7 +444,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: CircleAvatar(
-                                    radius: 12,
+                                    radius: 4,
                                     backgroundColor: Colors.transparent,
                                     child: ClipOval(
                                       child: displayLogo.startsWith('http')
@@ -563,7 +563,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryBlue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                     color:
                                         AppColors.primaryBlue.withOpacity(0.5)),
@@ -593,8 +593,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                               ),
                               child: Text(
                                 'Address',

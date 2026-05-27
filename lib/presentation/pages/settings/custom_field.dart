@@ -108,8 +108,15 @@ class _CustomFieldState extends State<CustomField> {
                             height: 40,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                             ),
                             child: TextField(
                               controller: _searchController,
@@ -137,7 +144,7 @@ class _CustomFieldState extends State<CustomField> {
                               label: 'New',
                               breakpoint: 450,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
+                                  borderRadius: BorderRadius.circular(4)),
                               foregroundColor: Colors.white,
                               backgroundColor: AppColors.secondaryBlue,
                               borderSide: BorderSide(
@@ -153,7 +160,7 @@ class _CustomFieldState extends State<CustomField> {
                   Container(
                     decoration: BoxDecoration(
                       color: AppColors.surfaceGrey,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: ListView.separated(
                       separatorBuilder: (context, index) {
@@ -169,7 +176,7 @@ class _CustomFieldState extends State<CustomField> {
                         return Container(
                           decoration: BoxDecoration(
                             color: AppColors.whiteColor,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
@@ -185,7 +192,7 @@ class _CustomFieldState extends State<CustomField> {
                                     decoration: BoxDecoration(
                                         color: AppColors.surfaceGrey,
                                         borderRadius:
-                                            BorderRadius.circular(12)),
+                                            BorderRadius.circular(4)),
                                     child: Text(
                                       fieldModel.customFieldName.toString(),
                                       style: GoogleFonts.plusJakartaSans(

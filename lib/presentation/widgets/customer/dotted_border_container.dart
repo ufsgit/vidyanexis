@@ -20,7 +20,7 @@ class DottedBorderContainer extends StatelessWidget {
       painter: DottedBorderPainter(),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           color: AppColors.whiteColor,
         ),
         width: width,

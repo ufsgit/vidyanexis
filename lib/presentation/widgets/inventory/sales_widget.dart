@@ -51,7 +51,7 @@ class _SalesWidgetState extends State<SalesWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -322,8 +322,8 @@ class _SalesWidgetState extends State<SalesWidget> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                         ),
                         child: CustomTextField(
                           controller: expenseProvider.descriptionSalesController,
@@ -359,8 +359,8 @@ class _SalesWidgetState extends State<SalesWidget> {
           padding: EdgeInsets.all(isWeb ? 20 : 16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.02),
@@ -471,7 +471,7 @@ class _SalesWidgetState extends State<SalesWidget> {
                       backgroundColor: const Color(0xFF1E293B),
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                       elevation: 0,
                     ),
                     child: Icon(
@@ -553,7 +553,7 @@ class _SalesWidgetState extends State<SalesWidget> {
                     backgroundColor: const Color(0xFF1E293B),
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     elevation: 0,
                   ),
                   child: Icon(
@@ -838,7 +838,7 @@ class _SalesWidgetState extends State<SalesWidget> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
@@ -869,7 +869,7 @@ class _SalesWidgetState extends State<SalesWidget> {
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.appViolet.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     '${expenseProvider.salesItems.length} items',
@@ -908,8 +908,8 @@ class _SalesWidgetState extends State<SalesWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
             ),
             child: Row(
               children: [
@@ -1030,7 +1030,7 @@ class _SalesWidgetState extends State<SalesWidget> {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: Colors.grey.shade200),
               boxShadow: [
                 BoxShadow(
@@ -1174,7 +1174,7 @@ class _SalesWidgetState extends State<SalesWidget> {
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.appViolet.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   '₹${expenseProvider.finalGrandTotal.toStringAsFixed(2)}',
@@ -1388,8 +1388,8 @@ class _SalesWidgetState extends State<SalesWidget> {
           padding: EdgeInsets.all(isWeb ? 20 : 16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.02),
@@ -1456,7 +1456,7 @@ class _SalesWidgetState extends State<SalesWidget> {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: const BorderSide(color: Color(0xFFE2E8F0)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                   child: Text(
                     'Cancel',
@@ -1534,7 +1534,7 @@ class _SalesWidgetState extends State<SalesWidget> {
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                   child: Text(
                     'Save',

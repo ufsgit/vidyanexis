@@ -70,7 +70,7 @@ class _PaymentTabWidgetState extends State<PaymentTabWidget> {
                             height: 44,
                             decoration: BoxDecoration(
                               color: AppColors.secondaryBlue,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
                                   color: AppColors.secondaryBlue.withOpacity(0.3),

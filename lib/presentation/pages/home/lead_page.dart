@@ -302,7 +302,7 @@ class _LeadsPageState extends State<LeadPage> {
                                   decoration: BoxDecoration(
                                     color: AppColors.secondaryBlue
                                         .withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Icon(
                                     Icons.arrow_back,
@@ -336,7 +336,7 @@ class _LeadsPageState extends State<LeadPage> {
                                   horizontal: 16, vertical: 6),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                     color: leadProvider.entryType != 'all'
                                         ? AppColors.primaryBlue
@@ -379,7 +379,7 @@ class _LeadsPageState extends State<LeadPage> {
                               height: 38,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                     color: const Color(0xFFCBD5E1), width: 1.0),
                                 boxShadow: [
@@ -516,7 +516,7 @@ class _LeadsPageState extends State<LeadPage> {
                                     vertical: 12,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
                               ),
@@ -535,7 +535,7 @@ class _LeadsPageState extends State<LeadPage> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: AppColors.secondaryBlue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Icon(
                                 Icons.arrow_back,
@@ -562,7 +562,7 @@ class _LeadsPageState extends State<LeadPage> {
                           height: 36,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: Colors.black, width: 1.5),
                           ),
                           child: TextField(
@@ -673,7 +673,7 @@ class _LeadsPageState extends State<LeadPage> {
                             },
                             icon: const Icon(Icons.add),
                             label: const Text('New Lead'),
-                            style: ElevatedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                               backgroundColor: AppColors.primaryBlue,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
@@ -691,9 +691,17 @@ class _LeadsPageState extends State<LeadPage> {
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                 child: Wrap(
                   spacing: 10,
                   runSpacing: 10,
@@ -710,7 +718,7 @@ class _LeadsPageState extends State<LeadPage> {
                             horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                               color: leadProvider.fromDate != null ||
                                       leadProvider.toDate != null
@@ -767,7 +775,7 @@ class _LeadsPageState extends State<LeadPage> {
                               leadId: '0');
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: Colors.white,
                           foregroundColor: AppColors.textRed,
                           side: BorderSide(color: AppColors.textRed),
@@ -787,9 +795,17 @@ class _LeadsPageState extends State<LeadPage> {
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Scrollbar(
@@ -1053,7 +1069,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                             0.1),
                                                                     shape: RoundedRectangleBorder(
                                                                         borderRadius:
-                                                                            BorderRadius.circular(5)),
+                                                                            BorderRadius.circular(4)),
                                                                     padding: const EdgeInsets
                                                                         .symmetric(
                                                                         horizontal:
@@ -1889,7 +1905,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               fontWeight: FontWeight.w600,
                                                             ),
                                                           ),
-                                                          style: TextButton.styleFrom(
+                                                          style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                                             padding: EdgeInsets.zero,
                                                             alignment: Alignment.centerLeft,
                                                           ),
@@ -2182,7 +2198,7 @@ class _LeadsPageState extends State<LeadPage> {
         builder: (contextx, leadProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -2212,7 +2228,7 @@ class _LeadsPageState extends State<LeadPage> {
                             leadProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -2242,7 +2258,7 @@ class _LeadsPageState extends State<LeadPage> {
                             onTap: () => leadProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: leadProvider.fromDate != null
                                   ? '${leadProvider.fromDate!.toLocal()}'
@@ -2260,7 +2276,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 leadProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: leadProvider.toDate != null
                                   ? '${leadProvider.toDate!.toLocal()}'
@@ -2296,7 +2312,7 @@ class _LeadsPageState extends State<LeadPage> {
                               searchController.text, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -2329,7 +2345,7 @@ class _LeadsPageState extends State<LeadPage> {
                               searchController.text, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -2364,7 +2380,7 @@ class _LeadsPageState extends State<LeadPage> {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
             color: Colors.green.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
             value,
@@ -2389,7 +2405,7 @@ class _LeadsPageState extends State<LeadPage> {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
             value,
@@ -2451,7 +2467,7 @@ class _LeadsPageState extends State<LeadPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: (leadIdController.text.isNotEmpty)
               ? AppColors.primaryBlue
@@ -2540,7 +2556,7 @@ class _LeadsPageState extends State<LeadPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: (leadProvider.selectedUser != null &&
                       leadProvider.selectedUser != 0)
@@ -2595,7 +2611,7 @@ class _LeadsPageState extends State<LeadPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: (leadProvider.selectedEnquiryFor != null &&
                       leadProvider.selectedEnquiryFor != 0)
@@ -2661,7 +2677,7 @@ class _LeadsPageState extends State<LeadPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: (leadProvider.selectedEnquirySource != null &&
                       leadProvider.selectedEnquirySource != 0)
@@ -2910,7 +2926,7 @@ class _LeadsPageState extends State<LeadPage> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
         ),
@@ -3125,7 +3141,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -3223,7 +3239,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                       widget.onApply(_tempSelected);
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                       backgroundColor: AppColors.primaryBlue,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(80, 40),

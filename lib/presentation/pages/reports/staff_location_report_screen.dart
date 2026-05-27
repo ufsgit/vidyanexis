@@ -94,7 +94,7 @@ class _EmployeeLocationReportScreenState
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: AppColors.secondaryBlue.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: const Icon(
                                   Icons.sort,
@@ -119,8 +119,15 @@ class _EmployeeLocationReportScreenState
                             height: 40,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                             ),
                             child: TextField(
                               controller: searchController,
@@ -129,7 +136,15 @@ class _EmployeeLocationReportScreenState
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search here....',
-                                prefixIcon: const Icon(Icons.search),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF64748B),
+                                size: 18,
+                              ),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -150,7 +165,7 @@ class _EmployeeLocationReportScreenState
                                         vertical: 12,
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                     ),
                                     child: Text(searchController.text.isNotEmpty
@@ -203,8 +218,15 @@ class _EmployeeLocationReportScreenState
                             height: 40,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                             ),
                             child: TextField(
                               controller: searchController,
@@ -213,7 +235,15 @@ class _EmployeeLocationReportScreenState
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search here....',
-                                prefixIcon: const Icon(Icons.search),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF64748B),
+                                size: 18,
+                              ),
                                 border: InputBorder.none,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -233,7 +263,7 @@ class _EmployeeLocationReportScreenState
                                         vertical: 0,
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                     ),
                                     child: Text(searchController.text.isNotEmpty
@@ -279,9 +309,17 @@ class _EmployeeLocationReportScreenState
                         padding: const EdgeInsets.all(16.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -290,7 +328,7 @@ class _EmployeeLocationReportScreenState
                                 Container(
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFEFF2F5),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -409,7 +447,7 @@ class _EmployeeLocationReportScreenState
                                                       ? Colors.white
                                                       : const Color(0xFFF6F7F9),
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                      BorderRadius.circular(4),
                                                 ),
                                                 // Alternate row colors
                                                 child: Row(
@@ -583,7 +621,7 @@ class _EmployeeLocationReportScreenState
                                         vertical: 8, horizontal: 12),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(4),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withOpacity(0.05),
@@ -629,7 +667,7 @@ class _EmployeeLocationReportScreenState
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade100,
                                               borderRadius:
-                                                  BorderRadius.circular(8),
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Row(
                                               mainAxisAlignment:
@@ -721,7 +759,7 @@ class _EmployeeLocationReportScreenState
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -751,7 +789,7 @@ class _EmployeeLocationReportScreenState
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -783,7 +821,7 @@ class _EmployeeLocationReportScreenState
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -801,7 +839,7 @@ class _EmployeeLocationReportScreenState
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -847,13 +885,13 @@ class _EmployeeLocationReportScreenState
                           reportsProvider.getSearchTaskReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),
@@ -889,7 +927,7 @@ class _EmployeeLocationReportScreenState
                           );
                           reportsProvider.getSearchTaskReport(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -933,7 +971,7 @@ class _EmployeeLocationReportScreenState
                       width: 200,
                       height: 200,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(4),
                           color: Colors.grey.withOpacity(0.2)),
                       child: const Icon(
                         Icons.hide_image_outlined,

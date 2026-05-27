@@ -29,7 +29,7 @@ class CommonReportDateFilter extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: hasDates ? AppColors.primaryBlue : Colors.grey[300]!,
           ),
@@ -80,7 +80,7 @@ class CommonReportResetButton extends StatelessWidget {
             elevation: 0,
             side: const BorderSide(color: AppColors.textRed),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
             ),
             padding: const EdgeInsets.symmetric(
               horizontal: 16,

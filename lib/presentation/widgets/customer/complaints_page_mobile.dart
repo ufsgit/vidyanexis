@@ -79,7 +79,7 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                             height: 44,
                             decoration: BoxDecoration(
                               color: AppColors.secondaryBlue,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
                                   color: AppColors.secondaryBlue.withOpacity(0.3),
@@ -221,7 +221,7 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                                                   height: 22,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(30),
+                                                        BorderRadius.circular(4),
                                                     color: statusColor
                                                         .withOpacity(.1),
                                                   ),

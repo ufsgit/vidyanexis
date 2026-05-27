@@ -52,7 +52,7 @@ class _AddDepartmentState extends State<AddDepartment> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -143,7 +143,7 @@ class _AddDepartmentState extends State<AddDepartment> {
             settingsProvider.departmentController.clear();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -159,7 +159,7 @@ class _AddDepartmentState extends State<AddDepartment> {
             settingsProvider.saveDepartment(
                 context: context, departmentId: widget.editId);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,

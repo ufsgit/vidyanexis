@@ -203,7 +203,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                                     ? AppColors.primaryBlue
                                     : Colors.transparent,
                               ),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Row(
@@ -239,7 +239,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                             decoration: BoxDecoration(
                               color: AppColors.primaryBlue.withOpacity(0.05),
                               border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Center(
@@ -427,7 +427,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
         builder: (context, followUprovider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -457,7 +457,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                             followUprovider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -489,7 +489,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                                 followUprovider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: followUprovider.fromDate != null
                                   ? '${followUprovider.fromDate!.toLocal()}'
@@ -507,7 +507,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                                 followUprovider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: followUprovider.toDate != null
                                   ? '${followUprovider.toDate!.toLocal()}'
@@ -529,13 +529,13 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                           followUprovider.formatDate();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Select',
                         ),
@@ -550,7 +550,7 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                           Navigator.pop(context);
                           followUprovider.selectDateFilterOption(null);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

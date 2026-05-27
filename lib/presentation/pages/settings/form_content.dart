@@ -89,7 +89,7 @@ class _FormContentState extends State<FormContent> {
             Container(
               decoration: BoxDecoration(
                 color: isMobile ? Colors.transparent : AppColors.surfaceGrey,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Column(
                 children: [
@@ -161,8 +161,15 @@ class _FormContentState extends State<FormContent> {
       height: 40,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
       ),
       child: TextField(
         onChanged: (query) {
@@ -186,7 +193,7 @@ class _FormContentState extends State<FormContent> {
       height: 40,
       decoration: BoxDecoration(
         color: AppColors.secondaryBlue,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: TextButton.icon(
         onPressed: _openAddDialog,
@@ -201,7 +208,7 @@ class _FormContentState extends State<FormContent> {
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(4),
           ),
         ),
       ),
@@ -213,7 +220,7 @@ class _FormContentState extends State<FormContent> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
@@ -227,7 +234,7 @@ class _FormContentState extends State<FormContent> {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,
-                    borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(4)),
                 child: Text(
                   formModel.name,
                   style: GoogleFonts.plusJakartaSans(
@@ -304,7 +311,7 @@ class _FormContentState extends State<FormContent> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -327,7 +334,7 @@ class _FormContentState extends State<FormContent> {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                         color: AppColors.surfaceGrey,
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(4)),
                     child: Text(
                       formModel.name,
                       style: GoogleFonts.plusJakartaSans(

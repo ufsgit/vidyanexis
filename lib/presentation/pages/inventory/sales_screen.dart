@@ -80,8 +80,15 @@ class _SalesScreenState extends State<SalesScreen> {
       height: 40,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
       ),
       child: TextField(
         controller: searchController,
@@ -104,7 +111,7 @@ class _SalesScreenState extends State<SalesScreen> {
             height: 48,
             decoration: BoxDecoration(
               color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: TextField(
               controller: searchController,
@@ -139,13 +146,13 @@ class _SalesScreenState extends State<SalesScreen> {
         const SizedBox(width: 12),
         InkWell(
           onTap: () => provider.toggleFilterSales(),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           child: Container(
             height: 48,
             width: 48,
             decoration: BoxDecoration(
               color: provider.isFilterSales ? AppColors.textBlue800 : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(
               Icons.tune_rounded,
@@ -169,7 +176,7 @@ class _SalesScreenState extends State<SalesScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)],
       ),
       child: Column(
@@ -196,7 +203,7 @@ class _SalesScreenState extends State<SalesScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                   child: const Text('Apply'),
                 ),
@@ -225,7 +232,7 @@ class _SalesScreenState extends State<SalesScreen> {
       builder: (contextx) => Consumer<ExpenseProvider>(
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -255,7 +262,7 @@ class _SalesScreenState extends State<SalesScreen> {
                     labelText: 'Pick a date',
                     hintText: reportsProvider.fromDateSales != null ? reportsProvider.formattedFromDateSales : 'Select',
                     suffixIcon: const Icon(Icons.calendar_month),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -266,7 +273,7 @@ class _SalesScreenState extends State<SalesScreen> {
                       Navigator.pop(context);
                       reportsProvider.getSalesMaster(context);
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white),
                     child: const Text('Apply'),
                   ),
                 )
@@ -320,7 +327,7 @@ class _SalesScreenState extends State<SalesScreen> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -330,7 +337,7 @@ class _SalesScreenState extends State<SalesScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: Column(
             children: [
               // Header
@@ -410,7 +417,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                     Tooltip(
                                       message: 'Edit',
                                       child: InkWell(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                         onTap: () async {
                                           await provider.searchSalesDetails(
                                               s.salesMasterId.toString(), context);
@@ -420,7 +427,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFEFF6FF),
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(4),
                                           ),
                                           child: const Icon(Icons.edit_outlined,
                                               color: AppColors.primaryBlue, size: 15),
@@ -434,14 +441,14 @@ class _SalesScreenState extends State<SalesScreen> {
                                     Tooltip(
                                       message: 'Delete',
                                       child: InkWell(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                         onTap: () => _showDeleteDialog(
                                             context, provider, s.salesMasterId),
                                         child: Container(
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFFFF1F2),
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(4),
                                           ),
                                           child: const Icon(Icons.delete_outline,
                                               color: Colors.red, size: 15),

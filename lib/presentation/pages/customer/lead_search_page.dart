@@ -80,7 +80,7 @@ class LeadSearchPage extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: Colors.black, width: 1.5),
             ),
             child: TextField(
@@ -303,7 +303,7 @@ class LeadSearchPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Text(

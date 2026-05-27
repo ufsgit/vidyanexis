@@ -140,7 +140,7 @@ class _CustomerOutstandingReportMobileState
                             height: 32,
                             decoration: BoxDecoration(
                               color: AppColors.scaffoldColor,
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -222,7 +222,7 @@ class _CustomerOutstandingReportMobileState
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
+                                borderRadius: BorderRadius.circular(4)),
                           ),
                         ),
                       ),
@@ -406,8 +406,8 @@ class _CustomerOutstandingReportMobileState
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8)),
+                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.fromDate != null
                               ? provider.formattedFromDate
                               : 'From'),
@@ -421,8 +421,8 @@ class _CustomerOutstandingReportMobileState
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8)),
+                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.toDate != null
                               ? provider.formattedToDate
                               : 'To'),
@@ -460,7 +460,7 @@ class _CustomerOutstandingReportMobileState
           height: 35,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: provider.selectedEnquirySourceId != null
                   ? AppColors.primaryBlue

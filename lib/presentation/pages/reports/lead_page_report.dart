@@ -157,8 +157,15 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               height: 48,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                               ),
                               child: TextField(
                                 controller: searchController,
@@ -205,7 +212,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
-                                              BorderRadius.circular(20),
+                                              BorderRadius.circular(4),
                                         ),
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 16),
@@ -240,7 +247,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 foregroundColor: Colors.white,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -250,6 +257,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const SizedBox(width: 8),
                             CustomElevatedButton(
+                          radius: 4,
                               onPressed: () async {
                                 final allLeads = await leadReportProvider
                                     .fetchAllLeadsForExport(context);
@@ -317,6 +325,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const SizedBox(width: 8),
                             CustomElevatedButton(
+                          radius: 4,
                               onPressed: () async {
                                 final allLeads = await leadReportProvider
                                     .fetchAllLeadsForExport(context);
@@ -394,9 +403,17 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -411,7 +428,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   horizontal: 16, vertical: 4),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: (leadReportProvider.selectedStatus !=
                                               null &&
@@ -491,7 +508,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     horizontal: 16, vertical: 8),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: leadReportProvider.fromDate !=
                                                 null ||
@@ -545,7 +562,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   horizontal: 16, vertical: 4),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: (leadReportProvider.selectedUser !=
                                               null &&
@@ -626,7 +643,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   horizontal: 16, vertical: 4),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color:
                                       (leadReportProvider.selectedEnquiryFor !=
@@ -712,7 +729,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   horizontal: 16, vertical: 4),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: (leadReportProvider
                                                   .selectedEnquirySource !=
@@ -852,7 +869,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Row(
                                   // mainAxisAlignment: MainAxisAlignment.start,
@@ -1408,7 +1425,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
         builder: (context, leadReportProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -1438,7 +1455,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             leadReportProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -1471,7 +1488,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 leadReportProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: leadReportProvider.fromDate != null
                                   ? '${leadReportProvider.fromDate!.toLocal()}'
@@ -1489,7 +1506,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 leadReportProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: leadReportProvider.toDate != null
                                   ? '${leadReportProvider.toDate!.toLocal()}'
@@ -1523,7 +1540,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               foregroundColor: AppColors.textRed,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             child: const Text('Clear'),
@@ -1548,7 +1565,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             child: const Text('Apply'),
@@ -1735,7 +1752,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(24),
             content: SizedBox(
@@ -2038,6 +2055,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             CustomElevatedButton(
+                          radius: 4,
                               buttonText: 'Cancel',
                               onPressed: () {
                                 Navigator.of(context).pop();
@@ -2048,6 +2066,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const SizedBox(width: 8),
                             CustomElevatedButton(
+                          radius: 4,
                               buttonText: 'Transfer',
                               onPressed: () {
                                 if (dropDownProvider.selectedStatusId == null) {

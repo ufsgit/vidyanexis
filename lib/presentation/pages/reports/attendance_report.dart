@@ -144,7 +144,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -170,8 +170,15 @@ class _AttendanceReportState extends State<AttendanceReport> {
                       height: 45,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.grey[200]!),
+                        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                       ),
                       child: TextField(
                         controller: searchController,
@@ -218,7 +225,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                     ),
@@ -270,7 +277,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.03),
@@ -346,7 +353,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                           horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[100],
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
                                         '#${index + 1}',
@@ -370,7 +377,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                         decoration: BoxDecoration(
                                           color: const Color(0xFFDCFCE7),
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                              BorderRadius.circular(4),
                                           border: Border.all(
                                             color: const Color(0xFF16A34A)
                                                 .withOpacity(0.12),
@@ -412,7 +419,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                               ? const Color(0xFFFEF3C7)
                                               : const Color(0xFFFEE2E2),
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                              BorderRadius.circular(4),
                                           border: Border.all(
                                             color: task.checkOutTimeOnly.isEmpty
                                                 ? const Color(0xFFD97706)
@@ -463,7 +470,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       color: Colors.grey[50],
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Row(
                                       crossAxisAlignment:
@@ -505,7 +512,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF3F4F6).withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   children: [
@@ -622,7 +629,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: AppColors.grey),
       ),
       child: Row(
@@ -642,7 +649,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color: reportsProvider.AssignedTo != '0' &&
                         reportsProvider.AssignedTo != ''
@@ -711,7 +718,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
             child: Text(
@@ -748,7 +755,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(4)),
               ),
             ),
         ],
@@ -793,7 +800,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                 selected: reportsProvider.AssignedTo == '0' ||
                     reportsProvider.AssignedTo == '',
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 label: Text(
                   'All Staff',
@@ -827,7 +834,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                   },
                   selected: isSelected,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   label: Text(
                     user.userDetailsName ?? 'Unknown',
@@ -879,7 +886,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(4)),
                 ),
               ),
             ),
@@ -916,7 +923,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -952,7 +959,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                           },
                           selected: isSelected,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(
                             title,
@@ -997,11 +1004,11 @@ class _AttendanceReportState extends State<AttendanceReport> {
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.fromDate != null
@@ -1028,11 +1035,11 @@ class _AttendanceReportState extends State<AttendanceReport> {
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.toDate != null
@@ -1072,7 +1079,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: Text(

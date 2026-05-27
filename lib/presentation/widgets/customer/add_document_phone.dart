@@ -77,7 +77,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                     ),
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   actions: [
                     TextButton(
@@ -157,7 +157,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.whiteColor,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                       color: selectedCount > 0
                           ? AppColors.bluebutton.withOpacity(0.5)
@@ -211,7 +211,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                             color: selectedCount > 0
                                 ? AppColors.bluebutton
                                 : AppColors.bluebutton.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Icon(
                             selectedCount > 0 ? Icons.add : Icons.upload_sharp,
@@ -245,7 +245,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                         margin: const EdgeInsets.only(bottom: 8),
                         decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                                 color: AppColors.textGrey2.withOpacity(0.3))),
                         child: Padding(

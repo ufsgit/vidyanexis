@@ -153,7 +153,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
           duration: const Duration(seconds: 3),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(4),
           ),
           margin: const EdgeInsets.all(10),
         ),
@@ -178,7 +178,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
               ),
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
             actions: [
               TextButton(
@@ -223,7 +223,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.secondaryBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: const Icon(
               Icons.arrow_back_ios_new,
@@ -255,7 +255,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         horizontal: 14, vertical: 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.04),
@@ -331,7 +331,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                       color: isSelected
                                           ? AppColors.bluebutton
                                           : const Color(0xFFF3F5F7),
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
                                       taskType.taskTypeName ?? '',
@@ -394,7 +394,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                           horizontal: 14, vertical: 16),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.04),
@@ -434,15 +434,15 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                               filled: true,
                               fillColor: const Color(0xFFF7F8F9),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide.none,
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide.none,
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(
                                     color:
                                         AppColors.bluebutton.withOpacity(0.5)),
@@ -470,7 +470,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                           horizontal: 14, vertical: 16),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.04),
@@ -510,7 +510,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                               filled: true,
                               fillColor: const Color(0xFFF7F8F9),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide.none,
                               ),
                               contentPadding: const EdgeInsets.all(12),
@@ -527,7 +527,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                           horizontal: 14, vertical: 16),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.04),
@@ -568,7 +568,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                   horizontal: 12, vertical: 12),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF7F8F9),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(color: Colors.transparent),
                               ),
                               child: Row(
@@ -605,7 +605,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         horizontal: 14, vertical: 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.04),
@@ -679,7 +679,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                       color: isSelected
                                           ? AppColors.bluebutton
                                           : const Color(0xFFF3F5F7),
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
                                       worker.userDetailsName ?? '',
@@ -726,7 +726,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.bluebutton,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   elevation: 0,
                 ),

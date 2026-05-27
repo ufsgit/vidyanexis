@@ -165,7 +165,7 @@ class _ComplaintsDetailsPageMobileState
                         Container(
                             height: 22,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(4),
                               color: StatusUtils.getStatusMobileColor(
                                       customerDetailsProvider
                                           .serviceDetails[0].serviceStatusName)
@@ -210,7 +210,7 @@ class _ComplaintsDetailsPageMobileState
                                           customerDetailsProvider
                                               .serviceDetails[0]
                                               .serviceStatusName),
-                                      borderRadius: BorderRadius.circular(16))),
+                                      borderRadius: BorderRadius.circular(4))),
                               const SizedBox(
                                 width: 8,
                               ),

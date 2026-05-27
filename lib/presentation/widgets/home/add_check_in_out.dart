@@ -44,7 +44,7 @@ class _AddCheckInOutWidgetState extends State<AddCheckInOutWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(

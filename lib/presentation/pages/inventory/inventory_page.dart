@@ -86,7 +86,7 @@ class _InventoryPageState extends State<InventoryPage> {
                   height: 44,
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
                     Icons.sort_rounded,
@@ -122,7 +122,7 @@ class _InventoryPageState extends State<InventoryPage> {
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -139,7 +139,7 @@ class _InventoryPageState extends State<InventoryPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                             color: isSelected ? Colors.white : Colors.transparent,
                             boxShadow: isSelected
                                 ? [
@@ -223,7 +223,7 @@ class _InventoryPageState extends State<InventoryPage> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -302,7 +302,7 @@ class _InventoryPageState extends State<InventoryPage> {
             child: Container(
               height: 40,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
                 color: isSelected ? const Color(0xFFE5F0FF) : null,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -376,8 +376,15 @@ class _InventoryPageState extends State<InventoryPage> {
           height: 40,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
           ),
           child: TextField(
             controller: controller,
@@ -492,7 +499,7 @@ class _InventoryPageState extends State<InventoryPage> {
         height: 44,
         decoration: BoxDecoration(
           color: AppColors.secondaryBlue,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: AppColors.secondaryBlue.withOpacity(0.3),

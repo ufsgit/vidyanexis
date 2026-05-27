@@ -79,7 +79,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -242,7 +242,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
                       Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFFF6F7F9),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -327,7 +327,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
                             margin: const EdgeInsets.only(bottom: 10),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.1),
@@ -383,7 +383,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
                           settingsProvider.fieldTypeController.clear();
                           Navigator.pop(context);
                         },
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: AppColors.whiteColor,
                         borderColor: const Color(0xFFE2E8F0),
                         textColor: const Color(0xFF64748B),
@@ -420,7 +420,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
                               context, customFieldTypeModel);
                           navigator.pop(true);
                         },
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: AppColors.secondaryBlue,
                         borderColor: AppColors.secondaryBlue,
                         textColor: AppColors.whiteColor,
@@ -493,7 +493,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
             settingsProvider.fieldTypeController.clear();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -523,7 +523,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
             await settingsProvider.saveCustomField(context, customFieldTypeModel);
             navigator.pop(true);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,

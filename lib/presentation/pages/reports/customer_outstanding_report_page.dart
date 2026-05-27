@@ -81,7 +81,7 @@ class _CustomerOutstandingReportPageState
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -106,8 +106,15 @@ class _CustomerOutstandingReportPageState
                       height: 44,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.grey[200]!),
+                        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                       ),
                       child: Row(
                         children: [
@@ -133,7 +140,7 @@ class _CustomerOutstandingReportPageState
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF7F8C8D),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
+                                    borderRadius: BorderRadius.circular(4)),
                                 elevation: 0,
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
@@ -184,7 +191,7 @@ class _CustomerOutstandingReportPageState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 15),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
+                            borderRadius: BorderRadius.circular(4)),
                       ),
                       child: const Text('Export to Excel',
                           style: TextStyle(fontWeight: FontWeight.bold)),
@@ -444,7 +451,7 @@ class _CustomerOutstandingReportPageState
           height: 35,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: provider.selectedEnquirySourceId != null
                   ? AppColors.primaryBlue
@@ -499,8 +506,8 @@ class _CustomerOutstandingReportPageState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
           children: [

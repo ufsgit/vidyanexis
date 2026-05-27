@@ -92,8 +92,15 @@ class _StockReturnReportState extends State<StockReturnReport> {
         height: 48,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
         ),
         child: TextField(
           controller: customerController,
@@ -121,7 +128,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
@@ -164,7 +171,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppColors.secondaryBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Icon(
                   Icons.sort,
@@ -190,8 +197,15 @@ class _StockReturnReportState extends State<StockReturnReport> {
             height: 48,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
             ),
             child: TextField(
               onChanged: (value) => provider.setCustomerName(value),
@@ -218,7 +232,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                     ),
@@ -261,7 +275,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
+                  borderRadius: BorderRadius.circular(4)),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
           ),
@@ -358,7 +372,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                       backgroundColor: AppColors.primaryBlue,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
+                          borderRadius: BorderRadius.circular(4)),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 12),
                       elevation: 0,
@@ -397,7 +411,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -455,7 +469,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: const Color(0xFFE9EDF1),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             item.itemName,
@@ -535,7 +549,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
         builder: (context, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -570,7 +584,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                             _setDateFilterByIndex(index, reportsProvider);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -608,7 +622,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                             },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? DateFormat('yyyy-MM-dd')
@@ -635,7 +649,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                             },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? DateFormat('yyyy-MM-dd')
@@ -660,7 +674,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: const Text(
@@ -685,7 +699,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                           foregroundColor: AppColors.textRed,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: const Text(

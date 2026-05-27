@@ -57,7 +57,7 @@ class CustomAppBarWidget extends StatelessWidget
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: AppColors.secondaryBlue.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: leadingIcon ??
               const Icon(

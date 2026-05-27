@@ -50,7 +50,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
     final dropDownProvider = Provider.of<DropDownProvider>(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: const EdgeInsets.all(24),
         width: AppStyles.isWebScreen(context)
@@ -152,7 +152,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                           ? AppColors.appViolet
                                           : AppColors.appViolet
                                               .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Icon(
                                       selectedCount > 0
@@ -176,7 +176,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: AppColors.appViolet.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                               color: AppColors.appViolet.withOpacity(0.2)),
                         ),
@@ -209,7 +209,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                               backgroundColor: AppColors.appViolet,
                               borderColor: AppColors.appViolet,
                               textColor: Colors.white,
-                              radius: 8,
+                              radius: 4,
                               textSize: 12,
                             ),
                           ],
@@ -236,7 +236,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                   color: AppColors.textGrey2.withOpacity(0.3)),
                             ),
@@ -319,7 +319,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                   backgroundColor: Colors.white,
                   borderColor: AppColors.textGrey2,
                   textColor: AppColors.textBlack,
-                  radius: 12,
+                  radius: 4,
                 ),
                 const SizedBox(width: 12),
                 CustomElevatedButton(
@@ -338,7 +338,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                   backgroundColor: AppColors.appViolet,
                   borderColor: AppColors.appViolet,
                   textColor: Colors.white,
-                  radius: 12,
+                  radius: 4,
                 ),
               ],
             ),

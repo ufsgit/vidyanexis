@@ -118,7 +118,7 @@ class _FullScreenImageViewState extends State<FullScreenImageView> {
                 width: MediaQuery.of(context).size.width * 0.8,
                 height: MediaQuery.of(context).size.width * 0.8,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                   color: Colors.grey.withOpacity(0.2),
                 ),
                 child: const Icon(Icons.hide_image_outlined,

@@ -94,7 +94,7 @@
 //                                   ? 'Filter'
 //                                   : '',
 //                             ),
-//                             style: OutlinedButton.styleFrom(
+//                             style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
 //                               foregroundColor: reportsProvider.isFilter
 //                                   ? Colors.white
 //                                   : AppColors.primaryBlue,
@@ -144,7 +144,7 @@
 //                                       ? 'Filter'
 //                                       : '',
 //                                 ),
-//                                 style: OutlinedButton.styleFrom(
+//                                 style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
 //                                   foregroundColor: reportsProvider.isFilter
 //                                       ? Colors.white
 //                                       : AppColors.primaryBlue,
@@ -177,7 +177,7 @@
 //                       padding: const EdgeInsets.all(10.0),
 //                       decoration: BoxDecoration(
 //                         color: Colors.white,
-//                         borderRadius: BorderRadius.circular(20),
+//                         borderRadius: BorderRadius.circular(4),
 //                       ),
 //                       child: Wrap(
 //                         spacing: 10, // horizontal spacing between elements
@@ -193,7 +193,7 @@
 //                                   horizontal: 20, vertical: 1.5),
 //                               decoration: BoxDecoration(
 //                                 color: Colors.white,
-//                                 borderRadius: BorderRadius.circular(20),
+//                                 borderRadius: BorderRadius.circular(4),
 //                                 border: Border.all(
 //                                   color: reportsProvider.fromDate != null ||
 //                                           reportsProvider.toDate != null
@@ -226,7 +226,7 @@
 //                             padding: const EdgeInsets.symmetric(horizontal: 20),
 //                             decoration: BoxDecoration(
 //                               color: Colors.white,
-//                               borderRadius: BorderRadius.circular(20),
+//                               borderRadius: BorderRadius.circular(4),
 //                               border: Border.all(
 //                                 color: reportsProvider.selectedUser != null &&
 //                                         reportsProvider.selectedUser != 0
@@ -333,7 +333,7 @@
 //                                 );
 //                                 reportsProvider.getSearchWorkSummary(context);
 //                               },
-//                               style: ElevatedButton.styleFrom(
+//                               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
 //                                 backgroundColor: Colors.white,
 //                                 foregroundColor: AppColors.textRed,
 //                                 side: BorderSide(color: AppColors.textRed),
@@ -352,7 +352,7 @@
 //                       padding: const EdgeInsets.all(10.0),
 //                       decoration: BoxDecoration(
 //                         color: Colors.white,
-//                         borderRadius: BorderRadius.circular(20),
+//                         borderRadius: BorderRadius.circular(4),
 //                       ),
 //                       child: Row(
 //                         children: [
@@ -365,7 +365,7 @@
 //                                   horizontal: 20, vertical: 1.5),
 //                               decoration: BoxDecoration(
 //                                 color: Colors.white,
-//                                 borderRadius: BorderRadius.circular(20),
+//                                 borderRadius: BorderRadius.circular(4),
 //                                 border: Border.all(
 //                                     color: reportsProvider.fromDate != null ||
 //                                             reportsProvider.toDate != null
@@ -400,7 +400,7 @@
 //                             padding: const EdgeInsets.symmetric(horizontal: 20),
 //                             decoration: BoxDecoration(
 //                               color: Colors.white,
-//                               borderRadius: BorderRadius.circular(20),
+//                               borderRadius: BorderRadius.circular(4),
 //                               border: Border.all(
 //                                   color: reportsProvider.selectedUser != null &&
 //                                           reportsProvider.selectedUser != 0
@@ -494,7 +494,7 @@
 //                           //     );
 //                           //     reportsProvider.getSearchCustomers(context);
 //                           //   },
-//                           //   style: ElevatedButton.styleFrom(
+//                           //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
 //                           //     backgroundColor: Colors.white,
 //                           //     foregroundColor: AppColors.primaryBlue,
 //                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -529,7 +529,7 @@
 //                                 );
 //                                 reportsProvider.getSearchWorkSummary(context);
 //                               },
-//                               style: ElevatedButton.styleFrom(
+//                               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
 //                                 backgroundColor: Colors.white,
 //                                 foregroundColor: AppColors.textRed,
 //                                 side: BorderSide(color: AppColors.textRed),
@@ -550,7 +550,7 @@
 //                       child: Container(
 //                         decoration: BoxDecoration(
 //                           color: Colors.white,
-//                           borderRadius: BorderRadius.circular(14),
+//                           borderRadius: BorderRadius.circular(4),
 //                         ),
 //                         child: Padding(
 //                           padding: const EdgeInsets.all(8.0),
@@ -560,7 +560,7 @@
 //                               Container(
 //                                 decoration: BoxDecoration(
 //                                   color: const Color(0xFFEFF2F5),
-//                                   borderRadius: BorderRadius.circular(8),
+//                                   borderRadius: BorderRadius.circular(4),
 //                                 ),
 //                                 child: Row(
 //                                   children: [
@@ -644,7 +644,7 @@
 //                                               ? Colors.white
 //                                               : const Color(0xFFF6F7F9),
 //                                           borderRadius:
-//                                               BorderRadius.circular(8),
+//                                               BorderRadius.circular(4),
 //                                         ),
 //                                         child: Row(
 //                                           crossAxisAlignment:
@@ -819,7 +819,7 @@
 //                       child: Container(
 //                         decoration: BoxDecoration(
 //                           color: Colors.white,
-//                           borderRadius: BorderRadius.circular(14),
+//                           borderRadius: BorderRadius.circular(4),
 //                         ),
 //                         child: Padding(
 //                           padding: const EdgeInsets.all(8.0),
@@ -829,7 +829,7 @@
 //                               Container(
 //                                 decoration: BoxDecoration(
 //                                   color: const Color(0xFFEFF2F5),
-//                                   borderRadius: BorderRadius.circular(8),
+//                                   borderRadius: BorderRadius.circular(4),
 //                                 ),
 //                                 child: const Row(
 //                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -884,7 +884,7 @@
 //                                               ? Colors.white
 //                                               : const Color(0xFFF6F7F9),
 //                                           borderRadius:
-//                                               BorderRadius.circular(8),
+//                                               BorderRadius.circular(4),
 //                                         ),
 //                                         // Alternate row colors
 //                                         child: Row(
@@ -1056,7 +1056,7 @@
 //         builder: (contextx, reportsProvider, child) {
 //           return AlertDialog(
 //             shape: RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(18),
+//               borderRadius: BorderRadius.circular(4),
 //             ),
 //             contentPadding: const EdgeInsets.all(10),
 //             content: SingleChildScrollView(
@@ -1086,7 +1086,7 @@
 //                             reportsProvider.selectDateFilterOption(index);
 //                           },
 //                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(20),
+//                             borderRadius: BorderRadius.circular(4),
 //                           ),
 //                           label: Text(title),
 //                           backgroundColor:
@@ -1118,7 +1118,7 @@
 //                                 reportsProvider.selectDate(context, true),
 //                             decoration: InputDecoration(
 //                               border: OutlineInputBorder(
-//                                 borderRadius: BorderRadius.circular(15),
+//                                 borderRadius: BorderRadius.circular(4),
 //                               ),
 //                               hintText: reportsProvider.fromDate != null
 //                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -1136,7 +1136,7 @@
 //                                 reportsProvider.selectDate(context, false),
 //                             decoration: InputDecoration(
 //                               border: OutlineInputBorder(
-//                                 borderRadius: BorderRadius.circular(15),
+//                                 borderRadius: BorderRadius.circular(4),
 //                               ),
 //                               hintText: reportsProvider.toDate != null
 //                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -1177,7 +1177,7 @@
 //                               assignedTo);
 //                           reportsProvider.getSearchWorkSummary(context);
 //                         },
-//                         style: ElevatedButton.styleFrom(
+//                         style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
 //                           backgroundColor: AppColors.primaryBlue,
 //                           foregroundColor: Colors.white,
 //                           padding: const EdgeInsets.symmetric(
@@ -1217,7 +1217,7 @@
 //                           );
 //                           reportsProvider.getSearchWorkSummary(context);
 //                         },
-//                         style: ElevatedButton.styleFrom(
+//                         style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
 //                           backgroundColor: AppColors.textRed.withOpacity(0.1),
 //                           foregroundColor: AppColors.textRed,
 //                           padding: const EdgeInsets.symmetric(

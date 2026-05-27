@@ -45,7 +45,7 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
     }
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: const EdgeInsets.all(20),
         constraints: const BoxConstraints(maxWidth: 500),
@@ -105,11 +105,6 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                       borderRadius: 12,
                       borderColor: const Color(0xFFD0D5DD),
                       focusedBorderColor: AppColors.bluebutton,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}')),
-                      ],
                       onChanged: (value) {
                         if (companyQuotationItems) {
                           provider.companyQuotationItemsCalulate(context);
@@ -253,7 +248,7 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
       builder: (context) {
         return AlertDialog(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: Text(
             'Confirm Delete',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),

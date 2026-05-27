@@ -56,7 +56,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -214,7 +214,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
               invoiceTabProvider.clearInvoiceItemFields();
               Navigator.pop(context);
             },
-            radius: 12,
+            radius: 4,
             backgroundColor: AppColors.whiteColor,
             borderColor: const Color(0xFFE2E8F0),
             textColor: const Color(0xFF64748B),
@@ -297,7 +297,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
               invoiceTabProvider.saveInvoiceTab(
                   customerId: widget.customerId, context: context, data: data);
             },
-            radius: 12,
+            radius: 4,
             backgroundColor: AppColors.secondaryBlue,
             borderColor: AppColors.secondaryBlue,
             textColor: AppColors.whiteColor,
@@ -657,7 +657,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Colors.grey.shade200),
           ),
           child: Column(
@@ -937,6 +937,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   CustomElevatedButton(
+                          radius: 4,
                     buttonText: 'Add Item',
                     onPressed: () {
                       if (invoiceTabProvider.itemNameInvoiceController.text.isEmpty ||
@@ -991,7 +992,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: Colors.grey.shade200),
             ),
             child: Column(
@@ -1021,7 +1022,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppColors.appViolet.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           '${invoiceTabProvider.invoiceItem.length} items',
@@ -1049,15 +1050,15 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade200),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade200,
-                              offset: const Offset(0, 2),
-                              blurRadius: 4,
-                            ),
-                          ],
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                         ),
                         child: Row(
                           children: [
@@ -1229,7 +1230,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.appViolet.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               '₹${invoiceTabProvider.finalGrandTotal.roundToDouble().toStringAsFixed(0)}',
@@ -1555,7 +1556,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Colors.grey.shade200),
           ),
           child: Column(
@@ -1764,6 +1765,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
                 children: [
                   Expanded(
                     child: CustomElevatedButton(
+                          radius: 4,
                       buttonText: 'Add Item',
                       onPressed: () {
                         if (invoiceTabProvider.itemNameInvoiceController.text.isEmpty ||
@@ -1825,7 +1827,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: Colors.grey.shade200),
             ),
             child: Column(
@@ -1855,7 +1857,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppColors.appViolet.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           '${invoiceTabProvider.invoiceItem.length} items',
@@ -1882,7 +1884,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
                         margin: const EdgeInsets.only(bottom: 12),
                         elevation: 2,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(12),
@@ -2068,7 +2070,7 @@ class _AddInvoiceTabState extends State<AddInvoiceTab> {
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.appViolet.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               '₹${invoiceTabProvider.finalGrandTotal.roundToDouble().toStringAsFixed(0)}',

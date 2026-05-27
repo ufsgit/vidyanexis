@@ -353,7 +353,7 @@ class QuotationDetailsWidget extends StatelessWidget {
                               Container(
                                 decoration: BoxDecoration(
                                   color: AppColors.surfaceGrey,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Column(
                                   crossAxisAlignment:
@@ -562,7 +562,7 @@ class QuotationDetailsWidget extends StatelessWidget {
                                   .isNotEmpty
                               ? Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(4),
                                     color: AppColors.surfaceGrey,
                                   ),
                                   padding: const EdgeInsets.all(16),

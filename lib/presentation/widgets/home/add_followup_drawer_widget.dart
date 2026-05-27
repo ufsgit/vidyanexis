@@ -442,7 +442,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.grey.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Colors.grey.withOpacity(0.2)),
       ),
       child: Column(
@@ -454,7 +454,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
               color: provider.isRecording
                   ? Colors.red.withOpacity(0.1)
                   : Colors.grey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color: provider.isRecording ? Colors.red : Colors.grey,
                 width: 2,
@@ -504,7 +504,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.blue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Column(
                       children: [
@@ -554,7 +554,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -577,7 +577,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -600,7 +600,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                     ),
@@ -630,7 +630,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                           ),
                         ),
@@ -659,7 +659,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                       ),
@@ -680,7 +680,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                       ),
@@ -712,7 +712,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: Colors.grey.withOpacity(0.2)),
               ),
               child: const Column(
@@ -746,7 +746,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: Colors.blue.withOpacity(0.3)),
                     boxShadow: [
                       BoxShadow(
@@ -765,7 +765,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                           color: audioFile.isRecording
                               ? Colors.red.withOpacity(0.1)
                               : Colors.blue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Icon(
                           audioFile.isRecording ? Icons.mic : Icons.audiotrack,
@@ -846,7 +846,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Colors.blue,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Icon(
                                 audioFile.isPlaying
@@ -864,7 +864,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Colors.orange,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Icon(
                                 Icons.stop,
@@ -915,7 +915,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Icon(
                                 Icons.close,
@@ -1005,7 +1005,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
               ),
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
             actions: [
               TextButton(

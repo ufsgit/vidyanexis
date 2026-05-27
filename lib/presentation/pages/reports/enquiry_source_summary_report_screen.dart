@@ -119,7 +119,7 @@ class _EnquirySourceSummaryReportScreenState
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -316,7 +316,7 @@ class _EnquirySourceSummaryReportScreenState
                   side: const BorderSide(color: AppColors.textRed),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(4)),
                 ),
               ),
             ),
@@ -329,7 +329,7 @@ class _EnquirySourceSummaryReportScreenState
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -438,7 +438,7 @@ class _EnquirySourceSummaryReportScreenState
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: AppColors.primaryBlue.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                 color: AppColors.primaryBlue.withOpacity(0.12),
                               ),
@@ -504,7 +504,7 @@ class _EnquirySourceSummaryReportScreenState
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: bgCol,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: textCol.withOpacity(0.15), width: 1),
       ),
       child: Row(
@@ -547,7 +547,7 @@ class _EnquirySourceSummaryReportScreenState
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -574,7 +574,7 @@ class _EnquirySourceSummaryReportScreenState
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E3A8A), // Navy Blue
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF1E3A8A).withOpacity(0.15),
@@ -644,7 +644,7 @@ class _EnquirySourceSummaryReportScreenState
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: bgCol,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.12)),
       ),
       child: Row(
@@ -716,7 +716,7 @@ class _EnquirySourceSummaryReportScreenState
 
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -751,7 +751,7 @@ class _EnquirySourceSummaryReportScreenState
                           },
                           selected: isSelected,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(
                             title,
@@ -796,11 +796,11 @@ class _EnquirySourceSummaryReportScreenState
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: currentFromDate != null
@@ -827,11 +827,11 @@ class _EnquirySourceSummaryReportScreenState
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: currentToDate != null
@@ -879,7 +879,7 @@ class _EnquirySourceSummaryReportScreenState
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: Text(
@@ -905,7 +905,7 @@ class _EnquirySourceSummaryReportScreenState
                           backgroundColor: AppColors.textRed.withOpacity(0.08),
                           foregroundColor: AppColors.textRed,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: Text(

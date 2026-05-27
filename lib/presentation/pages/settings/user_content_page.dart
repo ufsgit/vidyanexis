@@ -93,8 +93,15 @@ class _UsersContentState extends State<UsersContent> {
                           height: 40,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                           ),
                           child: TextField(
                             controller: settingsProvider.searchController,
@@ -132,7 +139,7 @@ class _UsersContentState extends State<UsersContent> {
                             label: 'New User',
                             breakpoint: 860,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
+                                borderRadius: BorderRadius.circular(4)),
                             foregroundColor: Colors.white,
                             backgroundColor: AppColors.secondaryBlue,
                             borderSide:
@@ -154,8 +161,15 @@ class _UsersContentState extends State<UsersContent> {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<int>(
@@ -194,8 +208,15 @@ class _UsersContentState extends State<UsersContent> {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<int>(
@@ -244,8 +265,8 @@ class _UsersContentState extends State<UsersContent> {
                     ? Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.02),
@@ -740,7 +761,7 @@ class _UsersContentState extends State<UsersContent> {
                                             side: BorderSide.none,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(20),
+                                                  BorderRadius.circular(4),
                                             ),
                                             avatar: Icon(
                                               Icons.group_add_rounded,
@@ -775,7 +796,7 @@ class _UsersContentState extends State<UsersContent> {
                                             side: BorderSide.none,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(20),
+                                                  BorderRadius.circular(4),
                                             ),
                                             avatar: const Icon(
                                               Icons.assignment_rounded,
@@ -810,7 +831,7 @@ class _UsersContentState extends State<UsersContent> {
                                             side: BorderSide.none,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(20),
+                                                  BorderRadius.circular(4),
                                             ),
                                             avatar: const Icon(
                                               Icons.campaign_rounded,
@@ -844,7 +865,7 @@ class _UsersContentState extends State<UsersContent> {
                                                 ? const Color(0xFFE8F8EE)
                                                 : const Color(0xFFFDECEB),
                                             borderRadius:
-                                                BorderRadius.circular(12),
+                                                BorderRadius.circular(4),
                                           ),
                                           child: Text(
                                             settingsProvider
@@ -926,7 +947,7 @@ class _UsersContentState extends State<UsersContent> {
                     : Container(
                         // decoration: BoxDecoration(
                         //   color: AppColors.surfaceGrey,
-                        //   borderRadius: BorderRadius.circular(8),
+                        //   borderRadius: BorderRadius.circular(4),
                         // ),
                         child: Column(
                           children: [
@@ -942,7 +963,7 @@ class _UsersContentState extends State<UsersContent> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     color: AppColors.whiteColor,
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(4),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withOpacity(0.04),
@@ -1032,7 +1053,7 @@ class _UsersContentState extends State<UsersContent> {
                                                   ? const Color(0xFFE8F8EE)
                                                   : const Color(0xFFFDECEB),
                                               borderRadius:
-                                                  BorderRadius.circular(12),
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Text(
                                               user.workingStatus == '1'
@@ -1064,7 +1085,7 @@ class _UsersContentState extends State<UsersContent> {
                                               decoration: BoxDecoration(
                                                 color: const Color(0xFFF8FAFC),
                                                 borderRadius:
-                                                    BorderRadius.circular(10),
+                                                    BorderRadius.circular(4),
                                                 border: Border.all(
                                                     color: const Color(
                                                         0xFFE2E8F0)),
@@ -1107,7 +1128,7 @@ class _UsersContentState extends State<UsersContent> {
                                               decoration: BoxDecoration(
                                                 color: const Color(0xFFF8FAFC),
                                                 borderRadius:
-                                                    BorderRadius.circular(10),
+                                                    BorderRadius.circular(4),
                                                 border: Border.all(
                                                     color: const Color(
                                                         0xFFE2E8F0)),
@@ -1314,8 +1335,7 @@ class _UsersContentState extends State<UsersContent> {
                                                         .withOpacity(0.2)),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
+                                                        BorderRadius.circular(4)),
                                                 backgroundColor: AppColors
                                                     .primaryBlue
                                                     .withOpacity(0.05),
@@ -1353,8 +1373,7 @@ class _UsersContentState extends State<UsersContent> {
                                                         .withOpacity(0.2)),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
+                                                        BorderRadius.circular(4)),
                                                 backgroundColor: const Color(0xFF6D28D9)
                                                     .withOpacity(0.05),
                                               ),
@@ -1391,8 +1410,7 @@ class _UsersContentState extends State<UsersContent> {
                                                         .withOpacity(0.2)),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
+                                                        BorderRadius.circular(4)),
                                                 backgroundColor: const Color(0xFF059669)
                                                     .withOpacity(0.05),
                                               ),
@@ -1428,8 +1446,7 @@ class _UsersContentState extends State<UsersContent> {
                                                     color: AppColors.primaryBlue),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
+                                                        BorderRadius.circular(4)),
                                                 backgroundColor: Colors.white,
                                               ),
                                               onPressed: () async {

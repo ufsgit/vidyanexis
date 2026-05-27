@@ -113,7 +113,7 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                         : 'Add Company Details',
                     breakpoint: 860,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(4)),
                     foregroundColor: Colors.white,
                     backgroundColor: AppColors.primaryBlue,
                     borderSide: BorderSide(color: AppColors.primaryBlue),
@@ -199,7 +199,7 @@ class _CompanyDetailsState extends State<CompanyDetails> {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: ListTile(
         leading: Icon(icon, color: Colors.blue),
         title: Text(

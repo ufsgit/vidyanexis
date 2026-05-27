@@ -280,7 +280,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF7B61FF).withOpacity(0.3),
@@ -383,11 +383,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
             Navigator.pop(context);
             sideProvider.setReportPage(page);
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
               children: [
@@ -395,7 +395,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: lightColor,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: SvgPicture.asset(
                     iconPath,
@@ -433,7 +433,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -443,7 +443,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: const Color(0xFFE9EAFB),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: SvgPicture.asset(
               'assets/images/Reports.svg',
@@ -468,7 +468,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               dense: true,
               visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               title: Text(
                 report['title'],
                 style: GoogleFonts.plusJakartaSans(
@@ -501,12 +501,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () => _handleLogout(context),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(4),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
                   border: Border.all(color: const Color(0xFFFF3B30).withOpacity(0.2)),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(4),
                   color: const Color(0xFFFF3B30).withOpacity(0.05),
                 ),
                 child: Row(
@@ -548,7 +548,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: Text(
             'Logout',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800),
@@ -624,7 +624,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   backgroundColor: const Color(0xFFFF3B30),
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                 ),
                 child: Text(
                   'Logout',

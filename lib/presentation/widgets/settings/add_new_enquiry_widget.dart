@@ -66,7 +66,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -220,7 +220,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
               //             horizontal: 12, vertical: 6),
               //         decoration: BoxDecoration(
               //           color: AppColors.appViolet,
-              //           borderRadius: BorderRadius.circular(20),
+              //           borderRadius: BorderRadius.circular(4),
               //         ),
               //         child: Row(
               //           mainAxisSize: MainAxisSize.min,
@@ -264,7 +264,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
             settingsProvider.sourceCategoryEnquiryController.clear();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -284,7 +284,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
               statusName: settingsProvider.enquirySourceController.text,
             );
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
@@ -350,7 +350,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
                         margin: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 4),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           color: isSelected
                               ? Colors.blue.shade50
                               : Colors.grey.shade50,
@@ -427,7 +427,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: Colors.blue.shade200,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                   border:
                                       Border.all(color: Colors.blue.shade200),
                                 ),
@@ -488,7 +488,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(
+                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),

@@ -120,7 +120,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
           BoxShadow(
@@ -137,7 +137,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(icon, size: 20, color: color),
           ),
@@ -171,7 +171,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: isExpanded ? AppColors.secondaryBlue.withOpacity(0.3) : const Color(0xFFF1F5F9),
         ),
@@ -198,7 +198,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
                 }
               });
             },
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(4),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -208,7 +208,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
                     height: 40,
                     decoration: BoxDecoration(
                       color: AppColors.secondaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Icon(Icons.business_rounded, 
                       size: 20, color: AppColors.secondaryBlue),
@@ -267,7 +267,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Row(
@@ -295,8 +295,15 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFF1F5F9)),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
             ),
             child: Text(
               task.subTaskCount?.toString() ?? '0',
@@ -317,7 +324,7 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Center(
         child: Text(
@@ -337,9 +344,17 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
         height: 80,
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
         ),
+      ],
+    ),
         child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       )),
     );

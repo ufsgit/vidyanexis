@@ -69,7 +69,7 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
         ),
         backgroundColor: Colors.red[700],
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         margin: const EdgeInsets.all(12),
       ),
     );
@@ -343,7 +343,7 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.secondaryBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: const Icon(
               Icons.arrow_back_ios_new,
@@ -462,7 +462,7 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
                             hintText: 'Description',
                             labelText: 'Description',
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 12),
@@ -674,7 +674,7 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
                       settingsProvider.taskTypeDescriptionController.clear();
                       Navigator.pop(context);
                     },
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: Colors.white,
                     borderColor: const Color(0xFFE2E8F0),
                     textColor: const Color(0xFF64748B),
@@ -685,7 +685,7 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
                   child: CustomElevatedButton(
                     buttonText: 'Save',
                     onPressed: () => _handleSave(settingsProvider),
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: AppColors.secondaryBlue,
                     borderColor: AppColors.secondaryBlue,
                     textColor: Colors.white,
@@ -713,7 +713,7 @@ class _Card extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -791,7 +791,7 @@ class _StatusRow extends StatelessWidget {
         color: isSelected
             ? AppColors.secondaryBlue.withOpacity(0.06)
             : Colors.grey[50],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: isSelected
               ? AppColors.secondaryBlue.withOpacity(0.3)
@@ -805,7 +805,7 @@ class _StatusRow extends StatelessWidget {
             height: 28,
             decoration: BoxDecoration(
               color: AppColors.appViolet.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Center(
               child: Text(

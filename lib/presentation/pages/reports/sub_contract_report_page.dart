@@ -82,7 +82,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: AppColors.secondaryBlue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Icon(
                               Icons.sort,
@@ -108,8 +108,15 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                         height: 48,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.grey[300]!),
+                          borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                         ),
                         child: TextField(
                           controller: searchController,
@@ -176,7 +183,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 15),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25)),
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                       ),
                     ],
@@ -186,9 +193,17 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: Wrap(
                         spacing: 12,
                         runSpacing: 10,
@@ -251,7 +266,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                 vertical: 12,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -272,7 +287,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: AppStyles.isWebScreen(context)
-                        ? BorderRadius.circular(14)
+                        ? BorderRadius.circular(4)
                         : BorderRadius.zero,
                   ),
                   child: Padding(
@@ -413,7 +428,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                                                     .min,
                                                             children: [
                                                               CircleAvatar(
-                                                                radius: 12,
+                                                                radius: 4,
                                                                 backgroundColor:
                                                                     AppColors
                                                                         .primaryBlue
@@ -635,8 +650,8 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
           children: [
@@ -662,8 +677,8 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
         children: [

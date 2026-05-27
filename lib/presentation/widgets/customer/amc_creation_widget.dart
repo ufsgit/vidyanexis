@@ -98,7 +98,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                   ),
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 actions: [
                   TextButton(
@@ -319,7 +319,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                     ),
                     border: OutlineInputBorder(
                       borderRadius:
-                          BorderRadius.circular(10), // Rounded corners
+                          BorderRadius.circular(4), // Rounded corners
                       borderSide: BorderSide(
                         color: AppColors.textGrey2, // Border color
                         width: 1, // Border width
@@ -327,7 +327,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius:
-                          BorderRadius.circular(10), // Rounded corners
+                          BorderRadius.circular(4), // Rounded corners
                       borderSide: BorderSide(
                         color: AppColors.textGrey2, // Border color
                         width: 1, // Border width
@@ -335,7 +335,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius:
-                          BorderRadius.circular(10), // Rounded corners
+                          BorderRadius.circular(4), // Rounded corners
                       borderSide: BorderSide(
                         color: AppColors.textGrey2, // Border color
                         width: 1, // Border width
@@ -459,21 +459,21 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                           ),
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           borderSide: BorderSide(
                             color: AppColors.textGrey2,
                             width: 1,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           borderSide: BorderSide(
                             color: AppColors.textGrey2,
                             width: 1,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           borderSide: BorderSide(
                             color: AppColors.textGrey2,
                             width: 1,
@@ -630,21 +630,21 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                           ),
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           borderSide: BorderSide(
                             color: AppColors.textGrey2,
                             width: 1,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           borderSide: BorderSide(
                             color: AppColors.textGrey2,
                             width: 1,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           borderSide: BorderSide(
                             color: AppColors.textGrey2,
                             width: 1,
@@ -835,7 +835,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     actions: [
                       TextButton(
@@ -960,7 +960,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
 //                   ),
 //                 ),
 //                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(15),
+//                   borderRadius: BorderRadius.circular(4),
 //                 ),
 //                 actions: [
 //                   TextButton(
@@ -1109,7 +1109,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
 //                     ),
 //                     border: OutlineInputBorder(
 //                       borderRadius:
-//                           BorderRadius.circular(10), // Rounded corners
+//                           BorderRadius.circular(4), // Rounded corners
 //                       borderSide: BorderSide(
 //                         color: AppColors.textGrey2, // Border color
 //                         width: 1, // Border width
@@ -1117,7 +1117,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
 //                     ),
 //                     focusedBorder: OutlineInputBorder(
 //                       borderRadius:
-//                           BorderRadius.circular(10), // Rounded corners
+//                           BorderRadius.circular(4), // Rounded corners
 //                       borderSide: BorderSide(
 //                         color: AppColors.textGrey2, // Border color
 //                         width: 1, // Border width
@@ -1125,7 +1125,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
 //                     ),
 //                     enabledBorder: OutlineInputBorder(
 //                       borderRadius:
-//                           BorderRadius.circular(10), // Rounded corners
+//                           BorderRadius.circular(4), // Rounded corners
 //                       borderSide: BorderSide(
 //                         color: AppColors.textGrey2, // Border color
 //                         width: 1, // Border width
@@ -1188,21 +1188,21 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
 //                           ),
 //                         ),
 //                         border: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(10),
+//                           borderRadius: BorderRadius.circular(4),
 //                           borderSide: BorderSide(
 //                             color: AppColors.textGrey2,
 //                             width: 1,
 //                           ),
 //                         ),
 //                         focusedBorder: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(10),
+//                           borderRadius: BorderRadius.circular(4),
 //                           borderSide: BorderSide(
 //                             color: AppColors.textGrey2,
 //                             width: 1,
 //                           ),
 //                         ),
 //                         enabledBorder: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(10),
+//                           borderRadius: BorderRadius.circular(4),
 //                           borderSide: BorderSide(
 //                             color: AppColors.textGrey2,
 //                             width: 1,
@@ -1251,21 +1251,21 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
 //                           ),
 //                         ),
 //                         border: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(10),
+//                           borderRadius: BorderRadius.circular(4),
 //                           borderSide: BorderSide(
 //                             color: AppColors.textGrey2,
 //                             width: 1,
 //                           ),
 //                         ),
 //                         focusedBorder: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(10),
+//                           borderRadius: BorderRadius.circular(4),
 //                           borderSide: BorderSide(
 //                             color: AppColors.textGrey2,
 //                             width: 1,
 //                           ),
 //                         ),
 //                         enabledBorder: OutlineInputBorder(
-//                           borderRadius: BorderRadius.circular(10),
+//                           borderRadius: BorderRadius.circular(4),
 //                           borderSide: BorderSide(
 //                             color: AppColors.textGrey2,
 //                             width: 1,
@@ -1365,7 +1365,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
 //                       ),
 //                     ),
 //                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(15),
+//                       borderRadius: BorderRadius.circular(4),
 //                     ),
 //                     actions: [
 //                       TextButton(

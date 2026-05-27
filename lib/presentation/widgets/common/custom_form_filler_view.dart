@@ -234,7 +234,7 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(4)),
                 ),
                 child: const Text('Cancel'),
               ),
@@ -247,7 +247,7 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(4)),
                 ),
                 child: const Text('Save Form'),
               ),
@@ -302,8 +302,8 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
       ),
       child: TextFormField(
         controller: _fieldValues[field.id],
@@ -343,8 +343,8 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
         ),
         child: Row(
           children: [
@@ -373,8 +373,8 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -452,7 +452,7 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                     color: Colors.blue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8)),
+                    borderRadius: BorderRadius.circular(4)),
                 child: Row(
                   children: [
                     const Icon(Icons.image, size: 20, color: Color(0xFF1A7AE8)),
@@ -486,7 +486,7 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
             foregroundColor: const Color(0xFF475569),
             elevation: 0,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           ),
         ),
       ],
@@ -508,8 +508,8 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
               height: 120,
               width: double.infinity,
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: isNew
                   ? Image.memory(val, fit: BoxFit.contain)
@@ -536,7 +536,7 @@ class _CustomFormFillerViewState extends State<CustomFormFillerView> {
             foregroundColor: const Color(0xFF475569),
             elevation: 0,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           ),
         ),
       ],

@@ -116,21 +116,21 @@ class ServiceCreationWidget extends StatelessWidget {
                     color: AppColors.textGrey3,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(4), // Rounded corners
                     borderSide: BorderSide(
                       color: AppColors.textGrey2, // Border color
                       width: 1, // Border width
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(4), // Rounded corners
                     borderSide: BorderSide(
                       color: AppColors.textGrey2, // Border color
                       width: 1, // Border width
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(4), // Rounded corners
                     borderSide: BorderSide(
                       color: AppColors.textGrey2, // Border color
                       width: 1, // Border width
@@ -211,21 +211,21 @@ class ServiceCreationWidget extends StatelessWidget {
                   color: AppColors.textGrey3,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                  borderRadius: BorderRadius.circular(4), // Rounded corners
                   borderSide: BorderSide(
                     color: AppColors.textGrey2, // Border color
                     width: 1, // Border width
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                  borderRadius: BorderRadius.circular(4), // Rounded corners
                   borderSide: BorderSide(
                     color: AppColors.textGrey2, // Border color
                     width: 1, // Border width
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                  borderRadius: BorderRadius.circular(4), // Rounded corners
                   borderSide: BorderSide(
                     color: AppColors.textGrey2, // Border color
                     width: 1, // Border width
@@ -395,7 +395,7 @@ class ServiceCreationWidget extends StatelessWidget {
             //         width: MediaQuery.sizeOf(context).width,
             //         decoration: BoxDecoration(
             //           color: Color(0xFFF6F7F9),
-            //           borderRadius: BorderRadius.circular(8),
+            //           borderRadius: BorderRadius.circular(4),
             //         ),
             //         padding: EdgeInsets.all(10),
             //         child: Column(
@@ -407,7 +407,7 @@ class ServiceCreationWidget extends StatelessWidget {
             //                 padding: EdgeInsets.all(4),
             //                 margin: EdgeInsets.only(bottom: 10),
             //                 decoration: BoxDecoration(
-            //                     borderRadius: BorderRadius.circular(8),
+            //                     borderRadius: BorderRadius.circular(4),
             //                     color: AppColors.grey),
             //                 child: Text(
             //                   customerDetailsProvider.selectedAssignWorkerName,
@@ -504,7 +504,7 @@ class ServiceCreationWidget extends StatelessWidget {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     actions: [
                       TextButton(

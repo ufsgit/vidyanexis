@@ -360,7 +360,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                       ? AppColors.primaryBlue
                                       : Colors.transparent,
                                 ),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               padding: const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
@@ -396,7 +396,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                               decoration: BoxDecoration(
                                 color: AppColors.primaryBlue.withOpacity(0.05),
                                 border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               padding: const EdgeInsets.symmetric(horizontal: 12),
                               child: Center(
@@ -665,7 +665,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                             ),
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(30),
+                                                  BorderRadius.circular(4),
                                             ),
                                           ),
                                           child:
@@ -800,7 +800,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
         builder: (context, leadReportProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -830,7 +830,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                             leadReportProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -863,7 +863,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                 leadReportProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: leadReportProvider.fromDate != null
                                   ? '${leadReportProvider.fromDate!.toLocal()}'
@@ -881,7 +881,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                 leadReportProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: leadReportProvider.toDate != null
                                   ? '${leadReportProvider.toDate!.toLocal()}'
@@ -919,7 +919,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                   vertical: 8,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
                               child: const Text('Apply'),
@@ -951,7 +951,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                   vertical: 8,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
                               child: const Text('Clear'),
@@ -1015,7 +1015,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
             insetPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(20),
             content: SizedBox(
@@ -1150,7 +1150,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                             height: 180,
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(8)),
+                                borderRadius: BorderRadius.circular(4)),
                             child: ListView.separated(
                               shrinkWrap: true,
                               itemCount:
@@ -1299,7 +1299,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                       "0", // Pass "0" as requested
                                 );
                               },
-                              style: ElevatedButton.styleFrom(
+                              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                 backgroundColor: AppColors.primaryBlue,
                                 foregroundColor: Colors.white,
                               ),

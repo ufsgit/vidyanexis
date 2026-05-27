@@ -83,7 +83,7 @@ class _AddPaymentPhoneState extends State<AddPaymentPhone> {
                     ),
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   actions: [
                     TextButton(
@@ -162,7 +162,7 @@ class _AddPaymentPhoneState extends State<AddPaymentPhone> {
             //   height: 38,
             //   child: CustomElevatedButton(
             //     textSize: 14,
-            //     radius: 12,
+            //     radius: 4,
             //     isLoading: leadProvider.isSavingFollowup,
             //     buttonText: widget.isEdit ? 'Edit Receipt' : 'Add Receipt',
             //     onPressed: () async {
@@ -193,7 +193,7 @@ class _AddPaymentPhoneState extends State<AddPaymentPhone> {
             //                 ),
             //               ),
             //               shape: RoundedRectangleBorder(
-            //                 borderRadius: BorderRadius.circular(15),
+            //                 borderRadius: BorderRadius.circular(4),
             //               ),
             //               actions: [
             //                 TextButton(

@@ -81,8 +81,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       height: 40,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
       ),
       child: TextField(
         controller: searchController,
@@ -106,7 +113,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             height: 48,
             decoration: BoxDecoration(
               color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: TextField(
               controller: searchController,
@@ -141,13 +148,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         const SizedBox(width: 12),
         InkWell(
           onTap: () => provider.toggleFilter(),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           child: Container(
             height: 48,
             width: 48,
             decoration: BoxDecoration(
               color: provider.isFilter ? AppColors.textBlue800 : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(
               Icons.tune_rounded,
@@ -173,7 +180,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)
         ],
@@ -198,7 +205,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: AppColors.grey),
             ),
             child: DropdownButtonHideUnderline(
@@ -237,7 +244,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                     backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                   child: const Text('Apply'),
                 ),
@@ -268,7 +275,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -317,7 +324,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                         : 'Select',
                     suffixIcon: const Icon(Icons.calendar_month),
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -328,7 +335,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       Navigator.pop(context);
                       reportsProvider.getPurchaseDataMaster(context);
                     },
-                    style: ElevatedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                         backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white),
                     child: const Text('Apply'),
@@ -382,7 +389,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -392,7 +399,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: Column(
             children: [
               // Header
@@ -472,13 +479,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                     Tooltip(
                                       message: 'Edit',
                                       child: InkWell(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                         onTap: () => _showPurchaseDialog(context, true, data: p),
                                         child: Container(
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFEFF6FF),
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(4),
                                           ),
                                           child: const Icon(Icons.edit_outlined,
                                               color: AppColors.primaryBlue, size: 15),
@@ -492,14 +499,14 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                     Tooltip(
                                       message: 'Delete',
                                       child: InkWell(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                         onTap: () => _showDeleteDialog(
                                             context, provider, p.purchaseMasterId),
                                         child: Container(
                                           padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFFFF1F2),
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(4),
                                           ),
                                           child: const Icon(Icons.delete_outline,
                                               color: Colors.red, size: 15),

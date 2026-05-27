@@ -76,7 +76,7 @@ class _TaskCardState extends State<TaskCard> {
                   Container(
                     width: 3,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(4),
                       color: getAvatarColor(widget.task.customerName)
                           .withOpacity(.4),
                     ),
@@ -134,7 +134,7 @@ class _TaskCardState extends State<TaskCard> {
                                 color: (widget.task.colorCode ??
                                         AppColors.primaryBlue)
                                     .withOpacity(0.12),
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 widget.task.taskStatusName.toUpperCase(),

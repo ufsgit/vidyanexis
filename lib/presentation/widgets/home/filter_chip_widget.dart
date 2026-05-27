@@ -17,12 +17,12 @@ class FilterChipWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(4),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primaryBlue : const Color(0xFFF3F4F6),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
           label.toUpperCase(),

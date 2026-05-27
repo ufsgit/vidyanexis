@@ -56,7 +56,7 @@ class _AddStageState extends State<AddStage> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -155,7 +155,7 @@ class _AddStageState extends State<AddStage> {
             settingsProvider.stageController.clear();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -175,7 +175,7 @@ class _AddStageState extends State<AddStage> {
               stageName: settingsProvider.stageController.text,
             );
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,

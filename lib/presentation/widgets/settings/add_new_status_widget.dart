@@ -93,7 +93,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -172,7 +172,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                         margin: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 4),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           color: isSelected
                               ? Colors.blue.shade50
                               : Colors.grey.shade50,
@@ -288,7 +288,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(
+                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),
@@ -367,6 +367,8 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             widget.data!.statusName ?? "";
         settingsProvider.progressValueController.text =
             widget.data!.progressValue.toString();
+        settingsProvider.whatsappTemplateIdController.text =
+            widget.data!.whatsappTemplateId ?? "";
 
         settingsProvider.viewInController.text = widget.data!.viewInName ?? "";
       } else {
@@ -383,6 +385,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.stageStatusController.text = '';
         settingsProvider.viewInController.text = '';
         settingsProvider.progressValueController.text = '';
+        settingsProvider.whatsappTemplateIdController.clear();
       }
     });
   }
@@ -435,6 +438,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
               settingsProvider.folloupController.clear();
               settingsProvider.isRegisterController.clear();
               settingsProvider.setSelectedColor(null);
+              settingsProvider.whatsappTemplateIdController.clear();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.close),
@@ -582,7 +586,17 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
+                height: 10,
+              ),
+              CustomTextField(
+                readOnly: false,
+                height: 54,
+                controller: settingsProvider.whatsappTemplateIdController,
+                hintText: 'Whatsapp Template Id',
+                labelText: '',
+              ),
+              const SizedBox(
                 height: 10,
               ),
               GestureDetector(
@@ -611,7 +625,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: AppColors.appViolet,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -725,9 +739,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             settingsProvider.folloupController.clear();
             settingsProvider.isRegisterController.clear();
             settingsProvider.setSelectedColor(null);
+            settingsProvider.whatsappTemplateIdController.clear();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -749,9 +764,11 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                 statusOrder: '0',
                 followUp: settingsProvider.selectedFollowUp.toString(),
                 isRegistered: settingsProvider.isRegister.toString(),
-                colorCode: settingsProvider.selectedColor.toString());
+                colorCode: settingsProvider.selectedColor.toString(),
+                whatsappTemplateId:
+                    settingsProvider.whatsappTemplateIdController.text);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,

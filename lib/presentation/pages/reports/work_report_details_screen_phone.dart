@@ -101,7 +101,7 @@
 //                       height: 28,
 //                       decoration: BoxDecoration(
 //                           color: AppColors.scaffoldColor,
-//                           borderRadius: BorderRadius.circular(8)),
+//                           borderRadius: BorderRadius.circular(4)),
 //                       child: Padding(
 //                         padding: const EdgeInsets.symmetric(
 //                           horizontal: 8,
@@ -145,7 +145,7 @@
 //                 child: Container(
 //                   decoration: BoxDecoration(
 //                       color: Color(0xFFF2F7FF),
-//                       borderRadius: BorderRadius.circular(12)),
+//                       borderRadius: BorderRadius.circular(4)),
 //                   child: Padding(
 //                     padding: const EdgeInsets.symmetric(
 //                         horizontal: 10, vertical: 10),

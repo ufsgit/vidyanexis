@@ -103,7 +103,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: AppColors.secondaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Icon(
                       Icons.sort,
@@ -125,52 +125,67 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
               const Spacer(),
               // Search Bar
               Container(
-                width: 250,
+                width: 280,
                 height: 38,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(19),
-                  border: Border.all(color: Colors.grey[200]!),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                      color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: TextField(
                   controller: provider.searchExpenseController,
+                  textAlignVertical: TextAlignVertical.center,
                   onChanged: (query) => provider.searchExpense(query, context),
                   decoration: InputDecoration(
                     hintText: 'Search here....',
                     hintStyle: GoogleFonts.plusJakartaSans(
-                      color: Colors.grey[400],
-                      fontSize: 12,
+                      color: const Color(0xFF94A3B8),
+                      fontSize: 13,
                     ),
-                    prefixIcon: Icon(Icons.search,
-                        color: Colors.grey[400], size: 18),
+                    suffixIcon: const Icon(Icons.search,
+                        color: Color(0xFF64748B), size: 18),
                     border: InputBorder.none,
+                    isDense: true,
                     contentPadding:
-                        const EdgeInsets.symmetric(vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               CustomFilterButton(
                 onPressed: () => provider.toggleFilter(),
                 isFilter: provider.isFilter,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               ElevatedButton.icon(
                 onPressed: () => _handleExport(provider),
                 icon: const Icon(Icons.file_upload_outlined, size: 16),
-                label: const Text('Export', style: TextStyle(fontSize: 12)),
+                label: Text('Export', 
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  )
+                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFEAB308),
+                  backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
+                      horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
             ],
           ),
         ),
@@ -229,8 +244,15 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
       ),
       child: Row(
         children: [
@@ -247,7 +269,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color:
                     provider.selectedUser != null && provider.selectedUser != 0
@@ -303,7 +325,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color: provider.selectedExpenseTypeId != null &&
                         provider.selectedExpenseTypeId != 0
@@ -365,7 +387,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
             child: Text(
@@ -462,7 +484,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: textColor.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
@@ -533,8 +555,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -783,7 +806,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(4)),
                     ),
                     child: const Text('Apply Filters'),
                   ),
@@ -814,7 +837,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -865,7 +888,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                           : 'Select',
                       suffixIcon: const Icon(Icons.calendar_month),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(4)),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -876,7 +899,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         Navigator.pop(context);
                         reportsProvider.getExpenseReport(context);
                       },
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                         backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white,
                       ),

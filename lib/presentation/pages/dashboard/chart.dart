@@ -75,10 +75,15 @@ class LeadGraphBarChart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 3),
-        ],
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +130,7 @@ class LeadGraphBarChart extends StatelessWidget {
                     enableTooltip: true,
                     color: AppColors.primaryBlue,
                     width: 0.3,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(4),
                     xValueMapper: (LeadCoversionChartModel lead, _) =>
                         lead.enquirySource.toString(),
                     yValueMapper: (LeadCoversionChartModel lead, _) =>
@@ -237,10 +242,15 @@ class ConversionGraphBarChart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 3),
-        ],
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,7 +286,7 @@ class ConversionGraphBarChart extends StatelessWidget {
                     enableTooltip: true,
                     color: AppColors.secondaryBlue,
                     width: 0.3,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(4),
                     xValueMapper: (LeadCoversionChartModel lead, _) =>
                         lead.enquirySource.toString(),
                     yValueMapper: (LeadCoversionChartModel lead, _) =>
@@ -324,10 +334,15 @@ class LeadDistributionPieChart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 3),
-        ],
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,10 +452,15 @@ class TaskAllocationBarChart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 3),
-        ],
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
       ),
       child: Column(
         children: [
@@ -471,7 +491,7 @@ class TaskAllocationBarChart extends StatelessWidget {
                 dataSource: taskData,
                 color: AppColors.primaryBlue,
                 width: AppStyles.isWebScreen(context) ? 0.3 : 0.5,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(4),
                 xValueMapper: (TaskAllocationSummaryModel data, _) =>
                     data.userDetailsName ?? '',
                 yValueMapper: (TaskAllocationSummaryModel data, _) =>

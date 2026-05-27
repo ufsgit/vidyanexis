@@ -18,6 +18,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.da
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/lead_history_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -553,7 +554,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                       height: 36,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: Colors.black, width: 1.5),
                       ),
                       child: TextField(
@@ -639,7 +640,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                     children: [
                                       // Fixed columns section
                                       SizedBox(
-                                        width: 600,
+                                        width: widget.source == 'Closed_Leads' ? 710 : 600,
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -721,6 +722,27 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                         ),
                                                       ),
                                                       color: Color(0xFF607185)),
+                                                  if (widget.source ==
+                                                      'Closed_Leads')
+                                                    const TableWidget(
+                                                        width: 110,
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                                vertical: 6.0,
+                                                                horizontal: 8.0),
+                                                        data: Align(
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          child: Text(
+                                                            'Closed Date',
+                                                            style: TextStyle(
+                                                              fontSize: 13,
+                                                              color: Color(
+                                                                  0xFFFFFFFF),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        color: Color(0xFF607185)),
                                                   const TableWidget(
                                                       flex: 3,
                                                       padding:
@@ -910,6 +932,32 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                 ),
                                                               ),
                                                             ),
+                                                            if (widget.source ==
+                                                                'Closed_Leads')
+                                                              TableWidget(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            6.0,
+                                                                        horizontal:
+                                                                            8.0),
+                                                                width: 110,
+                                                                data: Align(
+                                                                  alignment: Alignment
+                                                                      .centerLeft,
+                                                                  child: Text(
+                                                                    _formatDateSafely(
+                                                                        lead.registeredDate),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            12),
+                                                                  ),
+                                                                ),
+                                                              ),
                                                             TableWidget(
                                                               padding: EdgeInsets
                                                                   .symmetric(
@@ -942,7 +990,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               alpha: 0.1),
                                                                       shape: RoundedRectangleBorder(
                                                                           borderRadius:
-                                                                              BorderRadius.circular(5)),
+                                                                              BorderRadius.circular(4)),
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           horizontal:
@@ -1028,10 +1076,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                 _horizontalScrollController,
                                             scrollDirection: Axis.horizontal,
                                             child: SizedBox(
-                                              width: widget.source ==
-                                                      'Closed_Leads'
-                                                  ? 1670
-                                                  : 1520,
+                                              width: 1640,
                                               child: Column(
                                                 children: [
                                                   // Header row
@@ -1172,6 +1217,24 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                             color: Color(
                                                                 0xFF607185)),
                                                         TableWidget(
+                                                            width: 120,
+                                                            padding: const EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        6.0,
+                                                                    horizontal:
+                                                                        8.0),
+                                                            alignment: Alignment.centerLeft,
+                                                            data: const Text(
+                                                                'History',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        13)),
+                                                            color: const Color(
+                                                                0xFF607185)),
+                                                        TableWidget(
                                                             width: 150,
                                                             padding: EdgeInsets
                                                                 .symmetric(
@@ -1222,25 +1285,6 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         13)),
                                                             color: Color(
                                                                 0xFF607185)),
-                                                        if (widget.source ==
-                                                            'Closed_Leads')
-                                                          TableWidget(
-                                                              width: 150,
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      vertical:
-                                                                          6.0,
-                                                                      horizontal:
-                                                                          8.0),
-                                                              data: Text(
-                                                                  'Closed Date',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize:
-                                                                          13)),
-                                                              color: Color(
-                                                                  0xFF607185)),
                                                       ],
                                                     ),
                                                   ),
@@ -1361,7 +1405,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               onPressed: () {
                                                                                 _onStatusClick(context, lead);
                                                                               },
-                                                                              style: TextButton.styleFrom(backgroundColor: AppColors.parseColor(lead.colorCode).withValues(alpha: 0.2), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                                                                              style: TextButton.styleFrom(backgroundColor: AppColors.parseColor(lead.colorCode).withValues(alpha: 0.2), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                                                                               child: Text(lead.statusName, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.parseColor(lead.colorCode)))))),
                                                                   TableWidget(
                                                                       padding: EdgeInsets.symmetric(
@@ -1377,7 +1421,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               onPressed: () {
                                                                                 leadsProvider.convertLead(context, lead.customerId.toString());
                                                                               },
-                                                                              style: TextButton.styleFrom(backgroundColor: Colors.orange.withValues(alpha: 0.1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                                                                              style: TextButton.styleFrom(backgroundColor: Colors.orange.withValues(alpha: 0.1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                                                                               child: const Text('Convert', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.w500, fontSize: 13))))),
                                                                   TableWidget(
                                                                       padding: EdgeInsets.symmetric(
@@ -1395,6 +1439,46 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               maxLines: 1,
                                                                               overflow: TextOverflow.ellipsis,
                                                                               style: const TextStyle(fontSize: 13)))),
+                                                                   TableWidget(
+                                                                       padding: const EdgeInsets.symmetric(
+                                                                           vertical: 6.0,
+                                                                           horizontal: 8.0),
+                                                                       width: 120,
+                                                                       alignment: Alignment.centerLeft,
+                                                                       data: TextButton.icon(
+                                                                           onPressed: () {
+                                                                             LeadHistoryDialog.show(
+                                                                               context,
+                                                                               customerId: lead.customerId.toString(),
+                                                                               customerName: lead.customerName,
+                                                                             );
+                                                                           },
+                                                                           icon: const Icon(
+                                                                             Icons.history_rounded,
+                                                                             size: 15,
+                                                                             color: AppColors.primaryBlue,
+                                                                           ),
+                                                                           label: const Text(
+                                                                             'History',
+                                                                             style: TextStyle(
+                                                                               color: AppColors.primaryBlue,
+                                                                               fontSize: 13,
+                                                                               fontWeight: FontWeight.w600,
+                                                                             ),
+                                                                           ),
+                                                                           style: TextButton.styleFrom(
+                                                                             backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
+                                                                             shape: RoundedRectangleBorder(
+                                                                               borderRadius: BorderRadius.circular(6),
+                                                                             ),
+                                                                             padding: const EdgeInsets.symmetric(
+                                                                               horizontal: 10,
+                                                                               vertical: 6,
+                                                                             ),
+                                                                             minimumSize: const Size(0, 0),
+                                                                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                           ),
+                                                                       )),
                                                                   TableWidget(
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
@@ -1450,25 +1534,6 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               .ellipsis,
                                                                           style:
                                                                               const TextStyle(fontSize: 13))),
-                                                                  if (widget
-                                                                          .source ==
-                                                                      'Closed_Leads')
-                                                                    TableWidget(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                            vertical:
-                                                                                6.0,
-                                                                            horizontal:
-                                                                                8.0),
-                                                                        width:
-                                                                            150,
-                                                                        data: Text(
-                                                                            _formatDateSafely(lead.registeredDate),
-                                                                            maxLines:
-                                                                                1,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            style: const TextStyle(fontSize: 13))),
                                                                 ],
                                                               ),
                                                             ),
