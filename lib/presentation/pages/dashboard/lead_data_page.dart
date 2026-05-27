@@ -18,6 +18,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.da
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/lead_history_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -1031,8 +1032,8 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                             child: SizedBox(
                                               width: widget.source ==
                                                       'Closed_Leads'
-                                                  ? 1670
-                                                  : 1520,
+                                                  ? 1790
+                                                  : 1640,
                                               child: Column(
                                                 children: [
                                                   // Header row
@@ -1243,6 +1244,24 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                           13)),
                                                               color: Color(
                                                                   0xFF607185)),
+                                                         TableWidget(
+                                                             width: 120,
+                                                             padding: const EdgeInsets
+                                                                 .symmetric(
+                                                                     vertical:
+                                                                         6.0,
+                                                                     horizontal:
+                                                                         8.0),
+                                                             alignment: Alignment.centerLeft,
+                                                             data: const Text(
+                                                                 'History',
+                                                                 style: TextStyle(
+                                                                     color: Colors
+                                                                         .white,
+                                                                     fontSize:
+                                                                         13)),
+                                                             color: const Color(
+                                                                 0xFF607185)),
                                                       ],
                                                     ),
                                                   ),
@@ -1397,6 +1416,46 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               maxLines: 1,
                                                                               overflow: TextOverflow.ellipsis,
                                                                               style: const TextStyle(fontSize: 13)))),
+                                                                   TableWidget(
+                                                                       padding: const EdgeInsets.symmetric(
+                                                                           vertical: 6.0,
+                                                                           horizontal: 8.0),
+                                                                       width: 120,
+                                                                       alignment: Alignment.centerLeft,
+                                                                       data: TextButton.icon(
+                                                                           onPressed: () {
+                                                                             LeadHistoryDialog.show(
+                                                                               context,
+                                                                               customerId: lead.customerId.toString(),
+                                                                               customerName: lead.customerName,
+                                                                             );
+                                                                           },
+                                                                           icon: const Icon(
+                                                                             Icons.history_rounded,
+                                                                             size: 15,
+                                                                             color: AppColors.primaryBlue,
+                                                                           ),
+                                                                           label: const Text(
+                                                                             'History',
+                                                                             style: TextStyle(
+                                                                               color: AppColors.primaryBlue,
+                                                                               fontSize: 13,
+                                                                               fontWeight: FontWeight.w600,
+                                                                             ),
+                                                                           ),
+                                                                           style: TextButton.styleFrom(
+                                                                             backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
+                                                                             shape: RoundedRectangleBorder(
+                                                                               borderRadius: BorderRadius.circular(6),
+                                                                             ),
+                                                                             padding: const EdgeInsets.symmetric(
+                                                                               horizontal: 10,
+                                                                               vertical: 6,
+                                                                             ),
+                                                                             minimumSize: const Size(0, 0),
+                                                                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                           ),
+                                                                       )),
                                                                   TableWidget(
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
