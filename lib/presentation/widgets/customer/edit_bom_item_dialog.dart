@@ -105,11 +105,6 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                       borderRadius: 12,
                       borderColor: const Color(0xFFD0D5DD),
                       focusedBorderColor: AppColors.bluebutton,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}')),
-                      ],
                       onChanged: (value) {
                         if (companyQuotationItems) {
                           provider.companyQuotationItemsCalulate(context);
