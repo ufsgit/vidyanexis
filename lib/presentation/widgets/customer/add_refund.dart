@@ -189,7 +189,7 @@ class RefundCreationWidget extends StatelessWidget {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     actions: [
                       TextButton(

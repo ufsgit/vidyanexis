@@ -27,7 +27,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
     final provider = Provider.of<CustomerDetailsProvider>(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: const EdgeInsets.all(20),
         constraints: const BoxConstraints(maxWidth: 500),
@@ -265,7 +265,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
       builder: (context) {
         return AlertDialog(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: Text(
             'Confirm Delete',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),

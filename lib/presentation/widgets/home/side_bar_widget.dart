@@ -133,7 +133,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
                         //   color: isReportsExpanded
                         //       ? AppColors.lightBlueColor
                         //       : AppColors.whiteColor,
-                        //   borderRadius: BorderRadius.circular(8),
+                        //   borderRadius: BorderRadius.circular(4),
                         // ),
                         child: ExpansionTile(
                           tilePadding:
@@ -209,7 +209,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
           color: provider.selectedIndex == index
               ? AppColors.lightBlueColor
               : AppColors.whiteColor,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: InkWell(
           onTap: () {
@@ -275,7 +275,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
             color: provider.selectedIndex == index
                 ? AppColors.lightBlueColor
                 : AppColors.whiteColor,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 0),
           child: Align(
@@ -305,7 +305,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
             backgroundColor: AppColors.whiteColor,
             foregroundColor: AppColors.textRed,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               side: BorderSide(
                 color: AppColors.textRed,
               ),

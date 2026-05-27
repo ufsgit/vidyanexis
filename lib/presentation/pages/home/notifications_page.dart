@@ -92,7 +92,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: AppColors.secondaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Icon(
                       Icons.arrow_back,
@@ -172,7 +172,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Icon(
                     Icons.arrow_back,
@@ -251,7 +251,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Icon(
                     Icons.arrow_back,
@@ -424,7 +424,7 @@ class _NotificationTileState extends State<_NotificationTile> {
           color: _isHovered
               ? (isRead ? Colors.grey[100] : Colors.grey[50])
               : (isRead ? Colors.grey[50] : Colors.transparent),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           border:
               isRead ? Border.all(color: Colors.grey[300]!, width: 1) : null,
         ),
@@ -436,7 +436,7 @@ class _NotificationTileState extends State<_NotificationTile> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isRead ? Colors.grey[200] : Colors.blue[50],
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Icon(
                 Icons.notifications,
@@ -556,7 +556,7 @@ class _NotificationTileState extends State<_NotificationTile> {
       elevation: isRead ? 1 : 2,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         side: isRead
             ? BorderSide(color: Colors.grey[300]!, width: 1)
             : BorderSide.none,

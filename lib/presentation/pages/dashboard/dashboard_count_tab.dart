@@ -66,9 +66,17 @@ class DashboardCountTab extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
       padding: const EdgeInsets.all(8),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -143,9 +151,17 @@ class DashboardCountTab extends StatelessWidget {
   Widget _buildSkeleton(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
       padding: const EdgeInsets.all(16),
       child: GridView.builder(
         shrinkWrap: true,
@@ -161,7 +177,7 @@ class DashboardCountTab extends StatelessWidget {
           return Container(
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -253,7 +269,7 @@ class _DashboardCardState extends State<_DashboardCard> {
           child: Container(
             decoration: BoxDecoration(
               color: widget.theme.background,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(4),
               boxShadow: _isHovered
                   ? [
                       BoxShadow(

@@ -107,7 +107,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -326,7 +326,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: const BorderSide(color: Color(0xFFE2E8F0)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     ),
                     child: Text(
                       'Cancel',
@@ -346,7 +346,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     ),
                     child: Text(
                       'Save',
@@ -385,8 +385,8 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
             ),
             child: const Text('Loading...'),
           );

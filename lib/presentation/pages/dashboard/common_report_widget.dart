@@ -185,7 +185,7 @@ class _CommonReportWidgetState extends State<CommonReportWidget> {
         decoration: BoxDecoration(
             boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
             color: isHovered ? AppColors.buttonBackgroundColor : Colors.white,
-            borderRadius: BorderRadius.circular(18)),
+            borderRadius: BorderRadius.circular(4)),
         child: ListTile(
           leading: Image.asset(widget.image),
           title: Text(widget.title),

@@ -53,7 +53,7 @@ class _CheckListManagementWidgetState extends State<CheckListManagementWidget> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Icon(
                     Icons.arrow_back,
@@ -313,10 +313,10 @@ class _CheckListManagementWidgetState extends State<CheckListManagementWidget> {
                           elevation: 0,
                           margin: const EdgeInsets.only(bottom: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: InkWell(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                               onTap: () {
                                 showDialog(
                                   context: context,
@@ -344,7 +344,7 @@ class _CheckListManagementWidgetState extends State<CheckListManagementWidget> {
                                       decoration: BoxDecoration(
                                         color: const Color(0xFF5499D9)
                                             .withOpacity(0.15),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: const Icon(
                                         Icons.assignment_outlined,

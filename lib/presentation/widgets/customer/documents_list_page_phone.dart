@@ -95,7 +95,7 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                             height: 44,
                             decoration: BoxDecoration(
                               color: AppColors.secondaryBlue,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
                                   color: AppColors.secondaryBlue.withOpacity(0.3),
@@ -231,8 +231,8 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                                                       },
                                                       child: Container(
                                                         decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(8),
-                                                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                                                          borderRadius: BorderRadius.circular(4),
+                                                          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                                                           boxShadow: [
                                                             BoxShadow(
                                                               color: Colors.black.withOpacity(0.04),
@@ -242,7 +242,7 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                                                           ],
                                                         ),
                                                         child: ClipRRect(
-                                                          borderRadius: BorderRadius.circular(8),
+                                                          borderRadius: BorderRadius.circular(4),
                                                           child: Image.network(
                                                             image.filePath,
                                                             width: 90,
@@ -278,7 +278,7 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                                                                 child: Container(
                                                                   decoration: BoxDecoration(
                                                                     color: Colors.grey[200],
-                                                                    borderRadius: BorderRadius.circular(8),
+                                                                    borderRadius: BorderRadius.circular(4),
                                                                   ),
                                                                   width: 90,
                                                                   height: 90,

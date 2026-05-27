@@ -177,7 +177,7 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(4)),
                     ),
                     child: const Text('Apply Filters'),
                   ),
@@ -234,7 +234,7 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
         builder: (context, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -264,7 +264,7 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -296,7 +296,7 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -314,7 +314,7 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -344,7 +344,7 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                           );
                           reportsProvider.getSearchTaskReport(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                         ),

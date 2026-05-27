@@ -77,7 +77,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -152,7 +152,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                         margin: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 4),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           color: isSelected
                               ? Colors.blue.shade50
                               : Colors.grey.shade50,
@@ -314,7 +314,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                         ),
                                         border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                             color: Colors.blue.shade200,
                                             width: 1,
@@ -322,7 +322,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                             color: Colors.blue.shade200,
                                             width: 1,
@@ -330,7 +330,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                             color: Colors.blue.shade400,
                                             width: 1,
@@ -365,7 +365,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(
+                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),
@@ -423,7 +423,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                         margin: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 4),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           color: isSelected
                               ? Colors.green.shade50
                               : Colors.grey.shade50,
@@ -496,7 +496,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     backgroundColor: AppColors.secondaryBlue,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                   child: const Text('Done'),
@@ -690,7 +690,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.green.shade50.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: Colors.green.shade200),
                   ),
                   child: Wrap(
@@ -716,7 +716,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                           });
                         },
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       );
                     }).toList(),
@@ -732,7 +732,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: Column(
@@ -754,7 +754,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                 horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
                               color: AppColors.appViolet,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -811,7 +811,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                   settingsProvider.enquiryForController.clear();
                   Navigator.pop(context);
                 },
-                radius: 12,
+                radius: 4,
                 backgroundColor: AppColors.whiteColor,
                 borderColor: const Color(0xFFE2E8F0),
                 textColor: const Color(0xFF64748B),
@@ -841,7 +841,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     selectedTaskTypes.clear();
                   });
                 },
-                radius: 12,
+                radius: 4,
                 backgroundColor: AppColors.secondaryBlue,
                 borderColor: AppColors.secondaryBlue,
                 textColor: AppColors.whiteColor,

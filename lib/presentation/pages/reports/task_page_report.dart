@@ -118,7 +118,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -145,8 +145,15 @@ class _tasksPageReportState extends State<TaskPageReport> {
                     height: 48,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                     ),
                     child: TextField(
                       controller: searchController,
@@ -216,7 +223,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                 horizontal: 20,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             child: Text(
@@ -295,7 +302,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         vertical: 15,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                   )
@@ -307,9 +314,17 @@ class _tasksPageReportState extends State<TaskPageReport> {
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                 child: Row(
                   children: [
                     _buildStatusFilter(reportsProvider, provider),
@@ -330,7 +345,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: reportsProvider.selectedUser != null &&
                                     reportsProvider.selectedUser != 0
@@ -408,7 +423,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: reportsProvider.selectedTaskType != null &&
                                     reportsProvider.selectedTaskType != 0
@@ -515,7 +530,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                             vertical: 12,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                       ),
@@ -533,9 +548,17 @@ class _tasksPageReportState extends State<TaskPageReport> {
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
@@ -544,7 +567,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                             Container(
                               decoration: BoxDecoration(
                                 color: const Color(0xFFEFF2F5),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
                                 children: [
@@ -918,7 +941,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -948,7 +971,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -980,7 +1003,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -998,7 +1021,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -1045,13 +1068,13 @@ class _tasksPageReportState extends State<TaskPageReport> {
                               resetPage: true);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1088,7 +1111,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           reportsProvider.getSearchTaskReport(context,
                               resetPage: true);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -1242,7 +1265,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
         ),
@@ -1379,7 +1402,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -1461,7 +1484,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                       widget.onApply(_tempSelected);
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                       backgroundColor: AppColors.primaryBlue,
                       foregroundColor: Colors.white,
                     ),

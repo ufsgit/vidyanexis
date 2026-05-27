@@ -90,7 +90,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -374,7 +374,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -630,7 +630,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                             labelText: 'Description',
                                             border: OutlineInputBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(8),
+                                                  BorderRadius.circular(4),
                                             ),
                                             contentPadding:
                                                 const EdgeInsets.symmetric(
@@ -658,7 +658,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.grey[50],
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -681,7 +681,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                           vertical: 12, horizontal: 16),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Row(
                                         children: [
@@ -802,7 +802,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.grey[50],
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -828,7 +828,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                           vertical: 12, horizontal: 16),
                                       decoration: BoxDecoration(
                                         color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Row(
                                         children: [
@@ -880,7 +880,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                      BorderRadius.circular(4),
                                                   boxShadow: const [
                                                     BoxShadow(
                                                         color: Colors.black12,
@@ -1100,7 +1100,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                         labelText: 'Description',
                                         border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(8),
+                                              BorderRadius.circular(4),
                                         ),
                                         contentPadding:
                                             const EdgeInsets.symmetric(
@@ -1125,7 +1125,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                 height: 400,
                                 decoration: BoxDecoration(
                                   color: Colors.grey[50],
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1305,7 +1305,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                         settingsProvider.taskTypeDescriptionController.clear();
                         Navigator.pop(context);
                       },
-                      radius: 12,
+                      radius: 4,
                       backgroundColor: Colors.white,
                       borderColor: const Color(0xFFE2E8F0),
                       textColor: const Color(0xFF64748B),
@@ -1369,7 +1369,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                         settingsProvider.addTaskType(
                             context: context, data: requestData);
                       },
-                      radius: 12,
+                      radius: 4,
                       backgroundColor: AppColors.secondaryBlue,
                       borderColor: AppColors.secondaryBlue,
                       textColor: Colors.white,
@@ -1398,8 +1398,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
 //           padding: const EdgeInsets.symmetric(
 //               vertical: 8, horizontal: 12),
 //           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(10),
-//             border: Border.all(color: Colors.grey[300]!),
+//             borderRadius: BorderRadius.circular(4),
+//             border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
 //           ),
 //           child: Row(
 //             children: [
@@ -1432,8 +1432,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
 //           padding: const EdgeInsets.symmetric(
 //               vertical: 8, horizontal: 12),
 //           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(10),
-//             border: Border.all(color: Colors.grey[300]!),
+//             borderRadius: BorderRadius.circular(4),
+//             border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
 //           ),
 //           child: Row(
 //             children: [

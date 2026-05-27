@@ -39,15 +39,15 @@ Widget textFieldWidget(
         fillColor: const Color(0xFFF0F2F5),
         filled: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           borderSide: const BorderSide(color: Colors.black, width: 1),
         ),
       ),
@@ -68,7 +68,7 @@ Widget buttonWidget(
     width: MediaQuery.sizeOf(context).width,
     child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           backgroundColor: Colors.black,
           elevation: 0,
         ),

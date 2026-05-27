@@ -279,7 +279,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                               height: 32,
                               decoration: BoxDecoration(
                                 color: AppColors.scaffoldColor,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -397,7 +397,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
+                                  borderRadius: BorderRadius.circular(4)),
                             ),
                           ),
                         ),
@@ -550,7 +550,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -580,7 +580,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -612,7 +612,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -630,7 +630,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -676,13 +676,13 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           _refreshData();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),
@@ -718,7 +718,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           );
                           _refreshData();
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withAlpha(25),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -768,7 +768,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
         ),
@@ -904,7 +904,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -986,7 +986,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                       widget.onApply(_tempSelected);
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                       backgroundColor: AppColors.primaryBlue,
                       foregroundColor: Colors.white,
                     ),

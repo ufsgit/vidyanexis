@@ -200,7 +200,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.textGrey2, width: 1),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -238,7 +238,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 padding: EdgeInsets.zero,
                 labelPadding: const EdgeInsets.symmetric(horizontal: 8),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(4),
                   side: BorderSide(color: AppColors.secondaryBlue),
                 ),
               );
@@ -272,7 +272,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
               ),
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
             actions: [
               TextButton(
@@ -839,7 +839,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                           settingsProvider.resetStates();
                           Navigator.pop(context);
                         },
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: AppColors.whiteColor,
                         borderColor: const Color(0xFFE2E8F0),
                         textColor: const Color(0xFF64748B),
@@ -895,7 +895,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                                   Navigator.pop(context);
                                 }
                               },
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: AppColors.secondaryBlue,
                         borderColor: AppColors.secondaryBlue,
                         textColor: AppColors.whiteColor,
@@ -967,7 +967,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
             settingsProvider.resetStates();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -1007,7 +1007,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     Navigator.pop(context);
                   }
                 },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,

@@ -112,7 +112,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: AppColors.secondaryBlue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Icon(
                                 Icons.sort,
@@ -136,8 +136,15 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           height: 48,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: TextField(
                             controller: searchController,
@@ -184,7 +191,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                     foregroundColor: Colors.white,
                                     elevation: 0,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16),
@@ -210,6 +217,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         ),
                         const SizedBox(width: 8),
                         CustomElevatedButton(
+                          radius: 4,
                           onPressed: () {
                             exportToExcel(
                               headers: [
@@ -266,8 +274,15 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               height: 48,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                               ),
                               child: TextField(
                                 controller: searchController,
@@ -390,7 +405,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                       vertical: 12,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                   ),
                                 )
@@ -407,9 +422,17 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: Wrap(
                         spacing: 10, // horizontal spacing between items
                         runSpacing: 10, // vertical spacing between rows
@@ -420,7 +443,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //   padding: const EdgeInsets.symmetric(horizontal: 20),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
-                          //     borderRadius: BorderRadius.circular(20),
+                          //     borderRadius: BorderRadius.circular(4),
                           //     border: Border.all(
                           //         color: reportsProvider.selectedStatus != null &&
                           //                 reportsProvider.selectedStatus != 0
@@ -499,7 +522,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             height: 30,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                   color: reportsProvider.fromDate != null ||
                                           reportsProvider.toDate != null
@@ -530,7 +553,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                   color: dropDownProvider
                                                   .selectedEnquirySourceId !=
@@ -616,7 +639,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                   color: leadProvider.selectedEnquiryFor !=
                                               null &&
@@ -701,7 +724,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //   padding: const EdgeInsets.symmetric(horizontal: 20),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
-                          //     borderRadius: BorderRadius.circular(20),
+                          //     borderRadius: BorderRadius.circular(4),
                           //     border: Border.all(
                           //         color: reportsProvider.selectedUser != null &&
                           //                 reportsProvider.selectedUser != 0
@@ -788,7 +811,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //     );
                           //     reportsProvider.getSearchCustomers(context);
                           //   },
-                          //   style: ElevatedButton.styleFrom(
+                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           //     backgroundColor: Colors.white,
                           //     foregroundColor: AppColors.primaryBlue,
                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -836,9 +859,17 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         runSpacing: 10,
@@ -847,7 +878,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //   padding: const EdgeInsets.symmetric(horizontal: 20),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
-                          //     borderRadius: BorderRadius.circular(20),
+                          //     borderRadius: BorderRadius.circular(4),
                           //     border: Border.all(
                           //         color: reportsProvider.selectedStatus != null &&
                           //                 reportsProvider.selectedStatus != 0
@@ -927,7 +958,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //   padding: const EdgeInsets.symmetric(horizontal: 20),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
-                          //     borderRadius: BorderRadius.circular(20),
+                          //     borderRadius: BorderRadius.circular(4),
                           //     border: Border.all(
                           //         color: reportsProvider.selectedUser != null &&
                           //                 reportsProvider.selectedUser != 0
@@ -1014,7 +1045,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //     );
                           //     reportsProvider.getSearchCustomers(context);
                           //   },
-                          //   style: ElevatedButton.styleFrom(
+                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           //     backgroundColor: Colors.white,
                           //     foregroundColor: AppColors.primaryBlue,
                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -1078,9 +1109,17 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         padding: const EdgeInsets.all(16.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -1089,7 +1128,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                 Container(
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFEFF2F5),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -1165,7 +1204,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                 ? Colors.white
                                                 : const Color(0xFFF6F7F9),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                                BorderRadius.circular(4),
                                           ),
                                           child: Row(
                                             children: [
@@ -1352,9 +1391,17 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         padding: const EdgeInsets.all(16.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -1377,7 +1424,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                 ? Colors.white
                                                 : const Color(0xFFF6F7F9),
                                             borderRadius:
-                                                BorderRadius.circular(8),
+                                                BorderRadius.circular(4),
                                           ),
                                           child: Wrap(
                                             crossAxisAlignment:
@@ -1552,7 +1599,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                   ? Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFFEFF2F5),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Column(
                         children: [
@@ -1643,7 +1690,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: const Color(0xFFEFF2F5),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -1693,7 +1740,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -1723,7 +1770,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -1755,7 +1802,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -1773,7 +1820,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -1817,13 +1864,13 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           reportsProvider.getSearchTaskReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1857,7 +1904,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               reportsProvider.enquirySource);
                           reportsProvider.getSearchTaskReport(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

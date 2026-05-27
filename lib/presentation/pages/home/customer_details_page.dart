@@ -623,14 +623,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFF1F5F9),
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: TabBar(
                                       controller: _tabController,
                                       labelColor: AppColors.primaryBlue,
                                       unselectedLabelColor: const Color(0xFF64748B),
                                       indicator: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                         color: Colors.white,
                                         boxShadow: [
                                           BoxShadow(
@@ -690,7 +690,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Create Task'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -725,7 +725,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Checklist'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -757,7 +757,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Periodic Service'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -788,7 +788,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Expense'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -821,7 +821,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Receipt'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -855,7 +855,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Complaint'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -884,7 +884,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Payment'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -919,7 +919,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('New Quotation '),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -949,8 +949,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             padding: const EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                                             ),
                                             child: Row(
                                               children: [
@@ -1572,7 +1579,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 icon: const Icon(Icons.add),
                                                 label:
                                                     const Text('Create Task'),
-                                                style: ElevatedButton.styleFrom(
+                                                style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                                   backgroundColor:
                                                       AppColors.primaryBlue,
                                                   foregroundColor: Colors.white,
@@ -1967,6 +1974,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               .menuIsDeleteMap[4] ==
                                                                           1)
                                                                         CustomElevatedButton(
+                          radius: 4,
                                                                           backgroundColor:
                                                                               AppColors.whiteColor,
                                                                           borderColor:
@@ -2007,6 +2015,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2035,6 +2044,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2063,6 +2073,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2091,6 +2102,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2118,6 +2130,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2145,6 +2158,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2174,6 +2188,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2203,6 +2218,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2232,6 +2248,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2261,6 +2278,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2290,6 +2308,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2319,6 +2338,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2348,6 +2368,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2377,6 +2398,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
+                          radius: 4,
                                                                         backgroundColor:
                                                                             AppColors.whiteColor,
                                                                         borderColor:
@@ -2809,6 +2831,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         4] ==
                                                                     1)
                                                                   CustomElevatedButton(
+                          radius: 4,
                                                                     backgroundColor:
                                                                         AppColors
                                                                             .whiteColor,
@@ -2860,6 +2883,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -2894,6 +2918,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -2928,6 +2953,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -2962,6 +2988,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -2997,6 +3024,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3032,6 +3060,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3067,6 +3096,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3102,6 +3132,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3137,6 +3168,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3172,6 +3204,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3207,6 +3240,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3242,6 +3276,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3277,6 +3312,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3312,6 +3348,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .name !=
                                                                       'Lead /')
                                                                 CustomElevatedButton(
+                          radius: 4,
                                                                   backgroundColor:
                                                                       AppColors
                                                                           .whiteColor,
@@ -3825,7 +3862,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                       _showFullScreenImage(context, currentIndex, images, true);
                                                                                     },
                                                                                     child: ClipRRect(
-                                                                                      borderRadius: BorderRadius.circular(8),
+                                                                                      borderRadius: BorderRadius.circular(4),
                                                                                       child: Image.network(
                                                                                         image.filePath,
                                                                                         width: imageSize,
@@ -3893,7 +3930,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                           }
                                                                                         },
                                                                                         child: const CircleAvatar(
-                                                                                          radius: 12,
+                                                                                          radius: 4,
                                                                                           backgroundColor: AppColors.primaryBlue,
                                                                                           child: Icon(Icons.download, size: 14, color: Colors.white),
                                                                                         ),
@@ -3916,7 +3953,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                             );
                                                                                           },
                                                                                           child: const CircleAvatar(
-                                                                                            radius: 12,
+                                                                                            radius: 4,
                                                                                             backgroundColor: Colors.grey,
                                                                                             child: Icon(Icons.delete, size: 14, color: Colors.white),
                                                                                           ),
@@ -4078,7 +4115,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         color: const Color(
                                                                             0xFFEFF2F5),
                                                                         borderRadius:
-                                                                            BorderRadius.circular(8),
+                                                                            BorderRadius.circular(4),
                                                                       ),
                                                                       child:
                                                                           Padding(
@@ -4376,7 +4413,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   //     showCheckmark: false, // Removes the tick mark
   //     shape: RoundedRectangleBorder(
   //       // Removes the border by making it flat
-  //       borderRadius: BorderRadius.circular(8),
+  //       borderRadius: BorderRadius.circular(4),
   //     ),
   //     side: BorderSide.none, // Ensures no border is displayed
   //     elevation: 0, // Removes the elevation
@@ -4730,7 +4767,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         return Row(
                                           children: [
                                             CircleAvatar(
-                                              radius: 12,
+                                              radius: 4,
                                               backgroundColor: getAvatarColor(
                                                   assignedTo.isNotEmpty
                                                       ? assignedTo
@@ -5489,7 +5526,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                           ),
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         actions: [
                           TextButton(
@@ -5586,7 +5623,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                               width: 200,
                               height: 200,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                   color: Colors.grey.withOpacity(0.2)),
                               child: const Icon(
                                 Icons.hide_image_outlined,

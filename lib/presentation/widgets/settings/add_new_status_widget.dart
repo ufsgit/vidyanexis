@@ -93,7 +93,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -172,7 +172,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                         margin: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 4),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           color: isSelected
                               ? Colors.blue.shade50
                               : Colors.grey.shade50,
@@ -288,7 +288,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(
+                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),
@@ -625,7 +625,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: AppColors.appViolet,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -742,7 +742,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             settingsProvider.whatsappTemplateIdController.clear();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -768,7 +768,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                 whatsappTemplateId:
                     settingsProvider.whatsappTemplateIdController.text);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,

@@ -106,8 +106,15 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                           height: 40,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                           ),
                           child: TextField(
                             controller:
@@ -137,7 +144,7 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                             label: 'New',
                             breakpoint: 400,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             foregroundColor: Colors.white,
                             backgroundColor: AppColors.secondaryBlue,
@@ -154,7 +161,7 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.03),
@@ -240,7 +247,7 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.surfaceGrey,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         name,

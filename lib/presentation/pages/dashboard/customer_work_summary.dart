@@ -35,7 +35,7 @@ class CustomerWorkSummary extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(4),
       ),
       constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
       padding: const EdgeInsets.all(10),

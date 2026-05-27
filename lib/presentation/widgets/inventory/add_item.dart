@@ -77,7 +77,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -366,8 +366,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF8FAFC),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                           ),
                           child: Column(
                             children: [
@@ -481,7 +481,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                         vertical: 12),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(12)),
+                                            BorderRadius.circular(4)),
                                   ),
                                 ),
                               ),
@@ -501,7 +501,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(4),
                                         border: Border.all(
                                             color: const Color(0xFFE2E8F0)),
                                       ),
@@ -603,7 +603,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           side: const BorderSide(color: Color(0xFFE2E8F0)),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                         child: Text(
                           'Cancel',
@@ -632,7 +632,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                         child: Text(
                           'Save',

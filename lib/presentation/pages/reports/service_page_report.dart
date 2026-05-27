@@ -142,7 +142,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: AppColors.secondaryBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Icon(
                         Icons.sort,
@@ -168,8 +168,15 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                 height: 48,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                 ),
                 child: TextField(
                   controller: searchController,
@@ -209,11 +216,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                   ),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
+              const SizedBox(width: 8),
               CustomFilterButton(
                 onPressed: () {
                   reportsProvider.toggleFilter();
@@ -262,7 +265,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     vertical: 15,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               )
@@ -283,16 +286,24 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
                     padding: const EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                                 color: reportsProvider.selectedStatus != null &&
                                         reportsProvider.selectedStatus != 0
@@ -403,7 +414,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                 vertical: 8,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -415,9 +426,17 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
                     padding: const EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                     child: Wrap(
                       runSpacing: 10,
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -426,7 +445,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                                 color: reportsProvider.selectedStatus != null &&
                                         reportsProvider.selectedStatus != 0
@@ -537,7 +556,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                 vertical: 8,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -582,9 +601,17 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                   padding: const EdgeInsets.all(16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -593,7 +620,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                           Container(
                             decoration: BoxDecoration(
                               color: const Color(0xFFEFF2F5),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -688,7 +715,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                         color: index % 2 == 0
                                             ? Colors.white
                                             : const Color(0xFFF6F7F9),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       // Alternate row colors
                                       child: Row(
@@ -851,7 +878,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                         Service
                                                             .serviceStatusId),
                                                 borderRadius:
-                                                    BorderRadius.circular(6),
+                                                    BorderRadius.circular(4),
                                                 border: Border.all(
                                                     color: Colors.black45,
                                                     width: 0.1),
@@ -926,9 +953,17 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                   padding: const EdgeInsets.all(16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -957,7 +992,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                     color: index % 2 == 0
                                         ? Colors.white
                                         : const Color(0xFFF6F7F9),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   // Alternate row colors
                                   child: Wrap(
@@ -1085,7 +1120,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                             color: StatusUtils.getStatusColor(
                                                 Service.serviceStatusId),
                                             borderRadius:
-                                                BorderRadius.circular(6),
+                                                BorderRadius.circular(4),
                                             border: Border.all(
                                                 color: Colors.black45,
                                                 width: 0.1),
@@ -1162,7 +1197,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -1192,7 +1227,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -1224,7 +1259,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -1242,7 +1277,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -1284,13 +1319,13 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                           reportsProvider.getSearchServiceReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1323,7 +1358,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                           );
                           reportsProvider.getSearchServiceReport(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

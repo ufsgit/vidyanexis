@@ -48,7 +48,7 @@ class TaskLabelValue extends StatelessWidget {
         isTag
             ? Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                   color: color,
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -75,7 +75,7 @@ class TaskLabelValue extends StatelessWidget {
   Widget _buildValueTexts() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
         color: colorUser,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

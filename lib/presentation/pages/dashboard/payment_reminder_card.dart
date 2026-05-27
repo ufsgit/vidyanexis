@@ -34,7 +34,7 @@ class PaymentReminderCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -45,7 +45,7 @@ class PaymentReminderCard extends StatelessWidget {
         border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         child: Column(
           children: [
             Padding(

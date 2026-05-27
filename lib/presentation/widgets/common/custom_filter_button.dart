@@ -17,7 +17,7 @@ class CustomFilterButton extends StatelessWidget {
       message: 'Filter',
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(

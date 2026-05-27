@@ -155,7 +155,7 @@ pw.Widget _buildHeader(
                         decoration: pw.BoxDecoration(
                           border:
                               pw.Border.all(color: PdfColors.orange, width: 2),
-                          borderRadius: pw.BorderRadius.circular(20),
+                          borderRadius: pw.BorderRadius.circular(4),
                         ),
                         child: pw.ClipRRect(
                           child: pw.Image(

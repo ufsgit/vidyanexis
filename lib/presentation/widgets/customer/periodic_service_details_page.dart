@@ -216,19 +216,19 @@ class _PeriodicServiceDetailsPageState
                                     color: AppColors.textGrey3,
                                   ),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(4),
                                     borderSide: BorderSide(
                                       color: AppColors.textGrey2,
                                     ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(4),
                                     borderSide: BorderSide(
                                       color: AppColors.textGrey2,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(4),
                                     borderSide: BorderSide(
                                       color: AppColors.appViolet,
                                     ),
@@ -281,7 +281,7 @@ class _PeriodicServiceDetailsPageState
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.appViolet,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
           child: Text(

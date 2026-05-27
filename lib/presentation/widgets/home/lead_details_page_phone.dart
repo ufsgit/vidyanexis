@@ -111,7 +111,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                     icon:
                                         const Icon(Icons.location_on, size: 16),
                                     label: const Text('Check In'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: Colors.green,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -133,7 +133,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                     icon: const Icon(Icons.location_off,
                                         size: 16),
                                     label: const Text('Check Out'),
-                                    style: ElevatedButton.styleFrom(
+                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                       backgroundColor: Colors.red,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -232,7 +232,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                 color: AppColors.primaryBlue), // Border color
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.circular(5), // Border radius
+                                  BorderRadius.circular(4), // Border radius
                             ),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8.0,
@@ -264,7 +264,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                 color: AppColors.primaryBlue), // Border color
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.circular(5), // Border radius
+                                  BorderRadius.circular(4), // Border radius
                             ),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8.0,
@@ -391,7 +391,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                             color: parseColor(leadDetails.colorCode)
                                 .withOpacity(0.1)
                                 .withAlpha(30),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(4),
                             border:
                                 Border.all(color: Colors.black45, width: 0.1),
                           ),
@@ -469,7 +469,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                         const EdgeInsets.symmetric(vertical: 5),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFF6F7F9),
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: leadDetailsProvider
                                             .followUpHistory!.isNotEmpty
@@ -560,7 +560,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: Column(

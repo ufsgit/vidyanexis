@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
               // height: 340,
               decoration: BoxDecoration(
                   color: AppColors.scaffoldColor,
-                  borderRadius: BorderRadius.circular(16)),
+                  borderRadius: BorderRadius.circular(4)),
               child: SignUpForm(
                 passwordController: loginProvider.passWordController,
                 userNameController: loginProvider.userNameController,

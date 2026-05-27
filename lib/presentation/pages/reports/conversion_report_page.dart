@@ -167,7 +167,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: AppColors.secondaryBlue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Icon(
                               Icons.sort,
@@ -192,8 +192,15 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                       height: 48,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                       ),
                       child: TextField(
                         controller: searchController,
@@ -244,7 +251,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 foregroundColor: Colors.white,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16),
@@ -270,6 +277,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                     ),
                     const SizedBox(width: 16),
                     CustomElevatedButton(
+                          radius: 4,
                       onPressed: () {
                         exportToExcel(
                           headers: _exportHeaders,
@@ -284,6 +292,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                     ),
                     const SizedBox(width: 8),
                     CustomElevatedButton(
+                          radius: 4,
                       onPressed: () {
                         exportToPDF(
                           headers: _exportHeaders,
@@ -307,9 +316,17 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -324,7 +341,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               horizontal: 16, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: (reportsProvider.selectedStatus != null &&
                                       reportsProvider.selectedStatus != 0)
@@ -405,7 +422,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               horizontal: 16, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: (reportsProvider.selectedEnquirySourceId != null &&
                                       reportsProvider.selectedEnquirySourceId != 0)
@@ -495,7 +512,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               horizontal: 16, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: (reportsProvider.selectedByUserId != null &&
                                       reportsProvider.selectedByUserId != 0)
@@ -576,7 +593,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               horizontal: 16, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: (reportsProvider.selectedToUserId != null &&
                                       reportsProvider.selectedToUserId != 0)
@@ -657,7 +674,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               horizontal: 16, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: (reportsProvider.selectedFollowUpStatusId != null &&
                                       reportsProvider.selectedFollowUpStatusId != 0)
@@ -756,7 +773,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 vertical: 12,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           ),
@@ -789,11 +806,11 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide(color: AppColors.grey),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide(color: AppColors.grey),
                           ),
                         ),
@@ -1012,7 +1029,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
+                                  borderRadius: BorderRadius.circular(4)),
                             ),
                           ),
                         ),
@@ -1036,9 +1053,17 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 left: 16.0, right: 16.0, bottom: 16.0, top: 0.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -1046,7 +1071,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFEFF2F5),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: const Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
@@ -1147,7 +1172,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                       color: index % 2 == 0
                                                           ? Colors.white
                                                           : const Color(0xFFF6F7F9),
-                                                      borderRadius: BorderRadius.circular(8),
+                                                      borderRadius: BorderRadius.circular(4),
                                                     ),
                                                     child: Row(
                                                       children: [
@@ -1179,7 +1204,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                                   vertical: 4),
                                                               decoration: BoxDecoration(
                                                                 color: const Color(0xFFE9EDF1),
-                                                                borderRadius: BorderRadius.circular(20),
+                                                                borderRadius: BorderRadius.circular(4),
                                                               ),
                                                               child: Row(
                                                                 mainAxisSize: MainAxisSize.min,
@@ -1400,7 +1425,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -1430,7 +1455,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -1462,7 +1487,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -1480,7 +1505,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -1522,13 +1547,13 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           reportsProvider.getSearchConversionReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1561,7 +1586,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           );
                           reportsProvider.getSearchConversionReport(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

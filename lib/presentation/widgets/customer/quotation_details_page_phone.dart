@@ -507,7 +507,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                             Container(
                                 height: 22,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
+                                  borderRadius: BorderRadius.circular(4),
                                   color: StatusUtils.getStatusColor(2),
                                 ),
                                 child: Center(
@@ -588,7 +588,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                       Container(
                         decoration: BoxDecoration(
                             color: AppColors.scaffoldColor,
-                            borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(4)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -750,7 +750,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                           ),
                           decoration: BoxDecoration(
                               color: AppColors.scaffoldColor,
-                              borderRadius: BorderRadius.circular(8)),
+                              borderRadius: BorderRadius.circular(4)),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: SingleChildScrollView(
@@ -793,7 +793,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                           ),
                           decoration: BoxDecoration(
                               color: AppColors.scaffoldColor,
-                              borderRadius: BorderRadius.circular(8)),
+                              borderRadius: BorderRadius.circular(4)),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: SingleChildScrollView(
@@ -832,7 +832,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                       Container(
                           decoration: BoxDecoration(
                               color: AppColors.scaffoldColor,
-                              borderRadius: BorderRadius.circular(8)),
+                              borderRadius: BorderRadius.circular(4)),
                           child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(

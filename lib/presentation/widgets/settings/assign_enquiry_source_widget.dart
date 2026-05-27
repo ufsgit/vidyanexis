@@ -130,7 +130,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                                 padding: const EdgeInsets.all(12.0),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: const Color(0xFFE2E8F0),
                                     width: 1,
@@ -150,7 +150,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                                       height: 32,
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFF1F5F9),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Center(
                                         child: Text(
@@ -214,7 +214,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                       child: CustomElevatedButton(
                         buttonText: 'Cancel',
                         onPressed: () => Navigator.pop(context),
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: Colors.white,
                         borderColor: const Color(0xFFE2E8F0),
                         textColor: const Color(0xFF64748B),
@@ -231,7 +231,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                             updatedList: _items,
                           );
                         },
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: AppColors.secondaryBlue,
                         borderColor: AppColors.secondaryBlue,
                         textColor: Colors.white,
@@ -251,7 +251,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
         width: 600,
@@ -296,7 +296,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   children: [
@@ -354,7 +354,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: const Color(0xFFE2E8F0),
                               width: 1,
@@ -423,7 +423,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                   CustomElevatedButton(
                     buttonText: 'Cancel',
                     onPressed: () => Navigator.pop(context),
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: Colors.white,
                     borderColor: const Color(0xFFE2E8F0),
                     textColor: const Color(0xFF64748B),
@@ -438,7 +438,7 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                         updatedList: _items,
                       );
                     },
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: AppColors.secondaryBlue,
                     borderColor: AppColors.secondaryBlue,
                     textColor: Colors.white,

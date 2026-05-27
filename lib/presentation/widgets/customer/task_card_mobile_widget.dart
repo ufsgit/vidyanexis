@@ -47,7 +47,7 @@ class TaskCardMobileWidget extends StatelessWidget {
                   width: 3,
                   decoration: BoxDecoration(
                     color: statusColor,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -69,7 +69,7 @@ class TaskCardMobileWidget extends StatelessWidget {
                 Container(
                   height: 22,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(4),
                     color: statusColor.withOpacity(.1),
                   ),
                   child: Center(

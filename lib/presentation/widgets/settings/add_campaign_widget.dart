@@ -249,7 +249,7 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                         color: AppColors.secondaryBlue.withOpacity(0.3)),
                   ),
@@ -272,8 +272,8 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -296,14 +296,14 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
               CustomElevatedButton(
                 buttonText: 'Cancel',
                 onPressed: () => Navigator.pop(context),
-                radius: 12,
+                radius: 4,
                 backgroundColor: Colors.white,
                 borderColor: const Color(0xFFE2E8F0),
                 textColor: const Color(0xFF64748B),
               ),
               const SizedBox(width: 16),
               CustomElevatedButton(
-                radius: 12,
+                radius: 4,
                 backgroundColor: AppColors.secondaryBlue,
                 borderColor: AppColors.secondaryBlue,
                 textColor: Colors.white,
@@ -388,7 +388,7 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
     }
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: const EdgeInsets.all(24),
         width: 500,

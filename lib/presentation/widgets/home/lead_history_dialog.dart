@@ -74,7 +74,7 @@ class _LeadHistoryDialogState extends State<LeadHistoryDialog> {
         vertical: 24.0,
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
       ),
       elevation: 10,
       backgroundColor: Colors.white,
@@ -96,7 +96,7 @@ class _LeadHistoryDialogState extends State<LeadHistoryDialog> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: AppColors.primaryBlue.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Icon(
                       Icons.history_rounded,
@@ -274,7 +274,7 @@ class _LeadHistoryDialogState extends State<LeadHistoryDialog> {
                                               color:
                                                   statusColor.withOpacity(0.08),
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(4),
                                               border: Border.all(
                                                 color: statusColor
                                                     .withOpacity(0.2),
@@ -395,7 +395,7 @@ class _LeadHistoryDialogState extends State<LeadHistoryDialog> {
                                       decoration: BoxDecoration(
                                         color:
                                             const Color(0xFFF8FAFC), // Slate 50
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(4),
                                         border: Border(
                                           left: BorderSide(
                                             color: statusColor,

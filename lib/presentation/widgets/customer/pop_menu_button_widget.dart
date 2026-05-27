@@ -35,7 +35,7 @@ class CustomPopMenuButtonWidget extends StatelessWidget {
         height: 80,
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
       ),
       color: Colors.white, // White background
       onSelected: onOptionSelected,

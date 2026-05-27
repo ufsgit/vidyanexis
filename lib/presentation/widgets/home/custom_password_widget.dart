@@ -40,7 +40,7 @@ class CustomPasswordWidget extends StatelessWidget {
     bool hasAsterisk = hintText.contains('*');
     return Container(
       // decoration: BoxDecoration(
-      //   borderRadius: BorderRadius.circular(12),
+      //   borderRadius: BorderRadius.circular(4),
       //   border: Border.all(
       //     color: showError ? Colors.red : AppColors.textGrey2,
       //   ),
@@ -96,21 +96,21 @@ class CustomPasswordWidget extends StatelessWidget {
                 color: AppColors.textGrey3,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10), // Rounded corners
+                borderRadius: BorderRadius.circular(4), // Rounded corners
                 borderSide: BorderSide(
                   color: AppColors.textGrey2, // Border color
                   width: 1, // Border width
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10), // Rounded corners
+                borderRadius: BorderRadius.circular(4), // Rounded corners
                 borderSide: BorderSide(
                   color: AppColors.textGrey2, // Border color
                   width: 1, // Border width
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10), // Rounded corners
+                borderRadius: BorderRadius.circular(4), // Rounded corners
                 borderSide: BorderSide(
                   color: AppColors.textGrey2, // Border color
                   width: 1, // Border width

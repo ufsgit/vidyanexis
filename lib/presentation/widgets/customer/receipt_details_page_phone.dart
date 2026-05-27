@@ -148,7 +148,7 @@ class _ReceiptDetailsPagePhoneState extends State<ReceiptDetailsPagePhone> {
                             width: 3,
                             decoration: BoxDecoration(
                                 color: AppColors.appViolet,
-                                borderRadius: BorderRadius.circular(16))),
+                                borderRadius: BorderRadius.circular(4))),
                         const SizedBox(
                           width: 8,
                         ),

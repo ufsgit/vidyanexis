@@ -69,7 +69,7 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color: Colors.white.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: displayLogo.startsWith('http')
                                       ? Image.network(

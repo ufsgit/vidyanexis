@@ -81,7 +81,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -123,8 +123,9 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                       },
                       buttonText: 'Export to Excel',
                       textColor: AppColors.whiteColor,
-                      borderColor: AppColors.appViolet,
-                      backgroundColor: AppColors.appViolet,
+                      borderColor: AppColors.primaryBlue,
+                          backgroundColor: AppColors.primaryBlue,
+                          radius: 4,
                     ),
                   ],
                 ),
@@ -245,7 +246,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(4)),
                 ),
               ),
             ),
@@ -261,8 +262,15 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
       ),
       child: Row(
         children: [
@@ -283,7 +291,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
             child: Text(
@@ -306,7 +314,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
@@ -321,7 +329,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -488,7 +496,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(4),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.03),
@@ -542,7 +550,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                                   horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryBlue.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 'Total Tasks: ${task.totalTask}',
@@ -563,7 +571,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       '#${index + 1}',
@@ -585,7 +593,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                           vertical: 8, horizontal: 10),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFEF3C7),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                           color: const Color(0xFFD97706).withOpacity(0.12),
                         ),
@@ -622,7 +630,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                           vertical: 8, horizontal: 10),
                       decoration: BoxDecoration(
                         color: const Color(0xFFDCFCE7),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                           color: const Color(0xFF16A34A).withOpacity(0.12),
                         ),
@@ -689,7 +697,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -725,7 +733,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                           },
                           selected: isSelected,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(
                             title,
@@ -770,12 +778,12 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide:
                                     BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide:
                                     BorderSide(color: Colors.grey[300]!),
                               ),
@@ -803,12 +811,12 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide:
                                     BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide:
                                     BorderSide(color: Colors.grey[300]!),
                               ),
@@ -841,7 +849,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: Text(
@@ -867,7 +875,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                           backgroundColor: AppColors.textRed.withOpacity(0.08),
                           foregroundColor: AppColors.textRed,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: Text(

@@ -132,9 +132,17 @@ class _FollowUpCardState extends State<FollowUpCard> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
               child: Column(
                 children: [
                   Text(
@@ -182,9 +190,17 @@ class _FollowUpCardState extends State<FollowUpCard> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -202,7 +218,7 @@ class _FollowUpCardState extends State<FollowUpCard> {
                             horizontal: 6, vertical: 4),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF6F7F9),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
                           children: [
@@ -231,7 +247,7 @@ class _FollowUpCardState extends State<FollowUpCard> {
                             horizontal: 6, vertical: 4),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF6F7F9),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Row(
                           children: [
@@ -274,7 +290,7 @@ class _FollowUpCardState extends State<FollowUpCard> {
                               color: parseColor(widget.entry.colorCode)
                                   .withOpacity(0.1)
                                   .withAlpha(30),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(4),
                               border:
                                   Border.all(color: Colors.black45, width: 0.1),
                             ),
@@ -311,7 +327,7 @@ class _FollowUpCardState extends State<FollowUpCard> {
                       //           horizontal: 6, vertical: 4),
                       //       decoration: BoxDecoration(
                       //         color: const Color(0xFFF6F7F9),
-                      //         borderRadius: BorderRadius.circular(8),
+                      //         borderRadius: BorderRadius.circular(4),
                       //       ),
                       //       child: Row(
                       //         children: [
@@ -350,7 +366,7 @@ class _FollowUpCardState extends State<FollowUpCard> {
                                   horizontal: 6, vertical: 4),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF6F7F9),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
                                 children: [
@@ -383,7 +399,7 @@ class _FollowUpCardState extends State<FollowUpCard> {
                             height: 36,
                             decoration: BoxDecoration(
                               color: const Color(0xFFF6F7F9),
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Icon(
                                 _isPlaying ? Icons.pause : Icons.play_arrow),

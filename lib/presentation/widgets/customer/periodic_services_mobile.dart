@@ -73,7 +73,7 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                           height: 44,
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             boxShadow: [
                               BoxShadow(
                                 color: AppColors.secondaryBlue.withOpacity(0.3),
@@ -172,7 +172,7 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                                         color: StatusUtils.getStatusMobileColor(
                                                 item.amcStatusName)
                                             .withOpacity(.1),
-                                        borderRadius: BorderRadius.circular(13),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
                                         item.amcStatusName,
@@ -213,7 +213,7 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                                         padding: EdgeInsets.all(4),
                                         decoration: BoxDecoration(
                                           color: Color(0xffF6F7F9),
-                                          borderRadius: BorderRadius.circular(7),
+                                          borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: Center(
                                           child: Text(

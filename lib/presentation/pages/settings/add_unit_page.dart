@@ -58,7 +58,7 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -164,7 +164,7 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
                       settingsProvider.unitNameController.clear();
                       Navigator.pop(context);
                     },
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: AppColors.whiteColor,
                     borderColor: const Color(0xFFE2E8F0),
                     textColor: const Color(0xFF64748B),
@@ -187,7 +187,7 @@ class _AddUnitWidgetState extends State<AddUnitWidget> {
                         statusName: settingsProvider.unitNameController.text,
                       );
                     },
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: AppColors.secondaryBlue,
                     borderColor: AppColors.secondaryBlue,
                     textColor: AppColors.whiteColor,

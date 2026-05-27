@@ -37,7 +37,7 @@ class _ItemPageState extends State<ItemPage> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -47,7 +47,7 @@ class _ItemPageState extends State<ItemPage> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: expenseProvider.itemList.isEmpty
               ? _buildEmptyState()
               : Column(
@@ -135,7 +135,7 @@ class _ItemPageState extends State<ItemPage> {
           if (onEdit != null)
             TextButton(
               onPressed: onEdit,
-              style: TextButton.styleFrom(
+              style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                 foregroundColor: const Color(0xFFD97706),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 minimumSize: Size.zero,
@@ -153,7 +153,7 @@ class _ItemPageState extends State<ItemPage> {
           if (onDelete != null)
             TextButton(
               onPressed: onDelete,
-              style: TextButton.styleFrom(
+              style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                 foregroundColor: Colors.red,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 minimumSize: Size.zero,
@@ -202,7 +202,7 @@ class _ItemPageState extends State<ItemPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: const Text('Confirm Delete'),
           content: const Text('Are you sure you want to delete this item?'),
           actions: [

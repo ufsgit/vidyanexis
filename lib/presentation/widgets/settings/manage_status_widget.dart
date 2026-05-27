@@ -28,7 +28,7 @@ class _ManageStatusWidgetState extends State<ManageStatusWidget> {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -66,7 +66,7 @@ class _ManageStatusWidgetState extends State<ManageStatusWidget> {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Row(
                       children: [
@@ -96,7 +96,7 @@ class _ManageStatusWidgetState extends State<ManageStatusWidget> {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(4),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black12,
@@ -136,7 +136,7 @@ class _ManageStatusWidgetState extends State<ManageStatusWidget> {
                     CustomElevatedButton(
                       buttonText: 'Cancel',
                       onPressed: () => Navigator.pop(context),
-                      radius: 12,
+                      radius: 4,
                       backgroundColor: Colors.white,
                       borderColor: const Color(0xFFE2E8F0),
                       textColor: const Color(0xFF64748B),
@@ -146,7 +146,7 @@ class _ManageStatusWidgetState extends State<ManageStatusWidget> {
                       onPressed: () {
                         // Handle save action
                       },
-                      radius: 12,
+                      radius: 4,
                       backgroundColor: AppColors.secondaryBlue,
                       borderColor: AppColors.secondaryBlue,
                       textColor: Colors.white,

@@ -159,7 +159,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                                   spreadRadius: 4)
                             ],
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(5)),
+                            borderRadius: BorderRadius.circular(4)),
                         textStyle: const TextStyle(
                             color: Colors.black, fontWeight: FontWeight.w500),
                         message:
@@ -174,7 +174,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                                     spreadRadius: 4)
                               ],
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(4)),
                           child: Center(
                             child: Icon(
                               Icons.roofing_outlined,
@@ -215,7 +215,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide.none)),
                         onChanged: (e) {}),
                   ),
@@ -228,7 +228,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                       padding: const EdgeInsets.all(7),
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(4)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -257,7 +257,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                       padding: const EdgeInsets.all(7),
                       decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(4)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -284,7 +284,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                           foregroundColor: Colors.white,
                           fixedSize: const Size(130, 45),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10))),
+                              borderRadius: BorderRadius.circular(4))),
                       onPressed: () {},
                       child: const Text("Apply"))
                 ],
@@ -302,7 +302,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                   decoration: BoxDecoration(
                       boxShadow: const [],
                       color: Colors.black26,
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(4)),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,

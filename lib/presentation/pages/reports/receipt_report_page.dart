@@ -118,7 +118,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: AppColors.secondaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Icon(
                       Icons.sort,
@@ -183,9 +183,17 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
       margin: const EdgeInsets.symmetric(horizontal: 0.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
       child: Row(
         children: [
           CommonReportDateFilter(
@@ -200,7 +208,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
                   color: provider.selectedCustomerId != null
                       ? AppColors.primaryBlue
@@ -264,7 +272,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
           const Spacer(),
           ElevatedButton(
             onPressed: () => provider.getReceiptReport(context),
-            style: ElevatedButton.styleFrom(
+            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
               backgroundColor: Colors.white,
               foregroundColor: AppColors.primaryBlue,
               side: BorderSide(color: AppColors.primaryBlue),
@@ -294,7 +302,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFEFF2F5),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: const Row(
         children: [
@@ -409,7 +417,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(color: AppColors.primaryBlue),
                   ),
                   child: Row(
@@ -500,7 +508,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
         builder: (context, provider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -530,7 +538,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                             provider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -560,7 +568,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                             onTap: () => provider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: provider.fromDate != null
                                   ? '${provider.fromDate!.toLocal()}'
@@ -577,7 +585,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                             onTap: () => provider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: provider.toDate != null
                                   ? '${provider.toDate!.toLocal()}'
@@ -599,13 +607,13 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),

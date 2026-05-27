@@ -19,7 +19,7 @@
 //           height: 36,
 //           width: 450, // Increased width to accommodate three tabs
 //           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(15),
+//             borderRadius: BorderRadius.circular(4),
 //             color: Colors.grey.shade100,
 //           ),
 //           child: Stack(
@@ -64,7 +64,7 @@
 //                   width: 140,
 //                   height: 40,
 //                   decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(15),
+//                     borderRadius: BorderRadius.circular(4),
 //                     color: Colors.white,
 //                   ),
 //                   child: Center(
@@ -109,7 +109,7 @@
 //           height: 36,
 //           width: 450, // Increased width to accommodate three tabs
 //           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(15),
+//             borderRadius: BorderRadius.circular(4),
 //             color: Colors.grey.shade100,
 //           ),
 //           child: Stack(
@@ -154,7 +154,7 @@
 //                   width: 140,
 //                   height: 40,
 //                   decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(15),
+//                     borderRadius: BorderRadius.circular(4),
 //                     color: Colors.white,
 //                   ),
 //                   child: Center(
@@ -225,10 +225,10 @@ class CustomTab extends StatelessWidget {
         height: 38,
         decoration: BoxDecoration(
           color: const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
@@ -262,7 +262,7 @@ class CustomTab extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                       color: isSelected ? Colors.white : Colors.transparent,
                       boxShadow: isSelected
                           ? [

@@ -51,7 +51,7 @@ class VisitHistoryWidget extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: AppColors.grey.withOpacity(0.5)),
             boxShadow: [
               BoxShadow(
@@ -77,7 +77,7 @@ class VisitHistoryWidget extends StatelessWidget {
                                 ? Colors.green
                                 : Colors.orange)
                             .withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         status.toUpperCase(),

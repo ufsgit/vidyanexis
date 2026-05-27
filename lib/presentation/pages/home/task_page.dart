@@ -271,7 +271,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.arrow_back,
@@ -420,7 +420,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                                BorderRadius.circular(30),
+                                                BorderRadius.circular(4),
                                             border: Border.all(
                                                 color: reportsProvider
                                                             .entryType !=
@@ -481,7 +481,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                                BorderRadius.circular(30),
+                                                BorderRadius.circular(4),
                                             border: Border.all(
                                                 color: Colors.black,
                                                 width: 1.5),
@@ -609,6 +609,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             // Export button
                                             if (!isMobile || screenWidth > 400)
                                               CustomElevatedButton(
+                          radius: 4,
                                                 onPressed: () async {
                                                   await reportsProvider
                                                       .fetchTasksForExport(
@@ -642,9 +643,17 @@ class _tasksPageReportState extends State<TaskPage> {
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                 child: Wrap(
                   spacing: 12,
                   runSpacing: 10,
@@ -656,7 +665,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: reportsProvider.selectedStatus != null &&
                                     reportsProvider.selectedStatus != 0
@@ -720,7 +729,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                               color: reportsProvider.fromDate != null ||
                                       reportsProvider.toDate != null
@@ -751,7 +760,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: reportsProvider.selectedUser != null &&
                                     reportsProvider.selectedUser != 0
@@ -810,7 +819,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: reportsProvider.selectedTaskType != null &&
                                     reportsProvider.selectedTaskType != 0
@@ -869,7 +878,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: reportsProvider.selectedEnquiryFor != null &&
                                     reportsProvider.selectedEnquiryFor != 0
@@ -952,7 +961,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                         child: const Text('Reset'),
                       ),
@@ -1006,7 +1015,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               height: 32,
                               decoration: BoxDecoration(
                                 color: AppColors.scaffoldColor,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Padding(
                                 padding:
@@ -1175,7 +1184,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               side: BorderSide(color: AppColors.textRed),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             child: const Text('Reset All Filters'),
@@ -1197,7 +1206,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: AppStyles.isWebScreen(context)
-                          ? BorderRadius.circular(14)
+                          ? BorderRadius.circular(4)
                           : BorderRadius.zero,
                     ),
                     child: Padding(
@@ -1226,7 +1235,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             Container(
                               decoration: BoxDecoration(
                                 color: AppColors.primaryBlue,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -1423,7 +1432,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ? Colors.white
                                                   : const Color(0xFFF6F7F9),
                                               borderRadius:
-                                                  BorderRadius.circular(8),
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Row(
                                               children: [
@@ -2265,7 +2274,7 @@ class _tasksPageReportState extends State<TaskPage> {
             vertical: 24.0,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Container(
             width: isSmallScreen ? screenSize.width * 0.9 : 480,
@@ -2406,7 +2415,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 8),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(30),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       side: BorderSide(
                                         color: isSelected
@@ -2447,7 +2456,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             const SizedBox(height: 12),
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(color: theme.dividerColor),
                                 color: theme.cardColor,
                               ),
@@ -2482,7 +2491,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             color: theme.dividerColor),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(8)),
+                                                BorderRadius.circular(4)),
                                       ),
                                       child: const Text('Cancel'),
                                     ),
@@ -2525,7 +2534,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             horizontal: 24, vertical: 12),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(8)),
+                                                BorderRadius.circular(4)),
                                         backgroundColor: theme.primaryColor,
                                         foregroundColor: Colors.white,
                                       ),
@@ -2573,7 +2582,7 @@ class _tasksPageReportState extends State<TaskPage> {
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: CustomFormFillerView(
@@ -2892,7 +2901,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             decoration: BoxDecoration(
                                               color: const Color(0xFFF9FAFB),
                                               borderRadius:
-                                                  BorderRadius.circular(8),
+                                                  BorderRadius.circular(4),
                                               border: Border.all(
                                                   color: Colors.grey.shade300),
                                             ),
@@ -3303,7 +3312,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       context, form, task);
                                                 },
                                                 borderRadius:
-                                                    BorderRadius.circular(16),
+                                                    BorderRadius.circular(4),
                                                 child: Container(
                                                   width: 260,
                                                   padding:
@@ -3634,8 +3643,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               return AlertDialog(
                                                                 shape: RoundedRectangleBorder(
                                                                     borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            15)),
+                                                                        BorderRadius.circular(4)),
                                                                 titlePadding:
                                                                     const EdgeInsets
                                                                         .fromLTRB(
@@ -3722,7 +3730,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               .darkGreen,
                                                                       shape: RoundedRectangleBorder(
                                                                           borderRadius:
-                                                                              BorderRadius.circular(8)),
+                                                                              BorderRadius.circular(4)),
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           horizontal:
@@ -3811,8 +3819,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               return AlertDialog(
                                                                 shape: RoundedRectangleBorder(
                                                                     borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            15)),
+                                                                        BorderRadius.circular(4)),
                                                                 titlePadding:
                                                                     const EdgeInsets
                                                                         .fromLTRB(
@@ -3869,7 +3876,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               .darkGreen,
                                                                       shape: RoundedRectangleBorder(
                                                                           borderRadius:
-                                                                              BorderRadius.circular(8)),
+                                                                              BorderRadius.circular(4)),
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           horizontal:
@@ -3964,7 +3971,7 @@ class _tasksPageReportState extends State<TaskPage> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -3994,7 +4001,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -4026,7 +4033,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -4044,7 +4051,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -4091,7 +4098,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.goToPage(1);
                           reportsProvider.searchTaskByCustomer(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -4136,7 +4143,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.goToPage(1);
                           reportsProvider.searchTaskByCustomer(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -4256,7 +4263,7 @@ class _tasksPageReportState extends State<TaskPage> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.grey.shade200.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Colors.grey.shade300, width: 0.5),
       ),
       child: Row(
@@ -4286,13 +4293,13 @@ class _tasksPageReportState extends State<TaskPage> {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(4),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? statusColor : statusColor.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: statusColor,
             width: 1.5,
@@ -4387,7 +4394,7 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
           elevation: WidgetStateProperty.all(8),
           shadowColor: WidgetStateProperty.all(Colors.black.withOpacity(0.3)),
           shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           ),
         ),
         menuChildren: widget.menuChildren.map((childBuilder) {

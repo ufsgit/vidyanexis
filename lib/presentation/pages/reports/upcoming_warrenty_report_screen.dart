@@ -159,7 +159,7 @@ class _UpcomingWarrentyReportScreen
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -184,8 +184,15 @@ class _UpcomingWarrentyReportScreen
                       height: 40,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                       ),
                       child: TextField(
                         controller: searchController,
@@ -208,8 +215,9 @@ class _UpcomingWarrentyReportScreen
                       onPressed: () => _exportExcel(reportsProvider),
                       buttonText: 'Export to Excel',
                       textColor: AppColors.whiteColor,
-                      borderColor: AppColors.appViolet,
-                      backgroundColor: AppColors.appViolet,
+                      borderColor: AppColors.primaryBlue,
+                          backgroundColor: AppColors.primaryBlue,
+                          radius: 4,
                     ),
                   ],
                 ),
@@ -249,7 +257,7 @@ class _UpcomingWarrentyReportScreen
                               height: 32,
                               decoration: BoxDecoration(
                                 color: AppColors.scaffoldColor,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -312,7 +320,7 @@ class _UpcomingWarrentyReportScreen
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
+                                  borderRadius: BorderRadius.circular(4)),
                             ),
                           ),
                         ),
@@ -406,8 +414,15 @@ class _UpcomingWarrentyReportScreen
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
       ),
       child: Row(
         children: [
@@ -425,7 +440,7 @@ class _UpcomingWarrentyReportScreen
               backgroundColor: AppColors.appViolet,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                  borderRadius: BorderRadius.circular(4)),
             ),
             child: const Text('Apply'),
           ),
@@ -450,9 +465,17 @@ class _UpcomingWarrentyReportScreen
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
         ),
+      ],
+    ),
         child: Column(
           children: [
             // Header Row
@@ -582,7 +605,7 @@ class _UpcomingWarrentyReportScreen
         builder: (context, reportsProvider, child) {
           return AlertDialog(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             content: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -668,7 +691,7 @@ class _UpcomingWarrentyReportScreen
                         reportsProvider.formatDate();
                         _applySearch(reportsProvider);
                       },
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.appViolet,
                           foregroundColor: Colors.white),
                       child: const Text('Apply'),

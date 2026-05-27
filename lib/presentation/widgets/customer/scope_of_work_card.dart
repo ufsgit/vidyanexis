@@ -22,7 +22,7 @@ class ScopeOfWorkCard extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
           ),
           title: Text(
             'Confirm Delete',

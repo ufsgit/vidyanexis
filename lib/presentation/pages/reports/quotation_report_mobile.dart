@@ -295,7 +295,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                           ? AppColors.primaryBlue
                           : Colors.transparent,
                     ),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Row(
@@ -331,7 +331,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                   decoration: BoxDecoration(
                     color: AppColors.primaryBlue.withOpacity(0.05),
                     border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Center(
@@ -394,7 +394,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             ),
           ),
         ],
@@ -429,7 +429,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
         builder: (context, quotationProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -459,7 +459,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                             quotationProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -491,7 +491,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                                 quotationProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: quotationProvider.fromDate != null
                                   ? '${quotationProvider.fromDate!.toLocal()}'
@@ -509,7 +509,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                                 quotationProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: quotationProvider.toDate != null
                                   ? '${quotationProvider.toDate!.toLocal()}'
@@ -542,13 +542,13 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),

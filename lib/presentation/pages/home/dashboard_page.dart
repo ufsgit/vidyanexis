@@ -117,12 +117,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => onClickTopButton(context, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
         child: Ink(
           height: AppStyles.isWebScreen(context) ? 38 : 34,
           decoration: BoxDecoration(
             color: const Color(0xFFF1F5F9),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -156,7 +156,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         height: AppStyles.isWebScreen(context) ? 38 : 34,
         decoration: BoxDecoration(
           color: const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: _buildAssignedStaffFilter(dashBoardProvider, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
       ),
@@ -179,7 +179,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: const Color(0xFFF0FDF4),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: const Color(0xFFDCFCE7)),
               ),
               child: isWeb 
@@ -220,7 +220,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
           return Container(
             height: btnHeight,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
               gradient: LinearGradient(
                 colors: [
                   AppColors.secondaryBlue,
@@ -248,7 +248,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 shadowColor: Colors.transparent,
                 elevation: 0,
                 padding: EdgeInsets.symmetric(horizontal: isWeb ? 16 : 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               ),
               child: isWeb 
                   ? Row(
@@ -303,7 +303,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: AppColors.secondaryBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Icon(Icons.sort,
                           size: 20, color: AppColors.textBlue800),
@@ -538,7 +538,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         builder: (contextx, dashBoardProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -568,7 +568,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                             dashBoardProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -610,7 +610,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                             },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: dashBoardProvider.fromDate != null
                                   ? DateFormat('yyyy-MM-dd')
@@ -638,7 +638,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                             },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: dashBoardProvider.toDate != null
                                   ? DateFormat('yyyy-MM-dd')
@@ -662,7 +662,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
                           dashBoardProvider.loadDataForTab(activeTab, context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -685,7 +685,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           dashBoardProvider.selectDateFilterOption(null);
                           dashBoardProvider.loadDataForTab(activeTab, context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -778,7 +778,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             color: const Color(0xFFF1F5F9),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -834,7 +834,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                       color: dashBoardProvider.fromDate != null ||
                               dashBoardProvider.toDate != null
@@ -891,7 +891,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 foregroundColor: Colors.redAccent,
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(36, 36),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               ),
             ),
           ]

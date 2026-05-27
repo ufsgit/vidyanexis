@@ -71,8 +71,8 @@ class _StockScreenState extends State<StockScreen> {
                   //   height: 40,
                   //   decoration: BoxDecoration(
                   //     color: Colors.white,
-                  //     borderRadius: BorderRadius.circular(20),
-                  //     border: Border.all(color: Colors.grey[300]!),
+                  //     borderRadius: BorderRadius.circular(4),
+                  //     border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                   //   ),
                   //   child: TextField(
                   //     controller: settingsProvider.searchDocumentTypeController,
@@ -101,7 +101,7 @@ class _StockScreenState extends State<StockScreen> {
                     label: "Add Stock",
                     breakpoint: 860,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(4)),
                     foregroundColor: Colors.white,
                     backgroundColor: AppColors.primaryBlue,
                     borderSide: BorderSide(color: AppColors.primaryBlue),
@@ -418,7 +418,7 @@ class _StockScreenState extends State<StockScreen> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
                                     padding: const EdgeInsets.symmetric(
@@ -436,7 +436,7 @@ class _StockScreenState extends State<StockScreen> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                     backgroundColor: AppColors.primaryBlue,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
@@ -519,7 +519,7 @@ class _StockScreenState extends State<StockScreen> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(

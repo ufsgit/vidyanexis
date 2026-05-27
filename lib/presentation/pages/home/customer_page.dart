@@ -219,7 +219,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                     horizontal: 16, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                       color: customerProvider.entryType != 'all'
                                           ? AppColors.primaryBlue
@@ -264,7 +264,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                 height: 38,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                       color: const Color(0xFFCBD5E1),
                                       width: 1.0),
@@ -396,7 +396,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             height: 38,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(4),
                               border:
                                   Border.all(color: Colors.black, width: 1.5),
                             ),
@@ -498,9 +498,17 @@ class _CustomerPageState extends State<CustomerPage> {
                   margin: const EdgeInsets.symmetric(horizontal: 16.0),
                   padding: const EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                   child: Wrap(
                     spacing: 10,
                     runSpacing: 10,
@@ -516,7 +524,7 @@ class _CustomerPageState extends State<CustomerPage> {
                               horizontal: 16, vertical: 6),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                                 color: customerProvider.fromDate != null ||
                                         customerProvider.toDate != null
@@ -570,7 +578,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             customerProvider.getSearchCustomers(context,
                                 isSilent: true);
                           },
-                          style: ElevatedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.textRed,
                             side: BorderSide(color: AppColors.textRed),
@@ -591,9 +599,17 @@ class _CustomerPageState extends State<CustomerPage> {
                       vertical: 4.0), // Further reduced vertical
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -604,7 +620,7 @@ class _CustomerPageState extends State<CustomerPage> {
                               height: tableHeaderHeight,
                               decoration: BoxDecoration(
                                 color: AppColors.primaryBlue,
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
                                 children: [
@@ -687,7 +703,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       color: index % 2 == 0
                                           ? Colors.white
                                           : const Color(0xFFF6F7F9),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     // Alternate row colors
                                     child: AppStyles.isWebScreen(context)
@@ -1090,7 +1106,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
-                                                    BorderRadius.circular(12),
+                                                    BorderRadius.circular(4),
                                                 boxShadow: [
                                                   BoxShadow(
                                                     color: Colors.black
@@ -1276,7 +1292,7 @@ class _CustomerPageState extends State<CustomerPage> {
         builder: (contextx, customerProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -1306,7 +1322,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             customerProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -1338,7 +1354,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                 customerProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: customerProvider.fromDate != null
                                   ? '${customerProvider.fromDate!.toLocal()}'
@@ -1356,7 +1372,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                 customerProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: customerProvider.toDate != null
                                   ? '${customerProvider.toDate!.toLocal()}'
@@ -1394,7 +1410,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           customerProvider.getSearchCustomers(context,
                               isSilent: true);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -1429,7 +1445,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           customerProvider.getSearchCustomers(context,
                               isSilent: true);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -1699,7 +1715,7 @@ class _CustomerPageState extends State<CustomerPage> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
         ),
@@ -1846,7 +1862,7 @@ class _CustomerPageState extends State<CustomerPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: (customerProvider.selectedUser != null &&
                       customerProvider.selectedUser != 0)
@@ -1893,7 +1909,7 @@ class _CustomerPageState extends State<CustomerPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: (customerProvider.selectedEnquiryFor != null &&
                       customerProvider.selectedEnquiryFor != 0)
@@ -1955,7 +1971,7 @@ class _CustomerPageState extends State<CustomerPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: (customerProvider.selectedEnquirySource != null &&
                       customerProvider.selectedEnquirySource != 0)
@@ -2146,7 +2162,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -2220,7 +2236,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
+                      style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                         backgroundColor: const Color(0xFF152D70),
                         foregroundColor: Colors.white,
                       ),

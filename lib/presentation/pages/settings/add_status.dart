@@ -77,7 +77,7 @@ class _AddStatusState extends State<AddStatus> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -175,7 +175,7 @@ class _AddStatusState extends State<AddStatus> {
             settingsProvider.statusFollowUpController.clear();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -195,7 +195,7 @@ class _AddStatusState extends State<AddStatus> {
               statusId: widget.isEdit ? widget.status?.statusId : 0,
             );
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,

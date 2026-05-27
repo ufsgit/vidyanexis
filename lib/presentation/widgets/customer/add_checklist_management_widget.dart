@@ -75,7 +75,7 @@ class _AddCheckListManagementWidgetState
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -112,7 +112,7 @@ class _AddCheckListManagementWidgetState
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -261,7 +261,7 @@ class _AddCheckListManagementWidgetState
                               color: AppColors.textGrey1.withOpacity(0.15),
                               width: 1,
                             ),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Theme(
                             data: Theme.of(context).copyWith(
@@ -280,7 +280,7 @@ class _AddCheckListManagementWidgetState
                                 height: 32,
                                 decoration: BoxDecoration(
                                   color: AppColors.appViolet.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Icon(
                                   Icons.list_alt,
@@ -310,7 +310,7 @@ class _AddCheckListManagementWidgetState
                                         vertical: 4, horizontal: 4),
                                     decoration: BoxDecoration(
                                       color: Colors.grey.withOpacity(0.05),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Row(
                                       children: [
@@ -345,7 +345,7 @@ class _AddCheckListManagementWidgetState
                                             ? AppColors.appViolet
                                                 .withOpacity(0.05)
                                             : Colors.grey.withOpacity(0.03),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                         border: Border.all(
                                           color: (itemModel.isChecked ?? false)
                                               ? AppColors.appViolet
@@ -441,7 +441,7 @@ class _AddCheckListManagementWidgetState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                     child: Text(
@@ -489,7 +489,7 @@ class _AddCheckListManagementWidgetState
                           horizontal: 20, vertical: 12),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                     child: Row(

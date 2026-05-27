@@ -70,7 +70,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(

@@ -58,7 +58,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
         ),
         backgroundColor: Colors.red[700],
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         margin: const EdgeInsets.all(12),
       ),
     );
@@ -119,7 +119,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                         margin: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 4),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           color: isSelected
                               ? Colors.blue.shade50
                               : Colors.grey.shade50,
@@ -274,7 +274,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                                         ),
                                         border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                             color: Colors.blue.shade200,
                                             width: 1,
@@ -282,7 +282,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                             color: Colors.blue.shade200,
                                             width: 1,
@@ -290,7 +290,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                             color: Colors.blue.shade400,
                                             width: 1,
@@ -324,7 +324,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(
+                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),
@@ -386,7 +386,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                         margin: const EdgeInsets.symmetric(
                             vertical: 6, horizontal: 4),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           color: isSelected
                               ? Colors.green.shade50
                               : Colors.grey.shade50,
@@ -459,7 +459,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                     backgroundColor: AppColors.secondaryBlue,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                   child: const Text('Done'),
@@ -535,7 +535,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.secondaryBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: const Icon(
               Icons.arrow_back_ios_new,
@@ -669,7 +669,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                                   });
                                 },
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                               );
                             }).toList(),
@@ -697,7 +697,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                                     horizontal: 10, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: AppColors.appViolet,
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -758,7 +758,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                       settingsProvider.enquiryForController.clear();
                       Navigator.pop(context);
                     },
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: Colors.white,
                     borderColor: const Color(0xFFE2E8F0),
                     textColor: const Color(0xFF64748B),
@@ -790,7 +790,7 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                         Navigator.pop(context);
                       }
                     },
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: AppColors.secondaryBlue,
                     borderColor: AppColors.secondaryBlue,
                     textColor: Colors.white,
@@ -816,7 +816,7 @@ class _Card extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),

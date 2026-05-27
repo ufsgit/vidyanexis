@@ -92,8 +92,15 @@ class _CampaignContentState extends State<CampaignContent> {
                       height: 40,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                       ),
                       child: TextField(
                         controller: settingsProvider.searchCampaignController,
@@ -118,7 +125,7 @@ class _CampaignContentState extends State<CampaignContent> {
                       label: 'New Campaign',
                       breakpoint: 860,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(4)),
                       foregroundColor: Colors.white,
                       backgroundColor: AppColors.primaryBlue,
                       borderSide: BorderSide(color: AppColors.primaryBlue),
@@ -131,7 +138,7 @@ class _CampaignContentState extends State<CampaignContent> {
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: ListView.separated(
                   shrinkWrap: true,
@@ -146,7 +153,7 @@ class _CampaignContentState extends State<CampaignContent> {
                           horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
                         color: AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -165,7 +172,7 @@ class _CampaignContentState extends State<CampaignContent> {
                                         decoration: BoxDecoration(
                                             color: AppColors.surfaceGrey,
                                             borderRadius:
-                                                BorderRadius.circular(12)),
+                                                BorderRadius.circular(4)),
                                         child: Text(
                                           campaign.campaignName,
                                           overflow: TextOverflow.ellipsis,

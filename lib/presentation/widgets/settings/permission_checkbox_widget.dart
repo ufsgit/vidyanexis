@@ -12,7 +12,7 @@ Widget buildPermissionCheckbox({
     child: Center(
       child: Checkbox(
         shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
         ),
         activeColor: AppColors.secondaryBlue,
         value: switch (permissionType) {

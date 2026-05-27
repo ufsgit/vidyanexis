@@ -77,7 +77,7 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
                               ? AppColors.buttonBackgroundColor
                               : AppColors.grey,
                         ),
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         optionButtons[index],
@@ -99,7 +99,7 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
                         padding: EdgeInsets.all(4),
                         decoration: BoxDecoration(
                             color: AppColors.grey300,
-                            borderRadius: BorderRadius.circular(6)),
+                            borderRadius: BorderRadius.circular(4)),
                         child: Text(
                           _firstSelectedDate.toString().toDayMonthYearFormat(),
                           style: AppStyles.getBoldTextStyle(fontSize: 14),
@@ -116,7 +116,7 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
                         padding: EdgeInsets.all(4),
                         decoration: BoxDecoration(
                             color: AppColors.grey300,
-                            borderRadius: BorderRadius.circular(6)),
+                            borderRadius: BorderRadius.circular(4)),
                         child: Text(
                           _secondSelectedDate.toString().toDayMonthYearFormat(),
                           style: AppStyles.getBoldTextStyle(fontSize: 14),
@@ -130,7 +130,7 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
                 padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(
                     color: AppColors.grey300,
-                    borderRadius: BorderRadius.circular(6)),
+                    borderRadius: BorderRadius.circular(4)),
                 child: Text(
                   _firstSelectedDate.toString().toDayMonthYearFormat(),
                   style: AppStyles.getBoldTextStyle(fontSize: 14),

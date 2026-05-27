@@ -223,10 +223,10 @@ class CustomAutocomplete<T extends Object> extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
                   child: Material(
                     shadowColor: const Color(0xffb8b8b826),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(4),
                     elevation: 4,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(4),
                       child: Container(
                         constraints: BoxConstraints(
                           maxHeight: calculatedMaxHeight,
@@ -267,7 +267,7 @@ class CustomAutocomplete<T extends Object> extends StatelessWidget {
                                           return Container(
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Padding(
                                               padding:

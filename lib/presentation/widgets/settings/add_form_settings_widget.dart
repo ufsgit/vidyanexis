@@ -161,7 +161,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 4),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             color: isSelected
                                 ? AppColors.secondaryBlue.withOpacity(0.05)
                                 : Colors.transparent,
@@ -284,7 +284,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                                         vertical: 6),
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(6),
+                                                      BorderRadius.circular(4),
                                                 ),
                                               ),
                                               onChanged: (val) {
@@ -324,7 +324,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                 ),
               ],
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
               ),
             );
           },
@@ -375,7 +375,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
         width: dialogWidth,
@@ -525,7 +525,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Center(
                     child: Text(
@@ -545,7 +545,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(color: Colors.grey[200]!),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.02),
@@ -664,19 +664,19 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                                 horizontal: 10, vertical: 8),
                                         border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(8),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                               color: Colors.grey[300]!),
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(8),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                               color: Colors.grey[200]!),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(8),
+                                              BorderRadius.circular(4),
                                           borderSide: BorderSide(
                                               color: AppColors.secondaryBlue),
                                         ),
@@ -705,7 +705,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                   CustomElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     buttonText: 'Cancel',
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: Colors.white,
                     textColor: const Color(0xFF64748B),
                     borderColor: const Color(0xFFE2E8F0),
@@ -714,7 +714,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                   CustomElevatedButton(
                     onPressed: () => _saveForm(formProvider),
                     buttonText: 'Save',
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: AppColors.secondaryBlue,
                     textColor: Colors.white,
                     borderColor: AppColors.secondaryBlue,

@@ -62,18 +62,18 @@ class FeedbackPageState extends State<FeedbackPage> {
                   hintText: 'Tell us what you think...',
                   alignLabelWithHint: true,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(color: Colors.grey[300]!),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(
                       color: Theme.of(context).primaryColor,
                       width: 2,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide(color: Colors.grey[300]!),
                   ),
                   filled: true,
@@ -103,7 +103,7 @@ class FeedbackPageState extends State<FeedbackPage> {
                               backgroundColor: Colors.green,
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                           );
@@ -114,7 +114,7 @@ class FeedbackPageState extends State<FeedbackPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     elevation: 2,
                   ),

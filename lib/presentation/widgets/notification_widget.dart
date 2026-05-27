@@ -127,12 +127,12 @@ class _NotificationWidgetState extends State<NotificationWidget>
               margin: const EdgeInsets.only(bottom: 8.0),
               child: Material(
                 elevation: 4,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
                 child: Container(
                   width: 320,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                       // color: _getNotificationColor(),
                       width: 2,
@@ -147,7 +147,7 @@ class _NotificationWidgetState extends State<NotificationWidget>
                         //   padding: const EdgeInsets.all(8),
                         //   decoration: BoxDecoration(
                         //     // color: _getNotificationColor().withOpacity(0.1),
-                        //     borderRadius: BorderRadius.circular(6),
+                        //     borderRadius: BorderRadius.circular(4),
                         //   ),
                         //   child: Icon(
                         //     _getNotificationIcon(),

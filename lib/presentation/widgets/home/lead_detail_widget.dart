@@ -168,7 +168,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                             color: AppColors.primaryBlue), // Border color
                         shape: RoundedRectangleBorder(
                           borderRadius:
-                              BorderRadius.circular(5), // Border radius
+                              BorderRadius.circular(4), // Border radius
                         ),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
@@ -200,7 +200,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                             color: AppColors.primaryBlue), // Border color
                         shape: RoundedRectangleBorder(
                           borderRadius:
-                              BorderRadius.circular(5), // Border radius
+                              BorderRadius.circular(4), // Border radius
                         ),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
@@ -232,7 +232,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                             color: Colors.green), // Border color
                         shape: RoundedRectangleBorder(
                           borderRadius:
-                              BorderRadius.circular(5), // Border radius
+                              BorderRadius.circular(4), // Border radius
                         ),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
@@ -338,7 +338,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                         color: parseColor(leadDetails.colorCode)
                             .withOpacity(0.1)
                             .withAlpha(30),
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: Colors.black45, width: 0.1),
                       ),
                       child: Text(
@@ -403,7 +403,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                                     const EdgeInsets.symmetric(vertical: 5),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF6F7F9),
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: leadDetailsProvider
                                         .followUpHistory!.isNotEmpty

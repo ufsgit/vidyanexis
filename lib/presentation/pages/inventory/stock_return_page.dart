@@ -105,7 +105,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)],
       ),
       child: Column(
@@ -132,7 +132,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                   child: const Text('Apply'),
                 ),
@@ -158,7 +158,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
       builder: (contextx) => Consumer<StockreturnProvider>(
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -188,7 +188,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
                     labelText: 'Pick a date',
                     hintText: reportsProvider.fromDate != null ? reportsProvider.formattedFromDate : 'Select',
                     suffixIcon: const Icon(Icons.calendar_month),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -199,7 +199,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
                       Navigator.pop(context);
                       reportsProvider.searchStockReturnList(context: context, customerId: widget.customerId.toString());
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white),
                     child: const Text('Apply'),
                   ),
                 )
@@ -234,7 +234,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: const Text('Confirm Delete'),
           content: const Text('Are you sure you want to delete this stock return entry?'),
           actions: [

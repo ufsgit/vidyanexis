@@ -85,8 +85,15 @@ class _ExpenseTypeState extends State<ExpenseType> {
                         height: 40,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                         ),
                         child: TextField(
                           controller:
@@ -114,7 +121,7 @@ class _ExpenseTypeState extends State<ExpenseType> {
                           label: 'New Expense Type',
                           breakpoint: 860,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
+                              borderRadius: BorderRadius.circular(4)),
                           foregroundColor: Colors.white,
                           backgroundColor: AppColors.secondaryBlue,
                           borderSide: BorderSide(color: AppColors.secondaryBlue),
@@ -128,7 +135,7 @@ class _ExpenseTypeState extends State<ExpenseType> {
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: ListView.separated(
                   separatorBuilder: (context, index) {
@@ -143,7 +150,7 @@ class _ExpenseTypeState extends State<ExpenseType> {
                     return Container(
                       decoration: BoxDecoration(
                         color: AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
@@ -159,7 +166,7 @@ class _ExpenseTypeState extends State<ExpenseType> {
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
                                     borderRadius:
-                                        BorderRadius.circular(12)),
+                                        BorderRadius.circular(4)),
                                 child: Text(
                                   settingsProvider
                                       .expenseTypeList[index]
