@@ -89,10 +89,9 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
   Widget _buildResponsiveHeader(BuildContext context, bool isSmallScreen) {
     return Row(
       children: [
-        if (!isSmallScreen)
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: Builder(
+        Padding(
+          padding: const EdgeInsets.only(right: 12.0),
+          child: Builder(
               builder: (context) => IconButton(
                 onPressed: () {
                   ScaffoldState? parent;
@@ -112,7 +111,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
                     Icons.sort,
@@ -157,7 +156,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
         height: 50,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -203,7 +202,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
         height: 44,
         decoration: BoxDecoration(
           color: AppColors.secondaryBlue,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: AppColors.secondaryBlue.withOpacity(0.4),
@@ -226,7 +225,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -279,7 +278,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(4),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.02),
@@ -299,7 +298,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                   height: 44,
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Center(
                     child: Text(

@@ -105,7 +105,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         width: 600,
         padding: const EdgeInsets.all(24),
@@ -262,7 +262,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 16),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(4)),
                     side: const BorderSide(color: Colors.grey),
                   ),
                   child: Text(

@@ -91,7 +91,7 @@
 //                   padding: EdgeInsets.zero, // Ensures no unwanted extra padding
 //                   decoration: BoxDecoration(
 //                     color: fillColor ?? AppColors.scaffoldColor,
-//                     borderRadius: BorderRadius.circular(12),
+//                     borderRadius: BorderRadius.circular(4),
 //                     border: Border.all(
 //                       color: state.hasError ? Colors.red : AppColors.textGrey3,
 //                       width: 1,
@@ -311,7 +311,7 @@ class _CustomTextfieldWidgetMobileState
       child: Container(
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
             border: widget.showError
                 ? Border.all(color: Colors.red, width: 1)
                 : Border.all(color: AppColors.grey)),

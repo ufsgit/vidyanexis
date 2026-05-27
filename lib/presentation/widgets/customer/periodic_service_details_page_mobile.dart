@@ -138,7 +138,7 @@ class _PeriodicServiceDetailsPageMobileState
                   Container(
                       height: 22,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(4),
                         color: StatusUtils.getStatusMobileColor(
                                 widget.item.amcStatusName)
                             .withOpacity(.1),
@@ -177,7 +177,7 @@ class _PeriodicServiceDetailsPageMobileState
                             decoration: BoxDecoration(
                                 color: StatusUtils.getStatusMobileColor(
                                     widget.item.amcStatusName),
-                                borderRadius: BorderRadius.circular(16))),
+                                borderRadius: BorderRadius.circular(4))),
                         const SizedBox(
                           width: 8,
                         ),

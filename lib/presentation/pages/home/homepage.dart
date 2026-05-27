@@ -430,7 +430,7 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: AppColors.secondaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Icon(
                       Icons.sort,
@@ -470,7 +470,7 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 color: Colors.red,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               constraints: const BoxConstraints(
                                 minWidth: 16,

@@ -553,7 +553,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                       height: 36,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: Colors.black, width: 1.5),
                       ),
                       child: TextField(
@@ -942,7 +942,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               alpha: 0.1),
                                                                       shape: RoundedRectangleBorder(
                                                                           borderRadius:
-                                                                              BorderRadius.circular(5)),
+                                                                              BorderRadius.circular(4)),
                                                                       padding: const EdgeInsets
                                                                           .symmetric(
                                                                           horizontal:
@@ -1361,7 +1361,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               onPressed: () {
                                                                                 _onStatusClick(context, lead);
                                                                               },
-                                                                              style: TextButton.styleFrom(backgroundColor: AppColors.parseColor(lead.colorCode).withValues(alpha: 0.2), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                                                                              style: TextButton.styleFrom(backgroundColor: AppColors.parseColor(lead.colorCode).withValues(alpha: 0.2), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                                                                               child: Text(lead.statusName, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.parseColor(lead.colorCode)))))),
                                                                   TableWidget(
                                                                       padding: EdgeInsets.symmetric(
@@ -1377,7 +1377,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               onPressed: () {
                                                                                 leadsProvider.convertLead(context, lead.customerId.toString());
                                                                               },
-                                                                              style: TextButton.styleFrom(backgroundColor: Colors.orange.withValues(alpha: 0.1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                                                                              style: TextButton.styleFrom(backgroundColor: Colors.orange.withValues(alpha: 0.1), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                                                                               child: const Text('Convert', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.w500, fontSize: 13))))),
                                                                   TableWidget(
                                                                       padding: EdgeInsets.symmetric(

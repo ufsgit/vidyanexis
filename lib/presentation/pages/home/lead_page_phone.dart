@@ -179,7 +179,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
                     Icons.arrow_back,
@@ -297,7 +297,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             onChanged: (v) => leadProvider.setLeadId(v),
@@ -349,7 +349,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                   height: 32,
                                   decoration: BoxDecoration(
                                     color: AppColors.scaffoldColor,
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -545,7 +545,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 12),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
                                 child: const Text('Reset All Filters'),
@@ -711,7 +711,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
           // );
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -741,7 +741,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             leadProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -771,7 +771,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             onTap: () => leadProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: leadProvider.fromDate != null
                                   ? '${leadProvider.fromDate!.toLocal()}'
@@ -789,7 +789,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                 leadProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: leadProvider.toDate != null
                                   ? '${leadProvider.toDate!.toLocal()}'
@@ -829,7 +829,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           );
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -865,7 +865,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           );
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

@@ -143,6 +143,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CustomElevatedButton(
+                          radius: 4,
                 buttonText: 'Cancel',
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -159,6 +160,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2))
                   : CustomElevatedButton(
+                          radius: 4,
                       buttonText: 'Save',
                       onPressed: saveData,
                       backgroundColor: AppColors.secondaryBlue,
@@ -428,7 +430,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   final assignStatusButton = TextButton.icon(
                     icon: const Icon(Icons.add_circle_outline, size: 16),
                     label: const Text('Assign Status'),
-                    style: TextButton.styleFrom(
+                    style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                       foregroundColor: AppColors.secondaryBlue,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -505,6 +507,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           CustomElevatedButton(
+                          radius: 4,
                             buttonText: isEditingTaskFlow
                                 ? 'Update Task'
                                 : 'Add Task to Flow',
@@ -566,6 +569,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             CustomElevatedButton(
+                          radius: 4,
                               buttonText:
                                   isEditingMandatoryTask ? 'Update' : "Add",
                               onPressed: _addMandatoryTask,
@@ -676,7 +680,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
           color: const Color(0xFFF8F9FA),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(color: const Color(0xFFEDF2F7)),
         ),
         child: Center(
@@ -771,7 +775,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(4),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.02),
@@ -793,7 +797,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       height: 44,
                       decoration: BoxDecoration(
                         color: AppColors.secondaryBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Center(
                         child: Text(
@@ -854,7 +858,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: Colors.blue.withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Icon(
                               Icons.edit_outlined,
@@ -896,7 +900,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: const Color(0xFFFEF2F2),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Icon(
                               Icons.delete_outline_rounded,
@@ -968,6 +972,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
               ),
               actions: [
                 CustomElevatedButton(
+                          radius: 4,
                   onPressed: () {
                     Navigator.pop(context); // Close dialog without saving
                   },
@@ -977,6 +982,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   textColor: AppColors.secondaryBlue,
                 ),
                 CustomElevatedButton(
+                          radius: 4,
                   onPressed: () {
                     processFlowProvider.mandatoryTaskModel.statusIds =
                         selectedStatusIds;
@@ -1144,8 +1150,15 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFF1F5F9)),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1415,7 +1428,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         padding: const EdgeInsets.all(24.0),
         decoration: BoxDecoration(
           color: const Color(0xFFF8F9FA),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(color: const Color(0xFFEDF2F7)),
         ),
         child: Center(
@@ -1510,7 +1523,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
               margin: const EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(4),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.02),
@@ -1532,7 +1545,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       height: 44,
                       decoration: BoxDecoration(
                         color: AppColors.secondaryBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Center(
                         child: Text(
@@ -1595,7 +1608,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: Colors.blue.withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Icon(
                               Icons.edit_outlined,
@@ -1636,7 +1649,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: const Color(0xFFFEF2F2),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Icon(
                               Icons.delete_outline_rounded,

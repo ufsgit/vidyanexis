@@ -42,7 +42,7 @@ class FollowUpTabWidget extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.04),
@@ -85,7 +85,7 @@ class FollowUpTabWidget extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                   decoration: BoxDecoration(
                                     color: AppColors.lightGreen,
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     history.statusName ?? 'Follow up',
@@ -132,7 +132,7 @@ class FollowUpTabWidget extends StatelessWidget {
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF8FAFC),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(color: const Color(0xFFE9EDF1)),
                                 ),
                                 child: Column(
@@ -191,7 +191,7 @@ class FollowUpTabWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         CircleAvatar(
-          radius: 12,
+          radius: 4,
           backgroundColor: getAvatarColor(userName),
           child: Text(
             userName[0].toUpperCase(),

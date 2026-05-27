@@ -84,7 +84,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.secondaryBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: const Icon(
               Icons.arrow_back,
@@ -194,7 +194,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: const Color(0xFFF1F5F9)),
                         boxShadow: [
                           BoxShadow(
@@ -205,7 +205,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(4),
                         child: IntrinsicHeight(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -261,7 +261,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                                                           ? Colors.orange
                                                           : Colors.red)
                                                   .withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(20),
+                                              borderRadius: BorderRadius.circular(4),
                                             ),
                                             child: Text(
                                               customerDetailsProvider.taskDetails[0].taskStatusName,
@@ -385,7 +385,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             '${customerDetailsProvider.taskDetails[0].taskDocuments.length} assignees',
@@ -411,7 +411,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: const Color(0xFFF1F5F9)),
                             boxShadow: [
                               BoxShadow(
@@ -516,12 +516,12 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                                                 },
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.circular(10),
+                                                    borderRadius: BorderRadius.circular(4),
                                                     border: Border.all(color: const Color(0xFFF1F5F9)),
                                                   ),
                                                   child: ClipRRect(
                                                     borderRadius:
-                                                        BorderRadius.circular(10),
+                                                        BorderRadius.circular(4),
                                                     child: Image.network(
                                                       HttpUrls.imgBaseUrl +
                                                           doc.filePath,
@@ -584,7 +584,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
                                           color: const Color(0xFFF8FAFC),
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(4),
                                           border: Border.all(color: const Color(0xFFF1F5F9)),
                                         ),
                                         child: Column(

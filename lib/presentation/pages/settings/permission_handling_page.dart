@@ -89,7 +89,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
               margin: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: TextField(
                 controller: _searchController,
@@ -131,7 +131,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                         color: const Color(0xFF64748B),
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       label: 'Cancel',
                       breakpoint: 860,
@@ -170,7 +170,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                         color: Colors.white,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       svgPath: 'assets/images/Print.svg',
                       label: 'Save Changes',
@@ -195,15 +195,15 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.01),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                 ),
                 child: TextField(
                   controller: _searchController,
@@ -286,7 +286,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                       backgroundColor: AppColors.primaryBlue,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                     child: Text(
@@ -317,8 +317,8 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -510,7 +510,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
           child: Checkbox(
             visualDensity: VisualDensity.compact,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(4),
             ),
             activeColor: AppColors.primaryBlue,
             side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.5),
@@ -537,8 +537,8 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.015),
@@ -577,7 +577,7 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFFF7ED),
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(4),
                         border: Border.all(color: const Color(0xFFFFEDD5)),
                       ),
                       child: Text(
@@ -648,12 +648,12 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
       String label, bool value, ValueChanged<bool?> onChanged) {
     return InkWell(
       onTap: () => onChanged(!value),
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(4),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: value ? const Color(0xFFEFF6FF) : const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: value ? const Color(0xFFBFDBFE) : const Color(0xFFE2E8F0),
           ),

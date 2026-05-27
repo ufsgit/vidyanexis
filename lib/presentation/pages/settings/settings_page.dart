@@ -153,7 +153,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<int>(
@@ -198,7 +198,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<int>(
@@ -243,7 +243,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<int>(
@@ -280,7 +280,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryBlue,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                       child: Text(
@@ -403,7 +403,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: AppColors.secondaryBlue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Icon(
                                 Icons.sort,
@@ -447,10 +447,10 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
@@ -499,7 +499,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
             color: isSelected ? Colors.white : Colors.transparent,
             boxShadow: isSelected
                 ? [
@@ -527,11 +527,11 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       padding: const EdgeInsets.only(bottom: 4),
       child: InkWell(
         onTap: () => settings.setSelectedMenu(title),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
             color: isSelected ? AppColors.secondaryBlue.withOpacity(0.1) : Colors.transparent,
           ),
           child: Row(

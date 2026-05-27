@@ -62,7 +62,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: AppColors.secondaryBlue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: const Icon(
                 Icons.sort,
@@ -111,7 +111,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
         decoration: InputDecoration(
           hintText: 'Search customer...',
           prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
         ),
       ),
@@ -134,7 +134,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -238,7 +238,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
                   decoration: InputDecoration(
                     labelText: 'Item Name',
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(4)),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
@@ -262,7 +262,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
                   decoration: InputDecoration(
                     labelText: 'Enquiry For',
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(4)),
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
@@ -295,7 +295,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
                       backgroundColor: AppColors.primaryBlue,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(4)),
                     ),
                     child: const Text('Apply Filters',
                         style: TextStyle(
@@ -361,7 +361,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
     );

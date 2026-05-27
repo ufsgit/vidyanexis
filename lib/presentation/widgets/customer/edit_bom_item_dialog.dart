@@ -45,7 +45,7 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
     }
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: const EdgeInsets.all(20),
         constraints: const BoxConstraints(maxWidth: 500),
@@ -253,7 +253,7 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
       builder: (context) {
         return AlertDialog(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: Text(
             'Confirm Delete',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),

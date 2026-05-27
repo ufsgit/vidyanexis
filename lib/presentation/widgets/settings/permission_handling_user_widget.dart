@@ -67,7 +67,7 @@ class PermissionHandlingUserWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   children: [
@@ -205,7 +205,7 @@ class PermissionHandlingUserWidget extends StatelessWidget {
                           color: AppColors.whiteColor,
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           elevation: 1,
                           child: Padding(
@@ -290,7 +290,7 @@ class PermissionHandlingUserWidget extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                   svgPath: 'assets/images/Print.svg',
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   label: 'Cancel',
                   breakpoint: 860,
@@ -320,7 +320,7 @@ class PermissionHandlingUserWidget extends StatelessWidget {
                     );
                   },
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   svgPath: 'assets/images/Print.svg',
                   label: 'Save',
@@ -357,7 +357,7 @@ class CheckboxCellMobile extends StatelessWidget {
         if (label.isNotEmpty) Text(label, style: TextStyle(fontSize: 12)),
         Checkbox(
           shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
           activeColor: AppColors.secondaryBlue,
           value: value,
@@ -386,7 +386,7 @@ class CheckboxCell extends StatelessWidget {
       child: Center(
         child: Checkbox(
           shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
           activeColor: AppColors.secondaryBlue,
           value: value,

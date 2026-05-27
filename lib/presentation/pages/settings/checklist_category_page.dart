@@ -107,8 +107,15 @@ class _CheckListCategoryPageState extends State<CheckListCategoryPage> {
                           height: 40,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                           ),
                           child: TextField(
                             controller: searchController,
@@ -137,7 +144,7 @@ class _CheckListCategoryPageState extends State<CheckListCategoryPage> {
                             label: 'New CheckList Category',
                             breakpoint: 860,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
+                                borderRadius: BorderRadius.circular(4)),
                             foregroundColor: Colors.white,
                             backgroundColor: AppColors.secondaryBlue,
                             borderSide: BorderSide(color: AppColors.secondaryBlue),
@@ -151,7 +158,7 @@ class _CheckListCategoryPageState extends State<CheckListCategoryPage> {
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Column(
                     children: [
@@ -193,7 +200,7 @@ class _CheckListCategoryPageState extends State<CheckListCategoryPage> {
                                           decoration: BoxDecoration(
                                               color: AppColors.surfaceGrey,
                                               borderRadius:
-                                                  BorderRadius.circular(12)),
+                                                  BorderRadius.circular(4)),
                                           child: Center(
                                             child: Padding(
                                               padding: const EdgeInsets.only(

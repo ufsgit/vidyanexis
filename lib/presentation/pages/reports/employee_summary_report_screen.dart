@@ -108,7 +108,7 @@ class _EmployeeSummaryReportScreenState
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -214,15 +214,15 @@ class _EmployeeSummaryReportScreenState
               prefixIcon: const Icon(Icons.search, size: 20),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
                 borderSide: BorderSide(color: Colors.grey[300]!),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
                 borderSide: BorderSide(color: Colors.grey[300]!),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
                 borderSide: const BorderSide(color: AppColors.primaryBlue),
               ),
             ),
@@ -280,7 +280,7 @@ class _EmployeeSummaryReportScreenState
                   side: const BorderSide(color: AppColors.textRed),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(4)),
                 ),
               ),
             ),
@@ -293,7 +293,7 @@ class _EmployeeSummaryReportScreenState
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -402,7 +402,7 @@ class _EmployeeSummaryReportScreenState
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: AppColors.primaryBlue.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                   color: AppColors.primaryBlue.withOpacity(0.12)),
                             ),
@@ -458,7 +458,7 @@ class _EmployeeSummaryReportScreenState
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
         color: bgCol,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: textCol.withOpacity(0.15), width: 1),
       ),
       child: Row(
@@ -509,7 +509,7 @@ class _EmployeeSummaryReportScreenState
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -536,7 +536,7 @@ class _EmployeeSummaryReportScreenState
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E3A8A), // Navy Blue
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF1E3A8A).withOpacity(0.15),
@@ -597,7 +597,7 @@ class _EmployeeSummaryReportScreenState
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: bgCol,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.12)),
       ),
       child: Row(
@@ -657,7 +657,7 @@ class _EmployeeSummaryReportScreenState
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -693,7 +693,7 @@ class _EmployeeSummaryReportScreenState
                           },
                           selected: isSelected,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(
                             title,
@@ -738,10 +738,10 @@ class _EmployeeSummaryReportScreenState
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide(color: Colors.grey[300]!)),
                               enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide(color: Colors.grey[300]!)),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -767,10 +767,10 @@ class _EmployeeSummaryReportScreenState
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide(color: Colors.grey[300]!)),
                               enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   borderSide: BorderSide(color: Colors.grey[300]!)),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -801,7 +801,7 @@ class _EmployeeSummaryReportScreenState
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: Text(
@@ -827,7 +827,7 @@ class _EmployeeSummaryReportScreenState
                           backgroundColor: AppColors.textRed.withOpacity(0.08),
                           foregroundColor: AppColors.textRed,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: Text(

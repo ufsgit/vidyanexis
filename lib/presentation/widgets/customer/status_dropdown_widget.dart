@@ -173,14 +173,14 @@ class _StatusDropdownWidgetState<T> extends State<StatusDropdownWidget<T>> {
           offset: Offset(0.0, size.height),
           child: Material(
             elevation: 4.0,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(4),
             color: Colors.white,
             child: Container(
               height: widget
                   .dropdownHeight, // Use provided height or default to 200
               padding: const EdgeInsets.symmetric(vertical: 4),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: Colors.grey.shade300),
               ),
               child: SingleChildScrollView(
@@ -252,7 +252,7 @@ class _StatusDropdownWidgetState<T> extends State<StatusDropdownWidget<T>> {
             width: widget.width, // Apply custom width if provided
             decoration: BoxDecoration(
               color: AppColors.scaffoldColor,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Padding(
               padding: const EdgeInsets.only(left: 8, right: 8),

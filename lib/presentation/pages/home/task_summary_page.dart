@@ -134,7 +134,7 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
           BoxShadow(
@@ -151,7 +151,7 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(icon, size: 20, color: color),
           ),
@@ -188,7 +188,7 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFF1F5F9)),
         boxShadow: [
           BoxShadow(
@@ -285,7 +285,7 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Column(
@@ -337,7 +337,7 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         "No tasks assigned",
@@ -395,12 +395,12 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
   Widget _buildPaginationButton({required IconData icon, required VoidCallback? onPressed}) {
     return InkWell(
       onTap: onPressed,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(4),
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: onPressed != null ? AppColors.secondaryBlue.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Icon(icon, 
           size: 16, 

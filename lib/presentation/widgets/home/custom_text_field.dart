@@ -57,7 +57,7 @@ class CustomTextField extends StatelessWidget {
     bool hasAsterisk = hintText.contains('*');
     return Container(
       // decoration: BoxDecoration(
-      //   borderRadius: BorderRadius.circular(12),
+      //   borderRadius: BorderRadius.circular(4),
       //   border: Border.all(
       //     color: showError ? Colors.red : AppColors.textGrey2,
       //   ),

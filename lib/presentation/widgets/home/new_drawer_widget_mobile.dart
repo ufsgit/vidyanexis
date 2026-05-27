@@ -292,7 +292,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               ),
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
             actions: [
               TextButton(
@@ -564,7 +564,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   (index) => Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(4),
                       onTap: () => _toggleTab(index),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -1260,7 +1260,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.grey),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1354,7 +1354,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.grey),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1456,7 +1456,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.grey),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1558,7 +1558,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.grey),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1895,7 +1895,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               border: Border.all(color: AppColors.grey),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

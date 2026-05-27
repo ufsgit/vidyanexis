@@ -85,7 +85,7 @@ class _VersionPageState extends State<VersionPage> {
                         label: 'Save',
                         breakpoint: 860,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(4)),
                         foregroundColor: Colors.white,
                         backgroundColor: AppColors.primaryBlue,
                         borderSide: BorderSide(color: AppColors.primaryBlue),

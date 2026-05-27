@@ -29,7 +29,7 @@ class WeeklyReportCard extends StatelessWidget {
       decoration: BoxDecoration(
           boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18)),
+          borderRadius: BorderRadius.circular(4)),
       constraints: BoxConstraints(
           minWidth: 100,
           maxWidth: MediaQuery.of(context).size.width,
@@ -150,9 +150,17 @@ class WeeklyReportCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   height: 350,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                  ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                   child: dashBoardProvider.dashBoardCountModel.isEmpty
                       ? Center(
                           child: Column(

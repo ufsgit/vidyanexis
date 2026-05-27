@@ -102,7 +102,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                 }
                               }
                             },
-                      radius: 12,
+                      radius: 4,
                       backgroundColor: AppColors.whiteColor,
                       borderColor: const Color(0xFFE2E8F0),
                       textColor: const Color(0xFF64748B),
@@ -113,7 +113,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                   ),
                   if (data.isNotEmpty)
                     CustomElevatedButton(
-                      radius: 12,
+                      radius: 4,
                       backgroundColor: AppColors.secondaryBlue,
                       borderColor: AppColors.secondaryBlue,
                       textColor: AppColors.whiteColor,
@@ -223,7 +223,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                         // Request permission to access storage
                         leadProvider.downloadExcelFile();
                       },
-                      radius: 12,
+                      radius: 4,
                       backgroundColor: AppColors.secondaryBlue,
                       borderColor: AppColors.secondaryBlue,
                       textColor: AppColors.whiteColor,
@@ -249,7 +249,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                         valueColor: const AlwaysStoppedAnimation<Color>(
                             AppColors.secondaryBlue),
                         minHeight: 10,
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       const SizedBox(height: 5),
                       Text(
@@ -427,8 +427,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                       color: AppColors.textGrey3,
                                     ),
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          10), // Rounded corners
+                                      borderRadius: BorderRadius.circular(4), // Rounded corners
                                       borderSide: BorderSide(
                                         color:
                                             AppColors.textGrey2, // Border color
@@ -436,8 +435,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          10), // Rounded corners
+                                      borderRadius: BorderRadius.circular(4), // Rounded corners
                                       borderSide: BorderSide(
                                         color:
                                             AppColors.textGrey2, // Border color
@@ -445,8 +443,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                       ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          10), // Rounded corners
+                                      borderRadius: BorderRadius.circular(4), // Rounded corners
                                       borderSide: BorderSide(
                                         color:
                                             AppColors.textGrey2, // Border color
@@ -652,7 +649,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
               ),
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
             actions: [
               TextButton(

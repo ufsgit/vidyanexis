@@ -89,7 +89,7 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                           height: 48,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: Colors.grey[200]!),
                           ),
                           child: TextField(
@@ -123,7 +123,7 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                             label: 'New',
                             breakpoint: 400,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             foregroundColor: Colors.white,
                             backgroundColor: AppColors.secondaryBlue,
@@ -140,7 +140,7 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.03),
@@ -172,7 +172,7 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
-                                    borderRadius: BorderRadius.circular(12)),
+                                    borderRadius: BorderRadius.circular(4)),
                                 child: Text(
                                   doc.documentTypeName,
                                   style: GoogleFonts.plusJakartaSans(

@@ -34,7 +34,7 @@ class CustomActionButton extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: backgroundColor ?? AppColors.grey300,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Center(
           child: Padding(

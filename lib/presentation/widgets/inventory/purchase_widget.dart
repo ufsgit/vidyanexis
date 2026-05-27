@@ -50,7 +50,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -172,8 +172,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                         ),
                         child: CustomTextField(
                           controller: expenseProvider.descriptionPurchaseController,
@@ -364,8 +364,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isWeb ? Colors.white : const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
             boxShadow: isWeb ? [
               BoxShadow(
                 color: Colors.black.withOpacity(0.02),
@@ -444,8 +444,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -669,7 +669,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                       backgroundColor: const Color(0xFF1E293B),
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                       elevation: 0,
                     ),
                     child: Icon(
@@ -691,8 +691,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
         ),
         child: Column(
           children: [
@@ -895,7 +895,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                     backgroundColor: const Color(0xFF1E293B),
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     elevation: 0,
                   ),
                   child: Icon(
@@ -930,8 +930,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
             ),
             child: Row(
               children: [
@@ -1048,8 +1048,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
             ),
             child: Row(
               children: [
@@ -1181,7 +1181,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: const BorderSide(color: Color(0xFFE2E8F0)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                   child: Text(
                     'Cancel',
@@ -1231,7 +1231,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                   child: Text(
                     'Save',

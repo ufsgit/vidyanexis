@@ -159,7 +159,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: AppColors.secondaryBlue.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Icon(
             Icons.sort,
@@ -274,13 +274,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 padding: const EdgeInsets.only(left: 4.0, right: 4.0),
                 child: InkWell(
                   onTap: widget.onAddTap,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(4),
                   child: Container(
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
                       color: AppColors.secondaryBlue,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.secondaryBlue.withOpacity(0.3),

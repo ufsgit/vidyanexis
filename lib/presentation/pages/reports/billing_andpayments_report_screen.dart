@@ -121,7 +121,7 @@ class _BillingAndpaymentsReportScreenState
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: AppColors.secondaryBlue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Icon(
                           Icons.sort,
@@ -146,8 +146,15 @@ class _BillingAndpaymentsReportScreenState
                     height: 40,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                     ),
                     child: TextField(
                       controller: searchController,
@@ -164,7 +171,15 @@ class _BillingAndpaymentsReportScreenState
                       },
                       decoration: InputDecoration(
                         hintText: 'Search here....',
-                        prefixIcon: const Icon(Icons.search),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF64748B),
+                                size: 18,
+                              ),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -208,7 +223,7 @@ class _BillingAndpaymentsReportScreenState
                                 vertical: 12,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             child: Text(reportsProvider.Search.isNotEmpty
@@ -263,7 +278,7 @@ class _BillingAndpaymentsReportScreenState
                         vertical: 15,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                   ),
@@ -337,7 +352,7 @@ class _BillingAndpaymentsReportScreenState
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: const Color(0xFFF2F7FF),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -469,7 +484,7 @@ class _BillingAndpaymentsReportScreenState
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(4)),
                     ),
                     child: const Text('Apply Filters'),
                   ),
@@ -527,7 +542,7 @@ class _BillingAndpaymentsReportScreenState
         builder: (context, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -557,7 +572,7 @@ class _BillingAndpaymentsReportScreenState
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -589,7 +604,7 @@ class _BillingAndpaymentsReportScreenState
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? DateFormat('yyyy-MM-dd')
@@ -607,7 +622,7 @@ class _BillingAndpaymentsReportScreenState
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? DateFormat('yyyy-MM-dd')
@@ -639,13 +654,13 @@ class _BillingAndpaymentsReportScreenState
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),

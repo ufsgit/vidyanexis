@@ -87,7 +87,7 @@ class _BranchPageState extends State<BranchPage> {
                             label: 'New Branch',
                             breakpoint: 860,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
+                                borderRadius: BorderRadius.circular(4)),
                             foregroundColor: Colors.white,
                             backgroundColor: AppColors.secondaryBlue,
                             borderSide: BorderSide(color: AppColors.secondaryBlue),
@@ -104,7 +104,7 @@ class _BranchPageState extends State<BranchPage> {
                           height: 48,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: Colors.grey[200]!),
                           ),
                           child: TextField(
@@ -136,7 +136,7 @@ class _BranchPageState extends State<BranchPage> {
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Column(
                     children: [
@@ -165,7 +165,7 @@ class _BranchPageState extends State<BranchPage> {
                                     decoration: BoxDecoration(
                                         color: AppColors.surfaceGrey,
                                         borderRadius:
-                                            BorderRadius.circular(12)),
+                                            BorderRadius.circular(4)),
                                     child: Center(
                                       child: Padding(
                                         padding: const EdgeInsets.only(

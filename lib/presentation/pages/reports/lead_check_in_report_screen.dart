@@ -42,7 +42,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -72,7 +72,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                             reportProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -104,7 +104,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                                 reportProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportProvider.fromDate != null
                                   ? '${reportProvider.fromDate!.toLocal()}'
@@ -122,7 +122,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                                 reportProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportProvider.toDate != null
                                   ? '${reportProvider.toDate!.toLocal()}'
@@ -150,7 +150,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                               foregroundColor: AppColors.textRed,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             child: const Text('Clear'),
@@ -169,7 +169,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                             ),
                             child: const Text('Apply'),
@@ -264,8 +264,15 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             height: 48,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
             ),
             child: TextField(
               controller: searchController,
@@ -299,7 +306,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                     ),
@@ -319,6 +326,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
           ),
           const SizedBox(width: 8),
           CustomElevatedButton(
+                          radius: 4,
             onPressed: () {
               exportToExcel(
                 headers: [
@@ -370,16 +378,24 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(
                   color: reportProvider.selectedUserId != null
                       ? AppColors.primaryBlue
@@ -435,7 +451,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                   color: reportProvider.fromDate != null ||
                           reportProvider.toDate != null
@@ -499,7 +515,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                   vertical: 12,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
@@ -542,7 +558,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
           Container(
             decoration: BoxDecoration(
               color: const Color(0xFFEFF2F5),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: const Row(
               children: [
@@ -590,7 +606,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                   decoration: BoxDecoration(
                     color:
                         index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Row(
                     children: [
@@ -609,7 +625,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: const Color(0xFFE9EDF1),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -652,7 +668,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: const Color(0xFFE9EDF1),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -710,7 +726,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                           decoration: BoxDecoration(
                             color: const Color(
                                 0xFFFFFBE6), // Light yellow for highlight
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             reportProvider.calculateTimeDifference(record),

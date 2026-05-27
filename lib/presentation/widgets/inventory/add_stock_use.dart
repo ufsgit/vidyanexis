@@ -59,7 +59,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -249,15 +249,15 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         color: const Color(0xFF64748B),
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         borderSide: const BorderSide(color: Color(0xFF3B82F6)),
                       ),
                       contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -290,7 +290,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: item.isChecked ? const Color(0xFFF0F7FF) : Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(4),
                           border: Border.all(
                             color: item.isChecked ? const Color(0xFF3B82F6) : const Color(0xFFE2E8F0),
                           ),
@@ -347,7 +347,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                                 decoration: InputDecoration(
                                   hintText: 'Qty',
                                   contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
                                   isDense: true,
                                 ),
                                 onChanged: (value) {
@@ -395,7 +395,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: const BorderSide(color: Color(0xFFE2E8F0)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     ),
                     child: Text(
                       'Cancel',
@@ -426,7 +426,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     ),
                     child: Text(
                       'Save',

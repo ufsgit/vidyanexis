@@ -26,7 +26,7 @@ class LeadEnquiryForReportCard extends StatelessWidget {
             height: 400,
             decoration: BoxDecoration(boxShadow: const [
               BoxShadow(color: Colors.black12, blurRadius: 5)
-            ], color: Colors.white, borderRadius: BorderRadius.circular(18)),
+            ], color: Colors.white, borderRadius: BorderRadius.circular(4)),
             child: const Center(child: CircularProgressIndicator()),
           );
         }
@@ -36,7 +36,7 @@ class LeadEnquiryForReportCard extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(boxShadow: const [
             BoxShadow(color: Colors.black12, blurRadius: 5)
-          ], color: Colors.white, borderRadius: BorderRadius.circular(18)),
+          ], color: Colors.white, borderRadius: BorderRadius.circular(4)),
           constraints: BoxConstraints(
               minWidth: 100,
               maxWidth: MediaQuery.of(context).size.width,

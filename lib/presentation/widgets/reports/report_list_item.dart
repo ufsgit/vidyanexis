@@ -62,7 +62,7 @@ class ReportListItem extends StatelessWidget {
                       width: 3,
                       decoration: BoxDecoration(
                         color: statusColor.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                     const SizedBox(width: 12),

@@ -154,7 +154,7 @@ class _StockUseReportState extends State<StockUseReport> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.textRed,
                           side: BorderSide(color: AppColors.textRed),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                         ),
                         child: Text(
                           'Reset',
@@ -178,7 +178,7 @@ class _StockUseReportState extends State<StockUseReport> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                         ),
                         child: Text(
                           'Apply Filter',
@@ -204,8 +204,9 @@ class _StockUseReportState extends State<StockUseReport> {
         height: 52,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.grey[200]!),
+          borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -240,7 +241,7 @@ class _StockUseReportState extends State<StockUseReport> {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
@@ -283,7 +284,7 @@ class _StockUseReportState extends State<StockUseReport> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppColors.secondaryBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Icon(
                   Icons.sort,
@@ -308,8 +309,15 @@ class _StockUseReportState extends State<StockUseReport> {
             height: 48,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
             ),
             child: TextField(
               onChanged: (value) => provider.setCustomerName(value),
@@ -336,7 +344,7 @@ class _StockUseReportState extends State<StockUseReport> {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                     ),
@@ -379,7 +387,7 @@ class _StockUseReportState extends State<StockUseReport> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
+                  borderRadius: BorderRadius.circular(4)),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
           ),
@@ -462,7 +470,7 @@ class _StockUseReportState extends State<StockUseReport> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
+                  borderRadius: BorderRadius.circular(4)),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               elevation: 0,
             ),
@@ -567,8 +575,15 @@ class _StockUseReportState extends State<StockUseReport> {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey[200]!),
+                  borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                 ),
                 child: Row(
                   children: [
@@ -605,8 +620,9 @@ class _StockUseReportState extends State<StockUseReport> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[200]!),
+          borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -622,7 +638,7 @@ class _StockUseReportState extends State<StockUseReport> {
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFFEFF2F5),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Row(
                   children: [
@@ -644,7 +660,7 @@ class _StockUseReportState extends State<StockUseReport> {
                     return Container(
                       decoration: BoxDecoration(
                         color: index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
                         children: [
@@ -677,7 +693,7 @@ class _StockUseReportState extends State<StockUseReport> {
                                   horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFE9EDF1),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 item.itemName.isEmpty ? 'Unnamed Item' : item.itemName,
@@ -729,7 +745,7 @@ class _StockUseReportState extends State<StockUseReport> {
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Colors.grey.withOpacity(0.08)),
             boxShadow: [
               BoxShadow(
@@ -740,7 +756,7 @@ class _StockUseReportState extends State<StockUseReport> {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(4),
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -774,7 +790,7 @@ class _StockUseReportState extends State<StockUseReport> {
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFEFF6FF),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(color: const Color(0xFFDBEAFE)),
                                 ),
                                 child: Row(
@@ -877,7 +893,7 @@ class _StockUseReportState extends State<StockUseReport> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -912,7 +928,7 @@ class _StockUseReportState extends State<StockUseReport> {
                           },
                           selected: isSelected,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(
                             title,
@@ -951,11 +967,11 @@ class _StockUseReportState extends State<StockUseReport> {
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.fromDate != null
@@ -979,11 +995,11 @@ class _StockUseReportState extends State<StockUseReport> {
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.toDate != null
@@ -1012,7 +1028,7 @@ class _StockUseReportState extends State<StockUseReport> {
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                         child: Text(

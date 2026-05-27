@@ -294,7 +294,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                           border: OutlineInputBorder(
                             borderRadius:
-                                BorderRadius.circular(10), // Rounded corners
+                                BorderRadius.circular(4), // Rounded corners
                             borderSide: BorderSide(
                               color: AppColors.textGrey2, // Border color
                               width: 1, // Border width
@@ -302,7 +302,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius:
-                                BorderRadius.circular(10), // Rounded corners
+                                BorderRadius.circular(4), // Rounded corners
                             borderSide: BorderSide(
                               color: AppColors.textGrey2, // Border color
                               width: 1, // Border width
@@ -310,7 +310,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
-                                BorderRadius.circular(10), // Rounded corners
+                                BorderRadius.circular(4), // Rounded corners
                             borderSide: BorderSide(
                               color: AppColors.textGrey2, // Border color
                               width: 1, // Border width
@@ -834,7 +834,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   //         Container(
                   //           decoration: BoxDecoration(
                   //             color: const Color(0xFFF6F7F9),
-                  //             borderRadius: BorderRadius.circular(10),
+                  //             borderRadius: BorderRadius.circular(4),
                   //           ),
                   //           padding: const EdgeInsets.all(16.0),
                   //           child: Column(
@@ -927,7 +927,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   //                             horizontal: 10, vertical: 5),
                   //                         decoration: BoxDecoration(
                   //                           color: Colors.white,
-                  //                           borderRadius: BorderRadius.circular(20),
+                  //                           borderRadius: BorderRadius.circular(4),
                   //                         ),
                   //                         child: Column(
                   //                           children: [
@@ -1110,7 +1110,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   //                         // padding: const EdgeInsets.all(12),
                   //                         // decoration: BoxDecoration(
                   //                         //   color: AppColors.scaffoldColor,
-                  //                         //   borderRadius: BorderRadius.circular(20),
+                  //                         //   borderRadius: BorderRadius.circular(4),
                   //                         // ),
                   //                         child: Column(
                   //                           crossAxisAlignment:
@@ -1141,7 +1141,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   //                                   elevation: 2,
                   //                                   shape: RoundedRectangleBorder(
                   //                                     borderRadius:
-                  //                                         BorderRadius.circular(12),
+                  //                                         BorderRadius.circular(4),
                   //                                   ),
                   //                                   child: Padding(
                   //                                     padding:
@@ -1409,7 +1409,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -1440,7 +1440,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         Container(
           decoration: BoxDecoration(
             color: const Color(0xFFF6F7F9),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(4),
           ),
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -1492,7 +1492,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                   ),
@@ -1741,9 +1741,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: TextField(
                         controller:
                             customerDetailsProvider.qsubsidyAmountController,
@@ -1785,9 +1793,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: TextField(
                         controller: customerDetailsProvider.qDiscountController,
                         onChanged: (p0) {
@@ -1828,9 +1844,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: TextField(
                         controller:
                             customerDetailsProvider.shippingChargesController,
@@ -1897,7 +1921,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF6F7F9),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
       ),
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -1943,7 +1967,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   vertical: 0,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8), // Add border radius
+                  borderRadius: BorderRadius.circular(4), // Add border radius
                 ),
               ),
             ),
@@ -2146,7 +2170,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF6F7F9),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
       ),
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -2209,7 +2233,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 vertical: 0,
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8), // Add border radius
+                borderRadius: BorderRadius.circular(4), // Add border radius
               ),
             ),
           ),
@@ -2395,7 +2419,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               side: BorderSide(color: AppColors.primaryBlue),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),
@@ -2405,7 +2429,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           Container(
             decoration: BoxDecoration(
                 color: const Color(0xffF8FAFC),
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(4)),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: ListView.separated(
@@ -2496,7 +2520,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               side: BorderSide(color: AppColors.primaryBlue),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),
@@ -2506,7 +2530,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           Container(
             decoration: BoxDecoration(
                 color: const Color(0xffF8FAFC),
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(4)),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: ListView.separated(
@@ -2588,7 +2612,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
           content: const Text('Do you want to print the quotation?'),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(

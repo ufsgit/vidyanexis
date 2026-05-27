@@ -239,7 +239,7 @@
 //             padding: const EdgeInsets.all(12),
 //             decoration: BoxDecoration(
 //               border: Border.all(color: Colors.grey.shade300),
-//               borderRadius: BorderRadius.circular(8),
+//               borderRadius: BorderRadius.circular(4),
 //             ),
 //             child: Column(
 //               crossAxisAlignment: CrossAxisAlignment.start,
@@ -406,7 +406,7 @@
 //         padding: const EdgeInsets.all(12),
 //         decoration: BoxDecoration(
 //           border: Border.all(color: Colors.grey.shade300),
-//           borderRadius: BorderRadius.circular(8),
+//           borderRadius: BorderRadius.circular(4),
 //         ),
 //         child: const Align(
 //           alignment: Alignment.centerLeft,
@@ -434,7 +434,7 @@
 //     return DropdownButtonFormField<DropdownValue>(
 //       decoration: InputDecoration(
 //         border: OutlineInputBorder(
-//           borderRadius: BorderRadius.circular(8),
+//           borderRadius: BorderRadius.circular(4),
 //         ),
 //         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 //       ),

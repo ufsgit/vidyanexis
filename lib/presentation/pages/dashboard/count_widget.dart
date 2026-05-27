@@ -24,7 +24,7 @@ class CountWidget extends StatelessWidget {
             width: 6,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
           const SizedBox(width: 10),

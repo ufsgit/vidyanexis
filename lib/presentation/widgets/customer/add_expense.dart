@@ -119,15 +119,15 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(4),
                   borderSide: BorderSide(color: AppColors.textGrey2),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(4),
                   borderSide: BorderSide(color: AppColors.textGrey2),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(4),
                   borderSide: BorderSide(color: AppColors.textGrey2),
                 ),
               ),
@@ -195,7 +195,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                       ),
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     actions: [
                       TextButton(

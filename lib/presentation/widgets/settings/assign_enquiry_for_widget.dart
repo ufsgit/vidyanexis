@@ -133,7 +133,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                                 padding: const EdgeInsets.all(12.0),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: const Color(0xFFE2E8F0),
                                     width: 1,
@@ -153,7 +153,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                                       height: 32,
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFF1F5F9),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Center(
                                         child: Text(
@@ -218,7 +218,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                       child: CustomElevatedButton(
                         buttonText: 'Cancel',
                         onPressed: () => Navigator.pop(context),
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: Colors.white,
                         borderColor: const Color(0xFFE2E8F0),
                         textColor: const Color(0xFF64748B),
@@ -235,7 +235,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                             updatedList: _items,
                           );
                         },
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: AppColors.secondaryBlue,
                         borderColor: AppColors.secondaryBlue,
                         textColor: Colors.white,
@@ -255,7 +255,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
         width: 600,
@@ -301,7 +301,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                     const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   children: [
@@ -360,7 +360,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                               vertical: 8, horizontal: 12),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(
                               color: const Color(0xFFE2E8F0),
                               width: 1,
@@ -429,7 +429,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                   CustomElevatedButton(
                     buttonText: 'Cancel',
                     onPressed: () => Navigator.pop(context),
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: Colors.white,
                     borderColor: const Color(0xFFE2E8F0),
                     textColor: const Color(0xFF64748B),
@@ -444,7 +444,7 @@ class _AssignEnquiryForWidgetState extends State<AssignEnquiryForWidget> {
                         updatedList: _items,
                       );
                     },
-                    radius: 12,
+                    radius: 4,
                     backgroundColor: AppColors.secondaryBlue,
                     borderColor: AppColors.secondaryBlue,
                     textColor: Colors.white,

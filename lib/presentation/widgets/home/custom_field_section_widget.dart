@@ -711,7 +711,7 @@ class CustomFieldWidgetBuilder {
                         style: BorderStyle
                             .solid, // Note: standard border, dashed is hard with core BoxDecoration
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                       color: AppColors.bluebutton.withOpacity(0.02),
                     ),
                     child: Column(
@@ -757,7 +757,7 @@ class CustomFieldWidgetBuilder {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                       border: Border.all(color: Colors.grey.shade200),
                       boxShadow: [
                         BoxShadow(
@@ -804,11 +804,11 @@ class CustomFieldWidgetBuilder {
                                 height: 48,
                                 decoration: BoxDecoration(
                                   color: AppColors.bluebutton.withOpacity(0.05),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: isImage && bytes != null
                                     ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                         child: Image.memory(
                                           bytes,
                                           fit: BoxFit.cover,
@@ -870,7 +870,7 @@ class CustomFieldWidgetBuilder {
                               height: 48,
                               decoration: BoxDecoration(
                                 color: AppColors.bluebutton.withOpacity(0.05),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Builder(builder: (_) {
                                 final lower = (uploadedUrl ?? '').toLowerCase();
@@ -1066,12 +1066,12 @@ class CustomFieldWidgetBuilder {
                         color: AppColors.primaryBlue.withOpacity(0.3),
                         width: 1.5,
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                       color: AppColors.primaryBlue.withOpacity(0.02),
                     ),
                     child: hasPending
                         ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             child: Container(
                               color: Colors.white,
                               child: Image.memory(
@@ -1082,7 +1082,7 @@ class CustomFieldWidgetBuilder {
                           )
                         : (uploadedUrl != null && uploadedUrl!.isNotEmpty)
                             ? ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                                 child: Container(
                                   color: Colors.white,
                                   child: Image.network(
@@ -1138,7 +1138,7 @@ class CustomFieldWidgetBuilder {
                             },
                             icon: const Icon(Icons.delete_outline, size: 18),
                             label: const Text('Clear Signature'),
-                            style: TextButton.styleFrom(
+                            style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                 foregroundColor: Colors.red),
                           ),
                       ],
@@ -1306,7 +1306,7 @@ class CustomFieldWidgetBuilder {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           color: enabled ? null : Colors.grey.shade100,
         ),
         child: const Align(
@@ -1337,7 +1337,7 @@ class CustomFieldWidgetBuilder {
     return DropdownButtonFormField<DropdownValue>(
       decoration: InputDecoration(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         labelText: '$fieldName${isRequired ? ' *' : ''}',

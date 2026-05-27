@@ -101,7 +101,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -121,7 +121,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
               height: 32,
               decoration: BoxDecoration(
                 color: const Color(0xFFEFF6FF),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Center(
                 child: Text(
@@ -328,7 +328,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: CustomFormFillerView(

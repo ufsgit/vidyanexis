@@ -64,7 +64,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
             title: Row(
               children: [
                 CircleAvatar(
-                  radius: 10,
+                  radius: 4,
                   backgroundImage: widget.avatarUrl != null
                       ? NetworkImage(widget.avatarUrl!)
                       : null,
@@ -225,7 +225,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                     foregroundColor: Colors.white,
                     textStyle: AppStyles.getHeadingTextStyle(fontSize: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                   child: const Text('View Job Sheet'),
@@ -297,7 +297,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                               width: 200,
                               height: 200,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                   color: Colors.grey.withOpacity(0.2)),
                               child: const Icon(
                                 Icons.hide_image_outlined,

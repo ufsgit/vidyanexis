@@ -147,7 +147,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: AppColors.secondaryBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Icon(
                   Icons.sort,
@@ -172,8 +172,15 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
             height: 40,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
             ),
             child: TextField(
               controller: searchController,
@@ -183,7 +190,15 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
               },
               decoration: InputDecoration(
                 hintText: 'Search here....',
-                prefixIcon: const Icon(Icons.search),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF64748B),
+                                size: 18,
+                              ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -197,13 +212,13 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                       provider.getBalanceReport(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.textGrey4,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 0,
-                      ),
-                    ),
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
                     child:
                         Text(provider.search.isNotEmpty ? 'Cancel' : 'Search'),
                   ),
@@ -225,7 +240,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
             label: Text(MediaQuery.of(context).size.width > 860
                 ? 'Export To Excel'
                 : ''),
-            style: ElevatedButton.styleFrom(
+            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -243,9 +258,17 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
       child: Container(
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
         ),
+      ],
+    ),
         child: Row(
           children: [
             CommonReportDateFilter(
@@ -259,7 +282,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
             const SizedBox(width: 16),
             ElevatedButton(
               onPressed: () => provider.getBalanceReport(context),
-              style: ElevatedButton.styleFrom(
+              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                 backgroundColor: AppColors.primaryBlue,
                 foregroundColor: Colors.white,
                 padding:
@@ -296,7 +319,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
         child: Container(
           decoration: BoxDecoration(
             color: const Color(0xFFEFF2F5),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: const Row(
             children: [
@@ -340,7 +363,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
         child: Container(
           decoration: BoxDecoration(
             color: index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
             children: [
@@ -434,7 +457,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                       ),
                     ),

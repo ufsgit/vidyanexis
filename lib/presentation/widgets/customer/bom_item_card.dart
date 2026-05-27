@@ -45,7 +45,7 @@ class _BomItemCardState extends State<BomItemCard> {
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(4),
           ),
           title: Text(
             'Confirm Delete',
@@ -98,7 +98,7 @@ class _BomItemCardState extends State<BomItemCard> {
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),

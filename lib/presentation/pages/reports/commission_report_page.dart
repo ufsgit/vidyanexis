@@ -82,7 +82,7 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
                             Icons.sort,
@@ -107,8 +107,15 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       height: 44,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.grey[200]!),
+                        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                       ),
                       child: Row(
                         children: [
@@ -134,7 +141,7 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primaryBlue,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
+                                    borderRadius: BorderRadius.circular(4)),
                                 elevation: 0,
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
@@ -189,7 +196,7 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 15),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
+                            borderRadius: BorderRadius.circular(4)),
                       ),
                     ),
                   ],
@@ -426,7 +433,7 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                                                 color: AppColors.primaryBlue
                                                     .withOpacity(0.1),
                                                 borderRadius:
-                                                    BorderRadius.circular(20),
+                                                    BorderRadius.circular(4),
                                               ),
                                               child: Text(
                                                 item.statusName.isEmpty
@@ -543,8 +550,8 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
           children: [
@@ -567,8 +574,8 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       height: 40,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
         children: [

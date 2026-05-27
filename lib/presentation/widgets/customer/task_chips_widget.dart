@@ -82,7 +82,7 @@ class _TaskChipsScrollerState extends State<TaskChipsScroller> {
               left: _showLeftButton ? 24 : 0, right: _showRightButton ? 24 : 0),
           decoration: BoxDecoration(
             color: const Color(0xFFEFF2F5),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(4),
           ),
           child: ScrollConfiguration(
             behavior: ScrollConfiguration.of(context).copyWith(

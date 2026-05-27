@@ -160,7 +160,7 @@ class _CustomerTaskMonthReportScreenState
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: AppColors.secondaryBlue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Icon(
                               Icons.sort,
@@ -186,8 +186,15 @@ class _CustomerTaskMonthReportScreenState
                         height: 45,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(color: Colors.grey[200]!),
+                          borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                         ),
                         child: TextField(
                           controller: searchController,
@@ -304,7 +311,7 @@ class _CustomerTaskMonthReportScreenState
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Colors.grey[100]!, width: 1),
             boxShadow: [
               BoxShadow(
@@ -343,7 +350,7 @@ class _CustomerTaskMonthReportScreenState
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: AppColors.secondaryBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 child: Icon(
                   Icons.keyboard_arrow_down_rounded,
@@ -368,14 +375,14 @@ class _CustomerTaskMonthReportScreenState
 
                         return InkWell(
                           onTap: () => _showTaskDetails(context, tasks),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(4),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
                               color: _getStatusColor(tasks.first.taskStatusName)
                                   .withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                 color: _getStatusColor(tasks.first.taskStatusName)
                                     .withOpacity(0.2),
@@ -400,7 +407,7 @@ class _CustomerTaskMonthReportScreenState
                                   decoration: BoxDecoration(
                                     color: _getStatusColor(
                                         tasks.first.taskStatusName),
-                                    borderRadius: BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     '${tasks.length}',
@@ -643,7 +650,7 @@ class _CustomerTaskMonthReportScreenState
         builder: (context, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -673,7 +680,7 @@ class _CustomerTaskMonthReportScreenState
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -705,7 +712,7 @@ class _CustomerTaskMonthReportScreenState
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? DateFormat('yyyy-MM-dd')
@@ -723,7 +730,7 @@ class _CustomerTaskMonthReportScreenState
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? DateFormat('yyyy-MM-dd')
@@ -748,7 +755,7 @@ class _CustomerTaskMonthReportScreenState
                               backgroundColor: AppColors.primaryBlue,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
@@ -778,7 +785,7 @@ class _CustomerTaskMonthReportScreenState
                               foregroundColor: Colors.red,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
@@ -893,7 +900,7 @@ class _CustomerTaskMonthReportScreenState
                   height: 32,
                   decoration: BoxDecoration(
                     color: AppColors.scaffoldColor,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -944,7 +951,7 @@ class _CustomerTaskMonthReportScreenState
                   side: const BorderSide(color: AppColors.textRed),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(4)),
                 ),
               ),
             ),

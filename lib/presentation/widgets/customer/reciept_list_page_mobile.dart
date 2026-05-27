@@ -81,7 +81,7 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                       height: 44,
                       decoration: BoxDecoration(
                         color: AppColors.secondaryBlue,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.secondaryBlue.withOpacity(0.3),
@@ -209,7 +209,7 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                                 color: _selectedTabIndex == 0
                                     ? AppColors.grey300
                                     : AppColors.whiteColor,
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Center(
                                 child: Padding(
@@ -243,7 +243,7 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                                 color: _selectedTabIndex == 1
                                     ? AppColors.grey300
                                     : AppColors.whiteColor,
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Center(
                                 child: Padding(

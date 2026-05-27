@@ -99,12 +99,12 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
                 onTap: () {
                   Scaffold.of(context).openDrawer();
                 },
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Icon(
                     Icons.sort_rounded,
@@ -137,7 +137,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: AppColors.secondaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Icon(
                       Icons.sort_rounded,
@@ -177,7 +177,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
         height: 44,
         decoration: BoxDecoration(
           color: AppColors.secondaryBlue,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: AppColors.secondaryBlue.withOpacity(0.4),
@@ -241,7 +241,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -260,7 +260,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
           onTap: settingsProvider.menuIsEditMap[36] == 1
               ? () => _openAddDialog(isEdit: true, model: model.copyWith())
               : null,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -270,7 +270,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
                   height: 48,
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Center(
                     child: Text(
@@ -337,7 +337,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFFEF2F2),
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: const Icon(
                                   Icons.delete_outline_rounded,
@@ -381,7 +381,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         status,
@@ -447,7 +447,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         title: Text(
           'Confirm Delete',
           style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),

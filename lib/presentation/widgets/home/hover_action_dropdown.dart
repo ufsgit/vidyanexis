@@ -81,7 +81,7 @@ class _HoverActionDropdownState extends State<HoverActionDropdown> {
           elevation: WidgetStateProperty.all(8),
           shadowColor: WidgetStateProperty.all(Colors.black.withOpacity(0.3)),
           shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           ),
         ),
         menuChildren: widget.items.map((item) {
@@ -120,7 +120,7 @@ class _HoverActionDropdownState extends State<HoverActionDropdown> {
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: _isHovered ? Colors.grey[100] : Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(
               Icons.keyboard_arrow_down_rounded,

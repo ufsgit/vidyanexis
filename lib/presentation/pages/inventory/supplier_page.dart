@@ -33,7 +33,7 @@ class _SupplierPageState extends State<SupplierPage> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -43,7 +43,7 @@ class _SupplierPageState extends State<SupplierPage> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: settingsProvider.searchSupplier.isEmpty
               ? _buildEmptyState()
               : Column(
@@ -114,7 +114,7 @@ class _SupplierPageState extends State<SupplierPage> {
           if (onEdit != null)
             TextButton(
               onPressed: onEdit,
-              style: TextButton.styleFrom(
+              style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 minimumSize: Size.zero,
@@ -132,7 +132,7 @@ class _SupplierPageState extends State<SupplierPage> {
           if (onDelete != null)
             TextButton(
               onPressed: onDelete,
-              style: TextButton.styleFrom(
+              style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 minimumSize: Size.zero,
@@ -179,7 +179,7 @@ class _SupplierPageState extends State<SupplierPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: const Text('Confirm Delete'),
           content:
               const Text('Are you sure you want to delete this supplier?'),

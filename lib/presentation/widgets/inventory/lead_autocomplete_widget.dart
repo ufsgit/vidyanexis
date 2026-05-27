@@ -135,7 +135,7 @@ class _LeadAutocompleteWidgetState extends State<LeadAutocompleteWidget> {
               alignment: Alignment.topLeft,
               child: Material(
                 elevation: 4.0,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
                 child: Consumer<SettingsProvider>(
                   builder: (context, settingsProvider, child) {
                     // Use a slightly larger pool for the reactive view

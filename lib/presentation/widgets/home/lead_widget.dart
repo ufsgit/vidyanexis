@@ -178,7 +178,7 @@ class _LeadCardState extends State<LeadCard> {
                         Container(
                           width: 3,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(4),
                             color: getAvatarColor(widget.lead.customerName)
                                 .withOpacity(.4),
                           ),
@@ -241,7 +241,7 @@ class _LeadCardState extends State<LeadCard> {
                                       color: AppColors.parseColor(
                                               widget.lead.colorCode)
                                           .withOpacity(0.12),
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
                                       widget.lead.statusName.toUpperCase(),
@@ -365,9 +365,8 @@ class _LeadCardState extends State<LeadCard> {
                                     padding: const EdgeInsets.all(12),
                                     width: double.infinity,
                                     decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Colors.grey[300]!),
-                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Wrap(
                                       spacing: 8,
@@ -404,7 +403,7 @@ class _LeadCardState extends State<LeadCard> {
                                                       .withOpacity(0.1)
                                                   : Colors.grey[100],
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                                  BorderRadius.circular(4),
                                               border: Border.all(
                                                   color: isSelected
                                                       ? AppColors.bluebutton
@@ -526,7 +525,7 @@ class _LeadCardState extends State<LeadCard> {
                                                           .withOpacity(0.1)
                                                       : Colors.grey[100],
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                      BorderRadius.circular(4),
                                                   border: Border.all(
                                                       color: isSelected
                                                           ? AppColors.bluebutton
@@ -619,7 +618,7 @@ class _LeadCardState extends State<LeadCard> {
                                                           .withOpacity(0.1)
                                                       : Colors.grey[100],
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                      BorderRadius.circular(4),
                                                   border: Border.all(
                                                       color: isSelected
                                                           ? AppColors.bluebutton
@@ -726,7 +725,7 @@ class _LeadCardState extends State<LeadCard> {
                                                           .withOpacity(0.1)
                                                       : Colors.grey[100],
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                      BorderRadius.circular(4),
                                                   border: Border.all(
                                                       color: isSelected
                                                           ? AppColors.bluebutton
@@ -819,7 +818,7 @@ class _LeadCardState extends State<LeadCard> {
                                                 AppColors.bluebutton,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(10)),
+                                                    BorderRadius.circular(4)),
                                           ),
                                           child: Text('Save',
                                               style:

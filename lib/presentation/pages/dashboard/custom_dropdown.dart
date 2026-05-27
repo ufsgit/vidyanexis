@@ -20,7 +20,7 @@ class CustomDropDown extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade200),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(

@@ -28,7 +28,7 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
     final provider = Provider.of<CustomerDetailsProvider>(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: const EdgeInsets.all(20),
         constraints: const BoxConstraints(maxWidth: 500),

@@ -237,9 +237,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             width: double.infinity,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                             ),
                             padding: const EdgeInsets.all(12),
                             child: Wrap(
@@ -288,7 +287,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           ? const Color(0xFF1A7AE8)
                                               .withOpacity(0.1)
                                           : const Color(0xFFF1F5F9),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(4),
                                       border: Border.all(
                                         color: isSelected
                                             ? const Color(0xFF1A7AE8)
@@ -467,7 +466,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                               horizontal: 16, vertical: 10),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(10),
+                                                BorderRadius.circular(4),
                                           ),
                                         ),
                                         icon: const Icon(Icons.description,
@@ -507,7 +506,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(4),
                                         border: Border.all(
                                             color: const Color(0xFFE2E8F0)),
                                         boxShadow: [
@@ -593,7 +592,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         decoration: BoxDecoration(
                                           color: const Color(0xFFFEF2F2),
                                           borderRadius:
-                                              BorderRadius.circular(10),
+                                              BorderRadius.circular(4),
                                           border: Border.all(
                                               color: const Color(0xFFFECACA)),
                                         ),
@@ -661,7 +660,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               side: const BorderSide(color: Color(0xFFE2E8F0)),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
+                                  borderRadius: BorderRadius.circular(4)),
                               elevation: 0,
                             ),
                             child: Text(
@@ -762,7 +761,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
+                                  borderRadius: BorderRadius.circular(4)),
                               elevation: 2,
                               shadowColor:
                                   const Color(0xFF1A7AE8).withOpacity(0.2),
@@ -800,7 +799,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       context: context,
       barrierDismissible: false,
       pageBuilder: (context, animation, secondaryAnimation) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: CustomFormFillerView(
@@ -863,7 +862,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF1A7AE8).withOpacity(0.4)
@@ -938,7 +937,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: isExpanded
               ? const Color(0xFF1A7AE8).withOpacity(0.4)
@@ -1029,8 +1028,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC), // Faint grey background for inputs
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
       ),
       child: TextField(
         controller: controller,
@@ -1121,7 +1120,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
           color: const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Icon(Icons.upload_rounded,
             size: 16, color: const Color(0xFF1A7AE8).withOpacity(0.8)),

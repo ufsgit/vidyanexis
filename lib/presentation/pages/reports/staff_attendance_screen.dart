@@ -125,7 +125,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: AppColors.secondaryBlue.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: const Icon(
                                 Icons.sort,
@@ -150,8 +150,15 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           height: 40,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: TextField(
                             controller: searchController,
@@ -170,7 +177,15 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF64748B),
+                                size: 18,
+                              ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -210,13 +225,13 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
                                     ),
-                                  ),
                                   child: Text(reportsProvider.Search.isNotEmpty
                                       ? 'Cancel'
                                       : 'Search'),
@@ -250,13 +265,13 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           icon: const Icon(Icons.add),
                           label: const Text('Add Attendance'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
-                          ),
                         ),
                         const SizedBox(width: 16),
                         CustomElevatedButton(
@@ -284,8 +299,9 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           },
                           buttonText: 'Export to Excel',
                           textColor: AppColors.whiteColor,
-                          borderColor: AppColors.appViolet,
-                          backgroundColor: AppColors.appViolet,
+                          borderColor: AppColors.primaryBlue,
+                          backgroundColor: AppColors.primaryBlue,
+                          radius: 4,
                         ),
                       ],
                     ),
@@ -305,8 +321,15 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           height: 40,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: TextField(
                             controller: searchController,
@@ -325,7 +348,15 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF64748B),
+                                size: 18,
+                              ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -365,13 +396,13 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 0,
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
                                     ),
-                                  ),
                                   child: Text(reportsProvider.Search.isNotEmpty
                                       ? 'Cancel'
                                       : 'Search'),
@@ -404,13 +435,13 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           icon: const Icon(Icons.add),
                           label: const Text('Add Attendance'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 0,
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
-                          ),
                         ),
                         const SizedBox(width: 16),
                         CustomElevatedButton(
@@ -443,8 +474,9 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           },
                           buttonText: 'Export to Excel',
                           textColor: AppColors.whiteColor,
-                          borderColor: AppColors.appViolet,
-                          backgroundColor: AppColors.appViolet,
+                          borderColor: AppColors.primaryBlue,
+                          backgroundColor: AppColors.primaryBlue,
+                          radius: 4,
                         ),
                       ],
                     ),
@@ -455,9 +487,17 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: Row(
                         children: [
                           CommonReportDateFilter(
@@ -475,7 +515,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                   color: reportsProvider.selectedUser != null &&
                                           reportsProvider.selectedUser != 0
@@ -573,7 +613,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           //     );
                           //     reportsProvider.getSearchCustomers(context);
                           //   },
-                          //   style: ElevatedButton.styleFrom(
+                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           //     backgroundColor: Colors.white,
                           //     foregroundColor: AppColors.primaryBlue,
                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -619,9 +659,17 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                       child: Wrap(
                         runSpacing: 10,
                         crossAxisAlignment: WrapCrossAlignment.center,
@@ -641,7 +689,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(4),
                               border: Border.all(
                                   color: reportsProvider.selectedUser != null &&
                                           reportsProvider.selectedUser != 0
@@ -780,9 +828,17 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           padding: const EdgeInsets.all(16.0),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(14),
-                            ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
@@ -791,7 +847,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                   Container(
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFEFF2F5),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const Row(
                                       mainAxisAlignment:
@@ -859,7 +915,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                   ? Colors.white
                                                   : const Color(0xFFF6F7F9),
                                               borderRadius:
-                                                  BorderRadius.circular(8),
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Row(
                                               children: [
@@ -968,7 +1024,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 12),
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(4)),
                                 ),
                               ),
                             ],
@@ -1009,7 +1065,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                         vertical: 8, horizontal: 12),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(4),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withOpacity(0.05),
@@ -1051,7 +1107,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade100,
                                               borderRadius:
-                                                  BorderRadius.circular(8),
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Column(
                                               children: [
@@ -1173,7 +1229,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -1203,7 +1259,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -1235,7 +1291,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -1253,7 +1309,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -1299,13 +1355,13 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           reportsProvider.getSearchTaskReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1341,7 +1397,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           );
                           reportsProvider.getSearchTaskReport(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -1385,7 +1441,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       width: 200,
                       height: 200,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(4),
                           color: Colors.grey.withOpacity(0.2)),
                       child: const Icon(
                         Icons.hide_image_outlined,

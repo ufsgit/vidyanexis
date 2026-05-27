@@ -182,7 +182,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
               ),
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(4),
             ),
             actions: [
               TextButton(
@@ -220,7 +220,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
       backgroundColor: const Color(0xFFF8F9FB),
       contentPadding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
       ),
       titlePadding: EdgeInsets.zero,
       title: Container(
@@ -267,7 +267,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.04),
@@ -337,7 +337,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                   color: isSelected
                                       ? AppColors.bluebutton
                                       : const Color(0xFFF3F5F7),
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
                                   taskType.taskTypeName ?? '',
@@ -400,7 +400,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.04),
@@ -440,15 +440,15 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                           filled: true,
                           fillColor: const Color(0xFFF7F8F9),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide.none,
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide(
                                 color: AppColors.bluebutton.withOpacity(0.5)),
                           ),
@@ -475,7 +475,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.04),
@@ -515,7 +515,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                           filled: true,
                           fillColor: const Color(0xFFF7F8F9),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: const EdgeInsets.all(12),
@@ -532,7 +532,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.04),
@@ -573,7 +573,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                               horizontal: 12, vertical: 12),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF7F8F9),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: Colors.transparent),
                           ),
                           child: Row(
@@ -607,7 +607,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(4),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.04),
@@ -679,7 +679,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                   color: isSelected
                                       ? AppColors.bluebutton
                                       : const Color(0xFFF3F5F7),
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
                                   worker.userDetailsName ?? '',
@@ -732,7 +732,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.bluebutton,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 elevation: 0,
               ),

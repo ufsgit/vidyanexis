@@ -186,7 +186,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(4)),
                     ),
                     child: const Text('Apply Filters'),
                   ),
@@ -234,7 +234,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -300,7 +300,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: AppColors.secondaryBlue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Icon(
                               Icons.sort,
@@ -323,8 +323,15 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                       height: 40,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey[300]!),
+                        borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                       ),
                       child: TextField(
                         controller: searchController,
@@ -333,7 +340,15 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                         },
                         decoration: InputDecoration(
                           hintText: 'Search here....',
-                          prefixIcon: const Icon(Icons.search),
+                              hintStyle: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: Color(0xFF64748B),
+                                size: 18,
+                              ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 4),
@@ -343,7 +358,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                               onPressed: () {
                                 provider.fetchReportData(context);
                               },
-                              style: ElevatedButton.styleFrom(
+                              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                 backgroundColor: AppColors.textGrey4,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
@@ -364,6 +379,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                     ),
                     const SizedBox(width: 16),
                     CustomElevatedButton(
+                          radius: 4,
                       onPressed: () {
                         exportToExcel(
                           headers: ['Status ID', 'Status Name', 'Lead Count'],
@@ -421,7 +437,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
         builder: (contextx, provider, child) {
           return AlertDialog(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
               child: Padding(
@@ -448,7 +464,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                             provider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
+                              borderRadius: BorderRadius.circular(4)),
                           label: Text(title),
                           backgroundColor:
                               provider.selectedDateFilterIndex == index
@@ -475,7 +491,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                             onTap: () => provider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15)),
+                                  borderRadius: BorderRadius.circular(4)),
                               hintText: provider.fromDate != null
                                   ? DateFormat('yyyy-MM-dd')
                                       .format(provider.fromDate!)
@@ -491,7 +507,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                             onTap: () => provider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15)),
+                                  borderRadius: BorderRadius.circular(4)),
                               hintText: provider.toDate != null
                                   ? DateFormat('yyyy-MM-dd')
                                       .format(provider.toDate!)
@@ -511,7 +527,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                           Navigator.pop(context);
                           provider.fetchReportData(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: const Color(0xFFCD9C11),
                           foregroundColor: Colors.white,
                         ),
@@ -528,7 +544,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                           provider.selectDateFilterOption(null);
                           provider.fetchReportData(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                         ),
@@ -559,7 +575,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -653,7 +669,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),

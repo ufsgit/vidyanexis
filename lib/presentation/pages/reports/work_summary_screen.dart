@@ -127,7 +127,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
                                         color: AppColors.secondaryBlue.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: const Icon(
                                         Icons.sort,
@@ -196,9 +196,17 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                         margin: const EdgeInsets.symmetric(horizontal: 16.0),
                         padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                         child: Wrap(
                           spacing: 10, // horizontal spacing between elements
                           runSpacing: 10, // vertical spacing between lines
@@ -217,7 +225,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                   const EdgeInsets.symmetric(horizontal: 20),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: reportsProvider.selectedUser != null &&
                                           reportsProvider.selectedUser != 0
@@ -335,9 +343,17 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                         margin: const EdgeInsets.symmetric(horizontal: 16.0),
                         padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                         child: Row(
                           children: [
                             CommonReportDateFilter(
@@ -356,7 +372,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                   const EdgeInsets.symmetric(horizontal: 20),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                     color: reportsProvider.selectedUser !=
                                                 null &&
@@ -452,7 +468,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                             //     );
                             //     reportsProvider.getSearchCustomers(context);
                             //   },
-                            //   style: ElevatedButton.styleFrom(
+                            //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                             //     backgroundColor: Colors.white,
                             //     foregroundColor: AppColors.primaryBlue,
                             //     side: BorderSide(color: AppColors.primaryBlue),
@@ -487,7 +503,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                   );
                                   reportsProvider.getSearchWorkSummary(context);
                                 },
-                                style: ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                                   backgroundColor: Colors.white,
                                   foregroundColor: AppColors.textRed,
                                   side: BorderSide(color: AppColors.textRed),
@@ -511,9 +527,17 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                       child: AppStyles.isWebScreen(context)
                           ? Container(
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -522,7 +546,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFEFF2F5),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: const Row(
                                         mainAxisAlignment:
@@ -762,9 +786,17 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                             )
                           : Container(
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(14),
-                              ),
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.02),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -773,7 +805,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFEFF2F5),
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Row(
                                         children: [
@@ -1061,7 +1093,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(4),
             ),
             contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
@@ -1091,7 +1123,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                             reportsProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                           label: Text(title),
                           backgroundColor:
@@ -1123,7 +1155,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                 reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -1141,7 +1173,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                 reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
@@ -1183,13 +1215,13 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                           reportsProvider.getSearchWorkSummary(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1222,7 +1254,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                           );
                           reportsProvider.getSearchWorkSummary(context);
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -1260,7 +1292,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primaryBlue : Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: isSelected ? AppColors.primaryBlue : Colors.grey[300]!,
           ),

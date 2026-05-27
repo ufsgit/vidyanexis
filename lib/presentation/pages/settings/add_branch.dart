@@ -61,7 +61,7 @@ class _AddBranchState extends State<AddBranch> {
             ),
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(4),
           ),
           actions: [
             TextButton(
@@ -198,7 +198,7 @@ class _AddBranchState extends State<AddBranch> {
               onPressed: () async {
                 await _pickAndUploadLogo(settingsProvider);
               },
-              radius: 12,
+              radius: 4,
               backgroundColor: AppColors.whiteColor,
               borderColor: const Color(0xFFE2E8F0),
               textColor: const Color(0xFF64748B),
@@ -230,7 +230,7 @@ class _AddBranchState extends State<AddBranch> {
                       );
                     },
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                       child: Image.network(
                         '${HttpUrls.imgBaseUrl}${settingsProvider.logoController.text}',
                         width: 100,
@@ -259,7 +259,7 @@ class _AddBranchState extends State<AddBranch> {
                         });
                       },
                       child: const CircleAvatar(
-                        radius: 12,
+                        radius: 4,
                         backgroundColor: Colors.red,
                         child: Icon(
                           Icons.delete,
@@ -396,7 +396,7 @@ class _AddBranchState extends State<AddBranch> {
             settingsProvider.branchController.clear();
             Navigator.pop(context);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.whiteColor,
           borderColor: const Color(0xFFE2E8F0),
           textColor: const Color(0xFF64748B),
@@ -412,7 +412,7 @@ class _AddBranchState extends State<AddBranch> {
             settingsProvider.saveBranch(
                 context: context, branchId: widget.editId);
           },
-          radius: 12,
+          radius: 4,
           backgroundColor: AppColors.secondaryBlue,
           borderColor: AppColors.secondaryBlue,
           textColor: AppColors.whiteColor,
