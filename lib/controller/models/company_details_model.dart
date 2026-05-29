@@ -21,6 +21,7 @@ class Company {
   final int consumerContactNoMandatory;
   final int leadInSales;
   final int quotationItemValue;
+  final int additionalExpense;
 
   Company({
     required this.companyId,
@@ -45,6 +46,7 @@ class Company {
     required this.consumerContactNoMandatory,
     required this.leadInSales,
     required this.quotationItemValue,
+    required this.additionalExpense,
   });
 
   // Factory constructor for creating an instance from JSON with null checks
@@ -72,6 +74,7 @@ class Company {
       consumerContactNoMandatory: json['Contact_Number_Mandatory'] ?? 0,
       leadInSales: json['Lead_In_Sales'] ?? 0,
       quotationItemValue: json['Quotation_Item_Value'] ?? 0,
+      additionalExpense: json['Additional_Expense'] ?? 0,
     );
   }
 
@@ -99,6 +102,8 @@ class Company {
       'Consumer_Name_Mandatory': consumerNameMandatory,
       'Contact_Number_Mandatory': consumerContactNoMandatory,
       'Lead_In_Sales': leadInSales,
+      'Quotation_Item_Value': quotationItemValue,
+      'Additional_Expense': additionalExpense,
     };
   }
 }

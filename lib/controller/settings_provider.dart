@@ -458,6 +458,7 @@ class SettingsProvider extends ChangeNotifier {
   int _consumerContactNoMandatory = 0;
   int _leadInSales = 0;
   int _quotationItem = 0;
+  int _additionalExpense = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -466,6 +467,7 @@ class SettingsProvider extends ChangeNotifier {
   int get consumerContactNoMandatory => _consumerContactNoMandatory;
   int get leadInSales => _leadInSales;
   int get quotationItem => _quotationItem;
+  int get additionalExpense => _additionalExpense;
 
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
@@ -1006,6 +1008,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setQuotationItem(int value) {
     _quotationItem = value;
+    notifyListeners();
+  }
+
+  void setAdditionalExpense(int value) {
+    _additionalExpense = value;
     notifyListeners();
   }
 
@@ -3394,6 +3401,7 @@ class SettingsProvider extends ChangeNotifier {
                   _companyDetails[0].consumerContactNoMandatory;
               _leadInSales = _companyDetails[0].leadInSales;
               _quotationItem = _companyDetails[0].quotationItemValue;
+              _additionalExpense = _companyDetails[0].additionalExpense;
             }
           } catch (e) {
             print(
@@ -3443,6 +3451,7 @@ class SettingsProvider extends ChangeNotifier {
           _consumerContactNoMandatory = data['Contact_Number_Mandatory'] ?? 0;
           _leadInSales = data['Lead_In_Sales'] ?? 0;
           _quotationItem = data['Quotation_Item_Value'] ?? 0;
+          _additionalExpense = data['Additional_Expense'] ?? 0;
 
           if (newLogo != logo ||
               newTitle != title ||
@@ -3514,7 +3523,8 @@ class SettingsProvider extends ChangeNotifier {
             "Consumer_Name_Mandatory": _consumerNameMandatory,
             "Contact_Number_Mandatory": _consumerContactNoMandatory,
             "Lead_In_Sales": _leadInSales,
-            "Quotation_Item_Value": _quotationItem
+            "Quotation_Item_Value": _quotationItem,
+            "Additional_Expense": _additionalExpense,
           });
 
       if (response!.statusCode == 200) {
