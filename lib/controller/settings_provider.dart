@@ -61,15 +61,21 @@ import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
 class SettingsProvider extends ChangeNotifier {
+
+  static final SettingsProvider _instance = SettingsProvider._internal();
+  
+  factory SettingsProvider() => _instance;
+  
+  SettingsProvider._internal() {
+    _initCache();           
+  }
+
+
   VoidCallback? onAddPressed;
 
   void setOnAddPressed(VoidCallback? callback) {
     onAddPressed = callback;
     notifyListeners();
-  }
-
-  SettingsProvider() {
-    _initCache();
   }
 
   bool _isCacheLoaded = false;

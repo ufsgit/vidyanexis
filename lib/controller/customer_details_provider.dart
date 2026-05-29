@@ -19,6 +19,7 @@ import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1397,24 +1398,26 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   void updateTotal() {
-    double total = 0;
+    double subtotal = double.tryParse(subtotalController.text) ?? 0.0;
+    double shipping = double.tryParse(shippingChargesController.text) ?? 0.0;
+    double subsidy = _isSubsidyChecked
+        ? (double.tryParse(qsubsidyAmountController.text) ?? 0.0)
+        : 0.0;
+    double discount = double.tryParse(qDiscountController.text) ?? 0.0;
 
-    final subtotal = double.tryParse(subtotalController.text);
-    final subsidy = double.tryParse(qsubsidyAmountController.text) ?? 0.0;
-    final discount = double.tryParse(qDiscountController.text) ?? 0.0;
-    final shippingCharges =
-        double.tryParse(shippingChargesController.text) ?? 0.0;
+    double finalTotal = subtotal + shipping - subsidy - discount;
 
-    if (subtotal != null) {
-      total = subtotal +
-          shippingCharges -
-          (_isSubsidyChecked ? subsidy : 0) -
-          discount;
-    } else {
-      print("Invalid input for price or quantity");
+    // Access SettingsProvider using Singleton (No context, No global file)
+    final settingsProvider = SettingsProvider();
+
+    if (settingsProvider.additionalExpense == 1) {
+      final feasibility = double.tryParse(feasibilityFeeController.text) ?? 0.0;
+      final registration =
+          double.tryParse(registrationFeeController.text) ?? 0.0;
+      finalTotal += feasibility + registration;
     }
-    totalController.text =
-        total.toStringAsFixed(2); // Update controller with formatted total
+
+    totalController.text = finalTotal.toStringAsFixed(2);
     notifyListeners();
   }
 

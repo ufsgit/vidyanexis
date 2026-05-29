@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
@@ -53,6 +54,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
   Widget build(BuildContext context) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     if (customerDetailsProvider.qsubsidyAmountController.text.isEmpty) {
       customerDetailsProvider.qsubsidyAmountController.text = "0";
     }
@@ -741,6 +743,11 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       controller:
                           customerDetailsProvider.feasibilityFeeController,
                       labelText: 'Fee in KSEB for Feasibility study',
+                      onChanged: (p0) {
+                        if (settingsProvider.additionalExpense == 1) {
+                          customerDetailsProvider.updateTotal();
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
@@ -751,6 +758,11 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                           customerDetailsProvider.registrationFeeController,
                       labelText:
                           'Registration Fee in KSEB – 1000/- per kW (80% refundable)',
+                      onChanged: (p0) {
+                        if (settingsProvider.additionalExpense == 1) {
+                          customerDetailsProvider.updateTotal();
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
                   ],
