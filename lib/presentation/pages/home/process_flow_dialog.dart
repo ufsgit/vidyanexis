@@ -437,6 +437,21 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     showEditButton: false,
                                     enabled: true,
                                     showMore: false,
+                                    onFieldValuesChanged: (values) {
+                                      int statusId =
+                                          selectedStatus.statusId ?? 0;
+                                      int tasktypeId =
+                                          selectedStatus.taskTypeId ?? 0;
+                                      int customerId = widget.task.customerId;
+                                      int enquiryForId =
+                                          widget.task.enquiryForId;
+                                      reportsProvider.fetchTaskTypesWithCustomFields(
+                                          tasktypeId,
+                                          statusId,
+                                          customerId,
+                                          enquiryForId,
+                                          context);
+                                    },
                                   ),
                                 ],
                               );
