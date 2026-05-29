@@ -9,6 +9,7 @@ import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/login/splash_screen.dart';
+import 'package:vidyanexis/presentation/pages/login/company_code_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_reports_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/expense_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
@@ -29,6 +30,12 @@ final GoRouter appRouter = GoRouter(
       path: '/',
       pageBuilder: (context, state) {
         return fadeTransition(const SplashScreen());
+      },
+    ),
+    GoRoute(
+      path: CompanyCodePage.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const CompanyCodePage());
       },
     ),
     GoRoute(

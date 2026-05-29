@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/check_in_out_provider.dart';
 import 'package:vidyanexis/controller/followup_reports_provider.dart';
@@ -56,6 +57,8 @@ import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/controller/solar_lead_report_provider.dart';
 import 'package:vidyanexis/controller/lead_status_report_provider.dart';
 import 'package:vidyanexis/controller/task_summary_provider.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/controller/company_provider.dart';
 import 'package:vidyanexis/firebase_options.dart';
 import 'package:vidyanexis/routes/routes.dart';
 import 'package:vidyanexis/controller/receipt_report_provider.dart';
@@ -70,10 +73,22 @@ import 'package:vidyanexis/controller/sales_report_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
+bool isCompanyCode = false;
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize dynamic base URL from storage
+  if (isCompanyCode) {
+    HttpUrls.updateBaseUrl('');
+    final prefs = await SharedPreferences.getInstance();
+    final storedUrl = prefs.getString('company_base_url') ?? '';
+    if (storedUrl.isNotEmpty) {
+      HttpUrls.updateBaseUrl(storedUrl);
+    }
+  }
+
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-    WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -96,6 +111,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => CompanyProvider()),
         ChangeNotifierProvider(create: (context) => LoginController()),
         ChangeNotifierProvider(create: (context) => LeadsProvider()),
         ChangeNotifierProvider(create: (context) => DropDownProvider()),
@@ -164,7 +180,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => StockUseReportProvider()),
         ChangeNotifierProvider(
             create: (context) => StockReturnReportProvider()),
-        ChangeNotifierProvider(create: (context) => CustomerTaskMonthProvider()),
+        ChangeNotifierProvider(
+            create: (context) => CustomerTaskMonthProvider()),
         ChangeNotifierProvider(create: (context) => SalesReportProvider()),
       ],
       child: Consumer<SettingsProvider>(
