@@ -1,3 +1,4 @@
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -175,6 +176,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                   onPressed: () {
                     provider.getTaskSummary(context);
                     provider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

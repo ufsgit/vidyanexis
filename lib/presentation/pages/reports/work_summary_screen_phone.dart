@@ -332,6 +332,7 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                   onPressed: () {
                     reportsProvider.getSearchWorkSummary(context);
                     reportsProvider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

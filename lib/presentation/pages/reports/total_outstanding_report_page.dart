@@ -107,6 +107,7 @@ class _TotalOutstandingReportPageState
                   onPressed: () {
                     provider.getTotalOutstandingReport(context);
                     provider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

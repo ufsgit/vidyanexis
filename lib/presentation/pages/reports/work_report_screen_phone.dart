@@ -377,6 +377,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                   onPressed: () {
                     reportsProvider.getSearchTaskReport(widget.userId, context);
                     reportsProvider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

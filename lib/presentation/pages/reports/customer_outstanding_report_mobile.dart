@@ -1,3 +1,4 @@
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -359,6 +360,7 @@ class _CustomerOutstandingReportMobileState
                   onPressed: () {
                     provider.getReport(context);
                     provider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

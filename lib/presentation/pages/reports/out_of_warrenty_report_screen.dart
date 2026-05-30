@@ -728,6 +728,7 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                   onPressed: () {
                     reportsProvider.getSearchOutOfWarrentyReport(context);
                     reportsProvider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

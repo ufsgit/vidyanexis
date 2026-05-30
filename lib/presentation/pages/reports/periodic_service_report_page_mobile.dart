@@ -387,6 +387,7 @@ class _PeriodicServiceReportPageMobileState
                   onPressed: () {
                     reportsProvider.getSearchAmcReport(context);
                     reportsProvider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

@@ -1,3 +1,4 @@
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -379,6 +380,7 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                   onPressed: () {
                     provider.getCommissionReport(context);
                     provider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

@@ -364,6 +364,7 @@ class _UpcomingWarrentyReportScreen
                   onPressed: () {
                     reportsProvider.getSearchUpcomingWarrantyReport(context);
                     reportsProvider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

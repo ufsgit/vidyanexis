@@ -1,3 +1,4 @@
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -88,6 +89,7 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                   onPressed: () {
                     reportProvider.fetchReports(context);
                     reportProvider.toggleFilter();
+                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
