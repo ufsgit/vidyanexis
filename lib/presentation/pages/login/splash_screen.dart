@@ -4,8 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/company_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/presentation/pages/login/company_code_page.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -20,6 +23,21 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (isCompanyCode) {
+        final companyProvider =
+            Provider.of<CompanyProvider>(context, listen: false);
+
+        // Load settings first (this is already done in constructor, but double check)
+        await companyProvider.loadSettings();
+
+        if (companyProvider.baseUrl.isEmpty) {
+          if (mounted) {
+            context.go(CompanyCodePage.route);
+          }
+          return;
+        }
+      }
+
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
       await settingsProvider.getCompanyDetails();
@@ -28,14 +46,14 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1)); // Reduced delay from 2s
     final prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('IsLoggedIn') ?? false;
     print('Is Logged $isLoggedIn');
     if (isLoggedIn) {
-      context.go(HomePage.route);
+      if (mounted) context.go(HomePage.route);
     } else {
-      context.go(LoginPage.route);
+      if (mounted) context.go(LoginPage.route);
     }
   }
 

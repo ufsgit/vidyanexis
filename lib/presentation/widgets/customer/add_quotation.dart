@@ -602,6 +602,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
+                        onChanged: (p0) {
+                          if (settingsProvider.additionalExpense == 1) {
+                            customerDetailsProvider.updateTotal();
+                          }
+                        },
                       ),
                       const SizedBox(height: 16),
                       CustomTextField(
@@ -610,6 +615,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         controller:
                             customerDetailsProvider.registrationFeeController,
                         keyboardType: TextInputType.number,
+                        onChanged: (p0) {
+                          if (settingsProvider.additionalExpense == 1) {
+                            customerDetailsProvider.updateTotal();
+                          }
+                        },
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],

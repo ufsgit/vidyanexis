@@ -51,8 +51,11 @@ class HttpRequest {
     print(token);
 
     try {
+      final String url = endPoint.startsWith('http')
+          ? endPoint
+          : '${HttpUrls.baseUrl}$endPoint';
       final response = await dio.get(
-        '${HttpUrls.baseUrl}$endPoint',
+        url,
         options: Options(headers: {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",

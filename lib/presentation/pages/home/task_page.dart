@@ -3285,6 +3285,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                             showEditButton: false,
                                             enabled: true,
                                             showMore: false,
+                                            onFieldValuesChanged: (values) {
+                                              // Optional: You can also handle here if needed
+                                              reportsProvider.fetchTaskTypesWithCustomFields(
+                                                  tasktypeId,
+                                                  statusId,
+                                                  customerId,
+                                                  enquiryForId,
+                                                  context);
+                                            },
                                           ),
                                         ],
                                       );

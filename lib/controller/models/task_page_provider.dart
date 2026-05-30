@@ -1039,4 +1039,96 @@ class TaskPageProvider extends ChangeNotifier {
       );
     }
   }
+
+  Future<void> fetchTaskTypesWithCustomFields(int tasktypeId, int statusId,
+      int customerId, int enquiryForId, BuildContext context) async {
+    print(statusId);
+    print(tasktypeId);
+    try {
+      Loader.showLoader(context);
+
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      List<Map<String, dynamic>> customFieldsData = [];
+      if (customFieldTaskStatusKey.currentState != null) {
+        final fieldValues =
+            customFieldTaskStatusKey.currentState!.getFieldValues();
+        customFieldsData = fieldValues.map((field) => field.toJson()).toList();
+      }
+
+      final Map<String, dynamic> queryParams = {
+        "Task_Type_Id": tasktypeId,
+        "Status_Id": statusId,
+        "Customer_Id": customerId,
+        "Login_User_Id": userId,
+        "Enquiry_For_Id": enquiryForId,
+        "Custom_Fields": customFieldsData,
+      };
+
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getTaskTypesOfProcessFlowWithCustomFields,
+        bodyData: queryParams,
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          // log(data.toString());
+          _selectedTaskTypeIds.clear();
+          final newData = data['data'] ?? [];
+          final documentData = data['document_types'] ?? [];
+          final statusData = data['mandatory_status'] ?? [];
+          final formsData = data['forms'] ?? [];
+          // final customFieldData = data['show_custom_field'] ?? [];
+
+          debugPrint(
+              "DEBUG: fetchTaskTypes received ${formsData.length} forms");
+
+          _taskTypeModel = (newData as List<dynamic>)
+              .map((item) => TaskTypeModel.fromJson(item))
+              .toList();
+
+          initializeSelectedTaskTypes(); // deafult checkbox
+
+          if (_taskTypeModel.isNotEmpty) {
+            followUpDateController.text = DateFormat('dd MMM yyyy').format(
+                DateTime.now()
+                    .add(Duration(days: _taskTypeModel.first.duration)));
+          }
+
+          _documentTypeModel = (documentData as List<dynamic>)
+              .map((item) => DocumentTypeModel.fromJson(item))
+              .toList();
+          _statusData = (statusData as List<dynamic>)
+              .map((item) => MandatoryStatusModel.fromJson(item))
+              .toList();
+
+          // _showCustomFields = (customFieldData as List)
+          //     .map((e) => CustomFieldByStatusId.fromJson(e))
+          //     .toList();
+
+          // Update forms in FormProvider if present
+          final formProvider =
+              Provider.of<FormProvider>(context, listen: false);
+          formProvider.setCustomerForms(data);
+
+          Loader.stopLoader(context);
+          notifyListeners();
+        }
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
 }

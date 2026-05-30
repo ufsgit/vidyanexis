@@ -423,6 +423,22 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Additional Expense :   ${settingsProvider.additionalExpense == 1 ? "On" : "Off"}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 10),
+                  Switch(
+                    value: settingsProvider.additionalExpense == 1,
+                    onChanged: (bool value) {
+                      settingsProvider.setAdditionalExpense(value ? 1 : 0);
+                    },
+                  ),
+                ],
+              ),
               const SizedBox(height: 10),
               CustomElevatedButton(
                 buttonText: 'Upload Image',
