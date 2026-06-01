@@ -336,48 +336,61 @@ class _LeadsPageState extends State<LeadPage> {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             // Entry Type Filter
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                    color: leadProvider.entryType != 'all'
-                                        ? AppColors.primaryBlue
-                                        : const Color(0xFFCBD5E1), width: 1.0),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text('Entry Type: ',
-                                      style: TextStyle(fontSize: 14)),
-                                  DropdownButton<String>(
-                                    value: leadProvider.entryType,
-                                    hint: const Text('All',
-                                        style: TextStyle(fontSize: 14)),
-                                    items: const [
-                                      DropdownMenuItem<String>(
-                                        value: 'all',
-                                        child: Text('All', style: TextStyle(fontSize: 14)),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    leadProvider.setEntryType('myown');
+                                    leadProvider.getSearchLeads(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: leadProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                          width: 2.0,
+                                        ),
                                       ),
-                                      DropdownMenuItem<String>(
-                                        value: 'myown',
-                                        child: Text('My Own', style: TextStyle(fontSize: 14)),
+                                    ),
+                                    child: Text(
+                                      'ME',
+                                      style: TextStyle(
+                                        color: leadProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.grey,
+                                        fontWeight: leadProvider.entryType != 'all' ? FontWeight.w600 : FontWeight.normal,
+                                        fontSize: 14,
                                       ),
-                                    ],
-                                    onChanged: (String? newValue) {
-                                      if (newValue != null) {
-                                        leadProvider.setEntryType(newValue);
-                                        leadProvider.getSearchLeads(context);
-                                      }
-                                    },
-                                    underline: Container(),
-                                    isDense: true,
-                                    iconSize: 18,
+                                    ),
                                   ),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(width: 16),
+                                GestureDetector(
+                                  onTap: () {
+                                    leadProvider.setEntryType('all');
+                                    leadProvider.getSearchLeads(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: leadProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                          width: 2.0,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'ALL',
+                                      style: TextStyle(
+                                        color: leadProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.grey,
+                                        fontWeight: leadProvider.entryType == 'all' ? FontWeight.w600 : FontWeight.normal,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             Container(
                               width: 280,
@@ -400,10 +413,13 @@ class _LeadsPageState extends State<LeadPage> {
                                 focusNode: searchFocusNodeWeb,
                                 textAlignVertical: TextAlignVertical.center,
                                 onTap: () {
-                                  if (searchController.selection.baseOffset == 0 &&
-                                      searchController.selection.extentOffset == searchController.text.length) {
-                                    searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-                                  }
+                                  Future.microtask(() {
+                                    if (searchController.text.isNotEmpty &&
+                                        searchController.selection.baseOffset == 0 &&
+                                        searchController.selection.extentOffset == searchController.text.length) {
+                                      searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                    }
+                                  });
                                 },
                                 onSubmitted: (query) {
                                   if (_debounce?.isActive ?? false)
@@ -582,10 +598,13 @@ class _LeadsPageState extends State<LeadPage> {
                             focusNode: searchFocusNodeMobile,
                             textAlignVertical: TextAlignVertical.center,
                             onTap: () {
-                              if (searchController.selection.baseOffset == 0 &&
-                                  searchController.selection.extentOffset == searchController.text.length) {
-                                searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-                              }
+                              Future.microtask(() {
+                                if (searchController.text.isNotEmpty &&
+                                    searchController.selection.baseOffset == 0 &&
+                                    searchController.selection.extentOffset == searchController.text.length) {
+                                  searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                }
+                              });
                             },
                             onSubmitted: (query) {
                               if (_debounce?.isActive ?? false)

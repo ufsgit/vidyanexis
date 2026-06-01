@@ -191,11 +191,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
       controller: widget.searchController,
       focusNode: _searchFocus,
       onTap: () {
-        if (widget.searchController != null &&
-            widget.searchController!.selection.baseOffset == 0 &&
-            widget.searchController!.selection.extentOffset == widget.searchController!.text.length) {
-          widget.searchController!.selection = TextSelection.collapsed(offset: widget.searchController!.text.length);
-        }
+        Future.microtask(() {
+          if (widget.searchController != null &&
+              widget.searchController!.text.isNotEmpty &&
+              widget.searchController!.selection.baseOffset == 0 &&
+              widget.searchController!.selection.extentOffset == widget.searchController!.text.length) {
+            widget.searchController!.selection = TextSelection.collapsed(offset: widget.searchController!.text.length);
+          }
+        });
       },
       decoration: widget.searchDecoration ??
           InputDecoration(
@@ -217,7 +220,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       style: widget.searchTextStyle ?? const TextStyle(color: Colors.black),
       textInputAction: TextInputAction.search,
       onChanged: (query) {
-        searchProvider.setSearchQuery(query);
+        // searchProvider.setSearchQuery(query); // Prevents constant rebuilds which break cursor
         if (widget.onChanged != null) {
           widget.onChanged!(query);
         }

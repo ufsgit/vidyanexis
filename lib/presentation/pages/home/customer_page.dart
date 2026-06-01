@@ -214,50 +214,61 @@ class _CustomerPageState extends State<CustomerPage> {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               // Entry Type Filter
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(
-                                      color: customerProvider.entryType != 'all'
-                                          ? AppColors.primaryBlue
-                                          : const Color(0xFFCBD5E1),
-                                      width: 1.0),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text('Entry Type: ',
-                                        style: TextStyle(fontSize: 14)),
-                                    DropdownButton<String>(
-                                      value: customerProvider.entryType,
-                                      items: const [
-                                        DropdownMenuItem<String>(
-                                          value: 'all',
-                                          child: Text('All',
-                                              style: TextStyle(fontSize: 14)),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      customerProvider.setEntryType('myown');
+                                      customerProvider.getSearchCustomers(context, isSilent: true);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: customerProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                            width: 2.0,
+                                          ),
                                         ),
-                                        DropdownMenuItem<String>(
-                                          value: 'myown',
-                                          child: Text('My Own',
-                                              style: TextStyle(fontSize: 14)),
+                                      ),
+                                      child: Text(
+                                        'ME',
+                                        style: TextStyle(
+                                          color: customerProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.grey,
+                                          fontWeight: customerProvider.entryType != 'all' ? FontWeight.w600 : FontWeight.normal,
+                                          fontSize: 14,
                                         ),
-                                      ],
-                                      onChanged: (String? newValue) {
-                                        if (newValue != null) {
-                                          customerProvider.setEntryType(newValue);
-                                          customerProvider.getSearchCustomers(context,
-                                              isSilent: true);
-                                        }
-                                      },
-                                      underline: Container(),
-                                      isDense: true,
-                                      iconSize: 18,
+                                      ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  GestureDetector(
+                                    onTap: () {
+                                      customerProvider.setEntryType('all');
+                                      customerProvider.getSearchCustomers(context, isSilent: true);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 2),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            color: customerProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'ALL',
+                                        style: TextStyle(
+                                          color: customerProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.grey,
+                                          fontWeight: customerProvider.entryType == 'all' ? FontWeight.w600 : FontWeight.normal,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               Container(
                                 width: 280,

@@ -415,59 +415,63 @@ class _tasksPageReportState extends State<TaskPage> {
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         // Entry Type Filter
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            border: Border.all(
-                                                color: reportsProvider
-                                                            .entryType !=
-                                                        'all'
-                                                    ? AppColors.primaryBlue
-                                                    : const Color(0xFFCBD5E1)),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              const Text('Entry Type: ',
-                                                  style:
-                                                      TextStyle(fontSize: 14)),
-                                              DropdownButton<String>(
-                                                value:
-                                                    reportsProvider.entryType,
-                                                items: const [
-                                                  DropdownMenuItem<String>(
-                                                    value: 'all',
-                                                    child: Text('All',
-                                                        style: TextStyle(
-                                                            fontSize: 14)),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                reportsProvider.setEntryType('myown');
+                                                reportsProvider.goToPage(1);
+                                                reportsProvider.searchTaskByCustomer(context);
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.only(bottom: 2),
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                      color: reportsProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                                      width: 2.0,
+                                                    ),
                                                   ),
-                                                  DropdownMenuItem<String>(
-                                                    value: 'myown',
-                                                    child: Text('My Own',
-                                                        style: TextStyle(
-                                                            fontSize: 14)),
+                                                ),
+                                                child: Text(
+                                                  'ME',
+                                                  style: TextStyle(
+                                                    color: reportsProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.grey,
+                                                    fontWeight: reportsProvider.entryType != 'all' ? FontWeight.w600 : FontWeight.normal,
+                                                    fontSize: 14,
                                                   ),
-                                                ],
-                                                onChanged: (String? newValue) {
-                                                  if (newValue != null) {
-                                                    reportsProvider
-                                                        .setEntryType(newValue);
-                                                    reportsProvider.goToPage(1);
-                                                    reportsProvider
-                                                        .searchTaskByCustomer(
-                                                            context);
-                                                  }
-                                                },
-                                                underline: Container(),
-                                                isDense: true,
-                                                iconSize: 18,
+                                                ),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            GestureDetector(
+                                              onTap: () {
+                                                reportsProvider.setEntryType('all');
+                                                reportsProvider.goToPage(1);
+                                                reportsProvider.searchTaskByCustomer(context);
+                                              },
+                                              child: Container(
+                                                padding: const EdgeInsets.only(bottom: 2),
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                      color: reportsProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                                      width: 2.0,
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'ALL',
+                                                  style: TextStyle(
+                                                    color: reportsProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.grey,
+                                                    fontWeight: reportsProvider.entryType == 'all' ? FontWeight.w600 : FontWeight.normal,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                         const SizedBox(width: 16),
                                         // Search container
