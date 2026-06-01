@@ -341,8 +341,46 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 32),
+                      _buildSectionTitle('Price Range'),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller:
+                                  expenseProvider.priceRangeFromController,
+                              hintText: 'From Price',
+                              labelText: '',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller:
+                                  expenseProvider.priceRangeToController,
+                              hintText: 'To Price',
+                              labelText: '',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       CheckboxListTile(
+
+
                         title: Text(
                           'Add Item Materials',
                           style: GoogleFonts.plusJakartaSans(
@@ -451,7 +489,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               const SizedBox(height: 12),
                               Row(
                                 children: [
-                                  Expanded(
+                                   Expanded(
                                     child: CustomTextField(
                                       readOnly: false,
                                       height: 56,
@@ -461,8 +499,44 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                       labelText: '',
                                     ),
                                   ),
-                                  SizedBox(width: 12),
-                                  Expanded(child: Container()),
+                                   SizedBox(width: 12),
+                                   Expanded(child: Container()),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              _buildSectionTitle('Price Range'),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomTextField(
+                                      readOnly: false,
+                                      height: 56,
+                                      controller: expenseProvider
+                                          .materialPriceFromController,
+                                      hintText: 'From Price',
+                                      labelText: '',
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d*\.?\d{0,2}')),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: CustomTextField(
+                                      readOnly: false,
+                                      height: 56,
+                                      controller: expenseProvider
+                                          .materialPriceToController,
+                                      hintText: 'To Price',
+                                      labelText: '',
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d*\.?\d{0,2}')),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 16),
@@ -651,6 +725,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
       ),
     );
   }
+
+
 
   Widget _buildSectionTitle(String title) {
     return Text(

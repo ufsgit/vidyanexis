@@ -8,6 +8,8 @@ class ItemSettings {
   String specification;
   String manufacture;
   String unit;
+  String priceFrom;
+  String priceTo;
 
   // Constructor
   ItemSettings({
@@ -20,7 +22,8 @@ class ItemSettings {
     required this.specification,
     required this.manufacture,
     required this.unit,
-
+    this.priceFrom = '',
+    this.priceTo = '',
   });
 
   // Factory method to create an instance from a JSON object
@@ -35,6 +38,8 @@ class ItemSettings {
       specification: json['Specification'] ?? '',
       manufacture: json['Manufacture'] ?? '',
       unit: json['Unit'] ?? '',
+      priceFrom: json['Price_From']?.toString() ?? '',
+      priceTo: json['Price_To']?.toString() ?? '',
     );
   }
 
@@ -50,6 +55,8 @@ class ItemSettings {
       'Specification': specification,
       'Manufacture': manufacture,
       'Unit': unit,
+      'Price_From': priceFrom,
+      'Price_To': priceTo,
     };
   }
 }
