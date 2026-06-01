@@ -43,7 +43,7 @@ class HttpUrls {
 
 //company code
   static String getCompanyUrl =
-      'https://demoapi.ufstech.net.in/settings/Get_Company_Url';
+      'https://demo1api.ufstech.net.in/settings/Get_Company_Url';
 
   static void updateBaseUrl(String url) {
     if (isCompanyCode) {

@@ -2866,6 +2866,54 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                   const SizedBox(height: 10),
 
+                                  // CustomField
+                                  Consumer<TaskPageProvider>(
+                                    builder: (context, reportsProvider, child) {
+                                      if (reportsProvider
+                                          .showCustomFields.isEmpty) {
+                                        return const SizedBox.shrink();
+                                      }
+
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 24),
+                                          Text(
+                                            'CUSTOM FIELDS',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey.shade600,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          CustomFieldSectionWidget(
+                                            key:
+                                                customFieldTaskStatusKey, // Make sure this GlobalKey is defined
+                                            customFields: reportsProvider
+                                                .showCustomFields,
+                                            controllerKey:
+                                                'task_status_${task.taskId}', // Unique key
+                                            showEditButton: false,
+                                            enabled: true,
+                                            showMore: false,
+                                            onFieldValuesChanged: (values) {
+                                              // Optional: You can also handle here if needed
+                                              reportsProvider.fetchTaskTypesWithCustomFields(
+                                                  tasktypeId,
+                                                  statusId,
+                                                  customerId,
+                                                  enquiryForId,
+                                                  context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 20),
+
                                   // Row 2: New Task + Department
                                   Consumer<TaskPageProvider>(
                                     builder: (context, reportsProvider, child) {
@@ -3233,54 +3281,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                           fontSize: 14,
                                           color: Color(0xFF1E293B)),
                                     ),
-                                  ),
-                                  const SizedBox(height: 20),
-
-                                  // CustomField
-                                  Consumer<TaskPageProvider>(
-                                    builder: (context, reportsProvider, child) {
-                                      if (reportsProvider
-                                          .showCustomFields.isEmpty) {
-                                        return const SizedBox.shrink();
-                                      }
-
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(height: 24),
-                                          Text(
-                                            'CUSTOM FIELDS',
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.grey.shade600,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 12),
-                                          CustomFieldSectionWidget(
-                                            key:
-                                                customFieldTaskStatusKey, // Make sure this GlobalKey is defined
-                                            customFields: reportsProvider
-                                                .showCustomFields,
-                                            controllerKey:
-                                                'task_status_${task.taskId}', // Unique key
-                                            showEditButton: false,
-                                            enabled: true,
-                                            showMore: false,
-                                            onFieldValuesChanged: (values) {
-                                              // Optional: You can also handle here if needed
-                                              reportsProvider.fetchTaskTypesWithCustomFields(
-                                                  tasktypeId,
-                                                  statusId,
-                                                  customerId,
-                                                  enquiryForId,
-                                                  context);
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
                                   ),
                                   const SizedBox(height: 20),
                                   Consumer<FormProvider>(

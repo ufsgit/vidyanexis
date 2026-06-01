@@ -315,6 +315,58 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                           const SizedBox(height: 8),
 
+                          // CustomField
+                          Consumer<TaskPageProvider>(
+                            builder: (context, reportsProvider, child) {
+                              if (reportsProvider.showCustomFields.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    'CUSTOM FIELDS',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey.shade600,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  CustomFieldSectionWidget(
+                                    key:
+                                        customFieldTaskStatusKey, // Make sure this GlobalKey is defined
+                                    customFields:
+                                        reportsProvider.showCustomFields,
+                                    controllerKey:
+                                        'task_status_${widget.task.taskId}', // Unique key
+                                    showEditButton: false,
+                                    enabled: true,
+                                    showMore: false,
+                                    onFieldValuesChanged: (values) {
+                                      int statusId =
+                                          selectedStatus.statusId ?? 0;
+                                      int tasktypeId =
+                                          selectedStatus.taskTypeId ?? 0;
+                                      int customerId = widget.task.customerId;
+                                      int enquiryForId =
+                                          widget.task.enquiryForId;
+                                      reportsProvider.fetchTaskTypesWithCustomFields(
+                                          tasktypeId,
+                                          statusId,
+                                          customerId,
+                                          enquiryForId,
+                                          context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 8),
+
                           // --- Section: Tasks ---
                           Consumer<TaskPageProvider>(
                             builder: (context, reportsProvider, child) {
@@ -406,57 +458,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             ),
                           ),
 
-                          const SizedBox(height: 8),
-                          // CustomField
-                          Consumer<TaskPageProvider>(
-                            builder: (context, reportsProvider, child) {
-                              if (reportsProvider.showCustomFields.isEmpty) {
-                                return const SizedBox.shrink();
-                              }
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 24),
-                                  Text(
-                                    'CUSTOM FIELDS',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  CustomFieldSectionWidget(
-                                    key:
-                                        customFieldTaskStatusKey, // Make sure this GlobalKey is defined
-                                    customFields:
-                                        reportsProvider.showCustomFields,
-                                    controllerKey:
-                                        'task_status_${widget.task.taskId}', // Unique key
-                                    showEditButton: false,
-                                    enabled: true,
-                                    showMore: false,
-                                    onFieldValuesChanged: (values) {
-                                      int statusId =
-                                          selectedStatus.statusId ?? 0;
-                                      int tasktypeId =
-                                          selectedStatus.taskTypeId ?? 0;
-                                      int customerId = widget.task.customerId;
-                                      int enquiryForId =
-                                          widget.task.enquiryForId;
-                                      reportsProvider.fetchTaskTypesWithCustomFields(
-                                          tasktypeId,
-                                          statusId,
-                                          customerId,
-                                          enquiryForId,
-                                          context);
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
                           const SizedBox(height: 8),
 
                           Consumer<FormProvider>(
