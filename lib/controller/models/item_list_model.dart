@@ -16,6 +16,8 @@ class ItemListModel {
   int primaryCheckBox; // IGST value
   int stockId;
   String hsnCode;
+  String priceFrom;
+  String priceTo;
 
   // Constructor
   ItemListModel({
@@ -35,6 +37,8 @@ class ItemListModel {
     required this.hsnCode,
     required this.quantity,
     required this.primaryCheckBox,
+    this.priceFrom = '',
+    this.priceTo = '',
   });
 
   // Factory method to create an instance from a JSON object
@@ -56,6 +60,8 @@ class ItemListModel {
       serviceCheckbox: json['Service_CheckBox'] ?? 0,
       primaryCheckBox: json["Is_Primary"] ?? 0,
       hsnCode: json['HSNCode']?.toString() ?? '',
+      priceFrom: json['Price_Range_From']?.toString() ?? '',
+      priceTo: json['Price_Range_To']?.toString() ?? '',
     );
   }
 
@@ -76,6 +82,8 @@ class ItemListModel {
       'gst': gst,
       'igst': igst,
       'Service_CheckBox': serviceCheckbox,
+      'Price_Range_From': priceFrom,
+      'Price_Range_To': priceTo,
     };
   }
 }

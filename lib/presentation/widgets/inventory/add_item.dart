@@ -126,6 +126,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
         expenseProvider.igstController.text = widget.item!.igst;
         expenseProvider.gstController.text = widget.item!.gst;
         expenseProvider.itemHSNController.text = widget.item!.hsnCode;
+        expenseProvider.priceRangeFromController.text = widget.item!.priceFrom;
+        expenseProvider.priceRangeToController.text = widget.item!.priceTo;
         expenseProvider.setItemCategory(widget.item!.categoryId);
         expenseProvider.setItemUnit(widget.item!.unitId);
         expenseProvider
@@ -421,7 +423,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                   //     labelText: '',
                                   //   ),
                                   // ),
-                                  Expanded(
+                                   Expanded(
                                     child: CommonDropdown(
                                       hintText: "Select Material",
                                       items: expenseProvider.itemList
@@ -444,20 +446,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                  Expanded(
-                                    child: CustomTextField(
-                                      readOnly: false,
-                                      height: 56,
-                                      controller:
-                                          expenseProvider.itemPriceController,
-                                      hintText: 'Price',
-                                      labelText: '',
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp(r'^\d*\.?\d{0,2}')),
-                                      ],
-                                    ),
-                                  ),
+                                  Expanded(child: Container()),
                                 ],
                               ),
                               const SizedBox(height: 12),
@@ -606,7 +595,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                                 // ),
                                                 const SizedBox(height: 4),
                                                 Text(
-                                                  'Price: ${item.price}',
+                                                  'Price Range: ₹${item.priceFrom.isEmpty ? "0" : item.priceFrom} - ₹${item.priceTo.isEmpty ? "0" : item.priceTo}',
                                                   style: GoogleFonts
                                                       .plusJakartaSans(
                                                     fontSize: 12,

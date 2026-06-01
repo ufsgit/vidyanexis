@@ -38,8 +38,8 @@ class ItemSettings {
       specification: json['Specification'] ?? '',
       manufacture: json['Manufacture'] ?? '',
       unit: json['Unit'] ?? '',
-      priceFrom: json['Price_From']?.toString() ?? '',
-      priceTo: json['Price_To']?.toString() ?? '',
+      priceFrom: json['Price_Range_From']?.toString() ?? '',
+      priceTo: json['Price_Range_To']?.toString() ?? '',
     );
   }
 
@@ -55,8 +55,8 @@ class ItemSettings {
       'Specification': specification,
       'Manufacture': manufacture,
       'Unit': unit,
-      'Price_From': priceFrom,
-      'Price_To': priceTo,
+      'Price_Range_From': priceFrom,
+      'Price_Range_To': priceTo,
     };
   }
 }
