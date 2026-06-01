@@ -128,6 +128,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                     audioProvider: audioProvider),
               )
             : AlertDialog(
+                backgroundColor: AppColors.whiteColor,
+                surfaceTintColor: Colors.transparent,
                 scrollable: AppStyles.isWebScreen(context) ? false : false,
                 content: SizedBox(
                   width: AppStyles.isWebScreen(context)

@@ -49,6 +49,8 @@ class _LeadsPageState extends State<LeadPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   TextEditingController leadIdController = TextEditingController();
+  FocusNode searchFocusNodeWeb = FocusNode();
+  FocusNode searchFocusNodeMobile = FocusNode();
   // final ScrollController _horizontalScrollController = ScrollController();
   // final ScrollController _verticalScrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
@@ -106,8 +108,11 @@ class _LeadsPageState extends State<LeadPage> {
   void dispose() {
     _debounce?.cancel();
     _scrollableVerticalController.dispose();
+    searchFocusNodeWeb.dispose();
+    searchFocusNodeMobile.dispose();
     searchController.dispose();
     leadIdController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -392,7 +397,14 @@ class _LeadsPageState extends State<LeadPage> {
                               ),
                               child: TextField(
                                 controller: searchController,
+                                focusNode: searchFocusNodeWeb,
                                 textAlignVertical: TextAlignVertical.center,
+                                onTap: () {
+                                  if (searchController.selection.baseOffset == 0 &&
+                                      searchController.selection.extentOffset == searchController.text.length) {
+                                    searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                  }
+                                },
                                 onSubmitted: (query) {
                                   if (_debounce?.isActive ?? false)
                                     _debounce!.cancel();
@@ -567,7 +579,14 @@ class _LeadsPageState extends State<LeadPage> {
                           ),
                           child: TextField(
                             controller: searchController,
+                            focusNode: searchFocusNodeMobile,
                             textAlignVertical: TextAlignVertical.center,
+                            onTap: () {
+                              if (searchController.selection.baseOffset == 0 &&
+                                  searchController.selection.extentOffset == searchController.text.length) {
+                                searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                              }
+                            },
                             onSubmitted: (query) {
                               if (_debounce?.isActive ?? false)
                                 _debounce!.cancel();

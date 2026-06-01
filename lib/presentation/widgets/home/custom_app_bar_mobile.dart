@@ -190,7 +190,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return TextField(
       controller: widget.searchController,
       focusNode: _searchFocus,
-      autofocus: true,
+      onTap: () {
+        if (widget.searchController != null &&
+            widget.searchController!.selection.baseOffset == 0 &&
+            widget.searchController!.selection.extentOffset == widget.searchController!.text.length) {
+          widget.searchController!.selection = TextSelection.collapsed(offset: widget.searchController!.text.length);
+        }
+      },
       decoration: widget.searchDecoration ??
           InputDecoration(
             hintText: widget.searchHintText,

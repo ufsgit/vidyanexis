@@ -40,6 +40,11 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
     if (!mounted) return;
     setState(() => isLoadingData = true);
     await processFlowProvider.getProcessFlow(context);
+    
+    if (searchController.text.isNotEmpty) {
+      processFlowProvider.filterData(searchController.text);
+    }
+    
     if (!mounted) return;
     setState(() => isLoadingData = false);
   }
