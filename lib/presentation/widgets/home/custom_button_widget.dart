@@ -23,7 +23,7 @@ class CustomElevatedButton extends StatelessWidget {
     required this.backgroundColor,
     required this.borderColor,
     required this.textColor,
-    this.radius = 16,
+    this.radius = 4,
     this.isLoading = false,
     this.elevation = 1,
     this.textSize = 16,

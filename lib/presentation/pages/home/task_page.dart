@@ -2273,65 +2273,69 @@ class _tasksPageReportState extends State<TaskPage> {
             Provider.of<TaskPageProvider>(context, listen: false);
 
         return Dialog(
-          elevation: 5,
+          backgroundColor: Colors.white,
+          elevation: 0,
           insetPadding: EdgeInsets.symmetric(
-            horizontal: isSmallScreen ? 16.0 : 40.0,
-            vertical: 24.0,
-          ),
+              horizontal: isSmallScreen ? 16 : 40, vertical: 24),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(4.0),
           ),
           child: Container(
-            width: isSmallScreen ? screenSize.width * 0.9 : 480,
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: theme.primaryColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12.0),
-                      topRight: Radius.circular(12.0),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.update, color: Colors.white),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Update Status',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
+            constraints: const BoxConstraints(
+              maxWidth: 480,
+              maxHeight: 520,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Update Status',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1E293B),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              task.taskTypeName,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                          ),
+                          const Spacer(),
+                          Flexible(
+                            child: Wrap(
+                              spacing: 6,
+                              runSpacing: 4,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              alignment: WrapAlignment.end,
+                              children: [
+                                Text(
+                                  'Task:',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                ),
+                                Text(
+                                  task.taskTypeName ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1E293B),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                FutureBuilder<List<TaskTypeStatusModel>>(
+                    ),
+                    Flexible(
+                      child: FutureBuilder<List<TaskTypeStatusModel>>(
                   future: statusOptionsFuture,
                   builder: (contextBuilder, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -2362,124 +2366,113 @@ class _tasksPageReportState extends State<TaskPage> {
                         reportsProvider.clearDescription();
                       });
 
-                      return Container(
-                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+                      Widget formFields = Container(
+                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              'Current Status',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: theme.textTheme.bodyLarge?.color,
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Select Status',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF64748B))),
+                                  const SizedBox(height: 8),
+                                  ValueListenableBuilder<TaskTypeStatusModel>(
+                                    valueListenable: selectedStatus,
+                                    builder: (context, value, _) {
+                                      return Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: statusOptions.map((status) {
+                                          bool isSelected =
+                                              value.statusId == status.statusId;
+                                          return _buildCustomStatusChip(
+                                            status: status,
+                                            isSelected: isSelected,
+                                            onTap: () {
+                                              selectedStatus.value = status;
+                                            },
+                                          );
+                                        }).toList(),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            // Status Selection (Chips)
-                            ValueListenableBuilder<TaskTypeStatusModel>(
-                              valueListenable: selectedStatus,
-                              builder: (ctx, value, child) {
-                                return Wrap(
-                                  spacing: 12,
-                                  runSpacing: 12,
-                                  children: statusOptions.map((status) {
-                                    bool isSelected =
-                                        value.statusId == status.statusId;
-                                    Color statusColor =
-                                        status.colorCode ?? Colors.black;
-                                    return ChoiceChip(
-                                      label: Text(status.statusName ?? ''),
-                                      selected: isSelected,
-                                      onSelected: (bool selected) {
-                                        if (selected) {
-                                          selectedStatus.value = status;
-                                        }
-                                      },
-                                      labelStyle: TextStyle(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : const Color(0xFF1E293B),
-                                        fontWeight: isSelected
-                                            ? FontWeight.w700
-                                            : FontWeight.w500,
-                                        fontSize: 13,
-                                      ),
-                                      avatar: Container(
-                                        width: 10,
-                                        height: 10,
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : statusColor,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      selectedColor: statusColor,
-                                      backgroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 8),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      side: BorderSide(
-                                        color: isSelected
-                                            ? statusColor
-                                            : Colors.grey.shade300,
-                                        width: 1,
-                                      ),
-                                      showCheckmark: false,
-                                      elevation: isSelected ? 2 : 0,
-                                    );
-                                  }).toList(),
-                                );
-                              },
-                            ),
+                            const SizedBox(height: 6),
                             ValueListenableBuilder<TaskTypeStatusModel>(
                               valueListenable: selectedStatus,
                               builder: (ctx, status, child) {
-                                if (status.followup == 1) {
-                                  return Column(
-                                    children: [
-                                      const SizedBox(height: 16),
-                                      dateFollowUpWidget(),
-                                      const SizedBox(height: 16),
-                                    ],
-                                  );
+                                bool showDate = status.followup == 1;
+                                if (!showDate) {
+                                  return const SizedBox.shrink();
                                 }
-                                return const SizedBox(height: 16);
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: dateFollowUpWidget(),
+                                );
                               },
                             ),
-                            Text(
-                              'Description',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: theme.textTheme.bodyLarge?.color,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 4),
+                            Text('Add Notes',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade600,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.3)),
+                            const SizedBox(height: 6),
                             Container(
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: theme.dividerColor),
-                                color: theme.cardColor,
+                                border: Border.all(
+                                    color: Colors.grey.shade300, width: 1),
                               ),
                               child: TextField(
-                                controller:
-                                    reportsProvider.descriptionController,
-                                maxLines: 4,
-                                minLines: 3,
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
+                                controller: reportsProvider.descriptionController,
+                                maxLines: 3,
+                                minLines: 2,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 12),
                                   border: InputBorder.none,
-                                  hintText: 'Enter description',
+                                  hintText: 'Enter notes here...',
+                                  hintStyle: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey.shade400),
                                 ),
-                                style: const TextStyle(fontSize: 14),
+                                style: const TextStyle(
+                                    fontSize: 14, color: Color(0xFF1E293B)),
                               ),
                             ),
-                            ValueListenableBuilder<bool>(
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      );
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: SingleChildScrollView(
+                              child: formFields,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                top: BorderSide(color: Color(0xFFE2E8F0)),
+                              ),
+                            ),
+                            child: ValueListenableBuilder<bool>(
                               valueListenable: isSaving,
                               builder: (ctx, saving, child) {
                                 return Row(
@@ -2491,14 +2484,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                           : () => Navigator.pop(context, false),
                                       style: OutlinedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 12),
-                                        side: BorderSide(
-                                            color: theme.dividerColor),
+                                            horizontal: 24, vertical: 12),
+                                        side: const BorderSide(color: Color(0xFFE2E8F0)),
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4)),
+                                            borderRadius: BorderRadius.circular(4)),
                                       ),
-                                      child: const Text('Cancel'),
+                                      child: const Text('Cancel',
+                                          style: TextStyle(
+                                              color: Color(0xFF1E293B),
+                                              fontWeight: FontWeight.w700)),
                                     ),
                                     const SizedBox(width: 12),
                                     ElevatedButton(
@@ -2508,8 +2502,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               isSaving.value = true;
                                               try {
                                                 bool isSuccess =
-                                                    await reportsProvider
-                                                        .changeTaskStatus(
+                                                    await reportsProvider.changeTaskStatus(
                                                   context,
                                                   selectedStatus.value,
                                                   task.taskId,
@@ -2519,8 +2512,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       : null,
                                                 );
                                                 if (isSuccess) {
-                                                  Navigator.of(context)
-                                                      .pop(true);
+                                                  Navigator.of(context).pop(true);
                                                 } else {
                                                   isSaving.value = false;
                                                   ScaffoldMessenger.of(context)
@@ -2536,12 +2528,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                             },
                                       style: ElevatedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 24, vertical: 12),
+                                            horizontal: 32, vertical: 12),
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4)),
-                                        backgroundColor: theme.primaryColor,
+                                            borderRadius: BorderRadius.circular(4)),
+                                        backgroundColor: const Color(0xFF1A7AE8),
                                         foregroundColor: Colors.white,
+                                        elevation: 0,
                                       ),
                                       child: saving
                                           ? const SizedBox(
@@ -2550,24 +2542,27 @@ class _tasksPageReportState extends State<TaskPage> {
                                               child: CircularProgressIndicator(
                                                   strokeWidth: 2,
                                                   valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                          Color>(Colors.white)))
-                                          : const Text('Save'),
+                                                      AlwaysStoppedAnimation<Color>(
+                                                          Colors.white)))
+                                          : const Text('Save',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700)),
                                     ),
                                   ],
                                 );
                               },
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       );
                     }
                   },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
+        ),
+      );
       },
     );
   }
@@ -2618,109 +2613,89 @@ class _tasksPageReportState extends State<TaskPage> {
             getStatusType(context, task.taskTypeId.toString());
 
         return Dialog(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           elevation: 0,
           insetPadding: EdgeInsets.symmetric(
               horizontal: isSmallScreen ? 16 : 40, vertical: 24),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
+            borderRadius: BorderRadius.circular(4.0),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24.0),
-            child: BackdropFilter(
-              filter: ui.ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-              child: Container(
-                constraints: const BoxConstraints(
-                  maxWidth: 675,
-                  maxHeight: 600,
-                  minHeight: 600,
-                  minWidth: 675,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
-                  borderRadius: BorderRadius.circular(24.0),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.8),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Column(
+          child: Container(
+            constraints: const BoxConstraints(
+              maxWidth: 675,
+              maxHeight: 600,
+              minHeight: 600,
+              minWidth: 675,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.0),
+            ),
+            child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                      padding: const EdgeInsets.fromLTRB(24, 20, 24, 14),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          const Text(
+                            'Update Status',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1E293B),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                const Text(
-                                  'Update Status',
+                                Text(
+                                  'Task:',
                                   style: TextStyle(
-                                    fontSize: 24,
+                                    fontSize: 13,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                ),
+                                Text(
+                                  task.taskTypeName ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF1E293B),
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Task:',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                    Text(
-                                      task.taskTypeName ?? '',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF1E293B),
-                                      ),
-                                    ),
-                                    Text(
-                                      'for',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        context.push(
-                                            '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                      },
-                                      child: Text(
-                                        task.customerName,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF1E293B),
-                                          decoration: TextDecoration.underline,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    _buildHeaderPill(
-                                        Icons.person_outline, 'Customer'),
-                                    _buildHeaderPill(
-                                        Icons.description_outlined, 'Document'),
-                                  ],
+                                Text(
+                                  'for',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade500,
+                                  ),
                                 ),
+                                InkWell(
+                                  onTap: () {
+                                    context.push(
+                                        '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                  },
+                                  child: Text(
+                                    task.customerName,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF1E293B),
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 2),
+                                _buildHeaderPill(
+                                    Icons.person_outline, 'Customer'),
+                                _buildHeaderPill(
+                                    Icons.description_outlined, 'Document'),
                               ],
                             ),
                           ),
@@ -3089,7 +3064,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(8),
+                                                                .circular(4),
                                                         border: Border.all(
                                                             color: Colors
                                                                 .grey.shade300),
@@ -3225,35 +3200,39 @@ class _tasksPageReportState extends State<TaskPage> {
                                   // Row 4: Description text area
                                   Text('Description',
                                       style: TextStyle(
-                                          fontSize: 13,
+                                          fontSize: 12,
                                           color: Colors.grey.shade600,
-                                          fontWeight: FontWeight.w500)),
-                                  const SizedBox(height: 4),
-                                  TextField(
-                                    controller: Provider.of<TaskPageProvider>(
-                                            context,
-                                            listen: false)
-                                        .descriptionController,
-                                    maxLines: 2,
-                                    minLines: 2,
-                                    decoration: const InputDecoration(
-                                      contentPadding:
-                                          EdgeInsets.symmetric(vertical: 12),
-                                      enabledBorder: const UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color(0xFF3B82F6),
-                                            width: 1.5),
-                                      ),
-                                      focusedBorder: const UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Color(0xFF3B82F6),
-                                            width: 2.0),
-                                      ),
-                                      hintText: 'Enter description',
-                                      hintStyle: TextStyle(
-                                          color: Colors.grey, fontSize: 14),
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.3)),
+                                  const SizedBox(height: 6),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                          color: Colors.grey.shade300, width: 1),
                                     ),
-                                    style: const TextStyle(fontSize: 14),
+                                    child: TextField(
+                                      controller: Provider.of<TaskPageProvider>(
+                                              context,
+                                              listen: false)
+                                          .descriptionController,
+                                      maxLines: 3,
+                                      minLines: 2,
+                                      decoration: InputDecoration(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 14, vertical: 12),
+                                        border: InputBorder.none,
+                                        hintText: 'Enter notes here...',
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey.shade400,
+                                            fontSize: 13),
+                                      ),
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF1E293B)),
+                                    ),
                                   ),
                                   const SizedBox(height: 20),
 
@@ -3351,13 +3330,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                         children: [
                                           Text('FORMS',
                                               style: TextStyle(
-                                                  fontSize: 13,
+                                                  fontSize: 11,
                                                   color: Colors.grey.shade600,
-                                                  fontWeight: FontWeight.w600)),
-                                          const SizedBox(height: 8),
+                                                  fontWeight: FontWeight.w600,
+                                                  letterSpacing: 0.3)),
+                                          const SizedBox(height: 6),
                                           Wrap(
-                                            spacing: 12.0,
-                                            runSpacing: 12.0,
+                                            spacing: 8.0,
+                                            runSpacing: 8.0,
                                             children: validForms.map((form) {
                                               return InkWell(
                                                 onTap: () {
@@ -3367,29 +3347,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(4),
                                                 child: Container(
-                                                  width: 260,
+                                                  width: 180,
                                                   padding:
-                                                      const EdgeInsets.all(12),
+                                                      const EdgeInsets.all(8),
                                                   decoration: BoxDecoration(
-                                                    color: Colors.white
-                                                        .withOpacity(0.4),
+                                                    color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            16),
+                                                            4),
                                                     border: Border.all(
-                                                      color: Colors.white
-                                                          .withOpacity(0.6),
+                                                      color: Colors.grey.shade300,
                                                       width: 1,
                                                     ),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black
-                                                            .withOpacity(0.02),
-                                                        blurRadius: 8,
-                                                        offset:
-                                                            const Offset(0, 2),
-                                                      ),
-                                                    ],
                                                   ),
                                                   child: Row(
                                                     mainAxisSize:
@@ -3398,24 +3367,24 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       Container(
                                                         padding:
                                                             const EdgeInsets
-                                                                .all(10),
+                                                                .all(6),
                                                         decoration:
                                                             BoxDecoration(
                                                           color: const Color(
                                                               0xFFEEF2F6),
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(12),
+                                                                  .circular(4),
                                                         ),
                                                         child: const Icon(
                                                           Icons
                                                               .description_outlined,
                                                           color:
                                                               Color(0xFF1E293B),
-                                                          size: 20,
+                                                          size: 16,
                                                         ),
                                                       ),
-                                                      const SizedBox(width: 12),
+                                                      const SizedBox(width: 8),
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -3427,7 +3396,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             const Text(
                                                               "1",
                                                               style: TextStyle(
-                                                                fontSize: 16,
+                                                                fontSize: 13,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
@@ -3441,7 +3410,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   ? form.name
                                                                   : "Attached Form",
                                                               style: TextStyle(
-                                                                fontSize: 13,
+                                                                fontSize: 11,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w500,
@@ -3463,7 +3432,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               );
                                             }).toList(),
                                           ),
-                                          const SizedBox(height: 20),
+                                          const SizedBox(height: 12),
                                         ],
                                       );
                                     },
@@ -3507,22 +3476,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                               OutlinedButton.icon(
                                                 icon: const Icon(Icons.history,
                                                     size: 16,
-                                                    color: Color(0xFF64748B)),
+                                                    color: Color(0xFF1E293B)),
                                                 label: const Text(
                                                     "View History",
                                                     style: TextStyle(
                                                         color:
-                                                            Color(0xFF64748B),
+                                                            Color(0xFF1E293B),
                                                         fontWeight:
-                                                            FontWeight.w600)),
+                                                            FontWeight.w700)),
                                                 style: OutlinedButton.styleFrom(
-                                                  side: BorderSide(
-                                                      color:
-                                                          Colors.grey.shade400),
+                                                  side: const BorderSide(
+                                                      color: Color(0xFFE2E8F0)),
                                                   shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              24)),
+                                                              4)),
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       horizontal: 20,
@@ -3652,22 +3620,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             .pop(false);
                                                       },
                                                 style: OutlinedButton.styleFrom(
-                                                  side: BorderSide(
-                                                      color:
-                                                          Colors.grey.shade400),
+                                                  side: const BorderSide(
+                                                      color: Color(0xFFE2E8F0)),
                                                   shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              24)),
+                                                              4)),
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       horizontal: 20,
-                                                      vertical: 14),
+                                                      vertical: 12),
                                                 ),
                                                 child: const Text("Cancel",
                                                     style: TextStyle(
                                                         color:
-                                                            Color(0xFF64748B),
+                                                            Color(0xFF1E293B),
                                                         fontWeight:
                                                             FontWeight.w600)),
                                               ),
@@ -3952,16 +3919,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       },
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor:
-                                                      const Color(0xFF3B82F6),
+                                                      const Color(0xFF1A7AE8),
                                                   foregroundColor: Colors.white,
-                                                  shadowColor:
-                                                      const Color(0xFF3B82F6)
-                                                          .withOpacity(0.4),
-                                                  elevation: 4,
+                                                  elevation: 0,
                                                   shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              24)),
+                                                              4)),
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       horizontal: 28,
@@ -3983,7 +3947,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight
-                                                                    .bold)),
+                                                                    .w700)),
                                               ),
                                             ],
                                           ),
@@ -3999,8 +3963,6 @@ class _tasksPageReportState extends State<TaskPage> {
                       ),
                     ),
                   ],
-                ),
-              ),
             ),
           ),
         );
@@ -4235,13 +4197,14 @@ class _tasksPageReportState extends State<TaskPage> {
         Text(
           'Follow-up Date',
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
             color: Colors.grey.shade600,
+            letterSpacing: 0.3,
           ),
         ),
-        const SizedBox(height: 8),
-        TextField(
+        const SizedBox(height: 6),
+        InkWell(
           onTap: () async {
             final DateTime? picked = await showDatePicker(
               context: context,
@@ -4254,22 +4217,39 @@ class _tasksPageReportState extends State<TaskPage> {
                   DateFormat('dd MMM yyyy').format(picked);
             }
           },
-          readOnly: true,
-          controller: taskProvider.followUpDateController,
-          decoration: const InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 12),
-            enabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF3B82F6), width: 1.5),
+          borderRadius: BorderRadius.circular(4),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Colors.grey.shade300, width: 1),
             ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2.0),
+            child: Row(
+              children: [
+                const Icon(Icons.calendar_today_outlined,
+                    size: 14, color: Color(0xFF64748B)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: taskProvider.followUpDateController,
+                    builder: (_, val, __) {
+                      final hasDate = val.text.isNotEmpty;
+                      return Text(
+                        hasDate ? val.text : 'DD MMM YYYY',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: hasDate
+                              ? const Color(0xFF1E293B)
+                              : Colors.grey.shade400,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-            hintText: 'DD MMM YYYY',
-            hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
-            suffixIcon:
-                const Icon(Icons.calendar_today, color: Color(0xFF3B82F6)),
           ),
-          style: const TextStyle(fontSize: 14),
         ),
       ],
     );
@@ -4342,14 +4322,14 @@ class _tasksPageReportState extends State<TaskPage> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    const Color statusColor = Color(0xFF3B82F6);
+    final Color statusColor = status.colorCode ?? const Color(0xFF3B82F6);
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(4),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? statusColor : statusColor.withOpacity(0.05),
           borderRadius: BorderRadius.circular(4),

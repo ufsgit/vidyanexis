@@ -69,6 +69,9 @@ class _AddCheckInOutWidgetState extends State<AddCheckInOutWidget> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
       backgroundColor: Colors.white,
       title: Row(
         children: [
@@ -143,6 +146,7 @@ class _AddCheckInOutWidgetState extends State<AddCheckInOutWidget> {
         backgroundColor: AppColors.whiteColor,
         borderColor: AppColors.appViolet,
         textColor: AppColors.appViolet,
+        radius: 4,
       ),
       CustomElevatedButton(
         buttonText: 'Save',
@@ -194,6 +198,7 @@ class _AddCheckInOutWidgetState extends State<AddCheckInOutWidget> {
         backgroundColor: AppColors.appViolet,
         borderColor: AppColors.appViolet,
         textColor: AppColors.whiteColor,
+        radius: 4,
       ),
     ];
   }

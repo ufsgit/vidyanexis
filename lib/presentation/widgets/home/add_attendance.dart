@@ -213,6 +213,9 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
     final dropDownProvider = Provider.of<DropDownProvider>(context);
 
     return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
       backgroundColor: Colors.white,
       title: Row(
         children: [
@@ -369,6 +372,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
           backgroundColor: AppColors.whiteColor,
           borderColor: AppColors.appViolet,
           textColor: AppColors.appViolet,
+          radius: 4,
         ),
         if (!isCheckedIn && attendanceProvider.isCompletedToday)
           Padding(
@@ -465,6 +469,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                 isCheckedIn ? AppColors.btnRed : AppColors.bluebutton,
             borderColor: isCheckedIn ? AppColors.btnRed : AppColors.bluebutton,
             textColor: AppColors.whiteColor,
+            radius: 4,
           ),
       ],
     );
