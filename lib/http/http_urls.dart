@@ -14,7 +14,7 @@ class HttpUrls {
   // static String baseUrl = 'https://ecoamicaapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
-  static String baseUrl = 'https://demo3api.trackbox.net.in/';
+  // static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://uniquesolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
@@ -31,7 +31,7 @@ class HttpUrls {
   // static String baseUrl = 'https://jbsolarapi.ufstech.net.in/';
   // static String baseUrl = 'https://disunenergyapi.ufstech.net.in/';
   // static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
- static String baseUrl = 'https://lucidpowerapi.ufstech.net.in/';
+  static String baseUrl = 'https://lucidpowerapi.ufstech.net.in/';
 //dev
 
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
@@ -400,6 +400,6 @@ class HttpUrls {
   static String getLeadCustomerList = "lead/Get_Customer_List";
   static String getSalesReport = "item/Search_Sales_Report";
   static String getProfit = "quotation_master/Get_Profit";
-    static String getTaskTypesOfProcessFlowWithCustomFields =
+  static String getTaskTypesOfProcessFlowWithCustomFields =
       "process_flow/Get_Task_Types_Of_Process_Flow_With_Custom_Field";
 }

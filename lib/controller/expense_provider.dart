@@ -95,6 +95,16 @@ class ExpenseProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController itemMaterialUnitController =
       TextEditingController();
+  // Item attribute controllers
+  final TextEditingController itemVolumeController = TextEditingController();
+  final TextEditingController itemKindsController = TextEditingController();
+  final TextEditingController itemModelController = TextEditingController();
+  // Price range text fields
+  final TextEditingController priceRangeFromController = TextEditingController();
+  final TextEditingController priceRangeToController = TextEditingController();
+  // Material price range
+  final TextEditingController materialPriceFromController = TextEditingController();
+  final TextEditingController materialPriceToController = TextEditingController();
   List<ItemSettings> _items = [];
   List<ItemSettings> get items => _items;
   List<ItemSettings> _RealItems = [];
@@ -1315,6 +1325,8 @@ class ExpenseProvider extends ChangeNotifier {
       specification: itemMaterialSpecificationController.text,
       manufacture: itemMaterialManufactureController.text,
       unit: itemMaterialUnitController.text,
+      priceFrom: materialPriceFromController.text,
+      priceTo: materialPriceToController.text,
     );
 
     if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
@@ -1344,6 +1356,8 @@ class ExpenseProvider extends ChangeNotifier {
     itemMaterialSpecificationController.clear();
     itemMaterialManufactureController.clear();
     itemMaterialUnitController.clear();
+    materialPriceFromController.clear();
+    materialPriceToController.clear();
     setSubId(-1);
     _subItemId = null;
     notifyListeners();
@@ -1360,6 +1374,8 @@ class ExpenseProvider extends ChangeNotifier {
       itemMaterialSpecificationController.text = itemToEdit.specification;
       itemMaterialManufactureController.text = itemToEdit.manufacture;
       itemMaterialUnitController.text = itemToEdit.unit;
+      materialPriceFromController.text = itemToEdit.priceFrom;
+      materialPriceToController.text = itemToEdit.priceTo;
       setSubId(itemToEdit.subItemId);
       setEditItemIndex(index);
       notifyListeners();
@@ -1383,6 +1399,11 @@ class ExpenseProvider extends ChangeNotifier {
     sgstController.clear();
     igstController.clear();
     gstController.clear();
+    itemVolumeController.clear();
+    itemKindsController.clear();
+    itemModelController.clear();
+    priceRangeFromController.clear();
+    priceRangeToController.clear();
     items.clear();
     clearItemFields();
   }
@@ -1776,6 +1797,8 @@ class ExpenseProvider extends ChangeNotifier {
             "serviceCheckbox": _isChecked,
             "Is_Primary": _isPrimaryItem,
             "HSNCode": itemHSNController.text.toString(),
+            "Price_Range_From": priceRangeFromController.text.toString(),
+            "Price_Range_To": priceRangeToController.text.toString(),
             "itemMaterials": _items.map((item) => item.toJson()).toList(),
           });
 
