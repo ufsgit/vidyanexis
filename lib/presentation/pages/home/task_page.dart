@@ -1694,101 +1694,52 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               1)
                                                             (onHover) =>
                                                                 MenuItemButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    showDialog(
-                                                                      context:
-                                                                          context,
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return const Center(
-                                                                          child:
-                                                                              CircularProgressIndicator(),
-                                                                        );
-                                                                      },
-                                                                    );
-
-                                                                    final leadDetailsProvider = Provider.of<
-                                                                            LeadDetailsProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false);
-                                                                    await leadDetailsProvider.fetchLeadDetails(
-                                                                        task.customerId
-                                                                            .toString(),
-                                                                        context);
-
-                                                                    final leadsProvider = Provider.of<
-                                                                            LeadsProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false);
-                                                                    leadsProvider
-                                                                        .setCutomerId(
-                                                                            task.customerId);
-                                                                    final dropDownProvider = Provider.of<
-                                                                            DropDownProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false);
-                                                                    final leadDetails =
-                                                                        leadDetailsProvider
-                                                                            .leadDetails![0];
-                                                                    leadsProvider
-                                                                            .enquirySourceController
-                                                                            .text =
-                                                                        leadDetails
-                                                                            .enquirySourceName
-                                                                            .toString();
-
-                                                                    dropDownProvider
-                                                                            .selectedEnquirySourceId =
-                                                                        leadDetails
-                                                                            .enquirySourceId;
-                                                                    await leadsProvider
-                                                                        .getLeadDropdowns(
-                                                                            context);
-                                                                    if (context
-                                                                        .mounted) {
-                                                                      Navigator.pop(
-                                                                          context); // Close loading dialog
-                                                                    }
-
-                                                                    if (context
-                                                                        .mounted) {
+                                                                    onHover: onHover,
+                                                                    onPressed: () async {
                                                                       showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (BuildContext
-                                                                                context) {
-                                                                          return const NewLeadDrawerWidget(
-                                                                            isEdit:
-                                                                                true,
+                                                                        context: context,
+                                                                        barrierDismissible: false,
+                                                                        builder: (BuildContext context) {
+                                                                          return const Center(
+                                                                            child: CircularProgressIndicator(),
                                                                           );
                                                                         },
                                                                       );
-                                                                    }
-                                                                  },
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                          Icons
-                                                                              .edit,
-                                                                          size:
-                                                                              18,
-                                                                          color:
-                                                                              Colors.blue),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              8),
-                                                                      const Text(
-                                                                          'Edit'),
-                                                                    ],
-                                                                  ),
+
+                                                                      final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context, listen: false);
+                                                                      await leadDetailsProvider.fetchLeadDetails(task.customerId.toString(), context);
+                                                                      if (!context.mounted) return;
+
+                                                                      final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+                                                                      leadsProvider.setCutomerId(int.tryParse(task.customerId.toString()) ?? 0);
+                                                                      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+                                                                      
+                                                                      if (leadDetailsProvider.leadDetails != null && leadDetailsProvider.leadDetails!.isNotEmpty) {
+                                                                        final leadDetails = leadDetailsProvider.leadDetails![0];
+                                                                        leadsProvider.enquirySourceController.text = leadDetails.enquirySourceName.toString();
+                                                                        dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
+                                                                        await leadsProvider.getLeadDropdowns(context);
+                                                                        if (!context.mounted) return;
+                                                                      }
+                                                                      
+                                                                      Navigator.pop(context); // Close loading dialog
+
+                                                                      showDialog(
+                                                                        context: context,
+                                                                        builder: (BuildContext context) {
+                                                                          return const NewLeadDrawerWidget(
+                                                                            isEdit: true,
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Icon(Icons.edit, size: 18, color: Colors.blue),
+                                                                        const SizedBox(width: 8),
+                                                                        const Text('Edit Lead'),
+                                                                      ],
+                                                                    ),
                                                                 ),
                                                           if (settingsProvider
                                                                       .menuIsEditMap[
@@ -1796,6 +1747,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               1)
                                                             (onHover) =>
                                                                 MenuItemButton(
+                                                                  onHover: onHover,
                                                                   onPressed:
                                                                       () {
                                                                     final leadsProvider = Provider.of<
@@ -1831,6 +1783,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               1)
                                                             (onHover) =>
                                                                 MenuItemButton(
+                                                                  onHover: onHover,
                                                                   onPressed:
                                                                       () {
                                                                     final customerDetailsProvider = Provider.of<
@@ -1881,6 +1834,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               1)
                                                             (onHover) =>
                                                                 MenuItemButton(
+                                                                  onHover: onHover,
                                                                   onPressed:
                                                                       () {
                                                                     showDialog(
@@ -1918,6 +1872,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               1)
                                                             (onHover) =>
                                                                 MenuItemButton(
+                                                                  onHover: onHover,
                                                                   onPressed:
                                                                       () {
                                                                     showDialog(

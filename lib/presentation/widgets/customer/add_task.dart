@@ -10,12 +10,14 @@ import 'package:vidyanexis/controller/models/task_customer_model.dart';
 import 'package:vidyanexis/controller/models/task_details_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
+import 'package:vidyanexis/controller/models/task_report_model.dart';
 
 class TaskCreationWidget extends StatefulWidget {
   bool isEdit;
   String taskId;
   TaskCustomerModel? task;
   TaskDetails? taskDetails;
+  TaskReportModel? taskReportModel;
 
   TaskCreationWidget({
     super.key,
@@ -23,6 +25,7 @@ class TaskCreationWidget extends StatefulWidget {
     required this.taskId,
     this.task,
     this.taskDetails,
+    this.taskReportModel,
   });
 
   @override
@@ -111,20 +114,17 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                 widget.task?.commissionNumber.toString() ??
                 '';
         customerDetailsProvider.taskDescriptionController.text =
-            widget.taskDetails?.description ?? widget.task?.description ?? '';
+            widget.taskDetails?.description ?? widget.task?.description ?? widget.taskReportModel?.description ?? '';
 
-        if (widget.taskDetails?.taskDate != null &&
-            widget.taskDetails!.taskDate.isNotEmpty) {
+        String? dateStr = widget.taskDetails?.taskDate ?? widget.task?.taskDate.toString() ?? widget.taskReportModel?.taskDate;
+        if (dateStr != null && dateStr.isNotEmpty) {
           try {
-            DateTime date = DateTime.parse(widget.taskDetails!.taskDate);
+            DateTime date = DateTime.parse(dateStr);
             customerDetailsProvider.taskChoosedateController.text =
                 DateFormat('dd MMM yyyy').format(date);
           } catch (e) {
             // Handle parsing error
           }
-        } else if (widget.task?.taskDate != null) {
-          customerDetailsProvider.taskChoosedateController.text =
-              DateFormat('dd MMM yyyy').format(widget.task!.taskDate);
         }
       }
     });
@@ -147,10 +147,12 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
       }
 
       await customerDetailsProvider.saveTask(
-        widget.task?.taskId.toString() ??
+        widget.taskReportModel?.taskId.toString() ??
+            widget.task?.taskId.toString() ??
             widget.taskDetails?.taskId.first.toString() ??
             '0',
-        widget.task?.taskMasterId.toString() ??
+        widget.taskReportModel?.taskMasterId.toString() ??
+            widget.task?.taskMasterId.toString() ??
             widget.taskDetails?.taskMasterId.toString() ??
             '0',
         customerDetailsProvider.selectedTaskType.toString(),

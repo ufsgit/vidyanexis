@@ -1242,6 +1242,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     1)
                                                                   (onHover) =>
                                                                       MenuItemButton(
+                                                                        onHover: onHover,
                                                                         onPressed: () => _handleLeadAction(
                                                                             'convert',
                                                                             lead),
@@ -1262,6 +1263,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     1)
                                                                   (onHover) =>
                                                                       MenuItemButton(
+                                                                        onHover: onHover,
                                                                         onPressed: () => _handleLeadAction(
                                                                             'quotation',
                                                                             lead),
@@ -1282,6 +1284,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     1)
                                                                   (onHover) =>
                                                                       MenuItemButton(
+                                                                        onHover: onHover,
                                                                         onPressed: () => _handleLeadAction(
                                                                             'document',
                                                                             lead),
@@ -1302,6 +1305,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     1)
                                                                   (onHover) =>
                                                                       MenuItemButton(
+                                                                        onHover: onHover,
                                                                         onPressed: () => _handleLeadAction(
                                                                             'edit',
                                                                             lead),

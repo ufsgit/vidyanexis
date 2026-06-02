@@ -8,14 +8,16 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
+import 'package:vidyanexis/controller/models/task_report_model.dart';
 
 class AddTaskMobile extends StatefulWidget {
   final bool isEdit;
   final String taskId;
   final TaskDetails? task;
+  final TaskReportModel? taskReportModel;
 
   const AddTaskMobile(
-      {super.key, required this.isEdit, required this.taskId, this.task});
+      {super.key, required this.isEdit, required this.taskId, this.task, this.taskReportModel});
 
   @override
   State<AddTaskMobile> createState() => _AddTaskMobileState();
@@ -95,10 +97,12 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         customerDetailsProvider.commissionController.text =
             widget.task?.commissionNumber.toString() ?? '';
         customerDetailsProvider.taskDescriptionController.text =
-            widget.task?.description ?? '';
-        if (widget.task?.taskDate != null && widget.task!.taskDate.isNotEmpty) {
+            widget.task?.description ?? widget.taskReportModel?.description ?? '';
+        
+        String? taskDateStr = widget.task?.taskDate ?? widget.taskReportModel?.taskDate;
+        if (taskDateStr != null && taskDateStr.isNotEmpty) {
           try {
-            DateTime date = DateTime.parse(widget.task!.taskDate);
+            DateTime date = DateTime.parse(taskDateStr);
             customerDetailsProvider.taskChoosedateController.text =
                 DateFormat('dd MMM yyyy').format(date);
           } catch (e) {
@@ -126,9 +130,11 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
       }
 
       await customerDetailsProvider.saveTask(
-        widget.task?.taskId.first.toString() ??
+        widget.taskReportModel?.taskId.toString() ??
+            widget.task?.taskId.first.toString() ??
             '0', //taking first item from list
-        widget.task?.taskMasterId.toString() ?? '0',
+        widget.taskReportModel?.taskMasterId.toString() ?? 
+            widget.task?.taskMasterId.toString() ?? '0',
         customerDetailsProvider.selectedTaskType.toString(),
         customerDetailsProvider.taskDescriptionController.text.toString(),
         customerDetailsProvider.taskChoosedateController.text.toString(),

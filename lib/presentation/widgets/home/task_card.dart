@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
@@ -11,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/chat_launcher.dart';
+import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -443,49 +445,42 @@ class _TaskCardState extends State<TaskCard> {
     return CustomActionButton(
       imageColor: AppColors.secondaryBlue,
       onTap: () async {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return const Center(
-              child: CircularProgressIndicator(),
+        final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+        customerDetailsProvider.customerId = widget.task.customerId.toString();
+
+        await customerDetailsProvider.getTaskUsers(widget.task.taskMasterId);
+        customerDetailsProvider.setTaskEditDropDown(
+          widget.task.taskTypeId,
+          widget.task.taskTypeName,
+          widget.task.toUserId,
+          widget.task.toUserName,
+          widget.task.taskStatusId,
+          widget.task.taskStatusName,
+        );
+        customerDetailsProvider.taskDescriptionController.text = widget.task.description.toString();
+        customerDetailsProvider.taskChoosedateController.text = widget.task.taskDate.toString() != 'null' && widget.task.taskDate.toString().isNotEmpty == true
+                ? DateFormat('dd MMM yyyy').format(DateTime.parse(widget.task.taskDate.toString()))
+                : '';
+        customerDetailsProvider.taskChoosetimeController.text = widget.task.taskTime.toString();
+
+        customerDetailsProvider.addTaskModel.taskUser = [
+          UserInTaskModel(
+            userDetailsId: widget.task.toUserId,
+            userDetailsName: widget.task.toUserName,
+          )
+        ];
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return AddTaskMobile(
+              isEdit: true,
+              taskId: widget.task.taskMasterId.toString(),
+              taskReportModel: widget.task,
             );
           },
-        );
-
-        final leadDetailsProvider =
-            Provider.of<LeadDetailsProvider>(context, listen: false);
-        await leadDetailsProvider.fetchLeadDetails(
-            widget.task.customerId.toString(), context);
-
-        final leadsProvider =
-            Provider.of<LeadsProvider>(context, listen: false);
-        leadsProvider.setCutomerId(widget.task.customerId);
-        final dropDownProvider =
-            Provider.of<DropDownProvider>(context, listen: false);
-        final leadDetails = leadDetailsProvider.leadDetails![0];
-        leadsProvider.enquirySourceController.text =
-            leadDetails.enquirySourceName.toString();
-
-        dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
-        await leadsProvider.getLeadDropdowns(context);
-        if (context.mounted) {
-          Navigator.pop(context); // Close loading dialog
-        }
-
-        if (context.mounted) {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return const NewLeadDrawerWidget(
-                isEdit: true,
-              );
-            },
-          );
-        }
+        ));
       },
       icon: Icons.edit_outlined,
-      text: 'Edit',
+      text: 'Edit Task',
       height: 38,
     );
   }
