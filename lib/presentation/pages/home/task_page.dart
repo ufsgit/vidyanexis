@@ -250,7 +250,7 @@ class _tasksPageReportState extends State<TaskPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    final double rowHeight = AppStyles.isWebScreen(context) ? 60.0 : 80.0;
+    final double rowHeight = AppStyles.isWebScreen(context) ? 36.0 : 48.0;
     // Removed unused leadProvider
 
     final reportsProvider = Provider.of<TaskPageProvider>(context);
@@ -362,285 +362,356 @@ class _tasksPageReportState extends State<TaskPage> {
             // AppStyles.isWebScreen(context)
             //     ?
 
-            // Responsive header implementation - modify your existing padding section:
             Padding(
-              padding: AppStyles.isWebScreen(context)
-                  ? const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0)
-                  : EdgeInsets.zero,
-              child: Column(
-                children: [
-                  // Main row with adaptive layout
-
-                  if (AppStyles.isWebScreen(context))
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final screenWidth = MediaQuery.of(context).size.width;
-                        final isMobile = !AppStyles.isWebScreen(context);
-
-                        return Column(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: AppStyles.isWebScreen(context)
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
-                            // Top row with Tasks title on left, everything else on right
+                            if (widget.initialStatusFilter != null) ...[
+                              IconButton(
+                                icon: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Icon(
+                                    Icons.arrow_back,
+                                    size: 20,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                            const Text(
+                              'Tasks',
+                              style: TextStyle(
+                                fontSize: 22,
+                                color: Color(0xFF1E293B),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            // Entry Type Filter
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                // Left side: Tasks title only
-                                if (!isMobile)
-                                  Row(
-                                    children: [
-                                      if (widget.initialStatusFilter !=
-                                          null) ...[
-                                        IconButton(
-                                          icon: const Icon(Icons.arrow_back,
-                                              color: Color(0xFF152D70)),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                        const SizedBox(width: 8),
-                                      ],
-                                      const Text(
-                                        'Tasks',
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          color: Color(0xFF152D70),
-                                          fontWeight: FontWeight.w600,
+                                GestureDetector(
+                                  onTap: () {
+                                    reportsProvider.setEntryType('myown');
+                                    reportsProvider.goToPage(1);
+                                    reportsProvider.searchTaskByCustomer(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: reportsProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                          width: 2.0,
                                         ),
                                       ),
-                                    ],
+                                    ),
+                                    child: Text(
+                                      'ME',
+                                      style: TextStyle(
+                                        color: reportsProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.grey,
+                                        fontWeight: reportsProvider.entryType != 'all' ? FontWeight.w600 : FontWeight.normal,
+                                        fontSize: 14,
+                                      ),
+                                    ),
                                   ),
-
-                                Expanded(
-                                  child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        // Entry Type Filter
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                reportsProvider.setEntryType('myown');
-                                                reportsProvider.goToPage(1);
-                                                reportsProvider.searchTaskByCustomer(context);
-                                              },
-                                              child: Container(
-                                                padding: const EdgeInsets.only(bottom: 2),
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                      color: reportsProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.transparent,
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  'ME',
-                                                  style: TextStyle(
-                                                    color: reportsProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.grey,
-                                                    fontWeight: reportsProvider.entryType != 'all' ? FontWeight.w600 : FontWeight.normal,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 16),
-                                            GestureDetector(
-                                              onTap: () {
-                                                reportsProvider.setEntryType('all');
-                                                reportsProvider.goToPage(1);
-                                                reportsProvider.searchTaskByCustomer(context);
-                                              },
-                                              child: Container(
-                                                padding: const EdgeInsets.only(bottom: 2),
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                      color: reportsProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.transparent,
-                                                      width: 2.0,
-                                                    ),
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  'ALL',
-                                                  style: TextStyle(
-                                                    color: reportsProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.grey,
-                                                    fontWeight: reportsProvider.entryType == 'all' ? FontWeight.w600 : FontWeight.normal,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                ),
+                                const SizedBox(width: 16),
+                                GestureDetector(
+                                  onTap: () {
+                                    reportsProvider.setEntryType('all');
+                                    reportsProvider.goToPage(1);
+                                    reportsProvider.searchTaskByCustomer(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: reportsProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                          width: 2.0,
                                         ),
-                                        const SizedBox(width: 16),
-                                        // Search container
-                                        Container(
-                                          width: isMobile
-                                              ? constraints.maxWidth * 0.4
-                                              : MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  (screenWidth > 860 ? 5 : 4),
-                                          height: 38,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            border: Border.all(
-                                                color: Colors.black,
-                                                width: 1.5),
-                                          ),
-                                          child: TextField(
-                                            controller: searchController,
-                                            textAlignVertical:
-                                                TextAlignVertical.center,
-                                            onChanged: _onSearchChanged,
-                                            onSubmitted: (query) {
-                                              if (_debounce?.isActive ??
-                                                  false) {
-                                                _debounce!.cancel();
-                                              }
-                                              reportsProvider
-                                                  .setTaskSearchCriteria(
-                                                query,
-                                                reportsProvider.fromDateS,
-                                                reportsProvider.toDateS,
-                                                reportsProvider.Status,
-                                                reportsProvider.AssignedTo,
-                                                reportsProvider.TaskType,
-                                                reportsProvider.enquiryForS,
-                                              );
-                                              reportsProvider
-                                                  .searchTaskByCustomer(
-                                                      context);
-                                            },
-                                            decoration: InputDecoration(
-                                              hintText: 'Search here....',
-                                              border: InputBorder.none,
-                                              contentPadding:
-                                                  const EdgeInsets.only(
-                                                      left: 16,
-                                                      right: 16,
-                                                      bottom: 11),
-                                              suffixIcon: GestureDetector(
-                                                onTap: () {
-                                                  if (_debounce?.isActive ??
-                                                      false) {
-                                                    _debounce!.cancel();
-                                                  }
-                                                  reportsProvider
-                                                      .setTaskSearchCriteria(
-                                                    searchController.text,
-                                                    reportsProvider.fromDateS,
-                                                    reportsProvider.toDateS,
-                                                    reportsProvider.Status,
-                                                    reportsProvider.AssignedTo,
-                                                    reportsProvider.TaskType,
-                                                    reportsProvider.enquiryForS,
-                                                  );
-                                                  reportsProvider.goToPage(1);
-                                                  reportsProvider
-                                                      .searchTaskByCustomer(
-                                                          context);
-                                                },
-                                                child: const Icon(Icons.search,
-                                                    color: Colors.black),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        const SizedBox(width: 16),
-                                        PopupMenuButton<int>(
-                                          icon: const Icon(Icons.sort,
-                                              color: Color(0xFF152D70)),
-                                          tooltip: 'Sort By',
-                                          onSelected: (int value) {
-                                            reportsProvider.setSortOption(
-                                                value, context);
-                                          },
-                                          itemBuilder: (BuildContext context) =>
-                                              [
-                                            const PopupMenuItem(
-                                              value: 0,
-                                              child: Text('Default'),
-                                            ),
-                                            const PopupMenuItem(
-                                              value: 1,
-                                              child: Text('ID No'),
-                                            ),
-                                            const PopupMenuItem(
-                                              value: 2,
-                                              child: Text('Creation Date'),
-                                            ),
-                                            const PopupMenuItem(
-                                              value: 3,
-                                              child: Text('Followup Date'),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 4),
-                                        IconButton(
-                                          icon: Icon(
-                                            reportsProvider.sortOrder == 'ASC'
-                                                ? Icons.arrow_upward
-                                                : Icons.arrow_downward,
-                                            color: const Color(0xFF152D70),
-                                            size: 20,
-                                          ),
-                                          onPressed: () => reportsProvider
-                                              .toggleSortOrder(context),
-                                          tooltip:
-                                              reportsProvider.sortOrder == 'ASC'
-                                                  ? 'Ascending'
-                                                  : 'Descending',
-                                        ),
-                                        const SizedBox(width: 8),
-
-                                        Row(
-                                          children: [
-                                            // FILTER BUTTON
-                                            CustomFilterButton(
-                                              onPressed: () {
-                                                reportsProvider.toggleFilter();
-                                              },
-                                              isFilter:
-                                                  reportsProvider.isFilter,
-                                            ),
-
-                                            const SizedBox(width: 16),
-
-                                            // Export button
-                                            if (!isMobile || screenWidth > 400)
-                                              CustomElevatedButton(
-                          radius: 4,
-                                                onPressed: () async {
-                                                  await reportsProvider
-                                                      .fetchTasksForExport(
-                                                          context);
-                                                },
-                                                buttonText: screenWidth > 600
-                                                    ? 'Export to Excel'
-                                                    : 'Export',
-                                                textColor: AppColors.whiteColor,
-                                                borderColor:
-                                                    AppColors.appViolet,
-                                                backgroundColor:
-                                                    AppColors.appViolet,
-                                              )
-                                          ],
-                                        ),
-                                      ]),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'ALL',
+                                      style: TextStyle(
+                                        color: reportsProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.grey,
+                                        fontWeight: reportsProvider.entryType == 'all' ? FontWeight.w600 : FontWeight.normal,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
+                            Container(
+                              width: 280,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                    color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                controller: searchController,
+                                textAlignVertical: TextAlignVertical.center,
+                                onChanged: _onSearchChanged,
+                                onSubmitted: (query) {
+                                  if (_debounce?.isActive ?? false) {
+                                    _debounce!.cancel();
+                                  }
+                                  reportsProvider.setTaskSearchCriteria(
+                                    query,
+                                    reportsProvider.fromDateS,
+                                    reportsProvider.toDateS,
+                                    reportsProvider.Status,
+                                    reportsProvider.AssignedTo,
+                                    reportsProvider.TaskType,
+                                    reportsProvider.enquiryForS,
+                                  );
+                                  reportsProvider.searchTaskByCustomer(context);
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Search here...',
+                                  hintStyle: const TextStyle(
+                                    color: Color(0xFF94A3B8),
+                                    fontSize: 13,
+                                  ),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      if (_debounce?.isActive ?? false) {
+                                        _debounce!.cancel();
+                                      }
+                                      reportsProvider.setTaskSearchCriteria(
+                                        searchController.text,
+                                        reportsProvider.fromDateS,
+                                        reportsProvider.toDateS,
+                                        reportsProvider.Status,
+                                        reportsProvider.AssignedTo,
+                                        reportsProvider.TaskType,
+                                        reportsProvider.enquiryForS,
+                                      );
+                                      reportsProvider.goToPage(1);
+                                      reportsProvider.searchTaskByCustomer(context);
+                                    },
+                                    child: const Icon(Icons.search,
+                                        color: Color(0xFF64748B), size: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            PopupMenuButton<int>(
+                              icon: const Icon(Icons.sort,
+                                  color: Color(0xFF64748B)),
+                              tooltip: 'Sort By',
+                              onSelected: (int value) {
+                                reportsProvider.setSortOption(value, context);
+                              },
+                              itemBuilder: (BuildContext context) => [
+                                const PopupMenuItem(
+                                  value: 0,
+                                  child: Text('Default'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 1,
+                                  child: Text('ID No'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 2,
+                                  child: Text('Creation Date'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 3,
+                                  child: Text('Followup Date'),
+                                ),
+                              ],
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                reportsProvider.sortOrder == 'ASC'
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward,
+                                color: const Color(0xFF64748B),
+                                size: 20,
+                              ),
+                              onPressed: () => reportsProvider.toggleSortOrder(context),
+                              tooltip: reportsProvider.sortOrder == 'ASC'
+                                  ? 'Ascending'
+                                  : 'Descending',
+                            ),
+                            CustomFilterButton(
+                              onPressed: () {
+                                reportsProvider.toggleFilter();
+                              },
+                              isFilter: reportsProvider.isFilter,
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                await reportsProvider.fetchTasksForExport(context);
+                              },
+                              icon: const Icon(Icons.download, size: 16),
+                              label: const Text(
+                                'Export to Excel',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            ),
                           ],
-                        );
-                      },
+                        ),
+                      ],
                     )
-                ],
-              ),
+                  : Column(
+                      children: [
+                        // Mobile Layout
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Left side: Tasks title only
+                            Row(
+                              children: [
+                                if (widget.initialStatusFilter != null) ...[
+                                  IconButton(
+                                    icon: const Icon(Icons.arrow_back, color: Color(0xFF152D70)),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
+                                const Text(
+                                  'Tasks',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: Color(0xFF152D70),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    // Entry Type Filter
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            reportsProvider.setEntryType('myown');
+                                            reportsProvider.goToPage(1);
+                                            reportsProvider.searchTaskByCustomer(context);
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.only(bottom: 2),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color: reportsProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                                  width: 2.0,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              'ME',
+                                              style: TextStyle(
+                                                color: reportsProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.grey,
+                                                fontWeight: reportsProvider.entryType != 'all' ? FontWeight.w600 : FontWeight.normal,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        GestureDetector(
+                                          onTap: () {
+                                            reportsProvider.setEntryType('all');
+                                            reportsProvider.goToPage(1);
+                                            reportsProvider.searchTaskByCustomer(context);
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.only(bottom: 2),
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color: reportsProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                                  width: 2.0,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              'ALL',
+                                              style: TextStyle(
+                                                color: reportsProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.grey,
+                                                fontWeight: reportsProvider.entryType == 'all' ? FontWeight.w600 : FontWeight.normal,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 16),
+                                    CustomFilterButton(
+                                      onPressed: () {
+                                        reportsProvider.toggleFilter();
+                                      },
+                                      isFilter: reportsProvider.isFilter,
+                                    ),
+                                  ]),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
             ),
             if (reportsProvider.isFilter && AppStyles.isWebScreen(context))
               Container(
@@ -1229,7 +1300,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 children: [
                                   CustomText(
                                     'Total Tasks: ${reportsProvider.totalSize}',
-                                    fontSize: 12,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.textGrey3,
                                   ),
@@ -1250,7 +1321,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     width: 80,
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 12.0),
+                                          vertical: 4.0, horizontal: 12.0),
                                       child: Text('No.',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -1261,50 +1332,50 @@ class _tasksPageReportState extends State<TaskPage> {
                                       flex: 2,
                                       title: 'Customer',
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 10.0),
+                                          vertical: 4.0, horizontal: 12.0),
                                       alignment: Alignment.centerLeft,
                                       color: Colors.white),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Task',
-                                      fontSize: 12,
+                                      fontSize: 13,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Enquiry for',
-                                      fontSize: 12,
+                                      fontSize: 13,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Staff',
-                                      fontSize: 12,
+                                      fontSize: 13,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Description',
-                                      fontSize: 12,
+                                      fontSize: 13,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
                                       flex: 1,
                                       title: 'Date',
-                                      fontSize: 12,
+                                      fontSize: 13,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
                                       flex: 1,
                                       title: 'Status',
-                                      fontSize: 12,
+                                      fontSize: 13,
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                 ],
                               ),
@@ -1446,14 +1517,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   child: Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        vertical: 6.0,
+                                                        vertical: 4.0,
                                                         horizontal: 12.0),
                                                     child: Text(
                                                       itemNumber.toString(),
                                                       style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
-                                                        fontSize: 12,
+                                                        fontSize: 13,
                                                       ),
                                                     ),
                                                   ),
@@ -1462,8 +1533,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   flex: 2,
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                                   data: Row(
                                                     children: [
                                                       Expanded(
@@ -1502,7 +1573,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600,
-                                                                fontSize: 12,
+                                                                fontSize: 13,
                                                               ),
                                                             ),
                                                           ),
@@ -1885,8 +1956,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   flex: 2,
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                                   data: Tooltip(
                                                     message:
                                                         task.taskTypeName ?? '',
@@ -1896,7 +1967,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           TextOverflow.ellipsis,
                                                       maxLines: 1,
                                                       style: const TextStyle(
-                                                        fontSize: 12,
+                                                        fontSize: 13,
                                                         color:
                                                             Color(0xFF334155),
                                                         fontWeight:
@@ -1909,8 +1980,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   flex: 2,
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                                   data: Tooltip(
                                                     message: provider
                                                         .getEnquiryForNameById(
@@ -1925,7 +1996,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           TextOverflow.ellipsis,
                                                       maxLines: 1,
                                                       style: const TextStyle(
-                                                        fontSize: 12,
+                                                        fontSize: 13,
                                                         color:
                                                             Color(0xFF334155),
                                                         fontWeight:
@@ -1938,15 +2009,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   flex: 2,
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                                   data: Text(
                                                     task.toUserName ?? '',
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 1,
                                                     style: const TextStyle(
-                                                      fontSize: 12,
+                                                      fontSize: 13,
                                                       color: Color(0xFF334155),
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -1957,8 +2028,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   flex: 2,
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                                   data: Tooltip(
                                                     message:
                                                         task.description ?? '',
@@ -1968,7 +2039,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           TextOverflow.ellipsis,
                                                       maxLines: 1,
                                                       style: const TextStyle(
-                                                        fontSize: 12,
+                                                        fontSize: 13,
                                                         color:
                                                             Color(0xFF334155),
                                                         fontWeight:
@@ -1981,8 +2052,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   flex: 1,
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                                   data: Text(
                                                     task.taskDate
                                                         .toDayMonthYearFormat(),
@@ -1990,7 +2061,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         TextOverflow.ellipsis,
                                                     maxLines: 1,
                                                     style: const TextStyle(
-                                                      fontSize: 12,
+                                                      fontSize: 13,
                                                       color: Color(0xFF334155),
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -2001,8 +2072,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   flex: 1,
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                                   data: InkWell(
                                                     onTap: () {
                                                       reportsProvider
@@ -2079,7 +2150,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     .ellipsis,
                                                             maxLines: 1,
                                                             style: TextStyle(
-                                                              fontSize: 12,
+                                                              fontSize: 13,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,

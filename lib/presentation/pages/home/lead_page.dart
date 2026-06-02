@@ -2602,40 +2602,46 @@ class _LeadsPageState extends State<LeadPage> {
                   : Colors.grey[300]!,
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Assigned Staff: '),
-              DropdownButton<int>(
-                value: dropdownValue,
-                hint: const Text('All'),
-                items: dropdownItems,
-                onChanged: isAdmin
-                    ? (int? newValue) {
-                        if (newValue != null) {
-                          leadProvider.setUserFilterStatus(newValue);
-                        }
-                        String status = leadProvider.selectedStatus.toString();
-                        String fromDate = leadProvider.formattedFromDate;
-                        String toDate = leadProvider.formattedToDate;
-                        String enquiryFor =
-                            leadProvider.selectedEnquiryFor.toString();
-                        print(
-                            'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                        leadProvider.setSearchCriteria(
-                            searchController.text, fromDate, toDate);
-                        leadProvider.getSearchLeads(context);
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: dropdownValue,
+              hint: const Text('Assigned Staff: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              items: dropdownItems,
+              selectedItemBuilder: (BuildContext context) {
+                return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Assigned Staff: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      item.child,
+                    ],
+                  );
+                }).toList();
+              },
+              onChanged: isAdmin
+                  ? (int? newValue) {
+                      if (newValue != null) {
+                        leadProvider.setUserFilterStatus(newValue);
                       }
-                    : null,
-                underline: Container(),
-                isDense: true,
-                iconSize: 18,
-                disabledHint: Text(
-                  userName.isNotEmpty ? userName : 'Current User',
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
-                ),
+                      String status = leadProvider.selectedStatus.toString();
+                      String fromDate = leadProvider.formattedFromDate;
+                      String toDate = leadProvider.formattedToDate;
+                      String enquiryFor =
+                          leadProvider.selectedEnquiryFor.toString();
+                      print(
+                          'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
+                      leadProvider.setSearchCriteria(
+                          searchController.text, fromDate, toDate);
+                      leadProvider.getSearchLeads(context);
+                    }
+                  : null,
+              isDense: true,
+              iconSize: 18,
+              disabledHint: Text(
+                'Assigned Staff: ${userName.isNotEmpty ? userName : 'Current User'}',
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
               ),
-            ],
+            ),
           ),
         );
       },
@@ -2645,6 +2651,29 @@ class _LeadsPageState extends State<LeadPage> {
   Widget _buildEnquiryForFilter(LeadsProvider leadProvider) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
+        final List<DropdownMenuItem<int>> items = [
+          const DropdownMenuItem<int>(
+            value: 0,
+            child: Text(
+              'All',
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+        ] +
+        dropDownProvider.enquiryForList
+            .map((user) => DropdownMenuItem<int>(
+                  value: user.enquiryForId,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 150),
+                    child: Text(
+                      user.enquiryForName,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ))
+            .toList();
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
@@ -2657,51 +2686,35 @@ class _LeadsPageState extends State<LeadPage> {
                   : Colors.grey[300]!,
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Enquiry For: '),
-              DropdownButton<int>(
-                value: leadProvider.selectedEnquiryFor ?? 0,
-                hint: const Text('All'),
-                items: [
-                      const DropdownMenuItem<int>(
-                        value: 0,
-                        child: Text(
-                          'All',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ] +
-                    dropDownProvider.enquiryForList
-                        .map((user) => DropdownMenuItem<int>(
-                              value: user.enquiryForId,
-                              child: ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 150),
-                                child: Text(
-                                  user.enquiryForName,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                onChanged: (int? newValue) {
-                  if (newValue != null) {
-                    leadProvider.setEnquiryForFilter(newValue);
-                  }
-                  String fromDate = leadProvider.formattedFromDate;
-                  String toDate = leadProvider.formattedToDate;
-                  leadProvider.setSearchCriteria(
-                      searchController.text, fromDate, toDate);
-                  leadProvider.getSearchLeads(context);
-                },
-                underline: Container(),
-                isDense: true,
-                iconSize: 18,
-              ),
-            ],
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: leadProvider.selectedEnquiryFor ?? 0,
+              hint: const Text('Enquiry For: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              items: items,
+              selectedItemBuilder: (BuildContext context) {
+                return items.map<Widget>((DropdownMenuItem<int> item) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Enquiry For: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      item.child,
+                    ],
+                  );
+                }).toList();
+              },
+              onChanged: (int? newValue) {
+                if (newValue != null) {
+                  leadProvider.setEnquiryForFilter(newValue);
+                }
+                String fromDate = leadProvider.formattedFromDate;
+                String toDate = leadProvider.formattedToDate;
+                leadProvider.setSearchCriteria(
+                    searchController.text, fromDate, toDate);
+                leadProvider.getSearchLeads(context);
+              },
+              isDense: true,
+              iconSize: 18,
+            ),
           ),
         );
       },
@@ -2711,6 +2724,29 @@ class _LeadsPageState extends State<LeadPage> {
   Widget _buildEnquirySourceFilter(LeadsProvider leadProvider) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
+        final List<DropdownMenuItem<int>> items = [
+          const DropdownMenuItem<int>(
+            value: 0,
+            child: Text(
+              'All',
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+        ] +
+        dropDownProvider.enquiryData
+            .map((user) => DropdownMenuItem<int>(
+                  value: user.enquirySourceId,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 150),
+                    child: Text(
+                      user.enquirySourceName,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ))
+            .toList();
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
@@ -2723,51 +2759,35 @@ class _LeadsPageState extends State<LeadPage> {
                   : Colors.grey[300]!,
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Enquiry Source: '),
-              DropdownButton<int>(
-                value: leadProvider.selectedEnquirySource ?? 0,
-                hint: const Text('All'),
-                items: [
-                      const DropdownMenuItem<int>(
-                        value: 0,
-                        child: Text(
-                          'All',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ] +
-                    dropDownProvider.enquiryData
-                        .map((user) => DropdownMenuItem<int>(
-                              value: user.enquirySourceId,
-                              child: ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 150),
-                                child: Text(
-                                  user.enquirySourceName,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                onChanged: (int? newValue) {
-                  if (newValue != null) {
-                    leadProvider.setEnquirySourceFilter(newValue);
-                  }
-                  String fromDate = leadProvider.formattedFromDate;
-                  String toDate = leadProvider.formattedToDate;
-                  leadProvider.setSearchCriteria(
-                      searchController.text, fromDate, toDate);
-                  leadProvider.getSearchLeads(context);
-                },
-                underline: Container(),
-                isDense: true,
-                iconSize: 18,
-              ),
-            ],
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: leadProvider.selectedEnquirySource ?? 0,
+              hint: const Text('Enquiry Source: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              items: items,
+              selectedItemBuilder: (BuildContext context) {
+                return items.map<Widget>((DropdownMenuItem<int> item) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Enquiry Source: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      item.child,
+                    ],
+                  );
+                }).toList();
+              },
+              onChanged: (int? newValue) {
+                if (newValue != null) {
+                  leadProvider.setEnquirySourceFilter(newValue);
+                }
+                String fromDate = leadProvider.formattedFromDate;
+                String toDate = leadProvider.formattedToDate;
+                leadProvider.setSearchCriteria(
+                    searchController.text, fromDate, toDate);
+                leadProvider.getSearchLeads(context);
+              },
+              isDense: true,
+              iconSize: 18,
+            ),
           ),
         );
       },

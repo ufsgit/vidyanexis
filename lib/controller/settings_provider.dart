@@ -1729,7 +1729,12 @@ class SettingsProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          _getMenuPermission = (data as List<dynamic>)
+          var rawData = data as List<dynamic>;
+          
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
+          var filteredData = rawData.where((item) => (item['Menu_Status'] ?? 1) != 0).toList();
+
+          _getMenuPermission = filteredData
               .map((item) => GetMenuPermissionModel.fromJson(item))
               .toList();
           _getMenuPermission
@@ -1797,23 +1802,11 @@ class SettingsProvider extends ChangeNotifier {
           };
 
           for (var entry in customPermissions.entries) {
-            bool alreadyExists = false;
             for (var i = 0; i < _getMenuPermission.length; i++) {
               if (_getMenuPermission[i].menuId == entry.key) {
                 _getMenuPermission[i].menuName = entry.value;
-                alreadyExists = true;
                 break;
               }
-            }
-            if (!alreadyExists) {
-              _getMenuPermission.add(GetMenuPermissionModel(
-                menuId: entry.key,
-                menuName: entry.value,
-                isView: 1, // Defaulting to 1 so they show up for now
-                isSave: 1,
-                isEdit: 1,
-                isDelete: 1,
-              ));
             }
           }
 
@@ -3667,6 +3660,10 @@ class SettingsProvider extends ChangeNotifier {
           _showMenu = (data as List<dynamic>)
               .map((item) => MenuPermissionModel.fromJson(item))
               .toList();
+          
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
+          _showMenu.removeWhere((item) => item.menuStatus == 0);
+
           _showMenu
               .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
 
@@ -3726,29 +3723,15 @@ class SettingsProvider extends ChangeNotifier {
             76: 'AMC Notification',
             77: 'Payment Reminders',
             84: 'Dashboard count',
+            120: 'Lead Search',
           };
 
           for (var entry in customPermissionsShow.entries) {
-            bool alreadyExists = false;
             for (var i = 0; i < _showMenu.length; i++) {
               if (_showMenu[i].menuId == entry.key) {
                 _showMenu[i].menuName = entry.value;
-                alreadyExists = true;
                 break;
               }
-            }
-            if (!alreadyExists) {
-              _showMenu.add(MenuPermissionModel(
-                  menuId: entry.key,
-                  menuName: entry.value,
-                  menuOrder: 0,
-                  menuOrderSub: 0,
-                  isEdit: 1,
-                  isSave: 1,
-                  isDelete: 1,
-                  isView: 1,
-                  menuStatus: 1,
-                  menuType: 1));
             }
           }
 

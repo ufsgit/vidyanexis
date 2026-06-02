@@ -780,38 +780,46 @@ class _DashBoardPageState extends State<DashBoardPage> {
             color: const Color(0xFFF1F5F9),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(Icons.person_search_rounded, size: 13, color: AppColors.secondaryBlue),
-              const SizedBox(width: 8),
-              Expanded(
-                child: DropdownButton<int>(
-                  value: dropdownItems.any((item) => item.value == dropdownValue)
-                      ? dropdownValue
-                      : 0,
-                  underline: Container(),
-                  isDense: true,
-                  isExpanded: true,
-                  alignment: Alignment.centerLeft,
-                  icon: Icon(Icons.keyboard_arrow_down_rounded, size: 14, color: AppColors.secondaryBlue.withOpacity(0.5)),
-                  items: dropdownItems,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.secondaryBlue,
-                  ),
-                  onChanged: isAdmin
-                      ? (int? newValue) {
-                          if (newValue != null) {
-                            dashBoardProvider.setUserFilterStatus(newValue);
-                            dashBoardProvider.loadDataForTab(activeTab, context);
-                          }
-                        }
-                      : null,
-                ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: dropdownItems.any((item) => item.value == dropdownValue)
+                  ? dropdownValue
+                  : 0,
+              isDense: true,
+              isExpanded: true,
+              icon: Icon(Icons.keyboard_arrow_down_rounded, size: 14, color: AppColors.secondaryBlue.withOpacity(0.5)),
+              items: dropdownItems,
+              selectedItemBuilder: (BuildContext context) {
+                return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.person_search_rounded, size: 13, color: AppColors.secondaryBlue),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: item.child,
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList();
+              },
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: AppColors.secondaryBlue,
               ),
-            ],
+              onChanged: isAdmin
+                  ? (int? newValue) {
+                      if (newValue != null) {
+                        dashBoardProvider.setUserFilterStatus(newValue);
+                        dashBoardProvider.loadDataForTab(activeTab, context);
+                      }
+                    }
+                  : null,
+            ),
           ),
         );
 
