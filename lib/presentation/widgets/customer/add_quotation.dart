@@ -1312,6 +1312,40 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 onPressed: () async {
                   if (!_formKey.currentState!.validate()) return;
 
+                  if (companyQuotationItems) {
+                    final selectedData = expenseProvider.itemList.firstWhere(
+                        (item) =>
+                            item.itemId == customerDetailsProvider.newItemId);
+                    double priceFrom =
+                        double.tryParse(selectedData.priceFrom) ?? 0.0;
+                    double priceTo =
+                        double.tryParse(selectedData.priceTo) ?? 0.0;
+
+                    double netTotal = double.tryParse(
+                            customerDetailsProvider.totalController.text) ??
+                        0.0;
+                    // Validation: Show AlertDialog if total is out of range
+                    if (netTotal < priceFrom || netTotal > priceTo) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Invalid Amount'),
+                          content: Text(
+                            'Total amount must be between $priceFrom and $priceTo.\n\n'
+                            'Current total: ${netTotal.toStringAsFixed(2)}',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                      return; // Important: Stop execution, do not update amount
+                    }
+                  }
+
                   if (customerDetailsProvider
                       .qproductnameController.text.isEmpty) {
                     _showValidationDialog(
