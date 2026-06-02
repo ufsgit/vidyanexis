@@ -39,6 +39,18 @@ class _BomItemCardState extends State<BomItemCard> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(BomItemCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If the item instance changed (e.g., edited via the dialog and replaced in the list),
+    // update the controller's text to reflect the new quantity.
+    if (widget.item != oldWidget.item) {
+      if (_qtyController.text != widget.item.quantity.toString()) {
+        _qtyController.text = widget.item.quantity.toString();
+      }
+    }
+  }
+
   void _showDeleteConfirmation(BuildContext context) {
     showDialog(
       context: context,

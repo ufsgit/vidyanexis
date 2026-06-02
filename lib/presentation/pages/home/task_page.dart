@@ -2649,60 +2649,59 @@ class _tasksPageReportState extends State<TaskPage> {
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: Wrap(
-                              spacing: 6,
-                              runSpacing: 6,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                Text(
-                                  'Task:',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey.shade500,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Task:',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey.shade500,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  task.taskTypeName ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1E293B),
-                                  ),
-                                ),
-                                Text(
-                                  'for',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey.shade500,
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    context.push(
-                                        '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                  },
-                                  child: Text(
-                                    task.customerName,
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    task.taskTypeName ?? '',
                                     style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF1E293B),
-                                      decoration: TextDecoration.underline,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 2),
-                                _buildHeaderPill(
-                                    Icons.person_outline, 'Customer'),
-                                _buildHeaderPill(
-                                    Icons.description_outlined, 'Document'),
-                              ],
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'for',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  InkWell(
+                                    onTap: () {
+                                      context.push(
+                                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                    },
+                                    child: Text(
+                                      task.customerName,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1E293B),
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Flexible(
+                    Expanded(
                       child: FutureBuilder<List<TaskTypeStatusModel>>(
                         future: statusOptionsFuture,
                         builder: (contextBuilder, snapshot) {
@@ -2807,7 +2806,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 ValueNotifier(false);
 
                             Widget formFields = Container(
-                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
@@ -2815,7 +2814,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   // Row 1: Current Status Dropdown
                                   // Row 1: Current Status Chips Selection
                                   Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.only(bottom: 8),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -2825,7 +2824,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w600,
                                                 color: Color(0xFF64748B))),
-                                        const SizedBox(height: 12),
+                                        const SizedBox(height: 8),
                                         ValueListenableBuilder<
                                             TaskTypeStatusModel>(
                                           valueListenable: selectedStatus,
@@ -2864,7 +2863,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
 
                                   // CustomField
                                   Consumer<TaskPageProvider>(
@@ -3441,14 +3439,13 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                             );
 
-                            return ListView(
-                              shrinkWrap: true,
+                            return Column(
                               children: [
-                                isSmallScreen
-                                    ? Flexible(
-                                        child: SingleChildScrollView(
-                                            child: formFields))
-                                    : formFields, // No scrolling if large screen!
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: formFields,
+                                  ),
+                                ),
 
                                 // Row 5: Action buttons aligned to right
                                 ValueListenableBuilder<bool>(
@@ -4329,7 +4326,7 @@ class _tasksPageReportState extends State<TaskPage> {
       borderRadius: BorderRadius.circular(4),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected ? statusColor : statusColor.withOpacity(0.05),
           borderRadius: BorderRadius.circular(4),
@@ -4353,15 +4350,15 @@ class _tasksPageReportState extends State<TaskPage> {
             Icon(
               isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
               color: isSelected ? Colors.white : statusColor,
-              size: 18,
+              size: 12,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 4),
             Text(
               status.statusName ?? '',
               style: TextStyle(
                 color: isSelected ? Colors.white : statusColor,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
               ),
             ),
           ],
