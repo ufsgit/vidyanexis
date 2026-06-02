@@ -446,7 +446,20 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                  Expanded(child: Container()),
+                                  Expanded(
+                                    child: CustomTextField(
+                                      readOnly: false,
+                                      height: 56,
+                                      controller:
+                                          expenseProvider.itemPriceController,
+                                      hintText: 'Price',
+                                      labelText: '',
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d*\.?\d{0,2}')),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 12),
