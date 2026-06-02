@@ -25,17 +25,21 @@ class BomItemCard extends StatefulWidget {
 
 class _BomItemCardState extends State<BomItemCard> {
   late TextEditingController _qtyController;
+  late TextEditingController _priceController;
 
   @override
   void initState() {
     super.initState();
     _qtyController =
         TextEditingController(text: widget.item.quantity.toString());
+    _priceController =
+        TextEditingController(text: widget.item.price.toString());
   }
 
   @override
   void dispose() {
     _qtyController.dispose();
+    _priceController.dispose();
     super.dispose();
   }
 
@@ -47,6 +51,9 @@ class _BomItemCardState extends State<BomItemCard> {
     if (widget.item != oldWidget.item) {
       if (_qtyController.text != widget.item.quantity.toString()) {
         _qtyController.text = widget.item.quantity.toString();
+      }
+      if (_priceController.text != widget.item.price.toString()) {
+        _priceController.text = widget.item.price.toString();
       }
     }
   }
@@ -168,10 +175,10 @@ class _BomItemCardState extends State<BomItemCard> {
                   widget.item.uom,
                 ),
               ] else ...[
-                // Quantity row (editable) – same as above, using the controller
-                _buildEditableQuantityRow(
+                // Quantity row
+                _buildDetailRow(
                   provider.getQuotationFieldName(12, 'Quantity'),
-                  _qtyController,
+                  '${widget.item.quantity} ${widget.item.uom}',
                 ),
                 const SizedBox(height: 8),
               ],
@@ -189,11 +196,9 @@ class _BomItemCardState extends State<BomItemCard> {
               ),
               if (companyQuotationItems) ...[
                 const SizedBox(height: 8),
-                _buildDetailRow(
+                _buildEditablePriceRow(
                   provider.getQuotationFieldName(15, 'Price'),
-                  (widget.item.price?.isNotEmpty ?? false)
-                      ? widget.item.price!
-                      : '-',
+                  _priceController,
                 ),
                 const SizedBox(height: 8),
                 _buildDetailRow(
@@ -254,15 +259,66 @@ class _BomItemCardState extends State<BomItemCard> {
             ],
             onChanged: (value) {
               final newQty = double.tryParse(value) ?? 0.0;
-              final price = double.tryParse(widget.item.price ?? '0') ?? 0.0;
-              final newAmount = price * newQty;
               setState(() {
                 widget.item.quantity = newQty.toString();
-                widget.item.amount = newAmount.toStringAsFixed(2);
               });
-              context
-                  .read<CustomerDetailsProvider>()
-                  .companyQuotationItemsCalulate(context);
+              final provider = context.read<CustomerDetailsProvider>();
+              provider.billquantityController.text = widget.item.quantity;
+              provider.billpriceController.text = widget.item.price ?? '0';
+              provider.seteditBillOfMaterialsIndex(
+                  provider.billOfMaterialsItems.indexOf(widget.item));
+              provider.companyQuotationItemsCalulate(context);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEditablePriceRow(
+      String label, TextEditingController controller) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 100,
+          child: Text(
+            '$label :',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textGrey2,
+            ),
+          ),
+        ),
+        Expanded(
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
+            ),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textBlack.withValues(alpha: 0.8),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*\.?[0-9]*$')),
+            ],
+            onChanged: (value) {
+              final newPrice = double.tryParse(value) ?? 0.0;
+              setState(() {
+                widget.item.price = newPrice.toString();
+              });
+              final provider = context.read<CustomerDetailsProvider>();
+              provider.billquantityController.text = widget.item.quantity;
+              provider.billpriceController.text = widget.item.price ?? '0';
+              provider.seteditBillOfMaterialsIndex(
+                  provider.billOfMaterialsItems.indexOf(widget.item));
+              provider.companyQuotationItemsCalulate(context);
             },
           ),
         ),

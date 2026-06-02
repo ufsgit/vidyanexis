@@ -8,6 +8,8 @@ class BillOfMaterialItem {
   String? comments;
   String? price;
   String? amount;
+  String? priceFrom;
+  String? priceTo;
 
   BillOfMaterialItem({
     this.id,
@@ -19,6 +21,8 @@ class BillOfMaterialItem {
     this.comments,
     this.price,
     this.amount,
+    this.priceFrom,
+    this.priceTo,
   });
 
   // Convert to JSON
@@ -33,6 +37,8 @@ class BillOfMaterialItem {
       'UOM': uom,
       'Price': price ?? '',
       'Amount': amount ?? '',
+      'Price_Range_From': priceFrom ?? '',
+      'Price_Range_To': priceTo ?? '',
     };
   }
 
@@ -50,6 +56,8 @@ class BillOfMaterialItem {
       uom: json['UOM'] ?? '',
       price: json['Price']?.toString() ?? '',
       amount: json['Amount']?.toString() ?? '',
+      priceFrom: json['Price_Range_From']?.toString() ?? '',
+      priceTo: json['Price_Range_To']?.toString() ?? '',
     );
   }
 }

@@ -470,6 +470,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
             distributor: item.manufacture,
             price: item.price.toString(),
             amount: (item.price * item.quantity).toStringAsFixed(2),
+            priceFrom: item.priceFrom,
+            priceTo: item.priceTo,
           ),
         )
         .toList();
@@ -481,17 +483,56 @@ class CustomerDetailsProvider extends ChangeNotifier {
     try {
       double quantity = double.tryParse(billquantityController.text) ?? 0;
       double price = double.tryParse(billpriceController.text) ?? 0;
+      print("quantity: $quantity");
+      print("price: $price");
       double total = quantity * price;
+
+      final currentItem = _billOfMaterialsItems[editBillOfMaterialsIndex!];
+
+      double priceFrom = double.tryParse(currentItem.priceFrom ?? '0') ?? 0;
+      double priceTo = double.tryParse(currentItem.priceTo ?? '0') ?? 0;
+
+      print("priceFrom: $priceFrom");
+      print("priceTo: $priceTo");
+      print("total: $total");
+
+      // Validation: Show AlertDialog if total is out of range
+      if (total < priceFrom || total > priceTo) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Invalid Amount'),
+            content: Text(
+              'Total amount must be between $priceFrom and $priceTo.\n\n'
+              'Current total: ${total.toStringAsFixed(2)}',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return; // Important: Stop execution, do not update amount
+      }
+
+      // If validation passes, update the amount
       billamountController.text = total.toStringAsFixed(2);
+
+      // Update current item amount
+      currentItem.amount = total.toStringAsFixed(2);
+
+      // Recalculate total of all items
       billTotalAmount = _billOfMaterialsItems.fold(
         0.0,
-        (total, item) {
-          final amountStr = item.amount ?? '0.0';
-          final amount = double.tryParse(amountStr) ?? 0.0;
-          return total + amount;
+        (sum, item) {
+          final amount = double.tryParse(item.amount ?? '0') ?? 0.0;
+          return sum + amount;
         },
       );
-      print(billTotalAmount);
+
+      print('Updated billTotalAmount: $billTotalAmount');
       print(_billOfMaterialsItems.map((item) => item.toJson()).toList());
     } catch (e) {
       print('Error calculating total: $e');
@@ -522,8 +563,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     final profitAmount = bomTotal * profitPercent / 100;
     final finalTotal = bomTotal + profitAmount;
-    final itemName =
-        _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
+    final itemName = _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
 
     // 3. Inject exactly one auto-item depending on quotation type
     if (_selectedQuotationType == 1) {
@@ -2747,6 +2787,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _selectedBranchId = null;
     billpriceController.clear();
     billamountController.clear();
+    setSelectedItemName('');
+    _newItemId = 0;
+    billTotalAmount = 0.0;
     notifyListeners();
   }
 
@@ -2886,6 +2929,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         comments: billOfMaterials[index].invoiceNo,
         price: billOfMaterials[index].price,
         amount: billOfMaterials[index].amount,
+        priceFrom: billOfMaterials[index].priceFrom,
+        priceTo: billOfMaterials[index].priceTo,
       ),
     );
 
@@ -4538,7 +4583,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           }
 
           if (items.isEmpty) {
-             _profitList = [ProfitModel(id: -1, name: "Empty List from API")];
+            _profitList = [ProfitModel(id: -1, name: "Empty List from API")];
           } else {
             List<ProfitModel> temp = [];
             for (int i = 0; i < items.length; i++) {
@@ -4549,7 +4594,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 if (model.id == 0) {
                    temp.add(ProfitModel(id: i + 1, name: model.name.isEmpty ? 'Item ${i+1}' : model.name));
                 } else {
-                   temp.add(model);
+                  temp.add(model);
                 }
               } else {
                 temp.add(ProfitModel(id: i + 1, name: item.toString()));
@@ -4558,7 +4603,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
             _profitList = temp;
           }
         } else {
-           _profitList = [ProfitModel(id: -1, name: "API returned null data")];
+          _profitList = [ProfitModel(id: -1, name: "API returned null data")];
         }
       } else {
          _profitList = [ProfitModel(id: -1, name: "API Error ${response.statusCode}")];
