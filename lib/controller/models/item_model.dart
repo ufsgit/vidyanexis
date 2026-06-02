@@ -9,6 +9,8 @@ class Item {
   double GSTPercent;
   double AdCESS;
   String Unit;
+  String? priceRangeFrom;
+  String? priceRangeTo;
 
   Item({
     required this.ItemName,
@@ -21,6 +23,8 @@ class Item {
     required this.AdCESS,
     required this.Unit,
     required this.Amount,
+    this.priceRangeFrom,
+    this.priceRangeTo,
   });
 
   Map<String, dynamic> toJson() {
@@ -35,6 +39,8 @@ class Item {
       'GSTPercent': GSTPercent,
       'AdCESS': AdCESS,
       'Unit': Unit,
+      'Price_Range_From': priceRangeFrom,
+      'Price_Range_To': priceRangeTo,
     };
   }
 
@@ -50,6 +56,8 @@ class Item {
       AdCESS: json['AdCESS'],
       Unit: json['Unit'],
       Amount: json['Amount'],
+      priceRangeFrom: json['Price_Range_From']?.toString(),
+      priceRangeTo: json['Price_Range_To']?.toString(),
     );
   }
 

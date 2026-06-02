@@ -110,6 +110,9 @@ class ExpenseProvider extends ChangeNotifier {
   List<ItemSettings> _RealItems = [];
   List<ItemSettings> get RealItems => _RealItems;
 
+  String? fetchedPriceRangeFrom;
+  String? fetchedPriceRangeTo;
+
   int? _editIndex;
   int? get editIndex => _editIndex;
   List<ItemListModel> _itemList = [];
@@ -1936,7 +1939,16 @@ class ExpenseProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          final dataItem = data['data']?['itemMaterials'] as List<dynamic>?;
+          final rootData = data['data'];
+          if (rootData != null) {
+            fetchedPriceRangeFrom = rootData['Price_Range_From']?.toString();
+            fetchedPriceRangeTo = rootData['Price_Range_To']?.toString();
+          } else {
+            fetchedPriceRangeFrom = null;
+            fetchedPriceRangeTo = null;
+          }
+
+          final dataItem = rootData?['itemMaterials'] as List<dynamic>?;
 
           _RealItems = dataItem?.map((item) {
                 try {

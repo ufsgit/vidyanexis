@@ -538,6 +538,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
               CustomFieldSectionWidget(
                 controllerKey: CustomFieldControllerkey.leadStatus.value,
                 key: customFieldLeadStatusKey,
+                showMore: (settingsProvider.menuIsViewMap[67] ?? 0) == 1,
                 onFieldValuesChanged: (p0) {
                   print("kikisdhuqe $p0");
                   var f = [];
