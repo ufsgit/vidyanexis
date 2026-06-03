@@ -61,15 +61,13 @@ import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 
 class SettingsProvider extends ChangeNotifier {
-
   static final SettingsProvider _instance = SettingsProvider._internal();
-  
-  factory SettingsProvider() => _instance;
-  
-  SettingsProvider._internal() {
-    _initCache();           
-  }
 
+  factory SettingsProvider() => _instance;
+
+  SettingsProvider._internal() {
+    _initCache();
+  }
 
   VoidCallback? onAddPressed;
 
@@ -1730,9 +1728,10 @@ class SettingsProvider extends ChangeNotifier {
 
         if (data != null) {
           var rawData = data as List<dynamic>;
-          
+
           // Filter out permissions that are hidden by the backend (Menu_Status == 0)
-          var filteredData = rawData.where((item) => (item['Menu_Status'] ?? 1) != 0).toList();
+          var filteredData =
+              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0).toList();
 
           _getMenuPermission = filteredData
               .map((item) => GetMenuPermissionModel.fromJson(item))
@@ -2761,18 +2760,40 @@ class SettingsProvider extends ChangeNotifier {
     required BuildContext context,
     required String statusId,
     required String statusName,
+    int isMoreDetails = 0,
+    String contactPerson = '',
+    String phone = '',
+    String email = '',
+    String website = '',
+    String phone2 = '',
+    String contact2 = '',
+    String address = '',
+    String description = '',
   }) async {
     try {
       Loader.showLoader(context);
 
+      final Map<String, dynamic> bodyData = {
+        "Enquiry_Source_Id": statusId,
+        "Enquiry_Source_Name": statusName,
+        "Is_More_Details": isMoreDetails,
+      };
+
+      if (isMoreDetails == 1) {
+        bodyData.addAll({
+          "Contact_Person": contactPerson,
+          "Phone": phone,
+          "Email": email,
+          "Website": website,
+          "Phone_2": phone2,
+          "Contact_2": contact2,
+          "Address": address,
+          "Description": description,
+        });
+      }
+
       final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.addEnquirySource,
-          bodyData: {
-            "Enquiry_Source_Id": statusId,
-            "Enquiry_Source_Name": statusName,
-            // "Source_Category_Id": sourceCategoryId,
-            // "Source_Category_Name": sourceCategoryEnquiryController.text
-          });
+          endPoint: HttpUrls.addEnquirySource, bodyData: bodyData);
 
       if (response!.statusCode == 200) {
         enquirySourceController.clear();
@@ -3660,7 +3681,7 @@ class SettingsProvider extends ChangeNotifier {
           _showMenu = (data as List<dynamic>)
               .map((item) => MenuPermissionModel.fromJson(item))
               .toList();
-          
+
           // Filter out permissions that are hidden by the backend (Menu_Status == 0)
           _showMenu.removeWhere((item) => item.menuStatus == 0);
 

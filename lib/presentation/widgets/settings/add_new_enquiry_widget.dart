@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/controller/models/enquiry_settings_model.dart';
 
 class AddEnquirySource extends StatefulWidget {
   final bool isEdit;
@@ -14,6 +15,7 @@ class AddEnquirySource extends StatefulWidget {
   // final String sourceId;
 
   final String editId;
+  final EnquirySourceModel? model;
 
   const AddEnquirySource({
     super.key,
@@ -22,6 +24,7 @@ class AddEnquirySource extends StatefulWidget {
     // required this.sourceName,
     // required this.sourceId,
     required this.editId,
+    this.model,
   });
 
   @override
@@ -30,6 +33,15 @@ class AddEnquirySource extends StatefulWidget {
 
 class _AddEnquirySourceState extends State<AddEnquirySource> {
   List<Map<String, dynamic>> selectedFields = [];
+  bool _showMoreDetails = false;
+  late final TextEditingController contactPersonController;
+  late final TextEditingController phoneController;
+  late final TextEditingController emailController;
+  late final TextEditingController websiteController;
+  late final TextEditingController phone2Controller;
+  late final TextEditingController contact2Controller;
+  late final TextEditingController addressController;
+  late final TextEditingController descriptionController;
 
   String? validateInputs(
       BuildContext context, SettingsProvider settingsProvider) {
@@ -91,6 +103,20 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
   @override
   void initState() {
     super.initState();
+    final model = widget.model;
+    contactPersonController =
+        TextEditingController(text: model?.contactPerson ?? '');
+    phoneController = TextEditingController(text: model?.phone ?? '');
+    emailController = TextEditingController(text: model?.email ?? '');
+    websiteController = TextEditingController(text: model?.website ?? '');
+    phone2Controller = TextEditingController(text: model?.phone2 ?? '');
+    contact2Controller = TextEditingController(text: model?.contact2 ?? '');
+    addressController = TextEditingController(text: model?.address ?? '');
+    descriptionController =
+        TextEditingController(text: model?.description ?? '');
+
+    _showMoreDetails = model != null && model.isMoreDetails == 1;
+
     if (widget.isEdit) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final settingsProvider =
@@ -107,6 +133,19 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
       settingsProvider.sourceCategoryEnquiryController.clear();
       settingsProvider.setSourceId(0);
     }
+  }
+
+  @override
+  void dispose() {
+    contactPersonController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
+    websiteController.dispose();
+    phone2Controller.dispose();
+    contact2Controller.dispose();
+    addressController.dispose();
+    descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -140,41 +179,14 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
         width: AppStyles.isWebScreen(context)
             ? MediaQuery.sizeOf(context).width / 2
             : MediaQuery.sizeOf(context).width,
-        height: MediaQuery.sizeOf(context).height / 4,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.7,
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: CommonDropdown<int>(
-              //         hintText: 'Source Category',
-              //         selectedValue: widget.isEdit
-              //             ? settingsProvider.sourceCategoryId
-              //             : null,
-              //         items: settingsProvider.searchSourceCategory
-              //             .map((source) => DropdownItem<int>(
-              //                   id: source.sourceId,
-              //                   name: source.sourceName ?? '',
-              //                 ))
-              //             .toList(),
-              //         controller:
-              //             settingsProvider.sourceCategoryEnquiryController,
-              //         onItemSelected: (selectedId) {
-              //           settingsProvider.setSourceId(selectedId);
-              //           final selectedItem =
-              //               settingsProvider.searchSourceCategory.firstWhere(
-              //             (user) => user.sourceId == selectedId,
-              //           );
-              //           settingsProvider.sourceCategoryEnquiryController.text =
-              //               selectedItem.sourceName ?? '';
-              //         },
-              //       ),
-              //     ),
-              //   ],
-              // ),
               const SizedBox(
                 height: 10,
               ),
@@ -187,6 +199,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
                       controller: settingsProvider.enquirySourceController,
                       hintText: 'Enquiry Name*',
                       labelText: '',
+                      maxLines: 1,
                     ),
                   ),
                 ],
@@ -194,63 +207,218 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
               const SizedBox(
                 height: 10,
               ),
-              // GestureDetector(
-              //   onTap: _showCustomFieldDialog,
-              //   child: AbsorbPointer(
-              //     child: CustomTextField(
-              //       readOnly: true,
-              //       controller: TextEditingController(),
-              //       height: 54,
-              //       hintText: 'Custom Field',
-              //       labelText: '',
-              //       suffixIcon: const Icon(Icons.keyboard_arrow_down),
-              //     ),
-              //   ),
-              // ),
-              // if (selectedFields.isNotEmpty) ...[
-              //   const SizedBox(height: 10),
-              //   Wrap(
-              //     spacing: 8,
-              //     runSpacing: 8,
-              //     children: selectedFields.asMap().entries.map((entry) {
-              //       final idx = entry.key;
-              //       final field = entry.value;
-              //       return Container(
-              //         padding: const EdgeInsets.symmetric(
-              //             horizontal: 12, vertical: 6),
-              //         decoration: BoxDecoration(
-              //           color: AppColors.appViolet,
-              //           borderRadius: BorderRadius.circular(4),
-              //         ),
-              //         child: Row(
-              //           mainAxisSize: MainAxisSize.min,
-              //           children: [
-              //             Text(
-              //               field['custom_field_name'],
-              //               style: const TextStyle(
-              //                 color: Colors.white,
-              //                 fontWeight: FontWeight.w500,
-              //               ),
-              //             ),
-              //             const SizedBox(width: 6),
-              //             GestureDetector(
-              //               onTap: () {
-              //                 setState(() {
-              //                   selectedFields.removeAt(idx);
-              //                 });
-              //               },
-              //               child: const Icon(
-              //                 Icons.close,
-              //                 size: 18,
-              //                 color: Colors.white,
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       );
-              //     }).toList(),
-              //   ),
-              // ],
+              Row(
+                children: [
+                  Checkbox(
+                    value: _showMoreDetails,
+                    activeColor: AppColors.secondaryBlue,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _showMoreDetails = value ?? false;
+                      });
+                    },
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _showMoreDetails = !_showMoreDetails;
+                      });
+                    },
+                    child: Text(
+                      'More Details',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (_showMoreDetails) ...[
+                const SizedBox(height: 12),
+                if (AppStyles.isWebScreen(context)) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: contactPersonController,
+                          hintText: 'Contact Person',
+                          labelText: '',
+                          maxLines: 1,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: phoneController,
+                          hintText: 'Phone',
+                          labelText: '',
+                          maxLines: 1,
+                          keyboardType: TextInputType.phone,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: emailController,
+                          hintText: 'Email',
+                          labelText: '',
+                          maxLines: 1,
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: websiteController,
+                          hintText: 'Website',
+                          labelText: '',
+                          maxLines: 1,
+                          keyboardType: TextInputType.url,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: phone2Controller,
+                          hintText: 'Phone 2',
+                          labelText: '',
+                          maxLines: 1,
+                          keyboardType: TextInputType.phone,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: contact2Controller,
+                          hintText: 'Contact 2',
+                          labelText: '',
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 80,
+                    controller: addressController,
+                    hintText: 'Address',
+                    labelText: '',
+                    minLines: 2,
+                    maxLines: 4,
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 100,
+                    controller: descriptionController,
+                    hintText: 'Description',
+                    labelText: '',
+                    minLines: 3,
+                    maxLines: 6,
+                  ),
+                ] else ...[
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller: contactPersonController,
+                    hintText: 'Contact Person',
+                    labelText: '',
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller: phoneController,
+                    hintText: 'Phone',
+                    labelText: '',
+                    maxLines: 1,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller: emailController,
+                    hintText: 'Email',
+                    labelText: '',
+                    maxLines: 1,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller: websiteController,
+                    hintText: 'Website',
+                    labelText: '',
+                    maxLines: 1,
+                    keyboardType: TextInputType.url,
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller: phone2Controller,
+                    hintText: 'Phone 2',
+                    labelText: '',
+                    maxLines: 1,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller: contact2Controller,
+                    hintText: 'Contact 2',
+                    labelText: '',
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 80,
+                    controller: addressController,
+                    hintText: 'Address',
+                    labelText: '',
+                    minLines: 2,
+                    maxLines: 4,
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 100,
+                    controller: descriptionController,
+                    hintText: 'Description',
+                    labelText: '',
+                    minLines: 3,
+                    maxLines: 6,
+                  ),
+                ],
+              ],
               const SizedBox(height: 24.0),
             ],
           ),
@@ -282,6 +450,16 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
               context: context,
               statusId: widget.editId,
               statusName: settingsProvider.enquirySourceController.text,
+              isMoreDetails: _showMoreDetails ? 1 : 0,
+              contactPerson:
+                  _showMoreDetails ? contactPersonController.text : '',
+              phone: _showMoreDetails ? phoneController.text : '',
+              email: _showMoreDetails ? emailController.text : '',
+              website: _showMoreDetails ? websiteController.text : '',
+              phone2: _showMoreDetails ? phone2Controller.text : '',
+              contact2: _showMoreDetails ? contact2Controller.text : '',
+              address: _showMoreDetails ? addressController.text : '',
+              description: _showMoreDetails ? descriptionController.text : '',
             );
           },
           radius: 4,
@@ -488,7 +666,9 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),

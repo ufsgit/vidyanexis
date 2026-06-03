@@ -195,6 +195,8 @@ class _EnquirySourceContentState extends State<EnquirySourceContent> {
                                             .searchEnquiryStatus[index]
                                             .enquirySourceName,
                                         isEdit: true,
+                                        model: settingsProvider
+                                            .searchEnquiryStatus[index],
                                       );
                                     },
                                   );

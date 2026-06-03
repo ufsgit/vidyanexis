@@ -33,12 +33,12 @@ class HttpUrls {
   // static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
 //   static String baseUrl = 'https://lucidpowerapi.ufstech.net.in/';
 //    static String baseUrl = 'https://linoraapi.ufstech.net.in/';
-   static String baseUrl = 'https://demo2api.ufstech.net.in/';
+  //static String baseUrl = 'https://demo2api.ufstech.net.in/';
 //dev
 
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
-//   static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -64,6 +64,7 @@ class HttpUrls {
   static String getPaymentByCustomer = "service/Get_Payment_By_Customer";
   static String deletePayment = "service/Delete_payment";
   static String loginCheck = "Login/Login_Check";
+
   static String searchLead = "lead/Search_lead";
   static String saveLead = "lead/Save_lead";
   static String saveCustomer = "lead/Update_Customer";
