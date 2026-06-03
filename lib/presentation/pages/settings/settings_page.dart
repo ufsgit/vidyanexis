@@ -14,6 +14,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/pages/settings/branch_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/company_details.dart';
 import 'package:vidyanexis/presentation/pages/settings/custom_field.dart';
@@ -24,7 +25,7 @@ import 'package:vidyanexis/presentation/pages/settings/enquiry_source_content.da
 import 'package:vidyanexis/presentation/pages/settings/expense_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/location_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/lead_users_content.dart';
-import 'package:vidyanexis/presentation/pages/settings/source_cateGory_page.dart';
+import 'package:vidyanexis/presentation/pages/settings/source_category_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/stage_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/task_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/user_content_page.dart';
@@ -101,6 +102,13 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         break;
       case 'Campaign':
         provider.searchCampaignData(query, context);
+        break;
+      case 'Checklist Item':
+      case 'Checklist Category':
+        setState(() {}); // The page itself will rebuild with the updated _searchController.text
+        break;
+      case 'Checklist Type':
+        provider.searchCheckList(query, context);
         break;
     }
   }
@@ -302,6 +310,190 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
     );
   }
 
+  Widget _buildWebHeader(SettingsProvider settingsProvider) {
+    if (settingsProvider.selectedMenu == 'Company Details' ||
+        settingsProvider.selectedMenu == 'Excel Import' ||
+        settingsProvider.selectedMenu == 'Version') {
+      return const SizedBox.shrink();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: Row(
+            children: [
+              Text(
+                settingsProvider.selectedMenu,
+                style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textBlue800),
+              ),
+              const Spacer(),
+              Container(
+                width: MediaQuery.of(context).size.width / 3.5,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (query) {
+                    _triggerSearch(settingsProvider, query);
+                  },
+                  decoration: const InputDecoration(
+                    hintText: 'Search here....',
+                    prefixIcon: Icon(Icons.search),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              if (settingsProvider.onAddPressed != null)
+                CustomOutlinedSvgButton(
+                  onPressed: settingsProvider.onAddPressed!,
+                  svgPath: 'assets/images/Plus.svg',
+                  label: 'New ${settingsProvider.selectedMenu}',
+                  breakpoint: 860,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.secondaryBlue,
+                  borderSide: const BorderSide(color: AppColors.secondaryBlue),
+                ),
+              if (settingsProvider.onAddPressed != null)
+                const SizedBox(width: 16),
+            ],
+          ),
+        ),
+        if (settingsProvider.selectedMenu == 'Status') ...[
+          const SizedBox(height: 12),
+          Container(
+            width: 200,
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2)),
+              ],
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: settingsProvider.viewInId,
+                hint: Text("View", style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                isExpanded: true,
+                icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey, size: 20),
+                items: const [
+                  DropdownMenuItem(value: 0, child: Text("All")),
+                  DropdownMenuItem(value: 1, child: Text("Lead")),
+                  DropdownMenuItem(value: 2, child: Text("Customer")),
+                  DropdownMenuItem(value: 3, child: Text("Task")),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      settingsProvider.setViewInId(value);
+                    });
+                    settingsProvider.getSearchLeadStatus(
+                      _searchController.text,
+                      value.toString(),
+                      context,
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+        if (settingsProvider.selectedMenu == 'Users') ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Container(
+                width: 200,
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                  ],
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: settingsProvider.selectedFilterBranchId ?? 0,
+                    isExpanded: true,
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey, size: 20),
+                    items: [
+                      const DropdownMenuItem(value: 0, child: Text("All Branches")),
+                      ...settingsProvider.branchModel.map((branch) => DropdownMenuItem(value: branch.branchId, child: Text(branch.branchName ?? "", overflow: TextOverflow.ellipsis))),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        settingsProvider.selectedFilterBranchId = value;
+                      });
+                      settingsProvider.getUserDetails(_searchController.text, context);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Container(
+                width: 200,
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                  ],
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int>(
+                    value: settingsProvider.selectedFilterDepartmentId ?? 0,
+                    isExpanded: true,
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey, size: 20),
+                    items: [
+                      const DropdownMenuItem(value: 0, child: Text("All Depts")),
+                      ...settingsProvider.departmentModel.map((dept) => DropdownMenuItem(value: dept.departmentId, child: Text(dept.departmentName, overflow: TextOverflow.ellipsis))),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        settingsProvider.selectedFilterDepartmentId = value;
+                      });
+                      settingsProvider.getUserDetails(_searchController.text, context);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -468,7 +660,13 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                     padding: isMobile
                         ? const EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 16)
                         : const EdgeInsets.all(24),
-                    child: _buildContent(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (!isMobile) _buildWebHeader(settingsProvider),
+                        _buildContent(),
+                      ],
+                    ),
                   ),
                 ),
               ],

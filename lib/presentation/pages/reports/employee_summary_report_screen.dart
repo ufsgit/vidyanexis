@@ -23,6 +23,8 @@ class _EmployeeSummaryReportScreenState
     extends State<EmployeeSummaryReportScreen> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
 
   @override
   void initState() {

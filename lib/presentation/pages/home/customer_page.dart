@@ -51,6 +51,8 @@ class CustomerPage extends StatefulWidget {
 class _CustomerPageState extends State<CustomerPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
   Timer? _debounce;
   final sideProvider =
       Provider.of<SidebarProvider>(navigatorKey.currentState!.context);
@@ -198,17 +200,8 @@ class _CustomerPageState extends State<CustomerPage> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 8.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Customers',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 22,
-                              color: const Color(0xFF1E293B),
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Wrap(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [                          Wrap(
                             spacing: 8,
                             runSpacing: 8,
                             crossAxisAlignment: WrapCrossAlignment.center,
@@ -289,8 +282,17 @@ class _CustomerPageState extends State<CustomerPage> {
                                 ),
                                 child: TextField(
                                   controller: searchController,
+                                  focusNode: searchFocusNodeWeb,
                                   textAlignVertical: TextAlignVertical.center,
-                                  onChanged: _onSearchChanged,
+                                  onTap: () {
+                                    Future.microtask(() {
+                                      if (searchController.text.isNotEmpty &&
+                                          searchController.selection.baseOffset == 0 &&
+                                          searchController.selection.extentOffset == searchController.text.length) {
+                                        searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                      }
+                                    });
+                                  },
                                   onSubmitted: (query) {
                                     if (_debounce?.isActive ?? false) {
                                       _debounce!.cancel();
@@ -394,14 +396,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         runSpacing: 10,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          const Text(
-                            'Customers',
-                            style: TextStyle(
-                              fontSize: 24,
-                              color: Color(0xFF152D70),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+
                           Container(
                             width: double.infinity,
                             height: 38,
@@ -413,8 +408,17 @@ class _CustomerPageState extends State<CustomerPage> {
                             ),
                             child: TextField(
                               controller: searchController,
+                              focusNode: searchFocusNodeMobile,
                               textAlignVertical: TextAlignVertical.center,
-                              onChanged: _onSearchChanged,
+                              onTap: () {
+                                Future.microtask(() {
+                                  if (searchController.text.isNotEmpty &&
+                                      searchController.selection.baseOffset == 0 &&
+                                      searchController.selection.extentOffset == searchController.text.length) {
+                                    searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                  }
+                                });
+                              },
                               onSubmitted: (query) {
                                 if (_debounce?.isActive ?? false) {
                                   _debounce!.cancel();

@@ -30,6 +30,8 @@ class _UpcomingWarrentyReportScreen
     extends State<UpcomingWarrentyReportScreen> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
   Timer? _debounce;
 
   void _onSearchChanged(String query) {
@@ -180,31 +182,50 @@ class _UpcomingWarrentyReportScreen
                     const Spacer(),
                     // Search Bar
                     Container(
-                      width: 300,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                      ),
-                      child: TextField(
-                        controller: searchController,
-                        onSubmitted: (query) => _applySearch(reportsProvider),
-                        decoration: InputDecoration(
-                          hintText: 'Search here....',
-                          prefixIcon: const Icon(Icons.search, size: 20),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                        ),
-                      ),
-                    ),
+  width: 280,
+  height: 38,
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(4),
+    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.02),
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  ),
+  child: TextField(
+    controller: searchController,
+    focusNode: searchFocusNodeWeb,
+    textAlignVertical: TextAlignVertical.center,
+    onTap: () {
+      Future.microtask(() {
+        if (searchController.text.isNotEmpty &&
+            searchController.selection.baseOffset == 0 &&
+            searchController.selection.extentOffset == searchController.text.length) {
+          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+        }
+      });
+    },
+    onSubmitted: (query) => _applySearch(reportsProvider),
+    decoration: InputDecoration(
+      hintText: 'Search here....',
+      hintStyle: GoogleFonts.plusJakartaSans(
+        color: const Color(0xFF94A3B8),
+        fontSize: 13,
+      ),
+      border: InputBorder.none,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      suffixIcon: GestureDetector(
+        onTap: () { _applySearch(reportsProvider); },
+        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+      ),
+    ),
+  ),
+),
                     const SizedBox(width: 12),
                     CustomFilterButton(
                       onPressed: () => reportsProvider.toggleFilter(),

@@ -59,31 +59,7 @@ class _FormContentState extends State<FormContent> {
         Widget contentBody = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header section with Search and New Form Button (Web/Desktop only)
-            if (!isMobile) ...[
-              SizedBox(
-                width: double.infinity,
-                child: Row(
-                  children: [
-                    Text(
-                      'Forms',
-                      style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlue800),
-                    ),
-                    const Spacer(),
-                    // Search Bar
-                    _buildSearchBar(context, formProvider, isMobile: false),
-                    const SizedBox(width: 16),
-                    if (settingsProvider.menuIsSaveMap[85].toString() == '1')
-                      _buildNewFormButton(context),
-                    const SizedBox(width: 16),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
+
 
             // Form List
             Container(

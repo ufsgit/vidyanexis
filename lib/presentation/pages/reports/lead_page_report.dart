@@ -37,6 +37,8 @@ class LeadPageReport extends StatefulWidget {
 class _LeadsPageReportState extends State<LeadPageReport> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
   bool viewProfile = false;
   bool viewFollowUp = false;
   bool isEdit = false;
@@ -153,24 +155,34 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const Spacer(),
                             Container(
-                              width: MediaQuery.of(context).size.width / 4,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                              ),
-                              child: TextField(
-                                controller: searchController,
-                                style: const TextStyle(fontSize: 14),
-                                onSubmitted: (query) {
+  width: 280,
+  height: 38,
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(4),
+    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.02),
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  ),
+  child: TextField(
+    controller: searchController,
+    focusNode: searchFocusNodeWeb,
+    textAlignVertical: TextAlignVertical.center,
+    onTap: () {
+      Future.microtask(() {
+        if (searchController.text.isNotEmpty &&
+            searchController.selection.baseOffset == 0 &&
+            searchController.selection.extentOffset == searchController.text.length) {
+          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+        }
+      });
+    },
+    onSubmitted: (query) {
                                   leadReportProvider.getSearchLeadReports(
                                       query,
                                       leadReportProvider.fromDateS,
@@ -179,52 +191,30 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                           .toString(),
                                       context);
                                 },
-                                decoration: InputDecoration(
-                                  hintText: 'Search here....',
-                                  hintStyle: TextStyle(
-                                      color: Colors.grey[400],
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400),
-                                  prefixIcon: Icon(Icons.search,
-                                      color: Colors.grey[600], size: 20),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        String query = searchController.text;
-                                        leadReportProvider.getSearchLeadReports(
-                                            query,
-                                            leadReportProvider.fromDateS,
-                                            leadReportProvider.toDateS,
-                                            (leadReportProvider
-                                                        .selectedStatus ??
-                                                    0)
-                                                .toString(),
-                                            context);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.textGrey4,
-                                        foregroundColor: Colors.white,
-                                        elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16),
-                                      ),
-                                      child: const Text('Search',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+    decoration: InputDecoration(
+      hintText: 'Search here....',
+      hintStyle: GoogleFonts.plusJakartaSans(
+        color: const Color(0xFF94A3B8),
+        fontSize: 13,
+      ),
+      border: InputBorder.none,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      suffixIcon: GestureDetector(
+        onTap: () {
+                                  leadReportProvider.getSearchLeadReports(
+                                      searchController.text,
+                                      leadReportProvider.fromDateS,
+                                      leadReportProvider.toDateS,
+                                      (leadReportProvider.selectedStatus ?? 0)
+                                          .toString(),
+                                      context);
+                                },
+        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+      ),
+    ),
+  ),
+),
                             const SizedBox(width: 16),
                             CustomFilterButton(
                               onPressed: () {

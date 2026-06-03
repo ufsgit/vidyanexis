@@ -75,65 +75,7 @@ class _CampaignContentState extends State<CampaignContent> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (isWeb) ...[
-                // Header section
-                Row(
-                  children: [
-                    Text(
-                      'Campaign Management',
-                      style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textBlue800),
-                    ),
-                    const Spacer(),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 3.5,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                      ),
-                      child: TextField(
-                        controller: settingsProvider.searchCampaignController,
-                        onChanged: (query) {
-                          settingsProvider.searchCampaignData(query, context);
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'Search campaigns...',
-                          prefixIcon: Icon(Icons.search),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    CustomOutlinedSvgButton(
-                      onPressed: _openAddDialog,
-                      svgPath: 'assets/images/Plus.svg',
-                      label: 'New Campaign',
-                      breakpoint: 860,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                      foregroundColor: Colors.white,
-                      backgroundColor: AppColors.primaryBlue,
-                      borderSide: BorderSide(color: AppColors.primaryBlue),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-              ],
+
               // List section
               Container(
                 decoration: BoxDecoration(

@@ -87,73 +87,7 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (isWeb) ...[
-                // Header section
-                SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Enquiry For',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlue800),
-                      ),
-                      const Spacer(),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 3.5,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                        ),
-                        child: TextField(
-                          controller:
-                              settingsProvider.searchEnquiryForController,
-                          onChanged: (query) {
-                            print(query);
-                            settingsProvider.searchEnquiryForData(
-                                query, context);
-                          },
-                          decoration: const InputDecoration(
-                            hintText: 'Search here....',
-                            prefixIcon: Icon(Icons.search),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[17].toString() == '1')
-                        CustomOutlinedSvgButton(
-                          onPressed: _openAddDialog,
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New Enquiry For',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4)),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.secondaryBlue,
-                          borderSide: BorderSide(color: AppColors.secondaryBlue),
-                        ),
-                      const SizedBox(width: 16),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
+
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,

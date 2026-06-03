@@ -1,5 +1,6 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,8 @@ class LeadCheckInReportScreen extends StatefulWidget {
 
 class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
   TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
 
   List<String> dateButtonTitles = [
     'Yesterday',
@@ -260,63 +263,56 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
           ),
           const Spacer(),
           Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-            ),
-            child: TextField(
-              controller: searchController,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14),
-              onSubmitted: (query) {
+  width: 280,
+  height: 38,
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(4),
+    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.02),
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  ),
+  child: TextField(
+    controller: searchController,
+    focusNode: searchFocusNodeWeb,
+    textAlignVertical: TextAlignVertical.center,
+    onTap: () {
+      Future.microtask(() {
+        if (searchController.text.isNotEmpty &&
+            searchController.selection.baseOffset == 0 &&
+            searchController.selection.extentOffset == searchController.text.length) {
+          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+        }
+      });
+    },
+    onSubmitted: (query) {
                 reportProvider.setLeadSearch(query);
                 reportProvider.fetchReports(context);
               },
-              decoration: InputDecoration(
-                hintText: 'Search here....',
-                hintStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400),
-                prefixIcon:
-                    Icon(Icons.search, color: Colors.grey[600], size: 20),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                ),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      reportProvider.setLeadSearch(searchController.text);
-                      reportProvider.fetchReports(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6C7C93),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    child: const Text('Search',
-                        style: TextStyle(fontWeight: FontWeight.w500)),
-                  ),
-                ),
-              ),
-            ),
-          ),
+    decoration: InputDecoration(
+      hintText: 'Search here....',
+      hintStyle: GoogleFonts.plusJakartaSans(
+        color: const Color(0xFF94A3B8),
+        fontSize: 13,
+      ),
+      border: InputBorder.none,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      suffixIcon: GestureDetector(
+        onTap: () {
+                reportProvider.setLeadSearch(searchController.text);
+                reportProvider.fetchReports(context);
+              },
+        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+      ),
+    ),
+  ),
+),
           const SizedBox(width: 16),
           CustomFilterButton(
             onPressed: () {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   // Content customization
@@ -187,45 +188,66 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   Widget _buildSearchField(SidebarProvider searchProvider) {
-    return TextField(
-      controller: widget.searchController,
-      focusNode: _searchFocus,
-      onTap: () {
-        Future.microtask(() {
-          if (widget.searchController != null &&
-              widget.searchController!.text.isNotEmpty &&
-              widget.searchController!.selection.baseOffset == 0 &&
-              widget.searchController!.selection.extentOffset == widget.searchController!.text.length) {
-            widget.searchController!.selection = TextSelection.collapsed(offset: widget.searchController!.text.length);
-          }
-        });
-      },
-      decoration: widget.searchDecoration ??
-          InputDecoration(
-            hintText: widget.searchHintText,
-            border: InputBorder.none,
-            hintStyle:
-                widget.searchHintStyle ?? const TextStyle(color: Colors.grey),
-            suffixIcon: widget.onFilterTap != null
-                ? IconButton(
-                    icon: Icon(
-                      Icons.filter_list,
-                      color: widget.iconColor ?? Colors.black,
-                      size: widget.filterIconSize,
-                    ),
-                    onPressed: widget.onFilterTap,
-                  )
-                : null,
+    return Container(
+      height: 38,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-      style: widget.searchTextStyle ?? const TextStyle(color: Colors.black),
-      textInputAction: TextInputAction.search,
-      onChanged: (query) {
-        // searchProvider.setSearchQuery(query); // Prevents constant rebuilds which break cursor
-        if (widget.onChanged != null) {
-          widget.onChanged!(query);
-        }
-      },
-      onSubmitted: widget.onSearch,
+        ],
+      ),
+      child: TextField(
+        controller: widget.searchController,
+        focusNode: _searchFocus,
+        textAlignVertical: TextAlignVertical.center,
+        onTap: () {
+          Future.microtask(() {
+            if (widget.searchController != null &&
+                widget.searchController!.text.isNotEmpty &&
+                widget.searchController!.selection.baseOffset == 0 &&
+                widget.searchController!.selection.extentOffset == widget.searchController!.text.length) {
+              widget.searchController!.selection = TextSelection.collapsed(offset: widget.searchController!.text.length);
+            }
+          });
+        },
+        decoration: widget.searchDecoration ??
+            InputDecoration(
+              hintText: widget.searchHintText,
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              hintStyle: widget.searchHintStyle ?? 
+                  GoogleFonts.plusJakartaSans(
+                    color: const Color(0xFF94A3B8),
+                    fontSize: 13,
+                  ),
+              suffixIcon: widget.onFilterTap != null
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.filter_list,
+                        color: widget.iconColor ?? Colors.black,
+                        size: widget.filterIconSize,
+                      ),
+                      onPressed: widget.onFilterTap,
+                    )
+                  : null,
+            ),
+        style: widget.searchTextStyle ?? const TextStyle(color: Colors.black, fontSize: 13),
+        textInputAction: TextInputAction.search,
+        onChanged: (query) {
+          // searchProvider.setSearchQuery(query); // Prevents constant rebuilds which break cursor
+          if (widget.onChanged != null) {
+            widget.onChanged!(query);
+          }
+        },
+        onSubmitted: widget.onSearch,
+      ),
     );
   }
 

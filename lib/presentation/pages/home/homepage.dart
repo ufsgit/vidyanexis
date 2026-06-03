@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
@@ -441,7 +442,19 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
-              title: null,
+              title: ['Leads', 'Customers', 'Lead Search', 'Task']
+                      .contains(sideProvider.selectedName)
+                  ? Text(
+                      sideProvider.selectedName == 'Task'
+                          ? 'Tasks'
+                          : sideProvider.selectedName,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 22,
+                        color: const Color(0xFF1E293B),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )
+                  : null,
               actions: [
                 Consumer<NotificationProvider>(
                   builder: (context, notificationProvider, child) {

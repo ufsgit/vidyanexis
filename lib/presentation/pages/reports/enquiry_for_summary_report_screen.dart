@@ -23,6 +23,8 @@ class _EnquiryForSummaryReportScreenState
     extends State<EnquiryForSummaryReportScreen> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
 
   @override
   void initState() {

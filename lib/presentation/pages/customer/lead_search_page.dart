@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -66,36 +67,49 @@ class LeadSearchPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
         children: [
-          const Text(
-            'Lead Search',
-            style: TextStyle(
-              fontSize: 24,
-              color: Color(0xFF152D70),
-              fontWeight: FontWeight.w600,
-            ),
-          ),
           const Spacer(),
           Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: 36,
+            width: 280,
+            height: 38,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: Colors.black, width: 1.5),
+              border: Border.all(
+                  color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: TextField(
               controller: provider.contactNoController,
               textAlignVertical: TextAlignVertical.center,
+              onTap: () {
+                Future.microtask(() {
+                  if (provider.contactNoController.text.isNotEmpty &&
+                      provider.contactNoController.selection.baseOffset == 0 &&
+                      provider.contactNoController.selection.extentOffset == provider.contactNoController.text.length) {
+                    provider.contactNoController.selection = TextSelection.collapsed(offset: provider.contactNoController.text.length);
+                  }
+                });
+              },
               onSubmitted: (query) => provider.searchLeadByContact(),
               decoration: InputDecoration(
                 hintText: 'Search Contact Number...',
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  color: const Color(0xFF94A3B8),
+                  fontSize: 13,
+                ),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 10),
                 suffixIcon: GestureDetector(
                   onTap: () => provider.searchLeadByContact(),
-                  child: const Icon(Icons.search, color: Colors.black),
+                  child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
                 ),
               ),
             ),

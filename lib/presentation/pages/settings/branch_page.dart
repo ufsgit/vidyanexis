@@ -66,73 +66,7 @@ class _BranchPageState extends State<BranchPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (isWeb) ...[
-                  // Header section
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        Text(
-                          'Branch',
-                          style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textBlue800),
-                        ),
-                        const Spacer(),
-                        if (settingsProvider.menuIsSaveMap[57] == 1)
-                          CustomOutlinedSvgButton(
-                            onPressed: _openAddDialog,
-                            svgPath: 'assets/images/Plus.svg',
-                            label: 'New Branch',
-                            breakpoint: 860,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4)),
-                            foregroundColor: Colors.white,
-                            backgroundColor: AppColors.secondaryBlue,
-                            borderSide: BorderSide(color: AppColors.secondaryBlue),
-                          ),
-                        const SizedBox(width: 16),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: Colors.grey[200]!),
-                          ),
-                          child: TextField(
-                            controller:
-                                settingsProvider.searchBranchController,
-                            onChanged: (query) {
-                              settingsProvider.searchBranch(context, query: query);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search...',
-                              hintStyle: GoogleFonts.plusJakartaSans(
-                                color: Colors.grey[400],
-                                fontSize: 14,
-                              ),
-                              prefixIcon: Icon(Icons.search,
-                                  size: 20, color: Colors.grey[500]),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 0),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                ],
+
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,

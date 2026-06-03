@@ -17,7 +17,6 @@ class CustomField extends StatefulWidget {
 }
 
 class _CustomFieldState extends State<CustomField> {
-  final TextEditingController _searchController = TextEditingController();
   late SettingsProvider settingsProvider;
 
   @override
@@ -35,7 +34,6 @@ class _CustomFieldState extends State<CustomField> {
     if (settingsProvider.onAddPressed == _openAddDialog) {
       settingsProvider.setOnAddPressed(null);
     }
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -76,9 +74,7 @@ class _CustomFieldState extends State<CustomField> {
               : double.infinity,
           child: Consumer<SettingsProvider>(
             builder: (context, settingsProvider, child) {
-              final query = isWeb
-                  ? _searchController.text
-                  : settingsProvider.customFieldSearchQuery;
+              final query = settingsProvider.customFieldSearchQuery;
               final filteredList = settingsProvider.customFieldModelList
                   .where((field) => (field.customFieldName ?? "")
                       .toString()
@@ -89,73 +85,6 @@ class _CustomFieldState extends State<CustomField> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header section for Web only
-                  if (isWeb) ...[
-                    SizedBox(
-                      width: double.infinity,
-                      child: Row(
-                        children: [
-                          Text(
-                            'Custom Field',
-                            style: GoogleFonts.plusJakartaSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textBlue800),
-                          ),
-                          const Spacer(),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 3.5,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                            ),
-                            child: TextField(
-                              controller: _searchController,
-                              textAlignVertical: TextAlignVertical.center,
-                              onChanged: (value) {
-                                setState(() {});
-                              },
-                              decoration: const InputDecoration(
-                                hintText: 'Search fields...',
-                                hintStyle: TextStyle(
-                                    fontSize: 14, color: Colors.grey),
-                                prefixIcon: Icon(Icons.search,
-                                    color: Colors.grey, size: 20),
-                                border: InputBorder.none,
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 10),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          if (settingsProvider.menuIsSaveMap[60] == 1)
-                            CustomOutlinedSvgButton(
-                              onPressed: _openAddDialog,
-                              svgPath: 'assets/images/Plus.svg',
-                              label: 'New',
-                              breakpoint: 450,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4)),
-                              foregroundColor: Colors.white,
-                              backgroundColor: AppColors.secondaryBlue,
-                              borderSide: BorderSide(
-                                  color: AppColors.secondaryBlue),
-                            ),
-                          const SizedBox(width: 8),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
 
                   Container(
                     decoration: BoxDecoration(

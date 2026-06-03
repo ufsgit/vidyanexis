@@ -58,6 +58,8 @@ class TaskPage extends StatefulWidget {
 class _tasksPageReportState extends State<TaskPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
   DropDownProvider provider = DropDownProvider();
   late TaskPageProvider reportsProvider;
   final ScrollController _scrollController = ScrollController();
@@ -393,14 +395,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                               const SizedBox(width: 8),
                             ],
-                            const Text(
-                              'Tasks',
-                              style: TextStyle(
-                                fontSize: 22,
-                                color: Color(0xFF1E293B),
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+
                           ],
                         ),
                         Wrap(
@@ -505,8 +500,17 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                               child: TextField(
                                 controller: searchController,
+                                focusNode: searchFocusNodeWeb,
                                 textAlignVertical: TextAlignVertical.center,
-                                onChanged: _onSearchChanged,
+                                onTap: () {
+                                  Future.microtask(() {
+                                    if (searchController.text.isNotEmpty &&
+                                        searchController.selection.baseOffset == 0 &&
+                                        searchController.selection.extentOffset == searchController.text.length) {
+                                      searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                    }
+                                  });
+                                },
                                 onSubmitted: (query) {
                                   if (_debounce?.isActive ?? false) {
                                     _debounce!.cancel();
@@ -652,14 +656,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                   const SizedBox(width: 8),
                                 ],
-                                const Text(
-                                  'Tasks',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    color: Color(0xFF152D70),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+
                               ],
                             ),
                             Expanded(

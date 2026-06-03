@@ -23,6 +23,8 @@ class CustomerOutstandingReportPage extends StatefulWidget {
 class _CustomerOutstandingReportPageState
     extends State<CustomerOutstandingReportPage> {
   final TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
 
   @override
   void initState() {
@@ -102,58 +104,50 @@ class _CustomerOutstandingReportPageState
                     ),
                     const Spacer(),
                     Container(
-                      width: 400,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                      ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 15),
-                          const Icon(Icons.search,
-                              color: Colors.grey, size: 20),
-                          Expanded(
-                            child: TextField(
-                              controller: searchController,
-                              decoration: const InputDecoration(
-                                hintText: 'Search here....',
-                                border: InputBorder.none,
-                                hintStyle:
-                                    TextStyle(color: Colors.grey, fontSize: 13),
-                              ),
-                              onChanged: (val) => provider.setSearch(val),
-                              onSubmitted: (val) => provider.getReport(context),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.all(4),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF7F8C8D),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4)),
-                                elevation: 0,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                              ),
-                              onPressed: () => provider.getReport(context),
-                              child: const Text('Search',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+  width: 280,
+  height: 38,
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(4),
+    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.02),
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  ),
+  child: TextField(
+    controller: searchController,
+    focusNode: searchFocusNodeWeb,
+    textAlignVertical: TextAlignVertical.center,
+    onTap: () {
+      Future.microtask(() {
+        if (searchController.text.isNotEmpty &&
+            searchController.selection.baseOffset == 0 &&
+            searchController.selection.extentOffset == searchController.text.length) {
+          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+        }
+      });
+    },
+    onSubmitted: (val) => provider.getReport(context),
+    decoration: InputDecoration(
+      hintText: 'Search here....',
+      hintStyle: GoogleFonts.plusJakartaSans(
+        color: const Color(0xFF94A3B8),
+        fontSize: 13,
+      ),
+      border: InputBorder.none,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      suffixIcon: GestureDetector(
+        onTap: () { provider.getReport(context); },
+        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+      ),
+    ),
+  ),
+),
                     const SizedBox(width: 16),
                     CustomFilterButton(
                       onPressed: () => provider.toggleFilter(),

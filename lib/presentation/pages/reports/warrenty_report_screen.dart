@@ -1,5 +1,6 @@
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -22,6 +23,8 @@ class WarrentyReportScreen extends StatefulWidget {
 class _WarrentyReportScreen extends State<WarrentyReportScreen> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  final FocusNode searchFocusNodeWeb = FocusNode();
+  final FocusNode searchFocusNodeMobile = FocusNode();
 
   @override
   void initState() {
@@ -112,23 +115,34 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                         ),
                         Flexible(child: Container()),
                         Container(
-                          width: MediaQuery.of(context).size.width / 4,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            onSubmitted: (query) {
+  width: 280,
+  height: 38,
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(4),
+    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.02),
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  ),
+  child: TextField(
+    controller: searchController,
+    focusNode: searchFocusNodeWeb,
+    textAlignVertical: TextAlignVertical.center,
+    onTap: () {
+      Future.microtask(() {
+        if (searchController.text.isNotEmpty &&
+            searchController.selection.baseOffset == 0 &&
+            searchController.selection.extentOffset == searchController.text.length) {
+          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+        }
+      });
+    },
+    onSubmitted: (query) {
                               // reportsProvider.selectDateFilterOption(null);
                               // reportsProvider.removeStatus();
                               reportsProvider.setTaskSearchCriteria(
@@ -140,69 +154,33 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                               );
                               reportsProvider.getSearchAmcReport(context);
                             },
-                            decoration: InputDecoration(
-                              hintText: 'Search here....',
-                              hintStyle: const TextStyle(
-                                color: Color(0xFF94A3B8),
-                                fontSize: 13,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.search,
-                                color: Color(0xFF64748B),
-                                size: 18,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 4,
-                              ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    String query = searchController.text;
-                                    // leadProvider.selectDateFilterOption(null);
-                                    // leadProvider.removeStatus();
-                                    print(query);
-                                    if (reportsProvider.Search.isNotEmpty) {
-                                      searchController.clear();
-                                      reportsProvider.setTaskSearchCriteria(
-                                        '',
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchAmcReport(context);
-                                    } else {
-                                      reportsProvider.setTaskSearchCriteria(
-                                        query,
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchAmcReport(context);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  child: Text(reportsProvider.Search.isNotEmpty
-                                      ? 'Cancel'
-                                      : 'Search'),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+    decoration: InputDecoration(
+      hintText: 'Search here....',
+      hintStyle: GoogleFonts.plusJakartaSans(
+        color: const Color(0xFF94A3B8),
+        fontSize: 13,
+      ),
+      border: InputBorder.none,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      suffixIcon: GestureDetector(
+        onTap: () {
+                              // reportsProvider.selectDateFilterOption(null);
+                              // reportsProvider.removeStatus();
+                              reportsProvider.setTaskSearchCriteria(
+                                searchController.text,
+                                reportsProvider.fromDateS,
+                                reportsProvider.toDateS,
+                                reportsProvider.Status,
+                                reportsProvider.AssignedTo,
+                              );
+                              reportsProvider.getSearchAmcReport(context);
+                            },
+        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+      ),
+    ),
+  ),
+),
                         const SizedBox(width: 16),
                         CustomFilterButton(
                           onPressed: () {
@@ -226,23 +204,34 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                         Column(
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                              ),
-                              child: TextField(
-                                controller: searchController,
-                                onSubmitted: (query) {
+  width: double.infinity,
+  height: 38,
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(4),
+    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.02),
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      ),
+    ],
+  ),
+  child: TextField(
+    controller: searchController,
+    focusNode: searchFocusNodeMobile,
+    textAlignVertical: TextAlignVertical.center,
+    onTap: () {
+      Future.microtask(() {
+        if (searchController.text.isNotEmpty &&
+            searchController.selection.baseOffset == 0 &&
+            searchController.selection.extentOffset == searchController.text.length) {
+          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+        }
+      });
+    },
+    onSubmitted: (query) {
                                   // reportsProvider.selectDateFilterOption(null);
                                   // reportsProvider.removeStatus();
                                   reportsProvider.setTaskSearchCriteria(
@@ -254,70 +243,33 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                                   );
                                   reportsProvider.getSearchAmcReport(context);
                                 },
-                                decoration: InputDecoration(
-                                  hintText: 'Search here....',
-                              hintStyle: const TextStyle(
-                                color: Color(0xFF94A3B8),
-                                fontSize: 13,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.search,
-                                color: Color(0xFF64748B),
-                                size: 18,
-                              ),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 0,
-                                  ),
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        String query = searchController.text;
-                                        // leadProvider.selectDateFilterOption(null);
-                                        // leadProvider.removeStatus();
-                                        print(query);
-                                        if (reportsProvider.Search.isNotEmpty) {
-                                          searchController.clear();
-                                          reportsProvider.setTaskSearchCriteria(
-                                            '',
-                                            reportsProvider.fromDateS,
-                                            reportsProvider.toDateS,
-                                            reportsProvider.Status,
-                                            reportsProvider.AssignedTo,
-                                          );
-                                          reportsProvider
-                                              .getSearchAmcReport(context);
-                                        } else {
-                                          reportsProvider.setTaskSearchCriteria(
-                                            query,
-                                            reportsProvider.fromDateS,
-                                            reportsProvider.toDateS,
-                                            reportsProvider.Status,
-                                            reportsProvider.AssignedTo,
-                                          );
-                                          reportsProvider
-                                              .getSearchAmcReport(context);
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primaryBlue,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                      child: Text(
-                                          reportsProvider.Search.isNotEmpty
-                                              ? 'Cancel'
-                                              : 'Search'),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+    decoration: InputDecoration(
+      hintText: 'Search here....',
+      hintStyle: GoogleFonts.plusJakartaSans(
+        color: const Color(0xFF94A3B8),
+        fontSize: 13,
+      ),
+      border: InputBorder.none,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      suffixIcon: GestureDetector(
+        onTap: () {
+                                  // reportsProvider.selectDateFilterOption(null);
+                                  // reportsProvider.removeStatus();
+                                  reportsProvider.setTaskSearchCriteria(
+                                    searchController.text,
+                                    reportsProvider.fromDateS,
+                                    reportsProvider.toDateS,
+                                    reportsProvider.Status,
+                                    reportsProvider.AssignedTo,
+                                  );
+                                  reportsProvider.getSearchAmcReport(context);
+                                },
+        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+      ),
+    ),
+  ),
+),
                             const SizedBox(height: 8),
                             Row(
                               children: [

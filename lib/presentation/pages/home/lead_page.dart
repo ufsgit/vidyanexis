@@ -320,14 +320,7 @@ class _LeadsPageState extends State<LeadPage> {
                               const SizedBox(
                                 width: 8,
                               ),
-                            Text(
-                              'Leads',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 22,
-                                color: const Color(0xFF1E293B),
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+
                           ],
                         ),
                         Wrap(
@@ -576,14 +569,7 @@ class _LeadsPageState extends State<LeadPage> {
                           const SizedBox(
                             width: 8,
                           ),
-                        const Text(
-                          'Leads',
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Color(0xFF152D70),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+
                         Flexible(child: Container()),
                         Container(
                           width: MediaQuery.of(context).size.width / 4,
