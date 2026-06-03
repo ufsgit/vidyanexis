@@ -433,24 +433,55 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             ),
                             const SizedBox(width: 16),
                             Expanded(
-                              child: CommonDropdown<int>(
-                                hintText: 'Profit',
-                                items: customerDetailsProvider.profitList
-                                    .map((e) => DropdownItem<int>(
-                                        id: e.id, name: e.name))
-                                    .toList(),
-                                onItemSelected: (value) {
-                                  final selected = customerDetailsProvider
-                                      .profitList
-                                      .firstWhere((e) => e.id == value);
-                                  customerDetailsProvider.setSelectedProfitId(
-                                      value,
-                                      name: selected.name);
+                              child: CustomTextField(
+                                readOnly: false,
+                                height: 54,
+                                controller:
+                                    customerDetailsProvider.profitController,
+                                hintText: customerDetailsProvider.isPercentage
+                                    ? "Profit %"
+                                    : "Profit",
+                                labelText: '',
+                                onChanged: (value) {
+                                  customerDetailsProvider
+                                      .recalculateCompanyQuotationItem();
                                 },
-                                selectedValue:
-                                    customerDetailsProvider.selectedProfitId,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^\d*\.?\d{0,2}')),
+                                ],
                               ),
                             ),
+                            const SizedBox(width: 16),
+                            Tooltip(
+                              message: "Is Percentage %",
+                              child: Checkbox(
+                                value: customerDetailsProvider.isPercentage,
+                                onChanged: (value) {
+                                  customerDetailsProvider.isPercentage =
+                                      value ?? false;
+                                },
+                              ),
+                            ),
+                            // Expanded(
+                            //   child: CommonDropdown<int>(
+                            //     hintText: 'Profit',
+                            //     items: customerDetailsProvider.profitList
+                            //         .map((e) => DropdownItem<int>(
+                            //             id: e.id, name: e.name))
+                            //         .toList(),
+                            //     onItemSelected: (value) {
+                            //       final selected = customerDetailsProvider
+                            //           .profitList
+                            //           .firstWhere((e) => e.id == value);
+                            //       customerDetailsProvider.setSelectedProfitId(
+                            //           value,
+                            //           name: selected.name);
+                            //     },
+                            //     selectedValue:
+                            //         customerDetailsProvider.selectedProfitId,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ],
@@ -1785,17 +1816,18 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: TextField(
                         controller:
                             customerDetailsProvider.qsubsidyAmountController,
@@ -1837,17 +1869,18 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: TextField(
                         controller: customerDetailsProvider.qDiscountController,
                         onChanged: (p0) {
@@ -1888,17 +1921,18 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: TextField(
                         controller:
                             customerDetailsProvider.shippingChargesController,

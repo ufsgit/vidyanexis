@@ -92,6 +92,9 @@ class GetQuotationbyMasterIdmodel {
   final String leadBranchName;
   final BranchDetails? branchDetails;
   final String purchaseTotal;
+  final String itemId;
+  final String profit;
+  final String isProfitPercentage;
 
   GetQuotationbyMasterIdmodel({
     required this.quotationMasterId,
@@ -171,6 +174,9 @@ class GetQuotationbyMasterIdmodel {
     required this.leadBranchName,
     this.branchDetails,
     this.purchaseTotal = "0.0",
+    this.itemId = "0",
+    this.profit = "0",
+    this.isProfitPercentage = "0",
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -269,6 +275,9 @@ class GetQuotationbyMasterIdmodel {
           ? BranchDetails.fromJson(json['branch_details'])
           : null,
       purchaseTotal: toStr(json['Purchase_Total'] ?? "0.0"),
+      itemId: toStr(json['Item_Id'] ?? "0"),
+      profit: toStr(json['Profit_Amount'] ?? "0.0"),
+      isProfitPercentage: toStr(json['Is_Profit_Percentage'] ?? "0"),
     );
   }
 }

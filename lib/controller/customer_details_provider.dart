@@ -448,6 +448,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  final TextEditingController profitController = TextEditingController();
+  bool _isPercentage = false;
+  bool get isPercentage => _isPercentage;
+  set isPercentage(bool value) {
+    _isPercentage = value;
+    notifyListeners();
+  }
+
   final TextEditingController billpriceController = TextEditingController();
   final TextEditingController billamountController = TextEditingController();
 
@@ -556,16 +564,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _billTotalAmount = bomTotal;
 
     // 2. Parse profit % from the profit name (e.g. "15%" → 15.0)
-    double profitPercent = 0.0;
-    if (_selectedProfitName != null && _selectedProfitName!.isNotEmpty) {
-      final match = RegExp(r'[\d.]+').firstMatch(_selectedProfitName!);
-      if (match != null) {
-        profitPercent = double.tryParse(match.group(0)!) ?? 0.0;
-      }
-    }
+    double profitValue = double.tryParse(profitController.text) ?? 0.0;
+    double finalTotal = bomTotal;
 
-    final profitAmount = bomTotal * profitPercent / 100;
-    final finalTotal = bomTotal + profitAmount;
+    if (isPercentage) {
+      finalTotal = bomTotal + (bomTotal * profitValue / 100);
+    } else {
+      finalTotal = bomTotal + profitValue;
+    }
     final itemName = _selectedItemName.isNotEmpty ? _selectedItemName : 'Item';
 
     // 3. Inject exactly one auto-item depending on quotation type
@@ -2615,6 +2621,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Description_2": quotationDescription2Controller.text.toString(),
         "Description_3": quotationDescription3Controller.text.toString(),
         "Purchase_Total": _billTotalAmount.toStringAsFixed(2),
+        "Item_Id": _newItemId,
+        "Profit_Amount": profitController.text.toString(),
+        "Is_Profit_Percentage": isPercentage ? "1" : "0",
       });
 
       if (response!.statusCode == 200) {
@@ -2799,6 +2808,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     setSelectedItemName('');
     _newItemId = 0;
     billTotalAmount = 0.0;
+    _selectedProfitId = 0;
+    _selectedProfitName = '';
+    profitController.clear();
+    isPercentage = false;
     notifyListeners();
   }
 
@@ -4400,40 +4413,43 @@ class CustomerDetailsProvider extends ChangeNotifier {
     quotationDescription2Controller.text = quotation.description2;
     quotationDescription3Controller.text = quotation.description3;
     _billTotalAmount = double.tryParse(quotation.purchaseTotal) ?? 0.0;
+    _newItemId = int.tryParse(quotation.itemId) ?? 0;
+    profitController.text = quotation.profit;
+    isPercentage = quotation.isProfitPercentage == "1";
 
-    String nameOfItem = '';
-    if (quotation.quotationTypeId == 1 && quotation.quotationDetails.isNotEmpty) {
-      nameOfItem = quotation.quotationDetails.first.itemName;
-    } else if (quotation.quotationTypeId == 2 && quotation.commercialItems.isNotEmpty) {
-      nameOfItem = quotation.commercialItems.first.description ?? '';
-    }
+    // String nameOfItem = '';
+    // if (quotation.quotationTypeId == 1 && quotation.quotationDetails.isNotEmpty) {
+    //   nameOfItem = quotation.quotationDetails.first.itemName;
+    // } else if (quotation.quotationTypeId == 2 && quotation.commercialItems.isNotEmpty) {
+    //   nameOfItem = quotation.commercialItems.first.description ?? '';
+    // }
 
-    if (nameOfItem.isNotEmpty) {
-      _selectedItemName = nameOfItem;
-      newItemNameController.text = nameOfItem;
-    }
+    // if (nameOfItem.isNotEmpty) {
+    //   _selectedItemName = nameOfItem;
+    //   newItemNameController.text = nameOfItem;
+    // }
 
-    if (_billTotalAmount > 0) {
-      final totalAmt = double.tryParse(quotation.totalAmount) ?? 0.0;
-      double targetProfitPercent = ((totalAmt - _billTotalAmount) / _billTotalAmount) * 100;
-      ProfitModel? bestMatch;
-      double minDiff = 999999.0;
-      for (var profit in _profitList) {
-        final match = RegExp(r'[\d.]+').firstMatch(profit.name);
-        if (match != null) {
-          double pVal = double.tryParse(match.group(0)!) ?? 0.0;
-          double diff = (pVal - targetProfitPercent).abs();
-          if (diff < minDiff && diff < 0.5) { // within 0.5% tolerance
-            minDiff = diff;
-            bestMatch = profit;
-          }
-        }
-      }
-      if (bestMatch != null) {
-        _selectedProfitId = bestMatch.id;
-        _selectedProfitName = bestMatch.name;
-      }
-    }
+    // if (_billTotalAmount > 0) {
+    //   final totalAmt = double.tryParse(quotation.totalAmount) ?? 0.0;
+    //   double targetProfitPercent = ((totalAmt - _billTotalAmount) / _billTotalAmount) * 100;
+    //   ProfitModel? bestMatch;
+    //   double minDiff = 999999.0;
+    //   for (var profit in _profitList) {
+    //     final match = RegExp(r'[\d.]+').firstMatch(profit.name);
+    //     if (match != null) {
+    //       double pVal = double.tryParse(match.group(0)!) ?? 0.0;
+    //       double diff = (pVal - targetProfitPercent).abs();
+    //       if (diff < minDiff && diff < 0.5) { // within 0.5% tolerance
+    //         minDiff = diff;
+    //         bestMatch = profit;
+    //       }
+    //     }
+    //   }
+    //   if (bestMatch != null) {
+    //     _selectedProfitId = bestMatch.id;
+    //     _selectedProfitName = bestMatch.name;
+    //   }
+    // }
 
     // ---- STATUS ----
     selectedQuotationStatus = quotation.quotationStatusId;
