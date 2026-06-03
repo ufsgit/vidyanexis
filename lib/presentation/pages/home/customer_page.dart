@@ -511,7 +511,6 @@ class _CustomerPageState extends State<CustomerPage> {
                   decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.02),
@@ -612,7 +611,6 @@ class _CustomerPageState extends State<CustomerPage> {
                     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
       boxShadow: [
         BoxShadow(
           color: Colors.black.withOpacity(0.02),
