@@ -48,7 +48,7 @@ class _ExpenseTabWidgetState extends State<ExpenseTabWidget> {
                     color: const Color(0xFF1E293B),
                   ),
                 ),
-                if (settingsProvider.menuIsSaveMap[18] == 1)
+                if (settingsProvider.menuIsSaveMap[48] == 1)
                   GestureDetector(
                     onTap: () {
                       customerDetailsProvider.clearExpenseDetails();

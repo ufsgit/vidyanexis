@@ -95,7 +95,7 @@ class ExpenseCard extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (settingsProvider.menuIsEditMap[18] == 1)
+                    if (settingsProvider.menuIsEditMap[48] == 1)
                       IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -123,7 +123,7 @@ class ExpenseCard extends StatelessWidget {
                           color: Colors.blue,
                         ),
                       ),
-                    if (settingsProvider.menuIsDeleteMap[18] == 1)
+                    if (settingsProvider.menuIsDeleteMap[48] == 1)
                       IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),

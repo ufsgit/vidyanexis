@@ -3,7 +3,9 @@ import 'package:vidyanexis/constants/app_colors.dart';
 
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_expense.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/add_expense_management.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
@@ -41,32 +43,6 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: InkWell(
-                  onTap: () => Navigator.of(context).pop(),
-                  borderRadius: BorderRadius.circular(4),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-
-                    ),
-                    child: Icon(Icons.arrow_back,
-                        size: 20, color: AppColors.textBlue800),
-                  ),
-                ),
-              ),
               const SizedBox(height: 10),
               Expanded(
                 child: Container(
@@ -125,34 +101,39 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         if (settingsProvider
-                                                .menuIsEditMap[18] ==
+                                                .menuIsEditMap[48] ==
                                             1)
                                           IconButton(
                                             tooltip: 'Edit',
-                                            onPressed: () async {
-                                              // Fetch expense details by ID
-                                              await customerDetailsProvider
-                                                  .getExpenseByIdApi(
-                                                      expense
-                                                          .expenseManagementId
-                                                          .toString(),
-                                                      context);
-                                              if (context.mounted) {
-                                                showDialog(
-                                                  context: context,
-                                                  barrierDismissible: false,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AddExpenseWidget(
-                                                        expenseId: expense
-                                                            .expenseManagementId
-                                                            .toString(),
-                                                        isEdit: true,
-                                                        customerId:
-                                                            widget.customerId);
-                                                  },
-                                                );
-                                              }
+                                            onPressed: () {
+                                              final expProvider = Provider.of<ExpenseProvider>(context, listen: false);
+                                              expProvider.userController.clear();
+                                              expProvider.dateController.clear();
+                                              expProvider.expenseTypeController.clear();
+                                              expProvider.amountController.clear();
+                                              expProvider.taxPercentageController.clear();
+                                              expProvider.amountWithoutTaxController.clear();
+                                              expProvider.cgstController.clear();
+                                              expProvider.sgstController.clear();
+                                              expProvider.expenseHeadController.clear();
+                                              expProvider.commentController.clear();
+                                              expProvider.projectController.clear();
+                                              expProvider.projectTypeController.clear();
+                                              expProvider.leadController.clear();
+
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AddExpenseManagement(
+                                                      expenseModel: expense,
+                                                      isEdit: true);
+                                                },
+                                              ).then((_) {
+                                                customerDetailsProvider.getExpenseListApi(
+                                                    widget.customerId.toString(), context);
+                                              });
                                             },
                                             icon: const Icon(
                                                 Icons.edit_outlined,
@@ -160,7 +141,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                                                 color: Colors.blue),
                                           ),
                                         if (settingsProvider
-                                                .menuIsDeleteMap[18] ==
+                                                .menuIsDeleteMap[48] ==
                                             1)
                                           IconButton(
                                             tooltip: 'Delete',

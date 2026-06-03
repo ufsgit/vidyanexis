@@ -10,6 +10,10 @@ import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
+import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/models/expense_management_model.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/add_expense_management.dart';
 
 import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
@@ -178,9 +182,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
-      /*if (settingsprovider.menuIsViewMap[18] == 1 &&
-          sideprovider.name != 'Lead /')
-        const Tab(text: "Expense"),*/
+      if (settingsprovider.menuIsViewMap[48] == 1)
+        const Tab(text: "Expense"),
       // Payment Tab (New)
 
       if (settingsprovider.menuIsViewMap[37] == 1 &&
@@ -765,7 +768,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     ),
                                   ),
                                 ),
-                              if (settingsprovider.menuIsSaveMap[18] == 1 &&
+                              if (settingsprovider.menuIsSaveMap[48] == 1 &&
                                   _isControllerInitialized &&
                                   _tabs[_tabController.index].text == "Expense")
                                 Padding(
@@ -773,18 +776,40 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       horizontal: 8.0),
                                   child: ElevatedButton.icon(
                                     onPressed: () {
-                                      customerDetailsProvider
-                                          .clearExpenseDetails();
+                                      final lead = customerDetailsProvider.leadDetails?.isNotEmpty == true
+                                          ? customerDetailsProvider.leadDetails!.first
+                                          : null;
+                                      final customerName = lead?.customerName ?? '';
+
+                                      final expProvider = Provider.of<ExpenseProvider>(context, listen: false);
+                                      expProvider.userController.clear();
+                                      expProvider.dateController.clear();
+                                      expProvider.expenseTypeController.clear();
+                                      expProvider.amountController.clear();
+                                      expProvider.taxPercentageController.clear();
+                                      expProvider.amountWithoutTaxController.clear();
+                                      expProvider.cgstController.clear();
+                                      expProvider.sgstController.clear();
+                                      expProvider.expenseHeadController.clear();
+                                      expProvider.commentController.clear();
+                                      expProvider.projectController.clear();
+                                      expProvider.projectTypeController.clear();
+                                      expProvider.leadController.clear();
+
                                       showDialog(
                                         barrierDismissible: false,
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return AddExpenseWidget(
-                                              expenseId: '0',
-                                              customerId: widget.customerId,
+                                          return AddExpenseManagement(
+                                              expenseModel: ExpenseModel(
+                                                  customerId: int.tryParse(widget.customerId),
+                                                  customerName: customerName),
                                               isEdit: false);
                                         },
-                                      );
+                                      ).then((_) {
+                                        customerDetailsProvider.getExpenseListApi(
+                                            widget.customerId.toString(), context);
+                                      });
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Expense'),
@@ -4247,12 +4272,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     widget.customerId),
 
                                             //Expense Tab
-                                            /*if (settingsprovider
+                                            if (settingsprovider
                                                     .menuIsViewMap[18] ==
                                                 1)
-                                              if (sideprovider.name != 'Lead /')
-                                                ExpenseScreen(
-                                                    widget.customerId),*/
+                                              ExpenseScreen(
+                                                  widget.customerId),
 
                                             //CheckList Management
                                             if (settingsprovider

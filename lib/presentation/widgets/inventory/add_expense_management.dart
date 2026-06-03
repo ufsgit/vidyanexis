@@ -182,6 +182,11 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
             (widget.expenseModel.projectTypeName ?? "");
         expenseProvider.leadController.text =
             (widget.expenseModel.customerName ?? "");
+      } else {
+        if (widget.expenseModel.customerId != null) {
+          expenseProvider.leadController.text =
+              widget.expenseModel.customerName ?? "";
+        }
       }
 
       _projectFuture = settingsProvider.searchProjects("", context);
@@ -254,7 +259,8 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1E293B), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -273,7 +279,6 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                   const SizedBox(height: 16),
                   _buildDateField(),
                   const SizedBox(height: 32),
-                  
                   _buildSectionTitle('Project Details'),
                   const SizedBox(height: 16),
                   _buildProjectTypeDropdown(),
@@ -282,7 +287,6 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                   const SizedBox(height: 16),
                   _buildCustomerDropDown(),
                   const SizedBox(height: 32),
-                  
                   _buildSectionTitle('Expense Information'),
                   const SizedBox(height: 16),
                   _buildExpenseTypeDropDown(),
@@ -297,7 +301,6 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                   const SizedBox(height: 16),
                   _buildCommentField(),
                   const SizedBox(height: 32),
-                  
                   _buildSectionTitle('Attachments'),
                   const SizedBox(height: 16),
                   _buildFileUpload(context),
@@ -326,7 +329,8 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       side: const BorderSide(color: Color(0xFFE2E8F0)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
                     ),
                     child: Text(
                       'Cancel',
@@ -346,7 +350,8 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
                     ),
                     child: Text(
                       'Save',
@@ -607,7 +612,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
         List<CustomerModel> customerTypeList = snapshot.data ?? [];
         return CommonDropdown<int>(
           hintText: 'Select Lead/Customer*',
-          selectedValue: widget.isEdit ? widget.expenseModel.customerId : null,
+          selectedValue: widget.expenseModel.customerId,
           items: customerTypeList
               .map((status) => DropdownItem<int>(
                     id: int.parse(status.customerId),
@@ -622,6 +627,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                 .single
                 .customerName;
           },
+          enabled: widget.expenseModel.customerId == null,
         );
       },
     );
