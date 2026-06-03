@@ -242,8 +242,12 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
   }
 
   Widget _buildProcessFlowCard(ProcessFlowModel model, int index) {
+    final isWeb = AppStyles.isWebScreen(context);
+    final double rowHeight = isWeb ? 36.0 : 48.0;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      height: rowHeight,
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
@@ -267,12 +271,13 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
               : null,
           borderRadius: BorderRadius.circular(4),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: isWeb ? 26 : 32,
+                  height: isWeb ? 26 : 32,
                   decoration: BoxDecoration(
                     color: AppColors.secondaryBlue.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(4),
@@ -283,79 +288,68 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
                       style: GoogleFonts.plusJakartaSans(
                         color: AppColors.secondaryBlue,
                         fontWeight: FontWeight.w700,
-                        fontSize: 16,
+                        fontSize: isWeb ? 12 : 14,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  flex: 3,
+                  child: Text(
+                    model.taskTypeName ?? 'Unnamed Task',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: isWeb ? 13 : 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textBlue800,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              model.taskTypeName ?? 'Unnamed Task',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.textBlue800,
-                              ),
-                            ),
+                      const Icon(Icons.info_outline_rounded,
+                          size: 14, color: Color(0xFF64748B)),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          model.enquiryForName ?? 'N/A',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: isWeb ? 12 : 13,
+                            color: const Color(0xFF64748B),
+                            fontWeight: FontWeight.w500,
                           ),
-                          const SizedBox(width: 8),
-                          _buildStatusChip(model.statusName ?? 'Unknown'),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                const Icon(Icons.info_outline_rounded,
-                                    size: 14, color: Color(0xFF64748B)),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    model.enquiryForName ?? 'N/A',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 13,
-                                      color: const Color(0xFF64748B),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          if (settingsProvider.menuIsDeleteMap[36] == 1)
-                            InkWell(
-                              onTap: () => _confirmDelete(model),
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFEF2F2),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Icon(
-                                  Icons.delete_outline_rounded,
-                                  color: Color(0xFFEF4444),
-                                  size: 18,
-                                ),
-                              ),
-                            ),
-                        ],
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
+                _buildStatusChip(model.statusName ?? 'Unknown', isWeb),
+                const SizedBox(width: 12),
+                if (settingsProvider.menuIsDeleteMap[36] == 1)
+                  InkWell(
+                    onTap: () => _confirmDelete(model),
+                    child: Container(
+                      padding: EdgeInsets.all(isWeb ? 4.0 : 6.0),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEF2F2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Icon(
+                        Icons.delete_outline_rounded,
+                        color: const Color(0xFFEF4444),
+                        size: isWeb ? 15 : 18,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -364,7 +358,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
     );
   }
 
-  Widget _buildStatusChip(String status) {
+  Widget _buildStatusChip(String status, bool isWeb) {
     Color bgColor;
     Color textColor;
 
@@ -383,7 +377,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: isWeb ? 8 : 10, vertical: isWeb ? 2 : 4),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(4),
@@ -391,7 +385,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
       child: Text(
         status,
         style: GoogleFonts.plusJakartaSans(
-          fontSize: 11,
+          fontSize: isWeb ? 10 : 11,
           fontWeight: FontWeight.w700,
           color: textColor,
         ),
