@@ -475,7 +475,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
           ),
         )
         .toList();
-    recalculateCompanyQuotationItem();
+    final settingsProvider = SettingsProvider();
+    if (settingsProvider.quotationItem == 1) {
+      recalculateCompanyQuotationItem();
+    }
     notifyListeners();
   }
 
@@ -1565,7 +1568,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     // Clear the text fields
     _editBillOfMaterialsIndex = null;
     clearBOMFields();
-    recalculateCompanyQuotationItem();
+    final settingsProvider = SettingsProvider();
+    if (settingsProvider.quotationItem == 1) {
+      recalculateCompanyQuotationItem();
+    }
     notifyListeners();
   }
 
@@ -1667,7 +1673,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void deleteBillOfMaterialsItem(int index) {
     if (index >= 0 && index < _billOfMaterialsItems.length) {
       _billOfMaterialsItems.removeAt(index);
-      recalculateCompanyQuotationItem();
+      final settingsProvider = SettingsProvider();
+      if (settingsProvider.quotationItem == 1) {
+        recalculateCompanyQuotationItem();
+      }
       notifyListeners();
     }
   }
@@ -4549,7 +4558,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void setSelectedProfitId(int? id, {String? name}) {
     _selectedProfitId = id;
     if (name != null) _selectedProfitName = name;
-    recalculateCompanyQuotationItem();
+    final settingsProvider = SettingsProvider();
+    if (settingsProvider.quotationItem == 1) {
+      recalculateCompanyQuotationItem();
+    }
     notifyListeners();
   }
 
