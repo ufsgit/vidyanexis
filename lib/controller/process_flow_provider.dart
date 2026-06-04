@@ -202,14 +202,13 @@ class ProcessFlowProvider extends ChangeNotifier {
           endPoint: HttpUrls.deleteProcessFlowById,
           bodyData: {"flow_id": flowId});
 
+      Loader.stopLoader(context);
+
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-        if (data['department_id'] == -1) {
-          Loader.stopLoader(context);
-        } else {
-          showFriendlySnackBar(context, 'Process flow deleted successfully');
-          Loader.stopLoader(context);
-        }
+        // Refresh the list after successful delete
+        await getProcessFlow(context);
+        showFriendlySnackBar(context, 'Process flow deleted successfully');
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -217,6 +216,7 @@ class ProcessFlowProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      Loader.stopLoader(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
