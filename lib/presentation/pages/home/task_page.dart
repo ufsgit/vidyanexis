@@ -1694,6 +1694,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           .teal),
                                                                   children: provider
                                                                       .taskType
+                                                                      .where((taskType) =>
+                                                                          taskType.manualCreation ==
+                                                                          1)
                                                                       .map(
                                                                           (taskType) {
                                                                     final users = provider

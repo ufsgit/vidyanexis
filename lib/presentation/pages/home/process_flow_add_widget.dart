@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
+import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -40,6 +41,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   final TextEditingController taskTypeController = TextEditingController();
   final TextEditingController taskStatusController = TextEditingController();
   final TextEditingController enquiryForController = TextEditingController();
+  final TextEditingController leadStatusController = TextEditingController();
   final TextEditingController templateIdController = TextEditingController();
   bool isEditingMandatoryTask = false;
   bool isSavingData = false;
@@ -51,7 +53,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         List<DepartmentModel>,
         List<BranchModel>,
         List<DocumentTypeModel>,
-        List<EnquiryForModel>
+        List<EnquiryForModel>,
+        List<SearchLeadStatusModel>,
       )> _taskDataFuture;
   Future<List<TaskTypeModel>>? _taskTypeByDepartmentFuture;
 
@@ -106,6 +109,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     taskTypeController.dispose();
     taskStatusController.dispose();
     templateIdController.dispose();
+    enquiryForController.dispose();
+    leadStatusController.dispose();
     for (var controller in _customFieldControllers.values) {
       controller.dispose();
     }
@@ -198,7 +203,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       List<DepartmentModel>,
                       List<BranchModel>,
                       List<DocumentTypeModel>,
-                      List<EnquiryForModel>
+                      List<EnquiryForModel>,
+                      List<SearchLeadStatusModel>,
                     )>(
                 future: _taskDataFuture,
                 builder: (contextBuilder, snapshot) {
@@ -216,6 +222,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       snapshot.data?.$5 ?? [];
                   List<EnquiryForModel> enquiryForList =
                       snapshot.data?.$6 ?? [];
+                  List<SearchLeadStatusModel> searchLeadStatusList =
+                      snapshot.data?.$7 ?? [];
 
                   final isWeb = AppStyles.isWebScreen(context);
                   final settingsProvider =
@@ -241,6 +249,35 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             newValue.enquiryForId;
                         processFlowProvider.processFlowModel.enquiryForName =
                             newValue.enquiryForName;
+
+                        processFlowProvider.setProcessFlowModel(
+                            processFlowProvider.processFlowModel);
+                        setState(() {});
+                      }
+                    },
+                  );
+
+                  final leadStatusDropdown =
+                      CommonDropdown<SearchLeadStatusModel>(
+                    hintText: 'Lead Status *',
+                    items: searchLeadStatusList
+                        .map((status) => DropdownItem<SearchLeadStatusModel>(
+                              id: status,
+                              name: status.statusName ?? '',
+                            ))
+                        .toList(),
+                    controller: leadStatusController,
+                    selectedValue: searchLeadStatusList
+                        .where((element) =>
+                            element.statusId ==
+                            processFlowProvider.processFlowModel.leadStatusId)
+                        .firstOrNull,
+                    onItemSelected: (SearchLeadStatusModel? newValue) {
+                      if (newValue != null) {
+                        processFlowProvider.processFlowModel.leadStatusId =
+                            newValue.statusId ?? 0;
+                        processFlowProvider.processFlowModel.leadStatusName =
+                            newValue.statusName ?? '';
 
                         processFlowProvider.setProcessFlowModel(
                             processFlowProvider.processFlowModel);
@@ -461,13 +498,27 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       isWeb
-                          ? Row(
+                          ? Column(
                               children: [
-                                Expanded(child: enquiryForDropdown),
-                                const SizedBox(width: 10),
-                                Expanded(child: taskTypeDropdown),
-                                const SizedBox(width: 10),
-                                Expanded(child: taskTypeStatusDropdown),
+                                Row(
+                                  children: [
+                                    Expanded(child: enquiryForDropdown),
+                                    const SizedBox(width: 10),
+                                    Expanded(child: taskTypeDropdown),
+                                    const SizedBox(width: 10),
+                                    Expanded(child: taskTypeStatusDropdown),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(child: leadStatusDropdown),
+                                    const SizedBox(width: 10),
+                                    Expanded(child: Container()),  // remove this to add new fields
+                                    const SizedBox(width: 10),
+                                    Expanded(child: Container()),
+                                  ],
+                                )
                               ],
                             )
                           : Column(
@@ -477,6 +528,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 taskTypeDropdown,
                                 const SizedBox(height: 16),
                                 taskTypeStatusDropdown,
+                                const SizedBox(height: 16),
+                                leadStatusDropdown,
                               ],
                             ),
                       const SizedBox(height: 16),
