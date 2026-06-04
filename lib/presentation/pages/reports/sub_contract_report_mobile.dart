@@ -14,6 +14,7 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class SubContractReportMobile extends StatefulWidget {
   const SubContractReportMobile({super.key});
@@ -268,25 +269,7 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
           if (!provider.isFilter)
             Expanded(
               child: provider.subContractReport.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 80),
-                          Icon(Icons.search_off_outlined,
-                              size: 80, color: Colors.grey[300]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No sub contract reports found',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                  ? const CommonEmptyState(message: 'No sub contract reports found')
                   : Column(
                       children: [
                         CommonReportSummaryBar(

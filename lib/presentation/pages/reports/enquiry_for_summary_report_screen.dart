@@ -10,6 +10,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/enquiry_for_summary_provider.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class EnquiryForSummaryReportScreen extends StatefulWidget {
   const EnquiryForSummaryReportScreen({super.key});
@@ -633,24 +634,7 @@ class _EnquiryForSummaryReportScreenState
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        children: [
-          const SizedBox(height: 60),
-          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[200]),
-          const SizedBox(height: 16),
-          Text(
-            'No records found',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[500],
-            ),
-          ),
-          const SizedBox(height: 60),
-        ],
-      ),
-    );
+    return const CommonEmptyState(message: 'No records found');
   }
 
   void onClickTopButton(BuildContext context) {

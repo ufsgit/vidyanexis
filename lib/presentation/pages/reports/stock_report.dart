@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class StockReport extends StatefulWidget {
   static const String route = '/stock-report';
@@ -1034,23 +1035,7 @@ class _StockReportState extends State<StockReport> {
 
   // ── Empty State Widget ──
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.inventory_2_outlined, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          Text(
-            'No stock records found',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
+    return const CommonEmptyState(message: 'No stock records found');
   }
 
   // ── Date Chooser Dialog picker ──

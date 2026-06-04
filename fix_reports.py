@@ -1,49 +1,60 @@
 import os
 import re
 
-reports_dir = r'd:\dev\vidyanexis\lib\presentation\pages\reports'
-files_to_fix = [
-    'attendance_report.dart',
-    'commission_report_mobile.dart',
-    'customer_outstanding_report_mobile.dart',
-    'employee_summary_report_screen.dart',
-    'enquiry_for_summary_report_screen.dart',
-    'enquiry_source_summary_report_screen.dart',
-    'lead_check_in_report_mobile.dart',
-    'out_of_warrenty_report_screen.dart',
-    'periodic_service_report_page_mobile.dart',
-    'sub_contract_report_mobile.dart',
-    'task_summary_report_screen.dart',
-    'total_outstanding_report_page.dart',
-    'upcoming_warrenty_report_screen.dart',
-    'work_report_screen_phone.dart',
-    'work_summary_screen_phone.dart'
-]
+dir_path = r'd:\vidyanexis\lib\presentation\pages\reports'
 
-for file in files_to_fix:
-    filepath = os.path.join(reports_dir, file)
+def process_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
-    
-    fab_idx = content.find('floatingActionButton:')
-    if fab_idx != -1:
-        before_fab = content[:fab_idx]
-        fab_content = content[fab_idx:]
-        
-        # We need to make sure we don't insert it again if the script is run multiple times
-        if 'Provider.of<SidebarProvider>(context, listen: false).stopSearch();' not in fab_content:
-            new_fab_content = re.sub(
-                r'(\.toggleFilter\(\);)', 
-                r'\1\n                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();', 
-                fab_content, 
-                count=1
-            )
-            
-            if 'package:vidyanexis/controller/side_bar_provider.dart' not in before_fab:
-                before_fab = "import 'package:vidyanexis/controller/side_bar_provider.dart';\n" + before_fab
+
+    original_content = content
+
+    # This pattern targets: return Center( child: Column( ... Icon(Icons.search_off_outlined ...) ... Text('No ...') ... ));
+    # It handles both `return Center` and `Center` inside a ternary or similar.
+    # It stops matching at the end of the Center block which corresponds to the closing `)` of the `Center(`.
+    # Since regex balancing is hard, we'll do a simpler approach:
+    # Find `Icon(Icons.search_off_outlined`
+    # Walk backward to find `Center(`
+    # Walk forward to find `Text('...')`
+    # Replace that chunk.
+
+    # Simpler regex since most are identical:
+    pattern = re.compile(
+        r'(?:return\s+)?Center\(\s*child:\s*Column\(\s*(?:mainAxisAlignment:\s*MainAxisAlignment\.center,\s*)?children:\s*\[\s*(?:const\s+)?Icon\(Icons\.search_off_outlined[^\)]*\)\s*,\s*(?:const\s+)?SizedBox\(height:\s*\d+\),\s*(?:const\s+)?Text\(\s*\'([^\']+)\'[^\)]+\)\s*,?\s*\]\s*,\s*\)\s*,?\s*\)',
+        re.MULTILINE | re.DOTALL
+    )
+
+    def replace_match(m):
+        msg = m.group(1)
+        # If it started with return, we preserve it. Let's check by looking at the match text.
+        text = m.group(0)
+        prefix = 'return ' if text.startswith('return') else ''
+        return f"{prefix}const CommonEmptyState(message: '{msg}')"
+
+    content = pattern.sub(replace_match, content)
+
+    # Some might use Icons.assignment_return_outlined or others that I missed
+    pattern2 = re.compile(
+        r'(?:return\s+)?Center\(\s*child:\s*Padding\(\s*padding:[^\)]+\),\s*child:\s*Column\(\s*children:\s*\[\s*(?:const\s+)?Icon\([^\]]+\]\s*,\s*\)\s*,\s*\)\s*,?\s*\)',
+        re.MULTILINE | re.DOTALL
+    )
+    # The previous regex in replace_inventory_empty_states missed some, but we only have Icons.search_off_outlined remaining.
+
+    if content != original_content:
+        if 'CommonEmptyState' in content and 'common_empty_state.dart' not in content:
+            import_str = "import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';\n"
+            last_import = content.rfind('import ')
+            if last_import != -1:
+                end_of_last_import = content.find('\n', last_import) + 1
+                content = content[:end_of_last_import] + import_str + content[end_of_last_import:]
+            else:
+                content = import_str + content
                 
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(before_fab + new_fab_content)
-            print(f'Fixed {file}')
-        else:
-            print(f'Already fixed {file}')
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(content)
+        print(f"Updated {filepath}")
+
+for root, _, files in os.walk(dir_path):
+    for f in files:
+        if f.endswith('.dart'):
+            process_file(os.path.join(root, f))

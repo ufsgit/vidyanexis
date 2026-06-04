@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/sales_report_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class SalesReportScreenPhone extends StatefulWidget {
   const SalesReportScreenPhone({super.key});
@@ -123,7 +124,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
       return const Center(child: CircularProgressIndicator());
     }
     if (provider.salesReport.isEmpty) {
-      return const Center(child: Text('No records found'));
+      return const CommonEmptyState(message: 'No records found');
     }
 
     return ListView.builder(

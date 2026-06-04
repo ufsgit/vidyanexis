@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class WorkReportScreen extends StatefulWidget {
   static const String route = '/workReport/';
@@ -617,25 +618,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                         // Data Rows
                         reportsProvider.taskReport.isEmpty
                             ? Expanded(
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const SizedBox(height: 80),
-                                      Icon(Icons.search_off_outlined,
-                                          size: 80, color: Colors.grey[300]),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'No work reports found',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                child: const CommonEmptyState(message: 'No work reports found'),
                               )
                             : Expanded(
                                 child: ListView.builder(

@@ -21,6 +21,7 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class AmcReportScreen extends StatefulWidget {
   final bool fromDashBoard;
@@ -1072,24 +1073,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           ),
                         Expanded(
                           child: reportsProvider.amcReport.isEmpty
-                              ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.search_off_outlined,
-                                          size: 80, color: Colors.grey[300]),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'No reports found',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 16,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
+                              ? const CommonEmptyState(message: 'No reports found')
                               : ListView.separated(
                                   padding: const EdgeInsets.all(16),
                                   itemCount: reportsProvider.amcReport.length,

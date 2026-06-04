@@ -19,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import '../../widgets/customer/service_details_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ServicePageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -580,24 +581,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
     return SizedBox(
       height: availableHeight,
       child: reportsProvider.serviceReport.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search_off_outlined,
-                      size: 80, color: Colors.grey[300]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No complaint reports found',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            )
+          ? const CommonEmptyState(message: 'No complaint reports found')
           : AppStyles.isWebScreen(context)
               ? Padding(
                   padding: const EdgeInsets.all(16.0),

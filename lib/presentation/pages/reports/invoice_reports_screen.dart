@@ -17,6 +17,7 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class InvoiceReportsScreen extends StatefulWidget {
   const InvoiceReportsScreen({super.key});
@@ -1070,24 +1071,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                     ),
             if (reportsProvider.taskReport.isEmpty)
               Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.search_off_outlined,
-                          size: 80, color: Colors.grey[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No invoice reports found',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: const CommonEmptyState(message: 'No invoice reports found'),
               )
             else ...[
               AppStyles.isWebScreen(context)

@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_lead_search_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class LeadSearchPage extends StatelessWidget {
   static const String route = '/leadSearch';
@@ -44,21 +45,7 @@ class LeadSearchPage extends StatelessWidget {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          CustomText(
-            'No Leads Found',
-            fontSize: 16,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
-        ],
-      ),
-    );
+    return const CommonEmptyState(message: 'No Leads Found');
   }
 
   Widget _buildWebHeader(

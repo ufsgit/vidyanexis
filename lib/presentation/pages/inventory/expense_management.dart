@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -387,25 +388,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Column(
-          children: [
-            Icon(Icons.receipt_long_rounded, size: 64, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'No expenses found',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                color: Colors.grey[500],
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return const CommonEmptyState(message: 'No expenses found');
   }
 
   // Filter Helpers (Simplified for logic cleanup)

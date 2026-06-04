@@ -10,6 +10,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class EmployeeLocationReportScreen extends StatefulWidget {
   const EmployeeLocationReportScreen({super.key});
@@ -381,27 +382,7 @@ class _EmployeeLocationReportScreenState
 
                                         locationDataList = snapshot.data ?? [];
 
-                                        return Center(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              const SizedBox(height: 80),
-                                              Icon(Icons.search_off_outlined,
-                                                  size: 80,
-                                                  color: Colors.grey[300]),
-                                              const SizedBox(height: 16),
-                                              Text(
-                                                'No location reports found',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.grey[600],
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
+                                        return const CommonEmptyState(message: 'No location reports found');
 
                                         return ListView.builder(
                                           shrinkWrap:
@@ -566,25 +547,7 @@ class _EmployeeLocationReportScreenState
                               locationDataList = snapshot.data ?? [];
 
                               if (locationDataList.isEmpty) {
-                                return Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const SizedBox(height: 80),
-                                      Icon(Icons.search_off_outlined,
-                                          size: 80, color: Colors.grey[300]),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'No location reports found',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
+                                return const CommonEmptyState(message: 'No location reports found');
                               }
 
                               return ListView.builder(

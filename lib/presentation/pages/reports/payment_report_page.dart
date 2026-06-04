@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart'; // Ensure
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart'; // Ensure this exists
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class PaymentReportPage extends StatefulWidget {
   const PaymentReportPage({super.key});
@@ -164,25 +165,7 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
         _buildWebTableHeader(),
         Expanded(
           child: provider.paymentReportList.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 80),
-                      Icon(Icons.search_off_outlined,
-                          size: 80, color: Colors.grey[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No payment reports found',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+              ? const CommonEmptyState(message: 'No payment reports found')
               : ListView.builder(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
@@ -408,24 +391,7 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
       return const Center(child: CircularProgressIndicator());
     }
     if (provider.paymentReportList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 80),
-            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'No payment reports found',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      );
+      return const CommonEmptyState(message: 'No payment reports found');
     }
     return Container(
         color: Colors.grey[50],

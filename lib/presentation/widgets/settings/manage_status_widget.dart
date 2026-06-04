@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ManageStatusWidget extends StatefulWidget {
   const ManageStatusWidget({super.key});
@@ -70,7 +71,7 @@ class _ManageStatusWidgetState extends State<ManageStatusWidget> {
                     ),
                     child: Row(
                       children: [
-                        SizedBox(width: 48, child: Center(child: Text('No.'))),
+                        SizedBox(width: 48, child: const Center(child: Text('No.'))),
                         Expanded(child: Text('User')),
                         SizedBox(
                           width: 48,

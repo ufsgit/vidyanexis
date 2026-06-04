@@ -15,6 +15,7 @@ import 'package:vidyanexis/controller/models/lead_status_report_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class LeadStatusReportScreen extends StatefulWidget {
   final bool fromDashBoard;
@@ -209,22 +210,8 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          Text(
-            'No report data found',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
+    return const CommonEmptyState(
+      message: 'No report data found',
     );
   }
 
@@ -245,12 +232,8 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
             ),
           ],
         ),
-        child: const Center(
-          child: Text(
-            'No data available',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, fontSize: 16),
-          ),
+        child: const CommonEmptyState(
+          message: 'No data available',
         ),
       );
     }

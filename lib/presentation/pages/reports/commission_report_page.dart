@@ -10,6 +10,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class CommissionReportPage extends StatefulWidget {
   const CommissionReportPage({super.key});
@@ -300,25 +301,7 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       // Table Body
                       Expanded(
                         child: provider.commissionReport.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const SizedBox(height: 80),
-                                    Icon(Icons.search_off_outlined,
-                                        size: 80, color: Colors.grey[300]),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'No commission reports found',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
+                            ? const CommonEmptyState(message: 'No commission reports found')
                             : ListView.separated(
                                 itemCount: provider.commissionReport.length,
                                 separatorBuilder: (context, index) =>

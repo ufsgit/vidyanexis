@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class TotalOutstandingReportPage extends StatefulWidget {
   const TotalOutstandingReportPage({super.key});
@@ -193,25 +194,7 @@ class _TotalOutstandingReportPageState
         _buildWebTableHeader(),
         Expanded(
           child: provider.totalOutstandingReportList.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 80),
-                      Icon(Icons.search_off_outlined,
-                          size: 80, color: Colors.grey[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No total outstanding reports found',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+              ? const CommonEmptyState(message: 'No total outstanding reports found')
               : ListView.builder(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
@@ -485,24 +468,7 @@ class _TotalOutstandingReportPageState
           ),
         Expanded(
           child: provider.totalOutstandingReportList.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.search_off_outlined,
-                          size: 80, color: Colors.grey[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No total outstanding reports found',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+              ? const CommonEmptyState(message: 'No total outstanding reports found')
               : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: provider.totalOutstandingReportList.length,

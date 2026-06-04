@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class SubContractReportPage extends StatefulWidget {
   const SubContractReportPage({super.key});
@@ -349,29 +350,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                     ),
                                     Expanded(
                                       child: provider.subContractReport.isEmpty
-                                          ? Center(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  const SizedBox(height: 80),
-                                                  Icon(
-                                                      Icons.search_off_outlined,
-                                                      size: 80,
-                                                      color: Colors.grey[300]),
-                                                  const SizedBox(height: 16),
-                                                  Text(
-                                                    'No sub contract reports found',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey[600],
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
+                                          ? const CommonEmptyState(message: 'No sub contract reports found')
                                           : ListView.separated(
                                               itemCount: provider
                                                   .subContractReport.length,

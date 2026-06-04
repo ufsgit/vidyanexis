@@ -19,6 +19,7 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class OutOfWarrentyReportScreen extends StatefulWidget {
   const OutOfWarrentyReportScreen({super.key});
@@ -504,27 +505,7 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                 Expanded(
                                   child: reportsProvider
                                           .outOfWarrentyReport.isEmpty
-                                      ? Center(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              const SizedBox(height: 80),
-                                              Icon(Icons.search_off_outlined,
-                                                  size: 80,
-                                                  color: Colors.grey[300]),
-                                              const SizedBox(height: 16),
-                                              Text(
-                                                'No out of warranty reports found',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.grey[600],
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
+                                      ? const CommonEmptyState(message: 'No out of warranty reports found')
                                       : ListView.builder(
                                           shrinkWrap: true,
                                           physics:

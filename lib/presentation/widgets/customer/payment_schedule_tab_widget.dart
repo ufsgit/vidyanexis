@@ -7,6 +7,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_payment_schedule.da
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_card.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class PaymentScheduleTabWidget extends StatefulWidget {
   final String customerId;
@@ -96,8 +97,7 @@ class _PaymentScheduleTabWidgetState extends State<PaymentScheduleTabWidget> {
                 child: paymentScheduleProvider.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : paymentScheduleProvider.paymentScheduleList.isEmpty
-                        ? const Center(
-                            child: Text('No Payment Schedules found'))
+                        ? const CommonEmptyState(message: 'No Payment Schedules found')
                         : ListView.builder(
                             itemCount: paymentScheduleProvider
                                 .paymentScheduleList.length,

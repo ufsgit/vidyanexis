@@ -17,6 +17,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ExpenseReportScreen extends StatefulWidget {
   static const String route = "/expense_report";
@@ -88,8 +89,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                     context.visitAncestorElements((element) {
                       if (element is StatefulElement &&
                           element.state is ScaffoldState) {
-                        ScaffoldState scaffold =
-                            element.state as ScaffoldState;
+                        ScaffoldState scaffold = element.state as ScaffoldState;
                         if (scaffold.hasDrawer) {
                           parent = scaffold;
                           return false;
@@ -130,8 +130,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(
-                      color: const Color(0xFFCBD5E1), width: 1.0),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.02),
@@ -154,8 +154,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         color: Color(0xFF64748B), size: 18),
                     border: InputBorder.none,
                     isDense: true,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
                   ),
                 ),
               ),
@@ -168,18 +168,17 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
               ElevatedButton.icon(
                 onPressed: () => _handleExport(provider),
                 icon: const Icon(Icons.file_upload_outlined, size: 16),
-                label: Text('Export', 
-                  style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  )
-                ),
+                label: Text('Export',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    )),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -245,14 +244,14 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -537,18 +536,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
   Widget _buildWebTable(ExpenseProvider provider) {
     if (provider.expenseModelList.isEmpty) {
-      return Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 60),
-            Icon(Icons.receipt_long_outlined,
-                size: 80, color: Colors.grey[200]),
-            const SizedBox(height: 16),
-            Text('No expenses found',
-                style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16, color: Colors.grey[600])),
-          ],
-        ),
+      return const CommonEmptyState(
+        message: 'No expenses found',
+        icon: Icons.receipt_long_outlined,
       );
     }
 
@@ -556,8 +546,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -595,11 +584,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           TableWidget(title: 'User Name', flex: 2, color: Color(0xFF607185)),
           TableWidget(
               title: 'Entry Date', width: 140, color: Color(0xFF607185)),
-          TableWidget(
-              title: 'Expense Head', flex: 3, color: Color(0xFF607185)),
+          TableWidget(title: 'Expense Head', flex: 3, color: Color(0xFF607185)),
           TableWidget(title: 'Category', flex: 2, color: Color(0xFF607185)),
-          TableWidget(
-              title: 'Project Name', flex: 2, color: Color(0xFF607185)),
+          TableWidget(title: 'Project Name', flex: 2, color: Color(0xFF607185)),
           TableWidget(title: 'Amount', width: 130, color: Color(0xFF607185)),
           TableWidget(
               title: 'Actions',
@@ -787,8 +774,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                       label: type.expenseTypeName,
                       isSelected:
                           provider.selectedExpenseTypeId == type.expenseTypeId,
-                      onTap: () => provider
-                          .setSelectedExpenseTypeId(type.expenseTypeId),
+                      onTap: () =>
+                          provider.setSelectedExpenseTypeId(type.expenseTypeId),
                     )),
               ],
             ),
@@ -899,7 +886,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         Navigator.pop(context);
                         reportsProvider.getExpenseReport(context);
                       },
-                      style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
                         backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white,
                       ),
@@ -917,18 +906,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
   Widget _buildExpenseList(ExpenseProvider provider, bool isSmallScreen) {
     if (provider.expenseModelList.isEmpty) {
-      return Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 60),
-            Icon(Icons.receipt_long_outlined,
-                size: 80, color: Colors.grey[200]),
-            const SizedBox(height: 16),
-            Text('No expenses found',
-                style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16, color: Colors.grey[600])),
-          ],
-        ),
+      return const CommonEmptyState(
+        message: 'No expenses found',
+        icon: Icons.receipt_long_outlined,
       );
     }
 

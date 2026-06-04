@@ -1,3 +1,4 @@
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -212,21 +213,7 @@ class _StockReturnPageState extends State<StockReturnPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 40),
-        child: Column(
-          children: [
-            Icon(Icons.assignment_return_outlined, size: 60, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'No stock return entries found',
-              style: GoogleFonts.plusJakartaSans(color: Colors.grey[600], fontSize: 14),
-            ),
-          ],
-        ),
-      ),
-    );
+    return const CommonEmptyState(message: 'No stock return entries found');
   }
 
   void _showDeleteDialog(BuildContext context, StockreturnProvider provider, int id) {

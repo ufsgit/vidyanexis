@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/process_flow_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_add_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ProcessFlowPage extends StatefulWidget {
   const ProcessFlowPage({super.key});
@@ -394,23 +395,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.assignment_outlined, size: 64, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          Text(
-            'No process flows found',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              color: Colors.grey[500],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
+    return const CommonEmptyState(message: 'No process flows found');
   }
 
   void _openAddDialog({required bool isEdit, required ProcessFlowModel model}) {

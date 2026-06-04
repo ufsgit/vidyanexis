@@ -35,6 +35,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class LeadPage extends StatefulWidget {
   final bool fromDashBoard;
@@ -932,8 +933,7 @@ class _LeadsPageState extends State<LeadPage> {
 
                                 Expanded(
                                   child: leadProvider.leadData.isEmpty
-                                      ? const Center(
-                                          child: Text('No data available'))
+                                      ? const CommonEmptyState(message: 'No data available')
                                       : ScrollConfiguration(
                                           behavior:
                                               ScrollConfiguration.of(context)

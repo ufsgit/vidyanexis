@@ -17,6 +17,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class UpcomingWarrentyReportScreen extends StatefulWidget {
   const UpcomingWarrentyReportScreen({super.key});
@@ -601,22 +602,7 @@ class _UpcomingWarrentyReportScreen
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[200]),
-          const SizedBox(height: 16),
-          Text(
-            'No upcoming warranty reports found',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ),
-    );
+    return const CommonEmptyState(message: 'No upcoming warranty reports found');
   }
 
   void onClickTopButton(BuildContext context) {

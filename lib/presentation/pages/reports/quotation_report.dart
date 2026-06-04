@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class QuotationReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -751,24 +752,7 @@ class _QuotationReport extends State<QuotationReport> {
                 ? Expanded(
                     child: reportsProvider.hasFetched
                         ? reportsProvider.quotationReports.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.search_off_outlined,
-                                        size: 80, color: Colors.grey[300]),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'No reports found for the selected range',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
+                            ? const CommonEmptyState(message: 'No reports found for the selected range')
                             : Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(
@@ -1078,24 +1062,7 @@ class _QuotationReport extends State<QuotationReport> {
                 : Expanded(
                     child: reportsProvider.hasFetched
                         ? reportsProvider.quotationReports.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.search_off_outlined,
-                                        size: 80, color: Colors.grey[300]),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'No reports found for the selected range',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
+                            ? const CommonEmptyState(message: 'No reports found for the selected range')
                             : Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(

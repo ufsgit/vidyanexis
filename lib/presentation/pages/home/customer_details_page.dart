@@ -72,6 +72,7 @@ import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/utils/pdf_action_helper.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 
 class CustomerDetailsScreen extends StatefulWidget {
@@ -355,7 +356,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           //           future: getUserName(),
           //           builder: (context, snapshot) {
           //             if (snapshot.hasError) {
-          //               return const Center(child: Text('Error loading username'));
+          //               return const CommonEmptyState(message: 'Error loading username');
           //             } else {
           //               final userName = snapshot.data ?? '';
           //               return CustomSidebar(
@@ -4472,7 +4473,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     const borderColor = Color(0xFFE9EDF1);
 
     return filteredAmcList.isEmpty
-        ? const Center(child: Text('No Periodic Service found.'))
+        ? const CommonEmptyState(message: 'No Periodic Service found.')
         : Expanded(
             child: Container(
               margin: const EdgeInsets.only(top: 10),

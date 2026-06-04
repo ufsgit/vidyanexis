@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.da
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class TaskPageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -654,26 +655,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                             ),
                             // Data Rows
                             reportsProvider.taskReport.isEmpty
-                                ? Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(height: 80),
-                                        Icon(Icons.search_off_outlined,
-                                            size: 80, color: Colors.grey[300]),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          'No task reports found',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[600],
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
+                                ? const CommonEmptyState(message: 'No task reports found')
                                 : Column(
                                     children: List.generate(
                                         reportsProvider.taskReport.length,

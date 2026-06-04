@@ -17,6 +17,7 @@ import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class WorkReportPhone extends StatefulWidget {
   static const String route = '/workReport/';
@@ -288,25 +289,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
           if (!reportsProvider.isFilter)
             Expanded(
               child: reportsProvider.taskReport.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 80),
-                          Icon(Icons.search_off_outlined,
-                              size: 80, color: Colors.grey[300]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No work reports found',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                  ? const CommonEmptyState(message: 'No work reports found')
                   : Column(
                       children: [
                         CommonReportSummaryBar(

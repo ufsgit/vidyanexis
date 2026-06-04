@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_item.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({super.key});
@@ -174,25 +175,7 @@ class _ItemPageState extends State<ItemPage> {
   }
 
   Widget _buildEmptyState() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 60),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.inventory_2_outlined, size: 48, color: Colors.grey[300]),
-            const SizedBox(height: 12),
-            Text(
-              'No items found',
-              style: GoogleFonts.plusJakartaSans(
-                color: Colors.grey[500],
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return const CommonEmptyState(message: 'No items found');
   }
 
   void _showDeleteDialog(

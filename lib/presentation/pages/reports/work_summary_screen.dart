@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/reports/work_summary_graph_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class WorkSummaryScreen extends StatefulWidget {
   const WorkSummaryScreen({super.key});
@@ -590,29 +591,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                     // Data Rows
                                     Expanded(
                                       child: reportsProvider.taskReport.isEmpty
-                                          ? Center(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  const SizedBox(height: 80),
-                                                  Icon(
-                                                      Icons.search_off_outlined,
-                                                      size: 80,
-                                                      color: Colors.grey[300]),
-                                                  const SizedBox(height: 16),
-                                                  Text(
-                                                    'No reports found for the selected range',
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      color: Color(0xFF607185),
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
+                                          ? const CommonEmptyState(message: 'No reports found for the selected range')
                                           : ListView.builder(
                                               shrinkWrap: true,
                                               physics:
@@ -866,29 +845,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                     // Data Rows
                                     Expanded(
                                       child: reportsProvider.taskReport.isEmpty
-                                          ? Center(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  const SizedBox(height: 80),
-                                                  Icon(
-                                                      Icons.search_off_outlined,
-                                                      size: 80,
-                                                      color: Colors.grey[300]),
-                                                  const SizedBox(height: 16),
-                                                  Text(
-                                                    'No reports found for the selected range',
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      color: Color(0xFF607185),
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
+                                          ? const CommonEmptyState(message: 'No reports found for the selected range')
                                           : ListView.builder(
                                               shrinkWrap: true,
                                               physics:

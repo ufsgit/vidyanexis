@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ReceiptReportPage extends StatefulWidget {
   const ReceiptReportPage({super.key});
@@ -159,7 +160,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                 _buildWebTableHeader(),
                 Expanded(
                   child: provider.receiptReportList.isEmpty
-                      ? const Center(child: Text('No data found'))
+                      ? const CommonEmptyState(message: 'No data found')
                       : ListView.builder(
                           controller: scrollController,
                           padding: EdgeInsets.zero,
@@ -402,7 +403,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
       return const Center(child: CircularProgressIndicator());
     }
     if (provider.receiptReportList.isEmpty) {
-      return const Center(child: Text('No data found'));
+      return const CommonEmptyState(message: 'No data found');
     }
     return Container(
         color: Colors.grey[50],

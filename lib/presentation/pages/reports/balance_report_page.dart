@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class BalanceReportPage extends StatefulWidget {
   const BalanceReportPage({super.key});
@@ -87,24 +88,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
           SliverToBoxAdapter(child: _buildWebTableHeader()),
           if (provider.balanceReportList.isEmpty)
             SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.search_off_outlined,
-                        size: 80, color: Colors.grey[300]),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No balance reports found',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              child: const CommonEmptyState(message: 'No balance reports found'),
             )
           else
             SliverList(
@@ -462,24 +446,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
         if (!provider.isFilter)
           Expanded(
             child: provider.balanceReportList.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search_off_outlined,
-                            size: 80, color: Colors.grey[300]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No balance reports found',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                ? const CommonEmptyState(message: 'No balance reports found')
                 : Column(
                     children: [
                       CommonReportSummaryBar(

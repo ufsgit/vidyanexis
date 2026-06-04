@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_service.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ServiceDetailsWidget extends StatelessWidget {
   final String customerId;
@@ -363,7 +364,7 @@ class ServiceDetailsWidget extends StatelessWidget {
                             //     //           );
                             //     //         },
                             //     //       )
-                            //     //     : Center(child: Text('No Task Logs')),
+                            //     //     : const CommonEmptyState(message: 'No Task Logs'),
                             //   ],
                             // ),
                           ],

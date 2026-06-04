@@ -18,6 +18,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ComplaintPageReportsMobile extends StatefulWidget {
   static String route = '/complaintReports/';
@@ -308,55 +309,7 @@ class _ComplaintPageReportsMobileState
               Expanded(
                 child: !reportsProvider.isLoading &&
                         reportsProvider.serviceReport.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.search_off_outlined,
-                                size: 80, color: Colors.grey[300]),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No complaint reports found',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            if (reportsProvider.fromDate != null ||
-                                reportsProvider.toDate != null ||
-                                (reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0) ||
-                                reportsProvider.Search.isNotEmpty)
-                              ElevatedButton(
-                                onPressed: () {
-                                  reportsProvider.selectDateFilterOption(null);
-                                  reportsProvider.removeStatus();
-                                  searchController.clear();
-                                  reportsProvider.setTaskSearchCriteria(
-                                      '', '', '', '', '');
-                                  reportsProvider.getSearchServiceReport(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.primaryBlue,
-                                  elevation: 0,
-                                  side: const BorderSide(
-                                      color: AppColors.primaryBlue),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                child: const Text('Clear All Filters'),
-                              ),
-                          ],
-                        ),
-                      )
+                    ? const CommonEmptyState(message: 'No complaint reports found')
                     : ListView.separated(
                         separatorBuilder: (context, index) {
                           return const Divider(

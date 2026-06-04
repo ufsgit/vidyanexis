@@ -14,6 +14,7 @@ import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ProcessFlowDialog extends StatefulWidget {
   final TaskReportModel task;
@@ -174,7 +175,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           } else if (snapshot.hasError ||
               !snapshot.hasData ||
               snapshot.data!.isEmpty) {
-            return const Center(child: Text('Error loading status options'));
+            return const CommonEmptyState(message: 'Error loading status options');
           } else {
             final statusOptions = snapshot.data!;
 

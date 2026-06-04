@@ -14,6 +14,7 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class CustomerOutstandingReportMobile extends StatefulWidget {
   const CustomerOutstandingReportMobile({super.key});
@@ -237,25 +238,7 @@ class _CustomerOutstandingReportMobileState
           if (!provider.isFilter)
             Expanded(
               child: provider.reportData.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 80),
-                          Icon(Icons.search_off_outlined,
-                              size: 80, color: Colors.grey[300]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No records found',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                  ? const CommonEmptyState(message: 'No records found')
                   : Column(
                       children: [
                         CommonReportSummaryBar(

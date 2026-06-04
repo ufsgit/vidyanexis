@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class WarrentyReportScreen extends StatefulWidget {
   const WarrentyReportScreen({super.key});
@@ -592,27 +593,7 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                               // Data Rows
                               Expanded(
                                 child: reportsProvider.amcReport.isEmpty
-                                    ? Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const SizedBox(height: 80),
-                                            Icon(Icons.search_off_outlined,
-                                                size: 80,
-                                                color: Colors.grey[300]),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              'No warranty reports found',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey[600],
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
+                                    ? const CommonEmptyState(message: 'No warranty reports found')
                                     : ListView.builder(
                                         shrinkWrap:
                                             true, // To avoid scrolling issues when inside a parent widget
@@ -751,27 +732,7 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                               // Data Rows
                               Expanded(
                                 child: reportsProvider.amcReport.isEmpty
-                                    ? Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const SizedBox(height: 80),
-                                            Icon(Icons.search_off_outlined,
-                                                size: 80,
-                                                color: Colors.grey[300]),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              'No warranty reports found',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey[600],
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
+                                    ? const CommonEmptyState(message: 'No warranty reports found')
                                     : ListView.builder(
                                         shrinkWrap:
                                             true, // To avoid scrolling issues when inside a parent widget

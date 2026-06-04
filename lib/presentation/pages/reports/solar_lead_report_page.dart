@@ -16,6 +16,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class SolarLeadReportPage extends StatefulWidget {
   const SolarLeadReportPage({super.key});
@@ -863,29 +864,7 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
-            Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Icon(Icons.search_off_outlined,
-                      size: 48, color: Colors.grey[300]),
-                  const SizedBox(height: 12),
-                  Text(
-                    title.contains('Conversion')
-                        ? 'No converted leads found for the selected period'
-                        : title.contains('Cost')
-                            ? 'No project cost data available'
-                            : 'No data found for this range',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const CommonEmptyState(message: 'Conversion'),
             const SizedBox(height: 40),
           ],
         ),

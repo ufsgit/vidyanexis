@@ -11,6 +11,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class AddTaskType extends StatefulWidget {
   final bool isEdit;
@@ -688,7 +689,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                           const SizedBox(
                                               width: 48,
                                               child:
-                                                  Center(child: Text('No.'))),
+                                                  const CommonEmptyState(message: 'No.')),
                                           Expanded(child: Text('Status Name')),
                                           Center(
                                             child: Checkbox(
@@ -835,7 +836,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                           const SizedBox(
                                               width: 48,
                                               child:
-                                                  Center(child: Text('No.'))),
+                                                  const CommonEmptyState(message: 'No.')),
                                           Expanded(child: Text('Enquiry For')),
                                           Center(
                                             child: Checkbox(

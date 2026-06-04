@@ -11,6 +11,7 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class UpcomingPaymentReportPage extends StatefulWidget {
   const UpcomingPaymentReportPage({super.key});
@@ -139,25 +140,7 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
         _buildWebTableHeader(),
         Expanded(
           child: provider.upcomingPaymentReportList.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 80),
-                      Icon(Icons.search_off_outlined,
-                          size: 80, color: Colors.grey[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No upcoming payment reports found',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+              ? const CommonEmptyState(message: 'No upcoming payment reports found')
               : ListView.builder(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
@@ -356,24 +339,7 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
           ),
         Expanded(
           child: provider.upcomingPaymentReportList.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.search_off_outlined,
-                          size: 80, color: Colors.grey[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No upcoming payment reports found',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+              ? const CommonEmptyState(message: 'No upcoming payment reports found')
               : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: provider.upcomingPaymentReportList.length,

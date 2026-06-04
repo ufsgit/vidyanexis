@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class CustomerOutstandingReportPage extends StatefulWidget {
   static String route = '/customer_outstanding_report';
@@ -255,7 +256,7 @@ class _CustomerOutstandingReportPageState
                       // Table Body
                       Expanded(
                         child: provider.reportData.isEmpty
-                            ? const Center(child: Text('No data found'))
+                            ? const CommonEmptyState(message: 'No data found')
                             : ListView.separated(
                                 itemCount: provider.reportData.length,
                                 separatorBuilder: (context, index) =>

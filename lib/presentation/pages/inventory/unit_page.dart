@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_unit_page.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class UnitPage extends StatefulWidget {
   const UnitPage({super.key});
@@ -151,23 +152,7 @@ class _UnitPageState extends State<UnitPage> {
   }
 
   Widget _buildEmptyState() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 60),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.straighten_outlined, size: 48, color: Colors.grey[300]),
-            const SizedBox(height: 12),
-            Text(
-              'No units found',
-              style: GoogleFonts.plusJakartaSans(
-                  color: Colors.grey[500], fontSize: 14),
-            ),
-          ],
-        ),
-      ),
-    );
+    return const CommonEmptyState(message: 'No units found');
   }
 
   void _showDeleteDialog(

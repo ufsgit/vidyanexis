@@ -24,6 +24,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/utils/pdf_function.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class LeadPageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -940,26 +941,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             Expanded(
                               child: leadReportProvider.leadReportData.isEmpty
-                                  ? Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.search_off_outlined,
-                                              size: 60,
-                                              color: Colors.grey[300]),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            'No reports found for the selected range',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 16,
-                                              color: Colors.grey[600],
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
+                                  ? const CommonEmptyState(message: 'No reports found for the selected range')
                                   : ListView.builder(
                                       itemCount: leadReportProvider
                                           .leadReportData.length,

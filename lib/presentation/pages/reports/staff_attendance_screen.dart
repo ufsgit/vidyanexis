@@ -14,6 +14,7 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class StaffAttendanceScreen extends StatefulWidget {
   const StaffAttendanceScreen({super.key});
@@ -753,25 +754,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
             AppStyles.isWebScreen(context)
                 ? (reportsProvider.taskReport.isEmpty
                     ? Expanded(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const SizedBox(height: 80),
-                              Icon(Icons.search_off_outlined,
-                                  size: 80, color: Colors.grey[300]),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No attendance reports found',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: const CommonEmptyState(message: 'No attendance reports found'),
                       )
                     : Expanded(
                         child: Padding(
@@ -983,24 +966,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       )
                     : reportsProvider.taskReport.isEmpty
                         ? Expanded(
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.search_off_outlined,
-                                      size: 80, color: Colors.grey[300]),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    'No reports found for the selected range',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            child: const CommonEmptyState(message: 'No reports found for the selected range'),
                           )
                         : Expanded(
                             child: Padding(

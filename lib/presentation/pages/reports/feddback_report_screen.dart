@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class FeedbackReportScreen extends StatefulWidget {
   const FeedbackReportScreen({super.key});
@@ -638,27 +639,7 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                               // Data Rows
                               reportsProvider.amcReport.isEmpty
                                   ? Expanded(
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const SizedBox(height: 80),
-                                            Icon(Icons.search_off_outlined,
-                                                size: 80,
-                                                color: Colors.grey[300]),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              'No feedback reports found',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey[600],
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                      child: const CommonEmptyState(message: 'No feedback reports found'),
                                     )
                                   : Expanded(
                                       child: ListView.builder(
@@ -807,27 +788,7 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                               // Data Rows
                               reportsProvider.amcReport.isEmpty
                                   ? Expanded(
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const SizedBox(height: 80),
-                                            Icon(Icons.search_off_outlined,
-                                                size: 80,
-                                                color: Colors.grey[300]),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              'No feedback reports found',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey[600],
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                      child: const CommonEmptyState(message: 'No feedback reports found'),
                                     )
                                   : Expanded(
                                       child: ListView.builder(

@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class AttendanceReport extends StatefulWidget {
   const AttendanceReport({super.key});
@@ -902,23 +903,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[200]),
-          const SizedBox(height: 16),
-          Text(
-            'No attendance reports found',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 14,
-              color: Colors.grey[500],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
+    return const CommonEmptyState(message: 'No attendance reports found');
   }
 
   void onClickTopButton(BuildContext context) {

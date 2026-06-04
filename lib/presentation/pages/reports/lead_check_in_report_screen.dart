@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class LeadCheckInReportScreen extends StatefulWidget {
   const LeadCheckInReportScreen({super.key});
@@ -527,23 +528,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
     }
 
     if (reportProvider.reports.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'No check-in reports found',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      );
+      return const CommonEmptyState(message: 'No check-in reports found');
     }
 
     return Padding(

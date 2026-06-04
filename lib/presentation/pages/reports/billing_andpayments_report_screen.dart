@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class BillingAndpaymentsReportScreen extends StatefulWidget {
   const BillingAndpaymentsReportScreen({super.key});
@@ -489,24 +490,7 @@ class _BillingAndpaymentsReportScreenState
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 40),
-          Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          Text(
-            'No billing records found',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
+    return const CommonEmptyState(message: 'No billing records found');
   }
 
   void onClickTopButton(BuildContext context) {

@@ -24,6 +24,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/pdf_function.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class ConversionReportPage extends StatefulWidget {
   final bool fromDashBoard;
@@ -1130,25 +1131,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                     ),
                                     Expanded(
                                       child: reportsProvider.conversionReport.isEmpty
-                                          ? Center(
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(Icons.search_off_outlined,
-                                                      size: 80,
-                                                      color: Colors.grey[300]),
-                                                  const SizedBox(height: 16),
-                                                  Text(
-                                                    'No conversion reports found',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey[600],
-                                                      fontWeight: FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
+                                          ? const CommonEmptyState(message: 'No conversion reports found')
                                           : ListView.builder(
                                               shrinkWrap: true,
                                               physics: const AlwaysScrollableScrollPhysics(),

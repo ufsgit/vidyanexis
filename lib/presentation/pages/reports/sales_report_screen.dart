@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/pages/reports/sales_report_screen_phone.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class SalesReportScreen extends StatefulWidget {
   const SalesReportScreen({super.key});
@@ -410,7 +411,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
     }
 
     if (provider.salesReport.isEmpty) {
-      return const Center(child: Text('No sales found'));
+      return const CommonEmptyState(message: 'No sales found');
     }
 
     return Padding(

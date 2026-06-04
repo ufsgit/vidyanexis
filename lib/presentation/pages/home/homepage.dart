@@ -56,6 +56,7 @@ import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/sales_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class HomePage extends StatefulWidget {
   static String route = '/home';
@@ -516,7 +517,7 @@ class _HomePageState extends State<HomePage> {
           future: getUserName(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(child: Text('Error loading username'));
+              return const CommonEmptyState(message: 'Error loading username');
             } else {
               final userName = snapshot.data ?? '';
               return CustomSidebar(

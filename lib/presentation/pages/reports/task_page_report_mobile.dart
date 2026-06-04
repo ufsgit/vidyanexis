@@ -18,6 +18,7 @@ import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class TaskPageReportMobile extends StatefulWidget {
   const TaskPageReportMobile({super.key});
@@ -422,25 +423,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
             if (!reportsProvider.isFilter)
               Expanded(
                 child: reportsProvider.taskReport.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 80),
-                          Icon(Icons.search_off_outlined,
-                              size: 80, color: Colors.grey[300]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No task reports found',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                  ? const CommonEmptyState(message: 'No task reports found')
                   : SingleChildScrollView(
                       controller: scrollController,
                       child: Column(

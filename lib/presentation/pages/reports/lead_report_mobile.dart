@@ -24,6 +24,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class LeadReportMobile extends StatefulWidget {
   const LeadReportMobile(this.fromDashBoard, {super.key});
@@ -603,77 +604,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                       child: leadReportProvider.isLoading
                           ? const Center(child: CircularProgressIndicator())
                           : leadReportProvider.leadReportData.isEmpty
-                              ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const SizedBox(height: 100),
-                                      Icon(Icons.search_off_outlined,
-                                          size: 80, color: Colors.grey[300]),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'No lead reports found',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 24),
-                                      if (leadReportProvider.fromDate != null ||
-                                          leadReportProvider.toDate != null ||
-                                          (leadReportProvider.selectedStatus !=
-                                                  null &&
-                                              leadReportProvider
-                                                      .selectedStatus !=
-                                                  0) ||
-                                          (leadReportProvider.selectedUser !=
-                                                  null &&
-                                              leadReportProvider.selectedUser !=
-                                                  0) ||
-                                          (leadReportProvider
-                                                      .selectedEnquiryFor !=
-                                                  null &&
-                                              leadReportProvider
-                                                      .selectedEnquiryFor !=
-                                                  0) ||
-                                          (leadReportProvider
-                                                      .selectedEnquirySource !=
-                                                  null &&
-                                              leadReportProvider
-                                                      .selectedEnquirySource !=
-                                                  0))
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            leadReportProvider
-                                                .selectDateFilterOption(null);
-                                            leadReportProvider.removeStatus();
-                                            leadReportProvider
-                                                .getSearchLeadReports(
-                                                    '', '', '', '', context);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            foregroundColor:
-                                                AppColors.primaryBlue,
-                                            elevation: 0,
-                                            side: BorderSide(
-                                                color: AppColors.primaryBlue),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 24,
-                                              vertical: 12,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                          child:
-                                              const Text('Clear All Filters'),
-                                        ),
-                                    ],
-                                  ),
-                                )
+                              ? const CommonEmptyState(message: 'No lead reports found')
                               : SingleChildScrollView(
                                   child: Column(
                                     children: [
