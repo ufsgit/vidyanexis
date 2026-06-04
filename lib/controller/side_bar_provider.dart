@@ -107,7 +107,7 @@ class SidebarProvider extends ChangeNotifier {
   bool _replaceCustomer = true;
   String _customerId = '';
   String _name = '/';
-  String _selectedName = 'Leads';
+  String _selectedName = 'DashBoard';
   // int _selectedBottomIndex = 0;
   // String _currentTitle =
   //     'Leads'; // Changed default to 'Leads' since Home might not be available

@@ -116,7 +116,10 @@ class _DashBoardPageState extends State<DashBoardPage> {
     Widget dateFilterBtn = Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => onClickTopButton(context, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
+        onTap: () => onClickTopButton(
+            context,
+            allowedTabs[
+                dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
         borderRadius: BorderRadius.circular(4),
         child: Ink(
           height: AppStyles.isWebScreen(context) ? 38 : 34,
@@ -128,7 +131,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const SizedBox(width: 10),
-              const Icon(Icons.calendar_today_rounded, size: 13, color: AppColors.secondaryBlue),
+              const Icon(Icons.calendar_today_rounded,
+                  size: 13, color: AppColors.secondaryBlue),
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
@@ -158,7 +162,10 @@ class _DashBoardPageState extends State<DashBoardPage> {
           color: const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(4),
         ),
-        child: _buildAssignedStaffFilter(dashBoardProvider, allowedTabs[dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
+        child: _buildAssignedStaffFilter(
+            dashBoardProvider,
+            allowedTabs[
+                dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1)]),
       ),
     );
 
@@ -182,11 +189,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: const Color(0xFFDCFCE7)),
               ),
-              child: isWeb 
+              child: isWeb
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 16),
+                        const Icon(Icons.check_circle_rounded,
+                            color: Color(0xFF16A34A), size: 16),
                         const SizedBox(width: 6),
                         Text(
                           'Done',
@@ -201,7 +209,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A), size: 18),
+                        const Icon(Icons.check_circle_rounded,
+                            color: Color(0xFF16A34A), size: 18),
                         const SizedBox(height: 2),
                         Text(
                           'Done',
@@ -235,10 +244,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return const AddAttendanceWidget(
-                        editId: '0',
-                        isEdit: false,
-                        user: '',
-                        userId: 0);
+                        editId: '0', isEdit: false, user: '', userId: 0);
                   },
                 );
               },
@@ -248,9 +254,10 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 shadowColor: Colors.transparent,
                 elevation: 0,
                 padding: EdgeInsets.symmetric(horizontal: isWeb ? 16 : 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
               ),
-              child: isWeb 
+              child: isWeb
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -287,102 +294,19 @@ class _DashBoardPageState extends State<DashBoardPage> {
     );
 
     return Scaffold(
-      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
       backgroundColor: AppColors.scaffoldColor,
-      appBar: !AppStyles.isWebScreen(context)
-          ? AppBar(
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              surfaceTintColor: Colors.transparent,
-              backgroundColor: AppColors.whiteColor,
-              leadingWidth: 56,
-              leading: Builder(
-                builder: (context) {
-                  return IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.secondaryBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Icon(Icons.sort,
-                          size: 20, color: AppColors.textBlue800),
-                    ),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  );
-                },
-              ),
-              title: Text(
-                'Dashboard',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textBlack,
-                ),
-              ),
-              actions: [
-                Consumer<NotificationProvider>(
-                  builder: (context, notificationProvider, child) {
-                    final count = notificationProvider.totalCount;
-
-                    return Stack(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.notifications_none_rounded,
-                            size: 26,
-                            color: Colors.black.withOpacity(0.7),
-                          ),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (context) {
-                                return const NotificationsPage();
-                              },
-                            ));
-                          },
-                        ),
-                        if (count > 0)
-                          Positioned(
-                            right: 8,
-                            top: 8,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.redAccent,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 16,
-                                minHeight: 16,
-                              ),
-                              child: Text(
-                                count > 99 ? '!' : count.toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            )
-          : null,
       body: RefreshIndicator(
         onRefresh: () => dashBoardProvider.refreshDashboardData(context),
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.zero, // Remove padding here, add inside containers
+          padding:
+              EdgeInsets.zero, // Remove padding here, add inside containers
 
           children: [
             // Premium Header Section
             Container(
-              padding: const EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 12),
+              padding: const EdgeInsets.only(
+                  top: 4, left: 16, right: 16, bottom: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: const BorderRadius.only(
@@ -403,7 +327,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       children: [
                         Expanded(
                           flex: 4,
-                          child: CustomTab(dashBoardProvider: dashBoardProvider),
+                          child:
+                              CustomTab(dashBoardProvider: dashBoardProvider),
                         ),
                         const SizedBox(width: 12),
                         Expanded(flex: 2, child: dateFilterBtn),
@@ -438,11 +363,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     ),
             ),
 
-
-
-
             const SizedBox(height: 16),
-            
+
             // Tab Content
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -451,83 +373,79 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
                 final activeTab = allowedTabs[safeIndex];
 
+                switch (activeTab) {
+                  case 6:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: safeIndex == allowedTabs.indexOf(6)
+                          ? const Alignment(0, 0)
+                          : const Alignment(-100, 0),
+                      child: DashboardCountTab(
+                        dashBoardProvider: dashBoardProvider,
+                      ),
+                    );
+                  case 0:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: safeIndex == allowedTabs.indexOf(0)
+                          ? const Alignment(0, 0)
+                          : const Alignment(-100, 0),
+                      child: LeadsOverViewTab(
+                        dashBoardProvider: dashBoardProvider,
+                        taskAllocationData:
+                            dashBoardProvider.taskAllocationSummaryData,
+                        followUpLeadData: dashBoardProvider.followUpSummaryData,
+                        leadConversionData: dashBoardProvider.conversionData,
+                        countLeadData: dashBoardProvider.conversionCountData,
+                        pieData: dashBoardProvider.leadProgressReport,
+                      ),
+                    );
 
-              switch (activeTab) {
-                case 6:
-                  return AnimatedAlign(
-                    duration: const Duration(milliseconds: 600),
-                    alignment: safeIndex == allowedTabs.indexOf(6)
-                        ? const Alignment(0, 0)
-                        : const Alignment(-100, 0),
-                    child: DashboardCountTab(
-                      dashBoardProvider: dashBoardProvider,
-                    ),
-                  );
-                case 0:
-                  return AnimatedAlign(
-                    duration: const Duration(milliseconds: 600),
-                    alignment: safeIndex == allowedTabs.indexOf(0)
-                        ? const Alignment(0, 0)
-                        : const Alignment(-100, 0),
-                    child: LeadsOverViewTab(
-                      dashBoardProvider: dashBoardProvider,
-                      taskAllocationData:
-                          dashBoardProvider.taskAllocationSummaryData,
-                      followUpLeadData:
-                          dashBoardProvider.followUpSummaryData,
-                      leadConversionData: dashBoardProvider.conversionData,
-                      countLeadData: dashBoardProvider.conversionCountData,
-                      pieData: dashBoardProvider.leadProgressReport,
-                    ),
-                  );
-
-                case 1:
-                  return AnimatedAlign(
-                    duration: const Duration(milliseconds: 600),
-                    alignment: safeIndex == 1
-                        ? const Alignment(0, 0)
-                        : const Alignment(0, -100),
-                    child: WorkOverViewTab(
-                      dashboardProvider: dashBoardProvider,
-                      taskData: dashBoardProvider.taskAllocationSummaryData,
-                      data: dashBoardProvider.conversionData,
-                      countLeadData: dashBoardProvider.conversionCountData,
-                    ),
-                  );
-                case 4:
-                  return AnimatedAlign(
-                    duration: const Duration(milliseconds: 600),
-                    alignment: const Alignment(0, 0),
-                    child: const AmcNotificationTab(),
-                  );
-                case 5:
-                  return AnimatedAlign(
-                    duration: const Duration(milliseconds: 600),
-                    alignment: const Alignment(0, 0),
-                    child: const PaymentReminderTab(),
-                  );
-                case 2:
-                  return AnimatedAlign(
-                    duration: const Duration(milliseconds: 600),
-                    alignment: const Alignment(0, 0),
-                    child: const TaskOverviewTab(),
-                  );
-                case 3:
-                  return AnimatedAlign(
-                    duration: const Duration(milliseconds: 600),
-                    alignment: const Alignment(0, 0),
-                    child: const TaskSummaryPage(),
-                  );
+                  case 1:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: safeIndex == 1
+                          ? const Alignment(0, 0)
+                          : const Alignment(0, -100),
+                      child: WorkOverViewTab(
+                        dashboardProvider: dashBoardProvider,
+                        taskData: dashBoardProvider.taskAllocationSummaryData,
+                        data: dashBoardProvider.conversionData,
+                        countLeadData: dashBoardProvider.conversionCountData,
+                      ),
+                    );
+                  case 4:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: const Alignment(0, 0),
+                      child: const AmcNotificationTab(),
+                    );
+                  case 5:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: const Alignment(0, 0),
+                      child: const PaymentReminderTab(),
+                    );
+                  case 2:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: const Alignment(0, 0),
+                      child: const TaskOverviewTab(),
+                    );
+                  case 3:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: const Alignment(0, 0),
+                      child: const TaskSummaryPage(),
+                    );
                 }
                 return const SizedBox.shrink();
               }),
-
             ),
           ],
         ),
       ),
     );
-
   }
 
   void onClickTopButton(BuildContext context, int activeTab) {
@@ -590,7 +508,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
-                     const SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Expanded(
@@ -627,8 +545,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
                                 context: context,
-                                initialDate: dashBoardProvider.toDate ??
-                                    DateTime.now(),
+                                initialDate:
+                                    dashBoardProvider.toDate ?? DateTime.now(),
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2101),
                               );
@@ -662,7 +580,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
                           dashBoardProvider.loadDataForTab(activeTab, context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -685,7 +605,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           dashBoardProvider.selectDateFilterOption(null);
                           dashBoardProvider.loadDataForTab(activeTab, context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -761,14 +683,14 @@ class _DashBoardPageState extends State<DashBoardPage> {
           dropdownItems = [
             DropdownMenuItem<int>(
               value: userId,
-                child: Text(
-                  userName.isNotEmpty ? userName : 'Current User',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.secondaryBlue,
-                  ),
+              child: Text(
+                userName.isNotEmpty ? userName : 'Current User',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.secondaryBlue,
                 ),
+              ),
             ),
           ];
           dropdownValue = userId;
@@ -787,14 +709,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   : 0,
               isDense: true,
               isExpanded: true,
-              icon: Icon(Icons.keyboard_arrow_down_rounded, size: 14, color: AppColors.secondaryBlue.withOpacity(0.5)),
+              icon: Icon(Icons.keyboard_arrow_down_rounded,
+                  size: 14, color: AppColors.secondaryBlue.withOpacity(0.5)),
               items: dropdownItems,
               selectedItemBuilder: (BuildContext context) {
                 return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(Icons.person_search_rounded, size: 13, color: AppColors.secondaryBlue),
+                      Icon(Icons.person_search_rounded,
+                          size: 13, color: AppColors.secondaryBlue),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Align(
@@ -822,9 +746,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
             ),
           ),
         );
-
-
-
       },
     );
   }
@@ -852,7 +773,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_today_rounded, size: 14, color: Colors.black.withOpacity(0.5)),
+                    Icon(Icons.calendar_today_rounded,
+                        size: 14, color: Colors.black.withOpacity(0.5)),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -868,7 +790,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Colors.black45),
+                    const Icon(Icons.keyboard_arrow_down_rounded,
+                        size: 16, color: Colors.black45),
                   ],
                 ),
               ),
@@ -899,7 +822,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 foregroundColor: Colors.redAccent,
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(36, 36),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
               ),
             ),
           ]
@@ -907,9 +831,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
       ),
     );
   }
-
-
-
 
   /*
   Widget _buildTaskReports(
@@ -1010,3 +931,4 @@ class _DashBoardPageState extends State<DashBoardPage> {
   }
   */
 }
+//

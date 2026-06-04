@@ -442,12 +442,14 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
-              title: ['Leads', 'Customers', 'Lead Search', 'Task']
+              title: ['DashBoard', 'Leads', 'Customers', 'Lead Search', 'Task']
                       .contains(sideProvider.selectedName)
                   ? Text(
                       sideProvider.selectedName == 'Task'
                           ? 'Tasks'
-                          : sideProvider.selectedName,
+                          : sideProvider.selectedName == 'DashBoard'
+                              ? 'Dashboard'
+                              : sideProvider.selectedName,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 22,
                         color: const Color(0xFF1E293B),
