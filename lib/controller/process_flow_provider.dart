@@ -5,6 +5,7 @@ import 'package:vidyanexis/controller/models/department_model.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/process_flow_model.dart';
+import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/task_flow_model.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
@@ -89,7 +90,8 @@ class ProcessFlowProvider extends ChangeNotifier {
         List<DepartmentModel>,
         List<BranchModel>,
         List<DocumentTypeModel>,
-        List<EnquiryForModel>
+        List<EnquiryForModel>,
+        List<SearchLeadStatusModel>,
       )> getAllTskTypeStatus(BuildContext context) async {
     List<TaskTypeModel> taskTypeList = [];
     List<TaskTypeStatusModel> taskTypeStatusList = [];
@@ -97,6 +99,7 @@ class ProcessFlowProvider extends ChangeNotifier {
     List<BranchModel> branchList = [];
     List<DocumentTypeModel> documentTypeList = [];
     List<EnquiryForModel> enquiryForList = [];
+    List<SearchLeadStatusModel> searchLeadStatusList = [];
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.getProcessFlowData);
@@ -111,6 +114,7 @@ class ProcessFlowProvider extends ChangeNotifier {
           var taskTypeStatusData = data["data"]["task_type_status"] as List;
           var documentTypeData = data["data"]["document"] as List;
           var enquiryForData = data["data"]["enquiry_for"] as List;
+          var searchLeadStatusData = data["data"]["search_lead_status"] as List;
           taskTypeList =
               taskTypeData.map((item) => TaskTypeModel.fromJson(item)).toList();
           taskTypeStatusList = taskTypeStatusData
@@ -133,6 +137,9 @@ class ProcessFlowProvider extends ChangeNotifier {
           enquiryForList = enquiryForData
               .map((item) => EnquiryForModel.fromJson(item))
               .toList();
+          searchLeadStatusList = searchLeadStatusData
+              .map((item) => SearchLeadStatusModel.fromJson(item))
+              .toList();
           notifyListeners();
         }
       } else {
@@ -152,7 +159,8 @@ class ProcessFlowProvider extends ChangeNotifier {
       departmentList,
       branchList,
       documentTypeList,
-      enquiryForList
+      enquiryForList,
+      searchLeadStatusList,
     );
   }
 
@@ -194,14 +202,13 @@ class ProcessFlowProvider extends ChangeNotifier {
           endPoint: HttpUrls.deleteProcessFlowById,
           bodyData: {"flow_id": flowId});
 
+      Loader.stopLoader(context);
+
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-        if (data['department_id'] == -1) {
-          Loader.stopLoader(context);
-        } else {
-          showFriendlySnackBar(context, 'Process flow deleted successfully');
-          Loader.stopLoader(context);
-        }
+        // Refresh the list after successful delete
+        await getProcessFlow(context);
+        showFriendlySnackBar(context, 'Process flow deleted successfully');
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -209,6 +216,7 @@ class ProcessFlowProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      Loader.stopLoader(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
@@ -280,6 +288,8 @@ class ProcessFlowProvider extends ChangeNotifier {
               .map((item) => DocumentTypeModel.fromJson(item))
               .toList();
           processFlowModel.templateId = data["data"]["template_id"]?.toString();
+          processFlowModel.leadStatusId = data["data"]["lead_status_id"]?.toInt();
+          processFlowModel.leadStatusName = data["data"]["lead_status_name"]?.toString();
           var showCustomFieldsData = data["data"]["show_custom_fields"] ??
               data["data"]["show_custom_field"] ??
               [];
@@ -347,6 +357,8 @@ class ProcessFlowProvider extends ChangeNotifier {
                       "custom_field_name": item.customFieldName,
                     })
                 .toList(),
+            "lead_status_id": processFlowModel.leadStatusId ?? 0,
+            "lead_status_name": processFlowModel.leadStatusName ?? '',
           });
 
       if (response!.statusCode == 200) {
