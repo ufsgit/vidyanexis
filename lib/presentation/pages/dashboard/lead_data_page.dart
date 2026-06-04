@@ -203,7 +203,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
     }
   }
 
-  void _onStatusClick(BuildContext context, SearchLeadModel lead) {
+  Future<void> _onStatusClick(BuildContext context, SearchLeadModel lead) async {
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
     final settingsProvider =
@@ -238,13 +238,14 @@ class _LeadDataPageState extends State<LeadDataPage> {
 
     audioProvider.clearAudios();
 
-    showDialog(
+    await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) => AddFollowupDialog(
         customerName: lead.customerName,
       ),
     );
+    await _fetchLeads();
   }
 
   Future<void> _fetchLeads({bool isPagination = false}) async {
