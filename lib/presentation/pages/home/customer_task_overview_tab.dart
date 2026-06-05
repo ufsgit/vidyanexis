@@ -160,7 +160,7 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Completed on \n ${_formatDate("${task.completionDate?.toString() ?? ''} ${task.completionTime?.toString() ?? ''}")}', // No need for .toString() if already String
+              'Completed on \n ${_formatDate(task.completionDate?.toString() ?? '')}',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,

@@ -72,7 +72,7 @@ class FollowUpTabWidget extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
-                                      _formatDate(history.followUpDate),
+                                      _formatDate(history.followUpDate ?? ''),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15,
@@ -117,7 +117,7 @@ class FollowUpTabWidget extends StatelessWidget {
                                       const Icon(Icons.event, size: 16, color: Colors.blueGrey),
                                       const SizedBox(width: 6),
                                       Text(
-                                        _formatDate(history.nextFollowUpDate),
+                                        _formatDate(history.nextFollowUpDate ?? ''),
                                         style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87),
                                       ),
                                     ],
@@ -207,18 +207,20 @@ class FollowUpTabWidget extends StatelessWidget {
     );
   }
 
-  String _formatDate(String? dateStr) {
-    if (dateStr == null || dateStr.isEmpty || dateStr == 'null') return "-";
+  String _formatDate(String dateStr) {
     try {
-      DateTime? date;
-      try {
-        date = DateTime.parse(dateStr);
-      } catch (_) {
-        date = DateFormat('dd-MM-yyyy').parse(dateStr);
-      }
-      return DateFormat('dd MMM yyyy').format(date);
-    } catch (_) {
-      return dateStr;
+      // Clean the input (handles "00:00:00.000" case)
+      String cleaned = dateStr
+          .replaceFirst(RegExp(r'00:00:00\.000\s*'), '')
+          .trim()
+          .replaceAll(RegExp(r'\s+'), ' ');
+
+      final dateTime = DateTime.parse(cleaned);
+
+      // 12-hour format with AM/PM
+      return DateFormat('dd MMM yyyy hh:mm:ss a').format(dateTime);
+    } catch (e) {
+      return dateStr; // fallback
     }
   }
 }
