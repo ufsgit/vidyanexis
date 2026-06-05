@@ -263,6 +263,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             dropDownProvider.selectedEnquiryForId == 0) &&
         widget.isEdit == false) {
       errorMessage = 'Please select Enquiry For';
+    } else if (settingsProvider.enquirySourceMandatory == 1 &&
+        (dropDownProvider.selectedEnquirySourceId == null ||
+            dropDownProvider.selectedEnquirySourceId == 0) &&
+        widget.isEdit == false) {
+      errorMessage = 'Please select Enquiry Source';
     } else if (dropDownProvider.isFollowupRequired() &&
         leadProvider.followUpDateController.text.isEmpty &&
         widget.isEdit == false) {
@@ -2330,7 +2335,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             children: [
               Expanded(
                 child: CommonDropdown<int>(
-                  hintText: 'Enquiry Source',
+                  hintText:
+                      'Enquiry Source${settingsProvider.enquirySourceMandatory == 1 ? '*' : ''}',
                   items: dropDownProvider.enquiryData
                       .map((source) => DropdownItem<int>(
                             id: source.enquirySourceId,

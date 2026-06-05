@@ -17,6 +17,7 @@ class Company {
   final int isLocation;
   final String notificationTopic;
   final int enquiryForMandatory;
+  final int enquirySourceMandatory;
   final int consumerNameMandatory;
   final int consumerContactNoMandatory;
   final int leadInSales;
@@ -42,6 +43,7 @@ class Company {
     required this.isLocation,
     required this.notificationTopic,
     required this.enquiryForMandatory,
+    required this.enquirySourceMandatory,
     required this.consumerNameMandatory,
     required this.consumerContactNoMandatory,
     required this.leadInSales,
@@ -70,6 +72,7 @@ class Company {
       isLocation: json['Is_Location'] ?? 0,
       notificationTopic: json['notification_topic'] ?? '',
       enquiryForMandatory: json['Enquiry_For_Mandatory'] ?? 0,
+      enquirySourceMandatory: json['Enquiry_Source_Mandatory'] ?? 0,
       consumerNameMandatory: json['Consumer_Name_Mandatory'] ?? 0,
       consumerContactNoMandatory: json['Contact_Number_Mandatory'] ?? 0,
       leadInSales: json['Lead_In_Sales'] ?? 0,
@@ -99,6 +102,7 @@ class Company {
       'Is_Location': isLocation,
       'notification_topic': notificationTopic,
       'Enquiry_For_Mandatory': enquiryForMandatory,
+      'Enquiry_Source_Mandatory': enquirySourceMandatory,
       'Consumer_Name_Mandatory': consumerNameMandatory,
       'Contact_Number_Mandatory': consumerContactNoMandatory,
       'Lead_In_Sales': leadInSales,

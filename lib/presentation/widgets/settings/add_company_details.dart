@@ -360,6 +360,23 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
+                    'Enquiry Source Mandatory:   ${settingsProvider.enquirySourceMandatory == 1 ? "On" : "Off"}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 10),
+                  Switch(
+                    value: settingsProvider.enquirySourceMandatory == 1,
+                    onChanged: (bool value) {
+                      settingsProvider.setEnquirySourceMandatory(value ? 1 : 0);
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
                     'Consumer Name :   ${settingsProvider.consumerNameMandatory == 1 ? "On" : "Off"}',
                     style: const TextStyle(fontSize: 16),
                   ),
