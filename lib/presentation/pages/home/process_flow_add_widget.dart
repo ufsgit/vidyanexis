@@ -90,6 +90,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
       final settingsProv =
           Provider.of<SettingsProvider>(context, listen: false);
       await settingsProv.getCustomField(context);
+      processFlowProvider.showLeadStatus = false;
 
       if (null != widget.processFlowModel.flowId &&
           widget.processFlowModel.flowId! > 0) {
@@ -259,7 +260,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
 
                   final leadStatusDropdown =
                       CommonDropdown<SearchLeadStatusModel>(
-                    hintText: 'Lead Status *',
+                    hintText: 'Lead Status',
                     items: searchLeadStatusList
                         .map((status) => DropdownItem<SearchLeadStatusModel>(
                               id: status,
@@ -512,7 +513,18 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 const SizedBox(height: 16),
                                 Row(
                                   children: [
-                                    Expanded(child: leadStatusDropdown),
+                                    Tooltip(
+                                      message: "Show Lead Status",
+                                      child: Checkbox(
+                                        value: processFlowProvider.showLeadStatus,
+                                        onChanged: (value) {
+                                          processFlowProvider.showLeadStatus =
+                                              value ?? false;
+                                        },
+                                      ),
+                                    ),
+                                    if (processFlowProvider.showLeadStatus)
+                                      Expanded(child: leadStatusDropdown),
                                     const SizedBox(width: 10),
                                     Expanded(child: Container()),  // remove this to add new fields
                                     const SizedBox(width: 10),
@@ -523,7 +535,18 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             )
                           : Column(
                               children: [
-                                enquiryForDropdown,
+                                Tooltip(
+                                  message: "Show Lead Status",
+                                  child: Checkbox(
+                                    value: processFlowProvider.showLeadStatus,
+                                    onChanged: (value) {
+                                      processFlowProvider.showLeadStatus =
+                                          value ?? false;
+                                    },
+                                  ),
+                                ),
+                                if (processFlowProvider.showLeadStatus)
+                                  enquiryForDropdown,
                                 const SizedBox(height: 16),
                                 taskTypeDropdown,
                                 const SizedBox(height: 16),

@@ -687,9 +687,12 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       child: Row(
                                         children: [
                                           const SizedBox(
-                                              width: 48,
-                                              child:
-                                                  const CommonEmptyState(message: 'No.')),
+                                            width: 48,
+                                            child: CommonEmptyState(
+                                              message: 'No.',
+                                              height: 40,
+                                            ),
+                                          ),
                                           Expanded(child: Text('Status Name')),
                                           Center(
                                             child: Checkbox(
@@ -833,10 +836,13 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       ),
                                       child: Row(
                                         children: [
-                                          const SizedBox(
+                                            const SizedBox(
                                               width: 48,
-                                              child:
-                                                  const CommonEmptyState(message: 'No.')),
+                                              child: CommonEmptyState(
+                                                message: 'No.',
+                                                height: 40,
+                                              ),
+                                            ),
                                           Expanded(child: Text('Enquiry For')),
                                           Center(
                                             child: Checkbox(

@@ -93,6 +93,8 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                             settingsProvider.companyDetails[0].isLocation);
                         settingsProvider.setEnquiryForMandatory(settingsProvider
                             .companyDetails[0].enquiryForMandatory);
+                        settingsProvider.setEnquirySourceMandatory(settingsProvider
+                            .companyDetails[0].enquirySourceMandatory);
                         showDialog(
                           barrierDismissible: false,
                           context: context,
@@ -180,6 +182,15 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                         Icons.check_box,
                         "Enquiry For Mandatory",
                         settingsProvider.companyDetails[0].enquiryForMandatory ==
+                                1
+                            ? 'Enabled'
+                            : 'Disabled',
+                      ),
+                      // Enquiry Source Mandatory
+                      _buildInfoTile(
+                        Icons.check_box,
+                        "Enquiry Source Mandatory",
+                        settingsProvider.companyDetails[0].enquirySourceMandatory ==
                                 1
                             ? 'Enabled'
                             : 'Disabled',

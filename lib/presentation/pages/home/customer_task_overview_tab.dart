@@ -116,15 +116,15 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,7 +151,7 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Created on ${_formatDate(task.entryDate.toString())}',
+              'Created on \n ${_formatDate(task.entryDate?.toString() ?? '')}',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
@@ -160,7 +160,7 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Completed on ${_formatDate(task.taskDate.toString())}',
+              'Completed on \n ${_formatDate("${task.completionDate?.toString() ?? ''} ${task.completionTime?.toString() ?? ''}")}', // No need for .toString() if already String
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
@@ -202,10 +202,18 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
 
   String _formatDate(String dateStr) {
     try {
-      final date = DateTime.parse(dateStr);
-      return DateFormat('dd/MM/yyyy').format(date);
+      // Clean the input (handles "00:00:00.000" case)
+      String cleaned = dateStr
+          .replaceFirst(RegExp(r'00:00:00\.000\s*'), '')
+          .trim()
+          .replaceAll(RegExp(r'\s+'), ' ');
+
+      final dateTime = DateTime.parse(cleaned);
+
+      // 12-hour format with AM/PM
+      return DateFormat('dd/MM/yyyy hh:mm:ss a').format(dateTime);
     } catch (e) {
-      return dateStr;
+      return dateStr; // fallback
     }
   }
 }

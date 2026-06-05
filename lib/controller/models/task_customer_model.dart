@@ -7,6 +7,8 @@ class TaskCustomerModel {
   final String taskStatusName;
   final String toUsername;
   final String createdByName;
+  final String completionDate;
+  final String completionTime;
 
   final int toUserId;
   final int customerId;
@@ -36,6 +38,8 @@ class TaskCustomerModel {
     required this.taskTypeName,
     required this.taskTime,
     required this.taskDate,
+    this.completionDate = '',
+    this.completionTime = '',
     required this.deleteStatus,
     required this.taskUser,
     required this.taskFiles,
@@ -62,6 +66,8 @@ class TaskCustomerModel {
       taskTypeName: json['Task_Type_Name'] ?? '',
       taskTime: json['Task_Time'] ?? '',
       taskDate: DateTime.tryParse(json['Task_Date'] ?? '') ?? DateTime.now(),
+      completionDate: json['Completion_Date']?.toString() ?? '',
+      completionTime: json['Completion_Time']?.toString() ?? '',
       deleteStatus: json['DeleteStatus'] ?? 0,
       commissionNumber:
           int.tryParse(json['Commission_Number']?.toString() ?? '0') ?? 0,
