@@ -395,7 +395,6 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                               const SizedBox(width: 8),
                             ],
-
                           ],
                         ),
                         Wrap(
@@ -505,9 +504,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                 onTap: () {
                                   Future.microtask(() {
                                     if (searchController.text.isNotEmpty &&
-                                        searchController.selection.baseOffset == 0 &&
-                                        searchController.selection.extentOffset == searchController.text.length) {
-                                      searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                        searchController.selection.baseOffset ==
+                                            0 &&
+                                        searchController
+                                                .selection.extentOffset ==
+                                            searchController.text.length) {
+                                      searchController.selection =
+                                          TextSelection.collapsed(
+                                              offset:
+                                                  searchController.text.length);
                                     }
                                   });
                                 },
@@ -656,7 +661,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                   const SizedBox(width: 8),
                                 ],
-
                               ],
                             ),
                             Expanded(
@@ -1695,7 +1699,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   children: provider
                                                                       .taskType
                                                                       .where((taskType) =>
-                                                                          taskType.manualCreation ==
+                                                                          taskType
+                                                                              .manualCreation ==
                                                                           1)
                                                                       .map(
                                                                           (taskType) {
@@ -2778,10 +2783,10 @@ class _tasksPageReportState extends State<TaskPage> {
           ),
           child: Container(
             constraints: const BoxConstraints(
-              maxWidth: 675,
+              maxWidth: 900,
               maxHeight: 600,
               minHeight: 600,
-              minWidth: 675,
+              minWidth: 900,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
