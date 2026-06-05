@@ -196,22 +196,27 @@ class _CompanyDetailsState extends State<CompanyDetails> {
 
   Widget _buildInfoTile(IconData icon, String title, String value,
       {bool isLink = false}) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFE9EDF1), width: 1),
+      ),
       child: ListTile(
-        leading: Icon(icon, color: Colors.blue),
+        leading: Icon(icon, color: AppColors.primaryBlue, size: 20),
         title: Text(
           title,
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
           ),
         ),
         subtitle: SelectableText(
           value,
           style: TextStyle(
-            color: isLink ? Colors.blue : Colors.black,
+            fontSize: 13,
+            color: isLink ? AppColors.primaryBlue : Colors.black87,
             decoration: isLink ? TextDecoration.underline : TextDecoration.none,
           ),
         ),

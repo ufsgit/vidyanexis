@@ -5,7 +5,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_department_page.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 class DepartmentPage extends StatefulWidget {
   const DepartmentPage({super.key});
@@ -68,69 +67,6 @@ class _DepartmentPageState extends State<DepartmentPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (isWeb) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    'Department',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textBlue800,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: Colors.grey[200]!),
-                          ),
-                          child: TextField(
-                            controller:
-                                settingsProvider.searchDepartmentController,
-                            onChanged: (query) {
-                              settingsProvider.searchDepartment(query, context);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search...',
-                              hintStyle: GoogleFonts.plusJakartaSans(
-                                color: Colors.grey[400],
-                                fontSize: 14,
-                              ),
-                              prefixIcon: Icon(Icons.search,
-                                  size: 20, color: Colors.grey[500]),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 0),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      if (settingsProvider.menuIsSaveMap[42] == 1)
-                        SizedBox(
-                          height: 48,
-                          child: CustomOutlinedSvgButton(
-                            onPressed: _openAddDialog,
-                            svgPath: 'assets/images/Plus.svg',
-                            label: 'New',
-                            breakpoint: 400,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            foregroundColor: Colors.white,
-                            backgroundColor: AppColors.secondaryBlue,
-                            borderSide: BorderSide(color: AppColors.secondaryBlue),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                ],
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -152,14 +88,15 @@ class _DepartmentPageState extends State<DepartmentPage> {
                     separatorBuilder: (context, index) => Divider(
                       height: 1,
                       thickness: 1,
-                      color: Colors.grey[50]!,
+                      color: Colors.grey[200]!,
                     ),
                     itemBuilder: (context, index) {
                       final dept = settingsProvider.departmentModel[index];
                       return Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
                               child: Container(

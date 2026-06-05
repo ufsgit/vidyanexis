@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_new_enquiry_widget.dart';
 
 class EnquirySourceContent extends StatefulWidget {
@@ -66,73 +65,6 @@ class _EnquirySourceContentState extends State<EnquirySourceContent> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (isWeb) ...[
-                // Header section
-                SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Enquiry Source',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlue800),
-                      ),
-                      const Spacer(),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 3.5,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                        ),
-                        child: TextField(
-                          controller: settingsProvider.searchEnquiryController,
-                          onChanged: (query) {
-                            print(query);
-                            settingsProvider.searchEnquiryStatusData(
-                                query, context);
-                          },
-                          decoration: const InputDecoration(
-                            hintText: 'Search here....',
-                            prefixIcon: Icon(Icons.search),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[6] == 1)
-                        CustomOutlinedSvgButton(
-                          onPressed: _openAddDialog,
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New Enquiry Source',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4)),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.secondaryBlue,
-                          borderSide:
-                              BorderSide(color: AppColors.secondaryBlue),
-                        ),
-                      const SizedBox(width: 16),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,
