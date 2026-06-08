@@ -87,13 +87,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      String enquiryForId = '0';
-      if (customerDetailsProvider.leadDetails != null &&
-          customerDetailsProvider.leadDetails!.isNotEmpty) {
-        enquiryForId =
-            customerDetailsProvider.leadDetails!.first.enquiryForId.toString();
-      }
-      provider.getTaskType(context, enquiryForId: enquiryForId);
+      provider.getTaskType(context);
 
       if (!widget.isEdit) {
         customerDetailsProvider.taskChoosedateController.text =
