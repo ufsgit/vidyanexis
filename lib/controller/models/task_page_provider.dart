@@ -674,7 +674,16 @@ class TaskPageProvider extends ChangeNotifier {
       if (customFieldTaskStatusKey.currentState != null) {
         final fieldValues =
             customFieldTaskStatusKey.currentState!.getFieldValues();
-        customFieldsData = fieldValues.map((field) => field.toJson()).toList();
+            
+        final checkedFieldIds = _showCustomFields
+            .where((cf) => cf.isChecked == 1)
+            .map((cf) => cf.customFieldId)
+            .toSet();
+
+        customFieldsData = fieldValues
+            .where((field) => checkedFieldIds.contains(field.customFieldId))
+            .map((field) => field.toJson())
+            .toList();
       }
 
       final response = await HttpRequest.httpPostRequest(
@@ -1054,7 +1063,16 @@ class TaskPageProvider extends ChangeNotifier {
       if (customFieldTaskStatusKey.currentState != null) {
         final fieldValues =
             customFieldTaskStatusKey.currentState!.getFieldValues();
-        customFieldsData = fieldValues.map((field) => field.toJson()).toList();
+            
+        final checkedFieldIds = _showCustomFields
+            .where((cf) => cf.isChecked == 1)
+            .map((cf) => cf.customFieldId)
+            .toSet();
+
+        customFieldsData = fieldValues
+            .where((field) => checkedFieldIds.contains(field.customFieldId))
+            .map((field) => field.toJson())
+            .toList();
       }
 
       final Map<String, dynamic> queryParams = {

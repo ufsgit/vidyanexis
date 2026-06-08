@@ -357,12 +357,14 @@ class ProcessFlowProvider extends ChangeNotifier {
                 .map((item) => {
                       "custom_field_id": item.customFieldId,
                       "custom_field_name": item.customFieldName,
+                      "is_checked": item.isChecked ?? 0,
                     })
                 .toList(),
             "show_custom_field": showCustomFields
                 .map((item) => {
                       "custom_field_id": item.customFieldId,
                       "custom_field_name": item.customFieldName,
+                      "is_checked": item.isChecked ?? 0,
                     })
                 .toList(),
             "lead_status_id": processFlowModel.leadStatusId ?? 0,

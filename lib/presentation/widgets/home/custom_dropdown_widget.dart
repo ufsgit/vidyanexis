@@ -11,6 +11,9 @@ class CommonDropdown<T> extends StatelessWidget {
   final T? selectedValue;
   final bool enabled; // Added enabled property
   final bool isMultiLine;
+  final Widget? labelWidget;
+  final Widget? prefixIcon;
+  final FloatingLabelBehavior? floatingLabelBehavior;
 
   const CommonDropdown({
     super.key,
@@ -21,6 +24,9 @@ class CommonDropdown<T> extends StatelessWidget {
     this.selectedValue,
     this.enabled = true, // Default to true
     this.isMultiLine = false,
+    this.labelWidget,
+    this.prefixIcon,
+    this.floatingLabelBehavior,
     this.borderRadius,
     this.borderColor,
     this.focusedBorderColor,
@@ -59,7 +65,8 @@ class CommonDropdown<T> extends StatelessWidget {
                 : AppColors.textGrey2, // Icon color changes when disabled
           ),
           decoration: InputDecoration(
-            label: RichText(
+            prefixIcon: prefixIcon,
+            label: labelWidget ?? RichText(
               text: TextSpan(
                 text: hintText.replaceAll('*', ''),
                 style: GoogleFonts.plusJakartaSans(
@@ -76,7 +83,7 @@ class CommonDropdown<T> extends StatelessWidget {
                 ],
               ),
             ),
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            floatingLabelBehavior: floatingLabelBehavior ?? FloatingLabelBehavior.auto,
             floatingLabelStyle: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w500,

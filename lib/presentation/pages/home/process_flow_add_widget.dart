@@ -260,7 +260,18 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
 
                   final leadStatusDropdown =
                       CommonDropdown<SearchLeadStatusModel>(
-                    hintText: 'Lead Status',
+                    hintText: 'Update in lead/ Customer',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    prefixIcon: Transform.scale(
+                      scale: 0.8,
+                      child: Checkbox(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        value: processFlowProvider.showLeadStatus,
+                        onChanged: (value) {
+                          processFlowProvider.showLeadStatus = value ?? false;
+                        },
+                      ),
+                    ),
                     items: searchLeadStatusList
                         .map((status) => DropdownItem<SearchLeadStatusModel>(
                               id: status,
@@ -286,6 +297,47 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       }
                     },
                   );
+
+                  final leadStatusWidget = processFlowProvider.showLeadStatus
+                      ? leadStatusDropdown
+                      : InputDecorator(
+                          isEmpty: true,
+                          decoration: InputDecoration(
+                            labelText: "Update in lead/ Customer",
+                            labelStyle: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textGrey3,
+                            ),
+                            floatingLabelStyle: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textGrey1,
+                            ),
+                            prefixIcon: Transform.scale(
+                              scale: 0.8,
+                              child: Checkbox(
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                value: processFlowProvider.showLeadStatus,
+                                onChanged: (value) {
+                                  processFlowProvider.showLeadStatus = value ?? false;
+                                },
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: AppColors.textGrey2, width: 1),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                  color: isWeb ? AppColors.textGrey2 : AppColors.grey,
+                                  width: 1),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                          ),
+                          child: const SizedBox(height: 0),
+                        );
 
                   final taskTypeDropdown = CommonDropdown<TaskTypeModel>(
                     hintText: 'Task type *',
@@ -513,18 +565,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 const SizedBox(height: 16),
                                 Row(
                                   children: [
-                                    Tooltip(
-                                      message: "Show Lead Status",
-                                      child: Checkbox(
-                                        value: processFlowProvider.showLeadStatus,
-                                        onChanged: (value) {
-                                          processFlowProvider.showLeadStatus =
-                                              value ?? false;
-                                        },
-                                      ),
-                                    ),
-                                    if (processFlowProvider.showLeadStatus)
-                                      Expanded(child: leadStatusDropdown),
+                                    Expanded(child: leadStatusWidget),
                                     const SizedBox(width: 10),
                                     Expanded(child: Container()),  // remove this to add new fields
                                     const SizedBox(width: 10),
@@ -535,24 +576,13 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             )
                           : Column(
                               children: [
-                                Tooltip(
-                                  message: "Show Lead Status",
-                                  child: Checkbox(
-                                    value: processFlowProvider.showLeadStatus,
-                                    onChanged: (value) {
-                                      processFlowProvider.showLeadStatus =
-                                          value ?? false;
-                                    },
-                                  ),
-                                ),
-                                if (processFlowProvider.showLeadStatus)
-                                  enquiryForDropdown,
+                                enquiryForDropdown,
                                 const SizedBox(height: 16),
                                 taskTypeDropdown,
                                 const SizedBox(height: 16),
                                 taskTypeStatusDropdown,
                                 const SizedBox(height: 16),
-                                leadStatusDropdown,
+                                leadStatusWidget,
                               ],
                             ),
                       const SizedBox(height: 16),
@@ -1493,15 +1523,16 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   itemCount: allCustomFields.length,
                   itemBuilder: (context, index) {
                     final field = allCustomFields[index];
-                    bool isSelected = _showCustomFields
-                        .any((e) => e.customFieldId == field.customFieldId);
+                    final selectedItemIndex = _showCustomFields
+                        .indexWhere((e) => e.customFieldId == field.customFieldId);
+                    bool isSelected = selectedItemIndex != -1;
+                    final selectedItem = isSelected ? _showCustomFields[selectedItemIndex] : null;
 
                     return InkWell(
                       onTap: () {
                         setStateDialog(() {
                           if (isSelected) {
-                            _showCustomFields.removeWhere(
-                                (e) => e.customFieldId == field.customFieldId);
+                            _showCustomFields.removeAt(selectedItemIndex);
                           } else {
                             _showCustomFields.add(field);
                           }
@@ -1564,6 +1595,16 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 ),
                               ),
                             ),
+                            if (isSelected && selectedItem != null)
+                              Checkbox(
+                                value: selectedItem.isChecked == 1,
+                                onChanged: (bool? val) {
+                                  setStateDialog(() {
+                                    selectedItem.isChecked = (val == true) ? 1 : 0;
+                                    field.isChecked = (val == true) ? 1 : 0;
+                                  });
+                                },
+                              ),
                           ],
                         ),
                       ),

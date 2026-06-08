@@ -18,6 +18,7 @@ class CustomFieldModel {
   int? deletedStatus;
   int? isQuotationCustom;
   int? isViewInQuotation;
+  int? isChecked; // Added this property
   List<String>? dropDownValues;
   List<String>? checkBoxValues;
 
@@ -32,6 +33,7 @@ class CustomFieldModel {
     this.deletedStatus,
     this.isQuotationCustom,
     this.isViewInQuotation,
+    this.isChecked,
     this.createdAt,
   });
 
@@ -44,6 +46,7 @@ class CustomFieldModel {
     int? deletedStatus,
     int? isQuotationCustom,
     int? isViewInQuotation,
+    int? isChecked,
     DateTime? createdAt,
   }) =>
       CustomFieldModel(
@@ -53,6 +56,7 @@ class CustomFieldModel {
         deletedStatus: deletedStatus ?? this.deletedStatus,
         isQuotationCustom: isQuotationCustom ?? this.isQuotationCustom,
         isViewInQuotation: isViewInQuotation ?? this.isViewInQuotation,
+        isChecked: isChecked ?? this.isChecked,
         dropDownValues: dropDownValues ?? this.dropDownValues,
         checkBoxValues: checkBoxValues ?? this.checkBoxValues,
         createdAt: createdAt ?? this.createdAt,
@@ -69,6 +73,9 @@ class CustomFieldModel {
             json["quotation_custom"] ?? json["isQuotationCustom"],
         isViewInQuotation:
             json["view_in_quotation"] ?? json["isViewInQuotation"],
+        isChecked: json["is_checked"] != null 
+            ? int.tryParse(json["is_checked"].toString()) 
+            : null,
         dropDownValues:
             (json["Dropdown_Values"] ?? json["dropdown_values"]) == null
                 ? []
@@ -91,6 +98,7 @@ class CustomFieldModel {
         "Deleted_Status": deletedStatus,
         "quotation_custom": isQuotationCustom,
         "view_in_quotation": isViewInQuotation,
+        "is_checked": isChecked,
         "Dropdown_Values": dropDownValues == null
             ? []
             : List<dynamic>.from(dropDownValues!.map((x) => x)),
