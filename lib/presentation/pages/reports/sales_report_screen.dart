@@ -343,26 +343,38 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
     bool isActive = false,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      height: 38,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: isActive ? AppColors.primaryBlue : Colors.grey[300]!),
+        border: Border.all(
+            color: isActive ? AppColors.primaryBlue : const Color(0xFFCBD5E1),
+            width: 1.0),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text('$label: ',
+              style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                  color: const Color(0xFF1E293B))),
           Expanded(
             child: TextField(
               controller: controller,
               onChanged: onChanged,
+              textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
                 hintText: hint,
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                hintStyle: GoogleFonts.plusJakartaSans(
+                    color: const Color(0xFF94A3B8), fontSize: 13),
               ),
-              style: const TextStyle(fontSize: 14),
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13, color: const Color(0xFF1E293B)),
             ),
           ),
         ],
@@ -378,26 +390,37 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
     bool isActive = false,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+      height: 38,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: isActive ? AppColors.primaryBlue : Colors.grey[300]!),
+        border: Border.all(
+            color: isActive ? AppColors.primaryBlue : const Color(0xFFCBD5E1),
+            width: 1.0),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text('$label: ',
+              style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                  color: const Color(0xFF1E293B))),
           Expanded(
             child: DropdownButton<String?>(
               value: value,
-              hint: const Text('All'),
+              hint: Text('All',
+                  style: GoogleFonts.plusJakartaSans(
+                      color: const Color(0xFF94A3B8), fontSize: 13)),
               items: items,
               onChanged: onChanged,
               underline: const SizedBox(),
               isDense: true,
               isExpanded: true,
               iconSize: 18,
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13, color: const Color(0xFF1E293B)),
             ),
           ),
         ],

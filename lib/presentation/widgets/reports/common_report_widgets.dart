@@ -26,22 +26,25 @@ class CommonReportDateFilter extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+        height: 38,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: hasDates ? AppColors.primaryBlue : Colors.grey[300]!,
+            color: hasDates ? AppColors.primaryBlue : const Color(0xFFCBD5E1),
+            width: 1.0,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               !hasDates
                   ? '$label: All'
                   : '$label : $formattedFromDate - $formattedToDate',
-              style: const TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Color(0xFF1E293B)),
             ),
             const SizedBox(width: 10),
             const Icon(

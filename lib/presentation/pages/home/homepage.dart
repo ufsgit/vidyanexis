@@ -55,6 +55,7 @@ import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_repor
 import 'package:vidyanexis/presentation/pages/customer/lead_search_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_use_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/sales_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/sales_report_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
@@ -404,7 +405,7 @@ class _HomePageState extends State<HomePage> {
         SidebarOption(
           title: 'Sales Reports',
           iconPath: 'assets/images/Reports.svg',
-          baseContent: const Center(child: SalesReportScreen()),
+          baseContent: AppStyles.isWebScreen(context) ? const Center(child: SalesReportScreen()) : const SalesReportScreenPhone(),
         ),
     ];
 
@@ -459,6 +460,57 @@ class _HomePageState extends State<HomePage> {
                     )
                   : null,
               actions: [
+                FutureBuilder<String>(
+                  future: getUserName(),
+                  builder: (context, snapshot) {
+                    final userName = snapshot.data ?? '';
+                    if (userName.isEmpty) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 4.0),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryBlue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppColors.secondaryBlue.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundColor: AppColors.textBlue800,
+                              child: Text(
+                                userName.isNotEmpty
+                                    ? userName[0].toUpperCase()
+                                    : 'U',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              userName,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: AppColors.textBlue800,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 Consumer<NotificationProvider>(
                   builder: (context, notificationProvider, child) {
                     final count = notificationProvider.totalCount;

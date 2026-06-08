@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/task_overview_tab.dart';
@@ -294,6 +295,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
     );
 
     return Scaffold(
+      drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
+      appBar: !AppStyles.isWebScreen(context)
+          ? CustomAppBar(
+              title: 'Dashboard',
+              showSearch: false,
+              showFilterIcon: false,
+              showSort: false,
+              onSearch: (String query) {},
+            )
+          : null,
       backgroundColor: AppColors.scaffoldColor,
       body: RefreshIndicator(
         onRefresh: () => dashBoardProvider.refreshDashboardData(context),

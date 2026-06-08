@@ -197,8 +197,8 @@ class _CustomerPageState extends State<CustomerPage> {
               // Header
               AppStyles.isWebScreen(context)
                   ? Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, top: 8.0, bottom: 0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [                          Wrap(
@@ -608,9 +608,8 @@ class _CustomerPageState extends State<CustomerPage> {
                 ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 4.0), // Further reduced vertical
+                  padding: const EdgeInsets.only(
+                      left: 16.0, right: 16.0, top: 0, bottom: 4.0), // Further reduced vertical
                   child: Container(
                     decoration: BoxDecoration(
       color: Colors.white,
