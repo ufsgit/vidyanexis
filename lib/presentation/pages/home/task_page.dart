@@ -97,6 +97,7 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getUserDetails(context);
       provider.getTaskType(context);
       provider.getFollowUpStatus(context, "3");
+      provider.getEnquiryFor(context);
     });
   }
 
@@ -3051,8 +3052,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           // Optional: You can also handle here if needed
                                           reportsProvider
                                               .fetchTaskTypesWithCustomFields(
-                                                  tasktypeId,
-                                                  statusId,
+                                                  selectedStatus.value.taskTypeId ?? 0,
+                                                  selectedStatus.value.statusId ?? 0,
                                                   customerId,
                                                   enquiryForId,
                                                   context);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
@@ -95,6 +96,8 @@ class TaskPageProvider extends ChangeNotifier {
   List<int> _selectedUserIds = [0];
   List<int> _selectedTaskTypeFilterIds = [0];
   List<int> _selectedEnquiryForIds = [0];
+
+  String _lastFetchPayload = "";
 
   List<int> get selectedStatusIds => _selectedStatusIds;
   List<int> get selectedUserIds => _selectedUserIds;
@@ -674,9 +677,9 @@ class TaskPageProvider extends ChangeNotifier {
       if (customFieldTaskStatusKey.currentState != null) {
         final fieldValues =
             customFieldTaskStatusKey.currentState!.getFieldValues();
-            
+
         final checkedFieldIds = _showCustomFields
-            .where((cf) => cf.isChecked == 1)
+            .where((cf) => cf.isChecked == 1 || cf.isChecked == null)
             .map((cf) => cf.customFieldId)
             .toSet();
 
@@ -969,6 +972,7 @@ class TaskPageProvider extends ChangeNotifier {
       int enquiryForId, BuildContext context) async {
     print(statusId);
     print(tasktypeId);
+    _lastFetchPayload = "";
     try {
       Loader.showLoader(context);
 
@@ -1053,27 +1057,38 @@ class TaskPageProvider extends ChangeNotifier {
       int customerId, int enquiryForId, BuildContext context) async {
     print(statusId);
     print(tasktypeId);
+    List<Map<String, dynamic>> customFieldsData = [];
+    if (customFieldTaskStatusKey.currentState != null) {
+      final fieldValues =
+          customFieldTaskStatusKey.currentState!.getFieldValues();
+
+      final checkedFieldIds = _showCustomFields
+          .where((cf) => cf.isChecked == 1 || cf.isChecked == null)
+          .map((cf) => cf.customFieldId)
+          .toSet();
+
+      customFieldsData = fieldValues
+          .where((field) => checkedFieldIds.contains(field.customFieldId))
+          .map((field) => field.toJson())
+          .toList();
+    }
+
+    if (customFieldsData.isEmpty) {
+      return; // No need to call the API if there are no active custom fields to pass
+    }
+
+    final payloadJson = jsonEncode(customFieldsData);
+    if (payloadJson == _lastFetchPayload) {
+      // Payload hasn't changed (e.g., interacted with unchecked fields)
+      return;
+    }
+    _lastFetchPayload = payloadJson;
+
     try {
       Loader.showLoader(context);
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
-
-      List<Map<String, dynamic>> customFieldsData = [];
-      if (customFieldTaskStatusKey.currentState != null) {
-        final fieldValues =
-            customFieldTaskStatusKey.currentState!.getFieldValues();
-            
-        final checkedFieldIds = _showCustomFields
-            .where((cf) => cf.isChecked == 1)
-            .map((cf) => cf.customFieldId)
-            .toSet();
-
-        customFieldsData = fieldValues
-            .where((field) => checkedFieldIds.contains(field.customFieldId))
-            .map((field) => field.toJson())
-            .toList();
-      }
 
       final Map<String, dynamic> queryParams = {
         "Task_Type_Id": tasktypeId,
@@ -1095,11 +1110,6 @@ class TaskPageProvider extends ChangeNotifier {
         if (data != null) {
           // log(data.toString());
           final newData = data['data'] ?? [];
-          if (newData.isEmpty) {
-            debugPrint("DEBUG: fetchTaskTypesWithCustomFields returned empty tasks, keeping old response.");
-            Loader.stopLoader(context);
-            return;
-          }
           _selectedTaskTypeIds.clear();
           final documentData = data['document_types'] ?? [];
           final statusData = data['mandatory_status'] ?? [];
