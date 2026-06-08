@@ -22,6 +22,7 @@ import 'package:vidyanexis/presentation/widgets/customer/commercial_item_card.da
 import 'package:vidyanexis/presentation/widgets/customer/scope_of_work_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/structure_material_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_structure_material_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_multiple_items_dialog.dart';
 import 'package:vidyanexis/http/loader.dart';
 
 class QuotationCreationWidget extends StatefulWidget {
@@ -403,32 +404,25 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         Row(
                           children: [
                             Expanded(
-                              child: CommonDropdown(
-                                hintText: "Select Item",
-                                items: expenseProvider.itemList
-                                    .map((status) => DropdownItem<int>(
-                                          id: status.itemId,
-                                          name: status.itemName,
-                                        ))
-                                    .toList(),
-                                controller: customerDetailsProvider
-                                    .newItemNameController,
-                                onItemSelected: (selectedItem) async {
-                                  final selectedData = expenseProvider.itemList
-                                      .firstWhere((item) =>
-                                          item.itemId == selectedItem);
-                                  customerDetailsProvider.newItemId =
-                                      selectedData.itemId;
-                                  customerDetailsProvider.setSelectedItemName(
-                                      selectedData.itemName);
-                                  await expenseProvider.getItemMaterialList(
-                                      selectedData.itemId, context);
-                                  customerDetailsProvider
-                                      .updatebillOfMaterialsItems(
-                                          expenseProvider.items);
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const AddMultipleItemsDialog(),
+                                  );
                                 },
-                                selectedValue:
-                                    customerDetailsProvider.newItemId,
+                                icon: const Icon(Icons.add, color: AppColors.primaryBlue),
+                                label: const Text(
+                                  'Add Material',
+                                  style: TextStyle(color: AppColors.primaryBlue),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: AppColors.primaryBlue),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -1344,13 +1338,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   if (!_formKey.currentState!.validate()) return;
 
                   if (companyQuotationItems) {
-                    final selectedData = expenseProvider.itemList.firstWhere(
-                        (item) =>
-                            item.itemId == customerDetailsProvider.newItemId);
-                    double priceFrom =
-                        double.tryParse(selectedData.priceFrom) ?? 0.0;
-                    double priceTo =
-                        double.tryParse(selectedData.priceTo) ?? 0.0;
+                    double priceFrom = customerDetailsProvider.aggregatedPriceFrom;
+                    double priceTo = customerDetailsProvider.aggregatedPriceTo;
+                    if (priceFrom == 0 && priceTo == 0) {
+                      try {
+                        final selectedData = expenseProvider.itemList.firstWhere(
+                            (item) => item.itemId == customerDetailsProvider.newItemId);
+                        priceFrom = double.tryParse(selectedData.priceFrom) ?? 0.0;
+                        priceTo = double.tryParse(selectedData.priceTo) ?? 0.0;
+                      } catch (_) {}
+                    }
 
                     double netTotal = double.tryParse(
                             customerDetailsProvider.totalController.text) ??

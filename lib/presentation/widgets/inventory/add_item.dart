@@ -112,6 +112,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
 
       settingsProvider.searchCategoryApi('', context);
       settingsProvider.searchUnitApi('', context);
+      expenseProvider.searchItemDropdownList(context: context);
       expenseProvider.cgstController.text = "9";
       expenseProvider.sgstController.text = "9";
       expenseProvider.igstController.text = "18";
@@ -426,7 +427,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                    Expanded(
                                     child: CommonDropdown(
                                       hintText: "Select Material",
-                                      items: expenseProvider.itemList
+                                      items: expenseProvider.itemDropdownList
                                           .map((status) => DropdownItem<int>(
                                                 id: status.itemId,
                                                 name: status.itemName,
@@ -436,7 +437,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                           .itemMaterialController,
                                       onItemSelected: (selectedItem) {
                                         final selectedData = expenseProvider
-                                            .itemList
+                                            .itemDropdownList
                                             .firstWhere((item) =>
                                                 item.itemId == selectedItem);
                                         expenseProvider
@@ -501,8 +502,21 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                       labelText: '',
                                     ),
                                   ),
-                                   SizedBox(width: 12),
-                                   Expanded(child: Container()),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: CustomTextField(
+                                      readOnly: false,
+                                      height: 56,
+                                      controller: expenseProvider
+                                          .itemQuantityController,
+                                      hintText: 'Quantity',
+                                      labelText: '',
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp(r'^\d*\.?\d{0,2}')),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 12),
@@ -598,14 +612,14 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                                         const Color(0xFF1E293B),
                                                   ),
                                                 ),
-                                                // const SizedBox(height: 4),
-                                                // Text(
-                                                //   'Qty: ${item.quantity}',
-                                                //   style: GoogleFonts.plusJakartaSans(
-                                                //     fontSize: 12,
-                                                //     color: const Color(0xFF64748B),
-                                                //   ),
-                                                // ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  'Qty: ${item.quantity}',
+                                                  style: GoogleFonts.plusJakartaSans(
+                                                    fontSize: 12,
+                                                    color: const Color(0xFF64748B),
+                                                  ),
+                                                ),
                                                 const SizedBox(height: 4),
                                                 Text(
                                                   'Price Range: ₹${item.priceFrom.isEmpty ? "0" : item.priceFrom} - ₹${item.priceTo.isEmpty ? "0" : item.priceTo}',

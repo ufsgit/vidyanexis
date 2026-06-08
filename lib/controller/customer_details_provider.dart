@@ -27,6 +27,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/bill_of_material_model.dart';
@@ -448,6 +449,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  double aggregatedPriceFrom = 0.0;
+  double aggregatedPriceTo = 0.0;
+
   final TextEditingController profitController = TextEditingController();
   bool _isPercentage = false;
   bool get isPercentage => _isPercentage;
@@ -488,6 +492,61 @@ class CustomerDetailsProvider extends ChangeNotifier {
       recalculateCompanyQuotationItem();
     }
     notifyListeners();
+  }
+
+  Future<void> fetchAndSetMaterialsForMultipleItems(
+      List<Map<String, dynamic>> selectedItems,
+      ExpenseProvider expenseProvider,
+      BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      List<BillOfMaterialItem> combinedMaterials = [];
+      _newItemId = selectedItems.isNotEmpty ? selectedItems.first['itemId'] : 0;
+      aggregatedPriceFrom = 0.0;
+      aggregatedPriceTo = 0.0;
+
+      for (var item in selectedItems) {
+        int itemId = item['itemId'];
+        double userQty = item['quantity'];
+
+        await expenseProvider.getItemMaterialList(itemId, context);
+        
+        // Add to aggregated prices
+        final selectedData = expenseProvider.itemList.firstWhere((element) => element.itemId == itemId);
+        double priceFrom = double.tryParse(selectedData.priceFrom) ?? 0.0;
+        double priceTo = double.tryParse(selectedData.priceTo) ?? 0.0;
+        aggregatedPriceFrom += (priceFrom * userQty);
+        aggregatedPriceTo += (priceTo * userQty);
+
+        var materials = expenseProvider.RealItems;
+        for (var mat in materials) {
+          double totalQty = mat.quantity * userQty;
+          combinedMaterials.add(BillOfMaterialItem(
+            description: mat.itemMaterialName,
+            brand: mat.specification,
+            quantity: totalQty.toStringAsFixed(2),
+            uom: mat.unit,
+            distributor: mat.manufacture,
+            price: mat.price.toString(),
+            amount: (mat.price * totalQty).toStringAsFixed(2),
+            priceFrom: mat.priceFrom,
+            priceTo: mat.priceTo,
+          ));
+        }
+      }
+
+      _billOfMaterialsItems = combinedMaterials;
+
+      final settingsProvider = SettingsProvider();
+      if (settingsProvider.quotationItem == 1) {
+        recalculateCompanyQuotationItem();
+      }
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching materials for multiple items: $e");
+    } finally {
+      Loader.stopLoader(context);
+    }
   }
 
   void companyQuotationItemsCalulate(BuildContext context) {

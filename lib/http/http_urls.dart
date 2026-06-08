@@ -34,10 +34,10 @@ class HttpUrls {
   // static String baseUrl = 'https://lucidpowerapi.ufstech.net.in/';
   // static String baseUrl = 'https://linoraapi.ufstech.net.in/';
   // static String baseUrl = 'https://izzapower.trackbox.net.in/';
-  static String baseUrl = 'https://demo2api.ufstech.net.in/';
+//   static String baseUrl = 'https://demo2api.ufstech.net.in/';
 //dev
 
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
@@ -194,6 +194,7 @@ class HttpUrls {
   static String getAttendance = "attendance/attendance_report";
   static String saveItem = "item/create_Item";
   static String getItemList = "item/get_all_items";
+  static String getItemsDropdown = "item/get_Items_Dropdown";
   static String getItemMaterials = "item/get_item_details";
   static String deleteItem = "item/delete_item_details";
   static String getFormPrint = 'item/get_solar_panel_details';

@@ -118,6 +118,9 @@ class ExpenseProvider extends ChangeNotifier {
   List<ItemListModel> _itemList = [];
   List<ItemListModel> get itemList => _itemList;
 
+  List<ItemListModel> _itemDropdownList = [];
+  List<ItemListModel> get itemDropdownList => _itemDropdownList;
+
   //stock
   List<StockEntry> _stockList = [];
   List<StockEntry> get stockList => _stockList;
@@ -732,6 +735,34 @@ class ExpenseProvider extends ChangeNotifier {
           if (isFilter) {
             _filterItems();
           }
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<void> searchItemDropdownList({required BuildContext context}) async {
+    try {
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getItemsDropdown);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final dataitem = data['data'];
+          _itemDropdownList = (dataitem as List<dynamic>)
+              .map((item) => ItemListModel.fromJson(item))
+              .toList();
           notifyListeners();
         }
       } else {
@@ -1799,6 +1830,7 @@ class ExpenseProvider extends ChangeNotifier {
             "igst": igstController.text,
             "serviceCheckbox": _isChecked,
             "Is_Primary": _isPrimaryItem,
+            "material_checkbox": _isPrimaryItem,
             "HSNCode": itemHSNController.text.toString(),
             "Price_Range_From": priceRangeFromController.text.toString(),
             "Price_Range_To": priceRangeToController.text.toString(),
