@@ -817,85 +817,215 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     );
   }
 
+  final List<String> _dateButtonTitles = [
+    'Yesterday',
+    'Today',
+    'Tomorrow',
+    'This Week',
+    'This Month',
+  ];
+
   void _showDateDialog(BuildContext context, ExpenseProvider provider) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (contextx) => Consumer<ExpenseProvider>(
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            contentPadding: const EdgeInsets.all(10),
             content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Choose Date',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      'Yesterday',
-                      'Today',
-                      'Tomorrow',
-                      'This Week',
-                      'This Month'
-                    ]
-                        .asMap()
-                        .entries
-                        .map((e) => ActionChip(
-                              label: Text(e.value),
-                              onPressed: () {
-                                reportsProvider.setDateFilter(e.value);
-                                reportsProvider.selectDateFilterOption(e.key);
-                              },
-                              backgroundColor:
-                                  reportsProvider.selectedDateFilterIndex ==
-                                          e.key
-                                      ? AppColors.primaryBlue
-                                      : Colors.white,
-                              labelStyle: TextStyle(
-                                  color:
-                                      reportsProvider.selectedDateFilterIndex ==
-                                              e.key
-                                          ? Colors.white
-                                          : Colors.black),
-                            ))
-                        .toList(),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    readOnly: true,
-                    onTap: () => reportsProvider.selectDate(context, true),
-                    decoration: InputDecoration(
-                      labelText: 'Pick a date',
-                      hintText: reportsProvider.fromDate != null
-                          ? reportsProvider.formattedFromDate
-                          : 'Select',
-                      suffixIcon: const Icon(Icons.calendar_month),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        reportsProvider.getExpenseReport(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4)),
-                        backgroundColor: AppColors.primaryBlue,
-                        foregroundColor: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                      child: Text(
+                        'Choose Date',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF0F172A),
+                        ),
                       ),
-                      child: const Text('Apply'),
                     ),
-                  )
-                ],
+                    const SizedBox(height: 20),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: List<Widget>.generate(_dateButtonTitles.length,
+                          (index) {
+                        final String title = _dateButtonTitles[index];
+                        final bool isSelected =
+                            reportsProvider.selectedDateFilterIndex == index;
+                        return ChoiceChip(
+                          onSelected: (_) {
+                            reportsProvider.selectDateFilterOption(index);
+                            reportsProvider.setDateFilter(title);
+                          },
+                          selected: isSelected,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          label: Text(
+                            title,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight:
+                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF475569),
+                            ),
+                          ),
+                          selectedColor: AppColors.primaryBlue,
+                          backgroundColor: Colors.white,
+                          side: BorderSide(
+                            color: isSelected
+                                ? Colors.transparent
+                                : Colors.grey[300]!,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Pick a custom date',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF0F172A),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () => reportsProvider.selectDate(contextx, true),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 13),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              hintText: reportsProvider.fromDate != null
+                                  ? '${reportsProvider.fromDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'From',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: Colors.grey[500],
+                              ),
+                              suffixIcon: const Icon(Icons.calendar_month,
+                                  size: 18),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () => reportsProvider.selectDate(contextx, false),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 13),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              hintText: reportsProvider.toDate != null
+                                  ? '${reportsProvider.toDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'To',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: Colors.grey[500],
+                              ),
+                              suffixIcon: const Icon(Icons.calendar_month,
+                                  size: 18),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(contextx);
+                          reportsProvider.getExpenseReport(contextx);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        child: Text(
+                          'Apply Filter',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(contextx);
+                          reportsProvider.setFromDate(DateTime.now());
+                          reportsProvider.setToDate(DateTime.now());
+                          reportsProvider.clearUserFilter();
+                          reportsProvider.clearExpenseTypeFilter();
+                          reportsProvider.clearProjectTypeFilter();
+                          reportsProvider.getExpenseReport(contextx);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: AppColors.textRed.withOpacity(0.08),
+                          foregroundColor: AppColors.textRed,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        child: Text(
+                          'Clear Filter',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

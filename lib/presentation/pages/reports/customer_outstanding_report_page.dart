@@ -522,77 +522,211 @@ class _CustomerOutstandingReportPageState
   void _onClickDateRange(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => Consumer<CustomerOutstandingReportProvider>(
-        builder: (context, provider, child) {
+      barrierDismissible: false,
+      builder: (contextx) => Consumer<CustomerOutstandingReportProvider>(
+        builder: (contextx, provider, child) {
           return AlertDialog(
-            title: const Text('Select Date Range'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    for (int i = 0; i < 5; i++)
-                      ActionChip(
-                        label: Text([
-                          'Yesterday',
-                          'Today',
-                          'Tomorrow',
-                          'This Week',
-                          'This Month'
-                        ][i]),
-                        onPressed: () => provider.selectDateFilterOption(i),
-                        backgroundColor: provider.selectedDateFilterIndex == i
-                            ? AppColors.primaryBlue
-                            : null,
-                        labelStyle: TextStyle(
-                            color: provider.selectedDateFilterIndex == i
-                                ? Colors.white
-                                : null),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () => provider.selectDate(context, true),
-                        icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(provider.fromDate != null
-                            ? provider.formattedFromDate
-                            : 'From Date'),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () => provider.selectDate(context, false),
-                        icon: const Icon(Icons.calendar_today, size: 16),
-                        label: Text(provider.toDate != null
-                            ? provider.formattedToDate
-                            : 'To Date'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
             ),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel')),
-              ElevatedButton(
-                onPressed: () {
-                  provider.getReport(context);
-                  Navigator.pop(context);
-                },
-                child: const Text('Apply'),
+            contentPadding: const EdgeInsets.all(10),
+            content: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                      child: Text(
+                        'Choose Date',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF0F172A),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: List<Widget>.generate(_dateButtonTitles.length,
+                          (index) {
+                        final String title = _dateButtonTitles[index];
+                        final bool isSelected =
+                            provider.selectedDateFilterIndex == index;
+                        return ChoiceChip(
+                          onSelected: (_) {
+                            provider.selectDateFilterOption(index);
+                          },
+                          selected: isSelected,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          label: Text(
+                            title,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight:
+                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF475569),
+                            ),
+                          ),
+                          selectedColor: AppColors.primaryBlue,
+                          backgroundColor: Colors.white,
+                          side: BorderSide(
+                            color: isSelected
+                                ? Colors.transparent
+                                : Colors.grey[300]!,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Pick a custom date',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF0F172A),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () => provider.selectDate(contextx, true),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 13),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              hintText: provider.fromDate != null
+                                  ? '${provider.fromDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'From',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: Colors.grey[500],
+                              ),
+                              suffixIcon: const Icon(Icons.calendar_month,
+                                  size: 18),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () => provider.selectDate(contextx, false),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 13),
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
+                              ),
+                              hintText: provider.toDate != null
+                                  ? '${provider.toDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'To',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: Colors.grey[500],
+                              ),
+                              suffixIcon: const Icon(Icons.calendar_month,
+                                  size: 18),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(contextx);
+                          provider.getReport(contextx);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        child: Text(
+                          'Apply Filter',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(contextx);
+                          provider.resetFilters(contextx);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: AppColors.textRed.withOpacity(0.08),
+                          foregroundColor: AppColors.textRed,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        child: Text(
+                          'Clear Filter',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           );
         },
       ),
     );
   }
+
+  final List<String> _dateButtonTitles = [
+    'Yesterday',
+    'Today',
+    'Tomorrow',
+    'This Week',
+    'This Month',
+  ];
 }

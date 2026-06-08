@@ -2262,72 +2262,63 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(
           height: 10,
         ),
-        CustomTextfieldWidgetMobile(
-          focusNode: FocusNode(),
-          controller: leadProvider.referenceNameController,
-          labelText: 'Reference Name',
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        CustomTextfieldWidgetMobile(
-          controller: leadProvider.cityController,
-          labelText: 'Place',
-          showError: dropDownProvider.showValidation &&
-              !_isFieldValid(leadProvider.cityController.text),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        CommonDropdown<int>(
-          hintText: 'Location',
-          items: dropDownProvider.locationList
-              .map((loc) => DropdownItem<int>(
-                    id: loc.locationId,
-                    name: loc.locationName,
-                  ))
-              .toList(),
-          onItemSelected: (selectedId) {
-            dropDownProvider.selectedLocationId = selectedId;
-          },
-          selectedValue: dropDownProvider.selectedLocationId,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
+        if (settingsProvider.menuIsViewMap[145] == 1) ...[
+          CustomTextfieldWidgetMobile(
+            focusNode: FocusNode(),
+            controller: leadProvider.referenceNameController,
+            labelText: 'Reference Name',
+          ),
+          const SizedBox(height: 10),
+        ],
+        if (settingsProvider.menuIsViewMap[146] == 1) ...[
+          CustomTextfieldWidgetMobile(
+            controller: leadProvider.cityController,
+            labelText: 'Place',
+            showError: dropDownProvider.showValidation &&
+                !_isFieldValid(leadProvider.cityController.text),
+          ),
+          const SizedBox(height: 10),
+          CommonDropdown<int>(
+            hintText: 'Location',
+            items: dropDownProvider.locationList
+                .map((loc) => DropdownItem<int>(
+                      id: loc.locationId,
+                      name: loc.locationName,
+                    ))
+                .toList(),
+            onItemSelected: (selectedId) {
+              dropDownProvider.selectedLocationId = selectedId;
+            },
+            selectedValue: dropDownProvider.selectedLocationId,
+          ),
+          const SizedBox(height: 10),
+        ],
 
-        CommonDropdown<int>(
-          hintText: 'Source',
-          items: settingsProvider.searchSourceCategory
-              .map((source) => DropdownItem<int>(
-                    id: source.sourceId,
-                    name: source.sourceName ?? '',
-                  ))
-              .toList(),
-          controller: leadProvider.sourceCategoryController,
-          onItemSelected: (selectedId) {
-            dropDownProvider.setSourceCategoryId(selectedId);
-            final selectedItem = settingsProvider.searchSourceCategory
-                .firstWhere((source) => source.sourceId == selectedId);
-            leadProvider.sourceCategoryController.text =
-                selectedItem.sourceName ?? '';
-            // dropDownProvider
-            //     .setSelectedEnquirySourceId(-1);
-            // leadProvider.enquirySourceController
-            //     .clear();
-            // dropDownProvider
-            //     .filterEnquirySourcesByCategory(
-            //         selectedId);
-            dropDownProvider.updateEnquiryForName(0, '');
-            leadProvider.enquiryForController.clear();
+        if (settingsProvider.menuIsViewMap[149] == 1) ...[
+          CommonDropdown<int>(
+            hintText: 'Source',
+            items: settingsProvider.searchSourceCategory
+                .map((source) => DropdownItem<int>(
+                      id: source.sourceId,
+                      name: source.sourceName ?? '',
+                    ))
+                .toList(),
+            controller: leadProvider.sourceCategoryController,
+            onItemSelected: (selectedId) {
+              dropDownProvider.setSourceCategoryId(selectedId);
+              final selectedItem = settingsProvider.searchSourceCategory
+                  .firstWhere((source) => source.sourceId == selectedId);
+              leadProvider.sourceCategoryController.text =
+                  selectedItem.sourceName ?? '';
+              dropDownProvider.updateEnquiryForName(0, '');
+              leadProvider.enquiryForController.clear();
 
-            dropDownProvider.filterEnquiryForByCategory(selectedId);
-          },
-          selectedValue: dropDownProvider.selectedSourceId,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
+              dropDownProvider.filterEnquiryForByCategory(selectedId);
+            },
+            selectedValue: dropDownProvider.selectedSourceId,
+          ),
+          const SizedBox(height: 10),
+        ],
 
         if (dropDownProvider.selectedSourceId != null &&
             dropDownProvider.selectedSourceId! > 0)
@@ -2511,32 +2502,36 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             height: 10,
           ),
         ],
-        CustomTextfieldWidgetMobile(
-          focusNode: FocusNode(),
-          controller: leadProvider.commissionController,
-          labelText: 'Commission',
-          keyBoardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        if (settingsProvider.consumerNameMandatory == 1)
+        if (settingsProvider.menuIsViewMap[147] == 1) ...[
           CustomTextfieldWidgetMobile(
-            controller: leadProvider.consumerNameController,
-            labelText: 'Consumer Name',
+            focusNode: FocusNode(),
+            controller: leadProvider.commissionController,
+            labelText: 'Commission',
+            keyBoardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
-        const SizedBox(height: 10),
-        if (settingsProvider.consumerContactNoMandatory == 1)
-          CustomTextfieldWidgetMobile(
-            controller: leadProvider.consumerContactNoController,
-            labelText: 'Contact No',
-            keyBoardType: TextInputType.phone,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-          ),
-        const SizedBox(height: 10),
+          const SizedBox(height: 10),
+        ],
+        if (settingsProvider.menuIsViewMap[148] == 1) ...[
+          if (settingsProvider.consumerNameMandatory == 1) ...[
+            CustomTextfieldWidgetMobile(
+              controller: leadProvider.consumerNameController,
+              labelText: 'Consumer Name',
+            ),
+            const SizedBox(height: 10),
+          ],
+          if (settingsProvider.consumerContactNoMandatory == 1) ...[
+            CustomTextfieldWidgetMobile(
+              controller: leadProvider.consumerContactNoController,
+              labelText: 'Contact No',
+              keyBoardType: TextInputType.phone,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+        ],
         // if (dropDownProvider.selectedEnquiryForId != null &&
         //     dropDownProvider.selectedEnquiryForId != 0)
         //   // customFieldSection(),
