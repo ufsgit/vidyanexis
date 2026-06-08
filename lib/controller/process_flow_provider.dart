@@ -34,6 +34,13 @@ class ProcessFlowProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _showLeadStatus = false;
+  bool get showLeadStatus => _showLeadStatus;
+  set showLeadStatus(bool value) {
+    _showLeadStatus = value;
+    notifyListeners();
+  }
+
   void clearData() {
     processFlowModel = ProcessFlowModel();
     taskFlowList = [];
@@ -290,6 +297,7 @@ class ProcessFlowProvider extends ChangeNotifier {
           processFlowModel.templateId = data["data"]["template_id"]?.toString();
           processFlowModel.leadStatusId = data["data"]["lead_status_id"]?.toInt();
           processFlowModel.leadStatusName = data["data"]["lead_status_name"]?.toString();
+          _showLeadStatus = data["data"]["Show_Lead_Status"]?.toString() == "1";
           var showCustomFieldsData = data["data"]["show_custom_fields"] ??
               data["data"]["show_custom_field"] ??
               [];
@@ -359,6 +367,7 @@ class ProcessFlowProvider extends ChangeNotifier {
                 .toList(),
             "lead_status_id": processFlowModel.leadStatusId ?? 0,
             "lead_status_name": processFlowModel.leadStatusName ?? '',
+            "Show_Lead_Status": _showLeadStatus ? "1" : "0",
           });
 
       if (response!.statusCode == 200) {

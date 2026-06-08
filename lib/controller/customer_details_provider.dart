@@ -2067,10 +2067,62 @@ class CustomerDetailsProvider extends ChangeNotifier {
     String assignedWorker,
     BuildContext context,
     bool isEdit,
-    List<Map<String, String>>? audioFiles, { // Add this parameter
+    List<Map<String, String>>? audioFiles, {
+    // Add this parameter
     bool dismissDialog = true,
   }) async {
     try {
+      if (!isEdit) {
+        await getTaskList(customerId, context);
+        final targetTaskTypeId = int.tryParse(taskType) ?? 0;
+        final alreadyExists =
+            taskList.any((task) => task.taskTypeId == targetTaskTypeId);
+        if (alreadyExists) {
+          if (context.mounted) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text(
+                    'Cannot save',
+                    style: TextStyle(
+                      color: AppColors.appViolet,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  content: const Text(
+                    'This task type has already been created for this customer.',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 14,
+                    ),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(
+                          color: AppColors.appViolet,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+          return;
+        }
+      }
+
       if (date.isNotEmpty) {
         DateTime parsedDate;
         try {
@@ -2126,9 +2178,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
         }
 
         try {
-          final dbProvider = Provider.of<DashboardProvider>(context, listen: false);
+          final dbProvider =
+              Provider.of<DashboardProvider>(context, listen: false);
           dbProvider.clearDashboardFlags();
-          dbProvider.getTaskInfoDashBoard(context, isSilent: true, shouldNotify: true);
+          dbProvider.getTaskInfoDashBoard(context,
+              isSilent: true, shouldNotify: true);
         } catch (_) {}
 
         if (context.mounted) {
@@ -4382,7 +4436,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-
   Future<Uint8List?> getQuotationMasterPdfBytes(String masterId) async {
     try {
       final response = await HttpRequest.httpGetRequest(
@@ -4423,8 +4476,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           }
         } else {
           if (context.mounted) {
-            await Printing.layoutPdf(
-                onLayout: (format) async => data);
+            await Printing.layoutPdf(onLayout: (format) async => data);
           }
         }
       } else {
@@ -4443,7 +4495,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
     }
   }
-
 
   void setCustomerId(int customerIdValue) {
     customerId = customerIdValue.toString();
@@ -4648,7 +4699,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _isProfitLoading = true;
       notifyListeners();
 
-      final response = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getProfit);
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getProfit);
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
@@ -4676,10 +4728,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
             for (int i = 0; i < items.length; i++) {
               var item = items[i];
               if (item is Map<String, dynamic> || item is Map) {
-                var map = item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
+                var map = item is Map<String, dynamic>
+                    ? item
+                    : Map<String, dynamic>.from(item);
                 var model = ProfitModel.fromJson(map);
                 if (model.id == 0) {
-                   temp.add(ProfitModel(id: i + 1, name: model.name.isEmpty ? 'Item ${i+1}' : model.name));
+                  temp.add(ProfitModel(
+                      id: i + 1,
+                      name: model.name.isEmpty ? 'Item ${i + 1}' : model.name));
                 } else {
                   temp.add(model);
                 }
@@ -4693,7 +4749,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
           _profitList = [ProfitModel(id: -1, name: "API returned null data")];
         }
       } else {
-         _profitList = [ProfitModel(id: -1, name: "API Error ${response.statusCode}")];
+        _profitList = [
+          ProfitModel(id: -1, name: "API Error ${response.statusCode}")
+        ];
       }
     } catch (e) {
       print('Exception in getProfitList: $e');
@@ -4713,8 +4771,21 @@ class ProfitModel {
 
   factory ProfitModel.fromJson(Map<String, dynamic> json) {
     return ProfitModel(
-      id: int.tryParse(json['id']?.toString() ?? json['Id']?.toString() ?? json['profitId']?.toString() ?? json['ProfitId']?.toString() ?? json['profit_id']?.toString() ?? json['Profit_Id']?.toString() ?? '0') ?? 0,
-      name: json['name']?.toString() ?? json['Name']?.toString() ?? json['profitName']?.toString() ?? json['ProfitName']?.toString() ?? json['profit_name']?.toString() ?? json['Profit_Name']?.toString() ?? '',
+      id: int.tryParse(json['id']?.toString() ??
+              json['Id']?.toString() ??
+              json['profitId']?.toString() ??
+              json['ProfitId']?.toString() ??
+              json['profit_id']?.toString() ??
+              json['Profit_Id']?.toString() ??
+              '0') ??
+          0,
+      name: json['name']?.toString() ??
+          json['Name']?.toString() ??
+          json['profitName']?.toString() ??
+          json['ProfitName']?.toString() ??
+          json['profit_name']?.toString() ??
+          json['Profit_Name']?.toString() ??
+          '',
     );
   }
 }

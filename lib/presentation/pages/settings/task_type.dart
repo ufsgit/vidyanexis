@@ -5,7 +5,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_task_type_mobile_page.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_task_type.dart';
 import 'package:vidyanexis/presentation/widgets/settings/manage_status_widget.dart';
 
@@ -84,78 +83,6 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (isWeb) ...[
-                  const SizedBox(height: 8),
-                  // Page Title
-                  Text(
-                    'Task Type',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textBlue800,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Search and New Button
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          width: MediaQuery.of(context).size.width / 3.5,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                          ),
-                          child: TextField(
-                            controller:
-                                settingsProvider.searchTaskTypeController,
-                            onChanged: (query) {
-                              settingsProvider.searchTaskType(query, context);
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'Search here....',
-                              prefixIcon: Icon(Icons.search),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 4,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      if (settingsProvider.menuIsSaveMap[41] == 1)
-                        SizedBox(
-                          height: 48,
-                          child: CustomOutlinedSvgButton(
-                            onPressed: _openAddDialog,
-                            svgPath: 'assets/images/Plus.svg',
-                            label: 'New',
-                            breakpoint: 400,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            foregroundColor: Colors.white,
-                            backgroundColor: AppColors.secondaryBlue,
-                            borderSide: BorderSide(color: AppColors.secondaryBlue),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                ],
-
                 // The List
                 Container(
                   width: double.infinity,
@@ -178,53 +105,51 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                     separatorBuilder: (context, index) => Divider(
                       height: 1,
                       thickness: 1,
-                      color: Colors.grey[50]!,
+                      color: Colors.grey[200]!,
                     ),
                     itemBuilder: (context, index) {
                       final task = settingsProvider.taskType[index];
                       return Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildTaskTypeBadge(task.taskTypeName),
-                                  if (task.departmentName != null &&
-                                      task.departmentName!.isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 8, left: 4),
-                                      child: Text(
-                                        task.departmentName!,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.grey[500],
-                                        ),
-                                      ),
-                                    ),
-                                  if (task.description != null &&
-                                      task.description!.isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 4, left: 4),
-                                      child: Text(
-                                        "Description: ${task.description}",
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.grey[600],
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                ],
+                            // Task type badge – fixed min-width so names align
+                            SizedBox(
+                              width: 200,
+                              child: _buildTaskTypeBadge(task.taskTypeName),
+                            ),
+                            // Department name – fixed width column
+                            SizedBox(
+                              width: 160,
+                              child: Text(
+                                task.departmentName ?? '',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[500],
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            // Description fills remaining space
+                            if (task.description != null &&
+                                task.description!.isNotEmpty)
+                              Expanded(
+                                child: Text(
+                                  task.description!,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              )
+                            else
+                              const Expanded(child: SizedBox()),
                             _buildActionButtons(
                                 context, settingsProvider, index),
                           ],

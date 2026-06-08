@@ -395,7 +395,6 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                               const SizedBox(width: 8),
                             ],
-
                           ],
                         ),
                         Wrap(
@@ -436,7 +435,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 : Colors.grey,
                                         fontWeight:
                                             reportsProvider.entryType != 'all'
-                                                ? FontWeight.w600
+                                                ? FontWeight.w500
                                                 : FontWeight.normal,
                                         fontSize: 14,
                                       ),
@@ -473,7 +472,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 : Colors.grey,
                                         fontWeight:
                                             reportsProvider.entryType == 'all'
-                                                ? FontWeight.w600
+                                                ? FontWeight.w500
                                                 : FontWeight.normal,
                                         fontSize: 14,
                                       ),
@@ -505,9 +504,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                 onTap: () {
                                   Future.microtask(() {
                                     if (searchController.text.isNotEmpty &&
-                                        searchController.selection.baseOffset == 0 &&
-                                        searchController.selection.extentOffset == searchController.text.length) {
-                                      searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                        searchController.selection.baseOffset ==
+                                            0 &&
+                                        searchController
+                                                .selection.extentOffset ==
+                                            searchController.text.length) {
+                                      searchController.selection =
+                                          TextSelection.collapsed(
+                                              offset:
+                                                  searchController.text.length);
                                     }
                                   });
                                 },
@@ -615,7 +620,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               label: const Text(
                                 'Export to Excel',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 13,
                                 ),
                               ),
@@ -656,7 +661,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                   const SizedBox(width: 8),
                                 ],
-
                               ],
                             ),
                             Expanded(
@@ -701,7 +705,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 fontWeight:
                                                     reportsProvider.entryType !=
                                                             'all'
-                                                        ? FontWeight.w600
+                                                        ? FontWeight.w500
                                                         : FontWeight.normal,
                                                 fontSize: 14,
                                               ),
@@ -742,7 +746,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 fontWeight:
                                                     reportsProvider.entryType ==
                                                             'all'
-                                                        ? FontWeight.w600
+                                                        ? FontWeight.w500
                                                         : FontWeight.normal,
                                                 fontSize: 14,
                                               ),
@@ -1623,7 +1627,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     Colors.blue,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .w600,
+                                                                        .w500,
                                                                 fontSize: 13,
                                                               ),
                                                             ),
@@ -1695,7 +1699,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   children: provider
                                                                       .taskType
                                                                       .where((taskType) =>
-                                                                          taskType.manualCreation ==
+                                                                          taskType
+                                                                              .manualCreation ==
                                                                           1)
                                                                       .map(
                                                                           (taskType) {
@@ -2043,7 +2048,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         color:
                                                             Color(0xFF334155),
                                                         fontWeight:
-                                                            FontWeight.w600,
+                                                            FontWeight.w500,
                                                       ),
                                                     ),
                                                   ),
@@ -2072,7 +2077,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         color:
                                                             Color(0xFF334155),
                                                         fontWeight:
-                                                            FontWeight.w600,
+                                                            FontWeight.w500,
                                                       ),
                                                     ),
                                                   ),
@@ -2092,7 +2097,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       fontSize: 13,
                                                       color: Color(0xFF334155),
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
                                                 ),
@@ -2115,7 +2120,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         color:
                                                             Color(0xFF334155),
                                                         fontWeight:
-                                                            FontWeight.w600,
+                                                            FontWeight.w500,
                                                       ),
                                                     ),
                                                   ),
@@ -2136,7 +2141,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       fontSize: 13,
                                                       color: Color(0xFF334155),
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
                                                 ),
@@ -2524,7 +2529,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     const Text('Select Status',
                                         style: TextStyle(
                                             fontSize: 12,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.w500,
                                             color: Color(0xFF64748B))),
                                     const SizedBox(height: 8),
                                     ValueListenableBuilder<TaskTypeStatusModel>(
@@ -2569,7 +2574,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: 0.3)),
                               const SizedBox(height: 6),
                               Container(
@@ -2778,10 +2783,10 @@ class _tasksPageReportState extends State<TaskPage> {
           ),
           child: Container(
             constraints: const BoxConstraints(
-              maxWidth: 675,
+              maxWidth: 900,
               maxHeight: 600,
               minHeight: 600,
-              minWidth: 675,
+              minWidth: 900,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -2973,7 +2978,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                     const Text('Select Status',
                                         style: TextStyle(
                                             fontSize: 13,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.w500,
                                             color: Color(0xFF64748B))),
                                     const SizedBox(height: 8),
                                     ValueListenableBuilder<TaskTypeStatusModel>(
@@ -3028,7 +3033,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Colors.grey.shade600,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       const SizedBox(height: 12),
@@ -3096,14 +3101,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           color: Colors
                                                               .grey.shade600,
                                                           fontWeight:
-                                                              FontWeight.w600)),
+                                                              FontWeight.w500)),
                                                   Text('Department',
                                                       style: TextStyle(
                                                           fontSize: 13,
                                                           color: Colors
                                                               .grey.shade600,
                                                           fontWeight:
-                                                              FontWeight.w600)),
+                                                              FontWeight.w500)),
                                                 ],
                                               ),
                                             ),
@@ -3388,7 +3393,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: 0.3)),
                               const SizedBox(height: 6),
                               Container(
@@ -3464,7 +3469,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           style: TextStyle(
                                               fontSize: 11,
                                               color: Colors.grey.shade600,
-                                              fontWeight: FontWeight.w600,
+                                              fontWeight: FontWeight.w500,
                                               letterSpacing: 0.3)),
                                       const SizedBox(height: 6),
                                       Wrap(
@@ -3793,7 +3798,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             style:
                                                                                 GoogleFonts.plusJakartaSans(
                                                                               fontSize: 11,
-                                                                              fontWeight: FontWeight.w600,
+                                                                              fontWeight: FontWeight.w500,
                                                                               color: const Color(0xFF64748B),
                                                                             ),
                                                                           ),
@@ -3853,7 +3858,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 style: TextStyle(
                                                     color: Color(0xFF1E293B),
                                                     fontWeight:
-                                                        FontWeight.w600)),
+                                                        FontWeight.w500)),
                                           ),
                                           ElevatedButton(
                                             onPressed: saving
@@ -4419,7 +4424,7 @@ class _tasksPageReportState extends State<TaskPage> {
           'Follow-up Date',
           style: TextStyle(
             fontSize: 12,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             color: Colors.grey.shade600,
             letterSpacing: 0.3,
           ),

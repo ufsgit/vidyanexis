@@ -458,6 +458,7 @@ class SettingsProvider extends ChangeNotifier {
 
   int _toggleValue = 0;
   int _enquiryForMandatory = 0;
+  int _enquirySourceMandatory = 0;
   int _consumerNameMandatory = 0;
   int _consumerContactNoMandatory = 0;
   int _leadInSales = 0;
@@ -467,6 +468,7 @@ class SettingsProvider extends ChangeNotifier {
 
   int get toggleValue => _toggleValue;
   int get enquiryForMandatory => _enquiryForMandatory;
+  int get enquirySourceMandatory => _enquirySourceMandatory;
   int get consumerNameMandatory => _consumerNameMandatory;
   int get consumerContactNoMandatory => _consumerContactNoMandatory;
   int get leadInSales => _leadInSales;
@@ -992,6 +994,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setEnquiryForMandatory(int value) {
     _enquiryForMandatory = value;
+    notifyListeners();
+  }
+
+  void setEnquirySourceMandatory(int value) {
+    _enquirySourceMandatory = value;
     notifyListeners();
   }
 
@@ -3416,6 +3423,7 @@ class SettingsProvider extends ChangeNotifier {
                 data.map((item) => Company.fromJson(item)).toList();
             if (_companyDetails.isNotEmpty) {
               _enquiryForMandatory = _companyDetails[0].enquiryForMandatory;
+              _enquirySourceMandatory = _companyDetails[0].enquirySourceMandatory;
               _consumerNameMandatory = _companyDetails[0].consumerNameMandatory;
               _consumerContactNoMandatory =
                   _companyDetails[0].consumerContactNoMandatory;
@@ -3467,6 +3475,7 @@ class SettingsProvider extends ChangeNotifier {
           String newTitle = data['company_name'] ?? data['Company_Name'] ?? '';
           String newNotificationTopic = data['notification_topic'] ?? '';
           _enquiryForMandatory = data['Enquiry_For_Mandatory'] ?? 0;
+          _enquirySourceMandatory = data['Enquiry_Source_Mandatory'] ?? 0;
           _consumerNameMandatory = data['Consumer_Name_Mandatory'] ?? 0;
           _consumerContactNoMandatory = data['Contact_Number_Mandatory'] ?? 0;
           _leadInSales = data['Lead_In_Sales'] ?? 0;
@@ -3540,6 +3549,7 @@ class SettingsProvider extends ChangeNotifier {
             "Cin_No": ccinNoController.text.toString(),
             "Is_Location": _toggleValue,
             "Enquiry_For_Mandatory": _enquiryForMandatory,
+            "Enquiry_Source_Mandatory": _enquirySourceMandatory,
             "Consumer_Name_Mandatory": _consumerNameMandatory,
             "Contact_Number_Mandatory": _consumerContactNoMandatory,
             "Lead_In_Sales": _leadInSales,
@@ -3664,6 +3674,7 @@ class SettingsProvider extends ChangeNotifier {
     uploadedFilePath = '';
     _toggleValue = 0;
     _enquiryForMandatory = 0;
+    _enquirySourceMandatory = 0;
   }
 
   Future<void> searchPermission(BuildContext context) async {

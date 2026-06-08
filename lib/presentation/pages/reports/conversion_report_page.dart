@@ -37,6 +37,7 @@ class ConversionReportPage extends StatefulWidget {
 
 class _ConversionReportPage extends State<ConversionReportPage> {
   ScrollController scrollController = ScrollController();
+  final ScrollController _horizontalScrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNodeWeb = FocusNode();
   final FocusNode searchFocusNodeMobile = FocusNode();
@@ -1033,7 +1034,12 @@ class _ConversionReportPage extends State<ConversionReportPage> {
             if (AppStyles.isWebScreen(context) || !reportsProvider.isFilter)
               AppStyles.isWebScreen(context)
                   ? Expanded(
-                      child: SingleChildScrollView(
+                       child: Scrollbar(
+                         controller: _horizontalScrollController,
+                         thumbVisibility: true,
+                         trackVisibility: true,
+                         child: SingleChildScrollView(
+                           controller: _horizontalScrollController,
                         scrollDirection: Axis.horizontal,
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width < 1700
@@ -1261,6 +1267,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           ),
                         ),
                       ),
+                     ),
                     )
                   : Expanded(
                       child: Column(

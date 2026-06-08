@@ -1076,8 +1076,13 @@ class TaskPageProvider extends ChangeNotifier {
 
         if (data != null) {
           // log(data.toString());
-          _selectedTaskTypeIds.clear();
           final newData = data['data'] ?? [];
+          if (newData.isEmpty) {
+            debugPrint("DEBUG: fetchTaskTypesWithCustomFields returned empty tasks, keeping old response.");
+            Loader.stopLoader(context);
+            return;
+          }
+          _selectedTaskTypeIds.clear();
           final documentData = data['document_types'] ?? [];
           final statusData = data['mandatory_status'] ?? [];
           final formsData = data['forms'] ?? [];

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_document_type.dart';
 
 class DocumentTypeContent extends StatefulWidget {
@@ -68,73 +67,6 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (isWeb) ...[
-                  const SizedBox(height: 8),
-                  // Page Title
-                  Text(
-                    'Document Type',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textBlue800,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Search and New Button
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: Colors.grey[200]!),
-                          ),
-                          child: TextField(
-                            controller:
-                                settingsProvider.searchDocumentTypeController,
-                            onChanged: (query) {
-                              settingsProvider.searchDocumentType(query, context);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search...',
-                              hintStyle: GoogleFonts.plusJakartaSans(
-                                color: Colors.grey[400],
-                                fontSize: 14,
-                              ),
-                              prefixIcon: Icon(Icons.search,
-                                  size: 20, color: Colors.grey[500]),
-                              border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 0),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      if (settingsProvider.menuIsSaveMap[23] == 1)
-                        SizedBox(
-                          height: 48,
-                          child: CustomOutlinedSvgButton(
-                            onPressed: _openAddDialog,
-                            svgPath: 'assets/images/Plus.svg',
-                            label: 'New',
-                            breakpoint: 400,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            foregroundColor: Colors.white,
-                            backgroundColor: AppColors.secondaryBlue,
-                            borderSide: BorderSide(color: AppColors.secondaryBlue),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                ],
-
                 // The List
                 Container(
                   width: double.infinity,
@@ -157,14 +89,15 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                     separatorBuilder: (context, index) => Divider(
                       height: 1,
                       thickness: 1,
-                      color: Colors.grey[50]!,
+                      color: Colors.grey[200]!,
                     ),
                     itemBuilder: (context, index) {
                       final doc = settingsProvider.documentType[index];
                       return Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
                               child: Container(
@@ -182,6 +115,7 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                                 ),
                               ),
                             ),
+                            const SizedBox(width: 12),
                             _buildActionButtons(
                                 context, settingsProvider, index),
                           ],
