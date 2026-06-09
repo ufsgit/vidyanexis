@@ -545,6 +545,7 @@ class LeadsProvider extends ChangeNotifier {
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
 
+    _customerId = 0;
     clearCustomFieldValues();
     followUpStatusController.clear();
     branchController.clear();
@@ -2364,7 +2365,7 @@ class LeadsProvider extends ChangeNotifier {
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.checkLeadContactExists}?Phone_Number=$mobileNumber');
+              '${HttpUrls.checkLeadContactExists}?Phone_Number=$mobileNumber&Customer_Id=$_customerId');
 
       if (response.statusCode == 200) {
         final data = response.data;
