@@ -9,6 +9,7 @@ import 'package:printing/printing.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/added_multi_item.dart';
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 import 'package:vidyanexis/controller/models/get_refund_model.dart';
 import 'package:vidyanexis/controller/models/item_settings_model.dart';
@@ -163,6 +164,31 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<TaskHistoryModel> get taskHistoryList => _taskHistoryList;
   bool _isHistoryLoading = false;
   bool get isHistoryLoading => _isHistoryLoading;
+
+  // Multi Items List
+  List<AddedMultiItem> _multiItems = [];
+  List<AddedMultiItem> get multiItems => _multiItems;
+
+  void clearMultiItems() {
+    _multiItems.clear();
+    notifyListeners();
+  }
+
+  void removeMultiItem(int index) {
+    if (index >= 0 && index < _multiItems.length) {
+      _multiItems.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  void addMultiItems(List<Map<String, dynamic>> newItemsData) {
+    final newItems = newItemsData.map((map) {
+      return AddedMultiItem.fromJson(map); // Use fromJson
+    }).toList();
+
+    _multiItems = newItems; // Append only
+    notifyListeners();
+  }
 
   Future<void> getPaymentListApi(
       String customerId, BuildContext context) async {
@@ -510,9 +536,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
         double userQty = item['quantity'];
 
         await expenseProvider.getItemMaterialList(itemId, context);
-        
+
         // Add to aggregated prices
-        final selectedData = expenseProvider.itemList.firstWhere((element) => element.itemId == itemId);
+        final selectedData = expenseProvider.itemList
+            .firstWhere((element) => element.itemId == itemId);
         double priceFrom = double.tryParse(selectedData.priceFrom) ?? 0.0;
         double priceTo = double.tryParse(selectedData.priceTo) ?? 0.0;
         aggregatedPriceFrom += (priceFrom * userQty);
@@ -2737,6 +2764,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Item_Id": _newItemId,
         "Profit_Amount": profitController.text.toString(),
         "Is_Profit_Percentage": isPercentage ? "1" : "0",
+        "Multiple_Item_Material": _multiItems.map((e) => e.toJson()).toList(),
       });
 
       if (response!.statusCode == 200) {
@@ -2925,6 +2953,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _selectedProfitName = '';
     profitController.clear();
     isPercentage = false;
+    clearMultiItems();
     notifyListeners();
   }
 
@@ -4526,6 +4555,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _newItemId = int.tryParse(quotation.itemId) ?? 0;
     profitController.text = quotation.profit;
     isPercentage = quotation.isProfitPercentage == "1";
+    _multiItems = quotation.multiItems;
 
     // String nameOfItem = '';
     // if (quotation.quotationTypeId == 1 && quotation.quotationDetails.isNotEmpty) {

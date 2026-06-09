@@ -408,20 +408,29 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                 onPressed: () {
                                   showDialog(
                                     context: context,
-                                    builder: (context) => const AddMultipleItemsDialog(),
+                                    builder: (context) =>
+                                        AddMultipleItemsDialog(
+                                      isEdit: true,
+                                      initialItems:
+                                          customerDetailsProvider.multiItems,
+                                    ),
                                   );
                                 },
-                                icon: const Icon(Icons.add, color: AppColors.primaryBlue),
+                                icon: const Icon(Icons.add,
+                                    color: AppColors.primaryBlue),
                                 label: const Text(
                                   'Add Material',
-                                  style: TextStyle(color: AppColors.primaryBlue),
+                                  style:
+                                      TextStyle(color: AppColors.primaryBlue),
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(color: AppColors.primaryBlue),
+                                  side: const BorderSide(
+                                      color: AppColors.primaryBlue),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                 ),
                               ),
                             ),
@@ -478,6 +487,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             // ),
                           ],
                         ),
+                        multiItemsWidget(context),
                       ],
                       const SizedBox(height: 16),
                       if (customerDetailsProvider
@@ -1338,13 +1348,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   if (!_formKey.currentState!.validate()) return;
 
                   if (companyQuotationItems) {
-                    double priceFrom = customerDetailsProvider.aggregatedPriceFrom;
+                    double priceFrom =
+                        customerDetailsProvider.aggregatedPriceFrom;
                     double priceTo = customerDetailsProvider.aggregatedPriceTo;
                     if (priceFrom == 0 && priceTo == 0) {
                       try {
-                        final selectedData = expenseProvider.itemList.firstWhere(
-                            (item) => item.itemId == customerDetailsProvider.newItemId);
-                        priceFrom = double.tryParse(selectedData.priceFrom) ?? 0.0;
+                        final selectedData = expenseProvider.itemList
+                            .firstWhere((item) =>
+                                item.itemId ==
+                                customerDetailsProvider.newItemId);
+                        priceFrom =
+                            double.tryParse(selectedData.priceFrom) ?? 0.0;
                         priceTo = double.tryParse(selectedData.priceTo) ?? 0.0;
                       } catch (_) {}
                     }
@@ -2235,6 +2249,158 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget multiItemsWidget(BuildContext context) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        if (customerDetailsProvider.multiItems.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: const Center(
+              child: Column(
+                children: [
+                  Icon(Icons.inventory_2_outlined,
+                      size: 48, color: Colors.grey),
+                  SizedBox(height: 8),
+                  Text(
+                    "No item materials added yet",
+                    style: TextStyle(color: Colors.grey, fontSize: 15),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: customerDetailsProvider.multiItems.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 14),
+            itemBuilder: (context, index) {
+              final item = customerDetailsProvider.multiItems[index];
+
+              return Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                clipBehavior: Clip.antiAlias,
+                child: Column(
+                  children: [
+                    // Main Item Header
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBlue.withAlpha(50),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.itemName,
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              "Qty: ${item.quantity}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryBlue,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AddMultipleItemsDialog(
+                                  isEdit: true,
+                                  initialItems:
+                                      customerDetailsProvider.multiItems,
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline,
+                                color: Colors.red),
+                            onPressed: () =>
+                                customerDetailsProvider.removeMultiItem(index),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Materials Section
+                    Container(
+                      color: Colors.grey[50],
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Materials',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ...item.materials.map((mat) => Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.circle,
+                                        size: 6, color: Colors.grey),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        mat.itemMaterialName,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                    Text(
+                                      mat.quantity.toStringAsFixed(2),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
       ],
     );
   }

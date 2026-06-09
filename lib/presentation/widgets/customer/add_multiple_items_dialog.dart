@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/models/added_multi_item.dart';
+import 'package:vidyanexis/controller/models/item_settings_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
 class AddMultipleItemsDialog extends StatefulWidget {
-  const AddMultipleItemsDialog({Key? key}) : super(key: key);
+  final bool isEdit;
+  final List<AddedMultiItem>? initialItems;
+
+  const AddMultipleItemsDialog({
+    super.key,
+    this.isEdit = false,
+    this.initialItems,
+  });
 
   @override
   State<AddMultipleItemsDialog> createState() => _AddMultipleItemsDialogState();
@@ -16,62 +26,116 @@ class AddMultipleItemsDialog extends StatefulWidget {
 class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   int? _selectedItemId;
   String _selectedItemName = '';
-  final TextEditingController _quantityController = TextEditingController(text: '1');
-  
-  // Local list to hold added items
-  final List<Map<String, dynamic>> _addedItems = [];
+  final TextEditingController _quantityController =
+      TextEditingController(text: '1');
 
-  void _addItem() {
+  List<AddedMultiItem> _addedItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.initialItems != null) {
+      _addedItems = List.from(widget.initialItems!);
+    }
+  }
+
+  Future<void> _addItem() async {
     if (_selectedItemId == null || _quantityController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an item and enter quantity')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Please select an item and enter quantity')));
       return;
     }
 
-    double? qty = double.tryParse(_quantityController.text);
-    if (qty == null || qty <= 0) {
-       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid quantity')),
-      );
+    double? mainQty = double.tryParse(_quantityController.text);
+    if (mainQty == null || mainQty <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter a valid quantity')));
       return;
     }
+
+    final expenseProvider =
+        Provider.of<ExpenseProvider>(context, listen: false);
+    await expenseProvider.getItemMaterialList(_selectedItemId!, context);
+
+    final materials = expenseProvider.items.map((mat) {
+      return ItemSettings(
+        subItemId: mat.subItemId,
+        itemMaterialId: mat.itemMaterialId,
+        itemMaterialName: mat.itemMaterialName,
+        quantity: mat.quantity * mainQty,
+        price: mat.price,
+        deleteStatus: mat.deleteStatus,
+        specification: mat.specification,
+        manufacture: mat.manufacture,
+        unit: mat.unit,
+        priceFrom: mat.priceFrom,
+        priceTo: mat.priceTo,
+      );
+    }).toList();
 
     setState(() {
-      _addedItems.add({
-        'itemId': _selectedItemId,
-        'itemName': _selectedItemName,
-        'quantity': qty,
-      });
+      _addedItems.add(AddedMultiItem(
+        itemId: _selectedItemId!,
+        itemName: _selectedItemName,
+        quantity: mainQty,
+        materials: materials,
+      ));
+
       _selectedItemId = null;
       _selectedItemName = '';
       _quantityController.text = '1';
     });
   }
 
-  void _removeItem(int index) {
+  void _updateMainItemQuantity(int index, double newMainQty) {
+    if (newMainQty <= 0) return;
     setState(() {
-      _addedItems.removeAt(index);
+      final item = _addedItems[index];
+      final oldQty = item.quantity;
+      item.quantity = newMainQty;
+
+      for (var mat in item.materials) {
+        mat.quantity = (mat.quantity / oldQty) * newMainQty;
+      }
     });
+  }
+
+  void _updateMaterialQuantity(int itemIndex, int matIndex, double newQty) {
+    if (newQty <= 0) return;
+    setState(() {
+      _addedItems[itemIndex].materials[matIndex].quantity = newQty;
+    });
+  }
+
+  void _removeItem(int index) {
+    setState(() => _addedItems.removeAt(index));
   }
 
   Future<void> _saveAndClose() async {
     if (_addedItems.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please add at least one item')),
-      );
+          const SnackBar(content: Text('Please add at least one item')));
       return;
     }
 
-    final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
-    final expenseProvider = Provider.of<ExpenseProvider>(context, listen: false);
+    final customerProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+
+    final List<Map<String, dynamic>> itemsForApi = _addedItems.map((item) {
+      return item.toJson(); // Use toJson from model
+    }).toList();
+
+    customerProvider.addMultiItems(itemsForApi);
+
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    final expenseProvider =
+        Provider.of<ExpenseProvider>(context, listen: false);
 
     await customerDetailsProvider.fetchAndSetMaterialsForMultipleItems(
-        _addedItems, expenseProvider, context);
+        itemsForApi, expenseProvider, context);
 
-    if (mounted) {
-      Navigator.of(context).pop();
-    }
+    if (mounted) Navigator.of(context).pop();
   }
 
   @override
@@ -79,113 +143,325 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 8,
       child: Container(
-        padding: const EdgeInsets.all(20),
-        width: MediaQuery.of(context).size.width * 0.8,
-        constraints: const BoxConstraints(maxHeight: 600),
+        width: MediaQuery.of(context).size.width * 0.93,
+        constraints: const BoxConstraints(maxHeight: 780),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Add Materials',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryBlue,
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.primaryBlue.withAlpha(80),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.inventory_2,
+                      color: AppColors.primaryBlue, size: 28),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Add Items',
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context)),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: CommonDropdown(
-                    hintText: "Select Item",
-                    items: expenseProvider.itemList
-                        .map((status) => DropdownItem<int>(
-                              id: status.itemId,
-                              name: status.itemName,
-                            ))
-                        .toList(),
-                    onItemSelected: (selectedItem) {
-                      final selectedData = expenseProvider.itemList
-                          .firstWhere((item) => item.itemId == selectedItem);
-                      setState(() {
-                        _selectedItemId = selectedData.itemId;
-                        _selectedItemName = selectedData.itemName;
-                      });
-                    },
-                    selectedValue: _selectedItemId,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  flex: 1,
-                  child: CustomTextField(
-                    controller: _quantityController,
-                    hintText: "Qty",
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: _addItem,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: CommonDropdown(
+                      hintText: "Select Item",
+                      items: expenseProvider.itemList
+                          .map((e) =>
+                              DropdownItem<int>(id: e.itemId, name: e.itemName))
+                          .toList(),
+                      onItemSelected: (id) {
+                        final selected = expenseProvider.itemList
+                            .firstWhere((e) => e.itemId == id);
+                        setState(() {
+                          _selectedItemId = selected.itemId;
+                          _selectedItemName = selected.itemName;
+                        });
+                      },
+                      selectedValue: _selectedItemId,
                     ),
                   ),
-                  child: const Text('Add'),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  SizedBox(
+                    width: 110,
+                    child: CustomTextField(
+                      controller: _quantityController,
+                      hintText: "Quantity",
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d+\.?\d{0,2}'))
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    onPressed: _addItem,
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 14),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Items',
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w600)),
+                  Text('${_addedItems.length} item(s)',
+                      style: TextStyle(color: Colors.grey[600])),
+                ],
+              ),
+            ),
             Expanded(
               child: _addedItems.isEmpty
-                  ? const Center(child: Text("No items added yet."))
+                  ? const Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.inventory_2_outlined,
+                              size: 60, color: Colors.grey),
+                          SizedBox(height: 12),
+                          Text("No items yet",
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.grey)),
+                        ],
+                      ),
+                    )
                   : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       itemCount: _addedItems.length,
-                      itemBuilder: (context, index) {
-                        final item = _addedItems[index];
+                      itemBuilder: (context, itemIndex) {
+                        final item = _addedItems[itemIndex];
+                        final mainQtyController = TextEditingController(
+                            text: item.quantity.toStringAsFixed(0));
+
                         return Card(
-                          elevation: 1,
-                          margin: const EdgeInsets.symmetric(vertical: 4),
-                          child: ListTile(
-                            title: Text(item['itemName']),
-                            subtitle: Text("Quantity: ${item['quantity']}"),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _removeItem(index),
-                            ),
+                          margin: const EdgeInsets.only(bottom: 16),
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          clipBehavior:
+                              Clip.antiAlias, // Important for clean corners
+                          child: Column(
+                            children: [
+                              // Main Item Header (Blue accent)
+                              Container(
+                                padding: const EdgeInsets.all(18),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryBlue.withAlpha(50),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        item.itemName,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 110,
+                                      child: TextField(
+                                        controller: mainQtyController,
+                                        keyboardType: TextInputType.number,
+                                        textAlign: TextAlign.center,
+                                        decoration: InputDecoration(
+                                          labelText: 'Qty',
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                        onSubmitted: (val) {
+                                          final qty = double.tryParse(val);
+                                          if (qty != null) {
+                                            _updateMainItemQuantity(
+                                                itemIndex, qty);
+                                          }
+                                        },
+                                        onChanged: (val) {
+                                          final qty = double.tryParse(val);
+                                          if (qty != null) {
+                                            _updateMainItemQuantity(
+                                                itemIndex, qty);
+                                          }
+                                        },
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r'^\d+\.?\d{0,2}'))
+                                        ],
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete_outline,
+                                          color: Colors.red),
+                                      onPressed: () => _removeItem(itemIndex),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Materials Section (Grey background) - Full rounded bottom
+                              Container(
+                                color: Colors.grey[100],
+                                padding: const EdgeInsets.all(18),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Materials',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ...item.materials
+                                        .asMap()
+                                        .entries
+                                        .map((entry) {
+                                      final matIndex = entry.key;
+                                      final mat = entry.value;
+                                      final matQtyCtrl = TextEditingController(
+                                          text:
+                                              mat.quantity.toStringAsFixed(2));
+
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 12),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                                color: Colors.grey.shade200),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 6,
+                                                child: Text(
+                                                  mat.itemMaterialName,
+                                                  style: const TextStyle(
+                                                      fontSize: 14.5),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 130,
+                                                child: TextField(
+                                                  controller: matQtyCtrl,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  textAlign: TextAlign.center,
+                                                  decoration: InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                  ),
+                                                  onSubmitted: (val) {
+                                                    final qty =
+                                                        double.tryParse(val);
+                                                    if (qty != null) {
+                                                      _updateMaterialQuantity(
+                                                          itemIndex,
+                                                          matIndex,
+                                                          qty);
+                                                    }
+                                                  },
+                                                  onChanged: (val) {
+                                                    final qty =
+                                                        double.tryParse(val);
+                                                    if (qty != null) {
+                                                      _updateMaterialQuantity(
+                                                          itemIndex,
+                                                          matIndex,
+                                                          qty);
+                                                    }
+                                                  },
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .allow(RegExp(
+                                                            r'^\d+\.?\d{0,2}'))
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
                     ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: _saveAndClose,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel')),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: _saveAndClose,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text(
+                        widget.isEdit ? 'Update Items' : 'Save New Items',
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600)),
                   ),
-                  child: const Text('Save'),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

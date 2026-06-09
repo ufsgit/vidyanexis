@@ -1,3 +1,4 @@
+import 'package:vidyanexis/controller/models/added_multi_item.dart';
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
 import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
@@ -95,6 +96,7 @@ class GetQuotationbyMasterIdmodel {
   final String itemId;
   final String profit;
   final String isProfitPercentage;
+  final List<AddedMultiItem> multiItems;
 
   GetQuotationbyMasterIdmodel({
     required this.quotationMasterId,
@@ -177,6 +179,7 @@ class GetQuotationbyMasterIdmodel {
     this.itemId = "0",
     this.profit = "0",
     this.isProfitPercentage = "0",
+    this.multiItems = const [],
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -278,6 +281,9 @@ class GetQuotationbyMasterIdmodel {
       itemId: toStr(json['Item_Id'] ?? "0"),
       profit: toStr(json['Profit_Amount'] ?? "0.0"),
       isProfitPercentage: toStr(json['Is_Profit_Percentage'] ?? "0"),
+      multiItems: (json['Multiple_Item_Material'] as List? ?? [])
+          .map((e) => AddedMultiItem.fromJson(e))
+          .toList(),
     );
   }
 }
