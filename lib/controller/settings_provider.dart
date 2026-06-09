@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vidyanexis/controller/models/department_custom_field_model.dart';
 import 'package:vidyanexis/controller/models/inventory_customer_model.dart';
 import 'package:vidyanexis/controller/models/lead_customer_model.dart';
 import 'package:vidyanexis/controller/models/location_model.dart';
@@ -3423,7 +3424,8 @@ class SettingsProvider extends ChangeNotifier {
                 data.map((item) => Company.fromJson(item)).toList();
             if (_companyDetails.isNotEmpty) {
               _enquiryForMandatory = _companyDetails[0].enquiryForMandatory;
-              _enquirySourceMandatory = _companyDetails[0].enquirySourceMandatory;
+              _enquirySourceMandatory =
+                  _companyDetails[0].enquirySourceMandatory;
               _consumerNameMandatory = _companyDetails[0].consumerNameMandatory;
               _consumerContactNoMandatory =
                   _companyDetails[0].consumerContactNoMandatory;
@@ -5124,5 +5126,138 @@ class SettingsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+  }
+
+  List<DepartmentCustomFieldMapping> _departmentCustomFieldMappings = [];
+  List<DepartmentCustomFieldMapping> get departmentCustomFieldMappings =>
+      _departmentCustomFieldMappings;
+
+  /// Save Custom Fields Mapping for a Department
+  Future<void> saveDepartmentCustomFields({
+    required int departmentId,
+    required Map<int, List<CustomFieldModel>> mapping,
+    required BuildContext context,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final List<DepartmentCustomFieldMapping> list =
+          mapping.entries.map((entry) {
+        // Find enquiry for details
+        final enquiryFor = searchEnquiryFor.firstWhere(
+          (e) => e.enquiryForId == entry.key,
+          orElse: () => EnquiryForModel(
+            enquiryForId: entry.key,
+            enquiryForName: "",
+            deleteStatus: 0,
+            sourceCategoryId: 0,
+            sourceCategoryName: '',
+          ),
+        );
+
+        return DepartmentCustomFieldMapping(
+          departmentId: departmentId,
+          enquiryForId: entry.key,
+          enquiryForName: enquiryFor.enquiryForName,
+          customFields: entry.value,
+        );
+      }).toList();
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveDepartmentCustomFields,
+        bodyData: {
+          "department_id": departmentId,
+          "enquiry_for": list.map((m) => m.toJson()).toList(),
+        },
+      );
+
+      if (response != null && response.statusCode == 200) {
+        _departmentCustomFieldMappings = list;
+        notifyListeners();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Custom fields mapping saved successfully"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Failed to save custom fields"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error saving department custom fields: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("An error occurred while saving"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      Loader.stopLoader(context);
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> getDepartmentCustomFields({
+    required int departmentId,
+    required BuildContext context,
+  }) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint:
+            '${HttpUrls.getDepartmentCustomFields}?Department_Id=$departmentId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null && data['success'] == true && data['data'] != null) {
+          final deptData = data['data'] as Map<String, dynamic>;
+          final List<dynamic> enquiryList = deptData['enquiry_for'] ?? [];
+
+          _departmentCustomFieldMappings = enquiryList.map((item) {
+            final mapping = DepartmentCustomFieldMapping.fromApi(
+                item as Map<String, dynamic>,
+                deptData['department_id'] ?? departmentId);
+
+            // Resolve full CustomFieldModel objects
+            mapping.customFields = customFieldModelList
+                .where((field) =>
+                    mapping.customFieldIds.contains(field.customFieldId))
+                .toList();
+
+            return mapping;
+          }).toList();
+
+          notifyListeners();
+        } else {
+          _departmentCustomFieldMappings = [];
+        }
+      } else {
+        _departmentCustomFieldMappings = [];
+      }
+    } catch (e) {
+      print('Error fetching department custom fields: $e');
+      _departmentCustomFieldMappings = [];
+      notifyListeners();
+    }
+  }
+
+   List<CustomFieldModel> getCustomFieldsForEnquiryFor(
+      int departmentId, int enquiryForId) {
+    final mapping = _departmentCustomFieldMappings.firstWhere(
+      (m) => m.departmentId == departmentId && m.enquiryForId == enquiryForId,
+      orElse: () => DepartmentCustomFieldMapping(
+        departmentId: departmentId,
+        enquiryForId: enquiryForId,
+        enquiryForName: '',
+      ),
+    );
+    return mapping.customFields;
   }
 }
