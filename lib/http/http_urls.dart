@@ -407,4 +407,8 @@ class HttpUrls {
   static String getProfit = "quotation_master/Get_Profit";
   static String getTaskTypesOfProcessFlowWithCustomFields =
       "process_flow/Get_Task_Types_Of_Process_Flow_With_Custom_Field";
+  static String saveDepartmentCustomFields =
+      "department/Save_Department_Enquiry_CustomFields";
+  static String getDepartmentCustomFields =
+      "department/Get_Custom_Fields_By_Department_Enquiry";
 }
