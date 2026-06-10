@@ -1283,24 +1283,25 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   //   ],
                   // ),
                   //bill of details
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    title: Text(
-                      'Bill of Materials',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
+                  if (companyQuotationItems == false)
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
+                      title: Text(
+                        'Bill of Materials',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
+                        billofMaterialsWidget(context),
+                      ],
                     ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: false,
-                    children: [
-                      billofMaterialsWidget(context),
-                    ],
-                  ),
                   ExpansionTile(
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,
