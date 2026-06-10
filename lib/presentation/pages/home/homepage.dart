@@ -58,6 +58,8 @@ import 'package:vidyanexis/presentation/pages/reports/sales_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/sales_report_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/reports/customer_task_month_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 
 class HomePage extends StatefulWidget {
   static String route = '/home';
@@ -98,6 +100,85 @@ class _HomePageState extends State<HomePage> {
       packageInfo = value;
       setState(() {});
     });
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to log out?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(ctx).pop();
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+
+                // Backup attendance state
+                String? userId = prefs.getString('userId');
+                bool? isCheckedIn;
+                String? checkInDate;
+                String? checkInTime;
+                int? attendanceId;
+
+                if (userId != null) {
+                  isCheckedIn = prefs.getBool('is_checked_in_$userId');
+                  checkInDate = prefs.getString('check_in_date_$userId');
+                  checkInTime = prefs.getString('check_in_time_$userId');
+                  attendanceId = prefs.getInt('attendance_id_$userId');
+                }
+
+                // Backup branding state
+                String? cachedLogo = prefs.getString('cached_company_logo');
+                String? cachedTitle = prefs.getString('cached_company_title');
+
+                await prefs.clear();
+
+                // Restore attendance state
+                if (userId != null) {
+                  if (isCheckedIn != null) {
+                    await prefs.setBool('is_checked_in_$userId', isCheckedIn);
+                  }
+                  if (checkInDate != null) {
+                    await prefs.setString('check_in_date_$userId', checkInDate);
+                  }
+                  if (checkInTime != null) {
+                    await prefs.setString('check_in_time_$userId', checkInTime);
+                  }
+                  if (attendanceId != null) {
+                    await prefs.setInt('attendance_id_$userId', attendanceId);
+                  }
+                }
+
+                // Restore branding state
+                if (cachedLogo != null) {
+                  await prefs.setString('cached_company_logo', cachedLogo);
+                }
+                if (cachedTitle != null) {
+                  await prefs.setString('cached_company_title', cachedTitle);
+                }
+
+                if (context.mounted) {
+                  context.go(LoginPage.route);
+                }
+              },
+              child: const Text(
+                'Confirm',
+                style: TextStyle(
+                    color: Colors.red, fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -467,49 +548,102 @@ class _HomePageState extends State<HomePage> {
                     if (userName.isEmpty) return const SizedBox.shrink();
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 4.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryBlue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: AppColors.secondaryBlue.withOpacity(0.3),
-                            width: 1,
-                          ),
+                          vertical: 6.0, horizontal: 4.0),
+                      child: PopupMenuButton<String>(
+                        offset: const Offset(0, 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircleAvatar(
-                              radius: 12,
-                              backgroundColor: AppColors.textBlue800,
-                              child: Text(
-                                userName.isNotEmpty
-                                    ? userName[0].toUpperCase()
-                                    : 'U',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 11,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
+                        elevation: 8,
+                        color: Colors.white,
+                        onSelected: (value) {
+                          if (value == 'logout') {
+                            _showLogoutDialog(context);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          // Logout option only
+
+                          PopupMenuItem<String>(
+                            value: 'logout',
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFF3B30)
+                                        .withOpacity(0.08),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(Icons.logout_rounded,
+                                      color: Color(0xFFFF3B30), size: 16),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Logout',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 13,
+                                    color: const Color(0xFFFF3B30),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBlue.withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: AppColors.secondaryBlue.withOpacity(0.25),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                radius: 12,
+                                backgroundColor: AppColors.textBlue800,
+                                child: Text(
+                                  userName.isNotEmpty
+                                      ? userName[0].toUpperCase()
+                                      : 'U',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 11,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              userName,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13,
-                                color: AppColors.textBlue800,
-                                fontWeight: FontWeight.w600,
+                              const SizedBox(width: 6),
+                              Text(
+                                userName,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  color: AppColors.textBlue800,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 16,
+                                color: AppColors.textBlue800
+                                    .withOpacity(0.7),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
                   },
+
                 ),
                 Consumer<NotificationProvider>(
                   builder: (context, notificationProvider, child) {
