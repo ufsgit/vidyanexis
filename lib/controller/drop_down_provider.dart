@@ -269,6 +269,7 @@ class DropDownProvider extends ChangeNotifier {
   int? _selectedcreUserId;
   int? _selectedleadtypeUserId;
   int? _selectedStatusId;
+  int? _selectedTransferStatusId;
   int? _selectedFollowUpId;
   int? _selectedDepartmentId;
 
@@ -279,6 +280,7 @@ class DropDownProvider extends ChangeNotifier {
   int? get selectedcreUserId => _selectedcreUserId;
   int? get selectedleadtypeUserId => _selectedleadtypeUserId;
   int? get selectedStatusId => _selectedStatusId;
+  int? get selectedTransferStatusId => _selectedTransferStatusId;
   int? get selectedFollowUpId => _selectedFollowUpId;
   bool _showValidation = false;
   int? _selectedEnquiryForId;
@@ -470,6 +472,11 @@ class DropDownProvider extends ChangeNotifier {
 
   void setSelectedStatusId(int? id) {
     _selectedStatusId = id;
+    notifyListeners();
+  }
+
+  void setSelectedTransferStatusId(int? id) {
+    _selectedTransferStatusId = id;
     notifyListeners();
   }
 

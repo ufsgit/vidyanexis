@@ -5,6 +5,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_report_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:provider/provider.dart';
@@ -1382,7 +1383,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                     customerId: leadReportProvider.customerId.toString(),
                   )
                 : viewFollowUp
-                    ? const AddFollowupDrawerWidget()
+                    ? AddFollowupDialog(
+                        customerName: '',
+                      )
                     : NewLeadDrawerWidget(
                         isEdit: isEdit,
                       ),

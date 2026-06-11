@@ -704,7 +704,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                     child: CheckboxListTile(
                       dense: true,
                       controlAffinity: ListTileControlAffinity.leading,
-                      title: const Text('Transfer Status',
+                      title: const Text('Secondary Status',
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600)),
                       value: settingsProvider.isTransferStatus,
@@ -752,7 +752,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
 
               // Transfer Status - Now properly conditional
               if (settingsProvider.isTransferStatus) ...[
-                Text('Transfer Status',
+                Text('Secondary Status',
                     style: GoogleFonts.plusJakartaSans(
                         fontSize: 14, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),

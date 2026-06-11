@@ -22,9 +22,11 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 
 class AddFollowupDialog extends StatefulWidget {
   final String customerName;
+  final String statusId;
   const AddFollowupDialog({
     super.key,
     required this.customerName,
+    this.statusId = '0',
   });
 
   @override
@@ -35,6 +37,11 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
   late FocusNode _leadNameFocusNode;
   late FocusNode statusNode;
   late FocusNode staffNode;
+  List<SearchLeadStatusModel> _filteredFollowUpStatuses = [];
+  List<SearchLeadStatusModel> _filteredTransferStatuses = [];
+  bool showTransferStatus = false;
+  bool showTime = false;
+  bool showTransfer = false;
 
   @override
   void initState() {
@@ -50,7 +57,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
     leadProvider.messageController
         .clear(); // Clear remarks textfield by default
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _leadNameFocusNode.requestFocus();
       leadProvider.getCustomFieldsByStatusId(
         context,
@@ -67,6 +74,42 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       }
       if (dropDownProvider.searchUserDetails.isEmpty) {
         dropDownProvider.getUserDetails(context);
+      }
+
+      // Fetch specific sub-statuses for the current status
+      // Prioritize widget.statusId, then provider's selectedStatusId
+      String targetStatusId = widget.statusId?.toString() ??
+          dropDownProvider.selectedStatusId?.toString() ??
+          '0';
+
+      if (targetStatusId != '0' && targetStatusId != 'null') {
+        final parentStatuses =
+            await settingsProvider.getStatusById(context, targetStatusId);
+        if (mounted) {
+          setState(() {
+            showTransferStatus = parentStatuses.first.isTransferStatus == 1;
+            showTime = parentStatuses.first.isTime == 1;
+            showTransfer = parentStatuses.first.isTransfer == 1;
+            _filteredFollowUpStatuses = parentStatuses.isNotEmpty
+                ? parentStatuses.first.subStatuses
+                        ?.map((s) => SearchLeadStatusModel(
+                              statusId: s.subStatusId,
+                              statusName: s.subStatusName,
+                            ))
+                        .toList() ??
+                    []
+                : [];
+            _filteredTransferStatuses = parentStatuses.isNotEmpty
+                ? parentStatuses.first.transferStatuses
+                        ?.map((s) => SearchLeadStatusModel(
+                              statusId: s.subStatusId,
+                              statusName: s.subStatusName,
+                            ))
+                        .toList() ??
+                    []
+                : [];
+          });
+        }
       }
     });
     super.initState();
@@ -367,31 +410,110 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       child: ListView(
         shrinkWrap: true,
         children: [
+          SizedBox(height: 4),
           CommonDropdown<int>(
-            hintText: 'Follow-up Status*',
-            items: dropDownProvider.followUpData
+            hintText: 'Status*',
+
+            // ✅ Filter out null IDs
+            items: _filteredFollowUpStatuses
+                .where((status) => status.statusId != null)
                 .map((status) => DropdownItem<int>(
-                      id: status.statusId ?? 0,
+                      id: status.statusId!, // ✅ guaranteed unique
                       name: status.statusName ?? '',
                     ))
                 .toList(),
+
             controller: leadProvider.statusController,
+
             onItemSelected: (selectedId) {
               setState(() {
                 dropDownProvider.setSelectedStatusId(selectedId);
+
                 final selectedItem = dropDownProvider.followUpData.firstWhere(
                   (status) => status.statusId == selectedId,
                 );
-                leadProvider.customFieldList.clear();
-                leadProvider.getCustomFieldsByStatusId(context,
-                    leadId: leadProvider.customerId, statusId: selectedId);
+
+                // ✅ Sync controller text
                 leadProvider.statusController.text =
                     selectedItem.statusName ?? '';
+
+                // ✅ Refresh custom fields
+                // leadProvider.customFieldLeadStatusList.clear();
+                // leadProvider.getCustomFieldsByEnquirySourceId(
+                //   context,
+                //   leadId: leadProvider.customerId,
+                //   statusId: selectedId,
+                // );
               });
             },
-            selectedValue: dropDownProvider.selectedStatusId,
-          ),
 
+            // ✅ Only set value if it exists EXACTLY ONCE
+            selectedValue: dropDownProvider.followUpData
+                        .where((e) =>
+                            e.statusId == dropDownProvider.selectedStatusId)
+                        .length ==
+                    1
+                ? dropDownProvider.selectedStatusId
+                : null,
+          ),
+          // CommonDropdown<int>(
+          //   hintText: 'Follow-up Status*',
+          //   items: dropDownProvider.followUpData
+          //       .map((status) => DropdownItem<int>(
+          //             id: status.statusId ?? 0,
+          //             name: status.statusName ?? '',
+          //           ))
+          //       .toList(),
+          //   controller: leadProvider.statusController,
+          //   onItemSelected: (selectedId) {
+          //     setState(() {
+          //       dropDownProvider.setSelectedStatusId(selectedId);
+          //       final selectedItem = dropDownProvider.followUpData.firstWhere(
+          //         (status) => status.statusId == selectedId,
+          //       );
+          //       leadProvider.customFieldList.clear();
+          //       leadProvider.getCustomFieldsByStatusId(context,
+          //           leadId: leadProvider.customerId, statusId: selectedId);
+          //       leadProvider.statusController.text =
+          //           selectedItem.statusName ?? '';
+          //     });
+          //   },
+          //   selectedValue: dropDownProvider.selectedStatusId,
+          // ),
+
+          const SizedBox(height: 16),
+          if (showTransfer)
+            CommonDropdown<int>(
+              hintText: 'Secondary Status',
+
+              // ✅ Filter out null IDs
+              items: _filteredTransferStatuses
+                  .where((status) => status.statusId != null)
+                  .map((status) => DropdownItem<int>(
+                        id: status.statusId!, // ✅ guaranteed unique
+                        name: status.statusName ?? '',
+                      ))
+                  .toList(),
+
+              controller: leadProvider.transferStatusController,
+
+              onItemSelected: (selectedId) {
+                setState(() {
+                  dropDownProvider.setSelectedTransferStatusId(selectedId);
+
+                  final selectedItem = dropDownProvider.followUpData.firstWhere(
+                    (status) => status.statusId == selectedId,
+                  );
+
+                  // ✅ Sync controller text
+                  leadProvider.transferStatusController.text =
+                      selectedItem.statusName ?? '';
+                });
+              },
+
+              // ✅ Only set value if it exists EXACTLY ONCE
+              selectedValue: dropDownProvider.selectedTransferStatusId ?? 0,
+            ),
           const SizedBox(height: 16),
 
           CommonDropdown<int>(

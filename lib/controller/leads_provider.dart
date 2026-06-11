@@ -76,6 +76,7 @@ class LeadsProvider extends ChangeNotifier {
 
   //controllers for add followup
   final TextEditingController statusController = TextEditingController();
+  final TextEditingController transferStatusController = TextEditingController();
 
   final TextEditingController nextFollowUpDateController =
       TextEditingController();
