@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 
 List<SearchLeadStatusModel> searchLeadStatusModelFromJson(String str) =>
     List<SearchLeadStatusModel>.from(
@@ -27,6 +28,11 @@ class SearchLeadStatusModel {
   String? colorCode;
   List<CustomFieldByStatusId>? customFields;
   String? whatsappTemplateId;
+  List<SubStatus>? subStatuses;
+  List<SubStatus>? transferStatuses;
+  int? isTransfer;
+  int? isTime;
+  int? isTransferStatus;
 
   SearchLeadStatusModel({
     this.statusId,
@@ -42,6 +48,11 @@ class SearchLeadStatusModel {
     this.colorCode,
     this.customFields,
     this.whatsappTemplateId,
+    this.subStatuses,
+    this.transferStatuses,
+    this.isTransfer,
+    this.isTime,
+    this.isTransferStatus,
   });
 
   SearchLeadStatusModel copyWith({
@@ -58,6 +69,11 @@ class SearchLeadStatusModel {
     String? colorCode,
     List<CustomFieldByStatusId>? customFields,
     String? whatsappTemplateId,
+    List<SubStatus>? subStatuses,
+    List<SubStatus>? transferStatuses,
+    int? isTransfer,
+    int? isTime,
+    int? isTransferStatus,
   }) =>
       SearchLeadStatusModel(
         statusId: statusId ?? this.statusId,
@@ -73,6 +89,11 @@ class SearchLeadStatusModel {
         colorCode: colorCode ?? this.colorCode,
         customFields: customFields ?? this.customFields,
         whatsappTemplateId: whatsappTemplateId ?? this.whatsappTemplateId,
+        subStatuses: subStatuses ?? this.subStatuses,
+        transferStatuses: transferStatuses ?? this.transferStatuses,
+        isTransfer: isTransfer ?? this.isTransfer,
+        isTime: isTime ?? this.isTime,
+        isTransferStatus: isTransferStatus ?? this.isTransferStatus,
       );
 
   factory SearchLeadStatusModel.fromJson(Map<String, dynamic> json) =>
@@ -95,6 +116,17 @@ class SearchLeadStatusModel {
         whatsappTemplateId: json["Whatsapp_Template_Id"]?.toString() ??
             json["whatsapp_template_id"]?.toString() ??
             json["WhatsApp_Template_Id"]?.toString(),
+        subStatuses: json["Sub_Status"] == null
+            ? []
+            : List<SubStatus>.from(
+                json["Sub_Status"]!.map((x) => SubStatus.fromJson(x))),
+        transferStatuses: json["Transfer_Status"] == null
+            ? []
+            : List<SubStatus>.from(
+                json["Transfer_Status"]!.map((x) => SubStatus.fromJson(x))),
+        isTransfer: json["Is_transfer"]?.toInt() ?? 0,
+        isTime: json["Is_Time"]?.toInt() ?? 0,
+        isTransferStatus: json["Is_Transfer_Status"]?.toInt() ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -113,5 +145,14 @@ class SearchLeadStatusModel {
             ? []
             : List<dynamic>.from(customFields!.map((x) => x.toJson())),
         "Whatsapp_Template_Id": whatsappTemplateId,
+        "sub_statuses": subStatuses == null
+            ? []
+            : List<dynamic>.from(subStatuses!.map((x) => x.toJson())),
+        "transfer_statuses": transferStatuses == null
+            ? []
+            : List<dynamic>.from(transferStatuses!.map((x) => x.toJson())),
+        "Is_transfer": isTransfer,
+        "Is_Time": isTime,
+        "Is_Transfer_Status": isTransferStatus,
       };
 }

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
@@ -288,7 +289,9 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),
@@ -305,9 +308,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+      await settingsProvider.fetchSubStatuses();
       if (widget.isEdit) {
         selectedFields =
             widget.data!.customFields?.map((e) => e.toJson()).toList() ?? [];
@@ -371,8 +375,18 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             widget.data!.whatsappTemplateId ?? "";
 
         settingsProvider.viewInController.text = widget.data!.viewInName ?? "";
+        settingsProvider
+            .setSelectedSubStatuses(widget.data!.subStatuses?.toList() ?? []);
+        settingsProvider.setSelectedTransferStatuses(
+            widget.data!.transferStatuses?.toList() ?? []);
+        settingsProvider.isTransfer = widget.data!.isTransfer == 1;
+        settingsProvider.isTime = widget.data!.isTime == 1;
+        settingsProvider.isTransferStatus = widget.data!.isTransferStatus == 1;
       } else {
         // INITIALIZE FOR ADD NEW STATUS
+        settingsProvider.isTransfer = false;
+        settingsProvider.isTime = false;
+        settingsProvider.isTransferStatus = false;
         settingsProvider.statusController.clear();
         settingsProvider.folloupController.clear();
         settingsProvider.isRegisterController.clear();
@@ -450,7 +464,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         width: AppStyles.isWebScreen(context)
             ? MediaQuery.sizeOf(context).width / 2
             : MediaQuery.sizeOf(context).width,
-        height: MediaQuery.sizeOf(context).height / 4,
+        height: MediaQuery.sizeOf(context).height / 1.5,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -651,6 +665,119 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                             ),
                           ),
                         ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+              const SizedBox(height: 10),
+              // Top checkboxes
+              Row(
+                children: [
+                  Expanded(
+                    child: CheckboxListTile(
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Transfer',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      value: settingsProvider.isTransfer,
+                      onChanged: (value) =>
+                          settingsProvider.isTransfer = value ?? false,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: CheckboxListTile(
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Time',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      value: settingsProvider.isTime,
+                      onChanged: (value) =>
+                          settingsProvider.isTime = value ?? false,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: CheckboxListTile(
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Transfer Status',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      value: settingsProvider.isTransferStatus,
+                      onChanged: (value) =>
+                          settingsProvider.isTransferStatus = value ?? false,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              // Sub Status
+              Text('Sub Status',
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: settingsProvider.uniqueSubStatuses.map((status) {
+                  final isChecked = settingsProvider.selectedSubStatusIds
+                      .contains(status.subStatusId);
+                  return SizedBox(
+                    width: (MediaQuery.of(context).size.width /
+                            (AppStyles.isWebScreen(context) ? 6 : 3)) -
+                        20,
+                    child: CheckboxListTile(
+                      dense: true,
+                      visualDensity:
+                          const VisualDensity(horizontal: -4, vertical: -4),
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(status.subStatusName ?? '',
+                          style: const TextStyle(fontSize: 10)),
+                      value: isChecked,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (_) =>
+                          settingsProvider.toggleSubStatus(status),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+              const SizedBox(height: 10),
+
+              // Transfer Status - Now properly conditional
+              if (settingsProvider.isTransferStatus) ...[
+                Text('Transfer Status',
+                    style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children:
+                      settingsProvider.uniqueTransferStatuses.map((status) {
+                    final isChecked = settingsProvider.selectedTransferStatusIds
+                        .contains(status.subStatusId);
+                    return SizedBox(
+                      width: (MediaQuery.of(context).size.width /
+                              (AppStyles.isWebScreen(context) ? 6 : 3)) -
+                          20,
+                      child: CheckboxListTile(
+                        dense: true,
+                        visualDensity:
+                            const VisualDensity(horizontal: -4, vertical: -4),
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(status.subStatusName ?? '',
+                            style: const TextStyle(fontSize: 10)),
+                        value: isChecked,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: (_) =>
+                            settingsProvider.toggleTransferStatus(status),
                       ),
                     );
                   }).toList(),

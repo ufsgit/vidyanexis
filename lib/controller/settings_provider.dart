@@ -24,6 +24,7 @@ import 'package:vidyanexis/controller/models/project_model.dart';
 import 'package:vidyanexis/controller/models/project_type_model.dart';
 import 'package:vidyanexis/controller/models/source_category_model.dart';
 import 'package:vidyanexis/controller/models/stage_model.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/controller/models/tax_slab_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/main.dart';
@@ -2740,6 +2741,11 @@ class SettingsProvider extends ChangeNotifier {
                 : progressValueController.text,
             "Custom_Fields": customFields,
             "Whatsapp_Template_Id": whatsappTemplateId,
+            "Sub_Status": selectedSubStatusesForApi,
+            "Is_transfer": _isTransfer ? 1 : 0,
+            "Is_Time": _isTime ? 1 : 0,
+            "Is_Transfer_Status": _isTransferStatus ? 1 : 0,
+            "Transfer_Status": selectedTransferStatusesForApi,
           });
 
       if (response!.statusCode == 200) {
@@ -5248,7 +5254,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-   List<CustomFieldModel> getCustomFieldsForEnquiryFor(
+  List<CustomFieldModel> getCustomFieldsForEnquiryFor(
       int departmentId, int enquiryForId) {
     final mapping = _departmentCustomFieldMappings.firstWhere(
       (m) => m.departmentId == departmentId && m.enquiryForId == enquiryForId,
@@ -5259,5 +5265,126 @@ class SettingsProvider extends ChangeNotifier {
       ),
     );
     return mapping.customFields;
+  }
+
+  List<SearchLeadStatusModel> _subStatusGetModels = [];
+  List<SearchLeadStatusModel> get subStatusGetModels => _subStatusGetModels;
+
+  List<SubStatus> _uniqueStatuses = [];
+  List<SubStatus> get uniqueSubStatuses => _uniqueStatuses;
+  List<SubStatus> get uniqueTransferStatuses => _uniqueStatuses; // Reuse
+
+  Set<int> _selectedSubIds = {};
+  Set<int> _selectedTransferIds = {};
+
+  Set<int> get selectedSubStatusIds => _selectedSubIds;
+  Set<int> get selectedTransferStatusIds => _selectedTransferIds;
+
+  bool _isTransfer = false;
+  bool get isTransfer => _isTransfer;
+  set isTransfer(bool value) {
+    _isTransfer = value;
+    notifyListeners();
+  }
+
+  bool _isTime = false;
+  bool get isTime => _isTime;
+  set isTime(bool value) {
+    _isTime = value;
+    notifyListeners();
+  }
+
+  bool _isTransferStatus = false;
+  bool get isTransferStatus => _isTransferStatus;
+  set isTransferStatus(bool value) {
+    _isTransferStatus = value;
+    notifyListeners();
+  }
+
+// Common initialization
+  void _initializeUniqueStatuses() {
+    _uniqueStatuses = _subStatusGetModels
+        .fold<Map<int, SubStatus>>({}, (map, element) {
+          final id = element.statusId;
+          if (id != null) {
+            map[id] ??= SubStatus(
+              subStatusId: id,
+              subStatusName: element.statusName,
+            );
+          }
+          return map;
+        })
+        .values
+        .toList();
+  }
+
+// Using toJson() - Much cleaner
+  List<Map<String, dynamic>> get selectedSubStatusesForApi {
+    return _uniqueStatuses
+        .where((s) => _selectedSubIds.contains(s.subStatusId))
+        .map((s) => s.toJson())
+        .toList();
+  }
+
+  List<Map<String, dynamic>> get selectedTransferStatusesForApi {
+    return _uniqueStatuses
+        .where((s) => _selectedTransferIds.contains(s.subStatusId))
+        .map((s) => s.toJson())
+        .toList();
+  }
+
+  void setSelectedSubStatuses(List<SubStatus> statuses) {
+    _selectedSubIds = statuses
+        .where((s) => s.subStatusId != null)
+        .map((s) => s.subStatusId!)
+        .toSet();
+    notifyListeners();
+  }
+
+  void setSelectedTransferStatuses(List<SubStatus> statuses) {
+    _selectedTransferIds = statuses
+        .where((s) => s.subStatusId != null)
+        .map((s) => s.subStatusId!)
+        .toSet();
+    notifyListeners();
+  }
+
+  void toggleSubStatus(SubStatus status) {
+    if (status.subStatusId == null) return;
+    _selectedSubIds.contains(status.subStatusId!)
+        ? _selectedSubIds.remove(status.subStatusId!)
+        : _selectedSubIds.add(status.subStatusId!);
+    notifyListeners();
+  }
+
+  void toggleTransferStatus(SubStatus status) {
+    if (status.subStatusId == null) return;
+    _selectedTransferIds.contains(status.subStatusId!)
+        ? _selectedTransferIds.remove(status.subStatusId!)
+        : _selectedTransferIds.add(status.subStatusId!);
+    notifyListeners();
+  }
+
+  Future<void> fetchSubStatuses() async {
+    try {
+      _subStatusGetModels.clear();
+      _uniqueStatuses.clear();
+      _selectedSubIds.clear();
+      _selectedTransferIds.clear();
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=0');
+
+      if (response.statusCode == 200 && response.data != null) {
+        _subStatusGetModels = (response.data as List)
+            .map((item) => SearchLeadStatusModel.fromJson(item))
+            .toList();
+
+        _initializeUniqueStatuses();
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Exception: $e');
+    }
   }
 }
