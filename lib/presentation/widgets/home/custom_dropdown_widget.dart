@@ -13,6 +13,7 @@ class CommonDropdown<T> extends StatelessWidget {
   final bool isMultiLine;
   final Widget? labelWidget;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final FloatingLabelBehavior? floatingLabelBehavior;
 
   const CommonDropdown({
@@ -26,6 +27,7 @@ class CommonDropdown<T> extends StatelessWidget {
     this.isMultiLine = false,
     this.labelWidget,
     this.prefixIcon,
+    this.suffixIcon,
     this.floatingLabelBehavior,
     this.borderRadius,
     this.borderColor,
@@ -66,6 +68,7 @@ class CommonDropdown<T> extends StatelessWidget {
           ),
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
             label: labelWidget ?? RichText(
               text: TextSpan(
                 text: hintText.replaceAll('*', ''),

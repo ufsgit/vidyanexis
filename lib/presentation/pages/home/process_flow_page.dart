@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/process_flow_model.dart';
 import 'package:vidyanexis/controller/process_flow_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -33,6 +34,12 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
         Provider.of<ProcessFlowProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Ensure enquiry source list is available for the filter dropdown
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      if (dropDownProvider.enquiryData.isEmpty) {
+        dropDownProvider.getEnquirySource(context);
+      }
       getData();
     });
   }
@@ -41,11 +48,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
     if (!mounted) return;
     setState(() => isLoadingData = true);
     await processFlowProvider.getProcessFlow(context);
-    
-    if (searchController.text.isNotEmpty) {
-      processFlowProvider.filterData(searchController.text);
-    }
-    
+    processFlowProvider.filterData(searchController.text);
     if (!mounted) return;
     setState(() => isLoadingData = false);
   }
@@ -163,11 +166,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
             ),
           ),
           const Spacer(),
-          if (!isMobile)
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: _buildSearchBar(isHeader: true),
-            ),
+          if (!isMobile) ..._buildWebFilters(),
           if (settingsProvider.menuIsSaveMap[36] == 1)
             _buildAddButton(),
         ],
@@ -198,6 +197,158 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
           size: 26,
         ),
       ),
+    );
+  }
+
+  List<Widget> _buildWebFilters() {
+    return [
+      _buildEnquirySourceFilter(),
+      const SizedBox(width: 8),
+      _buildEnquiryForFilter(),
+      const SizedBox(width: 8),
+      Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: _buildSearchBar(isHeader: true),
+      ),
+    ];
+  }
+
+  Widget _buildEnquirySourceFilter() {
+    return Consumer2<ProcessFlowProvider, DropDownProvider>(
+      builder: (context, pfProvider, dropDownProvider, _) {
+        final items = [
+          const DropdownMenuItem<int>(
+            value: 0,
+            child: Text('All', style: TextStyle(fontSize: 14)),
+          ),
+          ...dropDownProvider.enquiryData.map(
+            (e) => DropdownMenuItem<int>(
+              value: e.enquirySourceId,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: Text(
+                  e.enquirySourceName,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+            ),
+          ),
+        ];
+
+        final selected = pfProvider.selectedEnquirySourceId ?? 0;
+        final isActive = selected != 0;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isActive ? AppColors.secondaryBlue : const Color(0xFFF1F5F9),
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: selected,
+              isDense: true,
+              iconSize: 18,
+              items: items,
+              selectedItemBuilder: (context) => items.map<Widget>((item) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Source: ',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        color: isActive
+                            ? AppColors.secondaryBlue
+                            : const Color(0xFF64748B),
+                      ),
+                    ),
+                    item.child,
+                  ],
+                );
+              }).toList(),
+              onChanged: (int? value) async {
+                pfProvider.setEnquirySourceFilter(value);
+                // Re-fetch with server-side source filter, then re-apply local filters
+                await getData();
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEnquiryForFilter() {
+    return Consumer2<ProcessFlowProvider, DropDownProvider>(
+      builder: (context, pfProvider, dropDownProvider, _) {
+        final items = [
+          const DropdownMenuItem<int>(
+            value: 0,
+            child: Text('All', style: TextStyle(fontSize: 14)),
+          ),
+          ...dropDownProvider.enquiryForList.map(
+            (e) => DropdownMenuItem<int>(
+              value: e.enquiryForId,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: Text(
+                  e.enquiryForName,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+            ),
+          ),
+        ];
+
+        final selected = pfProvider.selectedEnquiryForId ?? 0;
+        final isActive = selected != 0;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isActive ? AppColors.secondaryBlue : const Color(0xFFF1F5F9),
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: selected,
+              isDense: true,
+              iconSize: 18,
+              items: items,
+              selectedItemBuilder: (context) => items.map<Widget>((item) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Enquiry For: ',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        color: isActive
+                            ? AppColors.secondaryBlue
+                            : const Color(0xFF64748B),
+                      ),
+                    ),
+                    item.child,
+                  ],
+                );
+              }).toList(),
+              onChanged: (int? value) {
+                pfProvider.setEnquiryForFilter(value);
+                pfProvider.filterData(searchController.text);
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 

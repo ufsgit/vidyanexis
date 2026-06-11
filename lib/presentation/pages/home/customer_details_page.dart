@@ -4274,7 +4274,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
                                             //Expense Tab
                                             if (settingsprovider
-                                                    .menuIsViewMap[18] ==
+                                                    .menuIsViewMap[48] ==
                                                 1)
                                               ExpenseScreen(
                                                   widget.customerId),

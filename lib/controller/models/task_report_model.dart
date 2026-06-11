@@ -1,3 +1,4 @@
+import 'dart:io' as io;
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 
@@ -81,7 +82,11 @@ class TaskReportModel {
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
     String parseString(dynamic value) => value?.toString() ?? '';
-
+    if (json['Customer_Name'] == 'test site visit' || json['Customer_Name'] == 'akash') {
+      try {
+        io.File('task_json_debug.txt').writeAsStringSync(json.toString() + '\n', mode: io.FileMode.append);
+      } catch(e) {}
+    }
     return TaskReportModel(
       taskId: json['Task_Id'] ?? 0,
       taskMasterId: json['Task_Master_Id'] ?? 0,
@@ -103,18 +108,27 @@ class TaskReportModel {
       completionTime: json['Completion_Time'] as String?,
       deleteStatus: json['DeleteStatus'] ?? 0,
       customerName: parseString(json['Customer_Name']),
-      mobile: parseString(json['Phone_Number'] ??
-          json['Contact_Number'] ??
-          json['Contact_No'] ??
-          json['Mobile_No'] ??
-          json['Mobile_Number'] ??
-          json['Mobile'] ??
+      mobile: parseString(json['Customer_Contact'] ??
+          json['customer_contact'] ??
+          json['Customer_Contact_No'] ??
+          json['Customer_Phone_Number'] ??
+          json['Customer_Mobile'] ??
+          json['customer_mobile'] ??
           json['Customer_Phone'] ??
+          json['customer_phone'] ??
+          json['Phone_Number'] ??
           json['phone_number'] ??
+          json['Contact_Number'] ??
           json['contact_number'] ??
+          json['Contact_No'] ??
           json['contact_no'] ??
+          json['Mobile_No'] ??
           json['mobile_no'] ??
+          json['Mobile_Number'] ??
+          json['mobile_number'] ??
+          json['Mobile'] ??
           json['mobile'] ??
+          json['Phone'] ??
           json['phone']),
       address1: parseString(json['Address1']),
       address2: json['Address2'] ?? '',

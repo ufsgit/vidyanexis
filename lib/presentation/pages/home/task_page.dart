@@ -1393,6 +1393,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                       color: Colors.white),
                                   TableWidget(
                                       flex: 2,
+                                      title: 'Mobile No.',
+                                      fontSize: 13,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 12.0),
+                                      color: Colors.white),
+                                  TableWidget(
+                                      flex: 2,
                                       title: 'Task',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
@@ -1558,7 +1565,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           },
                                           hoverColor: const Color(0xFFF8FAFC),
                                           child: Container(
-                                            height: rowHeight,
+                                            constraints: BoxConstraints(minHeight: rowHeight),
                                             decoration: BoxDecoration(
                                               color: index % 2 == 0
                                                   ? Colors.white
@@ -2028,6 +2035,24 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ],
                                                       ),
                                                     ],
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                  flex: 2,
+                                                  padding: const EdgeInsets.symmetric(
+                                                      vertical: 4.0, horizontal: 12.0),
+                                                  data: Tooltip(
+                                                    message: task.mobile,
+                                                    child: Text(
+                                                      task.mobile.isNotEmpty ? task.mobile : '-',
+                                                      overflow: TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        color: Color(0xFF334155),
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                                 TableWidget(

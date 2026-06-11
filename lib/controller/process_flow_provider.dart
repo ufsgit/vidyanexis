@@ -25,12 +25,31 @@ class ProcessFlowProvider extends ChangeNotifier {
   List<Map<String, dynamic>> savedCustomFields = [];
   List<CustomFieldModel> showCustomFields = [];
 
+  int? _selectedEnquiryForId;
+  int? get selectedEnquiryForId => _selectedEnquiryForId;
+  void setEnquiryForFilter(int? id) {
+    _selectedEnquiryForId = id;
+    notifyListeners();
+  }
+
+  int? _selectedEnquirySourceId;
+  int? get selectedEnquirySourceId => _selectedEnquirySourceId;
+  void setEnquirySourceFilter(int? id) {
+    _selectedEnquirySourceId = id;
+    notifyListeners();
+  }
+
   void filterData(String searchText) {
-    processFlowFilteredList = processFlowList
-        .where((element) => element.taskTypeName!
-            .toLowerCase()
-            .startsWith(searchText.toLowerCase()))
-        .toList();
+    processFlowFilteredList = processFlowList.where((element) {
+      final matchesSearch = searchText.isEmpty ||
+          (element.taskTypeName ?? '')
+              .toLowerCase()
+              .startsWith(searchText.toLowerCase());
+      final matchesEnquiry = _selectedEnquiryForId == null ||
+          _selectedEnquiryForId == 0 ||
+          element.enquiryForId == _selectedEnquiryForId;
+      return matchesSearch && matchesEnquiry;
+    }).toList();
     notifyListeners();
   }
 
@@ -173,8 +192,13 @@ class ProcessFlowProvider extends ChangeNotifier {
 
   Future<List<ProcessFlowModel>> getProcessFlow(BuildContext context) async {
     try {
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getAllProcessFlow);
+      // Build endpoint – optionally append enquiry_source_id for server-side filtering
+      String endpoint = HttpUrls.getAllProcessFlow;
+      if (_selectedEnquirySourceId != null && _selectedEnquirySourceId != 0) {
+        endpoint = '$endpoint?enquiry_source_id=$_selectedEnquirySourceId';
+      }
+
+      final response = await HttpRequest.httpGetRequest(endPoint: endpoint);
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
