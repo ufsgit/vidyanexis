@@ -5417,4 +5417,34 @@ class SettingsProvider extends ChangeNotifier {
     }
     return [];
   }
+
+  //transferStatus
+  Future<List<SearchLeadStatusModel>> getTransferStatusById(
+      BuildContext context, String statusId) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getTransferStatusById}?status_id=$statusId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          if (data is List) {
+            return data.map((e) => SearchLeadStatusModel.fromJson(e)).toList();
+          } else if (data is Map<String, dynamic>) {
+            return [SearchLeadStatusModel.fromJson(data)];
+          }
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred in getStatusById: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    }
+    return [];
+  }
 }

@@ -412,4 +412,5 @@ class HttpUrls {
   static String getDepartmentCustomFields =
       "department/Get_Custom_Fields_By_Department_Enquiry";
   static String getStatusById = "status/Get_Status_By_Id";
+  static String getTransferStatusById = "status/Get_Transfer_Status_By_Id";
 }

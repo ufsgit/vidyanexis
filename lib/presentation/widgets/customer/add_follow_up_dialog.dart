@@ -90,9 +90,9 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
             await settingsProvider.getStatusById(context, targetStatusId);
         if (mounted) {
           setState(() {
-            showTransferStatus = parentStatuses.first.isTransferStatus == 1;
-            showTime = parentStatuses.first.isTime == 1;
-            showTransfer = parentStatuses.first.isTransfer == 1;
+            // showTransferStatus = parentStatuses.first.isTransferStatus == 1;
+            // showTime = parentStatuses.first.isTime == 1;
+            // showTransfer = parentStatuses.first.isTransfer == 1;
             _filteredFollowUpStatuses = parentStatuses.isNotEmpty
                 ? parentStatuses.first.subStatuses
                         ?.map((s) => SearchLeadStatusModel(
@@ -102,16 +102,39 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                         .toList() ??
                     []
                 : [];
-            _filteredTransferStatuses = parentStatuses.isNotEmpty
-                ? parentStatuses.first.transferStatuses
-                        ?.map((s) => SearchLeadStatusModel(
-                              statusId: s.subStatusId,
-                              statusName: s.subStatusName,
-                            ))
-                        .toList() ??
-                    []
-                : [];
+            // _filteredTransferStatuses = parentStatuses.isNotEmpty
+            //     ? parentStatuses.first.transferStatuses
+            //             ?.map((s) => SearchLeadStatusModel(
+            //                   statusId: s.subStatusId,
+            //                   statusName: s.subStatusName,
+            //                 ))
+            //             .toList() ??
+            //         []
+            //     : [];
           });
+        }
+
+        //transfer status
+        if (targetStatusId != '0' && targetStatusId != 'null') {
+          final transferStatusesData = await settingsProvider
+              .getTransferStatusById(context, targetStatusId);
+          if (mounted) {
+            setState(() {
+              showTransferStatus =
+                  transferStatusesData.first.isTransferStatus == 1;
+              showTime = transferStatusesData.first.isTime == 1;
+              showTransfer = transferStatusesData.first.isTransfer == 1;
+              _filteredTransferStatuses = transferStatusesData.isNotEmpty
+                  ? transferStatusesData.first.transferStatuses
+                          ?.map((s) => SearchLeadStatusModel(
+                                statusId: s.subStatusId,
+                                statusName: s.subStatusName,
+                              ))
+                          .toList() ??
+                      []
+                  : [];
+            });
+          }
         }
       }
     });
@@ -429,7 +452,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
             controller: leadProvider.statusController,
 
             onItemSelected: (selectedId) {
-              setState(() {
+              setState(() async {
                 dropDownProvider.setSelectedStatusId(selectedId);
 
                 final selectedItem = _filteredFollowUpStatuses.firstWhere(
@@ -439,6 +462,27 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 // ✅ Sync controller text
                 leadProvider.statusController.text =
                     selectedItem.statusName ?? '';
+
+                //transfer status
+                final transferStatusesData = await settingsProvider
+                    .getTransferStatusById(context, selectedId.toString());
+                if (mounted) {
+                  setState(() {
+                    showTransferStatus =
+                        transferStatusesData.first.isTransferStatus == 1;
+                    showTime = transferStatusesData.first.isTime == 1;
+                    showTransfer = transferStatusesData.first.isTransfer == 1;
+                    _filteredTransferStatuses = transferStatusesData.isNotEmpty
+                        ? transferStatusesData.first.transferStatuses
+                                ?.map((s) => SearchLeadStatusModel(
+                                      statusId: s.subStatusId,
+                                      statusName: s.subStatusName,
+                                    ))
+                                .toList() ??
+                            []
+                        : [];
+                  });
+                }
 
                 // ✅ Refresh custom fields
                 // leadProvider.customFieldLeadStatusList.clear();
@@ -512,70 +556,68 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
             ),
           const SizedBox(height: 16),
 
-          CommonDropdown<int>(
-            hintText: 'Branch*',
-            selectedValue: settingsProvider.selectedBranchId,
-            items: settingsProvider.branchModel
-                .map((source) => DropdownItem<int>(
-                      id: source.branchId ?? 0,
-                      name: source.branchName ?? '',
-                    ))
-                .toList(),
-            controller: leadProvider.branchController,
-            onItemSelected: (selectedId) {
-              setState(() {
-                settingsProvider.selectedBranchId = selectedId;
-                final selectedBranch = settingsProvider.branchModel
-                    .firstWhere((branch) => branch.branchId == selectedId);
-                leadProvider.branchController.text =
-                    selectedBranch.branchName ?? '';
+          if (showTransfer) ...[
+            CommonDropdown<int>(
+              hintText: 'Branch*',
+              selectedValue: settingsProvider.selectedBranchId,
+              items: settingsProvider.branchModel
+                  .map((source) => DropdownItem<int>(
+                        id: source.branchId ?? 0,
+                        name: source.branchName ?? '',
+                      ))
+                  .toList(),
+              controller: leadProvider.branchController,
+              onItemSelected: (selectedId) {
+                setState(() {
+                  settingsProvider.selectedBranchId = selectedId;
+                  final selectedBranch = settingsProvider.branchModel
+                      .firstWhere((branch) => branch.branchId == selectedId);
+                  leadProvider.branchController.text =
+                      selectedBranch.branchName ?? '';
 
-                settingsProvider.setSelectedDepartmentId(0);
-                leadProvider.departmentController.clear();
-                dropDownProvider.setSelectedUserId(0);
-                leadProvider.searchUserController.clear();
+                  settingsProvider.setSelectedDepartmentId(0);
+                  leadProvider.departmentController.clear();
+                  dropDownProvider.setSelectedUserId(0);
+                  leadProvider.searchUserController.clear();
 
-                dropDownProvider.filterStaffByBranchAndDepartment(
-                  branchId: selectedId,
-                  departmentId: null,
-                );
-              });
-            },
-          ),
+                  dropDownProvider.filterStaffByBranchAndDepartment(
+                    branchId: selectedId,
+                    departmentId: null,
+                  );
+                });
+              },
+            ),
+            const SizedBox(height: 8),
+            CommonDropdown<int>(
+              key: ValueKey(settingsProvider.selectedBranchId),
+              hintText: 'Department*',
+              selectedValue: settingsProvider.selectedDepartmentId,
+              items: settingsProvider.departmentModel
+                  .map((source) => DropdownItem<int>(
+                        id: source.departmentId,
+                        name: source.departmentName ?? '',
+                      ))
+                  .toList(),
+              controller: leadProvider.departmentController,
+              onItemSelected: (selectedId) {
+                setState(() {
+                  settingsProvider.selectedDepartmentId = selectedId;
+                  final selectedDepartment = settingsProvider.departmentModel
+                      .firstWhere((dept) => dept.departmentId == selectedId);
+                  leadProvider.departmentController.text =
+                      selectedDepartment.departmentName ?? '';
 
-          const SizedBox(height: 8),
+                  dropDownProvider.setSelectedUserId(0);
+                  leadProvider.searchUserController.clear();
 
-          CommonDropdown<int>(
-            key: ValueKey(settingsProvider.selectedBranchId),
-            hintText: 'Department*',
-            selectedValue: settingsProvider.selectedDepartmentId,
-            items: settingsProvider.departmentModel
-                .map((source) => DropdownItem<int>(
-                      id: source.departmentId,
-                      name: source.departmentName ?? '',
-                    ))
-                .toList(),
-            controller: leadProvider.departmentController,
-            onItemSelected: (selectedId) {
-              setState(() {
-                settingsProvider.selectedDepartmentId = selectedId;
-                final selectedDepartment = settingsProvider.departmentModel
-                    .firstWhere((dept) => dept.departmentId == selectedId);
-                leadProvider.departmentController.text =
-                    selectedDepartment.departmentName ?? '';
-
-                dropDownProvider.setSelectedUserId(0);
-                leadProvider.searchUserController.clear();
-
-                dropDownProvider.filterStaffByBranchAndDepartment(
-                  branchId: settingsProvider.selectedBranchId,
-                  departmentId: selectedId,
-                );
-              });
-            },
-          ),
-          if (showTransfer) const SizedBox(height: 16),
-          if (showTransfer)
+                  dropDownProvider.filterStaffByBranchAndDepartment(
+                    branchId: settingsProvider.selectedBranchId,
+                    departmentId: selectedId,
+                  );
+                });
+              },
+            ),
+            const SizedBox(height: 16),
             CommonDropdown<int>(
               hintText: 'Assigned Staff*',
               items: dropDownProvider.filteredStaffData
@@ -597,6 +639,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
               selectedValue: dropDownProvider.selectedUserId,
               enabled: settingsProvider.selectedBranchId != null,
             ),
+          ],
 
           const SizedBox(height: 16),
 
