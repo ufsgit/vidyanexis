@@ -2233,10 +2233,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(30),
-                                                        color: StatusUtils
-                                                                .getTaskColor(task
-                                                                    .taskStatusId)
-                                                            .withAlpha(40),
+                                                        color: (task.colorCode ?? const Color(0xFF3B82F6))
+                                                            .withOpacity(0.2),
                                                       ),
                                                       child: Center(
                                                         child: Padding(
@@ -2257,9 +2255,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
-                                                              color: StatusUtils
-                                                                  .getTaskTextColor(
-                                                                      task.taskStatusId),
+                                                              color: task.colorCode ?? const Color(0xFF3B82F6),
                                                             ),
                                                           ),
                                                         ),

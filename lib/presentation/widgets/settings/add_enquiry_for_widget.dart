@@ -139,6 +139,7 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                               "custom_field_name": field.customFieldName,
                               "custom_field_type_id": field.customFieldTypeId,
                               "isMandatory": 0,
+                              "isMandatoryAtRegistration": 0,
                               "Order_By": 0,
                               "dropdown_values": field.dropDownValues ?? [],
                               "checkbox_values": field.checkBoxValues ?? []
@@ -255,6 +256,49 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                                   e['custom_field_id'] ==
                                                   field.customFieldId);
                                           selectedFields[f]['isMandatory'] =
+                                              value ? 1 : 0;
+                                        });
+                                      },
+                                      activeThumbColor: Colors.blue.shade600,
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              // Mandatory at registration option
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                      width: 32), // Align with text above
+                                  Icon(
+                                    Icons.app_registration,
+                                    size: 18,
+                                    color: Colors.blue.shade600,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      'Mandatory at registration',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.blue.shade700,
+                                      ),
+                                    ),
+                                  ),
+                                  Transform.scale(
+                                    scale: 0.8, // Smaller switch for mobile
+                                    child: Switch(
+                                      value:
+                                          selectedFields[f]['isMandatoryAtRegistration'] == 1,
+                                      onChanged: (value) {
+                                        setStateDialog(() {
+                                          final f = selectedFields.indexWhere(
+                                              (e) =>
+                                                  e['custom_field_id'] ==
+                                                  field.customFieldId);
+                                          selectedFields[f]['isMandatoryAtRegistration'] =
                                               value ? 1 : 0;
                                         });
                                       },
@@ -535,6 +579,9 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
               }
               if (!field.containsKey('Order_By')) {
                 field['Order_By'] = 0;
+              }
+              if (!field.containsKey('isMandatoryAtRegistration')) {
+                field['isMandatoryAtRegistration'] = 0;
               }
               return field;
             }).toList();
