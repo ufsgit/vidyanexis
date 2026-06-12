@@ -66,7 +66,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       await customerDetailsProvider.getProfitList(context);
 
       // Fetch custom field definitions for quotations
-      await customerDetailsProvider.getCustomFieldsByQuotationId(context);
+      // await customerDetailsProvider.getCustomFieldsByQuotationId(context);
       await customerDetailsProvider.getQuotationFieldsApi();
 
       if (widget.isEdit) {
@@ -380,12 +380,18 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       const SizedBox(height: 16),
                       CommonDropdown(
                         hintText: 'Quotation Type*',
-                        items: customerDetailsProvider.quotationTypeData
-                            .map((status) => DropdownItem<int>(
-                                  id: status.quotationTypeId,
-                                  name: status.quotationTypeName,
-                                ))
-                            .toList(),
+                        items: [
+                          DropdownItem<int>(
+                            id: 0,
+                            name: 'All',
+                          ),
+                          ...customerDetailsProvider.quotationTypeData.map(
+                            (status) => DropdownItem<int>(
+                              id: status.quotationTypeId,
+                              name: status.quotationTypeName,
+                            ),
+                          ),
+                        ],
                         onItemSelected: (value) {
                           customerDetailsProvider.selectedQuotationType = value;
                           final selectedItem = customerDetailsProvider
@@ -395,6 +401,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           );
                           customerDetailsProvider.quotationTypeController.text =
                               selectedItem.quotationTypeName;
+                          customerDetailsProvider
+                              .getCustomFieldsByQuotationId(context);
                         },
                         selectedValue:
                             customerDetailsProvider.selectedQuotationType,

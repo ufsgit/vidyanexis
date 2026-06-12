@@ -335,6 +335,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                               ),
 
                               // Materials Section (Grey background) - Full rounded bottom
+                              if (item.materials.isNotEmpty)
                               Container(
                                 color: Colors.grey[100],
                                 padding: const EdgeInsets.all(18),

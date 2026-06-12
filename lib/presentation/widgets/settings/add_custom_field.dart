@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/custom_field_dropdown.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -108,7 +109,10 @@ class _AddCustomFieldState extends State<AddCustomField> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
       await settingsProvider.getCustomFieldDropDown(context);
+      customerDetailsProvider.getQuotationTypes(context);
       if (widget.isEdit) {
         settingsProvider.fieldNameController.text =
             widget.customFieldTypeModel?.customFieldName ?? "";
@@ -133,12 +137,16 @@ class _AddCustomFieldState extends State<AddCustomField> {
             widget.customFieldTypeModel?.isQuotationCustom == 1);
         settingsProvider.toggleViewInQuotation(
             widget.customFieldTypeModel?.isViewInQuotation == 1);
+        customerDetailsProvider.selectedQuotationType =
+            widget.customFieldTypeModel?.quotationTypeId ?? 0;
       } else {
         settingsProvider.fieldNameController.clear();
         settingsProvider.fieldTypeController.clear();
         settingsProvider.fieldListItems.clear();
         settingsProvider.toggleQuotationCustom(false);
         settingsProvider.toggleViewInQuotation(false);
+        customerDetailsProvider.selectedQuotationType = 0;
+        customerDetailsProvider.quotationTypeController.clear();
         // settingsProvider.setFieldId(0);
       }
     });
@@ -147,6 +155,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
 
     Widget buildContent() {
       return Container(
@@ -231,6 +241,33 @@ class _AddCustomFieldState extends State<AddCustomField> {
                       ),
                     ),
                   ],
+                ),
+              const SizedBox(height: 16),
+              if (settingsProvider.isViewInQuotation)
+                CommonDropdown(
+                  hintText: 'Quotation Type*',
+                  items: [
+                    DropdownItem<int>(
+                      id: 0,
+                      name: 'All',
+                    ),
+                    ...customerDetailsProvider.quotationTypeData.map(
+                      (status) => DropdownItem<int>(
+                        id: status.quotationTypeId,
+                        name: status.quotationTypeName,
+                      ),
+                    ),
+                  ],
+                  onItemSelected: (value) {
+                    customerDetailsProvider.selectedQuotationType = value;
+                    // final selectedItem =
+                    //     customerDetailsProvider.quotationTypeData.firstWhere(
+                    //   (status) => status.quotationTypeId == value,
+                    // );
+                    // customerDetailsProvider.quotationTypeController.text =
+                    //     selectedItem.quotationTypeName;
+                  },
+                  selectedValue: customerDetailsProvider.selectedQuotationType,
                 ),
               const SizedBox(height: 16),
               if ((settingsProvider.fieldNameid == 3 ||
@@ -518,9 +555,12 @@ class _AddCustomFieldState extends State<AddCustomField> {
                 settingsProvider.isQuotationCustom ? 1 : 0;
             customFieldTypeModel.isViewInQuotation =
                 settingsProvider.isViewInQuotation ? 1 : 0;
+            customFieldTypeModel.quotationTypeId =
+                customerDetailsProvider.selectedQuotationType;
 
             final navigator = Navigator.of(context);
-            await settingsProvider.saveCustomField(context, customFieldTypeModel);
+            await settingsProvider.saveCustomField(
+                context, customFieldTypeModel);
             navigator.pop(true);
           },
           radius: 4,

@@ -1077,7 +1077,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     try {
       _isLoadingQuotationCustomFields = true;
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getCustomFieldQuotation);
+          endPoint: "${HttpUrls.getCustomFieldQuotation}/$_selectedQuotationType");
 
       if (response.statusCode == 200) {
         _isLoadingQuotationCustomFields = false;

@@ -21,6 +21,7 @@ class CustomFieldModel {
   int? isChecked; // Added this property
   List<String>? dropDownValues;
   List<String>? checkBoxValues;
+  int? quotationTypeId;
 
   DateTime? createdAt;
 
@@ -35,6 +36,7 @@ class CustomFieldModel {
     this.isViewInQuotation,
     this.isChecked,
     this.createdAt,
+    this.quotationTypeId,
   });
 
   CustomFieldModel copyWith({
@@ -48,6 +50,7 @@ class CustomFieldModel {
     int? isViewInQuotation,
     int? isChecked,
     DateTime? createdAt,
+    int? quotationTypeId,
   }) =>
       CustomFieldModel(
         customFieldId: customFieldId ?? this.customFieldId,
@@ -60,6 +63,7 @@ class CustomFieldModel {
         dropDownValues: dropDownValues ?? this.dropDownValues,
         checkBoxValues: checkBoxValues ?? this.checkBoxValues,
         createdAt: createdAt ?? this.createdAt,
+        quotationTypeId: quotationTypeId ?? this.quotationTypeId,
       );
 
   factory CustomFieldModel.fromJson(Map<String, dynamic> json) =>
@@ -89,6 +93,7 @@ class CustomFieldModel {
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
+        quotationTypeId: json["quotation_type_id"] ?? json["Quotation_Type_Id"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -106,6 +111,7 @@ class CustomFieldModel {
         "Checkbox_Values": checkBoxValues == null
             ? []
             : List<dynamic>.from(checkBoxValues!.map((x) => x)),
+        "quotation_type_id": quotationTypeId,
       };
 
   @override
