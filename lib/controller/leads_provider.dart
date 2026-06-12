@@ -76,10 +76,12 @@ class LeadsProvider extends ChangeNotifier {
 
   //controllers for add followup
   final TextEditingController statusController = TextEditingController();
-  final TextEditingController transferStatusController = TextEditingController();
+  final TextEditingController transferStatusController =
+      TextEditingController();
 
   final TextEditingController nextFollowUpDateController =
       TextEditingController();
+  final TextEditingController followUpTimeController = TextEditingController();
   final TextEditingController assignToFollowUpController =
       TextEditingController();
   final TextEditingController messageController = TextEditingController();
@@ -1510,6 +1512,10 @@ class LeadsProvider extends ChangeNotifier {
     List<Map<String, String>>? audioFiles, // Add this parameter
   }) async {
     try {
+      DropDownProvider dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      int transferStatusId = dropDownProvider.selectedTransferStatusId ?? 0;
+
       if (followUpDate.isNotEmpty) {
         DateTime parsedDate;
         try {
@@ -1549,6 +1555,9 @@ class LeadsProvider extends ChangeNotifier {
               // Add audio files if any
               // if (audioFiles != null && audioFiles.isNotEmpty)
               "Audio_Files": audioFiles,
+              "Transfer_Status_Id": transferStatusId.toString(),
+              "Transfer_Status_Name": transferStatusController.text,
+              "Followup_Time": followUpTimeController.text,
             },
             "Customer_Id": custId
           });

@@ -53,6 +53,9 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
         Provider.of<DropDownProvider>(context, listen: false);
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
+    leadProvider.transferStatusController.clear();
+    dropDownProvider.setSelectedTransferStatusId(0);
+    leadProvider.followUpTimeController.clear();
 
     leadProvider.messageController
         .clear(); // Clear remarks textfield by default
@@ -429,7 +432,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
               setState(() {
                 dropDownProvider.setSelectedStatusId(selectedId);
 
-                final selectedItem = dropDownProvider.followUpData.firstWhere(
+                final selectedItem = _filteredFollowUpStatuses.firstWhere(
                   (status) => status.statusId == selectedId,
                 );
 
@@ -448,13 +451,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
             },
 
             // ✅ Only set value if it exists EXACTLY ONCE
-            selectedValue: dropDownProvider.followUpData
-                        .where((e) =>
-                            e.statusId == dropDownProvider.selectedStatusId)
-                        .length ==
-                    1
-                ? dropDownProvider.selectedStatusId
-                : null,
+            selectedValue: dropDownProvider.selectedStatusId ?? 0,
           ),
           // CommonDropdown<int>(
           //   hintText: 'Follow-up Status*',
@@ -480,9 +477,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
           //   },
           //   selectedValue: dropDownProvider.selectedStatusId,
           // ),
-
-          const SizedBox(height: 16),
-          if (showTransfer)
+          if (showTransferStatus) const SizedBox(height: 16),
+          if (showTransferStatus)
             CommonDropdown<int>(
               hintText: 'Secondary Status',
 
@@ -501,7 +497,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 setState(() {
                   dropDownProvider.setSelectedTransferStatusId(selectedId);
 
-                  final selectedItem = dropDownProvider.followUpData.firstWhere(
+                  final selectedItem = _filteredTransferStatuses.firstWhere(
                     (status) => status.statusId == selectedId,
                   );
 
@@ -578,30 +574,29 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
               });
             },
           ),
-
-          const SizedBox(height: 16),
-
-          CommonDropdown<int>(
-            hintText: 'Assigned Staff*',
-            items: dropDownProvider.filteredStaffData
-                .map((staff) => DropdownItem<int>(
-                      id: staff.userDetailsId,
-                      name: staff.userDetailsName,
-                    ))
-                .toList(),
-            controller: leadProvider.searchUserController,
-            onItemSelected: (selectedId) {
-              setState(() {
-                dropDownProvider.setSelectedUserId(selectedId);
-                final selectedStaff = dropDownProvider.filteredStaffData
-                    .firstWhere((staff) => staff.userDetailsId == selectedId);
-                leadProvider.searchUserController.text =
-                    selectedStaff.userDetailsName;
-              });
-            },
-            selectedValue: dropDownProvider.selectedUserId,
-            enabled: settingsProvider.selectedBranchId != null,
-          ),
+          if (showTransfer) const SizedBox(height: 16),
+          if (showTransfer)
+            CommonDropdown<int>(
+              hintText: 'Assigned Staff*',
+              items: dropDownProvider.filteredStaffData
+                  .map((staff) => DropdownItem<int>(
+                        id: staff.userDetailsId,
+                        name: staff.userDetailsName,
+                      ))
+                  .toList(),
+              controller: leadProvider.searchUserController,
+              onItemSelected: (selectedId) {
+                setState(() {
+                  dropDownProvider.setSelectedUserId(selectedId);
+                  final selectedStaff = dropDownProvider.filteredStaffData
+                      .firstWhere((staff) => staff.userDetailsId == selectedId);
+                  leadProvider.searchUserController.text =
+                      selectedStaff.userDetailsName;
+                });
+              },
+              selectedValue: dropDownProvider.selectedUserId,
+              enabled: settingsProvider.selectedBranchId != null,
+            ),
 
           const SizedBox(height: 16),
 
@@ -645,6 +640,42 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                   if (picked != null) {
                     leadProvider.nextFollowUpDateController.text =
                         DateFormat('dd MMM yyyy').format(picked);
+                  }
+                },
+              ),
+              labelText: '',
+            ),
+          const SizedBox(height: 16),
+          if (showTime)
+            CustomTextField(
+              onTap: () async {
+                final TimeOfDay? picked = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                );
+                if (picked != null) {
+                  // Format as 12-hour with AM/PM or 24-hour as needed
+                  leadProvider.followUpTimeController.text =
+                      picked.format(context);
+                  // OR for custom format (e.g., 14:30):
+                  // leadProvider.nextFollowUpDateController.text =
+                  //     '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+                }
+              },
+              readOnly: true,
+              height: 54,
+              controller: leadProvider.followUpTimeController,
+              hintText: 'Time*', // Updated hint
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.access_time), // Changed icon
+                onPressed: () async {
+                  final TimeOfDay? picked = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                  if (picked != null) {
+                    leadProvider.followUpTimeController.text =
+                        picked.format(context);
                   }
                 },
               ),
