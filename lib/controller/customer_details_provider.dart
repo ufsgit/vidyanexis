@@ -545,20 +545,38 @@ class CustomerDetailsProvider extends ChangeNotifier {
         aggregatedPriceFrom += (priceFrom * userQty);
         aggregatedPriceTo += (priceTo * userQty);
 
-        var materials = expenseProvider.RealItems;
-        for (var mat in materials) {
-          double totalQty = mat.quantity * userQty;
-          combinedMaterials.add(BillOfMaterialItem(
-            description: mat.itemMaterialName,
-            brand: mat.specification,
-            quantity: totalQty.toStringAsFixed(2),
-            uom: mat.unit,
-            distributor: mat.manufacture,
-            price: mat.price.toString(),
-            amount: (mat.price * totalQty).toStringAsFixed(2),
-            priceFrom: mat.priceFrom,
-            priceTo: mat.priceTo,
-          ));
+        final materialsData = item['materials'] as List<dynamic>? ?? [];
+        if (materialsData.isNotEmpty) {
+          for (var matMap in materialsData) {
+            final mat = ItemSettings.fromJson(matMap as Map<String, dynamic>);
+            combinedMaterials.add(BillOfMaterialItem(
+              description: mat.itemMaterialName,
+              brand: mat.specification,
+              quantity: mat.quantity.toStringAsFixed(2),
+              uom: mat.unit,
+              distributor: mat.manufacture,
+              price: mat.price.toString(),
+              amount: mat.amount.toStringAsFixed(2),
+              priceFrom: mat.priceFrom,
+              priceTo: mat.priceTo,
+            ));
+          }
+        } else {
+          var materials = expenseProvider.RealItems;
+          for (var mat in materials) {
+            double totalQty = mat.quantity * userQty;
+            combinedMaterials.add(BillOfMaterialItem(
+              description: mat.itemMaterialName,
+              brand: mat.specification,
+              quantity: totalQty.toStringAsFixed(2),
+              uom: mat.unit,
+              distributor: mat.manufacture,
+              price: mat.price.toString(),
+              amount: (mat.price * totalQty).toStringAsFixed(2),
+              priceFrom: mat.priceFrom,
+              priceTo: mat.priceTo,
+            ));
+          }
         }
       }
 
@@ -1077,7 +1095,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     try {
       _isLoadingQuotationCustomFields = true;
       final response = await HttpRequest.httpGetRequest(
-          endPoint: "${HttpUrls.getCustomFieldQuotation}/$_selectedQuotationType");
+          endPoint:
+              "${HttpUrls.getCustomFieldQuotation}/$_selectedQuotationType");
 
       if (response.statusCode == 200) {
         _isLoadingQuotationCustomFields = false;

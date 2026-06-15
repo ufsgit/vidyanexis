@@ -70,6 +70,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
         unit: mat.unit,
         priceFrom: mat.priceFrom,
         priceTo: mat.priceTo,
+        amount: mat.price * mat.quantity,
       );
     }).toList();
 
@@ -96,6 +97,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
 
       for (var mat in item.materials) {
         mat.quantity = (mat.quantity / oldQty) * newMainQty;
+        mat.amount = mat.price * mat.quantity;
       }
     });
   }
@@ -104,6 +106,17 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     if (newQty <= 0) return;
     setState(() {
       _addedItems[itemIndex].materials[matIndex].quantity = newQty;
+      _addedItems[itemIndex].materials[matIndex].amount =
+          newQty * _addedItems[itemIndex].materials[matIndex].price;
+    });
+  }
+
+  void _updateMaterialPrice(int itemIndex, int matIndex, double newPrice) {
+    if (newPrice < 0) return;
+    setState(() {
+      _addedItems[itemIndex].materials[matIndex].price = newPrice;
+      _addedItems[itemIndex].materials[matIndex].amount =
+          newPrice * _addedItems[itemIndex].materials[matIndex].quantity;
     });
   }
 
@@ -336,101 +349,207 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
 
                               // Materials Section (Grey background) - Full rounded bottom
                               if (item.materials.isNotEmpty)
-                              Container(
-                                color: Colors.grey[100],
-                                padding: const EdgeInsets.all(18),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Materials',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15.5,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    ...item.materials
-                                        .asMap()
-                                        .entries
-                                        .map((entry) {
-                                      final matIndex = entry.key;
-                                      final mat = entry.value;
-                                      final matQtyCtrl = TextEditingController(
-                                          text:
-                                              mat.quantity.toStringAsFixed(2));
-
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 12),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(12),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            border: Border.all(
-                                                color: Colors.grey.shade200),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 6,
-                                                child: Text(
-                                                  mat.itemMaterialName,
-                                                  style: const TextStyle(
-                                                      fontSize: 14.5),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 130,
-                                                child: TextField(
-                                                  controller: matQtyCtrl,
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  textAlign: TextAlign.center,
-                                                  decoration: InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                  ),
-                                                  onSubmitted: (val) {
-                                                    final qty =
-                                                        double.tryParse(val);
-                                                    if (qty != null) {
-                                                      _updateMaterialQuantity(
-                                                          itemIndex,
-                                                          matIndex,
-                                                          qty);
-                                                    }
-                                                  },
-                                                  onChanged: (val) {
-                                                    final qty =
-                                                        double.tryParse(val);
-                                                    if (qty != null) {
-                                                      _updateMaterialQuantity(
-                                                          itemIndex,
-                                                          matIndex,
-                                                          qty);
-                                                    }
-                                                  },
-                                                  inputFormatters: [
-                                                    FilteringTextInputFormatter
-                                                        .allow(RegExp(
-                                                            r'^\d+\.?\d{0,2}'))
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                Container(
+                                  color: Colors.grey[100],
+                                  padding: const EdgeInsets.all(18),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Materials',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15.5,
                                         ),
-                                      );
-                                    }),
-                                  ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      ...item.materials
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
+                                        final matIndex = entry.key;
+                                        final mat = entry.value;
+                                        final matQtyCtrl =
+                                            TextEditingController(
+                                                text: mat.quantity
+                                                    .toStringAsFixed(2));
+                                        // matQtyCtrl.selection =
+                                        //     TextSelection.fromPosition(
+                                        //         TextPosition(
+                                        //             offset: matQtyCtrl
+                                        //                 .text.length));
+
+                                        final matPriceCtrl =
+                                            TextEditingController(
+                                                text: mat.price
+                                                    .toStringAsFixed(2));
+                                        // matPriceCtrl.selection =
+                                        //     TextSelection.fromPosition(
+                                        //         TextPosition(
+                                        //             offset: matPriceCtrl
+                                        //                 .text.length));
+
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 12),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: Colors.grey.shade200),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 4,
+                                                  child: Text(
+                                                    mat.itemMaterialName,
+                                                    style: const TextStyle(
+                                                        fontSize: 14.5),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                SizedBox(
+                                                  width: 90,
+                                                  child: TextField(
+                                                    controller: matPriceCtrl,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    textAlign: TextAlign.center,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Price',
+                                                      isDense: true,
+                                                      contentPadding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 8),
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    onSubmitted: (val) {
+                                                      final price =
+                                                          double.tryParse(val);
+                                                      if (price != null) {
+                                                        _updateMaterialPrice(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            price);
+                                                      }
+                                                    },
+                                                    onChanged: (val) {
+                                                      final price =
+                                                          double.tryParse(val);
+                                                      if (price != null) {
+                                                        _updateMaterialPrice(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            price);
+                                                      }
+                                                    },
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(RegExp(
+                                                              r'^\d+\.?\d{0,2}'))
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                SizedBox(
+                                                  width: 90,
+                                                  child: TextField(
+                                                    controller: matQtyCtrl,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    textAlign: TextAlign.center,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Qty',
+                                                      isDense: true,
+                                                      contentPadding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 8),
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                    ),
+                                                    onSubmitted: (val) {
+                                                      final qty =
+                                                          double.tryParse(val);
+                                                      if (qty != null) {
+                                                        _updateMaterialQuantity(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            qty);
+                                                      }
+                                                    },
+                                                    onChanged: (val) {
+                                                      final qty =
+                                                          double.tryParse(val);
+                                                      if (qty != null) {
+                                                        _updateMaterialQuantity(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            qty);
+                                                      }
+                                                    },
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(RegExp(
+                                                              r'^\d+\.?\d{0,2}'))
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                SizedBox(
+                                                  width: 100,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const Text(
+                                                        'Amount',
+                                                        style: TextStyle(
+                                                            fontSize: 10,
+                                                            color: Colors.grey),
+                                                      ),
+                                                      Text(
+                                                        (mat.amount)
+                                                            .toStringAsFixed(2),
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: AppColors
+                                                              .primaryBlue,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         );

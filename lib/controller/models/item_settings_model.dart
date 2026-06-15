@@ -10,6 +10,7 @@ class ItemSettings {
   String unit;
   String priceFrom;
   String priceTo;
+  double amount;
 
   // Constructor
   ItemSettings({
@@ -24,6 +25,7 @@ class ItemSettings {
     required this.unit,
     this.priceFrom = '',
     this.priceTo = '',
+    this.amount = 0.0,
   });
 
   // Factory method to create an instance from a JSON object
@@ -40,6 +42,7 @@ class ItemSettings {
       unit: json['Unit'] ?? '',
       priceFrom: json['Price_Range_From']?.toString() ?? '',
       priceTo: json['Price_Range_To']?.toString() ?? '',
+      amount: (json['Amount'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -57,6 +60,7 @@ class ItemSettings {
       'Unit': unit,
       'Price_Range_From': priceFrom,
       'Price_Range_To': priceTo,
+      'Amount': amount,
     };
   }
 }

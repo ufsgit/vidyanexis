@@ -2394,9 +2394,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                       ),
                                     ),
                                     Text(
-                                      mat.quantity.toStringAsFixed(2),
+                                      "${mat.price} x ${mat.quantity}",
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      "Amount : ${(mat.amount).toStringAsFixed(2)}",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ],
