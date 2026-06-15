@@ -10,6 +10,7 @@ import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
 import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
+import 'package:vidyanexis/controller/models/customer_outstanding_summary_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -81,6 +82,8 @@ class DashboardProvider extends ChangeNotifier {
   bool isTaskOverviewLoaded = false;
   bool isAmcLoaded = false;
   bool isPaymentLoaded = false;
+  bool isCustomerOutstandingSummaryLoaded = false;
+  CustomerOutstandingSummaryModel? customerOutstandingSummary;
 
   String? selectedeLeadConversionValue;
   String? selectedeLeadProgressValue;
@@ -621,6 +624,9 @@ class DashboardProvider extends ChangeNotifier {
           await getLeadDashboardCount();
         }
         break;
+      case 7: // Customer Outstanding Summary
+        await getCustomerOutstandingSummary();
+        break;
     }
   }
 
@@ -752,6 +758,7 @@ class DashboardProvider extends ChangeNotifier {
     isTaskOverviewLoaded = false;
     isAmcLoaded = false;
     isPaymentLoaded = false;
+    isCustomerOutstandingSummaryLoaded = false;
   }
 
   Future<void> refreshDashboardData(BuildContext context,
@@ -860,6 +867,35 @@ class DashboardProvider extends ChangeNotifier {
       _formattedToDate = DateFormat('yyyy-MM-dd').format(toDate!);
     } else {
       _formattedToDate = '';
+    }
+  }
+
+  Future<void> getCustomerOutstandingSummary({bool shouldNotify = true}) async {
+    try {
+      isCustomerOutstandingSummaryLoaded = false;
+      if (shouldNotify) notifyListeners();
+      await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getCustomerOutstandingSummary,
+      ).then((response) {
+        if (response.statusCode == 200) {
+          final data = response.data;
+          if (data is Map && data['data'] is List) {
+            final list = data['data'] as List;
+            if (list.isNotEmpty) {
+              customerOutstandingSummary =
+                  CustomerOutstandingSummaryModel.fromJson(list.first);
+            }
+          } else if (data is List && data.isNotEmpty) {
+            customerOutstandingSummary =
+                CustomerOutstandingSummaryModel.fromJson(data.first);
+          }
+          isCustomerOutstandingSummaryLoaded = true;
+        }
+      });
+    } catch (e) {
+      print(e);
+    } finally {
+      if (shouldNotify) notifyListeners();
     }
   }
 }

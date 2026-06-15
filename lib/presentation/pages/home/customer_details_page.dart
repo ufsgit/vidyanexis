@@ -4495,7 +4495,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                         _buildHeaderCell('Product Name', flex: 2),
                         _buildHeaderCell('Category', flex: 2),
                         _buildHeaderCell('Amount', flex: 2),
-                        _buildHeaderCell('From Date', flex: 2),
                         _buildHeaderCell('To Date', flex: 2),
                         _buildHeaderCell('Options', flex: 2),
                       ],
@@ -4542,10 +4541,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         : 'AMC',
                                     flex: 2),
                                 _buildDataCell("₹${double.parse(amc.amount)}",
-                                    flex: 2),
-                                _buildDataCell(
-                                    DateFormat('dd MMM yyyy')
-                                        .format(DateTime.parse(amc.fromDate)),
                                     flex: 2),
                                 _buildDataCell(
                                     DateFormat('dd MMM yyyy')

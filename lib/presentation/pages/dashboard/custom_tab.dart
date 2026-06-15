@@ -211,6 +211,7 @@ class CustomTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[77].toString() != '0') 'Payment Reminders',
       if (settingsProvider.menuIsViewMap[51].toString() != '0') 'Task Overview',
       if (settingsProvider.menuIsViewMap[52].toString() != '0') 'Task Summary',
+      if (settingsProvider.menuIsViewMap[152].toString() != '0') 'Customer Outstanding Summary',
     ];
 
     //change permissions id in dashBoardPage also ----------------
@@ -248,6 +249,7 @@ class CustomTab extends StatelessWidget {
                       if (settingsProvider.menuIsViewMap[77].toString() != '0') 5,
                       if (settingsProvider.menuIsViewMap[51].toString() != '0') 2,
                       if (settingsProvider.menuIsViewMap[52].toString() != '0') 3,
+                      if (settingsProvider.menuIsViewMap[152].toString() != '0') 7,
                     ];
   
                     if (index >= 0 && index < allowedTabIds.length) {
@@ -313,6 +315,8 @@ class CustomTab extends StatelessWidget {
         return 'Tasks';
       case 'Task Summary':
         return 'Summary';
+      case 'Customer Outstanding Summary':
+        return 'Outstanding';
       default:
         return fullName;
     }

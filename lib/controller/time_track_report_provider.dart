@@ -182,7 +182,8 @@ class TimeTrackReportProvider extends ChangeNotifier {
       String toUserId = (_selectedUser ?? 0).toString();
       String fromDateStr = _formattedFromDate;
       String toDateStr = _formattedToDate;
-      String isDate = (fromDateStr.isNotEmpty && toDateStr.isNotEmpty) ? "1" : "0";
+      String isDate =
+          (fromDateStr.isNotEmpty && toDateStr.isNotEmpty) ? "1" : "0";
 
       String url =
           '${HttpUrls.timeTrack}?Fromdate=$fromDateStr&Todate=$toDateStr&Is_Date=$isDate&By_User_Id=$toUserId';

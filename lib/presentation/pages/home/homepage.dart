@@ -465,7 +465,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: OutstandingReportPage()),
         ),
-      if (settingsProvider.menuIsViewMap[116].toString() == '1' || kDebugMode)
+      if (settingsProvider.menuIsViewMap[152].toString() == '1' || kDebugMode)
         SidebarOption(
           title: 'Customer Outstanding Reports',
           iconPath: 'assets/images/Reports.svg',

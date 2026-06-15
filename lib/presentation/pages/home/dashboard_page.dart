@@ -26,6 +26,7 @@ import 'package:vidyanexis/presentation/pages/dashboard/work_overview_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/amc_notification_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/payment_reminder_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/dashboard_count_tab.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/customer_outstanding_summary_tab.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -77,6 +78,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
         if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0') 5,
         if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0') 2,
         if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
+        if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
       ];
 
       if (allowedTabs.isNotEmpty) {
@@ -112,6 +114,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0') 5,
       if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0') 2,
       if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
+      if ((settingsProvider.menuIsViewMap[152] ?? 1).toString() != '0') 7,
     ];
 
     Widget dateFilterBtn = Material(
@@ -448,6 +451,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       duration: const Duration(milliseconds: 600),
                       alignment: const Alignment(0, 0),
                       child: const TaskSummaryPage(),
+                    );
+                  case 7:
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 600),
+                      alignment: const Alignment(0, 0),
+                      child: const CustomerOutstandingSummaryTab(),
                     );
                 }
                 return const SizedBox.shrink();

@@ -149,7 +149,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Customer Task Month Report', 'page': const CustomerTaskMonthReportScreen()},
       if (settingsProvider.menuIsViewMap[144].toString() == '1')
         {'title': 'Sales Reports', 'page': const SalesReportScreenPhone()},
-      if (settingsProvider.menuIsViewMap[116].toString() == '1')
+      if (settingsProvider.menuIsViewMap[152].toString() == '1')
         {'title': 'Customer Outstanding Reports', 'page': const CustomerOutstandingReportMobile()},
     ];
 
