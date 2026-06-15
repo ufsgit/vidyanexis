@@ -35,6 +35,7 @@ class HttpUrls {
   // static String baseUrl = 'https://linoraapi.ufstech.net.in/';
   // static String baseUrl = 'https://izzapower.trackbox.net.in/';
 //   static String baseUrl = 'https://demo2api.ufstech.net.in/';
+  // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
 //dev
 
   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
