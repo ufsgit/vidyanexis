@@ -33,6 +33,11 @@ class SearchLeadStatusModel {
   int? isTransfer;
   int? isTime;
   int? isTransferStatus;
+  int? isSendUser;
+  String? templateId;
+  int? isLinkForm;
+  int? formId;
+  String? formName;
 
   SearchLeadStatusModel({
     this.statusId,
@@ -53,6 +58,11 @@ class SearchLeadStatusModel {
     this.isTransfer,
     this.isTime,
     this.isTransferStatus,
+    this.isSendUser,
+    this.templateId,
+    this.isLinkForm,
+    this.formId,
+    this.formName,
   });
 
   SearchLeadStatusModel copyWith({
@@ -74,6 +84,11 @@ class SearchLeadStatusModel {
     int? isTransfer,
     int? isTime,
     int? isTransferStatus,
+    int? isSendUser,
+    String? templateId,
+    int? isLinkForm,
+    int? formId,
+    String? formName,
   }) =>
       SearchLeadStatusModel(
         statusId: statusId ?? this.statusId,
@@ -94,6 +109,11 @@ class SearchLeadStatusModel {
         isTransfer: isTransfer ?? this.isTransfer,
         isTime: isTime ?? this.isTime,
         isTransferStatus: isTransferStatus ?? this.isTransferStatus,
+        isSendUser: isSendUser ?? this.isSendUser,
+        templateId: templateId ?? this.templateId,
+        isLinkForm: isLinkForm ?? this.isLinkForm,
+        formId: formId ?? this.formId,
+        formName: formName ?? this.formName,
       );
 
   factory SearchLeadStatusModel.fromJson(Map<String, dynamic> json) =>
@@ -127,6 +147,11 @@ class SearchLeadStatusModel {
         isTransfer: json["Is_transfer"]?.toInt() ?? 0,
         isTime: json["Is_Time"]?.toInt() ?? 0,
         isTransferStatus: json["Is_Transfer_Status"]?.toInt() ?? 0,
+        isSendUser: json["Is_Send_User"]?.toInt() ?? json["is_send_user"]?.toInt() ?? json["Is_Sent_User"]?.toInt() ?? json["is_sent_user"]?.toInt() ?? 0,
+        templateId: json["Template_Id"]?.toString() ?? json["template_id"]?.toString() ?? "",
+        isLinkForm: json["Is_Link_Form"]?.toInt() ?? json["is_link_form"]?.toInt() ?? 0,
+        formId: json["Form_Id"]?.toInt() ?? json["form_id"]?.toInt() ?? 0,
+        formName: json["Form_Name"]?.toString() ?? json["form_name"]?.toString() ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -154,5 +179,10 @@ class SearchLeadStatusModel {
         "Is_transfer": isTransfer,
         "Is_Time": isTime,
         "Is_Transfer_Status": isTransferStatus,
+        "Is_Send_User": isSendUser,
+        "Template_Id": templateId,
+        "Is_Link_Form": isLinkForm,
+        "Form_Id": formId,
+        "Form_Name": formName,
       };
 }

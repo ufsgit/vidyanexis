@@ -194,6 +194,8 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController statusController = TextEditingController();
   final TextEditingController whatsappTemplateIdController =
       TextEditingController();
+  final TextEditingController templateIdController =
+      TextEditingController();
 
   final TextEditingController folloupController = TextEditingController();
 
@@ -2746,6 +2748,11 @@ class SettingsProvider extends ChangeNotifier {
             "Is_Time": _isTime ? 1 : 0,
             "Is_Transfer_Status": _isTransferStatus ? 1 : 0,
             "Transfer_Status": selectedTransferStatusesForApi,
+            "Is_Send_User": _isSendUser ? 1 : 0,
+            "Template_Id": templateIdController.text,
+            "Is_Link_Form": _isLinkForm ? 1 : 0,
+            "Form_Id": int.tryParse(_selectedFormId) ?? 0,
+            "Form_Name": _selectedFormName,
           });
 
       if (response!.statusCode == 200) {
@@ -5298,6 +5305,32 @@ class SettingsProvider extends ChangeNotifier {
   bool get isTransferStatus => _isTransferStatus;
   set isTransferStatus(bool value) {
     _isTransferStatus = value;
+    notifyListeners();
+  }
+
+  bool _isSendUser = false;
+  bool get isSendUser => _isSendUser;
+  set isSendUser(bool value) {
+    _isSendUser = value;
+    notifyListeners();
+  }
+
+  bool _isLinkForm = false;
+  bool get isLinkForm => _isLinkForm;
+  set isLinkForm(bool value) {
+    _isLinkForm = value;
+    notifyListeners();
+  }
+
+  String _selectedFormId = "";
+  String get selectedFormId => _selectedFormId;
+
+  String _selectedFormName = "";
+  String get selectedFormName => _selectedFormName;
+
+  void setSelectedForm(String id, String name) {
+    _selectedFormId = id;
+    _selectedFormName = name;
     notifyListeners();
   }
 

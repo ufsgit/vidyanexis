@@ -184,7 +184,6 @@ import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:provider/provider.dart';
 
-
 class CustomTab extends StatelessWidget {
   const CustomTab({
     super.key,
@@ -204,14 +203,19 @@ class CustomTab extends StatelessWidget {
         : 900.0;
 
     final tabOptions = [
-      if (settingsProvider.menuIsViewMap[84].toString() != '0') 'Dashboard count',
-      if (settingsProvider.menuIsViewMap[49].toString() != '0') 'Leads Overview',
+      if (settingsProvider.menuIsViewMap[84].toString() != '0')
+        'Dashboard count',
+      if (settingsProvider.menuIsViewMap[49].toString() != '0')
+        'Leads Overview',
       if (settingsProvider.menuIsViewMap[50].toString() != '0') 'Work Overview',
-      if (settingsProvider.menuIsViewMap[76].toString() != '0') 'Amc Notification',
-      if (settingsProvider.menuIsViewMap[77].toString() != '0') 'Payment Reminders',
+      if (settingsProvider.menuIsViewMap[76].toString() != '0')
+        'Amc Notification',
+      if (settingsProvider.menuIsViewMap[77].toString() != '0')
+        'Payment Reminders',
       if (settingsProvider.menuIsViewMap[51].toString() != '0') 'Task Overview',
       if (settingsProvider.menuIsViewMap[52].toString() != '0') 'Task Summary',
-      if (settingsProvider.menuIsViewMap[152].toString() != '0') 'Customer Outstanding Summary',
+      if (settingsProvider.menuIsViewMap[152].toString() != '0')
+        'Customer Outstanding Summary',
     ];
 
     //change permissions id in dashBoardPage also ----------------
@@ -242,24 +246,33 @@ class CustomTab extends StatelessWidget {
                   onTap: () {
                     _dashBoardProvider.changeTab(index);
                     final allowedTabIds = [
-                      if (settingsProvider.menuIsViewMap[84].toString() != '0') 6,
-                      if (settingsProvider.menuIsViewMap[49].toString() != '0') 0,
-                      if (settingsProvider.menuIsViewMap[50].toString() != '0') 1,
-                      if (settingsProvider.menuIsViewMap[76].toString() != '0') 4,
-                      if (settingsProvider.menuIsViewMap[77].toString() != '0') 5,
-                      if (settingsProvider.menuIsViewMap[51].toString() != '0') 2,
-                      if (settingsProvider.menuIsViewMap[52].toString() != '0') 3,
-                      if (settingsProvider.menuIsViewMap[152].toString() != '0') 7,
+                      if (settingsProvider.menuIsViewMap[84].toString() != '0')
+                        6,
+                      if (settingsProvider.menuIsViewMap[49].toString() != '0')
+                        0,
+                      if (settingsProvider.menuIsViewMap[50].toString() != '0')
+                        1,
+                      if (settingsProvider.menuIsViewMap[76].toString() != '0')
+                        4,
+                      if (settingsProvider.menuIsViewMap[77].toString() != '0')
+                        5,
+                      if (settingsProvider.menuIsViewMap[51].toString() != '0')
+                        2,
+                      if (settingsProvider.menuIsViewMap[52].toString() != '0')
+                        3,
+                      if (settingsProvider.menuIsViewMap[152].toString() != '0')
+                        7,
                     ];
-  
+
                     if (index >= 0 && index < allowedTabIds.length) {
-                      _dashBoardProvider.loadDataForTab(allowedTabIds[index], context);
+                      _dashBoardProvider.loadDataForTab(
+                          allowedTabIds[index], context);
                     }
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    margin: isSelected 
-                        ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2) 
+                    margin: isSelected
+                        ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2)
                         : const EdgeInsets.symmetric(vertical: 4),
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     alignment: Alignment.center,
@@ -276,13 +289,15 @@ class CustomTab extends StatelessWidget {
                             ]
                           : null,
                     ),
-  
                     child: Text(
                       _getShortTabName(tabOptions[index]),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                        color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: isSelected
+                            ? AppColors.secondaryBlue
+                            : const Color(0xFF64748B),
                       ),
                     ),
                   ),
@@ -293,10 +308,6 @@ class CustomTab extends StatelessWidget {
         ),
       ),
     );
-
-
-
-
   }
 
   String _getShortTabName(String fullName) {

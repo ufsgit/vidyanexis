@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -305,6 +306,128 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
     );
   }
 
+  void _showFormChoosingDialog() {
+    FormProvider formProvider =
+        Provider.of<FormProvider>(context, listen: false);
+    SettingsProvider settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    String formSearchQuery = "";
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            final filteredList = formProvider.forms
+                .where((f) => f.name
+                    .toLowerCase()
+                    .contains(formSearchQuery.toLowerCase()))
+                .toList();
+
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: const Text('Select Form'),
+              content: SizedBox(
+                width: AppStyles.isWebScreen(context)
+                    ? MediaQuery.of(context).size.width / 3
+                    : MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 2,
+                child: Column(
+                  children: [
+                    TextField(
+                      decoration: const InputDecoration(
+                        hintText: 'Search Form...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (val) {
+                        setStateDialog(() {
+                          formSearchQuery = val;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: filteredList.isEmpty
+                          ? const Center(child: Text('No forms found.'))
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: filteredList.length,
+                              itemBuilder: (context, index) {
+                                final formItem = filteredList[index];
+                                bool isSelected =
+                                    settingsProvider.selectedFormId ==
+                                        formItem.id;
+
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      settingsProvider.setSelectedForm(
+                                        formItem.id,
+                                        formItem.name,
+                                      );
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.all(12),
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: isSelected
+                                          ? Colors.blue.shade50
+                                          : Colors.grey.shade50,
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? Colors.blue.shade400
+                                            : Colors.grey.shade300,
+                                        width: isSelected ? 2 : 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            formItem.name,
+                                            style: TextStyle(
+                                              fontWeight: isSelected
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
+                                              color: isSelected
+                                                  ? Colors.blue.shade700
+                                                  : Colors.black87,
+                                            ),
+                                          ),
+                                        ),
+                                        if (isSelected)
+                                          Icon(Icons.check_circle,
+                                              color: Colors.blue.shade600),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel',
+                      style: TextStyle(color: Colors.grey.shade600)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -312,6 +435,8 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
       await settingsProvider.fetchSubStatuses();
+      final formProvider = Provider.of<FormProvider>(context, listen: false);
+      await formProvider.fetchForms(context);
       if (widget.isEdit) {
         selectedFields =
             widget.data!.customFields?.map((e) => e.toJson()).toList() ?? [];
@@ -382,11 +507,21 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.isTransfer = widget.data!.isTransfer == 1;
         settingsProvider.isTime = widget.data!.isTime == 1;
         settingsProvider.isTransferStatus = widget.data!.isTransferStatus == 1;
+        settingsProvider.isSendUser = widget.data!.isSendUser == 1;
+        settingsProvider.templateIdController.text = widget.data!.templateId ?? "";
+        settingsProvider.isLinkForm = widget.data!.isLinkForm == 1;
+        settingsProvider.setSelectedForm(
+            widget.data!.formId?.toString() ?? "",
+            widget.data!.formName ?? "");
       } else {
         // INITIALIZE FOR ADD NEW STATUS
         settingsProvider.isTransfer = false;
         settingsProvider.isTime = false;
         settingsProvider.isTransferStatus = false;
+        settingsProvider.isSendUser = false;
+        settingsProvider.templateIdController.clear();
+        settingsProvider.isLinkForm = false;
+        settingsProvider.setSelectedForm("", "");
         settingsProvider.statusController.clear();
         settingsProvider.folloupController.clear();
         settingsProvider.isRegisterController.clear();
@@ -453,6 +588,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
               settingsProvider.isRegisterController.clear();
               settingsProvider.setSelectedColor(null);
               settingsProvider.whatsappTemplateIdController.clear();
+              settingsProvider.templateIdController.clear();
               Navigator.pop(context);
             },
             icon: const Icon(Icons.close),
@@ -714,7 +850,70 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                   ),
                 ],
               ),
-
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: CheckboxListTile(
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Sent User',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      value: settingsProvider.isSendUser,
+                      onChanged: (value) =>
+                          settingsProvider.isSendUser = value ?? false,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: CheckboxListTile(
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Link Form',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      value: settingsProvider.isLinkForm,
+                      onChanged: (value) =>
+                          settingsProvider.isLinkForm = value ?? false,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: const SizedBox(),
+                  ),
+                ],
+              ),
+              if (settingsProvider.isSendUser) ...[
+                const SizedBox(height: 10),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.templateIdController,
+                  hintText: 'Template id',
+                  labelText: '',
+                ),
+              ],
+              if (settingsProvider.isLinkForm) ...[
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: _showFormChoosingDialog,
+                  child: AbsorbPointer(
+                    child: CustomTextField(
+                      readOnly: true,
+                      controller: TextEditingController(
+                        text: settingsProvider.selectedFormName.isNotEmpty
+                            ? settingsProvider.selectedFormName
+                            : '',
+                      ),
+                      height: 54,
+                      hintText: 'Choose Form',
+                      labelText: '',
+                      suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 10),
 
               // Sub Status
@@ -867,6 +1066,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             settingsProvider.isRegisterController.clear();
             settingsProvider.setSelectedColor(null);
             settingsProvider.whatsappTemplateIdController.clear();
+            settingsProvider.templateIdController.clear();
             Navigator.pop(context);
           },
           radius: 4,
