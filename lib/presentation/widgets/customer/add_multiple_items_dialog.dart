@@ -28,6 +28,8 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   String _selectedItemName = '';
   final TextEditingController _quantityController =
       TextEditingController(text: '1');
+  final Map<String, TextEditingController> _priceMaterialControllers = {};
+  final Map<String, TextEditingController> _qtyMaterialControllers = {};
 
   List<AddedMultiItem> _addedItems = [];
 
@@ -370,26 +372,29 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                           .map((entry) {
                                         final matIndex = entry.key;
                                         final mat = entry.value;
-                                        final matQtyCtrl =
-                                            TextEditingController(
-                                                text: mat.quantity
-                                                    .toStringAsFixed(2));
-                                        // matQtyCtrl.selection =
-                                        //     TextSelection.fromPosition(
-                                        //         TextPosition(
-                                        //             offset: matQtyCtrl
-                                        //                 .text.length));
 
+                                        // Create unique key for each material
+                                        final priceKey =
+                                            '${itemIndex}_${matIndex}_price';
+                                        final qtyKey =
+                                            '${itemIndex}_${matIndex}_qty';
+
+                                        // Reuse or create controller once
                                         final matPriceCtrl =
-                                            TextEditingController(
-                                                text: mat.price
-                                                    .toStringAsFixed(2));
-                                        // matPriceCtrl.selection =
-                                        //     TextSelection.fromPosition(
-                                        //         TextPosition(
-                                        //             offset: matPriceCtrl
-                                        //                 .text.length));
+                                            _priceMaterialControllers
+                                                .putIfAbsent(
+                                                    priceKey,
+                                                    () => TextEditingController(
+                                                        text: mat.price
+                                                            .toStringAsFixed(
+                                                                2)));
 
+                                        final matQtyCtrl =
+                                            _qtyMaterialControllers.putIfAbsent(
+                                                qtyKey,
+                                                () => TextEditingController(
+                                                    text: mat.quantity
+                                                        .toStringAsFixed(2)));
                                         return Padding(
                                           padding:
                                               const EdgeInsets.only(bottom: 12),
@@ -414,7 +419,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                 ),
                                                 const SizedBox(width: 8),
                                                 SizedBox(
-                                                  width: 90,
+                                                  width: 180,
                                                   child: TextField(
                                                     controller: matPriceCtrl,
                                                     keyboardType:
