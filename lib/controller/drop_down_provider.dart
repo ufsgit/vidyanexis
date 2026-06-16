@@ -115,6 +115,9 @@ class DropDownProvider extends ChangeNotifier {
   List<IntervalModel> _amcInterval = [];
   List<IntervalModel> get amcInterval => _amcInterval;
 
+  int? _currentBranchId;
+  int? _currentDepartmentId;
+
   int? _selectedLocationId;
   int? get selectedLocationId => _selectedLocationId;
   set selectedLocationId(int? value) {
@@ -159,6 +162,9 @@ class DropDownProvider extends ChangeNotifier {
     required int? branchId,
     required int? departmentId,
   }) {
+    _currentBranchId = branchId;
+    _currentDepartmentId = departmentId;
+
     if (branchId == null || departmentId == null) {
       filteredStaffData = [];
     } else {
@@ -172,6 +178,32 @@ class DropDownProvider extends ChangeNotifier {
     // Print the full list with all fields as maps for clarity
     print(
         "filteredStaffData: ${filteredStaffData.map((staff) => staff.toJson()).toList()}");
+    notifyListeners();
+  }
+
+  void filterStaff(String query) {
+    if (_currentBranchId == null || _currentDepartmentId == null) {
+      filteredStaffData = [];
+      notifyListeners();
+      return;
+    }
+
+    final lowerQuery = query.trim().toLowerCase();
+
+    filteredStaffData = searchUserDetails.where((staff) {
+      if (staff.branchId != _currentBranchId.toString() ||
+          staff.departmentId != _currentDepartmentId.toString() ||
+          staff.workingStatus != "1") {
+        return false;
+      }
+
+      if (lowerQuery.isEmpty) {
+        return true; // show all
+      }
+
+      return (staff.userDetailsName ?? '').toLowerCase().contains(lowerQuery);
+    }).toList();
+
     notifyListeners();
   }
 

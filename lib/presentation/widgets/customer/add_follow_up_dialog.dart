@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -618,27 +619,57 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
               },
             ),
             const SizedBox(height: 16),
-            CommonDropdown<int>(
-              hintText: 'Assigned Staff*',
-              items: dropDownProvider.filteredStaffData
-                  .map((staff) => DropdownItem<int>(
-                        id: staff.userDetailsId,
-                        name: staff.userDetailsName,
-                      ))
-                  .toList(),
-              controller: leadProvider.searchUserController,
-              onItemSelected: (selectedId) {
-                setState(() {
-                  dropDownProvider.setSelectedUserId(selectedId);
-                  final selectedStaff = dropDownProvider.filteredStaffData
-                      .firstWhere((staff) => staff.userDetailsId == selectedId);
-                  leadProvider.searchUserController.text =
-                      selectedStaff.userDetailsName;
-                });
+            Consumer<DropDownProvider>(
+              builder: (context, dropDownProvider, child) {
+                return CustomAutocompleteSearch<SearchUserDetails>(
+                  focusNode: staffNode,
+                  showOptionsOnTap: true,
+                  maxHeight: 300,
+                  optionsViewOpenDirection: OptionsViewOpenDirection.down,
+                  items: dropDownProvider.filteredStaffData,
+                  displayStringFunction: (staff) => staff.userDetailsName ?? '',
+                  defaultText: leadProvider.searchUserController.text,
+                  labelText: 'Assigned Staff*',
+                  controller: leadProvider.searchUserController,
+                  suffixIcon: const Icon(Icons.search),
+                  onSelected: (SearchUserDetails selected) {
+                    dropDownProvider.setSelectedUserId(
+                      selected.userDetailsId,
+                    );
+
+                    leadProvider.searchUserController.text =
+                        selected.userDetailsName ?? '';
+                  },
+                  onChanged: (value) {
+                    dropDownProvider.filterStaff(value);
+                  },
+                  onSearch: (query) async {
+                    dropDownProvider.filterStaff(query);
+                  },
+                );
               },
-              selectedValue: dropDownProvider.selectedUserId,
-              enabled: settingsProvider.selectedBranchId != null,
-            ),
+            )
+            // CommonDropdown<int>(
+            //   hintText: 'Assigned Staff*',
+            //   items: dropDownProvider.filteredStaffData
+            //       .map((staff) => DropdownItem<int>(
+            //             id: staff.userDetailsId,
+            //             name: staff.userDetailsName,
+            //           ))
+            //       .toList(),
+            //   controller: leadProvider.searchUserController,
+            //   onItemSelected: (selectedId) {
+            //     setState(() {
+            //       dropDownProvider.setSelectedUserId(selectedId);
+            //       final selectedStaff = dropDownProvider.filteredStaffData
+            //           .firstWhere((staff) => staff.userDetailsId == selectedId);
+            //       leadProvider.searchUserController.text =
+            //           selectedStaff.userDetailsName;
+            //     });
+            //   },
+            //   selectedValue: dropDownProvider.selectedUserId,
+            //   enabled: settingsProvider.selectedBranchId != null,
+            // ),
           ],
 
           const SizedBox(height: 16),
