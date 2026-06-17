@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
@@ -434,9 +436,14 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
       await settingsProvider.fetchSubStatuses();
       final formProvider = Provider.of<FormProvider>(context, listen: false);
       await formProvider.fetchForms(context);
+      dropDownProvider.getUserDetails(context);
+      settingsProvider.searchDepartment('', context);
       if (widget.isEdit) {
         selectedFields =
             widget.data!.customFields?.map((e) => e.toJson()).toList() ?? [];
@@ -508,11 +515,19 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.isTime = widget.data!.isTime == 1;
         settingsProvider.isTransferStatus = widget.data!.isTransferStatus == 1;
         settingsProvider.isSendUser = widget.data!.isSendUser == 1;
-        settingsProvider.templateIdController.text = widget.data!.templateId ?? "";
+        settingsProvider.templateIdController.text =
+            widget.data!.templateId ?? "";
         settingsProvider.isLinkForm = widget.data!.isLinkForm == 1;
         settingsProvider.setSelectedForm(
-            widget.data!.formId?.toString() ?? "",
-            widget.data!.formName ?? "");
+            widget.data!.formId?.toString() ?? "", widget.data!.formName ?? "");
+
+        settingsProvider.selectedDepartmentId =
+            widget.data!.departmentId ?? 0;
+        leadProvider.departmentController.text =
+            widget.data!.departmentName ?? "";
+        leadProvider.searchUserController.text =
+            widget.data!.userName ?? "";
+        dropDownProvider.setSelectedUserId(widget.data!.userId ?? 0);
       } else {
         // INITIALIZE FOR ADD NEW STATUS
         settingsProvider.isTransfer = false;
@@ -535,6 +550,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.viewInController.text = '';
         settingsProvider.progressValueController.text = '';
         settingsProvider.whatsappTemplateIdController.clear();
+        dropDownProvider.setSelectedUserId(0);
+        leadProvider.departmentController.clear();
+        leadProvider.searchUserController.clear();
+        settingsProvider.selectedDepartmentId = 0;
       }
     });
   }
@@ -542,6 +561,9 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+    final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
 
     final List<Color> colorOptions = [
       const Color(0xffA8A8A8),
@@ -915,6 +937,57 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                 ),
               ],
               const SizedBox(height: 10),
+              if (settingsProvider.isTransfer) ...[
+                CommonDropdown<int>(
+                  hintText: 'Department',
+                  selectedValue: settingsProvider.selectedDepartmentId,
+                  items: settingsProvider.departmentModel
+                      .map((source) => DropdownItem<int>(
+                            id: source.departmentId,
+                            name: source.departmentName,
+                          ))
+                      .toList(),
+                  controller: leadProvider.departmentController,
+                  onItemSelected: (selectedId) {
+                    setState(() {
+                      settingsProvider.selectedDepartmentId = selectedId;
+                      final selectedDepartment =
+                          settingsProvider.departmentModel.firstWhere(
+                              (dept) => dept.departmentId == selectedId);
+                      leadProvider.departmentController.text =
+                          selectedDepartment.departmentName;
+
+                      dropDownProvider.setSelectedUserId(0);
+                      leadProvider.searchUserController.clear();
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                CommonDropdown<int>(
+                  hintText: 'Users',
+                  items: dropDownProvider.searchUserDetails
+                      .where((staff) =>
+                          int.tryParse(staff.departmentId ?? "0") ==
+                          settingsProvider.selectedDepartmentId)
+                      .map((staff) => DropdownItem<int>(
+                            id: staff.userDetailsId,
+                            name: staff.userDetailsName,
+                          ))
+                      .toList(),
+                  controller: leadProvider.searchUserController,
+                  onItemSelected: (selectedId) {
+                    setState(() {
+                      dropDownProvider.setSelectedUserId(selectedId);
+                      final selectedStaff = dropDownProvider.searchUserDetails
+                          .firstWhere(
+                              (staff) => staff.userDetailsId == selectedId);
+                      leadProvider.searchUserController.text =
+                          selectedStaff.userDetailsName;
+                    });
+                  },
+                  selectedValue: dropDownProvider.selectedUserId ?? 0,
+                ),
+              ],
 
               // Sub Status
               Text('Sub Status',

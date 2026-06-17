@@ -8,6 +8,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/department_custom_field_model.dart';
 import 'package:vidyanexis/controller/models/inventory_customer_model.dart';
 import 'package:vidyanexis/controller/models/lead_customer_model.dart';
@@ -2723,6 +2725,8 @@ class SettingsProvider extends ChangeNotifier {
   }) async {
     try {
       Loader.showLoader(context);
+      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
 
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.addLeadStatus,
@@ -2753,6 +2757,10 @@ class SettingsProvider extends ChangeNotifier {
             "Is_Link_Form": _isLinkForm ? 1 : 0,
             "Form_Id": int.tryParse(_selectedFormId) ?? 0,
             "Form_Name": _selectedFormName,
+            "Department_Id": _selectedDepartmentId,
+            "Department_Name": leadProvider.departmentController.text.toString(),
+            "User_Id": dropDownProvider.selectedUserId,
+            "User_Name": leadProvider.searchUserController.text.toString(),
           });
 
       if (response!.statusCode == 200) {

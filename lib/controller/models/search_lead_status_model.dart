@@ -38,6 +38,10 @@ class SearchLeadStatusModel {
   int? isLinkForm;
   int? formId;
   String? formName;
+  int? departmentId;
+  String? departmentName;
+  int? userId;
+  String? userName;
 
   SearchLeadStatusModel({
     this.statusId,
@@ -63,6 +67,10 @@ class SearchLeadStatusModel {
     this.isLinkForm,
     this.formId,
     this.formName,
+    this.departmentId,
+    this.departmentName,
+    this.userId,
+    this.userName,
   });
 
   SearchLeadStatusModel copyWith({
@@ -89,6 +97,10 @@ class SearchLeadStatusModel {
     int? isLinkForm,
     int? formId,
     String? formName,
+    int? departmentId,
+    String? departmentName,
+    int? userId,
+    String? userName,
   }) =>
       SearchLeadStatusModel(
         statusId: statusId ?? this.statusId,
@@ -114,6 +126,10 @@ class SearchLeadStatusModel {
         isLinkForm: isLinkForm ?? this.isLinkForm,
         formId: formId ?? this.formId,
         formName: formName ?? this.formName,
+        departmentId: departmentId ?? this.departmentId,
+        departmentName: departmentName ?? this.departmentName,
+        userId: userId ?? this.userId,
+        userName: userName ?? this.userName,
       );
 
   factory SearchLeadStatusModel.fromJson(Map<String, dynamic> json) =>
@@ -152,6 +168,10 @@ class SearchLeadStatusModel {
         isLinkForm: json["Is_Link_Form"]?.toInt() ?? json["is_link_form"]?.toInt() ?? 0,
         formId: json["Form_Id"]?.toInt() ?? json["form_id"]?.toInt() ?? 0,
         formName: json["Form_Name"]?.toString() ?? json["form_name"]?.toString() ?? "",
+        departmentId: json["Department_Id"]?.toInt() ?? json["department_id"]?.toInt() ?? 0,
+        departmentName: json["Department_Name"]?.toString() ?? json["department_name"]?.toString() ?? "",
+        userId: json["User_Id"]?.toInt() ?? json["user_id"]?.toInt() ?? 0,
+        userName: json["User_Name"]?.toString() ?? json["user_name"]?.toString() ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -184,5 +204,9 @@ class SearchLeadStatusModel {
         "Is_Link_Form": isLinkForm,
         "Form_Id": formId,
         "Form_Name": formName,
+        "Department_Id": departmentId,
+        "Department_Name": departmentName,
+        "User_Id": userId,
+        "User_Name": userName,
       };
 }
