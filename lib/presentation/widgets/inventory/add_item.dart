@@ -112,7 +112,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
 
       settingsProvider.searchCategoryApi('', context);
       settingsProvider.searchUnitApi('', context);
-      expenseProvider.searchItemDropdownList(context: context);
+      // expenseProvider.searchItemDropdownList(context: context);
+      expenseProvider.searchItemTypeDropdownList(context: context);
       expenseProvider.cgstController.text = "9";
       expenseProvider.sgstController.text = "9";
       expenseProvider.igstController.text = "18";
@@ -133,9 +134,12 @@ class _AddItemWidgetState extends State<AddItemWidget> {
         expenseProvider.setItemUnit(widget.item!.unitId);
         expenseProvider
             .toggleCheckbox(widget.item!.serviceCheckbox == 1 ? true : false);
-
-        expenseProvider.togglePrimaryCheckbox(
-            widget.item!.primaryCheckBox == 1 ? true : false);
+        expenseProvider.selectedItemTypeId =
+            widget.item!.primaryCheckBox; // for item type
+        expenseProvider.searchItemDropdownList(
+            context: context, itemTypeId: expenseProvider.selectedItemTypeId);
+        // expenseProvider.togglePrimaryCheckbox(
+        //     widget.item!.primaryCheckBox == 1 ? true : false);
       }
     });
   }
@@ -381,25 +385,43 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      CheckboxListTile(
-
-
-                        title: Text(
-                          'Add Item Materials',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF1E293B),
-                          ),
-                        ),
-                        value: expenseProvider.isPrimaryItem == 1,
-                        checkColor: Colors.white,
-                        contentPadding: EdgeInsets.zero,
-                        onChanged: (p0) {
-                          expenseProvider.togglePrimaryCheckbox(p0 ?? false);
+                      // CheckboxListTile(
+                      //   title: Text(
+                      //     'Add Item Materials',
+                      //     style: GoogleFonts.plusJakartaSans(
+                      //       fontSize: 16,
+                      //       fontWeight: FontWeight.w700,
+                      //       color: const Color(0xFF1E293B),
+                      //     ),
+                      //   ),
+                      //   value: expenseProvider.isPrimaryItem == 1,
+                      //   checkColor: Colors.white,
+                      //   contentPadding: EdgeInsets.zero,
+                      //   onChanged: (p0) {
+                      //     expenseProvider.togglePrimaryCheckbox(p0 ?? false);
+                      //   },
+                      // ),
+                      CommonDropdown(
+                        hintText: "Select Item Type",
+                        items: expenseProvider.itemTypeDropdownList
+                            .map((status) => DropdownItem<int>(
+                                  id: status.itemTypeId,
+                                  name: status.itemTypeName,
+                                ))
+                            .toList(),
+                        controller: expenseProvider.itemTypeController,
+                        onItemSelected: (selectedItem) {
+                          final selectedData =
+                              expenseProvider.itemTypeDropdownList.firstWhere(
+                                  (item) => item.itemTypeId == selectedItem);
+                          expenseProvider.selectedItemTypeId =
+                              selectedData.itemTypeId;
+                          expenseProvider.searchItemDropdownList(
+                              context: context, itemTypeId: selectedItem);
                         },
+                        selectedValue: expenseProvider.selectedItemTypeId,
                       ),
-                      if (expenseProvider.isPrimaryItem == 1) ...[
+                      if (expenseProvider.selectedItemTypeId != 0) ...[
                         const SizedBox(height: 32),
                         _buildSectionTitle('Item Material'),
                         const SizedBox(height: 16),
@@ -408,7 +430,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                           decoration: BoxDecoration(
                             color: const Color(0xFFF8FAFC),
                             borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                            border: Border.all(
+                                color: const Color(0xFFCBD5E1), width: 1.0),
                           ),
                           child: Column(
                             children: [
@@ -424,7 +447,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                   //     labelText: '',
                                   //   ),
                                   // ),
-                                   Expanded(
+                                  Expanded(
                                     child: CommonDropdown(
                                       hintText: "Select Material",
                                       items: expenseProvider.itemDropdownList
@@ -492,7 +515,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               const SizedBox(height: 12),
                               Row(
                                 children: [
-                                   Expanded(
+                                  Expanded(
                                     child: CustomTextField(
                                       readOnly: false,
                                       height: 56,
@@ -570,8 +593,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4)),
+                                        borderRadius: BorderRadius.circular(4)),
                                   ),
                                 ),
                               ),
@@ -615,9 +637,11 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                                 const SizedBox(height: 4),
                                                 Text(
                                                   'Qty: ${item.quantity}',
-                                                  style: GoogleFonts.plusJakartaSans(
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
                                                     fontSize: 12,
-                                                    color: const Color(0xFF64748B),
+                                                    color:
+                                                        const Color(0xFF64748B),
                                                   ),
                                                 ),
                                                 const SizedBox(height: 4),
@@ -741,8 +765,6 @@ class _AddItemWidgetState extends State<AddItemWidget> {
       ),
     );
   }
-
-
 
   Widget _buildSectionTitle(String title) {
     return Text(

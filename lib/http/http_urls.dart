@@ -416,4 +416,5 @@ class HttpUrls {
   static String getTransferStatusById = "status/Get_Transfer_Status_By_Id";
   static String getCustomerOutstandingSummary =
       "lead/Get_Customer_Outstanding_Summary";
+  static String getItemTypeDropdown = "item/Get_Item_Type_Dropdown";
 }

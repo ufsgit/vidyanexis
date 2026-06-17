@@ -16,6 +16,7 @@ import 'package:vidyanexis/controller/models/expense_type_model.dart';
 import 'package:vidyanexis/controller/models/item_list_model.dart';
 import 'package:vidyanexis/controller/models/item_lists_model.dart';
 import 'package:vidyanexis/controller/models/item_settings_model.dart';
+import 'package:vidyanexis/controller/models/item_type_model.dart';
 import 'package:vidyanexis/controller/models/purchase_item_model.dart';
 import 'package:vidyanexis/controller/models/purchase_model.dart';
 import 'package:vidyanexis/controller/models/sales_item_model.dart';
@@ -100,11 +101,14 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController itemKindsController = TextEditingController();
   final TextEditingController itemModelController = TextEditingController();
   // Price range text fields
-  final TextEditingController priceRangeFromController = TextEditingController();
+  final TextEditingController priceRangeFromController =
+      TextEditingController();
   final TextEditingController priceRangeToController = TextEditingController();
   // Material price range
-  final TextEditingController materialPriceFromController = TextEditingController();
-  final TextEditingController materialPriceToController = TextEditingController();
+  final TextEditingController materialPriceFromController =
+      TextEditingController();
+  final TextEditingController materialPriceToController =
+      TextEditingController();
   List<ItemSettings> _items = [];
   List<ItemSettings> get items => _items;
   List<ItemSettings> _RealItems = [];
@@ -120,6 +124,16 @@ class ExpenseProvider extends ChangeNotifier {
 
   List<ItemListModel> _itemDropdownList = [];
   List<ItemListModel> get itemDropdownList => _itemDropdownList;
+
+  List<ItemTypeModel> _itemTypeDropdownList = [];
+  List<ItemTypeModel> get itemTypeDropdownList => _itemTypeDropdownList;
+  TextEditingController itemTypeController = TextEditingController();
+  int _selectedItemTypeId = 0;
+  int get selectedItemTypeId => _selectedItemTypeId;
+  set selectedItemTypeId(int id) {
+    _selectedItemTypeId = id;
+    notifyListeners();
+  }
 
   //stock
   List<StockEntry> _stockList = [];
@@ -750,10 +764,10 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchItemDropdownList({required BuildContext context}) async {
+  Future<void> searchItemDropdownList({required BuildContext context, required int itemTypeId}) async {
     try {
       final response =
-          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getItemsDropdown);
+          await HttpRequest.httpGetRequest(endPoint: '${HttpUrls.getItemsDropdown}/$itemTypeId');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -762,6 +776,35 @@ class ExpenseProvider extends ChangeNotifier {
           final dataitem = data['data'];
           _itemDropdownList = (dataitem as List<dynamic>)
               .map((item) => ItemListModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<void> searchItemTypeDropdownList(
+      {required BuildContext context}) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getItemTypeDropdown);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final dataitem = data['data'];
+          _itemTypeDropdownList = (dataitem as List<dynamic>)
+              .map((item) => ItemTypeModel.fromJson(item))
               .toList();
           notifyListeners();
         }
@@ -1123,8 +1166,8 @@ class ExpenseProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getAllItemsSales);
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getAllItemsSales);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1439,6 +1482,8 @@ class ExpenseProvider extends ChangeNotifier {
     priceRangeFromController.clear();
     priceRangeToController.clear();
     items.clear();
+    selectedItemTypeId = 0;
+    itemTypeController.clear();
     clearItemFields();
   }
   //-----------------------------------------
@@ -1829,7 +1874,7 @@ class ExpenseProvider extends ChangeNotifier {
             "gst": gstController.text,
             "igst": igstController.text,
             "serviceCheckbox": _isChecked,
-            "Is_Primary": _isPrimaryItem,
+            "Is_Primary": selectedItemTypeId,
             "material_checkbox": _isPrimaryItem,
             "HSNCode": itemHSNController.text.toString(),
             "Price_Range_From": priceRangeFromController.text.toString(),
