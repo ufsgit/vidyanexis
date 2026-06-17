@@ -38,6 +38,7 @@ class SearchLeadStatusModel {
   int? isLinkForm;
   int? formId;
   String? formName;
+  int? isAmount;
   int? departmentId;
   String? departmentName;
   int? userId;
@@ -67,6 +68,7 @@ class SearchLeadStatusModel {
     this.isLinkForm,
     this.formId,
     this.formName,
+    this.isAmount,
     this.departmentId,
     this.departmentName,
     this.userId,
@@ -97,6 +99,7 @@ class SearchLeadStatusModel {
     int? isLinkForm,
     int? formId,
     String? formName,
+    int? isAmount,
     int? departmentId,
     String? departmentName,
     int? userId,
@@ -126,6 +129,7 @@ class SearchLeadStatusModel {
         isLinkForm: isLinkForm ?? this.isLinkForm,
         formId: formId ?? this.formId,
         formName: formName ?? this.formName,
+        isAmount: isAmount ?? this.isAmount,
         departmentId: departmentId ?? this.departmentId,
         departmentName: departmentName ?? this.departmentName,
         userId: userId ?? this.userId,
@@ -168,6 +172,7 @@ class SearchLeadStatusModel {
         isLinkForm: json["Is_Link_Form"]?.toInt() ?? json["is_link_form"]?.toInt() ?? 0,
         formId: json["Form_Id"]?.toInt() ?? json["form_id"]?.toInt() ?? 0,
         formName: json["Form_Name"]?.toString() ?? json["form_name"]?.toString() ?? "",
+        isAmount: json["Is_Amount"]?.toInt() ?? json["is_amount"]?.toInt() ?? json["Is_amount"]?.toInt() ?? json["isAmount"]?.toInt() ?? 0,
         departmentId: json["Department_Id"]?.toInt() ?? json["department_id"]?.toInt() ?? 0,
         departmentName: json["Department_Name"]?.toString() ?? json["department_name"]?.toString() ?? "",
         userId: json["User_Id"]?.toInt() ?? json["user_id"]?.toInt() ?? 0,
@@ -204,6 +209,7 @@ class SearchLeadStatusModel {
         "Is_Link_Form": isLinkForm,
         "Form_Id": formId,
         "Form_Name": formName,
+        "Is_Amount": isAmount,
         "Department_Id": departmentId,
         "Department_Name": departmentName,
         "User_Id": userId,

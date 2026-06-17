@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
@@ -24,10 +25,12 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 class AddFollowupDialog extends StatefulWidget {
   final String customerName;
   final String statusId;
+  final String? amount;
   const AddFollowupDialog({
     super.key,
     required this.customerName,
     this.statusId = '0',
+    this.amount,
   });
 
   @override
@@ -43,12 +46,36 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
   bool showTransferStatus = false;
   bool showTime = false;
   bool showTransfer = false;
+  bool showAmountForMain = false;
+  bool showAmountForSecondary = false;
+  bool get showAmount => showAmountForMain || showAmountForSecondary;
+  late TextEditingController amountController;
+
+  @override
+  void dispose() {
+    _leadNameFocusNode.dispose();
+    statusNode.dispose();
+    staffNode.dispose();
+    amountController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     _leadNameFocusNode = FocusNode();
     statusNode = FocusNode();
     staffNode = FocusNode();
+    
+    double? parsedAmount = double.tryParse(widget.amount ?? '');
+    if (parsedAmount != null && parsedAmount > 0) {
+      if (parsedAmount == parsedAmount.toInt()) {
+        amountController = TextEditingController(text: parsedAmount.toInt().toString());
+      } else {
+        amountController = TextEditingController(text: parsedAmount.toString());
+      }
+    } else {
+      amountController = TextEditingController();
+    }
     final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
@@ -89,11 +116,10 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       if (targetStatusId != '0' && targetStatusId != 'null') {
         final parentStatuses =
             await settingsProvider.getStatusById(context, targetStatusId);
+        bool parentHasAmount = parentStatuses.isNotEmpty && parentStatuses.first.isAmount == 1;
         if (mounted) {
           setState(() {
-            // showTransferStatus = parentStatuses.first.isTransferStatus == 1;
-            // showTime = parentStatuses.first.isTime == 1;
-            // showTransfer = parentStatuses.first.isTransfer == 1;
+            showAmountForMain = parentHasAmount;
             _filteredFollowUpStatuses = parentStatuses.isNotEmpty
                 ? parentStatuses.first.subStatuses
                         ?.map((s) => SearchLeadStatusModel(
@@ -103,15 +129,6 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                         .toList() ??
                     []
                 : [];
-            // _filteredTransferStatuses = parentStatuses.isNotEmpty
-            //     ? parentStatuses.first.transferStatuses
-            //             ?.map((s) => SearchLeadStatusModel(
-            //                   statusId: s.subStatusId,
-            //                   statusName: s.subStatusName,
-            //                 ))
-            //             .toList() ??
-            //         []
-            //     : [];
           });
         }
 
@@ -119,12 +136,14 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
         if (targetStatusId != '0' && targetStatusId != 'null') {
           final transferStatusesData = await settingsProvider
               .getTransferStatusById(context, targetStatusId);
+          bool transferHasAmount = transferStatusesData.isNotEmpty && transferStatusesData.first.isAmount == 1;
           if (mounted) {
             setState(() {
               showTransferStatus =
                   transferStatusesData.first.isTransferStatus == 1;
               showTime = transferStatusesData.first.isTime == 1;
               showTransfer = transferStatusesData.first.isTransfer == 1;
+              showAmountForSecondary = transferHasAmount;
               _filteredTransferStatuses = transferStatusesData.isNotEmpty
                   ? transferStatusesData.first.transferStatuses
                           ?.map((s) => SearchLeadStatusModel(
@@ -341,6 +360,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       custId: int.parse(leadProvider.customerId.toString()),
       followUp: leadProvider.nextFollowUpDateController.text.isNotEmpty ? 1 : 0,
       message: leadProvider.messageController.text,
+      amount: amountController.text,
       audioFiles: uploadedAudioFiles,
     );
 
@@ -452,27 +472,36 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
 
             controller: leadProvider.statusController,
 
-            onItemSelected: (selectedId) {
-              setState(() async {
-                dropDownProvider.setSelectedStatusId(selectedId);
+            onItemSelected: (selectedId) async {
+              dropDownProvider.setSelectedStatusId(selectedId);
 
+              if (selectedId != null) {
                 final selectedItem = _filteredFollowUpStatuses.firstWhere(
                   (status) => status.statusId == selectedId,
+                  orElse: () => SearchLeadStatusModel(statusId: selectedId, statusName: ''),
                 );
 
                 // ✅ Sync controller text
                 leadProvider.statusController.text =
                     selectedItem.statusName ?? '';
 
-                //transfer status
+                // Check if selected status has isAmount == 1
+                final statusData = await settingsProvider
+                    .getStatusById(context, selectedId.toString());
                 final transferStatusesData = await settingsProvider
                     .getTransferStatusById(context, selectedId.toString());
+
+                bool mainHasAmount = (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
+                                     (transferStatusesData.isNotEmpty && transferStatusesData.first.isAmount == 1);
+
                 if (mounted) {
                   setState(() {
-                    showTransferStatus =
+                    showAmountForMain = mainHasAmount;
+                    showAmountForSecondary = false; // reset secondary when main changes
+                    showTransferStatus = transferStatusesData.isNotEmpty &&
                         transferStatusesData.first.isTransferStatus == 1;
-                    showTime = transferStatusesData.first.isTime == 1;
-                    showTransfer = transferStatusesData.first.isTransfer == 1;
+                    showTime = transferStatusesData.isNotEmpty && transferStatusesData.first.isTime == 1;
+                    showTransfer = transferStatusesData.isNotEmpty && transferStatusesData.first.isTransfer == 1;
                     _filteredTransferStatuses = transferStatusesData.isNotEmpty
                         ? transferStatusesData.first.transferStatuses
                                 ?.map((s) => SearchLeadStatusModel(
@@ -484,44 +513,12 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                         : [];
                   });
                 }
-
-                // ✅ Refresh custom fields
-                // leadProvider.customFieldLeadStatusList.clear();
-                // leadProvider.getCustomFieldsByEnquirySourceId(
-                //   context,
-                //   leadId: leadProvider.customerId,
-                //   statusId: selectedId,
-                // );
-              });
+              }
             },
 
             // ✅ Only set value if it exists EXACTLY ONCE
             selectedValue: dropDownProvider.selectedStatusId ?? 0,
           ),
-          // CommonDropdown<int>(
-          //   hintText: 'Follow-up Status*',
-          //   items: dropDownProvider.followUpData
-          //       .map((status) => DropdownItem<int>(
-          //             id: status.statusId ?? 0,
-          //             name: status.statusName ?? '',
-          //           ))
-          //       .toList(),
-          //   controller: leadProvider.statusController,
-          //   onItemSelected: (selectedId) {
-          //     setState(() {
-          //       dropDownProvider.setSelectedStatusId(selectedId);
-          //       final selectedItem = dropDownProvider.followUpData.firstWhere(
-          //         (status) => status.statusId == selectedId,
-          //       );
-          //       leadProvider.customFieldList.clear();
-          //       leadProvider.getCustomFieldsByStatusId(context,
-          //           leadId: leadProvider.customerId, statusId: selectedId);
-          //       leadProvider.statusController.text =
-          //           selectedItem.statusName ?? '';
-          //     });
-          //   },
-          //   selectedValue: dropDownProvider.selectedStatusId,
-          // ),
           if (showTransferStatus) const SizedBox(height: 16),
           if (showTransferStatus)
             CommonDropdown<int>(
@@ -538,23 +535,53 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
 
               controller: leadProvider.transferStatusController,
 
-              onItemSelected: (selectedId) {
-                setState(() {
-                  dropDownProvider.setSelectedTransferStatusId(selectedId);
+              onItemSelected: (selectedId) async {
+                dropDownProvider.setSelectedTransferStatusId(selectedId);
 
+                if (selectedId != null) {
                   final selectedItem = _filteredTransferStatuses.firstWhere(
                     (status) => status.statusId == selectedId,
+                    orElse: () => SearchLeadStatusModel(statusId: selectedId, statusName: ''),
                   );
 
                   // ✅ Sync controller text
                   leadProvider.transferStatusController.text =
                       selectedItem.statusName ?? '';
-                });
+
+                  // Check if secondary status requires amount
+                  final statusData = await settingsProvider
+                      .getStatusById(context, selectedId.toString());
+                  final transferStatusesData = await settingsProvider
+                      .getTransferStatusById(context, selectedId.toString());
+
+                  bool secondaryHasAmount = (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
+                                           (transferStatusesData.isNotEmpty && transferStatusesData.first.isAmount == 1);
+
+                  if (mounted) {
+                    setState(() {
+                      showAmountForSecondary = secondaryHasAmount;
+                    });
+                  }
+                }
               },
 
               // ✅ Only set value if it exists EXACTLY ONCE
               selectedValue: dropDownProvider.selectedTransferStatusId ?? 0,
             ),
+          if (showAmount) ...[
+            const SizedBox(height: 16),
+            CustomTextField(
+              readOnly: false,
+              height: 54,
+              controller: amountController,
+              hintText: 'Amount',
+              labelText: '',
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*')),
+              ],
+            ),
+          ],
           const SizedBox(height: 16),
 
           if (showTransfer) ...[

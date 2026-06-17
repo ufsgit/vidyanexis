@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/enums.dart';
@@ -19,8 +20,10 @@ import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
 class AddFollowupDrawerWidget extends StatefulWidget {
+  final String? amount;
   const AddFollowupDrawerWidget({
     super.key,
+    this.amount,
   });
 
   @override
@@ -30,6 +33,8 @@ class AddFollowupDrawerWidget extends StatefulWidget {
 
 class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
   late FocusNode _leadNameFocusNode;
+  bool showAmount = false;
+  late TextEditingController amountController;
 
   @override
   void initState() {
@@ -43,6 +48,18 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
         .clear(); // Clear remarks textfield by default
 
     _leadNameFocusNode = FocusNode();
+
+    double? parsedAmount = double.tryParse(widget.amount ?? '');
+    if (parsedAmount != null && parsedAmount > 0) {
+      if (parsedAmount == parsedAmount.toInt()) {
+        amountController =
+            TextEditingController(text: parsedAmount.toInt().toString());
+      } else {
+        amountController = TextEditingController(text: parsedAmount.toString());
+      }
+    } else {
+      amountController = TextEditingController();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _leadNameFocusNode.requestFocus();
       leadProvider.getCustomFieldsByStatusId(
@@ -50,6 +67,17 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
         statusId: dropDownProvider.selectedStatusId ?? 0,
         leadId: leadProvider.customerId,
       );
+      final selectedId = dropDownProvider.selectedStatusId;
+      if (selectedId != null && selectedId != 0) {
+        final selectedItem = dropDownProvider.followUpData.firstWhere(
+          (status) => status.statusId == selectedId,
+          orElse: () =>
+              SearchLeadStatusModel(statusId: selectedId, statusName: ''),
+        );
+        setState(() {
+          showAmount = selectedItem.isAmount == 1;
+        });
+      }
     });
     super.initState();
   }
@@ -57,6 +85,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
   @override
   void dispose() {
     _leadNameFocusNode.dispose();
+    amountController.dispose();
     super.dispose();
   }
 
@@ -102,15 +131,34 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                     final selectedItem =
                         dropDownProvider.followUpData.firstWhere(
                       (status) => status.statusId == selectedId,
+                      orElse: () => SearchLeadStatusModel(
+                          statusId: selectedId, statusName: ''),
                     );
                     leadProvider.customFieldList.clear();
                     leadProvider.getCustomFieldsByStatusId(context,
                         leadId: leadProvider.customerId, statusId: selectedId);
                     leadProvider.statusController.text =
                         selectedItem.statusName ?? '';
+                    setState(() {
+                      showAmount = selectedItem.isAmount == 1;
+                    });
                   },
                   selectedValue: dropDownProvider.selectedStatusId,
                 ),
+                if (showAmount) ...[
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller: amountController,
+                    hintText: 'Amount',
+                    labelText: '',
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*')),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 16),
 
                 Row(
@@ -426,6 +474,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
       custId: int.parse(leadProvider.customerId.toString()),
       followUp: leadProvider.nextFollowUpDateController.text.isNotEmpty ? 1 : 0,
       message: leadProvider.messageController.text,
+      amount: amountController.text,
       audioFiles: uploadedAudioFiles,
     );
 

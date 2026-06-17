@@ -243,6 +243,8 @@ class _LeadDataPageState extends State<LeadDataPage> {
       context: context,
       builder: (BuildContext context) => AddFollowupDialog(
         customerName: lead.customerName,
+        statusId: lead.statusId.toString(),
+        amount: lead.amount,
       ),
     );
     await _fetchLeads();

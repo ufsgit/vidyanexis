@@ -259,6 +259,8 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                           builder: (context) {
                             return AddFollowupDialog(
                               customerName: widget.lead?.customerName ?? '',
+                              statusId: widget.lead?.statusId.toString() ?? '0',
+                              amount: widget.lead?.amount,
                             );
                           },
                         ));
