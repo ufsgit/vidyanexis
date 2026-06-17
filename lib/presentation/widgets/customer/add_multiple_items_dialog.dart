@@ -166,7 +166,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               decoration: BoxDecoration(
                 color: AppColors.primaryBlue.withAlpha(80),
                 borderRadius: const BorderRadius.only(
@@ -193,7 +193,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             ),
             const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
                   Expanded(
@@ -245,7 +245,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             ),
             const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+              padding: const EdgeInsets.fromLTRB(15, 10, 10, 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -292,7 +292,8 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                             children: [
                               // Main Item Header (Blue accent)
                               Container(
-                                padding: const EdgeInsets.all(18),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 5),
                                 decoration: BoxDecoration(
                                   color: AppColors.primaryBlue.withAlpha(50),
                                 ),
@@ -315,6 +316,10 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                         textAlign: TextAlign.center,
                                         decoration: InputDecoration(
                                           labelText: 'Qty',
+                                          isDense: true,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 8),
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(8),
@@ -353,19 +358,21 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                               if (item.materials.isNotEmpty)
                                 Container(
                                   color: Colors.grey[100],
-                                  padding: const EdgeInsets.all(18),
+                                  padding: const EdgeInsets.all(10),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        'Materials',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15.5,
+                                      Center(
+                                        child: const Text(
+                                          'Materials',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15.5,
+                                          ),
                                         ),
                                       ),
-                                      const SizedBox(height: 12),
+                                      const SizedBox(height: 10),
                                       ...item.materials
                                           .asMap()
                                           .entries
@@ -397,9 +404,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                         .toStringAsFixed(2)));
                                         return Padding(
                                           padding:
-                                              const EdgeInsets.only(bottom: 12),
+                                              const EdgeInsets.only(bottom: 10),
                                           child: Container(
-                                            padding: const EdgeInsets.all(12),
+                                            padding: const EdgeInsets.all(10),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
