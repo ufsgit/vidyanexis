@@ -417,4 +417,5 @@ class HttpUrls {
   static String getCustomerOutstandingSummary =
       "lead/Get_Customer_Outstanding_Summary";
   static String getItemTypeDropdown = "item/Get_Item_Type_Dropdown";
+  static String followupAmountReport = "followup/Followup_Amount_Report";
 }

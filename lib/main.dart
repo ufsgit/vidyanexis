@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/check_in_out_provider.dart';
 import 'package:vidyanexis/controller/followup_reports_provider.dart';
+import 'package:vidyanexis/controller/followup_amount_report_provider.dart';
 import 'package:vidyanexis/controller/form_builder_provider.dart';
 import 'package:vidyanexis/controller/invoice_tab_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
@@ -135,6 +136,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => FeedbackReportProvider()),
         ChangeNotifierProvider(create: (context) => WarrentyReportProvider()),
         ChangeNotifierProvider(create: (context) => FollowupReportsProvider()),
+        ChangeNotifierProvider(
+            create: (context) => FollowupAmountReportProvider()),
         ChangeNotifierProvider(create: (context) => QuotationReportProvider()),
         ChangeNotifierProvider(
             create: (_) => SettingsProvider()..getCompanyDetails()),

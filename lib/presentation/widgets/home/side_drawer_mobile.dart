@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/presentation/pages/reports/attendance_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_report_mobile.dart';
+import 'package:vidyanexis/presentation/pages/reports/followup_amount_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report_mobile.dart';
@@ -113,6 +114,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Check-in Reports', 'page': const LeadCheckInReportScreen()},
       if (settingsProvider.menuIsViewMap[115].toString() == '1')
         {'title': 'Followup Reports', 'page': const FollowupReportMobile()},
+      if (settingsProvider.menuIsViewMap[153].toString() == '1')
+        {'title': 'Followup Amount Report', 'page': const FollowupAmountReportPage()},
       if (settingsProvider.menuIsViewMap[118].toString() == '1')
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')

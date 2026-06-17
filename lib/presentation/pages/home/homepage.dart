@@ -7,6 +7,7 @@ import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_reports.dart';
+import 'package:vidyanexis/presentation/pages/reports/followup_amount_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
@@ -171,8 +172,8 @@ class _HomePageState extends State<HomePage> {
               },
               child: const Text(
                 'Confirm',
-                style: TextStyle(
-                    color: Colors.red, fontWeight: FontWeight.w500),
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
               ),
             ),
           ],
@@ -393,6 +394,12 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: FollowupReports()),
         ),
+      if (settingsProvider.menuIsViewMap[153].toString() == '1')
+        SidebarOption(
+          title: 'Followup Amount Report',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: FollowupAmountReportPage()),
+        ),
       if (settingsProvider.menuIsViewMap[118].toString() == '1')
         SidebarOption(
           title: 'Quotation Reports',
@@ -465,7 +472,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: OutstandingReportPage()),
         ),
-      if (settingsProvider.menuIsViewMap[152].toString() == '1' || kDebugMode)
+      if (settingsProvider.menuIsViewMap[152].toString() == '1')
         SidebarOption(
           title: 'Customer Outstanding Reports',
           iconPath: 'assets/images/Reports.svg',
@@ -486,7 +493,9 @@ class _HomePageState extends State<HomePage> {
         SidebarOption(
           title: 'Sales Reports',
           iconPath: 'assets/images/Reports.svg',
-          baseContent: AppStyles.isWebScreen(context) ? const Center(child: SalesReportScreen()) : const SalesReportScreenPhone(),
+          baseContent: AppStyles.isWebScreen(context)
+              ? const Center(child: SalesReportScreen())
+              : const SalesReportScreenPhone(),
         ),
     ];
 
@@ -634,8 +643,7 @@ class _HomePageState extends State<HomePage> {
                               Icon(
                                 Icons.keyboard_arrow_down_rounded,
                                 size: 16,
-                                color: AppColors.textBlue800
-                                    .withOpacity(0.7),
+                                color: AppColors.textBlue800.withOpacity(0.7),
                               ),
                             ],
                           ),
@@ -643,7 +651,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   },
-
                 ),
                 Consumer<NotificationProvider>(
                   builder: (context, notificationProvider, child) {
@@ -747,8 +754,7 @@ class _HomePageState extends State<HomePage> {
             child: Consumer<SidebarProvider>(
               builder: (context, provider, child) {
                 // Ensure sidebarOptions is not empty before accessing it
-                if (sidebarOptions.isEmpty ||
-                    provider.selectedIndex >= sidebarOptions.length) {
+                if (sidebarOptions.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 // Safely find the selected option with error handling
@@ -759,13 +765,11 @@ class _HomePageState extends State<HomePage> {
                       .where((option) => option.title == provider.selectedName)
                       .toList();
 
-                  if (matchingOptions.isEmpty) {
-                    // If no matching option found, show empty container
-                    return Center(
-                        child: Container(child: CircularProgressIndicator()));
-                  } else {
-                    // Use the first matching option
+                  if (matchingOptions.isNotEmpty) {
                     selectedOption = matchingOptions.first;
+                  } else if (provider.selectedIndex < sidebarOptions.length) {
+                    // Fallback to index if name match fails
+                    selectedOption = sidebarOptions[provider.selectedIndex];
                   }
                 } catch (e) {
                   // If any error occurs, show empty container
@@ -782,9 +786,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
                 }
-                // Get the base content for the selected index
-                final baseContent =
-                    sidebarOptions[provider.selectedIndex].baseContent;
+
+                if (selectedOption == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                // Get the base content for the selected option
+                final baseContent = selectedOption.baseContent;
 
                 // Determine the overlay content based on the selected index and state flags
                 final overlayContent =
