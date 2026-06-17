@@ -1248,6 +1248,7 @@ class LeadsProvider extends ChangeNotifier {
     required int leadtypeId,
     required String leadtypeName,
     int? locationId,
+    String amount = '0',
   }) async {
     try {
       Loader.showLoader(context);
@@ -1438,6 +1439,7 @@ class LeadsProvider extends ChangeNotifier {
 
           // "FollowUp": followUp,
           "Remark": remark,
+          "amount": amount,
         }
       });
 
@@ -1509,6 +1511,7 @@ class LeadsProvider extends ChangeNotifier {
     required String branchName,
     required int departmentId,
     required String departmentName,
+    String amount = '0',
     List<Map<String, String>>? audioFiles, // Add this parameter
   }) async {
     try {
@@ -1558,8 +1561,9 @@ class LeadsProvider extends ChangeNotifier {
               "Transfer_Status_Id": transferStatusId.toString(),
               "Transfer_Status_Name": transferStatusController.text,
               "Followup_Time": followUpTimeController.text,
+              "amount": amount,
             },
-            "Customer_Id": custId
+            "Customer_Id": custId,
           });
 
       if (response != null && response.statusCode == 200) {

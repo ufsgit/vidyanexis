@@ -38,6 +38,7 @@ class SearchLeadStatusModel {
   int? isLinkForm;
   int? formId;
   String? formName;
+  int? isAmount;
 
   SearchLeadStatusModel({
     this.statusId,
@@ -63,6 +64,7 @@ class SearchLeadStatusModel {
     this.isLinkForm,
     this.formId,
     this.formName,
+    this.isAmount,
   });
 
   SearchLeadStatusModel copyWith({
@@ -89,6 +91,7 @@ class SearchLeadStatusModel {
     int? isLinkForm,
     int? formId,
     String? formName,
+    int? isAmount,
   }) =>
       SearchLeadStatusModel(
         statusId: statusId ?? this.statusId,
@@ -114,6 +117,7 @@ class SearchLeadStatusModel {
         isLinkForm: isLinkForm ?? this.isLinkForm,
         formId: formId ?? this.formId,
         formName: formName ?? this.formName,
+        isAmount: isAmount ?? this.isAmount,
       );
 
   factory SearchLeadStatusModel.fromJson(Map<String, dynamic> json) =>
@@ -152,6 +156,7 @@ class SearchLeadStatusModel {
         isLinkForm: json["Is_Link_Form"]?.toInt() ?? json["is_link_form"]?.toInt() ?? 0,
         formId: json["Form_Id"]?.toInt() ?? json["form_id"]?.toInt() ?? 0,
         formName: json["Form_Name"]?.toString() ?? json["form_name"]?.toString() ?? "",
+        isAmount: json["Is_Amount"]?.toInt() ?? json["is_amount"]?.toInt() ?? json["Is_amount"]?.toInt() ?? json["isAmount"]?.toInt() ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -184,5 +189,6 @@ class SearchLeadStatusModel {
         "Is_Link_Form": isLinkForm,
         "Form_Id": formId,
         "Form_Name": formName,
+        "Is_Amount": isAmount,
       };
 }

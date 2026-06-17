@@ -2213,6 +2213,7 @@ class _LeadsPageState extends State<LeadPage> {
       builder: (BuildContext context) => AddFollowupDialog(
         customerName: lead.customerName,
         statusId: lead.statusId.toString(),
+        amount: lead.amount,
       ),
     );
   }

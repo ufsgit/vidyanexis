@@ -2753,6 +2753,7 @@ class SettingsProvider extends ChangeNotifier {
             "Is_Link_Form": _isLinkForm ? 1 : 0,
             "Form_Id": int.tryParse(_selectedFormId) ?? 0,
             "Form_Name": _selectedFormName,
+            "Is_Amount": _isAmount ? 1 : 0,
           });
 
       if (response!.statusCode == 200) {
@@ -5291,6 +5292,13 @@ class SettingsProvider extends ChangeNotifier {
   bool get isTransfer => _isTransfer;
   set isTransfer(bool value) {
     _isTransfer = value;
+    notifyListeners();
+  }
+
+  bool _isAmount = false;
+  bool get isAmount => _isAmount;
+  set isAmount(bool value) {
+    _isAmount = value;
     notifyListeners();
   }
 

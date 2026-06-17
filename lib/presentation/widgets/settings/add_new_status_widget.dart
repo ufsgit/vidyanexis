@@ -508,11 +508,12 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.isTime = widget.data!.isTime == 1;
         settingsProvider.isTransferStatus = widget.data!.isTransferStatus == 1;
         settingsProvider.isSendUser = widget.data!.isSendUser == 1;
-        settingsProvider.templateIdController.text = widget.data!.templateId ?? "";
+        settingsProvider.templateIdController.text =
+            widget.data!.templateId ?? "";
         settingsProvider.isLinkForm = widget.data!.isLinkForm == 1;
+        settingsProvider.isAmount = widget.data!.isAmount == 1;
         settingsProvider.setSelectedForm(
-            widget.data!.formId?.toString() ?? "",
-            widget.data!.formName ?? "");
+            widget.data!.formId?.toString() ?? "", widget.data!.formName ?? "");
       } else {
         // INITIALIZE FOR ADD NEW STATUS
         settingsProvider.isTransfer = false;
@@ -521,6 +522,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.isSendUser = false;
         settingsProvider.templateIdController.clear();
         settingsProvider.isLinkForm = false;
+        settingsProvider.isAmount = false;
         settingsProvider.setSelectedForm("", "");
         settingsProvider.statusController.clear();
         settingsProvider.folloupController.clear();
@@ -880,7 +882,16 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                   ),
                   SizedBox(width: 10),
                   Expanded(
-                    child: const SizedBox(),
+                    child: CheckboxListTile(
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Amount',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      value: settingsProvider.isAmount,
+                      onChanged: (value) =>
+                          settingsProvider.isAmount = value ?? false,
+                    ),
                   ),
                 ],
               ),

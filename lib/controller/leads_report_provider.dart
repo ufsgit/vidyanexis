@@ -1312,6 +1312,7 @@ class LeadReportProvider extends ChangeNotifier {
     required String creName,
     required int leadtypeId,
     required String leadtypeName,
+    String amount = '0',
   }) async {
     try {
       Loader.showLoader(context);
@@ -1504,6 +1505,7 @@ class LeadReportProvider extends ChangeNotifier {
 
               // "FollowUp": followUp,
               "Remark": remark,
+              "amount": amount,
             }
           });
 
@@ -1571,6 +1573,7 @@ class LeadReportProvider extends ChangeNotifier {
     required String branchName,
     required int departmentId,
     required String departmentName,
+    String amount = '0',
     List<Map<String, String>>? audioFiles, // Add this parameter
   }) async {
     try {
@@ -1613,8 +1616,9 @@ class LeadReportProvider extends ChangeNotifier {
               // Add audio files if any
               // if (audioFiles != null && audioFiles.isNotEmpty)
               "Audio_Files": audioFiles,
+              "amount": amount,
             },
-            "Customer_Id": custId
+            "Customer_Id": custId,
           });
 
       if (response!.statusCode == 200) {
