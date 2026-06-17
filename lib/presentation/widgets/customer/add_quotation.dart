@@ -2365,6 +2365,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
 
                     // Materials Section
+                    if(item.materials.isNotEmpty)
                     Container(
                       color: Colors.grey[50],
                       padding: const EdgeInsets.all(16),
