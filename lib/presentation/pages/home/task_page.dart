@@ -1392,7 +1392,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       alignment: Alignment.centerLeft,
                                       color: Colors.white),
                                   TableWidget(
-                                      flex: 2,
+                                      width: 110,
                                       title: 'Mobile No.',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
@@ -1406,7 +1406,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
-                                      flex: 2,
+                                      width: 150,
                                       title: 'Enquiry for',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
@@ -1427,14 +1427,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                           vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
-                                      flex: 1,
+                                      width: 110,
                                       title: 'Date',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
-                                      flex: 1,
+                                      width: 120,
                                       title: 'Status',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
@@ -2038,7 +2038,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 2,
+                                                  width: 110,
                                                   padding: const EdgeInsets.symmetric(
                                                       vertical: 4.0, horizontal: 12.0),
                                                   data: Tooltip(
@@ -2080,7 +2080,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 2,
+                                                  width: 150,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 4.0,
@@ -2152,7 +2152,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 1,
+                                                  width: 110,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 4.0,
@@ -2172,7 +2172,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 1,
+                                                  width: 120,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 4.0,
