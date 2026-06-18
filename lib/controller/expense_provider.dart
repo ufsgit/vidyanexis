@@ -351,6 +351,9 @@ class ExpenseProvider extends ChangeNotifier {
   DateTime? get toDateSales => _toDateSales;
   int? get selectedDateFilterIndexSales => _selectedDateFilterIndexSales;
 
+  List<ItemListModel> _multiItems = [];
+  List<ItemListModel> get multiItems => _multiItems;
+
 // Formatted dates for API
   String get formattedFromDateSales {
     if (_fromDateSales == null) return '';
@@ -2079,6 +2082,40 @@ class ExpenseProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  Future<void> getItemMultipleMaterialList(
+      int itemId, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.getMultipleItemMaterials}/$itemId',
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null && data['success'] == true) {
+          final List<dynamic> dataList = data['data'] ?? [];
+
+          _multiItems = dataList
+              .map((item) =>
+                  ItemListModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to fetch items')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Exception in getItemMultipleMaterialList: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('An error occurred while fetching materials')),
+      );
+    } finally {
+      notifyListeners();
     }
   }
 
