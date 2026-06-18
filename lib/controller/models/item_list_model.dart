@@ -1,3 +1,5 @@
+import 'package:vidyanexis/controller/models/item_settings_model.dart';
+
 class ItemListModel {
   int itemId; // ID of the item
   String itemName; // Name of the item
@@ -18,6 +20,7 @@ class ItemListModel {
   String hsnCode;
   String priceFrom;
   String priceTo;
+  List<ItemSettings> multiItemMaterials;
 
   // Constructor
   ItemListModel({
@@ -39,6 +42,7 @@ class ItemListModel {
     required this.primaryCheckBox,
     this.priceFrom = '',
     this.priceTo = '',
+    this.multiItemMaterials = const [],
   });
 
   // Factory method to create an instance from a JSON object
@@ -62,6 +66,10 @@ class ItemListModel {
       hsnCode: json['HSNCode']?.toString() ?? '',
       priceFrom: json['Price_Range_From']?.toString() ?? '',
       priceTo: json['Price_Range_To']?.toString() ?? '',
+      multiItemMaterials: (json['itemMaterials'] as List<dynamic>? ?? [])
+          .map((material) =>
+              ItemSettings.fromJson(material as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -84,6 +92,7 @@ class ItemListModel {
       'Service_CheckBox': serviceCheckbox,
       'Price_Range_From': priceFrom,
       'Price_Range_To': priceTo,
+      'itemMaterials': multiItemMaterials.map((m) => m.toJson()).toList(),
     };
   }
 }

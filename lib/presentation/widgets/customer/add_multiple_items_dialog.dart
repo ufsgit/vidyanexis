@@ -28,8 +28,11 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   String _selectedItemName = '';
   final TextEditingController _quantityController =
       TextEditingController(text: '1');
-  final Map<String, TextEditingController> _priceMaterialControllers = {};
-  final Map<String, TextEditingController> _qtyMaterialControllers = {};
+
+  // Controllers
+  final Map<int, TextEditingController> _mainQtyControllers = {};
+  final Map<String, TextEditingController> _materialPriceControllers = {};
+  final Map<String, TextEditingController> _materialQtyControllers = {};
 
   List<AddedMultiItem> _addedItems = [];
 
@@ -38,7 +41,119 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     super.initState();
     if (widget.isEdit && widget.initialItems != null) {
       _addedItems = List.from(widget.initialItems!);
+      _initializeControllersForEdit();
     }
+  }
+
+  void _initializeControllersForEdit() {
+    for (int i = 0; i < _addedItems.length; i++) {
+      final item = _addedItems[i];
+      _mainQtyControllers[i] =
+          TextEditingController(text: item.quantity.toStringAsFixed(0));
+
+      for (int j = 0; j < item.materials.length; j++) {
+        final mat = item.materials[j];
+        final key = '${i}_$j';
+        _materialPriceControllers[key] =
+            TextEditingController(text: mat.price.toStringAsFixed(2));
+        _materialQtyControllers[key] =
+            TextEditingController(text: mat.quantity.toStringAsFixed(2));
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    for (var c in _mainQtyControllers.values) {
+      c.dispose();
+    }
+    for (var c in _materialPriceControllers.values) {
+      c.dispose();
+    }
+    for (var c in _materialQtyControllers.values) {
+      c.dispose();
+    }
+    _quantityController.dispose();
+    super.dispose();
+  }
+
+  // ================== Controller Getters ==================
+  TextEditingController _getMainQtyController(int index, double value) {
+    return _mainQtyControllers.putIfAbsent(
+        index, () => TextEditingController(text: value.toStringAsFixed(0)));
+  }
+
+  TextEditingController _getMaterialPriceController(
+      int itemIndex, int matIndex, double value) {
+    final key = '${itemIndex}_$matIndex';
+    return _materialPriceControllers.putIfAbsent(
+        key, () => TextEditingController(text: value.toStringAsFixed(2)));
+  }
+
+  TextEditingController _getMaterialQtyController(
+      int itemIndex, int matIndex, double value) {
+    final key = '${itemIndex}_$matIndex';
+    return _materialQtyControllers.putIfAbsent(
+        key, () => TextEditingController(text: value.toStringAsFixed(2)));
+  }
+
+  // ================== Update Methods ==================
+  void _updateMainItemQuantity(int index, String val) {
+    final qty = double.tryParse(val) ?? 0.0;
+    if (qty <= 0) return;
+
+    setState(() {
+      final item = _addedItems[index];
+      final oldQty = item.quantity;
+      item.quantity = qty;
+
+      // Update materials proportionally
+      for (int matIndex = 0; matIndex < item.materials.length; matIndex++) {
+        final mat = item.materials[matIndex];
+        mat.quantity = (mat.quantity / oldQty) * qty;
+        mat.amount = mat.price * mat.quantity;
+
+        // Sync only material controllers
+        final key = '${index}_$matIndex';
+        _materialQtyControllers[key]?.text = mat.quantity.toStringAsFixed(2);
+      }
+      // Do NOT sync main controller here → prevents typing issue
+    });
+  }
+
+  void _updateMaterialPrice(int itemIndex, int matIndex, String val) {
+    final price = double.tryParse(val) ?? 0.0;
+    if (price < 0) return;
+
+    setState(() {
+      final mat = _addedItems[itemIndex].materials[matIndex];
+      mat.price = price;
+      mat.amount = price * mat.quantity;
+    });
+  }
+
+  void _updateMaterialQuantity(int itemIndex, int matIndex, String val) {
+    final qty = double.tryParse(val) ?? 0.0;
+    if (qty < 0) return;
+
+    setState(() {
+      final mat = _addedItems[itemIndex].materials[matIndex];
+      mat.quantity = qty;
+      mat.amount = qty * mat.price;
+    });
+  }
+
+  void _removeItem(int index) {
+    setState(() {
+      _mainQtyControllers.remove(index);
+      final item = _addedItems[index];
+      for (int matIndex = 0; matIndex < item.materials.length; matIndex++) {
+        final key = '${index}_$matIndex';
+        _materialPriceControllers.remove(key);
+        _materialQtyControllers.remove(key);
+      }
+      _addedItems.removeAt(index);
+    });
   }
 
   Future<void> _addItem() async {
@@ -57,73 +172,47 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
 
     final expenseProvider =
         Provider.of<ExpenseProvider>(context, listen: false);
-    await expenseProvider.getItemMaterialList(_selectedItemId!, context);
+    await expenseProvider.getItemMultipleMaterialList(
+        _selectedItemId!, context);
 
-    final materials = expenseProvider.items.map((mat) {
-      return ItemSettings(
-        subItemId: mat.subItemId,
-        itemMaterialId: mat.itemMaterialId,
-        itemMaterialName: mat.itemMaterialName,
-        quantity: mat.quantity * mainQty,
-        price: mat.price,
-        deleteStatus: mat.deleteStatus,
-        specification: mat.specification,
-        manufacture: mat.manufacture,
-        unit: mat.unit,
-        priceFrom: mat.priceFrom,
-        priceTo: mat.priceTo,
-        amount: mat.price * mat.quantity,
-      );
-    }).toList();
+    if (expenseProvider.multiItems.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('No items found')));
+      return;
+    }
 
     setState(() {
-      _addedItems.add(AddedMultiItem(
-        itemId: _selectedItemId!,
-        itemName: _selectedItemName,
-        quantity: mainQty,
-        materials: materials,
-      ));
+      for (final mainItem in expenseProvider.multiItems) {
+        final materials = mainItem.multiItemMaterials.map((mat) {
+          final scaledQty = mat.quantity * mainQty;
+          return ItemSettings(
+            subItemId: mat.subItemId,
+            itemMaterialId: mat.itemMaterialId,
+            itemMaterialName: mat.itemMaterialName,
+            quantity: scaledQty,
+            price: mat.price,
+            deleteStatus: mat.deleteStatus,
+            specification: mat.specification,
+            manufacture: mat.manufacture,
+            unit: mat.unit,
+            priceFrom: mat.priceFrom,
+            priceTo: mat.priceTo,
+            amount: mat.price * scaledQty,
+          );
+        }).toList();
+
+        _addedItems.add(AddedMultiItem(
+          itemId: mainItem.itemId,
+          itemName: mainItem.itemName,
+          quantity: mainQty,
+          materials: materials,
+        ));
+      }
 
       _selectedItemId = null;
       _selectedItemName = '';
       _quantityController.text = '1';
     });
-  }
-
-  void _updateMainItemQuantity(int index, double newMainQty) {
-    if (newMainQty <= 0) return;
-    setState(() {
-      final item = _addedItems[index];
-      final oldQty = item.quantity;
-      item.quantity = newMainQty;
-
-      for (var mat in item.materials) {
-        mat.quantity = (mat.quantity / oldQty) * newMainQty;
-        mat.amount = mat.price * mat.quantity;
-      }
-    });
-  }
-
-  void _updateMaterialQuantity(int itemIndex, int matIndex, double newQty) {
-    if (newQty <= 0) return;
-    setState(() {
-      _addedItems[itemIndex].materials[matIndex].quantity = newQty;
-      _addedItems[itemIndex].materials[matIndex].amount =
-          newQty * _addedItems[itemIndex].materials[matIndex].price;
-    });
-  }
-
-  void _updateMaterialPrice(int itemIndex, int matIndex, double newPrice) {
-    if (newPrice < 0) return;
-    setState(() {
-      _addedItems[itemIndex].materials[matIndex].price = newPrice;
-      _addedItems[itemIndex].materials[matIndex].amount =
-          newPrice * _addedItems[itemIndex].materials[matIndex].quantity;
-    });
-  }
-
-  void _removeItem(int index) {
-    setState(() => _addedItems.removeAt(index));
   }
 
   Future<void> _saveAndClose() async {
@@ -135,11 +224,8 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
 
     final customerProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
-
-    final List<Map<String, dynamic>> itemsForApi = _addedItems.map((item) {
-      return item.toJson(); // Use toJson from model
-    }).toList();
-
+    final List<Map<String, dynamic>> itemsForApi =
+        _addedItems.map((item) => item.toJson()).toList();
     customerProvider.addMultiItems(itemsForApi);
 
     final customerDetailsProvider =
@@ -165,6 +251,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
         constraints: const BoxConstraints(maxHeight: 780),
         child: Column(
           children: [
+            // Header
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               decoration: BoxDecoration(
@@ -179,19 +266,20 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                   const Icon(Icons.inventory_2,
                       color: AppColors.primaryBlue, size: 28),
                   const SizedBox(width: 12),
-                  Text(
-                    'Add Items',
-                    style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
+                  const Text('Add Items',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   const Spacer(),
                   IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context)),
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 ],
               ),
             ),
             const Divider(height: 1),
+
+            // Add new item row
             Padding(
               padding: const EdgeInsets.all(10),
               child: Row(
@@ -202,7 +290,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                       hintText: "Select Item",
                       items: expenseProvider.itemList
                           .map((e) =>
-                              DropdownItem<int>(id: e.itemId, name: e.itemName))
+                              DropdownItem(id: e.itemId, name: e.itemName))
                           .toList(),
                       onItemSelected: (id) {
                         final selected = expenseProvider.itemList
@@ -224,7 +312,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}'))
+                            RegExp(r'^\d+\.?\d{0,2}')),
                       ],
                     ),
                   ),
@@ -243,20 +331,24 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                 ],
               ),
             ),
+
             const Divider(height: 1),
+
+            // Items List Header
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 10, 10, 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Items',
-                      style: const TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.w600)),
+                  const Text('Items',
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
                   Text('${_addedItems.length} item(s)',
                       style: TextStyle(color: Colors.grey[600])),
                 ],
               ),
             ),
+
             Expanded(
               child: _addedItems.isEmpty
                   ? const Center(
@@ -277,42 +369,37 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                       itemCount: _addedItems.length,
                       itemBuilder: (context, itemIndex) {
                         final item = _addedItems[itemIndex];
-                        final mainQtyController = TextEditingController(
-                            text: item.quantity.toStringAsFixed(0));
-
                         return Card(
                           margin: const EdgeInsets.only(bottom: 16),
                           elevation: 4,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          clipBehavior:
-                              Clip.antiAlias, // Important for clean corners
+                              borderRadius: BorderRadius.circular(16)),
+                          clipBehavior: Clip.antiAlias,
                           child: Column(
                             children: [
-                              // Main Item Header (Blue accent)
+                              // Main Item Header
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 5),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryBlue.withAlpha(50),
-                                ),
+                                    color: AppColors.primaryBlue.withAlpha(50)),
                                 child: Row(
                                   children: [
                                     Expanded(
                                       child: Text(
                                         item.itemName,
                                         style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     SizedBox(
                                       width: 110,
                                       child: TextField(
-                                        controller: mainQtyController,
-                                        keyboardType: TextInputType.number,
+                                        controller: _getMainQtyController(
+                                            itemIndex, item.quantity),
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: true),
                                         textAlign: TextAlign.center,
                                         decoration: InputDecoration(
                                           labelText: 'Qty',
@@ -321,28 +408,16 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                               const EdgeInsets.symmetric(
                                                   horizontal: 8, vertical: 8),
                                           border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
                                         ),
-                                        onSubmitted: (val) {
-                                          final qty = double.tryParse(val);
-                                          if (qty != null) {
-                                            _updateMainItemQuantity(
-                                                itemIndex, qty);
-                                          }
-                                        },
-                                        onChanged: (val) {
-                                          final qty = double.tryParse(val);
-                                          if (qty != null) {
-                                            _updateMainItemQuantity(
-                                                itemIndex, qty);
-                                          }
-                                        },
                                         inputFormatters: [
                                           FilteringTextInputFormatter.allow(
-                                              RegExp(r'^\d+\.?\d{0,2}'))
+                                              RegExp(r'^\d+\.?\d{0,2}')),
                                         ],
+                                        onChanged: (val) =>
+                                            _updateMainItemQuantity(
+                                                itemIndex, val),
                                       ),
                                     ),
                                     IconButton(
@@ -354,7 +429,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                 ),
                               ),
 
-                              // Materials Section (Grey background) - Full rounded bottom
+                              // Materials
                               if (item.materials.isNotEmpty)
                                 Container(
                                   color: Colors.grey[100],
@@ -363,13 +438,12 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Center(
-                                        child: const Text(
+                                      const Center(
+                                        child: Text(
                                           'Materials',
                                           style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 15.5,
-                                          ),
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 15.5),
                                         ),
                                       ),
                                       const SizedBox(height: 10),
@@ -379,29 +453,6 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                           .map((entry) {
                                         final matIndex = entry.key;
                                         final mat = entry.value;
-
-                                        // Create unique key for each material
-                                        final priceKey =
-                                            '${itemIndex}_${matIndex}_price';
-                                        final qtyKey =
-                                            '${itemIndex}_${matIndex}_qty';
-
-                                        // Reuse or create controller once
-                                        final matPriceCtrl =
-                                            _priceMaterialControllers
-                                                .putIfAbsent(
-                                                    priceKey,
-                                                    () => TextEditingController(
-                                                        text: mat.price
-                                                            .toStringAsFixed(
-                                                                2)));
-
-                                        final matQtyCtrl =
-                                            _qtyMaterialControllers.putIfAbsent(
-                                                qtyKey,
-                                                () => TextEditingController(
-                                                    text: mat.quantity
-                                                        .toStringAsFixed(2)));
                                         return Padding(
                                           padding:
                                               const EdgeInsets.only(bottom: 10),
@@ -428,9 +479,15 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                 SizedBox(
                                                   width: 180,
                                                   child: TextField(
-                                                    controller: matPriceCtrl,
+                                                    controller:
+                                                        _getMaterialPriceController(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            mat.price),
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        const TextInputType
+                                                            .numberWithOptions(
+                                                            decimal: true),
                                                     textAlign: TextAlign.center,
                                                     decoration: InputDecoration(
                                                       labelText: 'Price',
@@ -442,45 +499,36 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                               vertical: 8),
                                                       border:
                                                           OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8)),
                                                     ),
-                                                    onSubmitted: (val) {
-                                                      final price =
-                                                          double.tryParse(val);
-                                                      if (price != null) {
-                                                        _updateMaterialPrice(
-                                                            itemIndex,
-                                                            matIndex,
-                                                            price);
-                                                      }
-                                                    },
-                                                    onChanged: (val) {
-                                                      final price =
-                                                          double.tryParse(val);
-                                                      if (price != null) {
-                                                        _updateMaterialPrice(
-                                                            itemIndex,
-                                                            matIndex,
-                                                            price);
-                                                      }
-                                                    },
                                                     inputFormatters: [
                                                       FilteringTextInputFormatter
                                                           .allow(RegExp(
-                                                              r'^\d+\.?\d{0,2}'))
+                                                              r'^\d+\.?\d{0,2}')),
                                                     ],
+                                                    onChanged: (val) =>
+                                                        _updateMaterialPrice(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            val),
                                                   ),
                                                 ),
                                                 const SizedBox(width: 8),
                                                 SizedBox(
                                                   width: 90,
                                                   child: TextField(
-                                                    controller: matQtyCtrl,
+                                                    controller:
+                                                        _getMaterialQtyController(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            mat.quantity),
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        const TextInputType
+                                                            .numberWithOptions(
+                                                            decimal: true),
                                                     textAlign: TextAlign.center,
                                                     decoration: InputDecoration(
                                                       labelText: 'Qty',
@@ -492,36 +540,21 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                               vertical: 8),
                                                       border:
                                                           OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8)),
                                                     ),
-                                                    onSubmitted: (val) {
-                                                      final qty =
-                                                          double.tryParse(val);
-                                                      if (qty != null) {
-                                                        _updateMaterialQuantity(
-                                                            itemIndex,
-                                                            matIndex,
-                                                            qty);
-                                                      }
-                                                    },
-                                                    onChanged: (val) {
-                                                      final qty =
-                                                          double.tryParse(val);
-                                                      if (qty != null) {
-                                                        _updateMaterialQuantity(
-                                                            itemIndex,
-                                                            matIndex,
-                                                            qty);
-                                                      }
-                                                    },
                                                     inputFormatters: [
                                                       FilteringTextInputFormatter
                                                           .allow(RegExp(
-                                                              r'^\d+\.?\d{0,2}'))
+                                                              r'^\d+\.?\d{0,2}')),
                                                     ],
+                                                    onChanged: (val) =>
+                                                        _updateMaterialQuantity(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            val),
                                                   ),
                                                 ),
                                                 const SizedBox(width: 12),
@@ -530,18 +563,14 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment.end,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
                                                     children: [
-                                                      const Text(
-                                                        'Amount',
-                                                        style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: Colors.grey),
-                                                      ),
+                                                      const Text('Amount',
+                                                          style: TextStyle(
+                                                              fontSize: 10,
+                                                              color:
+                                                                  Colors.grey)),
                                                       Text(
-                                                        (mat.amount)
+                                                        mat.amount
                                                             .toStringAsFixed(2),
                                                         style: const TextStyle(
                                                           fontSize: 14,
@@ -568,14 +597,17 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                       },
                     ),
             ),
+
+            // Bottom buttons
             Padding(
               padding: const EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel')),
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
                   const SizedBox(width: 16),
                   ElevatedButton(
                     onPressed: _saveAndClose,
@@ -588,9 +620,10 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                           borderRadius: BorderRadius.circular(12)),
                     ),
                     child: Text(
-                        widget.isEdit ? 'Update Items' : 'Save New Items',
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600)),
+                      widget.isEdit ? 'Update Items' : 'Save New Items',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),

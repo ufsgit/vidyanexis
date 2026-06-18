@@ -420,4 +420,5 @@ class HttpUrls {
       "lead/Get_Customer_Outstanding_Summary";
   static String getItemTypeDropdown = "item/Get_Item_Type_Dropdown";
   static String followupAmountReport = "followup/Followup_Amount_Report";
+  static String getMultipleItemMaterials = "item/get_multiple_item_details";
 }
