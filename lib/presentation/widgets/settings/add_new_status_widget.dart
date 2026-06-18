@@ -505,6 +505,12 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
             widget.data!.progressValue.toString();
         settingsProvider.whatsappTemplateIdController.text =
             widget.data!.whatsappTemplateId ?? "";
+        settingsProvider.statusDurationController.text =
+            widget.data!.statusDuration.toString();
+        settingsProvider.isCreateNew =
+            widget.data!.isCreateNew == 1 ? true : false;
+        settingsProvider.isShowFollowupDate =
+            widget.data!.isShowFollowupDate == 1 ? true : false;
 
         settingsProvider.viewInController.text = widget.data!.viewInName ?? "";
         settingsProvider
@@ -552,6 +558,9 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.viewInController.text = '';
         settingsProvider.progressValueController.text = '';
         settingsProvider.whatsappTemplateIdController.clear();
+        settingsProvider.statusDurationController.clear();
+        settingsProvider.isCreateNew = false;
+        settingsProvider.isShowFollowupDate = false;
         dropDownProvider.setSelectedUserId(0);
         leadProvider.departmentController.clear();
         leadProvider.searchUserController.clear();
@@ -762,12 +771,32 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
               const SizedBox(
                 height: 10,
               ),
-              CustomTextField(
-                readOnly: false,
-                height: 54,
-                controller: settingsProvider.whatsappTemplateIdController,
-                hintText: 'Whatsapp Template Id',
-                labelText: '',
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: settingsProvider.whatsappTemplateIdController,
+                      hintText: 'Whatsapp Template Id',
+                      labelText: '',
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: settingsProvider.statusDurationController,
+                      hintText: 'Duration',
+                      labelText: '',
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(
                 height: 10,
@@ -916,6 +945,40 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: CheckboxListTile(
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Create New',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      value: settingsProvider.isCreateNew,
+                      onChanged: (value) =>
+                          settingsProvider.isCreateNew = value ?? false,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: CheckboxListTile(
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: const Text('Show Followup Date',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      value: settingsProvider.isShowFollowupDate,
+                      onChanged: (value) =>
+                          settingsProvider.isShowFollowupDate = value ?? false,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Container(), // remove this to add checkbox
+                  ),
+                ],
+              ),
               if (settingsProvider.isSendUser) ...[
                 const SizedBox(height: 10),
                 CustomTextField(
@@ -924,6 +987,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                   controller: settingsProvider.templateIdController,
                   hintText: 'Template id',
                   labelText: '',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                 ),
               ],
               if (settingsProvider.isLinkForm) ...[
