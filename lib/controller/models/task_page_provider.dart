@@ -105,6 +105,7 @@ class TaskPageProvider extends ChangeNotifier {
   List<int> get selectedEnquiryForIds => _selectedEnquiryForIds;
   int? _expandedIndex;
   int? get expandedIndex => _expandedIndex;
+  int _flowId = 0;
 
   void toggleExpansion(int index) {
     if (_expandedIndex == index) {
@@ -705,6 +706,7 @@ class TaskPageProvider extends ChangeNotifier {
             "Next_FollowUp_Date": followUpDateController.text.toyyyymmdd(),
             "Tasks": _selectedTaskTypeIds.join(","),
             "CustomFields": customFieldsData,
+            "flow_id": _flowId,
           });
 
       if (response?.statusCode == 200) {
@@ -1003,6 +1005,11 @@ class TaskPageProvider extends ChangeNotifier {
           final statusData = data['mandatory_status'] ?? [];
           final formsData = data['forms'] ?? [];
           final customFieldData = data['show_custom_field'] ?? [];
+          final enquiry = data['enquiry'] ?? [];
+          if (enquiry.isNotEmpty) {
+            _flowId = enquiry.first['FlowId'] ?? 0;
+            print("FlowId: ${_flowId.toString()}");
+          }
 
           debugPrint(
               "DEBUG: fetchTaskTypes received ${formsData.length} forms");
@@ -1115,6 +1122,11 @@ class TaskPageProvider extends ChangeNotifier {
           final statusData = data['mandatory_status'] ?? [];
           final formsData = data['forms'] ?? [];
           // final customFieldData = data['show_custom_field'] ?? [];
+          final enquiry = data['enquiry'] ?? [];
+          if (enquiry.isNotEmpty) {
+            _flowId = enquiry.first['FlowId'] ?? 0;
+            print("FlowId: ${_flowId.toString()}");
+          }
 
           debugPrint(
               "DEBUG: fetchTaskTypes received ${formsData.length} forms");
