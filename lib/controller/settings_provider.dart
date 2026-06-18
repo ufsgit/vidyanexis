@@ -200,6 +200,8 @@ class SettingsProvider extends ChangeNotifier {
       TextEditingController();
 
   final TextEditingController folloupController = TextEditingController();
+  final TextEditingController statusDurationController =
+      TextEditingController();
 
   final TextEditingController isRegisterController = TextEditingController();
   final TextEditingController viewInController = TextEditingController();
@@ -2755,7 +2757,7 @@ class SettingsProvider extends ChangeNotifier {
             "Is_Transfer_Status": _isTransferStatus ? 1 : 0,
             "Transfer_Status": selectedTransferStatusesForApi,
             "Is_Send_User": _isSendUser ? 1 : 0,
-            "Template_Id": templateIdController.text,
+            "Template_Id": int.tryParse(templateIdController.text) ?? 0,
             "Is_Link_Form": _isLinkForm ? 1 : 0,
             "Form_Id": int.tryParse(_selectedFormId) ?? 0,
             "Form_Name": _selectedFormName,
@@ -2764,6 +2766,9 @@ class SettingsProvider extends ChangeNotifier {
             "Department_Name": leadProvider.departmentController.text.toString(),
             "User_Id": dropDownProvider.selectedUserId,
             "User_Name": leadProvider.searchUserController.text.toString(),
+            "Duration": int.tryParse(statusDurationController.text) ?? 0,
+            "Create_New": _isCreateNew ? 1 : 0,
+            "View_Date_Followup": _isShowFollowupDate ? 1 : 0,
           });
 
       if (response!.statusCode == 200) {
@@ -5342,6 +5347,20 @@ class SettingsProvider extends ChangeNotifier {
   bool get isLinkForm => _isLinkForm;
   set isLinkForm(bool value) {
     _isLinkForm = value;
+    notifyListeners();
+  }
+
+  bool _isCreateNew = false;
+  bool get isCreateNew => _isCreateNew;
+  set isCreateNew(bool value) {
+    _isCreateNew = value;
+    notifyListeners();
+  }
+
+  bool _isShowFollowupDate = false;
+  bool get isShowFollowupDate => _isShowFollowupDate;
+  set isShowFollowupDate(bool value) {
+    _isShowFollowupDate = value;
     notifyListeners();
   }
 

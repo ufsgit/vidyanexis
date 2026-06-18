@@ -43,6 +43,9 @@ class SearchLeadStatusModel {
   String? departmentName;
   int? userId;
   String? userName;
+  String? statusDuration;
+  int? isCreateNew;
+  int? isShowFollowupDate;
 
   SearchLeadStatusModel({
     this.statusId,
@@ -73,6 +76,9 @@ class SearchLeadStatusModel {
     this.departmentName,
     this.userId,
     this.userName,
+    this.statusDuration,
+    this.isCreateNew,
+    this.isShowFollowupDate,
   });
 
   SearchLeadStatusModel copyWith({
@@ -104,6 +110,9 @@ class SearchLeadStatusModel {
     String? departmentName,
     int? userId,
     String? userName,
+    String? statusDuration,
+    int? isCreateNew,
+    int? isShowFollowupDate,
   }) =>
       SearchLeadStatusModel(
         statusId: statusId ?? this.statusId,
@@ -134,6 +143,9 @@ class SearchLeadStatusModel {
         departmentName: departmentName ?? this.departmentName,
         userId: userId ?? this.userId,
         userName: userName ?? this.userName,
+        statusDuration: statusDuration ?? this.statusDuration,
+        isCreateNew: isCreateNew ?? this.isCreateNew,
+        isShowFollowupDate: isShowFollowupDate ?? this.isShowFollowupDate,
       );
 
   factory SearchLeadStatusModel.fromJson(Map<String, dynamic> json) =>
@@ -177,6 +189,9 @@ class SearchLeadStatusModel {
         departmentName: json["Department_Name"]?.toString() ?? json["department_name"]?.toString() ?? "",
         userId: json["User_Id"]?.toInt() ?? json["user_id"]?.toInt() ?? 0,
         userName: json["User_Name"]?.toString() ?? json["user_name"]?.toString() ?? "",
+        statusDuration: json["duration"]?.toString() ?? json["Duration"]?.toString() ?? "",
+        isCreateNew: json["create_new"]?.toInt() ?? json["Create_New"]?.toInt() ?? 0,
+        isShowFollowupDate: json["view_date_followup"]?.toInt() ?? json["View_Date_Followup"]?.toInt() ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -214,5 +229,8 @@ class SearchLeadStatusModel {
         "Department_Name": departmentName,
         "User_Id": userId,
         "User_Name": userName,
+        "Duration": statusDuration,
+        "Create_New": isCreateNew,
+        "View_Date_Followup": isShowFollowupDate,
       };
 }
