@@ -149,6 +149,21 @@ class SettingsProvider extends ChangeNotifier {
   bool get isSavingUserTaskType => _isSavingUserTaskType;
   bool _isAddingUser = false;
   bool get isAddingUser => _isAddingUser;
+
+  bool _isCreateNew = false;
+  bool get isCreateNew => _isCreateNew;
+  set isCreateNew(bool value) {
+    _isCreateNew = value;
+    notifyListeners();
+  }
+
+  bool _isShowFollowupDate = false;
+  bool get isShowFollowupDate => _isShowFollowupDate;
+  set isShowFollowupDate(bool value) {
+    _isShowFollowupDate = value;
+    notifyListeners();
+  }
+
   String _selectedMenu = 'Users';
 
   String get selectedMenu => _selectedMenu;
@@ -200,6 +215,8 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController whatsappTemplateIdController =
       TextEditingController();
   final TextEditingController templateIdController =
+      TextEditingController();
+  final TextEditingController statusDurationController =
       TextEditingController();
 
   final TextEditingController folloupController = TextEditingController();
