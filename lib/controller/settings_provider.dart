@@ -380,6 +380,8 @@ class SettingsProvider extends ChangeNotifier {
   int? get selectedFollowUp => _selectedFollowUp;
   int _viewInId = 0;
   int get viewInId => _viewInId;
+  int? _formViewInId;
+  int? get formViewInId => _formViewInId;
 
   dynamic _isRegister;
   dynamic get isRegister => _isRegister;
@@ -2738,7 +2740,7 @@ class SettingsProvider extends ChangeNotifier {
             "Is_Registered": isRegistered,
             "registered": isRegistered,
             "Color_Code": colorCode,
-            "ViewIn_Id": viewInId,
+            "ViewIn_Id": formViewInId ?? 0,
             "ViewIn_Name": viewInController.text.toString(),
             "Stage_Id": stageId,
             "Stage_Name": stageStatusController.text.toString(),
@@ -3169,6 +3171,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setViewInId(int value) {
     _viewInId = value;
+    notifyListeners();
+  }
+
+  void setFormViewInId(int? value) {
+    _formViewInId = value;
     notifyListeners();
   }
 

@@ -497,7 +497,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         // settingsProvider.isRegisterController.text = selectedRegItem.name;
         // settingsProvider.setIsRegistered(selectedRegItem.id);
         settingsProvider.setSelectedColor(widget.colorCode);
-        settingsProvider.setViewInId(widget.data!.viewInId ?? 0);
+        settingsProvider.setFormViewInId(widget.data!.viewInId ?? 0);
         settingsProvider.setStageId(widget.data!.stageId ?? 0);
         settingsProvider.stageStatusController.text =
             widget.data!.statusName ?? "";
@@ -546,7 +546,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.setIsRegistered(null); // Show hint by default
         settingsProvider.setSelectedFollowUp(null); // Show hint by default
 
-        settingsProvider.setViewInId(0);
+        settingsProvider.setFormViewInId(null);
         settingsProvider.setStageId(0);
         settingsProvider.stageStatusController.text = '';
         settingsProvider.viewInController.text = '';
@@ -678,12 +678,11 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                   Expanded(
                     child: CommonDropdown<int>(
                       hintText: 'View In*',
-                      selectedValue:
-                          widget.isEdit ? settingsProvider.viewInId : null,
+                      selectedValue: settingsProvider.formViewInId,
                       items: viewInOptions,
                       controller: settingsProvider.viewInController,
                       onItemSelected: (selectedId) {
-                        settingsProvider.setViewInId(selectedId);
+                        settingsProvider.setFormViewInId(selectedId);
                       },
                     ),
                   ),
