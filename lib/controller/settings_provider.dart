@@ -34,6 +34,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/controller/models/user_enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/user_enquiry_source_model.dart';
+import 'package:vidyanexis/controller/models/user_task_type_model.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -144,6 +145,8 @@ class SettingsProvider extends ChangeNotifier {
   bool get isSavingUserEnquiryFor => _isSavingUserEnquiryFor;
   bool _isSavingUserEnquirySource = false;
   bool get isSavingUserEnquirySource => _isSavingUserEnquirySource;
+  bool _isSavingUserTaskType = false;
+  bool get isSavingUserTaskType => _isSavingUserTaskType;
   bool _isAddingUser = false;
   bool get isAddingUser => _isAddingUser;
   String _selectedMenu = 'Users';
@@ -2614,6 +2617,125 @@ class SettingsProvider extends ChangeNotifier {
       );
     }
     return list;
+  }
+
+  Future<List<UserTaskTypeModel>> getUserTaskType(
+      String userId, BuildContext context) async {
+    List<UserTaskTypeModel> list = [];
+    try {
+      List<TaskTypeModel> masterList = [];
+      try {
+        final masterResponse = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchTaskType}?Task_Type_Name=',
+        );
+        if (masterResponse.statusCode == 200 && masterResponse.data != null) {
+          masterList = (masterResponse.data as List<dynamic>)
+              .map((item) => TaskTypeModel.fromJson(item))
+              .toList();
+        }
+      } catch (e) {
+        print('Error fetching master Task Type: $e');
+      }
+
+      List<UserTaskTypeModel> userList = [];
+      try {
+        final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getUserTaskType}/$userId',
+        );
+        print('DEBUG getUserTaskType API response: ${response.data}');
+        if (response.statusCode == 200 &&
+            response.data != null &&
+            response.data['data'] != null) {
+          final List<dynamic> dataList = response.data['data'];
+          userList = dataList
+              .map((item) => UserTaskTypeModel.fromJson(item))
+              .toList();
+          print('DEBUG userList mapped count: ${userList.length}');
+          if (userList.isNotEmpty) {
+            print('DEBUG First mapped item taskTypeId: ${userList.first.taskTypeId}, isview: ${userList.first.isview}');
+          }
+        }
+      } catch (e) {
+        print('Error fetching user Task Type: $e');
+      }
+
+      for (var master in masterList) {
+        final matchedUserItem = userList.firstWhere(
+          (u) => u.taskTypeId == master.taskTypeId,
+          orElse: () => UserTaskTypeModel(
+            isview: 0,
+            taskTypeId: master.taskTypeId,
+            taskTypeName: master.taskTypeName,
+            userId: int.tryParse(userId),
+          ),
+        );
+
+        list.add(UserTaskTypeModel(
+          userTaskTypeId: matchedUserItem.userTaskTypeId,
+          userId: int.tryParse(userId),
+          userDetailsName: matchedUserItem.userDetailsName,
+          taskTypeId: master.taskTypeId,
+          taskTypeName: master.taskTypeName,
+          isview: matchedUserItem.isview,
+          deleteStatus: master.deleteStatus,
+        ));
+      }
+    } catch (e) {
+      print('Exception occurred in getUserTaskType: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred loading task types')),
+      );
+    }
+    return list;
+  }
+
+  Future<void> saveUserTaskTypeList({
+    required BuildContext context,
+    required String userId,
+    required List<UserTaskTypeModel> updatedList,
+  }) async {
+    _isSavingUserTaskType = true;
+    notifyListeners();
+
+    try {
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveUserTaskType,
+        bodyData: {
+          "user_id": int.parse(userId),
+          "task_type_list": updatedList
+              .map((item) => {
+                    "task_type_id": item.taskTypeId ?? 0,
+                    "isview": item.isview,
+                  })
+              .toList(),
+        },
+      );
+
+      _isSavingUserTaskType = false;
+      notifyListeners();
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == false || data['success'] == 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to save')),
+          );
+        } else {
+          Navigator.pop(context);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      _isSavingUserTaskType = false;
+      notifyListeners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred during save')),
+      );
+    }
   }
 
   Future<void> saveUserEnquiryForList({

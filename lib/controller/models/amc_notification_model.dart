@@ -19,6 +19,7 @@ class AmcNotificationModel {
   late String serviceName;
   late String serviceDate;
   late String staffName;
+  int? customerId;
   List<IntervalDetail>? intervalDetails;
 
   AmcNotificationModel({
@@ -27,6 +28,7 @@ class AmcNotificationModel {
     required this.serviceName,
     required this.serviceDate,
     required this.staffName,
+    this.customerId,
     this.intervalDetails,
   });
 
@@ -36,6 +38,12 @@ class AmcNotificationModel {
     serviceName = json['Service_Name'] ?? '';
     serviceDate = json['Service_Date'] ?? '';
     staffName = json['Staff_Name'] ?? '';
+    customerId = int.tryParse(json['Customer_Id']?.toString() ?? 
+        json['Customer_id']?.toString() ?? 
+        json['customer_id']?.toString() ?? 
+        json['CustomerId']?.toString() ?? 
+        json['customerId']?.toString() ?? '0');
+    if (customerId == 0) customerId = null;
     if (json['Interval_Details'] != null) {
       intervalDetails = <IntervalDetail>[];
       json['Interval_Details'].forEach((v) {
