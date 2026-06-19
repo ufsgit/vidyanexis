@@ -2418,6 +2418,21 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               );
             },
           ),
+      
+        if (customerDetailsProvider.multiItems.isNotEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Total Amount : ${customerDetailsProvider.mutipleItemsTotalAmount}",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryBlue,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

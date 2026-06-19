@@ -97,6 +97,7 @@ class GetQuotationbyMasterIdmodel {
   final String profit;
   final String isProfitPercentage;
   final List<AddedMultiItem> multiItems;
+  final double multipleItemsTotalAmount;
 
   GetQuotationbyMasterIdmodel({
     required this.quotationMasterId,
@@ -180,6 +181,7 @@ class GetQuotationbyMasterIdmodel {
     this.profit = "0",
     this.isProfitPercentage = "0",
     this.multiItems = const [],
+    this.multipleItemsTotalAmount = 0.0,
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -284,6 +286,8 @@ class GetQuotationbyMasterIdmodel {
       multiItems: (json['Multiple_Item_Material'] as List? ?? [])
           .map((e) => AddedMultiItem.fromJson(e))
           .toList(),
+      multipleItemsTotalAmount:
+          toDouble(json['Multiple_Items_TotalAmount'] ?? 0.0),
     );
   }
 }

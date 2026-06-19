@@ -33,6 +33,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   final Map<int, TextEditingController> _mainQtyControllers = {};
   final Map<String, TextEditingController> _materialPriceControllers = {};
   final Map<String, TextEditingController> _materialQtyControllers = {};
+  final Map<String, TextEditingController> _materialNameControllers = {};
 
   List<AddedMultiItem> _addedItems = [];
 
@@ -58,6 +59,8 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             TextEditingController(text: mat.price.toStringAsFixed(2));
         _materialQtyControllers[key] =
             TextEditingController(text: mat.quantity.toStringAsFixed(2));
+        _materialNameControllers[key] =
+            TextEditingController(text: mat.itemMaterialName);
       }
     }
   }
@@ -74,6 +77,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       c.dispose();
     }
     _quantityController.dispose();
+    for (var c in _materialNameControllers.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -95,6 +101,18 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     final key = '${itemIndex}_$matIndex';
     return _materialQtyControllers.putIfAbsent(
         key, () => TextEditingController(text: value.toStringAsFixed(2)));
+  }
+
+  TextEditingController _getMaterialNameController(
+    int itemIndex,
+    int matIndex,
+    String value,
+  ) {
+    final key = '${itemIndex}_$matIndex';
+    return _materialNameControllers.putIfAbsent(
+      key,
+      () => TextEditingController(text: value),
+    );
   }
 
   // ================== Update Methods ==================
@@ -140,6 +158,16 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       final mat = _addedItems[itemIndex].materials[matIndex];
       mat.quantity = qty;
       mat.amount = qty * mat.price;
+    });
+  }
+
+  void _updateMaterialName(
+    int itemIndex,
+    int matIndex,
+    String value,
+  ) {
+    setState(() {
+      _addedItems[itemIndex].materials[matIndex].itemMaterialName = value;
     });
   }
 
@@ -222,14 +250,13 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       return;
     }
 
-    final customerProvider =
+    final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
     final List<Map<String, dynamic>> itemsForApi =
         _addedItems.map((item) => item.toJson()).toList();
-    customerProvider.addMultiItems(itemsForApi);
+    customerDetailsProvider.addMultiItems(itemsForApi);
+    customerDetailsProvider.mutipleItemsTotalAmount = grandTotal;
 
-    final customerDetailsProvider =
-        Provider.of<CustomerDetailsProvider>(context, listen: false);
     final expenseProvider =
         Provider.of<ExpenseProvider>(context, listen: false);
 
@@ -237,6 +264,18 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
         itemsForApi, expenseProvider, context);
 
     if (mounted) Navigator.of(context).pop();
+  }
+
+  double get grandTotal {
+    double total = 0;
+
+    for (final item in _addedItems) {
+      for (final mat in item.materials) {
+        total += mat.amount;
+      }
+    }
+
+    return total;
   }
 
   @override
@@ -469,51 +508,40 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                               children: [
                                                 Expanded(
                                                   flex: 4,
-                                                  child: Text(
-                                                    mat.itemMaterialName,
-                                                    style: const TextStyle(
-                                                        fontSize: 14.5),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                SizedBox(
-                                                  width: 180,
                                                   child: TextField(
                                                     controller:
-                                                        _getMaterialPriceController(
-                                                            itemIndex,
-                                                            matIndex,
-                                                            mat.price),
-                                                    keyboardType:
-                                                        const TextInputType
-                                                            .numberWithOptions(
-                                                            decimal: true),
-                                                    textAlign: TextAlign.center,
+                                                        _getMaterialNameController(
+                                                      itemIndex,
+                                                      matIndex,
+                                                      mat.itemMaterialName,
+                                                    ),
+                                                    minLines: 1,
+                                                    maxLines: null,
                                                     decoration: InputDecoration(
-                                                      labelText: 'Price',
+                                                      labelText: 'Material',
                                                       isDense: true,
                                                       contentPadding:
                                                           const EdgeInsets
                                                               .symmetric(
-                                                              horizontal: 8,
-                                                              vertical: 8),
+                                                        horizontal: 10,
+                                                        vertical: 14,
+                                                      ),
                                                       border:
                                                           OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8)),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
                                                     ),
-                                                    inputFormatters: [
-                                                      FilteringTextInputFormatter
-                                                          .allow(RegExp(
-                                                              r'^\d+\.?\d{0,2}')),
-                                                    ],
-                                                    onChanged: (val) =>
-                                                        _updateMaterialPrice(
-                                                            itemIndex,
-                                                            matIndex,
-                                                            val),
+                                                    keyboardType:
+                                                        TextInputType.multiline,
+                                                    onChanged: (val) {
+                                                      _updateMaterialName(
+                                                        itemIndex,
+                                                        matIndex,
+                                                        val,
+                                                      );
+                                                    },
                                                   ),
                                                 ),
                                                 const SizedBox(width: 8),
@@ -552,6 +580,47 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                     ],
                                                     onChanged: (val) =>
                                                         _updateMaterialQuantity(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            val),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                SizedBox(
+                                                  width: 180,
+                                                  child: TextField(
+                                                    controller:
+                                                        _getMaterialPriceController(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            mat.price),
+                                                    keyboardType:
+                                                        const TextInputType
+                                                            .numberWithOptions(
+                                                            decimal: true),
+                                                    textAlign: TextAlign.center,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Price',
+                                                      isDense: true,
+                                                      contentPadding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 8),
+                                                      border:
+                                                          OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8)),
+                                                    ),
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .allow(RegExp(
+                                                              r'^\d+\.?\d{0,2}')),
+                                                    ],
+                                                    onChanged: (val) =>
+                                                        _updateMaterialPrice(
                                                             itemIndex,
                                                             matIndex,
                                                             val),
@@ -604,6 +673,15 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Text(
+                    'Total : ₹${grandTotal.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryBlue,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: const Text('Cancel'),

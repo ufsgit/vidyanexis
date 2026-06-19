@@ -421,7 +421,9 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                         },
                         selectedValue: expenseProvider.selectedItemTypeId,
                       ),
-                      if (expenseProvider.selectedItemTypeId != 0) ...[
+                      //show only for primary and secondary
+                      if (expenseProvider.selectedItemTypeId != 0 &&
+                          expenseProvider.selectedItemTypeId != 3) ...[
                         const SizedBox(height: 32),
                         _buildSectionTitle('Item Material'),
                         const SizedBox(height: 16),

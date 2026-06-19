@@ -169,8 +169,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<AddedMultiItem> _multiItems = [];
   List<AddedMultiItem> get multiItems => _multiItems;
 
+  double _mutipleItemsTotalAmount = 0.0;
+  double get mutipleItemsTotalAmount => _mutipleItemsTotalAmount;
+  set mutipleItemsTotalAmount(double value) {
+    _mutipleItemsTotalAmount = value;
+    notifyListeners();
+  }
+
   void clearMultiItems() {
     _multiItems.clear();
+    _mutipleItemsTotalAmount = 0.0;
     notifyListeners();
   }
 
@@ -2784,6 +2792,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Profit_Amount": profitController.text.toString(),
         "Is_Profit_Percentage": isPercentage ? "1" : "0",
         "Multiple_Item_Material": _multiItems.map((e) => e.toJson()).toList(),
+        "Multiple_Items_TotalAmount": _mutipleItemsTotalAmount
       });
 
       if (response!.statusCode == 200) {
@@ -4575,6 +4584,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     profitController.text = quotation.profit;
     isPercentage = quotation.isProfitPercentage == "1";
     _multiItems = quotation.multiItems;
+    _mutipleItemsTotalAmount = quotation.multipleItemsTotalAmount;
 
     // String nameOfItem = '';
     // if (quotation.quotationTypeId == 1 && quotation.quotationDetails.isNotEmpty) {
