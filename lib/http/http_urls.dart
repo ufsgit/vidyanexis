@@ -36,11 +36,13 @@ class HttpUrls {
   // static String baseUrl = 'https://izzapower.trackbox.net.in/';
 //   static String baseUrl = 'https://demo2api.ufstech.net.in/';
   // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
+  // static String baseUrl = 'https://bodhieapi.ufstech.net.in/';
+  static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
-  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -258,6 +260,8 @@ class HttpUrls {
   static String getUserEnquirySource = "user_details/get_user_enquiry_source";
   static String saveUserEnquiryFor = "user_details/save_user_enquiry_for";
   static String saveUserEnquirySource = "user_details/save_user_enquiry_source";
+  static String getUserTaskType = "user_details/get_user_task_type";
+  static String saveUserTaskType = "user_details/save_user_task_type";
   static String getTaskTypesOfProcessFlow =
       "process_flow/Get_Task_Types_Of_Process_Flow";
 
@@ -418,4 +422,5 @@ class HttpUrls {
       "lead/Get_Customer_Outstanding_Summary";
   static String getItemTypeDropdown = "item/Get_Item_Type_Dropdown";
   static String followupAmountReport = "followup/Followup_Amount_Report";
+  static String getMultipleItemMaterials = "item/get_multiple_item_details";
 }

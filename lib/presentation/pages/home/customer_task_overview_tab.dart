@@ -158,26 +158,34 @@ class _CustomerTaskOverviewTabState extends State<CustomerTaskOverviewTab> {
                 color: const Color(0xFF64748B),
               ),
             ),
-            const SizedBox(height: 6),
-            Text(
-              'Completed on \n ${_formatDate(task.completionDate?.toString() ?? '')}',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF64748B),
+            if (task.completionDate != null &&
+                task.completionDate.toString().trim().isNotEmpty &&
+                task.completionDate.toString().trim() != 'null') ...[
+              const SizedBox(height: 6),
+              Text(
+                'Completed on \n ${_formatDate(task.completionDate.toString())}',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF64748B),
+                ),
               ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'By ${task.toUsername}',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
+            ],
+            if (task.toUsername != null &&
+                task.toUsername.toString().trim().isNotEmpty &&
+                task.toUsername.toString().trim() != 'null') ...[
+              const SizedBox(height: 6),
+              Text(
+                'By ${task.toUsername}',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            ],
           ],
         ),
       ),

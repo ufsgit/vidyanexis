@@ -6,6 +6,10 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/amc_notification_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class AmcNotificationTab extends StatefulWidget {
@@ -26,6 +30,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
           Provider.of<DropDownProvider>(context, listen: false);
 
       dropdownProvider.getUserDetails(context);
+      dropdownProvider.getTaskType(context);
       provider.getAmcNotification(context);
     });
   }
@@ -47,6 +52,210 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
     return parts[0][0].toUpperCase();
+  }
+
+  Future<void> _showIntervalPopup(
+      BuildContext context,
+      AmcNotificationModel item,
+      IntervalDetail? interval,
+      DropDownProvider dropdownProvider,
+      WarrentyReportProvider provider) async {
+    int? selectedTaskTypeId;
+    String? selectedTaskTypeName;
+    int? selectedUserId;
+    String? selectedUserName;
+    final remarksController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              title: const Text('Create AMC Task'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Task Type
+                    DropdownButtonFormField<int>(
+                      decoration: const InputDecoration(labelText: 'AMC Service Task Type'),
+                      value: selectedTaskTypeId,
+                      items: dropdownProvider.taskType.map((taskType) {
+                        return DropdownMenuItem<int>(
+                          value: taskType.taskTypeId,
+                          child: Text(taskType.taskTypeName),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedTaskTypeId = value;
+                          selectedTaskTypeName = dropdownProvider.taskType
+                              .firstWhere((element) => element.taskTypeId == value)
+                              .taskTypeName;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    // Interval Date
+                    TextFormField(
+                      decoration: const InputDecoration(labelText: 'Selected Interval Date'),
+                      initialValue: _formatDate(interval?.intervalDate ?? item.serviceDate),
+                      readOnly: true,
+                    ),
+                    const SizedBox(height: 10),
+                    // Assigned Staff
+                    DropdownButtonFormField<int>(
+                      decoration: const InputDecoration(labelText: 'Assigned Staff'),
+                      value: selectedUserId,
+                      items: dropdownProvider.searchUserDetails.map((user) {
+                        return DropdownMenuItem<int>(
+                          value: user.userDetailsId,
+                          child: Text(user.userDetailsName ?? 'Unknown'),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedUserId = value;
+                          selectedUserName = dropdownProvider.searchUserDetails
+                              .firstWhere((element) => element.userDetailsId == value)
+                              .userDetailsName;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    // Remarks
+                    TextFormField(
+                      controller: remarksController,
+                      decoration: const InputDecoration(labelText: 'Remarks'),
+                      maxLines: 3,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  child: const Text('Cancel', style: TextStyle(color: AppColors.appViolet)),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (selectedTaskTypeId == null || selectedUserId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please select Task Type and Staff')),
+                      );
+                      return;
+                    }
+                    Navigator.pop(context); // close dialog
+                    await _createTask(
+                      context: context,
+                      item: item,
+                      interval: interval,
+                      taskTypeId: selectedTaskTypeId!,
+                      taskTypeName: selectedTaskTypeName!,
+                      userId: selectedUserId!,
+                      userName: selectedUserName ?? '',
+                      remarks: remarksController.text,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.appViolet,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _createTask({
+    required BuildContext context,
+    required AmcNotificationModel item,
+    required IntervalDetail? interval,
+    required int taskTypeId,
+    required String taskTypeName,
+    required int userId,
+    required String userName,
+    required String remarks,
+  }) async {
+    try {
+      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String currentUserId = preferences.getString('userId') ?? "0";
+
+      String date = interval?.intervalDate ?? item.serviceDate;
+      if (date.isNotEmpty) {
+        DateTime parsedDate;
+        try {
+          parsedDate = DateFormat('dd MMM yyyy').parse(date);
+        } catch (e) {
+          parsedDate = DateTime.parse(date);
+        }
+        date = DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      final payload = {
+        "Task_Id": 0,
+        "Task_Master_Id": 0,
+        "Task_Status_Id": 1,
+        "Task_Status_Name": "Not Started",
+        "Task_user": [
+          {
+            "User_Details_Id": userId,
+            "User_Details_Name": userName,
+          }
+        ],
+        "Customer_Id": item.customerId ?? 0,
+        "Created_By": int.tryParse(currentUserId) ?? 0,
+        "Task_Date": date,
+        "Task_Type_Id": taskTypeId,
+        "Task_Type_Name": taskTypeName,
+        "Description": remarks,
+        "Task_Time": DateFormat('HH:mm').format(DateTime.now()),
+        "Completion_Date": "",
+        "Completion_Time": "",
+        "Commission_Number": 0,
+        "Task_Files": [],
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveTask,
+        bodyData: payload,
+      );
+
+      Loader.stopLoader(context);
+
+      if (response != null && response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Task created successfully!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to create task')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred while creating task')),
+      );
+    }
   }
 
   @override
@@ -167,9 +376,15 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
   }
 
   Widget _buildAmcCard(dynamic item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return InkWell(
+      onTap: () {
+        final provider = Provider.of<WarrentyReportProvider>(context, listen: false);
+        final dropdownProvider = Provider.of<DropDownProvider>(context, listen: false);
+        _showIntervalPopup(context, item, null, dropdownProvider, provider);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                                 boxShadow: [
@@ -295,41 +510,48 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                     runSpacing: 8,
                     children: item.intervalDetails!.map<Widget>((interval) {
                       bool isCompleted = interval.completedStatus == 1;
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: isCompleted 
-                              ? const Color(0xFF34C759).withOpacity(0.3)
-                              : const Color(0xFFFB923C).withOpacity(0.3),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.01),
-                              blurRadius: 4,
+                      return InkWell(
+                        onTap: () {
+                          final provider = Provider.of<WarrentyReportProvider>(context, listen: false);
+                          final dropdownProvider = Provider.of<DropDownProvider>(context, listen: false);
+                          _showIntervalPopup(context, item, interval, dropdownProvider, provider);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color: isCompleted 
+                                ? const Color(0xFF34C759).withOpacity(0.3)
+                                : const Color(0xFFFB923C).withOpacity(0.3),
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              isCompleted ? Icons.check_circle_rounded : Icons.schedule_rounded,
-                              size: 14,
-                              color: isCompleted ? const Color(0xFF34C759) : const Color(0xFFFB923C),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              _formatDate(interval.intervalDate),
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textBlack,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.01),
+                                blurRadius: 4,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isCompleted ? Icons.check_circle_rounded : Icons.schedule_rounded,
+                                size: 14,
+                                color: isCompleted ? const Color(0xFF34C759) : const Color(0xFFFB923C),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                _formatDate(interval.intervalDate),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlack,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }).toList(),
@@ -340,6 +562,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
           ],
         ],
       ),
+    ),
     );
   }
 

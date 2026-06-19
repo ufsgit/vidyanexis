@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
@@ -205,6 +206,92 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
             )
           : Column(
               children: [
+                Container(
+                  color: AppColors.whiteColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Entry Type Filter
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              customerProvider.setEntryType('myown');
+                              customerProvider.getSearchCustomers(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.only(bottom: 2),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: customerProvider.entryType != 'all'
+                                        ? AppColors.primaryBlue
+                                        : Colors.transparent,
+                                    width: 2.0,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                'ME',
+                                style: TextStyle(
+                                  color: customerProvider.entryType != 'all'
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey,
+                                  fontWeight: customerProvider.entryType != 'all'
+                                      ? FontWeight.w500
+                                      : FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          GestureDetector(
+                            onTap: () {
+                              customerProvider.setEntryType('all');
+                              customerProvider.getSearchCustomers(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.only(bottom: 2),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: customerProvider.entryType == 'all'
+                                        ? AppColors.primaryBlue
+                                        : Colors.transparent,
+                                    width: 2.0,
+                                  ),
+                                ),
+                              ),
+                              child: Text(
+                                'ALL',
+                                style: TextStyle(
+                                  color: customerProvider.entryType == 'all'
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey,
+                                  fontWeight: customerProvider.entryType == 'all'
+                                      ? FontWeight.w500
+                                      : FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 16),
+                      CustomFilterButton(
+                        onPressed: () {
+                          customerProvider.toggleFilter();
+                        },
+                        isFilter: customerProvider.isFilter,
+                      ),
+                    ],
+                  ),
+                ),
                 if (customerProvider.isFilter)
                   Expanded(
                     child: SingleChildScrollView(
@@ -297,35 +384,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
-                          CustomText(
-                            'Entry Type',
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textBlack,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 8.0,
-                            children: [
-                              FilterChipWidget(
-                                label: 'All',
-                                isSelected: customerProvider.entryType == 'all',
-                                onTap: () {
-                                  customerProvider.setEntryType('all');
-                                },
-                              ),
-                              FilterChipWidget(
-                                label: 'My Own',
-                                isSelected:
-                                    customerProvider.entryType == 'myown',
-                                onTap: () {
-                                  customerProvider.setEntryType('myown');
-                                },
-                              ),
-                            ],
-                          ),
+
                           const SizedBox(height: 24),
                           if (customerProvider.fromDate != null ||
                               customerProvider.toDate != null ||

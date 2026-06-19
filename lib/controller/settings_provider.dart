@@ -34,6 +34,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/controller/models/user_enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/user_enquiry_source_model.dart';
+import 'package:vidyanexis/controller/models/user_task_type_model.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -144,8 +145,25 @@ class SettingsProvider extends ChangeNotifier {
   bool get isSavingUserEnquiryFor => _isSavingUserEnquiryFor;
   bool _isSavingUserEnquirySource = false;
   bool get isSavingUserEnquirySource => _isSavingUserEnquirySource;
+  bool _isSavingUserTaskType = false;
+  bool get isSavingUserTaskType => _isSavingUserTaskType;
   bool _isAddingUser = false;
   bool get isAddingUser => _isAddingUser;
+
+  bool _isCreateNew = false;
+  bool get isCreateNew => _isCreateNew;
+  set isCreateNew(bool value) {
+    _isCreateNew = value;
+    notifyListeners();
+  }
+
+  bool _isShowFollowupDate = false;
+  bool get isShowFollowupDate => _isShowFollowupDate;
+  set isShowFollowupDate(bool value) {
+    _isShowFollowupDate = value;
+    notifyListeners();
+  }
+
   String _selectedMenu = 'Users';
 
   String get selectedMenu => _selectedMenu;
@@ -198,10 +216,10 @@ class SettingsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController templateIdController =
       TextEditingController();
-
-  final TextEditingController folloupController = TextEditingController();
   final TextEditingController statusDurationController =
       TextEditingController();
+
+  final TextEditingController folloupController = TextEditingController();
 
   final TextEditingController isRegisterController = TextEditingController();
   final TextEditingController viewInController = TextEditingController();
@@ -2618,6 +2636,120 @@ class SettingsProvider extends ChangeNotifier {
     return list;
   }
 
+  Future<List<UserTaskTypeModel>> getUserTaskType(
+      String userId, BuildContext context) async {
+    List<UserTaskTypeModel> list = [];
+    try {
+      List<TaskTypeModel> masterList = [];
+      try {
+        final masterResponse = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchTaskType}?Task_Type_Name=',
+        );
+        if (masterResponse.statusCode == 200 && masterResponse.data != null) {
+          masterList = (masterResponse.data as List<dynamic>)
+              .map((item) => TaskTypeModel.fromJson(item))
+              .toList();
+        }
+      } catch (e) {
+        print('Error fetching master Task Type: $e');
+      }
+
+      List<UserTaskTypeModel> userList = [];
+      try {
+        final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getUserTaskType}/$userId',
+        );
+        if (response.statusCode == 200 &&
+            response.data != null &&
+            response.data['data'] != null) {
+          final List<dynamic> dataList = response.data['data'];
+          userList = dataList
+              .map((item) => UserTaskTypeModel.fromJson(item))
+              .toList();
+        }
+      } catch (e) {
+        print('Error fetching user Task Type: $e');
+      }
+
+      for (var master in masterList) {
+        final matchedUserItem = userList.firstWhere(
+          (u) => u.taskTypeId == master.taskTypeId,
+          orElse: () => UserTaskTypeModel(
+            isview: 0,
+            taskTypeId: master.taskTypeId,
+            taskTypeName: master.taskTypeName,
+            userId: int.tryParse(userId),
+          ),
+        );
+
+        list.add(UserTaskTypeModel(
+          userTaskTypeId: matchedUserItem.userTaskTypeId,
+          userId: int.tryParse(userId),
+          userDetailsName: matchedUserItem.userDetailsName,
+          taskTypeId: master.taskTypeId,
+          taskTypeName: master.taskTypeName,
+          isview: matchedUserItem.isview,
+          deleteStatus: master.deleteStatus,
+        ));
+      }
+    } catch (e) {
+      print('Exception occurred in getUserTaskType: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred loading task types')),
+      );
+    }
+    return list;
+  }
+
+  Future<void> saveUserTaskTypeList({
+    required BuildContext context,
+    required String userId,
+    required List<UserTaskTypeModel> updatedList,
+  }) async {
+    _isSavingUserTaskType = true;
+    notifyListeners();
+
+    try {
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveUserTaskType,
+        bodyData: {
+          "user_id": int.parse(userId),
+          "task_type_list": updatedList
+              .map((item) => {
+                    "task_type_id": item.taskTypeId ?? 0,
+                    "isview": item.isview,
+                  })
+              .toList(),
+        },
+      );
+
+      _isSavingUserTaskType = false;
+      notifyListeners();
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == false || data['success'] == 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to save')),
+          );
+        } else {
+          Navigator.pop(context);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      _isSavingUserTaskType = false;
+      notifyListeners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred during save')),
+      );
+    }
+  }
+
   Future<void> saveUserEnquiryForList({
     required BuildContext context,
     required String userId,
@@ -2757,7 +2889,7 @@ class SettingsProvider extends ChangeNotifier {
             "Is_Transfer_Status": _isTransferStatus ? 1 : 0,
             "Transfer_Status": selectedTransferStatusesForApi,
             "Is_Send_User": _isSendUser ? 1 : 0,
-            "Template_Id": int.tryParse(templateIdController.text) ?? 0,
+            "Template_Id": templateIdController.text,
             "Is_Link_Form": _isLinkForm ? 1 : 0,
             "Form_Id": int.tryParse(_selectedFormId) ?? 0,
             "Form_Name": _selectedFormName,
@@ -2766,9 +2898,6 @@ class SettingsProvider extends ChangeNotifier {
             "Department_Name": leadProvider.departmentController.text.toString(),
             "User_Id": dropDownProvider.selectedUserId,
             "User_Name": leadProvider.searchUserController.text.toString(),
-            "Duration": int.tryParse(statusDurationController.text) ?? 0,
-            "Create_New": _isCreateNew ? 1 : 0,
-            "View_Date_Followup": _isShowFollowupDate ? 1 : 0,
           });
 
       if (response!.statusCode == 200) {
@@ -5347,20 +5476,6 @@ class SettingsProvider extends ChangeNotifier {
   bool get isLinkForm => _isLinkForm;
   set isLinkForm(bool value) {
     _isLinkForm = value;
-    notifyListeners();
-  }
-
-  bool _isCreateNew = false;
-  bool get isCreateNew => _isCreateNew;
-  set isCreateNew(bool value) {
-    _isCreateNew = value;
-    notifyListeners();
-  }
-
-  bool _isShowFollowupDate = false;
-  bool get isShowFollowupDate => _isShowFollowupDate;
-  set isShowFollowupDate(bool value) {
-    _isShowFollowupDate = value;
     notifyListeners();
   }
 

@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/widgets/settings/settings_add_user_widge
 import '../../widgets/settings/add_team_widget.dart';
 import '../../widgets/settings/assign_enquiry_for_widget.dart';
 import '../../widgets/settings/assign_enquiry_source_widget.dart';
+import '../../widgets/settings/assign_task_type_widget.dart';
 
 class UsersContent extends StatefulWidget {
   const UsersContent({super.key});
@@ -209,6 +210,19 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Center(
                                       child: Text(
                                         'Enquiry Source',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  SizedBox(
+                                    width: 120,
+                                    child: Center(
+                                      child: Text(
+                                        'Task Type',
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -669,6 +683,41 @@ class _UsersContentState extends State<UsersContent> {
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color: const Color(0xFF059669),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      SizedBox(
+                                        width: 120,
+                                        child: Center(
+                                          child: ActionChip(
+                                            onPressed: () => assignTaskTypeDialogue(
+                                                context,
+                                                settingsProvider
+                                                    .searchUserDetails[index]),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 4),
+                                            backgroundColor:
+                                                const Color(0xFFFFF7ED),
+                                            side: BorderSide.none,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            avatar: const Icon(
+                                              Icons.task_rounded,
+                                              size: 14,
+                                              color: Color(0xFFEA580C),
+                                            ),
+                                            label: Text(
+                                              'Task Type',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFFEA580C),
                                               ),
                                             ),
                                           ),
@@ -1256,6 +1305,43 @@ class _UsersContentState extends State<UsersContent> {
                                                 ),
                                               ),
                                             ),
+                                            OutlinedButton.icon(
+                                              style: OutlinedButton.styleFrom(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 8),
+                                                minimumSize: Size.zero,
+                                                tapTargetSize:
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
+                                                side: BorderSide(
+                                                    color: const Color(0xFFEA580C)
+                                                        .withOpacity(0.2)),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(4)),
+                                                backgroundColor: const Color(0xFFEA580C)
+                                                    .withOpacity(0.05),
+                                              ),
+                                              onPressed: () => assignTaskTypeDialogue(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchUserDetails[index]),
+                                              icon: const Icon(
+                                                  Icons.task_rounded,
+                                                  size: 15,
+                                                  color: Color(0xFFEA580C)),
+                                              label: Text(
+                                                'Task Type',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color(0xFFEA580C),
+                                                ),
+                                              ),
+                                            ),
                                             OutlinedButton(
                                               style: OutlinedButton.styleFrom(
                                                 padding:
@@ -1368,6 +1454,19 @@ class _UsersContentState extends State<UsersContent> {
       context: context,
       builder: (BuildContext context) {
         return AssignEnquirySourceWidget(
+          userModel: searchUserDetail,
+        );
+      },
+    );
+  }
+
+  Future<dynamic> assignTaskTypeDialogue(
+      BuildContext context, GetUserModel searchUserDetail) {
+    return showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AssignTaskTypeWidget(
           userModel: searchUserDetail,
         );
       },
