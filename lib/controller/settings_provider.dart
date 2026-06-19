@@ -2857,6 +2857,7 @@ class SettingsProvider extends ChangeNotifier {
     required String isRegistered,
     required String colorCode,
     required final customFields,
+    required final taskTypes,
     required String whatsappTemplateId,
   }) async {
     try {
@@ -2882,6 +2883,8 @@ class SettingsProvider extends ChangeNotifier {
                 ? "0"
                 : progressValueController.text,
             "Custom_Fields": customFields,
+            "Task_Type": taskTypes,
+            "Task_Types": taskTypes,
             "Whatsapp_Template_Id": whatsappTemplateId,
             "Sub_Status": selectedSubStatusesForApi,
             "Is_transfer": _isTransfer ? 1 : 0,
