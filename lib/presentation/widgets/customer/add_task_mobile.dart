@@ -78,7 +78,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      provider.getTaskType(context);
+      provider.getTaskType(context, fetchUserSpecific: true);
 
       if (!widget.isEdit) {
         customerDetailsProvider.taskChoosedateController.text =

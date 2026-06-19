@@ -2532,7 +2532,16 @@ class SettingsProvider extends ChangeNotifier {
         if (response.statusCode == 200 &&
             response.data != null &&
             response.data['data'] != null) {
-          final List<dynamic> dataList = response.data['data'];
+          final responseData = response.data['data'];
+          List<dynamic> dataList;
+          if (responseData is Map &&
+              responseData['enquiry_for_list'] != null) {
+            dataList = responseData['enquiry_for_list'] as List<dynamic>;
+          } else if (responseData is List) {
+            dataList = responseData;
+          } else {
+            dataList = [];
+          }
           userList = dataList
               .map((item) => UserEnquiryForModel.fromJson(item))
               .toList();
@@ -2597,7 +2606,16 @@ class SettingsProvider extends ChangeNotifier {
         if (response.statusCode == 200 &&
             response.data != null &&
             response.data['data'] != null) {
-          final List<dynamic> dataList = response.data['data'];
+          final responseData = response.data['data'];
+          List<dynamic> dataList;
+          if (responseData is Map &&
+              responseData['enquiry_source_list'] != null) {
+            dataList = responseData['enquiry_source_list'] as List<dynamic>;
+          } else if (responseData is List) {
+            dataList = responseData;
+          } else {
+            dataList = [];
+          }
           userList = dataList
               .map((item) => UserEnquirySourceModel.fromJson(item))
               .toList();
@@ -2662,7 +2680,16 @@ class SettingsProvider extends ChangeNotifier {
         if (response.statusCode == 200 &&
             response.data != null &&
             response.data['data'] != null) {
-          final List<dynamic> dataList = response.data['data'];
+          final responseData = response.data['data'];
+          List<dynamic> dataList;
+          if (responseData is Map &&
+              responseData['task_type_list'] != null) {
+            dataList = responseData['task_type_list'] as List<dynamic>;
+          } else if (responseData is List) {
+            dataList = responseData;
+          } else {
+            dataList = [];
+          }
           userList = dataList
               .map((item) => UserTaskTypeModel.fromJson(item))
               .toList();
