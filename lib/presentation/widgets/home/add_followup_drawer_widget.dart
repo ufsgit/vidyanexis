@@ -89,6 +89,16 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
           showAmount = selectedItem.isAmount == 1;
         });
       }
+      if (settingsProvider.selectedDepartmentId != null &&
+          settingsProvider.selectedDepartmentId != 0) {
+        dropDownProvider.fetchAndSetAssignedUser(
+          context: context,
+          leadId: leadProvider.customerId.toString(),
+          branchId: settingsProvider.selectedBranchId,
+          departmentId: settingsProvider.selectedDepartmentId,
+          leadProvider: leadProvider,
+        );
+      }
     });
     super.initState();
   }
@@ -243,6 +253,13 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                             dropDownProvider.filterStaffByBranchAndDepartment(
                               branchId: settingsProvider.selectedBranchId,
                               departmentId: selectedId,
+                            );
+                            dropDownProvider.fetchAndSetAssignedUser(
+                              context: context,
+                              leadId: leadProvider.customerId.toString(),
+                              branchId: settingsProvider.selectedBranchId,
+                              departmentId: selectedId,
+                              leadProvider: leadProvider,
                             );
                           },
                         ),

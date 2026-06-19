@@ -169,6 +169,16 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
           }
         }
       }
+      if (settingsProvider.selectedDepartmentId != null &&
+          settingsProvider.selectedDepartmentId != 0) {
+        dropDownProvider.fetchAndSetAssignedUser(
+          context: context,
+          leadId: leadProvider.customerId.toString(),
+          branchId: settingsProvider.selectedBranchId,
+          departmentId: settingsProvider.selectedDepartmentId,
+          leadProvider: leadProvider,
+        );
+      }
     });
     super.initState();
   }
@@ -663,6 +673,14 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                   dropDownProvider.filterStaffByBranchAndDepartment(
                     branchId: settingsProvider.selectedBranchId,
                     departmentId: selectedId,
+                  );
+
+                  dropDownProvider.fetchAndSetAssignedUser(
+                    context: context,
+                    leadId: leadProvider.customerId.toString(),
+                    branchId: settingsProvider.selectedBranchId,
+                    departmentId: selectedId,
+                    leadProvider: leadProvider,
                   );
                 });
               },

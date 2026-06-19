@@ -485,6 +485,20 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       leadProvider.searchUserController.text = leadProvider.loginUserName;
       dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
 
+      if (widget.isEdit &&
+          settingsProvider.selectedDepartmentId != null &&
+          settingsProvider.selectedDepartmentId != 0 &&
+          widget.customerId != null &&
+          widget.customerId.isNotEmpty &&
+          widget.customerId != '0') {
+        dropDownProvider.fetchAndSetAssignedUser(
+          context: context,
+          leadId: widget.customerId,
+          branchId: settingsProvider.selectedBranchId,
+          departmentId: settingsProvider.selectedDepartmentId,
+          leadProvider: leadProvider,
+        );
+      }
       // widgetBuilder = CustomFieldWidgetBuilder(context);
     });
   }
@@ -955,6 +969,18 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   branchId: settingsProvider.selectedBranchId,
                   departmentId: selectedId,
                 );
+
+                if (widget.customerId != null &&
+                    widget.customerId.isNotEmpty &&
+                    widget.customerId != '0') {
+                  dropDownProvider.fetchAndSetAssignedUser(
+                    context: context,
+                    leadId: widget.customerId,
+                    branchId: settingsProvider.selectedBranchId,
+                    departmentId: selectedId,
+                    leadProvider: leadProvider,
+                  );
+                }
               },
             ),
             SizedBox(

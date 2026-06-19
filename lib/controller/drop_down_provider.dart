@@ -1072,4 +1072,93 @@ class DropDownProvider extends ChangeNotifier {
       );
     }
   }
+
+  Future<void> fetchAndSetAssignedUser({
+    required BuildContext context,
+    required String leadId,
+    required int? branchId,
+    required int? departmentId,
+    required dynamic leadProvider,
+  }) async {
+    if (leadId.isEmpty || leadId == '0' || departmentId == null || departmentId == 0) {
+      return;
+    }
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getFollowupAssignedUser,
+        bodyData: {
+          'Lead_Id': leadId,
+          'Department_Id': departmentId,
+        },
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        dynamic responseData = response.data;
+        if (responseData is Map<String, dynamic> && responseData.containsKey('success') && responseData['success'] == true) {
+          responseData = responseData['data'];
+        }
+
+        Map<String, dynamic>? userMap;
+        if (responseData is List<dynamic> && responseData.isNotEmpty) {
+          userMap = responseData.first as Map<String, dynamic>;
+        } else if (responseData is Map<String, dynamic>) {
+          userMap = responseData;
+        }
+
+        if (userMap != null) {
+          int? parsedUserId;
+          final rawUserId = userMap['User_Details_Id'] ??
+                            userMap['user_details_id'] ??
+                            userMap['User_Id'] ??
+                            userMap['user_id'] ??
+                            userMap['Id'] ??
+                            userMap['id'];
+          if (rawUserId != null) {
+            parsedUserId = int.tryParse(rawUserId.toString());
+          }
+
+          final String parsedUserName = (userMap['User_Details_Name'] ??
+                                         userMap['user_details_name'] ??
+                                         userMap['User_Name'] ??
+                                         userMap['user_name'] ??
+                                         userMap['To_User_Name'] ??
+                                         userMap['to_user_name'] ??
+                                         userMap['Name'] ??
+                                         userMap['name'] ??
+                                         '').toString().trim();
+
+          if (parsedUserId != null && parsedUserId > 0 && parsedUserName.isNotEmpty) {
+            final alreadyInSearchUser = _searchUserDetails.any((u) => u.userDetailsId == parsedUserId);
+            if (!alreadyInSearchUser) {
+              _searchUserDetails.add(SearchUserDetails(
+                userDetailsId: parsedUserId,
+                userDetailsName: parsedUserName,
+                workingStatus: "1",
+                branchId: branchId?.toString(),
+                departmentId: departmentId.toString(),
+              ));
+            }
+
+            final alreadyInFilteredStaff = filteredStaffData.any((u) => u.userDetailsId == parsedUserId);
+            if (!alreadyInFilteredStaff) {
+              filteredStaffData.add(SearchUserDetails(
+                userDetailsId: parsedUserId,
+                userDetailsName: parsedUserName,
+                workingStatus: "1",
+                branchId: branchId?.toString(),
+                departmentId: departmentId.toString(),
+              ));
+            }
+
+            setSelectedUserId(parsedUserId);
+            leadProvider.searchUserController.text = parsedUserName;
+            notifyListeners();
+          }
+        }
+      }
+    } catch (e) {
+      print('Exception occurred in fetchAndSetAssignedUser: $e');
+    }
+  }
 }
