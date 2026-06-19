@@ -46,6 +46,7 @@ class LeadCard extends StatefulWidget {
 
 class _LeadCardState extends State<LeadCard> {
   bool _isNoteClicked = false;
+  DateTime? originalFollowUpDate;
 
   @override
   void didUpdateWidget(covariant LeadCard oldWidget) {
@@ -62,6 +63,18 @@ class _LeadCardState extends State<LeadCard> {
   }
 
   void _initializeNoteData() {
+    if (widget.lead.nextFollowUpDate.isNotEmpty) {
+      try {
+        originalFollowUpDate = DateTime.parse(widget.lead.nextFollowUpDate);
+      } catch (_) {
+        try {
+          originalFollowUpDate =
+              DateFormat('dd MMM yyyy').parse(widget.lead.nextFollowUpDate);
+        } catch (_) {}
+      }
+    } else {
+      originalFollowUpDate = null;
+    }
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
@@ -365,7 +378,9 @@ class _LeadCardState extends State<LeadCard> {
                                     padding: const EdgeInsets.all(12),
                                     width: double.infinity,
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                                      border: Border.all(
+                                          color: const Color(0xFFCBD5E1),
+                                          width: 1.0),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Wrap(
@@ -392,6 +407,28 @@ class _LeadCardState extends State<LeadCard> {
                                               leadsProvider
                                                       .statusController.text =
                                                   status.statusName ?? '';
+                                              if (status.isShowFollowupDate ==
+                                                  1) {
+                                                int durationVal = int.tryParse(
+                                                        status.statusDuration ??
+                                                            '') ??
+                                                    0;
+                                                DateTime baseDate =
+                                                    originalFollowUpDate ??
+                                                        DateTime.now();
+                                                DateTime targetDate =
+                                                    baseDate.add(Duration(
+                                                        days: durationVal));
+                                                leadsProvider
+                                                    .nextFollowUpDateController
+                                                    .text = DateFormat(
+                                                        'dd MMM yyyy')
+                                                    .format(targetDate);
+                                              } else {
+                                                leadsProvider
+                                                    .nextFollowUpDateController
+                                                    .clear();
+                                              }
                                             });
                                           },
                                           child: Container(
@@ -444,7 +481,7 @@ class _LeadCardState extends State<LeadCard> {
                                       if (date != null) {
                                         leadsProvider.nextFollowUpDateController
                                                 .text =
-                                            DateFormat('yyyy-MM-dd')
+                                            DateFormat('dd MMM yyyy')
                                                 .format(date);
                                       }
                                     },

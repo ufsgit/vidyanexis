@@ -22,7 +22,10 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
   void initState() {
     settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      settingsProvider.searchTaskType('', context);
+      settingsProvider.searchEnquiryForData('', context);
+      settingsProvider.searchTaskType('', context,
+          enquiryForId:
+              settingsProvider.selectedTaskTypeFilterEnquiryForId.toString());
       settingsProvider.searchTaskTypeController.clear();
       settingsProvider.setOnAddPressed(_openAddDialog);
     });

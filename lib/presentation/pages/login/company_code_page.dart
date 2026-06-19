@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/company_provider.dart';
 import 'package:go_router/go_router.dart';
 
@@ -81,6 +82,7 @@ class _CompanyCodePageState extends State<CompanyCodePage> {
 
                   // Glassmorphism Card
                   Container(
+                    width: AppStyles.isWebScreen(context) ? 376 : null,
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.1),

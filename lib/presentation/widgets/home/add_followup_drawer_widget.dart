@@ -35,6 +35,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
   late FocusNode _leadNameFocusNode;
   bool showAmount = false;
   late TextEditingController amountController;
+  DateTime? originalFollowUpDate;
 
   @override
   void initState() {
@@ -43,6 +44,16 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
         Provider.of<DropDownProvider>(context, listen: false);
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
+
+    if (leadProvider.nextFollowUpDateController.text.isNotEmpty) {
+      try {
+        originalFollowUpDate = DateFormat('dd MMM yyyy').parse(leadProvider.nextFollowUpDateController.text);
+      } catch (_) {
+        try {
+          originalFollowUpDate = DateTime.parse(leadProvider.nextFollowUpDateController.text);
+        } catch (_) {}
+      }
+    }
 
     leadProvider.messageController
         .clear(); // Clear remarks textfield by default
@@ -139,10 +150,20 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                         leadId: leadProvider.customerId, statusId: selectedId);
                     leadProvider.statusController.text =
                         selectedItem.statusName ?? '';
+                    if (selectedItem.isShowFollowupDate == 1) {
+                      int durationVal = int.tryParse(selectedItem.statusDuration ?? '') ?? 0;
+                      DateTime baseDate = originalFollowUpDate ?? DateTime.now();
+                      DateTime targetDate = baseDate.add(Duration(days: durationVal));
+                      leadProvider.nextFollowUpDateController.text =
+                          DateFormat('dd MMM yyyy').format(targetDate);
+                    } else {
+                      leadProvider.nextFollowUpDateController.clear();
+                    }
                     setState(() {
                       showAmount = selectedItem.isAmount == 1;
                     });
                   },
+
                   selectedValue: dropDownProvider.selectedStatusId,
                 ),
                 if (showAmount) ...[

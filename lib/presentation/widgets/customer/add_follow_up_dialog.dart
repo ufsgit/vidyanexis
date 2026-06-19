@@ -50,6 +50,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
   bool showAmountForSecondary = false;
   bool get showAmount => showAmountForMain || showAmountForSecondary;
   late TextEditingController amountController;
+  DateTime? originalFollowUpDate;
 
   @override
   void dispose() {
@@ -81,6 +82,17 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
         Provider.of<DropDownProvider>(context, listen: false);
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
+
+    if (leadProvider.nextFollowUpDateController.text.isNotEmpty) {
+      try {
+        originalFollowUpDate = DateFormat('dd MMM yyyy').parse(leadProvider.nextFollowUpDateController.text);
+      } catch (_) {
+        try {
+          originalFollowUpDate = DateTime.parse(leadProvider.nextFollowUpDateController.text);
+        } catch (_) {}
+      }
+    }
+
     leadProvider.transferStatusController.clear();
     dropDownProvider.setSelectedTransferStatusId(0);
     leadProvider.followUpTimeController.clear();
@@ -476,7 +488,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
               dropDownProvider.setSelectedStatusId(selectedId);
 
               if (selectedId != null) {
-                final selectedItem = _filteredFollowUpStatuses.firstWhere(
+                final selectedItem = dropDownProvider.followUpData.firstWhere(
                   (status) => status.statusId == selectedId,
                   orElse: () => SearchLeadStatusModel(statusId: selectedId, statusName: ''),
                 );
@@ -484,6 +496,16 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 // ✅ Sync controller text
                 leadProvider.statusController.text =
                     selectedItem.statusName ?? '';
+
+                if (selectedItem.isShowFollowupDate == 1) {
+                  int durationVal = int.tryParse(selectedItem.statusDuration ?? '') ?? 0;
+                  DateTime baseDate = originalFollowUpDate ?? DateTime.now();
+                  DateTime targetDate = baseDate.add(Duration(days: durationVal));
+                  leadProvider.nextFollowUpDateController.text =
+                      DateFormat('dd MMM yyyy').format(targetDate);
+                } else {
+                  leadProvider.nextFollowUpDateController.clear();
+                }
 
                 // Check if selected status has isAmount == 1
                 final statusData = await settingsProvider

@@ -295,13 +295,18 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                           .firstWhere(
                                         (status) =>
                                             status.statusId == selectedId,
+                                        orElse: () => SearchLeadStatusModel(
+                                            statusId: selectedId, statusName: ''),
                                       );
                                       leadProvider.statusController.text =
                                           selectedItem.statusName ?? '';
-                                      if (!dropDownProvider
-                                          .isFollowupRequiredNew()) {
-                                        leadProvider.nextFollowUpDateController
-                                            .clear();
+                                      if (selectedItem.isShowFollowupDate == 1) {
+                                        int durationVal = int.tryParse(selectedItem.statusDuration ?? '') ?? 0;
+                                        DateTime targetDate = DateTime.now().add(Duration(days: durationVal));
+                                        leadProvider.nextFollowUpDateController.text =
+                                            DateFormat('dd MMM yyyy').format(targetDate);
+                                      } else {
+                                        leadProvider.nextFollowUpDateController.clear();
                                       }
                                     },
                                     selectedValue:
