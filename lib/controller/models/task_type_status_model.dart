@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 
 TaskTypeStatusModel taskTypeStatusModelFromJson(String str) =>
     TaskTypeStatusModel.fromJson(json.decode(str));
@@ -22,6 +23,8 @@ class TaskTypeStatusModel {
   Color? colorCode;
   int? taskTypeId;
   int? enquiryForId; // Added field
+  int? isTime;
+  List<SubStatus>? subStatuses;
 
   TaskTypeStatusModel({
     this.statusId,
@@ -32,6 +35,8 @@ class TaskTypeStatusModel {
     this.colorCode,
     this.taskTypeId,
     this.enquiryForId, // Added parameter
+    this.isTime,
+    this.subStatuses,
   });
 
   TaskTypeStatusModel copyWith({
@@ -43,6 +48,8 @@ class TaskTypeStatusModel {
     Color? colorCode,
     int? taskTypeId,
     int? enquiryForId, // Added parameter
+    int? isTime,
+    List<SubStatus>? subStatuses,
   }) =>
       TaskTypeStatusModel(
         statusId: statusId ?? this.statusId,
@@ -53,6 +60,8 @@ class TaskTypeStatusModel {
         colorCode: colorCode ?? this.colorCode,
         taskTypeId: taskTypeId ?? this.taskTypeId,
         enquiryForId: enquiryForId ?? this.enquiryForId, // Added assignment
+        isTime: isTime ?? this.isTime,
+        subStatuses: subStatuses ?? this.subStatuses,
       );
 
   factory TaskTypeStatusModel.fromJson(Map<String, dynamic> json) =>
@@ -67,6 +76,11 @@ class TaskTypeStatusModel {
             : AppColors.parseColor(json["Color_Code"]),
         taskTypeId: json["Task_Type_Id"],
         enquiryForId: json["Enquiry_For_Id"], // Added field mapping
+        isTime: json["Is_Time"]?.toInt(),
+        subStatuses: json["Sub_Statuses"] == null
+            ? []
+            : List<SubStatus>.from(
+                json["Sub_Statuses"]!.map((x) => SubStatus.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -77,5 +91,9 @@ class TaskTypeStatusModel {
         "registered": isRegistered,
         "Color_Code": colorCode,
         "Enquiry_For_Id": enquiryForId, // Added field to JSON map
+        "Is_Time": isTime,
+        "Sub_Statuses": subStatuses == null
+            ? []
+            : List<dynamic>.from(subStatuses!.map((x) => x.toJson())),
       };
 }

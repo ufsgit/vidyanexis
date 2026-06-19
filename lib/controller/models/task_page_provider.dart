@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/controller/models/task_history_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
@@ -128,10 +129,12 @@ class TaskPageProvider extends ChangeNotifier {
 
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController followUpDateController = TextEditingController();
+  final TextEditingController followUpTimeController = TextEditingController();
 
   void clearDescription() {
     descriptionController.clear();
     followUpDateController.clear();
+    followUpTimeController.clear();
     notifyListeners();
   }
 
@@ -664,7 +667,8 @@ class TaskPageProvider extends ChangeNotifier {
       BuildContext context,
       TaskTypeStatusModel statusModel,
       int taskId,
-      Map<String, dynamic>? locationData) async {
+      Map<String, dynamic>? locationData,
+      {SubStatus? subStatus}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -703,10 +707,16 @@ class TaskPageProvider extends ChangeNotifier {
             "Description": descriptionController.text,
             // "Next_FollowUp_Date":
             //     DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            "Next_FollowUp_Date": followUpDateController.text.toyyyymmdd(),
+            "Next_FollowUp_Date": statusModel.followup == 1 ? followUpDateController.text.toyyyymmdd() : "",
+            "Followup_Time": statusModel.isTime == 1 ? followUpTimeController.text : "",
             "Tasks": _selectedTaskTypeIds.join(","),
             "CustomFields": customFieldsData,
             "flow_id": _flowId,
+            "Sub_Status_Id": subStatus?.subStatusId,
+            "Sub_Status_Name": subStatus?.subStatusName,
+            "sub_status_id": subStatus?.subStatusId,
+            "sub_status_name": subStatus?.subStatusName,
+            "Sub_Status": subStatus != null ? [subStatus.toJson()] : null,
           });
 
       if (response?.statusCode == 200) {

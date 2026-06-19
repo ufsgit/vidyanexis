@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
@@ -31,6 +32,7 @@ class ProcessFlowDialog extends StatefulWidget {
 class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   late Future<List<TaskTypeStatusModel>> statusOptionsFuture;
   late TaskTypeStatusModel selectedStatus;
+  SubStatus? selectedSubStatus;
   bool isSaving = false;
   bool isInitialized = false;
   bool showScheduleNotes = false;
@@ -175,7 +177,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           } else if (snapshot.hasError ||
               !snapshot.hasData ||
               snapshot.data!.isEmpty) {
-            return const CommonEmptyState(message: 'Error loading status options');
+            return const CommonEmptyState(
+                message: 'Error loading status options');
           } else {
             final statusOptions = snapshot.data!;
 
@@ -240,7 +243,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                             ),
                             padding: const EdgeInsets.all(12),
                             child: Wrap(
@@ -253,6 +257,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   onTap: () async {
                                     setState(() {
                                       selectedStatus = status;
+                                      selectedSubStatus = null;
                                     });
 
                                     int statusId = selectedStatus.statusId ?? 0;
@@ -314,6 +319,66 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             ),
                           ),
 
+                          if (selectedStatus.subStatuses != null &&
+                              selectedStatus.subStatuses!.any((s) =>
+                                  s.subStatusId != null &&
+                                  s.subStatusId != 0 &&
+                                  s.subStatusName != null &&
+                                  s.subStatusName!.isNotEmpty)) ...[
+                            const SizedBox(height: 12),
+                            _buildFieldLabel('Select Sub Status'),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                    color: const Color(0xFFCBD5E1), width: 1.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButtonFormField<SubStatus>(
+                                  value: selectedSubStatus,
+                                  isExpanded: true,
+                                  decoration: const InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 10),
+                                    border: InputBorder.none,
+                                  ),
+                                  hint: Text(
+                                    'Choose Sub Status',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: const Color(0xFF94A3B8),
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  onChanged: (newVal) {
+                                    setState(() {
+                                      selectedSubStatus = newVal;
+                                    });
+                                  },
+                                  items: selectedStatus.subStatuses!
+                                      .where((s) =>
+                                          s.subStatusId != null &&
+                                          s.subStatusId != 0 &&
+                                          s.subStatusName != null &&
+                                          s.subStatusName!.isNotEmpty)
+                                      .map((sub) => DropdownMenuItem<SubStatus>(
+                                            value: sub,
+                                            child: Text(
+                                              sub.subStatusName ?? '',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 15,
+                                                color: const Color(0xFF1E293B),
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ))
+                                      .toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+
                           const SizedBox(height: 8),
 
                           // CustomField
@@ -354,12 +419,13 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       int customerId = widget.task.customerId;
                                       int enquiryForId =
                                           widget.task.enquiryForId;
-                                      reportsProvider.fetchTaskTypesWithCustomFields(
-                                          tasktypeId,
-                                          statusId,
-                                          customerId,
-                                          enquiryForId,
-                                          context);
+                                      reportsProvider
+                                          .fetchTaskTypesWithCustomFields(
+                                              tasktypeId,
+                                              statusId,
+                                              customerId,
+                                              enquiryForId,
+                                              context);
                                     },
                                   ),
                                 ],
@@ -414,40 +480,64 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             children: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildFieldLabel('Next FollowUp Date'),
-                                _buildInputField(
-                                  controller:
-                                      reportsProvider.followUpDateController,
-                                  hint: 'Choose FollowUp Date',
-                                  icon: Icons.calendar_today,
-                                  readOnly: true,
-                                  onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime(2101),
-                                      builder: (context, child) {
-                                        return Theme(
-                                          data: Theme.of(context).copyWith(
-                                            colorScheme:
-                                                const ColorScheme.light(
-                                              primary: Color(0xFF1A7AE8),
+                                if (selectedStatus.followup == 1) ...[
+                                  _buildFieldLabel('Next FollowUp Date'),
+                                  _buildInputField(
+                                    controller:
+                                        reportsProvider.followUpDateController,
+                                    hint: 'Choose FollowUp Date',
+                                    icon: Icons.calendar_today,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      DateTime? pickedDate = await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(),
+                                        firstDate: DateTime.now(),
+                                        lastDate: DateTime(2101),
+                                        builder: (context, child) {
+                                          return Theme(
+                                            data: Theme.of(context).copyWith(
+                                              colorScheme:
+                                                  const ColorScheme.light(
+                                                primary: Color(0xFF1A7AE8),
+                                              ),
                                             ),
-                                          ),
-                                          child: child!,
-                                        );
-                                      },
-                                    );
-                                    if (pickedDate != null) {
-                                      reportsProvider
-                                              .followUpDateController.text =
-                                          DateFormat('dd MMM yyyy')
-                                              .format(pickedDate);
-                                    }
-                                  },
-                                ),
-                                const SizedBox(height: 16),
+                                            child: child!,
+                                          );
+                                        },
+                                      );
+                                      if (pickedDate != null) {
+                                        reportsProvider
+                                                .followUpDateController.text =
+                                            DateFormat('dd MMM yyyy')
+                                                .format(pickedDate);
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
+                                if (selectedStatus.isTime == 1) ...[
+                                  _buildFieldLabel('Next FollowUp Time'),
+                                  _buildInputField(
+                                    controller:
+                                        reportsProvider.followUpTimeController,
+                                    hint: 'Choose FollowUp Time',
+                                    icon: Icons.access_time,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      TimeOfDay? pickedTime = await showTimePicker(
+                                        context: context,
+                                        initialTime: TimeOfDay.now(),
+                                      );
+                                      if (pickedTime != null) {
+                                        reportsProvider
+                                                .followUpTimeController.text =
+                                            pickedTime.format(context);
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
                                 _buildFieldLabel('Add Notes'),
                                 _buildInputField(
                                   controller:
@@ -788,7 +878,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                               widget.task.locationTracking == 1
                                                   ? await reportsProvider
                                                       .getCurrentLocation()
-                                                  : null);
+                                                  : null,
+                                              subStatus: selectedSubStatus);
 
                                       if (isSuccess) {
                                         Navigator.of(context).pop(true);

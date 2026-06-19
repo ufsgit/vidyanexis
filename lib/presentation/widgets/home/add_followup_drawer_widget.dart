@@ -47,10 +47,12 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
 
     if (leadProvider.nextFollowUpDateController.text.isNotEmpty) {
       try {
-        originalFollowUpDate = DateFormat('dd MMM yyyy').parse(leadProvider.nextFollowUpDateController.text);
+        originalFollowUpDate = DateFormat('dd MMM yyyy')
+            .parse(leadProvider.nextFollowUpDateController.text);
       } catch (_) {
         try {
-          originalFollowUpDate = DateTime.parse(leadProvider.nextFollowUpDateController.text);
+          originalFollowUpDate =
+              DateTime.parse(leadProvider.nextFollowUpDateController.text);
         } catch (_) {}
       }
     }
@@ -161,9 +163,12 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                     leadProvider.statusController.text =
                         selectedItem.statusName ?? '';
                     if (selectedItem.isShowFollowupDate == 1) {
-                      int durationVal = int.tryParse(selectedItem.statusDuration ?? '') ?? 0;
-                      DateTime baseDate = originalFollowUpDate ?? DateTime.now();
-                      DateTime targetDate = baseDate.add(Duration(days: durationVal));
+                      int durationVal =
+                          int.tryParse(selectedItem.statusDuration ?? '') ?? 0;
+                      DateTime baseDate =
+                          originalFollowUpDate ?? DateTime.now();
+                      DateTime targetDate =
+                          baseDate.add(Duration(days: durationVal));
                       leadProvider.nextFollowUpDateController.text =
                           DateFormat('dd MMM yyyy').format(targetDate);
                     } else {
@@ -173,7 +178,6 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                       showAmount = selectedItem.isAmount == 1;
                     });
                   },
-
                   selectedValue: dropDownProvider.selectedStatusId,
                 ),
                 if (showAmount) ...[

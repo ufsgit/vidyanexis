@@ -28,6 +28,7 @@ import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -2531,6 +2532,8 @@ class _tasksPageReportState extends State<TaskPage> {
 
                         final ValueNotifier<TaskTypeStatusModel>
                             selectedStatus = ValueNotifier(defaultStatus);
+                        final ValueNotifier<SubStatus?>
+                            selectedSubStatus = ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -2568,6 +2571,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               isSelected: isSelected,
                                               onTap: () {
                                                 selectedStatus.value = status;
+                                                selectedSubStatus.value = null;
                                               },
                                             );
                                           }).toList(),
@@ -2577,17 +2581,87 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ],
                                 ),
                               ),
+                              ValueListenableBuilder<TaskTypeStatusModel>(
+                                valueListenable: selectedStatus,
+                                builder: (context, currentStatus, _) {
+                                  final validSubStatuses = currentStatus.subStatuses
+                                      ?.where((s) => s.subStatusId != null && s.subStatusId != 0 && s.subStatusName != null && s.subStatusName!.isNotEmpty)
+                                      .toList() ?? [];
+                                  if (validSubStatuses.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('Select Sub Status',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF64748B))),
+                                        const SizedBox(height: 8),
+                                        ValueListenableBuilder<SubStatus?>(
+                                          valueListenable: selectedSubStatus,
+                                          builder: (context, subVal, _) {
+                                            return DropdownButtonFormField<SubStatus>(
+                                              value: subVal,
+                                              decoration: InputDecoration(
+                                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                                ),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  borderSide: const BorderSide(color: Color(0xFF1A7AE8), width: 1),
+                                                ),
+                                                hintText: 'Select Sub Status',
+                                                hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                                              ),
+                                              isExpanded: true,
+                                              onChanged: (sub) {
+                                                selectedSubStatus.value = sub;
+                                              },
+                                              items: validSubStatuses.map((sub) {
+                                                return DropdownMenuItem<SubStatus>(
+                                                  value: sub,
+                                                  child: Text(sub.subStatusName ?? '', style: const TextStyle(fontSize: 14)),
+                                                );
+                                              }).toList(),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                               const SizedBox(height: 6),
                               ValueListenableBuilder<TaskTypeStatusModel>(
                                 valueListenable: selectedStatus,
                                 builder: (ctx, status, child) {
                                   bool showDate = status.followup == 1;
-                                  if (!showDate) {
+                                  bool showTime = status.isTime == 1;
+                                  if (!showDate && !showTime) {
                                     return const SizedBox.shrink();
                                   }
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 12),
-                                    child: dateFollowUpWidget(),
+                                    child: Row(
+                                      children: [
+                                        if (showDate)
+                                          Expanded(child: dateFollowUpWidget()),
+                                        if (showDate && showTime)
+                                          const SizedBox(width: 12),
+                                        if (showTime)
+                                          Expanded(child: timeFollowUpWidget()),
+                                      ],
+                                    ),
                                   );
                                 },
                               ),
@@ -2630,7 +2704,7 @@ class _tasksPageReportState extends State<TaskPage> {
                         );
 
                         return Column(
-                          mainAxisSize: MainAxisSize.min,
+                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Flexible(
                               child: SingleChildScrollView(
@@ -2687,6 +2761,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ? await reportsProvider
                                                             .getCurrentLocation()
                                                         : null,
+                                                    subStatus: selectedSubStatus.value,
                                                   );
                                                   if (isSuccess) {
                                                     Navigator.of(context)
@@ -2981,6 +3056,8 @@ class _tasksPageReportState extends State<TaskPage> {
 
                         final ValueNotifier<TaskTypeStatusModel>
                             selectedStatus = ValueNotifier(defaultStatus);
+                        final ValueNotifier<SubStatus?>
+                            selectedSubStatus = ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
 
@@ -3017,6 +3094,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               isSelected: isSelected,
                                               onTap: () async {
                                                 selectedStatus.value = status;
+                                                selectedSubStatus.value = null;
                                                 int sId = status.statusId ?? 0;
                                                 int tId =
                                                     status.taskTypeId ?? 0;
@@ -3035,6 +3113,66 @@ class _tasksPageReportState extends State<TaskPage> {
                                     ),
                                   ],
                                 ),
+                              ),
+                              ValueListenableBuilder<TaskTypeStatusModel>(
+                                valueListenable: selectedStatus,
+                                builder: (context, currentStatus, _) {
+                                  final validSubStatuses = currentStatus.subStatuses
+                                      ?.where((s) => s.subStatusId != null && s.subStatusId != 0 && s.subStatusName != null && s.subStatusName!.isNotEmpty)
+                                      .toList() ?? [];
+                                  if (validSubStatuses.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text('Select Sub Status',
+                                            style: TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF64748B))),
+                                        const SizedBox(height: 8),
+                                        ValueListenableBuilder<SubStatus?>(
+                                          valueListenable: selectedSubStatus,
+                                          builder: (context, subVal, _) {
+                                            return DropdownButtonFormField<SubStatus>(
+                                              value: subVal,
+                                              decoration: InputDecoration(
+                                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                                ),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(4),
+                                                  borderSide: const BorderSide(color: Color(0xFF1A7AE8), width: 1),
+                                                ),
+                                                hintText: 'Select Sub Status',
+                                                hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                                              ),
+                                              isExpanded: true,
+                                              onChanged: (sub) {
+                                                selectedSubStatus.value = sub;
+                                              },
+                                              items: validSubStatuses.map((sub) {
+                                                return DropdownMenuItem<SubStatus>(
+                                                  value: sub,
+                                                  child: Text(sub.subStatusName ?? '', style: const TextStyle(fontSize: 14)),
+                                                );
+                                              }).toList(),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
 
                               // CustomField
@@ -3243,6 +3381,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   return Consumer<TaskPageProvider>(
                                     builder: (context, reportsProvider, child) {
                                       bool showDate = status.followup == 1;
+                                      bool showTime = status.isTime == 1;
                                       bool hasDocs = reportsProvider
                                           .documentTypeModel.isNotEmpty;
                                       bool hasMandatory =
@@ -3250,8 +3389,20 @@ class _tasksPageReportState extends State<TaskPage> {
                                       bool showRightList =
                                           hasDocs || hasMandatory;
 
-                                      Widget leftSide = showDate
-                                          ? dateFollowUpWidget()
+                                      Widget leftSide = (showDate || showTime)
+                                          ? Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                if (showDate) ...[
+                                                  dateFollowUpWidget(),
+                                                  if (showTime)
+                                                    const SizedBox(height: 12),
+                                                ],
+                                                if (showTime)
+                                                  timeFollowUpWidget(),
+                                              ],
+                                            )
                                           : const SizedBox.shrink();
 
                                       Widget rightSide = showRightList
@@ -3363,7 +3514,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             )
                                           : const SizedBox.shrink();
 
-                                      if (!showDate && !showRightList) {
+                                      if (!showDate && !showTime && !showRightList) {
                                         return const SizedBox.shrink();
                                       }
 
@@ -3372,7 +3523,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            if (showDate) ...[
+                                            if (showDate || showTime) ...[
                                               leftSide,
                                               const SizedBox(height: 10)
                                             ],
@@ -3391,13 +3542,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                if (showDate)
+                                                if (showDate || showTime)
                                                   Expanded(child: leftSide),
-                                                if (showDate && showRightList)
+                                                if ((showDate || showTime) && showRightList)
                                                   const SizedBox(width: 16),
                                                 if (showRightList)
                                                   Expanded(child: rightSide),
-                                                if (!showRightList && showDate)
+                                                if (!showRightList && (showDate || showTime))
                                                   const Expanded(
                                                       child: SizedBox()),
                                               ],
@@ -4036,7 +4187,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         1
                                                                     ? await provider
                                                                         .getCurrentLocation()
-                                                                    : null);
+                                                                    : null,
+                                                                subStatus: selectedSubStatus.value);
 
                                                         if (!context.mounted) {
                                                           return;
@@ -4488,6 +4640,70 @@ class _tasksPageReportState extends State<TaskPage> {
                         style: TextStyle(
                           fontSize: 13,
                           color: hasDate
+                              ? const Color(0xFF1E293B)
+                              : Colors.grey.shade400,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget timeFollowUpWidget() {
+    final taskProvider = Provider.of<TaskPageProvider>(context, listen: false);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Follow-up Time',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey.shade600,
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: () async {
+            final TimeOfDay? picked = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
+            if (picked != null) {
+              taskProvider.followUpTimeController.text =
+                  picked.format(context);
+            }
+          },
+          borderRadius: BorderRadius.circular(4),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Colors.grey.shade300, width: 1),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.access_time_outlined,
+                    size: 14, color: Color(0xFF64748B)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: taskProvider.followUpTimeController,
+                    builder: (_, val, __) {
+                      final hasTime = val.text.isNotEmpty;
+                      return Text(
+                        hasTime ? val.text : 'HH:MM AM/PM',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: hasTime
                               ? const Color(0xFF1E293B)
                               : Colors.grey.shade400,
                         ),
