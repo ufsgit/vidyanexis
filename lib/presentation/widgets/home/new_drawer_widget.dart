@@ -418,6 +418,19 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       leadProvider.searchUserController.text = leadProvider.loginUserName;
       dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
 
+      if (widget.isEdit &&
+          settingsProvider.selectedDepartmentId != null &&
+          settingsProvider.selectedDepartmentId != 0 &&
+          leadProvider.customerId != null &&
+          leadProvider.customerId != 0) {
+        dropDownProvider.fetchAndSetAssignedUser(
+          context: context,
+          leadId: leadProvider.customerId.toString(),
+          branchId: settingsProvider.selectedBranchId,
+          departmentId: settingsProvider.selectedDepartmentId,
+          leadProvider: leadProvider,
+        );
+      }
       // widgetBuilder = CustomFieldWidgetBuilder(context);
     });
   }

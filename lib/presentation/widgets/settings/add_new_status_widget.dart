@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
+import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
@@ -39,6 +40,7 @@ class AddNewStatusWidget extends StatefulWidget {
 
 class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
   List<Map<String, dynamic>> selectedFields = [];
+  List<Map<String, dynamic>> selectedTaskTypes = [];
   String? validateInputs(
       BuildContext context, SettingsProvider settingsProvider) {
     if (settingsProvider.statusController.text.trim().isEmpty) {
@@ -308,6 +310,141 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
     );
   }
 
+  void _showTaskTypeDialog() {
+    SettingsProvider settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: const Text('Select Task Types'),
+              content: SizedBox(
+                width: AppStyles.isWebScreen(context)
+                    ? MediaQuery.of(context).size.width / 3
+                    : MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 2,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: settingsProvider.taskType.length,
+                  itemBuilder: (context, index) {
+                    final task = settingsProvider.taskType[index];
+                    bool isSelected = selectedTaskTypes.any((e) =>
+                        (e['task_type_id'] ?? e['Task_Type_Id']) ==
+                        task.taskTypeId);
+
+                    return InkWell(
+                      onTap: () {
+                        setStateDialog(() {
+                          if (isSelected) {
+                            selectedTaskTypes.removeWhere((e) =>
+                                (e['task_type_id'] ?? e['Task_Type_Id']) ==
+                                task.taskTypeId);
+                          } else {
+                            selectedTaskTypes.add({
+                              "task_type_id": task.taskTypeId,
+                              "task_type_name": task.taskTypeName,
+                              "Task_Type_Id": task.taskTypeId,
+                              "Task_Type_Name": task.taskTypeName,
+                            });
+                          }
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: isSelected
+                              ? Colors.blue.shade50
+                              : Colors.grey.shade50,
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.blue.shade400
+                                : Colors.grey.shade300,
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            // Selection indicator
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isSelected
+                                    ? Colors.blue.shade400
+                                    : Colors.transparent,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Colors.blue.shade400
+                                      : Colors.grey.shade400,
+                                  width: 2,
+                                ),
+                              ),
+                              child: isSelected
+                                  ? const Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: Colors.white,
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 12),
+                            // Task type name
+                            Expanded(
+                              child: Text(
+                                task.taskTypeName,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? Colors.blue.shade700
+                                      : Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel',
+                      style: TextStyle(color: Colors.grey.shade600)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
+                    backgroundColor: Colors.blue.shade600,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Done'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _showFormChoosingDialog() {
     FormProvider formProvider =
         Provider.of<FormProvider>(context, listen: false);
@@ -444,9 +581,12 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
       await formProvider.fetchForms(context);
       dropDownProvider.getUserDetails(context);
       settingsProvider.searchDepartment('', context);
+      settingsProvider.searchTaskType('', context);
       if (widget.isEdit) {
         selectedFields =
             widget.data!.customFields?.map((e) => e.toJson()).toList() ?? [];
+        selectedTaskTypes =
+            widget.data!.taskTypes?.map((e) => e.toJson()).toList() ?? [];
         settingsProvider.statusController.text = widget.status;
         final List<DropdownItem<dynamic>> followUpOptions = [
           DropdownItem<dynamic>(id: 1, name: 'Yes'),
@@ -528,12 +668,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         settingsProvider.setSelectedForm(
             widget.data!.formId?.toString() ?? "", widget.data!.formName ?? "");
 
-        settingsProvider.selectedDepartmentId =
-            widget.data!.departmentId ?? 0;
+        settingsProvider.selectedDepartmentId = widget.data!.departmentId ?? 0;
         leadProvider.departmentController.text =
             widget.data!.departmentName ?? "";
-        leadProvider.searchUserController.text =
-            widget.data!.userName ?? "";
+        leadProvider.searchUserController.text = widget.data!.userName ?? "";
         dropDownProvider.setSelectedUserId(widget.data!.userId ?? 0);
       } else {
         // INITIALIZE FOR ADD NEW STATUS
@@ -844,6 +982,68 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                             onTap: () {
                               setState(() {
                                 selectedFields.removeAt(idx);
+                              });
+                            },
+                            child: const Icon(
+                              Icons.close,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+              const SizedBox(
+                height: 10,
+              ),
+              GestureDetector(
+                onTap: _showTaskTypeDialog,
+                child: AbsorbPointer(
+                  child: CustomTextField(
+                    readOnly: true,
+                    controller: TextEditingController(),
+                    height: 54,
+                    hintText: 'Task Type',
+                    labelText: '',
+                    suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                  ),
+                ),
+              ),
+              if (selectedTaskTypes.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: selectedTaskTypes.asMap().entries.map((entry) {
+                    final idx = entry.key;
+                    final taskType = entry.value;
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.appViolet,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            taskType['task_type_name'] ??
+                                taskType['Task_Type_Name'] ??
+                                '',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedTaskTypes.removeAt(idx);
                               });
                             },
                             child: const Icon(
@@ -1237,6 +1437,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                 context: context,
                 statusId: widget.editId,
                 customFields: selectedFields,
+                taskTypes: selectedTaskTypes,
                 statusName: settingsProvider.statusController.text,
                 statusOrder: '0',
                 followUp: settingsProvider.selectedFollowUp.toString(),

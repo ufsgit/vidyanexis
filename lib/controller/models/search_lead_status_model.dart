@@ -27,6 +27,7 @@ class SearchLeadStatusModel {
   int? progressValue;
   String? colorCode;
   List<CustomFieldByStatusId>? customFields;
+  List<StatusTaskType>? taskTypes;
   String? whatsappTemplateId;
   List<SubStatus>? subStatuses;
   List<SubStatus>? transferStatuses;
@@ -60,6 +61,7 @@ class SearchLeadStatusModel {
     this.progressValue,
     this.colorCode,
     this.customFields,
+    this.taskTypes,
     this.whatsappTemplateId,
     this.subStatuses,
     this.transferStatuses,
@@ -94,6 +96,7 @@ class SearchLeadStatusModel {
     int? progressValue,
     String? colorCode,
     List<CustomFieldByStatusId>? customFields,
+    List<StatusTaskType>? taskTypes,
     String? whatsappTemplateId,
     List<SubStatus>? subStatuses,
     List<SubStatus>? transferStatuses,
@@ -127,6 +130,7 @@ class SearchLeadStatusModel {
         progressValue: progressValue ?? this.progressValue,
         colorCode: colorCode ?? this.colorCode,
         customFields: customFields ?? this.customFields,
+        taskTypes: taskTypes ?? this.taskTypes,
         whatsappTemplateId: whatsappTemplateId ?? this.whatsappTemplateId,
         subStatuses: subStatuses ?? this.subStatuses,
         transferStatuses: transferStatuses ?? this.transferStatuses,
@@ -165,6 +169,16 @@ class SearchLeadStatusModel {
             ? []
             : List<CustomFieldByStatusId>.from(json["custom_fields"]!
                 .map((x) => CustomFieldByStatusId.fromJson(x))),
+        taskTypes: json["Task_Types"] == null &&
+                json["Task_Type"] == null &&
+                json["task_types"] == null &&
+                json["task_type"] == null
+            ? []
+            : List<StatusTaskType>.from((json["Task_Types"] ??
+                    json["Task_Type"] ??
+                    json["task_types"] ??
+                    json["task_type"])!
+                .map((x) => StatusTaskType.fromJson(x))),
         whatsappTemplateId: json["Whatsapp_Template_Id"]?.toString() ??
             json["whatsapp_template_id"]?.toString() ??
             json["WhatsApp_Template_Id"]?.toString(),
@@ -179,19 +193,42 @@ class SearchLeadStatusModel {
         isTransfer: json["Is_transfer"]?.toInt() ?? 0,
         isTime: json["Is_Time"]?.toInt() ?? 0,
         isTransferStatus: json["Is_Transfer_Status"]?.toInt() ?? 0,
-        isSendUser: json["Is_Send_User"]?.toInt() ?? json["is_send_user"]?.toInt() ?? json["Is_Sent_User"]?.toInt() ?? json["is_sent_user"]?.toInt() ?? 0,
-        templateId: json["Template_Id"]?.toString() ?? json["template_id"]?.toString() ?? "",
-        isLinkForm: json["Is_Link_Form"]?.toInt() ?? json["is_link_form"]?.toInt() ?? 0,
+        isSendUser: json["Is_Send_User"]?.toInt() ??
+            json["is_send_user"]?.toInt() ??
+            json["Is_Sent_User"]?.toInt() ??
+            json["is_sent_user"]?.toInt() ??
+            0,
+        templateId: json["Template_Id"]?.toString() ??
+            json["template_id"]?.toString() ??
+            "",
+        isLinkForm:
+            json["Is_Link_Form"]?.toInt() ?? json["is_link_form"]?.toInt() ?? 0,
         formId: json["Form_Id"]?.toInt() ?? json["form_id"]?.toInt() ?? 0,
-        formName: json["Form_Name"]?.toString() ?? json["form_name"]?.toString() ?? "",
-        isAmount: json["Is_Amount"]?.toInt() ?? json["is_amount"]?.toInt() ?? json["Is_amount"]?.toInt() ?? json["isAmount"]?.toInt() ?? 0,
-        departmentId: json["Department_Id"]?.toInt() ?? json["department_id"]?.toInt() ?? 0,
-        departmentName: json["Department_Name"]?.toString() ?? json["department_name"]?.toString() ?? "",
+        formName: json["Form_Name"]?.toString() ??
+            json["form_name"]?.toString() ??
+            "",
+        isAmount: json["Is_Amount"]?.toInt() ??
+            json["is_amount"]?.toInt() ??
+            json["Is_amount"]?.toInt() ??
+            json["isAmount"]?.toInt() ??
+            0,
+        departmentId: json["Department_Id"]?.toInt() ??
+            json["department_id"]?.toInt() ??
+            0,
+        departmentName: json["Department_Name"]?.toString() ??
+            json["department_name"]?.toString() ??
+            "",
         userId: json["User_Id"]?.toInt() ?? json["user_id"]?.toInt() ?? 0,
-        userName: json["User_Name"]?.toString() ?? json["user_name"]?.toString() ?? "",
-        statusDuration: json["duration"]?.toString() ?? json["Duration"]?.toString() ?? "",
-        isCreateNew: json["create_new"]?.toInt() ?? json["Create_New"]?.toInt() ?? 0,
-        isShowFollowupDate: json["view_date_followup"]?.toInt() ?? json["View_Date_Followup"]?.toInt() ?? 0,
+        userName: json["User_Name"]?.toString() ??
+            json["user_name"]?.toString() ??
+            "",
+        statusDuration:
+            json["duration"]?.toString() ?? json["Duration"]?.toString() ?? "",
+        isCreateNew:
+            json["create_new"]?.toInt() ?? json["Create_New"]?.toInt() ?? 0,
+        isShowFollowupDate: json["view_date_followup"]?.toInt() ??
+            json["View_Date_Followup"]?.toInt() ??
+            0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -209,6 +246,12 @@ class SearchLeadStatusModel {
         "custom_fields": customFields == null
             ? []
             : List<dynamic>.from(customFields!.map((x) => x.toJson())),
+        "Task_Type": taskTypes == null
+            ? []
+            : List<dynamic>.from(taskTypes!.map((x) => x.toJson())),
+        "Task_Types": taskTypes == null
+            ? []
+            : List<dynamic>.from(taskTypes!.map((x) => x.toJson())),
         "Whatsapp_Template_Id": whatsappTemplateId,
         "sub_statuses": subStatuses == null
             ? []
@@ -232,5 +275,35 @@ class SearchLeadStatusModel {
         "Duration": statusDuration,
         "Create_New": isCreateNew,
         "View_Date_Followup": isShowFollowupDate,
+      };
+}
+
+class StatusTaskType {
+  int? taskTypeId;
+  String? taskTypeName;
+
+  StatusTaskType({
+    this.taskTypeId,
+    this.taskTypeName,
+  });
+
+  factory StatusTaskType.fromJson(Map<String, dynamic> json) => StatusTaskType(
+        taskTypeId: json["task_type_id"] is int
+            ? json["task_type_id"]
+            : json["Task_Type_Id"] is int
+                ? json["Task_Type_Id"]
+                : int.tryParse(json["task_type_id"]?.toString() ?? '') ??
+                    int.tryParse(json["Task_Type_Id"]?.toString() ?? '') ??
+                    json["tasktype_id"],
+        taskTypeName: json["task_type_name"]?.toString() ??
+            json["Task_Type_Name"]?.toString() ??
+            json["tasktype_name"]?.toString(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "task_type_id": taskTypeId,
+        "task_type_name": taskTypeName,
+        "Task_Type_Id": taskTypeId,
+        "Task_Type_Name": taskTypeName,
       };
 }
