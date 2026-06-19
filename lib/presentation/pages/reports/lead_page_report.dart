@@ -1,3 +1,4 @@
+import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -157,34 +158,41 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const Spacer(),
                             Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                              width: 280,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                    color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                controller: searchController,
+                                focusNode: searchFocusNodeWeb,
+                                textAlignVertical: TextAlignVertical.center,
+                                onTap: () {
+                                  Future.microtask(() {
+                                    if (searchController.text.isNotEmpty &&
+                                        searchController.selection.baseOffset ==
+                                            0 &&
+                                        searchController
+                                                .selection.extentOffset ==
+                                            searchController.text.length) {
+                                      searchController.selection =
+                                          TextSelection.collapsed(
+                                              offset:
+                                                  searchController.text.length);
+                                    }
+                                  });
+                                },
+                                onSubmitted: (query) {
                                   leadReportProvider.getSearchLeadReports(
                                       query,
                                       leadReportProvider.fromDateS,
@@ -193,30 +201,33 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                           .toString(),
                                       context);
                                 },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                                  leadReportProvider.getSearchLeadReports(
-                                      searchController.text,
-                                      leadReportProvider.fromDateS,
-                                      leadReportProvider.toDateS,
-                                      (leadReportProvider.selectedStatus ?? 0)
-                                          .toString(),
-                                      context);
-                                },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                                decoration: InputDecoration(
+                                  hintText: 'Search here....',
+                                  hintStyle: GoogleFonts.plusJakartaSans(
+                                    color: const Color(0xFF94A3B8),
+                                    fontSize: 13,
+                                  ),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      leadReportProvider.getSearchLeadReports(
+                                          searchController.text,
+                                          leadReportProvider.fromDateS,
+                                          leadReportProvider.toDateS,
+                                          (leadReportProvider.selectedStatus ??
+                                                  0)
+                                              .toString(),
+                                          context);
+                                    },
+                                    child: const Icon(Icons.search,
+                                        color: Color(0xFF64748B), size: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
                             const SizedBox(width: 16),
                             CustomFilterButton(
                               onPressed: () {
@@ -249,7 +260,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const SizedBox(width: 8),
                             CustomElevatedButton(
-                          radius: 4,
+                              radius: 4,
                               onPressed: () async {
                                 final allLeads = await leadReportProvider
                                     .fetchAllLeadsForExport(context);
@@ -317,7 +328,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const SizedBox(width: 8),
                             CustomElevatedButton(
-                          radius: 4,
+                              radius: 4,
                               onPressed: () async {
                                 final allLeads = await leadReportProvider
                                     .fetchAllLeadsForExport(context);
@@ -395,17 +406,18 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8),
                     decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                          color: const Color(0xFFCBD5E1), width: 1.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.02),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -942,7 +954,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             Expanded(
                               child: leadReportProvider.leadReportData.isEmpty
-                                  ? const CommonEmptyState(message: 'No reports found for the selected range')
+                                  ? const CommonEmptyState(
+                                      message:
+                                          'No reports found for the selected range')
                                   : ListView.builder(
                                       itemCount: leadReportProvider
                                           .leadReportData.length,
@@ -1767,9 +1781,22 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             final selectedItem =
                                 dropDownProvider.followUpData.firstWhere(
                               (status) => status.statusId == selectedId,
+                              orElse: () => SearchLeadStatusModel(
+                                  statusId: selectedId, statusName: ''),
                             );
                             statusController.text =
                                 selectedItem.statusName ?? '';
+                            if (selectedItem.isShowFollowupDate == 1) {
+                              int durationVal = int.tryParse(
+                                      selectedItem.statusDuration ?? '') ??
+                                  0;
+                              DateTime targetDate = DateTime.now()
+                                  .add(Duration(days: durationVal));
+                              nextFollowUpDateController.text =
+                                  DateFormat('dd MMM yyyy').format(targetDate);
+                            } else {
+                              nextFollowUpDateController.clear();
+                            }
                           },
                           selectedValue: dropDownProvider.selectedStatusId,
                         ),
@@ -2030,7 +2057,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             CustomElevatedButton(
-                          radius: 4,
+                              radius: 4,
                               buttonText: 'Cancel',
                               onPressed: () {
                                 Navigator.of(context).pop();
@@ -2041,7 +2068,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const SizedBox(width: 8),
                             CustomElevatedButton(
-                          radius: 4,
+                              radius: 4,
                               buttonText: 'Transfer',
                               onPressed: () {
                                 if (dropDownProvider.selectedStatusId == null) {

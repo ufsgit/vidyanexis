@@ -39,6 +39,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
   final FocusNode _leadAgeFocusNode = FocusNode();
   ScrollController scrollController = ScrollController();
   bool validatePhone = false;
+  DateTime? originalFollowUpDate;
 
   void _saveLead() async {
     final fieldValues =
@@ -285,6 +286,19 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _leadNameFocusNode.requestFocus();
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      if (widget.isEdit) {
+        if (leadProvider.followUpDateController.text.isNotEmpty) {
+          try {
+            originalFollowUpDate = DateFormat('dd MMM yyyy').parse(leadProvider.followUpDateController.text);
+          } catch (_) {
+            try {
+              originalFollowUpDate = DateTime.parse(leadProvider.followUpDateController.text);
+            } catch (_) {}
+          }
+        }
+      } else {
+        originalFollowUpDate = DateTime.now();
+      }
 
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
@@ -1834,12 +1848,24 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                       dropDownProvider.followUpData
                                                           .firstWhere((status) =>
                                                               status.statusId ==
-                                                              selectedId);
+                                                              selectedId,
+                                                              orElse: () => SearchLeadStatusModel(
+                                                                  statusId: selectedId, statusName: ''));
                                                   leadProvider
                                                           .followUpStatusController
                                                           .text =
                                                       selectedStatus.statusName ?? '';
+                                                  if (selectedStatus.isShowFollowupDate == 1) {
+                                                    int durationVal = int.tryParse(selectedStatus.statusDuration ?? '') ?? 0;
+                                                    DateTime baseDate = originalFollowUpDate ?? DateTime.now();
+                                                    DateTime targetDate = baseDate.add(Duration(days: durationVal));
+                                                    leadProvider.followUpDateController.text =
+                                                        DateFormat('dd MMM yyyy').format(targetDate);
+                                                  } else {
+                                                    leadProvider.followUpDateController.clear();
+                                                  }
                                                 },
+
                                                 selectedValue: dropDownProvider
                                                     .selectedFollowUpId,
                                               ),

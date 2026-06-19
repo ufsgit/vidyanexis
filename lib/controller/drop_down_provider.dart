@@ -525,8 +525,8 @@ class DropDownProvider extends ChangeNotifier {
           statusId: -1,
         ),
       );
-      print(selectedStatus.followup == 1);
-      return selectedStatus.followup == 1;
+      print(selectedStatus.isShowFollowupDate == 1);
+      return selectedStatus.isShowFollowupDate == 1;
     }
     return false;
   }
@@ -539,11 +539,12 @@ class DropDownProvider extends ChangeNotifier {
           statusId: -1,
         ),
       );
-      print(selectedStatus.followup == 1);
-      return selectedStatus.followup == 1;
+      print(selectedStatus.isShowFollowupDate == 1);
+      return selectedStatus.isShowFollowupDate == 1;
     }
     return false;
   }
+
 
   void getDuration(BuildContext context) async {
     try {
