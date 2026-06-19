@@ -637,7 +637,16 @@ class DropDownProvider extends ChangeNotifier {
               if (userResponse.statusCode == 200 &&
                   userResponse.data != null &&
                   userResponse.data['data'] != null) {
-                final List<dynamic> dataList = userResponse.data['data'];
+                final responseData = userResponse.data['data'];
+                List<dynamic> dataList;
+                if (responseData is Map &&
+                    responseData['enquiry_source_list'] != null) {
+                  dataList = responseData['enquiry_source_list'] as List<dynamic>;
+                } else if (responseData is List) {
+                  dataList = responseData;
+                } else {
+                  dataList = [];
+                }
                 final userSources = dataList
                     .map((item) => UserEnquirySourceModel.fromJson(item))
                     .toList();
