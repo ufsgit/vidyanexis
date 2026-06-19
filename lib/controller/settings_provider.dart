@@ -564,6 +564,14 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int? _selectedTaskTypeFilterEnquiryForId = 0;
+  int? get selectedTaskTypeFilterEnquiryForId => _selectedTaskTypeFilterEnquiryForId;
+
+  set selectedTaskTypeFilterEnquiryForId(int? id) {
+    _selectedTaskTypeFilterEnquiryForId = id ?? 0;
+    notifyListeners();
+  }
+
   void clearUserFilters() {
     searchController.clear();
     _selectedFilterBranchId = 0;

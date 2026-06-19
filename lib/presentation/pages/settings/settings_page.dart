@@ -62,7 +62,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         provider.getUserDetails(query, context);
         break;
       case 'Status':
-        provider.getSearchLeadStatus(query, provider.viewInId.toString(), context);
+        provider.getSearchLeadStatus(
+            query, provider.viewInId.toString(), context);
         break;
       case 'Enquiry Source':
         provider.searchEnquiryStatusData(query, context);
@@ -74,7 +75,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         provider.searchDocumentType(query, context);
         break;
       case 'Task Type':
-        provider.searchTaskType(query, context);
+        provider.searchTaskType(query, context,
+            enquiryForId:
+                provider.selectedTaskTypeFilterEnquiryForId.toString());
         break;
       case 'Department':
         provider.searchDepartment(query, context);
@@ -105,7 +108,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         break;
       case 'Checklist Item':
       case 'Checklist Category':
-        setState(() {}); // The page itself will rebuild with the updated _searchController.text
+        setState(
+            () {}); // The page itself will rebuild with the updated _searchController.text
         break;
       case 'Checklist Type':
         provider.searchCheckList(query, context);
@@ -113,7 +117,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
     }
   }
 
-  void _showFilterBottomSheet(BuildContext context, SettingsProvider settingsProvider) {
+  void _showFilterBottomSheet(
+      BuildContext context, SettingsProvider settingsProvider) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -210,7 +215,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<int>(
-                          value: settingsProvider.selectedFilterDepartmentId ?? 0,
+                          value:
+                              settingsProvider.selectedFilterDepartmentId ?? 0,
                           isExpanded: true,
                           items: [
                             const DropdownMenuItem(
@@ -227,7 +233,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                           ],
                           onChanged: (value) {
                             setState(() {
-                              settingsProvider.selectedFilterDepartmentId = value;
+                              settingsProvider.selectedFilterDepartmentId =
+                                  value;
                             });
                             settingsProvider.getUserDetails(
                               _searchController.text,
@@ -274,6 +281,55 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                                 context,
                               );
                             }
+                          },
+                        ),
+                      ),
+                    ),
+                  ] else if (settingsProvider.selectedMenu == 'Task Type') ...[
+                    Text(
+                      'Enquiry For',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<int>(
+                          value: settingsProvider
+                                  .selectedTaskTypeFilterEnquiryForId ??
+                              0,
+                          isExpanded: true,
+                          items: [
+                            const DropdownMenuItem(
+                              value: 0,
+                              child: Text("All Enquiry For"),
+                            ),
+                            ...settingsProvider.searchEnquiryFor.map((item) {
+                              return DropdownMenuItem(
+                                value: item.enquiryForId,
+                                child: Text(item.enquiryForName,
+                                    overflow: TextOverflow.ellipsis),
+                              );
+                            }),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              settingsProvider
+                                  .selectedTaskTypeFilterEnquiryForId = value;
+                            });
+                            settingsProvider.searchTaskType(
+                              _searchController.text,
+                              context,
+                              enquiryForId: value.toString(),
+                            );
                           },
                         ),
                       ),
@@ -337,7 +393,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.02),
@@ -369,7 +426,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                   svgPath: 'assets/images/Plus.svg',
                   label: 'New ${settingsProvider.selectedMenu}',
                   breakpoint: 860,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
                   foregroundColor: Colors.white,
                   backgroundColor: AppColors.secondaryBlue,
                   borderSide: const BorderSide(color: AppColors.secondaryBlue),
@@ -390,15 +448,20 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2)),
               ],
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<int>(
                 value: settingsProvider.viewInId,
-                hint: Text("View", style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                hint: Text("View",
+                    style: GoogleFonts.plusJakartaSans(fontSize: 14)),
                 isExpanded: true,
-                icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey, size: 20),
+                icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                    color: Colors.grey, size: 20),
                 items: const [
                   DropdownMenuItem(value: 0, child: Text("All")),
                   DropdownMenuItem(value: 1, child: Text("Lead")),
@@ -421,6 +484,58 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
             ),
           ),
         ],
+        if (settingsProvider.selectedMenu == 'Task Type') ...[
+          const SizedBox(height: 12),
+          Container(
+            width: 200,
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2)),
+              ],
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: settingsProvider.selectedTaskTypeFilterEnquiryForId ?? 0,
+                hint: Text("Enquiry For",
+                    style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                isExpanded: true,
+                icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                    color: Colors.grey, size: 20),
+                items: [
+                  const DropdownMenuItem(
+                      value: 0, child: Text("All Enquiry For")),
+                  ...settingsProvider.searchEnquiryFor
+                      .map((item) => DropdownMenuItem(
+                            value: item.enquiryForId,
+                            child: Text(item.enquiryForName,
+                                overflow: TextOverflow.ellipsis),
+                          )),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() {
+                      settingsProvider.selectedTaskTypeFilterEnquiryForId =
+                          value;
+                    });
+                    settingsProvider.searchTaskType(
+                      _searchController.text,
+                      context,
+                      enquiryForId: value.toString(),
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
         if (settingsProvider.selectedMenu == 'Users') ...[
           const SizedBox(height: 12),
           Row(
@@ -432,25 +547,36 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2)),
                   ],
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<int>(
                     value: settingsProvider.selectedFilterBranchId ?? 0,
                     isExpanded: true,
-                    icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey, size: 20),
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                        color: Colors.grey, size: 20),
                     items: [
-                      const DropdownMenuItem(value: 0, child: Text("All Branches")),
-                      ...settingsProvider.branchModel.map((branch) => DropdownMenuItem(value: branch.branchId, child: Text(branch.branchName ?? "", overflow: TextOverflow.ellipsis))),
+                      const DropdownMenuItem(
+                          value: 0, child: Text("All Branches")),
+                      ...settingsProvider.branchModel.map((branch) =>
+                          DropdownMenuItem(
+                              value: branch.branchId,
+                              child: Text(branch.branchName ?? "",
+                                  overflow: TextOverflow.ellipsis))),
                     ],
                     onChanged: (value) {
                       setState(() {
                         settingsProvider.selectedFilterBranchId = value;
                       });
-                      settingsProvider.getUserDetails(_searchController.text, context);
+                      settingsProvider.getUserDetails(
+                          _searchController.text, context);
                     },
                   ),
                 ),
@@ -463,25 +589,36 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2)),
                   ],
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<int>(
                     value: settingsProvider.selectedFilterDepartmentId ?? 0,
                     isExpanded: true,
-                    icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey, size: 20),
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                        color: Colors.grey, size: 20),
                     items: [
-                      const DropdownMenuItem(value: 0, child: Text("All Depts")),
-                      ...settingsProvider.departmentModel.map((dept) => DropdownMenuItem(value: dept.departmentId, child: Text(dept.departmentName, overflow: TextOverflow.ellipsis))),
+                      const DropdownMenuItem(
+                          value: 0, child: Text("All Depts")),
+                      ...settingsProvider.departmentModel.map((dept) =>
+                          DropdownMenuItem(
+                              value: dept.departmentId,
+                              child: Text(dept.departmentName,
+                                  overflow: TextOverflow.ellipsis))),
                     ],
                     onChanged: (value) {
                       setState(() {
                         settingsProvider.selectedFilterDepartmentId = value;
                       });
-                      settingsProvider.getUserDetails(_searchController.text, context);
+                      settingsProvider.getUserDetails(
+                          _searchController.text, context);
                     },
                   ),
                 ),
@@ -529,10 +666,12 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
               showSearch: true,
               searchController: _searchController,
               onSearchTap: () {
-                Provider.of<SidebarProvider>(context, listen: false).startSearch();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .startSearch();
               },
               onClearTap: () {
-                Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .stopSearch();
                 _searchController.clear();
                 _triggerSearch(settingsProvider, '');
                 setState(() {});
@@ -545,7 +684,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                 _triggerSearch(settingsProvider, query);
                 setState(() {});
               },
-              showFilterIcon: settingsProvider.selectedMenu == 'Users' || settingsProvider.selectedMenu == 'Status',
+              showFilterIcon: settingsProvider.selectedMenu == 'Users' ||
+                  settingsProvider.selectedMenu == 'Status' ||
+                  settingsProvider.selectedMenu == 'Task Type',
               onFilterTap: () {
                 _showFilterBottomSheet(context, settingsProvider);
               },
@@ -580,8 +721,10 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                             onPressed: () {
                               ScaffoldState? parent;
                               context.visitAncestorElements((element) {
-                                if (element is StatefulElement && element.state is ScaffoldState) {
-                                  ScaffoldState scaffold = element.state as ScaffoldState;
+                                if (element is StatefulElement &&
+                                    element.state is ScaffoldState) {
+                                  ScaffoldState scaffold =
+                                      element.state as ScaffoldState;
                                   if (scaffold.hasDrawer) {
                                     parent = scaffold;
                                     return false;
@@ -633,7 +776,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                 if (isMobile)
                   Container(
                     color: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Container(
                       height: 38,
                       width: double.infinity,
@@ -658,7 +802,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
                 Expanded(
                   child: SingleChildScrollView(
                     padding: isMobile
-                        ? const EdgeInsets.only(top: 4, left: 16, right: 16, bottom: 16)
+                        ? const EdgeInsets.only(
+                            top: 4, left: 16, right: 16, bottom: 16)
                         : const EdgeInsets.all(24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -677,7 +822,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, String title, IconData icon, {required bool isMobile}) {
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon,
+      {required bool isMobile}) {
     final settings = Provider.of<SettingsProvider>(context);
     final isSelected = settings.selectedMenu == title;
 
@@ -691,8 +837,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          margin: isSelected 
-              ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2) 
+          margin: isSelected
+              ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2)
               : const EdgeInsets.symmetric(vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           alignment: Alignment.center,
@@ -714,7 +860,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+              color: isSelected
+                  ? AppColors.secondaryBlue
+                  : const Color(0xFF64748B),
             ),
           ),
         ),
@@ -730,14 +878,18 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
-            color: isSelected ? AppColors.secondaryBlue.withOpacity(0.1) : Colors.transparent,
+            color: isSelected
+                ? AppColors.secondaryBlue.withOpacity(0.1)
+                : Colors.transparent,
           ),
           child: Row(
             children: [
               Text(
                 title,
                 style: GoogleFonts.plusJakartaSans(
-                  color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+                  color: isSelected
+                      ? AppColors.secondaryBlue
+                      : const Color(0xFF64748B),
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                   fontSize: 14,
                 ),
@@ -795,44 +947,60 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
     }
   }
 
-  List<Widget> tabBar(SettingsProvider settingsProvider, {required bool isMobile}) {
+  List<Widget> tabBar(SettingsProvider settingsProvider,
+      {required bool isMobile}) {
     return [
       if (settingsProvider.menuIsViewMap[1].toString() == '1')
         _buildMenuItem(context, 'Users', Icons.people, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[5].toString() == '1')
-        _buildMenuItem(context, 'Status', Icons.trending_up, isMobile: isMobile),
+        _buildMenuItem(context, 'Status', Icons.trending_up,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[6].toString() == '1')
-        _buildMenuItem(context, 'Enquiry Source', Icons.trending_up, isMobile: isMobile),
+        _buildMenuItem(context, 'Enquiry Source', Icons.trending_up,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[17].toString() == '1')
-        _buildMenuItem(context, 'Enquiry For', Icons.trending_up, isMobile: isMobile),
+        _buildMenuItem(context, 'Enquiry For', Icons.trending_up,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[23].toString() == '1')
-        _buildMenuItem(context, 'Document Type', Icons.trending_up, isMobile: isMobile),
+        _buildMenuItem(context, 'Document Type', Icons.trending_up,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[41].toString() == '1')
-        _buildMenuItem(context, 'Task Type', Icons.trending_up, isMobile: isMobile),
+        _buildMenuItem(context, 'Task Type', Icons.trending_up,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[20].toString() == '1')
-        _buildMenuItem(context, 'Excel Import', Icons.document_scanner, isMobile: isMobile),
+        _buildMenuItem(context, 'Excel Import', Icons.document_scanner,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[27].toString() == '1')
-        _buildMenuItem(context, 'Company Details', Icons.document_scanner, isMobile: isMobile),
+        _buildMenuItem(context, 'Company Details', Icons.document_scanner,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[42].toString() == '1')
-        _buildMenuItem(context, 'Department', Icons.document_scanner, isMobile: isMobile),
+        _buildMenuItem(context, 'Department', Icons.document_scanner,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[57].toString() == '1')
         _buildMenuItem(context, 'Branch', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[58].toString() == '1')
         _buildMenuItem(context, 'Stage', Icons.category, isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[59].toString() == '1')
-        _buildMenuItem(context, 'Source Category', Icons.category, isMobile: isMobile),
+        _buildMenuItem(context, 'Source Category', Icons.category,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[38].toString() == '1')
-        _buildMenuItem(context, 'Checklist Item', Icons.category, isMobile: isMobile),
+        _buildMenuItem(context, 'Checklist Item', Icons.category,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[39].toString() == '1')
-        _buildMenuItem(context, 'Checklist Category', Icons.category, isMobile: isMobile),
+        _buildMenuItem(context, 'Checklist Category', Icons.category,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[60].toString() == '1')
-        _buildMenuItem(context, 'Custom Field', Icons.category, isMobile: isMobile),
+        _buildMenuItem(context, 'Custom Field', Icons.category,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[64].toString() == '1')
-        _buildMenuItem(context, 'ExpenseType', Icons.category, isMobile: isMobile),
+        _buildMenuItem(context, 'ExpenseType', Icons.category,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[86].toString() == '1')
-        _buildMenuItem(context, 'Location', Icons.location_on, isMobile: isMobile),
+        _buildMenuItem(context, 'Location', Icons.location_on,
+            isMobile: isMobile),
       if (settingsProvider.menuIsViewMap[85].toString() == '1')
-        _buildMenuItem(context, 'Forms', Icons.format_list_bulleted, isMobile: isMobile),
+        _buildMenuItem(context, 'Forms', Icons.format_list_bulleted,
+            isMobile: isMobile),
       _buildMenuItem(context, 'Campaign', Icons.campaign, isMobile: isMobile),
     ];
   }
