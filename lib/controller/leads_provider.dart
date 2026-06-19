@@ -634,6 +634,10 @@ class LeadsProvider extends ChangeNotifier {
     setPanelId(0);
     setRoofTypeId(0);
     setSelectedSubsidyId(0);
+    followupAmountController.clear();
+    followUpTimeController.clear();
+    dropDownProvider.setSelectedTransferStatusId(0);
+    transferStatusController.clear();
     notifyListeners();
   }
 //api for dropdowns
