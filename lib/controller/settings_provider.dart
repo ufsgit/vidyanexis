@@ -2898,6 +2898,9 @@ class SettingsProvider extends ChangeNotifier {
             "Department_Name": leadProvider.departmentController.text.toString(),
             "User_Id": dropDownProvider.selectedUserId,
             "User_Name": leadProvider.searchUserController.text.toString(),
+            "Duration": int.tryParse(statusDurationController.text) ?? 0,
+            "Create_New": _isCreateNew ? 1 : 0,
+            "View_Date_Followup": _isShowFollowupDate ? 1 : 0,
           });
 
       if (response!.statusCode == 200) {

@@ -105,6 +105,8 @@ class LeadsProvider extends ChangeNotifier {
   final TextEditingController costIncludesController = TextEditingController();
 
   final TextEditingController amountPaidController = TextEditingController();
+  final TextEditingController followupAmountController =
+      TextEditingController();
 
   int _selectedSortOption =
       0; // 0: Default, 1: ID, 2: Creation Date, 3: Followup Date
@@ -1251,6 +1253,8 @@ class LeadsProvider extends ChangeNotifier {
     String amount = '0',
   }) async {
     try {
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
       Loader.showLoader(context);
 
       if (nextFollowUpDate.isNotEmpty) {
@@ -1439,7 +1443,10 @@ class LeadsProvider extends ChangeNotifier {
 
           // "FollowUp": followUp,
           "Remark": remark,
-          "amount": amount,
+          "amount": int.tryParse(followupAmountController.text) ?? 0,
+          "secondaryStatusId": dropDownProvider.selectedTransferStatusId,
+          "secondaryStatusName": transferStatusController.text,
+          "time": followUpTimeController.text,
         }
       });
 
