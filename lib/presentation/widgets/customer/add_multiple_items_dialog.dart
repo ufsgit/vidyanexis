@@ -34,6 +34,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   final Map<String, TextEditingController> _materialPriceControllers = {};
   final Map<String, TextEditingController> _materialQtyControllers = {};
   final Map<String, TextEditingController> _materialNameControllers = {};
+  final Map<String, bool> _materialChecked = {}; // New: Checkbox state
 
   List<AddedMultiItem> _addedItems = [];
 
@@ -61,6 +62,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             TextEditingController(text: mat.quantity.toStringAsFixed(2));
         _materialNameControllers[key] =
             TextEditingController(text: mat.itemMaterialName);
+        _materialChecked[key] = mat.includeInTotal == '1' ? true : false;
       }
     }
   }
@@ -113,6 +115,11 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       key,
       () => TextEditingController(text: value),
     );
+  }
+
+  bool _getMaterialChecked(int itemIndex, int matIndex) {
+    final key = '${itemIndex}_$matIndex';
+    return _materialChecked.putIfAbsent(key, () => true);
   }
 
   // ================== Update Methods ==================
@@ -171,6 +178,16 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     });
   }
 
+  void _updateMaterialChecked(int itemIndex, int matIndex, bool? value) {
+    final key = '${itemIndex}_$matIndex';
+    setState(() {
+      _materialChecked[key] = value ?? true;
+      // Update model
+      _addedItems[itemIndex].materials[matIndex].includeInTotal =
+          value == true ? '1' : '0';
+    });
+  }
+
   void _removeItem(int index) {
     setState(() {
       _mainQtyControllers.remove(index);
@@ -226,6 +243,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             priceFrom: mat.priceFrom,
             priceTo: mat.priceTo,
             amount: mat.price * scaledQty,
+            includeInTotal: mat.includeInTotal,
           );
         }).toList();
 
@@ -624,6 +642,20 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                             itemIndex,
                                                             matIndex,
                                                             val),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 50,
+                                                  child: Checkbox(
+                                                    value: _getMaterialChecked(
+                                                        itemIndex, matIndex),
+                                                    onChanged: (val) =>
+                                                        _updateMaterialChecked(
+                                                            itemIndex,
+                                                            matIndex,
+                                                            val),
+                                                    activeColor:
+                                                        AppColors.primaryBlue,
                                                   ),
                                                 ),
                                                 const SizedBox(width: 12),
