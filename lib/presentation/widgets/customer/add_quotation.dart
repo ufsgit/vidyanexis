@@ -639,7 +639,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         height: 54,
                         controller:
                             customerDetailsProvider.feasibilityFeeController,
-                        hintText: 'Fee in KSEB for Feasibility study',
+                        hintText: customerDetailsProvider.getQuotationFieldName(
+                            19, 'Fee in KSEB for Feasibility study'),
                         labelText: '',
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -666,11 +667,54 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        hintText:
-                            'Registration Fee in KSEB – 1000/- per kW (80% refundable)',
+                        hintText: customerDetailsProvider.getQuotationFieldName(
+                            18,
+                            'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
                         labelText: '',
                       ),
                       const SizedBox(height: 16),
+                      if (settingsProvider.menuIsViewMap[154] == 1) ...[
+                        CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: customerDetailsProvider
+                              .feasibilityFeeThreeController,
+                          hintText: customerDetailsProvider.getQuotationFieldName(
+                              21,
+                              'Fee in KSEB for Feasibility study Three phase'),
+                          labelText: '',
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          onChanged: (p0) {
+                            if (settingsProvider.additionalExpense == 1) {
+                              customerDetailsProvider.updateTotal();
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: customerDetailsProvider
+                              .registrationFeeThreeController,
+                          keyboardType: TextInputType.number,
+                          onChanged: (p0) {
+                            if (settingsProvider.additionalExpense == 1) {
+                              customerDetailsProvider.updateTotal();
+                            }
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          hintText: customerDetailsProvider.getQuotationFieldName(
+                              20,
+                              'Registration Fee in KSEB - 1000/- per kW (80% refundable) Three phase'),
+                          labelText: '',
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ],
                   ),
 
@@ -1618,8 +1662,12 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     onDelete: () {
                       customerDetailsProvider.deleteItem(index);
                     },
-                    onMoveUp: index > 0 ? () => customerDetailsProvider.moveItemUp(index) : null,
-                    onMoveDown: index < customerDetailsProvider.items.length - 1 ? () => customerDetailsProvider.moveItemDown(index) : null,
+                    onMoveUp: index > 0
+                        ? () => customerDetailsProvider.moveItemUp(index)
+                        : null,
+                    onMoveDown: index < customerDetailsProvider.items.length - 1
+                        ? () => customerDetailsProvider.moveItemDown(index)
+                        : null,
                   );
                 },
               ),
@@ -2367,60 +2415,59 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
 
                     // Materials Section
-                    if(item.materials.isNotEmpty)
-                    Container(
-                      color: Colors.grey[50],
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Materials',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                              color: Colors.black87,
+                    if (item.materials.isNotEmpty)
+                      Container(
+                        color: Colors.grey[50],
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Materials',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                                color: Colors.black87,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          ...item.materials.map((mat) => Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.circle,
-                                        size: 6, color: Colors.grey),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        mat.itemMaterialName,
-                                        style: const TextStyle(fontSize: 14),
+                            const SizedBox(height: 12),
+                            ...item.materials.map((mat) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.circle,
+                                          size: 6, color: Colors.grey),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          mat.itemMaterialName,
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      "${mat.price} x ${mat.quantity}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
+                                      Text(
+                                        "${mat.price} x ${mat.quantity}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      "Amount : ${(mat.amount).toStringAsFixed(2)}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "Amount : ${(mat.amount).toStringAsFixed(2)}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                        ],
+                                    ],
+                                  ),
+                                )),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               );
             },
           ),
-      
         if (customerDetailsProvider.multiItems.isNotEmpty)
           Center(
             child: Padding(
@@ -2733,8 +2780,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         ),
                       );
                     },
-                    onMoveUp: index > 0 ? () => customerDetailsProvider.moveBillOfMaterialsItemUp(index) : null,
-                    onMoveDown: index < customerDetailsProvider.billOfMaterialsItems.length - 1 ? () => customerDetailsProvider.moveBillOfMaterialsItemDown(index) : null,
+                    onMoveUp: index > 0
+                        ? () => customerDetailsProvider
+                            .moveBillOfMaterialsItemUp(index)
+                        : null,
+                    onMoveDown: index <
+                            customerDetailsProvider
+                                    .billOfMaterialsItems.length -
+                                1
+                        ? () => customerDetailsProvider
+                            .moveBillOfMaterialsItemDown(index)
+                        : null,
                   );
                 },
               ),
@@ -2837,8 +2893,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         ),
                       );
                     },
-                    onMoveUp: index > 0 ? () => customerDetailsProvider.moveStructureMaterialUp(index) : null,
-                    onMoveDown: index < customerDetailsProvider.structureMaterialsItems.length - 1 ? () => customerDetailsProvider.moveStructureMaterialDown(index) : null,
+                    onMoveUp: index > 0
+                        ? () => customerDetailsProvider
+                            .moveStructureMaterialUp(index)
+                        : null,
+                    onMoveDown: index <
+                            customerDetailsProvider
+                                    .structureMaterialsItems.length -
+                                1
+                        ? () => customerDetailsProvider
+                            .moveStructureMaterialDown(index)
+                        : null,
                   );
                 },
               ),

@@ -466,6 +466,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController(text: '200');
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
+  TextEditingController feasibilityFeeThreeController = TextEditingController();
+  TextEditingController registrationFeeThreeController =
+      TextEditingController();
 
   // when qutaion item is tick in company
   TextEditingController newItemNameController = TextEditingController();
@@ -2850,7 +2853,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Profit_Amount": profitController.text.toString(),
         "Is_Profit_Percentage": isPercentage ? "1" : "0",
         "Multiple_Item_Material": _multiItems.map((e) => e.toJson()).toList(),
-        "Multiple_Items_TotalAmount": _mutipleItemsTotalAmount
+        "Multiple_Items_TotalAmount": _mutipleItemsTotalAmount,
+        "KSEB_Feasibility_Study_Fees_3Phase":
+            double.tryParse(feasibilityFeeThreeController.text) ?? 0.0,
+        "KSEB_Registration_Fees_3Phase":
+            double.tryParse(registrationFeeThreeController.text) ?? 0.0,
       });
 
       if (response!.statusCode == 200) {
@@ -3040,6 +3047,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     profitController.clear();
     isPercentage = false;
     clearMultiItems();
+    feasibilityFeeThreeController.clear();
+    registrationFeeThreeController.clear();
     notifyListeners();
   }
 
@@ -4688,6 +4697,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     systemPriceController.text = quotation.ksebSystemPrice.toString();
     additionalStructureController.text =
         quotation.additionalStructure.toString();
+    feasibilityFeeThreeController.text =
+        quotation.ksebFeasibilityFeeThreePhase.toString();
+    registrationFeeThreeController.text =
+        quotation.ksebRegistrationFeeThreePhase.toString();
 
     // ---- TOTALS ----
     subtotalController.text = quotation.totalAmount.toString();
