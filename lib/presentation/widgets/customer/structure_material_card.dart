@@ -7,12 +7,16 @@ class StructureMaterialCard extends StatelessWidget {
   final StructureMaterialItem item;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
+  final VoidCallback? onMoveUp;
+  final VoidCallback? onMoveDown;
 
   const StructureMaterialCard({
     super.key,
     required this.item,
     required this.onDelete,
     required this.onEdit,
+    this.onMoveUp,
+    this.onMoveDown,
   });
 
   void _showDeleteConfirmation(BuildContext context) {
@@ -97,18 +101,52 @@ class StructureMaterialCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _showDeleteConfirmation(context);
-                    },
-                    child: Text(
-                      'Delete',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textRed,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (onMoveUp != null || onMoveDown != null) ...[
+                        GestureDetector(
+                          onTap: onMoveUp,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Icon(
+                              Icons.arrow_upward_rounded,
+                              size: 20,
+                              color: onMoveUp != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: onMoveDown,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Icon(
+                              Icons.arrow_downward_rounded,
+                              size: 20,
+                              color: onMoveDown != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      GestureDetector(
+                        onTap: () {
+                          _showDeleteConfirmation(context);
+                        },
+                        child: Text(
+                          'Delete',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textRed,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

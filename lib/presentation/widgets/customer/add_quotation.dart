@@ -1618,6 +1618,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     onDelete: () {
                       customerDetailsProvider.deleteItem(index);
                     },
+                    onMoveUp: index > 0 ? () => customerDetailsProvider.moveItemUp(index) : null,
+                    onMoveDown: index < customerDetailsProvider.items.length - 1 ? () => customerDetailsProvider.moveItemDown(index) : null,
                   );
                 },
               ),
@@ -2731,6 +2733,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         ),
                       );
                     },
+                    onMoveUp: index > 0 ? () => customerDetailsProvider.moveBillOfMaterialsItemUp(index) : null,
+                    onMoveDown: index < customerDetailsProvider.billOfMaterialsItems.length - 1 ? () => customerDetailsProvider.moveBillOfMaterialsItemDown(index) : null,
                   );
                 },
               ),
@@ -2833,6 +2837,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         ),
                       );
                     },
+                    onMoveUp: index > 0 ? () => customerDetailsProvider.moveStructureMaterialUp(index) : null,
+                    onMoveDown: index < customerDetailsProvider.structureMaterialsItems.length - 1 ? () => customerDetailsProvider.moveStructureMaterialDown(index) : null,
                   );
                 },
               ),

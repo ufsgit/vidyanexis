@@ -1852,6 +1852,64 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  void moveBillOfMaterialsItemUp(int index) {
+    if (index > 0 && index < _billOfMaterialsItems.length) {
+      final item = _billOfMaterialsItems.removeAt(index);
+      _billOfMaterialsItems.insert(index - 1, item);
+      final settingsProvider = SettingsProvider();
+      if (settingsProvider.quotationItem == 1) {
+        recalculateCompanyQuotationItem();
+      }
+      notifyListeners();
+    }
+  }
+
+  void moveBillOfMaterialsItemDown(int index) {
+    if (index >= 0 && index < _billOfMaterialsItems.length - 1) {
+      final item = _billOfMaterialsItems.removeAt(index);
+      _billOfMaterialsItems.insert(index + 1, item);
+      final settingsProvider = SettingsProvider();
+      if (settingsProvider.quotationItem == 1) {
+        recalculateCompanyQuotationItem();
+      }
+      notifyListeners();
+    }
+  }
+
+  void moveItemUp(int index) {
+    if (index > 0 && index < _items.length) {
+      final item = _items.removeAt(index);
+      _items.insert(index - 1, item);
+      updateSubtotal();
+      notifyListeners();
+    }
+  }
+
+  void moveItemDown(int index) {
+    if (index >= 0 && index < _items.length - 1) {
+      final item = _items.removeAt(index);
+      _items.insert(index + 1, item);
+      updateSubtotal();
+      notifyListeners();
+    }
+  }
+
+  void moveStructureMaterialUp(int index) {
+    if (index > 0 && index < _structureMaterialsItems.length) {
+      final item = _structureMaterialsItems.removeAt(index);
+      _structureMaterialsItems.insert(index - 1, item);
+      notifyListeners();
+    }
+  }
+
+  void moveStructureMaterialDown(int index) {
+    if (index >= 0 && index < _structureMaterialsItems.length - 1) {
+      final item = _structureMaterialsItems.removeAt(index);
+      _structureMaterialsItems.insert(index + 1, item);
+      notifyListeners();
+    }
+  }
+
   Future<void> saveStructureMaterials(
       String quotationId, BuildContext context) async {
     try {

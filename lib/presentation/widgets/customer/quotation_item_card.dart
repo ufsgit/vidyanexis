@@ -8,6 +8,8 @@ class QuotationItemCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onEdit;
   final bool showActions;
+  final VoidCallback? onMoveUp;
+  final VoidCallback? onMoveDown;
 
   const QuotationItemCard({
     super.key,
@@ -15,6 +17,8 @@ class QuotationItemCard extends StatelessWidget {
     required this.onDelete,
     required this.onEdit,
     this.showActions = true,
+    this.onMoveUp,
+    this.onMoveDown,
   });
 
   @override
@@ -52,16 +56,50 @@ class QuotationItemCard extends StatelessWidget {
                   ),
                 ),
                 if (showActions)
-                  GestureDetector(
-                    onTap: onDelete,
-                    child: Text(
-                      'Delete',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textRed,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (onMoveUp != null || onMoveDown != null) ...[
+                        GestureDetector(
+                          onTap: onMoveUp,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Icon(
+                              Icons.arrow_upward_rounded,
+                              size: 20,
+                              color: onMoveUp != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: onMoveDown,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Icon(
+                              Icons.arrow_downward_rounded,
+                              size: 20,
+                              color: onMoveDown != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      GestureDetector(
+                        onTap: onDelete,
+                        child: Text(
+                          'Delete',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textRed,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
               ],
             ),
