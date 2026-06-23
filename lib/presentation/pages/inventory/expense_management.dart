@@ -42,12 +42,13 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
     });
   }
 
-  bool _isSmallScreen(BuildContext context) => MediaQuery.of(context).size.width < 768;
+  bool _isSmallScreen(BuildContext context) =>
+      MediaQuery.of(context).size.width < 768;
 
   @override
   Widget build(BuildContext context) {
     final isSmallScreen = _isSmallScreen(context);
-    
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
       drawer: isSmallScreen ? const SidebarDrawer() : null,
@@ -59,7 +60,6 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   _buildResponsiveHeader(context, isSmallScreen),
                   if (isSmallScreen) ...[
                     const SizedBox(height: 16),
@@ -93,36 +93,37 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
         Padding(
           padding: const EdgeInsets.only(right: 12.0),
           child: Builder(
-              builder: (context) => IconButton(
-                onPressed: () {
-                  ScaffoldState? parent;
-                  context.visitAncestorElements((element) {
-                    if (element is StatefulElement && element.state is ScaffoldState) {
-                      ScaffoldState scaffold = element.state as ScaffoldState;
-                      if (scaffold.hasDrawer) {
-                        parent = scaffold;
-                        return false;
-                      }
+            builder: (context) => IconButton(
+              onPressed: () {
+                ScaffoldState? parent;
+                context.visitAncestorElements((element) {
+                  if (element is StatefulElement &&
+                      element.state is ScaffoldState) {
+                    ScaffoldState scaffold = element.state as ScaffoldState;
+                    if (scaffold.hasDrawer) {
+                      parent = scaffold;
+                      return false;
                     }
-                    return true;
-                  });
-                  parent?.openDrawer();
-                },
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Icon(
-                    Icons.sort,
-                    size: 20,
-                    color: AppColors.secondaryBlue,
-                  ),
+                  }
+                  return true;
+                });
+                parent?.openDrawer();
+              },
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.secondaryBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Icon(
+                  Icons.sort,
+                  size: 20,
+                  color: AppColors.secondaryBlue,
                 ),
               ),
             ),
           ),
+        ),
         Text(
           'Expense Management',
           style: GoogleFonts.plusJakartaSans(
@@ -138,8 +139,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
           _buildFilterButton(),
           const SizedBox(width: 8),
         ],
-        if (settingsProvider.menuIsSaveMap[48] == 1)
-          _buildAddButton(context),
+        if (settingsProvider.menuIsSaveMap[48] == 1) _buildAddButton(context),
       ],
     );
   }
@@ -175,9 +175,11 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
               color: const Color(0xFF94A3B8),
               fontSize: 14,
             ),
-            prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF64748B)),
+            prefixIcon:
+                const Icon(Icons.search_rounded, color: Color(0xFF64748B)),
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         ),
       ),
@@ -250,7 +252,8 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
               expenseProvider.clearClientFilter();
               expenseProvider.clearProjectTypeFilter();
               expenseProvider.clearExpenseTypeFilter();
-              expenseProvider.searchExpense(expenseProvider.searchExpenseController.text, context);
+              expenseProvider.searchExpense(
+                  expenseProvider.searchExpenseController.text, context);
             },
             child: Text(
               'Reset',
@@ -328,7 +331,8 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          const Icon(Icons.info_outline_rounded, size: 13, color: Color(0xFF64748B)),
+                          const Icon(Icons.info_outline_rounded,
+                              size: 13, color: Color(0xFF64748B)),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
@@ -346,7 +350,8 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.person_outline_rounded, size: 13, color: Color(0xFF64748B)),
+                          const Icon(Icons.person_outline_rounded,
+                              size: 13, color: Color(0xFF64748B)),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
@@ -370,12 +375,15 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                     if (settingsProvider.menuIsEditMap[48] == 1)
                       IconButton(
                         onPressed: () => _showEditDialog(context, expenseModel),
-                        icon: const Icon(Icons.edit_outlined, color: Colors.blue, size: 18),
+                        icon: const Icon(Icons.edit_outlined,
+                            color: Colors.blue, size: 18),
                       ),
                     if (settingsProvider.menuIsDeleteMap[48] == 1)
                       IconButton(
-                        onPressed: () => _showDeleteDialog(context, expenseModel),
-                        icon: const Icon(Icons.delete_outline_rounded, color: Colors.red, size: 18),
+                        onPressed: () =>
+                            _showDeleteDialog(context, expenseModel),
+                        icon: const Icon(Icons.delete_outline_rounded,
+                            color: Colors.red, size: 18),
                       ),
                   ],
                 ),
@@ -392,7 +400,8 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
   }
 
   // Filter Helpers (Simplified for logic cleanup)
-  Widget _buildAssignedToFilter() => const SizedBox.shrink(); // Logic omitted for brevity, should be restored from working backup
+  Widget _buildAssignedToFilter() => const SizedBox
+      .shrink(); // Logic omitted for brevity, should be restored from working backup
   Widget _buildClientFilter() => const SizedBox.shrink();
   Widget _buildProjectTypeFilter() => const SizedBox.shrink();
   Widget _buildExpenseTypeFilter() => const SizedBox.shrink();
@@ -400,7 +409,8 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
   void _showEditDialog(BuildContext context, ExpenseModel expenseModel) {
     showDialog(
       context: context,
-      builder: (context) => AddExpenseManagement(expenseModel: expenseModel, isEdit: true),
+      builder: (context) =>
+          AddExpenseManagement(expenseModel: expenseModel, isEdit: true),
     );
   }
 
@@ -410,10 +420,13 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
       builder: (context) => AlertDialog(
         title: const Text('Confirm Delete'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           TextButton(
             onPressed: () async {
-              await expenseProvider.deleteExpense(context, expenseModel.expenseManagementId!);
+              await expenseProvider.deleteExpense(
+                  context, expenseModel.expenseManagementId!);
               Navigator.pop(context);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),

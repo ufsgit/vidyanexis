@@ -91,8 +91,8 @@ class PaymentReminderCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Icon(Icons.calendar_today_outlined, 
-                              size: 12, color: AppColors.textGrey3),
+                            const Icon(Icons.calendar_today_outlined,
+                                size: 12, color: AppColors.textGrey3),
                             const SizedBox(width: 4),
                             Text(
                               "Due: ${_formatDate(item.reminderDate)}",

@@ -81,15 +81,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       height: 40,
       decoration: BoxDecoration(
         color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextField(
         controller: searchController,
@@ -129,12 +129,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                   fontSize: 14,
                   color: const Color(0xFF94A3B8),
                 ),
-                prefixIcon: const Icon(Icons.search_rounded, size: 20, color: Color(0xFF64748B)),
+                prefixIcon: const Icon(Icons.search_rounded,
+                    size: 20, color: Color(0xFF64748B)),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 suffixIcon: provider.search.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFF64748B)),
+                        icon: const Icon(Icons.close_rounded,
+                            size: 18, color: Color(0xFF64748B)),
                         onPressed: () {
                           searchController.clear();
                           _handleSearch(provider, '');
@@ -153,7 +156,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             height: 48,
             width: 48,
             decoration: BoxDecoration(
-              color: provider.isFilter ? AppColors.textBlue800 : const Color(0xFFF1F5F9),
+              color: provider.isFilter
+                  ? AppColors.textBlue800
+                  : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(
@@ -335,7 +340,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       Navigator.pop(context);
                       reportsProvider.getPurchaseDataMaster(context);
                     },
-                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
                         backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white),
                     child: const Text('Apply'),
@@ -362,8 +369,10 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           padding: const EdgeInsets.only(bottom: 12),
           child: InventoryListItem(
             title: purchase.supplierName ?? 'Unknown Supplier',
-            subtitle: 'Inv: ${purchase.invoiceNo} • ${formatSalesDate(purchase.purchaseDate)}',
-            description: 'Total Amount: ${NumberFormat.currency(symbol: '₹', decimalDigits: 0).format(double.parse(purchase.netTotal ?? '0'))}',
+            subtitle:
+                'Inv: ${purchase.invoiceNo} • ${formatSalesDate(purchase.purchaseDate)}',
+            description:
+                'Total Amount: ${NumberFormat.currency(symbol: '₹', decimalDigits: 0).format(double.parse(purchase.netTotal ?? '0'))}',
             onEdit: settingsProvider.menuIsEditMap[44] == 1
                 ? () => _showPurchaseDialog(context, true, data: purchase)
                 : null,
@@ -380,7 +389,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   Widget _buildDesktopTable(
       ExpenseProvider provider, SettingsProvider settingsProvider) {
     const headerStyle = TextStyle(
-      fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF475569));
+        fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF475569));
     const cellStyle = TextStyle(fontSize: 13, color: Color(0xFF1E293B));
 
     return Padding(
@@ -405,13 +414,21 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               // Header
               Container(
                 color: const Color(0xFFF8FAFC),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 child: Row(children: [
-                  Expanded(flex: 3, child: Text('Supplier Name', style: headerStyle)),
-                  Expanded(flex: 2, child: Text('Invoice No', style: headerStyle)),
-                  Expanded(flex: 2, child: Text('Purchase Date', style: headerStyle)),
-                  Expanded(flex: 3, child: Text('Description', style: headerStyle)),
-                  Expanded(flex: 2, child: Text('Total Amount', style: headerStyle)),
+                  Expanded(
+                      flex: 3,
+                      child: Text('Supplier Name', style: headerStyle)),
+                  Expanded(
+                      flex: 2, child: Text('Invoice No', style: headerStyle)),
+                  Expanded(
+                      flex: 2,
+                      child: Text('Purchase Date', style: headerStyle)),
+                  Expanded(
+                      flex: 3, child: Text('Description', style: headerStyle)),
+                  Expanded(
+                      flex: 2, child: Text('Total Amount', style: headerStyle)),
                   Expanded(flex: 1, child: Text('Actions', style: headerStyle)),
                 ]),
               ),
@@ -420,105 +437,147 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                   ? const Padding(
                       padding: EdgeInsets.all(60),
                       child: Center(
-                        child: Column(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(Icons.receipt_long_outlined, size: 48, color: Color(0xFFCBD5E1)),
+                        child:
+                            Column(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(Icons.receipt_long_outlined,
+                              size: 48, color: Color(0xFFCBD5E1)),
                           SizedBox(height: 12),
                           Text('No purchase data available',
-                              style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14)),
+                              style: TextStyle(
+                                  color: Color(0xFF94A3B8), fontSize: 14)),
                         ]),
                       ),
                     )
                   : Column(
-                      children: provider.purchaseList.asMap().entries.map((entry) {
+                      children:
+                          provider.purchaseList.asMap().entries.map((entry) {
                         final i = entry.key;
                         final p = entry.value;
                         return Column(children: [
                           Container(
-                            color: i.isEven ? Colors.white : const Color(0xFFF8FAFC),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                            color: i.isEven
+                                ? Colors.white
+                                : const Color(0xFFF8FAFC),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 13),
                             child: Row(children: [
                               Expanded(
                                 flex: 3,
                                 child: Text(
-                                  p.supplierName.isNotEmpty ? p.supplierName : '-',
-                                  style: cellStyle.copyWith(fontWeight: FontWeight.w500),
+                                  p.supplierName.isNotEmpty
+                                      ? p.supplierName
+                                      : '-',
+                                  style: cellStyle.copyWith(
+                                      fontWeight: FontWeight.w500),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               Expanded(
                                 flex: 2,
-                                child: Text(p.invoiceNo.isNotEmpty ? p.invoiceNo : '-',
-                                    style: cellStyle, overflow: TextOverflow.ellipsis),
+                                child: Text(
+                                    p.invoiceNo.isNotEmpty ? p.invoiceNo : '-',
+                                    style: cellStyle,
+                                    overflow: TextOverflow.ellipsis),
                               ),
                               Expanded(
                                 flex: 2,
                                 child: Text(formatSalesDate(p.purchaseDate),
-                                    style: cellStyle, overflow: TextOverflow.ellipsis),
+                                    style: cellStyle,
+                                    overflow: TextOverflow.ellipsis),
                               ),
                               Expanded(
                                 flex: 3,
                                 child: Text(
-                                  p.descriptions.isNotEmpty ? p.descriptions : '-',
-                                  style: cellStyle, maxLines: 2, overflow: TextOverflow.ellipsis,
+                                  p.descriptions.isNotEmpty
+                                      ? p.descriptions
+                                      : '-',
+                                  style: cellStyle,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               Expanded(
                                 flex: 2,
                                 child: Text(
-                                  NumberFormat.currency(symbol: '\u20b9', decimalDigits: 0)
+                                  NumberFormat.currency(
+                                          symbol: '\u20b9', decimalDigits: 0)
                                       .format(double.tryParse(p.netTotal) ?? 0),
                                   style: cellStyle.copyWith(
-                                    fontWeight: FontWeight.w600, color: const Color(0xFF0F766E)),
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF0F766E)),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               Expanded(
                                 flex: 1,
-                                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                  if (settingsProvider.menuIsEditMap[44] == 1)
-                                    Tooltip(
-                                      message: 'Edit',
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(4),
-                                        onTap: () => _showPurchaseDialog(context, true, data: p),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFEFF6FF),
-                                            borderRadius: BorderRadius.circular(4),
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (settingsProvider.menuIsEditMap[44] ==
+                                          1)
+                                        Tooltip(
+                                          message: 'Edit',
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            onTap: () => _showPurchaseDialog(
+                                                context, true,
+                                                data: p),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFEFF6FF),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: const Icon(
+                                                  Icons.edit_outlined,
+                                                  color: AppColors.primaryBlue,
+                                                  size: 15),
+                                            ),
                                           ),
-                                          child: const Icon(Icons.edit_outlined,
-                                              color: AppColors.primaryBlue, size: 15),
                                         ),
-                                      ),
-                                    ),
-                                  if (settingsProvider.menuIsEditMap[44] == 1 &&
-                                      settingsProvider.menuIsDeleteMap[44] == 1)
-                                    const SizedBox(width: 6),
-                                  if (settingsProvider.menuIsDeleteMap[44] == 1)
-                                    Tooltip(
-                                      message: 'Delete',
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(4),
-                                        onTap: () => _showDeleteDialog(
-                                            context, provider, p.purchaseMasterId),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFFFF1F2),
-                                            borderRadius: BorderRadius.circular(4),
+                                      if (settingsProvider.menuIsEditMap[44] ==
+                                              1 &&
+                                          settingsProvider
+                                                  .menuIsDeleteMap[44] ==
+                                              1)
+                                        const SizedBox(width: 6),
+                                      if (settingsProvider
+                                              .menuIsDeleteMap[44] ==
+                                          1)
+                                        Tooltip(
+                                          message: 'Delete',
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            onTap: () => _showDeleteDialog(
+                                                context,
+                                                provider,
+                                                p.purchaseMasterId),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFFFF1F2),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: const Icon(
+                                                  Icons.delete_outline,
+                                                  color: Colors.red,
+                                                  size: 15),
+                                            ),
                                           ),
-                                          child: const Icon(Icons.delete_outline,
-                                              color: Colors.red, size: 15),
                                         ),
-                                      ),
-                                    ),
-                                ]),
+                                    ]),
                               ),
                             ]),
                           ),
                           if (i < provider.purchaseList.length - 1)
-                            const Divider(height: 1, thickness: 1, color: Color(0xFFE2E8F0)),
+                            const Divider(
+                                height: 1,
+                                thickness: 1,
+                                color: Color(0xFFE2E8F0)),
                         ]);
                       }).toList(),
                     ),

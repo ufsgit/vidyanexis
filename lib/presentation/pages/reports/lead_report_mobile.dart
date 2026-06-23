@@ -46,7 +46,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
   void _onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      final leadReportProvider = Provider.of<LeadReportProvider>(context, listen: false);
+      final leadReportProvider =
+          Provider.of<LeadReportProvider>(context, listen: false);
       leadReportProvider.getSearchLeadReports(
         searchController.text,
         leadReportProvider.fromDateS,
@@ -353,36 +354,48 @@ class _leadReportMobile extends State<LeadReportMobile> {
                             child: Container(
                               height: 32,
                               decoration: BoxDecoration(
-                                color: leadReportProvider.selectedDateFilterIndex != null
+                                color: leadReportProvider
+                                            .selectedDateFilterIndex !=
+                                        null
                                     ? AppColors.primaryBlue.withOpacity(0.1)
                                     : Colors.grey[100],
                                 border: Border.all(
-                                  color: leadReportProvider.selectedDateFilterIndex != null
+                                  color: leadReportProvider
+                                              .selectedDateFilterIndex !=
+                                          null
                                       ? AppColors.primaryBlue
                                       : Colors.transparent,
                                 ),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
                                     Icons.calendar_today_outlined,
                                     size: 14,
-                                    color: leadReportProvider.selectedDateFilterIndex != null
+                                    color: leadReportProvider
+                                                .selectedDateFilterIndex !=
+                                            null
                                         ? AppColors.primaryBlue
                                         : Colors.grey[600],
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    leadReportProvider.selectedDateFilterIndex != null
-                                        ? dateButtonTitles[leadReportProvider.selectedDateFilterIndex!]
+                                    leadReportProvider
+                                                .selectedDateFilterIndex !=
+                                            null
+                                        ? dateButtonTitles[leadReportProvider
+                                            .selectedDateFilterIndex!]
                                         : 'Select Date Range',
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: leadReportProvider.selectedDateFilterIndex != null
+                                      color: leadReportProvider
+                                                  .selectedDateFilterIndex !=
+                                              null
                                           ? AppColors.primaryBlue
                                           : Colors.grey[600],
                                     ),
@@ -391,15 +404,19 @@ class _leadReportMobile extends State<LeadReportMobile> {
                               ),
                             ),
                           ),
-                          if (leadReportProvider.fromDate != null || leadReportProvider.toDate != null)
+                          if (leadReportProvider.fromDate != null ||
+                              leadReportProvider.toDate != null)
                             Container(
                               height: 32,
                               decoration: BoxDecoration(
                                 color: AppColors.primaryBlue.withOpacity(0.05),
-                                border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
+                                border: Border.all(
+                                    color:
+                                        AppColors.primaryBlue.withOpacity(0.3)),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Center(
                                 child: Text(
                                   "${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}",
@@ -604,12 +621,14 @@ class _leadReportMobile extends State<LeadReportMobile> {
                       child: leadReportProvider.isLoading
                           ? const Center(child: CircularProgressIndicator())
                           : leadReportProvider.leadReportData.isEmpty
-                              ? const CommonEmptyState(message: 'No lead reports found')
+                              ? const CommonEmptyState(
+                                  message: 'No lead reports found')
                               : SingleChildScrollView(
                                   child: Column(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            16, 8, 12, 8),
                                         child: Row(
                                           children: [
                                             Checkbox(
@@ -1230,7 +1249,9 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                       "0", // Pass "0" as requested
                                 );
                               },
-                              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4)),
                                 backgroundColor: AppColors.primaryBlue,
                                 foregroundColor: Colors.white,
                               ),

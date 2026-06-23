@@ -135,34 +135,39 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         ),
                         Flexible(child: Container()),
                         Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                          width: 280,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            controller: searchController,
+                            focusNode: searchFocusNodeWeb,
+                            textAlignVertical: TextAlignVertical.center,
+                            onTap: () {
+                              Future.microtask(() {
+                                if (searchController.text.isNotEmpty &&
+                                    searchController.selection.baseOffset ==
+                                        0 &&
+                                    searchController.selection.extentOffset ==
+                                        searchController.text.length) {
+                                  searchController.selection =
+                                      TextSelection.collapsed(
+                                          offset: searchController.text.length);
+                                }
+                              });
+                            },
+                            onSubmitted: (query) {
                               reportsProvider.setTaskSearchCriteria(
                                   query,
                                   reportsProvider.fromDateS,
@@ -173,32 +178,34 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                   reportsProvider.enquirySource);
                               reportsProvider.getSearchTaskReport(context);
                             },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                              reportsProvider.setTaskSearchCriteria(
-                                  searchController.text,
-                                  reportsProvider.fromDateS,
-                                  reportsProvider.toDateS,
-                                  reportsProvider.Status,
-                                  reportsProvider.AssignedTo,
-                                  reportsProvider.enquiryFor,
-                                  reportsProvider.enquirySource);
-                              reportsProvider.getSearchTaskReport(context);
-                            },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                            decoration: InputDecoration(
+                              hintText: 'Search here....',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: const Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 10),
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  reportsProvider.setTaskSearchCriteria(
+                                      searchController.text,
+                                      reportsProvider.fromDateS,
+                                      reportsProvider.toDateS,
+                                      reportsProvider.Status,
+                                      reportsProvider.AssignedTo,
+                                      reportsProvider.enquiryFor,
+                                      reportsProvider.enquirySource);
+                                  reportsProvider.getSearchTaskReport(context);
+                                },
+                                child: const Icon(Icons.search,
+                                    color: Color(0xFF64748B), size: 18),
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(width: 16),
                         CustomFilterButton(
                           onPressed: () {
@@ -262,34 +269,41 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         Column(
                           children: [
                             Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                              width: 280,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                    color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                controller: searchController,
+                                focusNode: searchFocusNodeWeb,
+                                textAlignVertical: TextAlignVertical.center,
+                                onTap: () {
+                                  Future.microtask(() {
+                                    if (searchController.text.isNotEmpty &&
+                                        searchController.selection.baseOffset ==
+                                            0 &&
+                                        searchController
+                                                .selection.extentOffset ==
+                                            searchController.text.length) {
+                                      searchController.selection =
+                                          TextSelection.collapsed(
+                                              offset:
+                                                  searchController.text.length);
+                                    }
+                                  });
+                                },
+                                onSubmitted: (query) {
                                   reportsProvider.setTaskSearchCriteria(
                                       query,
                                       reportsProvider.fromDateS,
@@ -300,32 +314,35 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                       reportsProvider.enquirySource);
                                   reportsProvider.getSearchTaskReport(context);
                                 },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                                  reportsProvider.setTaskSearchCriteria(
-                                      searchController.text,
-                                      reportsProvider.fromDateS,
-                                      reportsProvider.toDateS,
-                                      reportsProvider.Status,
-                                      reportsProvider.AssignedTo,
-                                      reportsProvider.enquiryFor,
-                                      reportsProvider.enquirySource);
-                                  reportsProvider.getSearchTaskReport(context);
-                                },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                                decoration: InputDecoration(
+                                  hintText: 'Search here....',
+                                  hintStyle: GoogleFonts.plusJakartaSans(
+                                    color: const Color(0xFF94A3B8),
+                                    fontSize: 13,
+                                  ),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      reportsProvider.setTaskSearchCriteria(
+                                          searchController.text,
+                                          reportsProvider.fromDateS,
+                                          reportsProvider.toDateS,
+                                          reportsProvider.Status,
+                                          reportsProvider.AssignedTo,
+                                          reportsProvider.enquiryFor,
+                                          reportsProvider.enquirySource);
+                                      reportsProvider
+                                          .getSearchTaskReport(context);
+                                    },
+                                    child: const Icon(Icons.search,
+                                        color: Color(0xFF64748B), size: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             Row(
                               children: [
@@ -410,17 +427,18 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Wrap(
                         spacing: 10, // horizontal spacing between items
                         runSpacing: 10, // vertical spacing between rows
@@ -799,7 +817,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //     );
                           //     reportsProvider.getSearchCustomers(context);
                           //   },
-                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                           //     backgroundColor: Colors.white,
                           //     foregroundColor: AppColors.primaryBlue,
                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -847,17 +865,18 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         runSpacing: 10,
@@ -1033,7 +1052,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //     );
                           //     reportsProvider.getSearchCustomers(context);
                           //   },
-                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                           //     backgroundColor: Colors.white,
                           //     foregroundColor: AppColors.primaryBlue,
                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -1071,7 +1090,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                     ),
             if (reportsProvider.taskReport.isEmpty)
               Expanded(
-                child: const CommonEmptyState(message: 'No invoice reports found'),
+                child:
+                    const CommonEmptyState(message: 'No invoice reports found'),
               )
             else ...[
               AppStyles.isWebScreen(context)
@@ -1080,17 +1100,18 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         padding: const EdgeInsets.all(16.0),
                         child: Container(
                           decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -1362,17 +1383,18 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         padding: const EdgeInsets.all(16.0),
                         child: Container(
                           decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -1835,13 +1857,14 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           reportsProvider.getSearchTaskReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1875,7 +1898,9 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               reportsProvider.enquirySource);
                           reportsProvider.getSearchTaskReport(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

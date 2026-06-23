@@ -94,7 +94,7 @@
 //                                   ? 'Filter'
 //                                   : '',
 //                             ),
-//                             style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+//                             style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
 //                               foregroundColor: reportsProvider.isFilter
 //                                   ? Colors.white
 //                                   : AppColors.primaryBlue,
@@ -144,7 +144,7 @@
 //                                       ? 'Filter'
 //                                       : '',
 //                                 ),
-//                                 style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+//                                 style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
 //                                   foregroundColor: reportsProvider.isFilter
 //                                       ? Colors.white
 //                                       : AppColors.primaryBlue,
@@ -333,7 +333,7 @@
 //                                 );
 //                                 reportsProvider.getSearchWorkSummary(context);
 //                               },
-//                               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+//                               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
 //                                 backgroundColor: Colors.white,
 //                                 foregroundColor: AppColors.textRed,
 //                                 side: BorderSide(color: AppColors.textRed),
@@ -494,7 +494,7 @@
 //                           //     );
 //                           //     reportsProvider.getSearchCustomers(context);
 //                           //   },
-//                           //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+//                           //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
 //                           //     backgroundColor: Colors.white,
 //                           //     foregroundColor: AppColors.primaryBlue,
 //                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -529,7 +529,7 @@
 //                                 );
 //                                 reportsProvider.getSearchWorkSummary(context);
 //                               },
-//                               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+//                               style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
 //                                 backgroundColor: Colors.white,
 //                                 foregroundColor: AppColors.textRed,
 //                                 side: BorderSide(color: AppColors.textRed),
@@ -1177,7 +1177,7 @@
 //                               assignedTo);
 //                           reportsProvider.getSearchWorkSummary(context);
 //                         },
-//                         style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+//                         style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
 //                           backgroundColor: AppColors.primaryBlue,
 //                           foregroundColor: Colors.white,
 //                           padding: const EdgeInsets.symmetric(
@@ -1217,7 +1217,7 @@
 //                           );
 //                           reportsProvider.getSearchWorkSummary(context);
 //                         },
-//                         style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+//                         style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
 //                           backgroundColor: AppColors.textRed.withOpacity(0.1),
 //                           foregroundColor: AppColors.textRed,
 //                           padding: const EdgeInsets.symmetric(

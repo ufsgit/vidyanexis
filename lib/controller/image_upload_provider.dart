@@ -435,7 +435,7 @@ class ImageUploadProvider extends ChangeNotifier {
     print(uploadedFilePaths);
     print(_selectedDocumentType);
     print(customerId);
-    
+
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -462,7 +462,7 @@ class ImageUploadProvider extends ChangeNotifier {
 
         clearFiles();
         print(data);
-        
+
         customerDetailsProvider.getDocument(customerId, context);
 
         if (shouldPop) {

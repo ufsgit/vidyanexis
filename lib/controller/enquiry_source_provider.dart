@@ -59,7 +59,8 @@ class EnquirySourceProvider extends ChangeNotifier {
   int? _selectedConversionDateFilterIndex;
 
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
-  int? get selectedConversionDateFilterIndex => _selectedConversionDateFilterIndex;
+  int? get selectedConversionDateFilterIndex =>
+      _selectedConversionDateFilterIndex;
   int? get selectedStatus => _selectedStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
@@ -188,19 +189,22 @@ class EnquirySourceProvider extends ChangeNotifier {
     }
 
     if (conversionFromDate != null) {
-      _formattedConversionFromDate = DateFormat('yyyy-MM-dd').format(conversionFromDate!);
+      _formattedConversionFromDate =
+          DateFormat('yyyy-MM-dd').format(conversionFromDate!);
     } else {
       _formattedConversionFromDate = '';
     }
 
     if (conversionToDate != null) {
-      _formattedConversionToDate = DateFormat('yyyy-MM-dd').format(conversionToDate!);
+      _formattedConversionToDate =
+          DateFormat('yyyy-MM-dd').format(conversionToDate!);
     } else {
       _formattedConversionToDate = '';
     }
   }
 
-  Future<void> selectDate(BuildContext context, bool isFromDate, {bool isConversion = false}) async {
+  Future<void> selectDate(BuildContext context, bool isFromDate,
+      {bool isConversion = false}) async {
     DateTime? initialDate;
     if (isConversion) {
       initialDate = isFromDate
@@ -262,7 +266,8 @@ class EnquirySourceProvider extends ChangeNotifier {
   }
 
   void setTaskSearchCriteria(String search, String fromDate, String toDate,
-      String status, String assignedTo, {String conversionFromDate = '', String conversionToDate = ''}) {
+      String status, String assignedTo,
+      {String conversionFromDate = '', String conversionToDate = ''}) {
     _Search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;

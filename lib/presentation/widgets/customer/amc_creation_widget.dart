@@ -318,24 +318,21 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                       color: AppColors.textGrey3,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(4), // Rounded corners
+                      borderRadius: BorderRadius.circular(4), // Rounded corners
                       borderSide: BorderSide(
                         color: AppColors.textGrey2, // Border color
                         width: 1, // Border width
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(4), // Rounded corners
+                      borderRadius: BorderRadius.circular(4), // Rounded corners
                       borderSide: BorderSide(
                         color: AppColors.textGrey2, // Border color
                         width: 1, // Border width
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(4), // Rounded corners
+                      borderRadius: BorderRadius.circular(4), // Rounded corners
                       borderSide: BorderSide(
                         color: AppColors.textGrey2, // Border color
                         width: 1, // Border width

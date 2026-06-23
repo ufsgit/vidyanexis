@@ -57,21 +57,26 @@ class EnquiryForSummaryModel {
     int total = parsedClients ?? 0;
     if (total > 0) {
       if (total == 1) {
-        dynamicStatuses.add(EnquiryForSummaryStatus(statusName: 'Converted', count: 1));
+        dynamicStatuses
+            .add(EnquiryForSummaryStatus(statusName: 'Converted', count: 1));
       } else {
         int conv = (total * 0.55).round().clamp(1, total - 1);
         int rem = total - conv;
-        dynamicStatuses.add(EnquiryForSummaryStatus(statusName: 'Converted', count: conv));
-        
+        dynamicStatuses
+            .add(EnquiryForSummaryStatus(statusName: 'Converted', count: conv));
+
         if (rem > 1) {
           int scheduled = (rem * 0.6).round().clamp(1, rem - 1);
           int left = rem - scheduled;
-          dynamicStatuses.add(EnquiryForSummaryStatus(statusName: 'Interview Scheduled', count: scheduled));
+          dynamicStatuses.add(EnquiryForSummaryStatus(
+              statusName: 'Interview Scheduled', count: scheduled));
           if (left > 0) {
-            dynamicStatuses.add(EnquiryForSummaryStatus(statusName: 'Cold', count: left));
+            dynamicStatuses
+                .add(EnquiryForSummaryStatus(statusName: 'Cold', count: left));
           }
         } else if (rem > 0) {
-          dynamicStatuses.add(EnquiryForSummaryStatus(statusName: 'Cold', count: rem));
+          dynamicStatuses
+              .add(EnquiryForSummaryStatus(statusName: 'Cold', count: rem));
         }
       }
     }

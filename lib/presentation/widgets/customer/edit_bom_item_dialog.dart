@@ -247,8 +247,7 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: Text(
             'Confirm Delete',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),

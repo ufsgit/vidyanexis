@@ -134,8 +134,7 @@ class _SalesReportScreenPhoneState extends State<SalesReportScreenPhone> {
         final sale = provider.salesReport[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(

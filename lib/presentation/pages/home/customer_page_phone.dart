@@ -208,7 +208,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
               children: [
                 Container(
                   color: AppColors.whiteColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -240,9 +241,10 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   color: customerProvider.entryType != 'all'
                                       ? AppColors.primaryBlue
                                       : Colors.grey,
-                                  fontWeight: customerProvider.entryType != 'all'
-                                      ? FontWeight.w500
-                                      : FontWeight.normal,
+                                  fontWeight:
+                                      customerProvider.entryType != 'all'
+                                          ? FontWeight.w500
+                                          : FontWeight.normal,
                                   fontSize: 14,
                                 ),
                               ),
@@ -272,9 +274,10 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                   color: customerProvider.entryType == 'all'
                                       ? AppColors.primaryBlue
                                       : Colors.grey,
-                                  fontWeight: customerProvider.entryType == 'all'
-                                      ? FontWeight.w500
-                                      : FontWeight.normal,
+                                  fontWeight:
+                                      customerProvider.entryType == 'all'
+                                          ? FontWeight.w500
+                                          : FontWeight.normal,
                                   fontSize: 14,
                                 ),
                               ),
@@ -384,7 +387,6 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                               ),
                             ],
                           ),
-
                           const SizedBox(height: 24),
                           if (customerProvider.fromDate != null ||
                               customerProvider.toDate != null ||
@@ -625,7 +627,9 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                           );
                           leadProvider.getSearchCustomers(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -661,7 +665,9 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                           );
                           leadProvider.getSearchCustomers(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

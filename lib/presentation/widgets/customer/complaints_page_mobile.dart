@@ -60,8 +60,10 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                         GestureDetector(
                           onTap: () {
                             final customerDetailsProvider =
-                                Provider.of<CustomerDetailsProvider>(context, listen: false);
-                            customerDetailsProvider.customerId = widget.customerId;
+                                Provider.of<CustomerDetailsProvider>(context,
+                                    listen: false);
+                            customerDetailsProvider.customerId =
+                                widget.customerId;
                             customerDetailsProvider.clearTaskDetails();
 
                             Navigator.push(context, MaterialPageRoute(
@@ -82,7 +84,8 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                               borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.secondaryBlue.withOpacity(0.3),
+                                  color:
+                                      AppColors.secondaryBlue.withOpacity(0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -134,17 +137,18 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                               );
                             },
                             padding: const EdgeInsets.only(bottom: 16),
-                            itemCount: customerDetailsProvider.serviceList.length,
+                            itemCount:
+                                customerDetailsProvider.serviceList.length,
                             itemBuilder: (context, index) {
                               final service =
                                   customerDetailsProvider.serviceList[index];
 
-                              Color statusColor =
-                                  service.serviceStatusName == "Completed"
-                                      ? Colors.green
-                                      : service.serviceStatusName == "In Progress"
-                                          ? Colors.orange
-                                          : Colors.red;
+                              Color statusColor = service.serviceStatusName ==
+                                      "Completed"
+                                  ? Colors.green
+                                  : service.serviceStatusName == "In Progress"
+                                      ? Colors.orange
+                                      : Colors.red;
                               return InkWell(
                                   onTap: () {
                                     Navigator.push(context, MaterialPageRoute(
@@ -189,7 +193,8 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                                                           .plusJakartaSans(
                                                               fontSize: 12,
                                                               fontWeight:
-                                                                  FontWeight.w500,
+                                                                  FontWeight
+                                                                      .w500,
                                                               color: AppColors
                                                                   .textGrey4),
                                                       maxLines: 1,
@@ -202,7 +207,8 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                                                           .plusJakartaSans(
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight.w500,
+                                                                  FontWeight
+                                                                      .w500,
                                                               color: AppColors
                                                                   .textBlack),
                                                       maxLines:
@@ -221,7 +227,8 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                                                   height: 22,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(4),
+                                                        BorderRadius.circular(
+                                                            4),
                                                     color: statusColor
                                                         .withOpacity(.1),
                                                   ),
@@ -232,7 +239,8 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                                                           horizontal: 10,
                                                           vertical: 2),
                                                       child: Text(
-                                                        service.serviceStatusName,
+                                                        service
+                                                            .serviceStatusName,
                                                         style: GoogleFonts
                                                             .plusJakartaSans(
                                                                 fontSize: 12,
@@ -253,10 +261,13 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                                               service.description,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.plusJakartaSans(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: AppColors.textGrey3),
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color:
+                                                          AppColors.textGrey3),
                                             ),
                                           ),
                                           const SizedBox(height: 12),
@@ -279,10 +290,11 @@ class _ComplaintsPageMobileState extends State<ComplaintsPageMobile> {
                                                       .toString()
                                                       .toTimeAgo(),
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   textAlign: TextAlign.end,
-                                                  style:
-                                                      GoogleFonts.plusJakartaSans(
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
                                                           fontSize: 12,
                                                           fontWeight:
                                                               FontWeight.w500,

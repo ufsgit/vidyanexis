@@ -87,7 +87,6 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,
@@ -121,12 +120,10 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
-                                    borderRadius:
-                                        BorderRadius.circular(4)),
+                                    borderRadius: BorderRadius.circular(4)),
                                 child: Text(
                                   settingsProvider
-                                      .searchEnquiryFor[index]
-                                      .enquiryForName,
+                                      .searchEnquiryFor[index].enquiryForName,
                                   style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
@@ -136,7 +133,8 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          if (settingsProvider.menuIsEditMap[17].toString() == '1')
+                          if (settingsProvider.menuIsEditMap[17].toString() ==
+                              '1')
                             TextButton(
                                 onPressed: () {
                                   final isWeb = AppStyles.isWebScreen(context);
@@ -171,7 +169,8 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => AddEnquiryForMobilePage(
+                                        builder: (context) =>
+                                            AddEnquiryForMobilePage(
                                           editId: settingsProvider
                                               .searchEnquiryFor[index]
                                               .enquiryForId
@@ -202,15 +201,15 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.primaryBlue),
                                 )),
-                          if (settingsProvider.menuIsDeleteMap[17].toString() == '1')
+                          if (settingsProvider.menuIsDeleteMap[17].toString() ==
+                              '1')
                             TextButton(
                                 onPressed: () {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: const Text(
-                                            'Confirm Delete'),
+                                        title: const Text('Confirm Delete'),
                                         content: const Text(
                                             'Are you sure you want to delete?'),
                                         actions: [
@@ -221,19 +220,17 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              settingsProvider
-                                                  .deleteEnquiryFor(
-                                                      context,
-                                                      settingsProvider
-                                                          .searchEnquiryFor[
-                                                              index]
-                                                          .enquiryForId);
+                                              settingsProvider.deleteEnquiryFor(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchEnquiryFor[index]
+                                                      .enquiryForId);
                                               Navigator.pop(context);
                                             },
                                             child: const Text(
                                               'Delete',
-                                              style: TextStyle(
-                                                  color: Colors.red),
+                                              style:
+                                                  TextStyle(color: Colors.red),
                                             ),
                                           ),
                                         ],

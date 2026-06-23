@@ -581,8 +581,9 @@ class DashboardProvider extends ChangeNotifier {
   Future<void> loadDataForTab(int activeTab, BuildContext context,
       {bool isSilent = false}) async {
     // Sync filters with other providers if needed
-    final warrantyProvider = Provider.of<WarrentyReportProvider>(context, listen: false);
-    
+    final warrantyProvider =
+        Provider.of<WarrentyReportProvider>(context, listen: false);
+
     // Sync common filters to Warranty Provider
     warrantyProvider.syncCommonFilters(
       fromDate: _fromDate,

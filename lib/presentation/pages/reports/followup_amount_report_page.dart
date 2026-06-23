@@ -317,7 +317,6 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
               ],
             ),
           ),
-
           const Spacer(),
           if (provider.fromDate != null ||
               (provider.selectedUser != null && provider.selectedUser != 0))

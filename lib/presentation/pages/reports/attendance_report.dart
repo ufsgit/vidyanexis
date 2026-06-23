@@ -169,50 +169,56 @@ class _AttendanceReportState extends State<AttendanceReport> {
                     const Spacer(),
                     // Search Bar
                     Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {},
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {},
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                      width: 280,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: searchController,
+                        focusNode: searchFocusNodeWeb,
+                        textAlignVertical: TextAlignVertical.center,
+                        onTap: () {
+                          Future.microtask(() {
+                            if (searchController.text.isNotEmpty &&
+                                searchController.selection.baseOffset == 0 &&
+                                searchController.selection.extentOffset ==
+                                    searchController.text.length) {
+                              searchController.selection =
+                                  TextSelection.collapsed(
+                                      offset: searchController.text.length);
+                            }
+                          });
+                        },
+                        onSubmitted: (query) {},
+                        decoration: InputDecoration(
+                          hintText: 'Search here....',
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            color: const Color(0xFF94A3B8),
+                            fontSize: 13,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          suffixIcon: GestureDetector(
+                            onTap: () {},
+                            child: const Icon(Icons.search,
+                                color: Color(0xFF64748B), size: 18),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     CustomFilterButton(
                       onPressed: () => reportsProvider.toggleFilter(),
@@ -269,7 +275,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                           // Extract Initials for User Avatar
                           String initials = '';
                           if (task.userDetailsName.isNotEmpty) {
-                            final parts = task.userDetailsName.trim().split(' ');
+                            final parts =
+                                task.userDetailsName.trim().split(' ');
                             if (parts.isNotEmpty) {
                               initials = parts[0][0].toUpperCase();
                               if (parts.length > 1 && parts[1].isNotEmpty) {
@@ -395,7 +402,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                           children: [
                                             Text(
                                               'CHECK-IN',
-                                              style: GoogleFonts.plusJakartaSans(
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
                                                 fontSize: 9,
                                                 fontWeight: FontWeight.w800,
                                                 color: const Color(0xFF15803D),
@@ -405,7 +413,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                             const SizedBox(height: 2),
                                             Text(
                                               task.checkInTimeOnly,
-                                              style: GoogleFonts.plusJakartaSans(
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w700,
                                                 color: const Color(0xFF16A34A),
@@ -440,13 +449,14 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                           children: [
                                             Text(
                                               'CHECK-OUT',
-                                              style: GoogleFonts.plusJakartaSans(
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
                                                 fontSize: 9,
                                                 fontWeight: FontWeight.w800,
-                                                color:
-                                                    task.checkOutTimeOnly.isEmpty
-                                                        ? const Color(0xFFB45309)
-                                                        : const Color(0xFFB91C1C),
+                                                color: task.checkOutTimeOnly
+                                                        .isEmpty
+                                                    ? const Color(0xFFB45309)
+                                                    : const Color(0xFFB91C1C),
                                                 letterSpacing: 0.5,
                                               ),
                                             ),
@@ -455,13 +465,14 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                               task.checkOutTimeOnly.isEmpty
                                                   ? 'In Progress'
                                                   : task.checkOutTimeOnly,
-                                              style: GoogleFonts.plusJakartaSans(
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w700,
-                                                color:
-                                                    task.checkOutTimeOnly.isEmpty
-                                                        ? const Color(0xFFD97706)
-                                                        : const Color(0xFFDC2626),
+                                                color: task.checkOutTimeOnly
+                                                        .isEmpty
+                                                    ? const Color(0xFFD97706)
+                                                    : const Color(0xFFDC2626),
                                               ),
                                             ),
                                           ],
@@ -608,7 +619,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                     );
                     reportsProvider.getSearchTaskReport(context);
                     reportsProvider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -832,8 +844,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
                 ),
               ),
               ...provider.searchUserDetails.map((user) {
-                final bool isSelected = reportsProvider.AssignedTo ==
-                    user.userDetailsId.toString();
+                final bool isSelected =
+                    reportsProvider.AssignedTo == user.userDetailsId.toString();
                 return ChoiceChip(
                   onSelected: (_) {
                     reportsProvider
@@ -956,8 +968,9 @@ class _AttendanceReportState extends State<AttendanceReport> {
                             title,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
-                              fontWeight:
-                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               color: isSelected
                                   ? Colors.white
                                   : const Color(0xFF475569),
@@ -996,11 +1009,13 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
@@ -1027,11 +1042,13 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'

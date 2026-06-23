@@ -216,8 +216,9 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        final settingsProvider =
-                            Provider.of<SettingsProvider>(context, listen: false);
+                        final settingsProvider = Provider.of<SettingsProvider>(
+                            context,
+                            listen: false);
 
                         final leadsProvider =
                             Provider.of<LeadsProvider>(context, listen: false);
@@ -225,12 +226,13 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                         leadsProvider.assignToFollowUpController.clear();
                         leadsProvider.messageController.clear();
                         leadsProvider.nextFollowUpDateController.clear();
-                        final dropDownProvider =
-                            Provider.of<DropDownProvider>(context, listen: false);
+                        final dropDownProvider = Provider.of<DropDownProvider>(
+                            context,
+                            listen: false);
                         dropDownProvider.selectedStatusId = null;
                         dropDownProvider.selectedUserId = null;
-                        leadsProvider
-                            .setCutomerId(int.parse(widget.customerId.toString()));
+                        leadsProvider.setCutomerId(
+                            int.parse(widget.customerId.toString()));
 
                         dropDownProvider.selectedStatusId =
                             int.parse(widget.lead?.statusId.toString() ?? "0");
@@ -241,7 +243,8 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                             widget.lead?.statusName ?? "";
                         leadsProvider.branchController.text =
                             widget.lead?.branchName ?? "";
-                        settingsProvider.selectedBranchId = widget.lead?.branchId ?? 0;
+                        settingsProvider.selectedBranchId =
+                            widget.lead?.branchId ?? 0;
                         leadsProvider.assignToFollowUpController.text =
                             widget.lead?.toUserName ?? "";
                         leadsProvider.departmentController.text =
@@ -251,7 +254,8 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                         leadsProvider.nextFollowUpDateController.text =
                             (widget.lead?.nextFollowUpDate ?? '').isNotEmpty
                                 ? DateFormat('dd MMM yyyy').format(
-                                    DateTime.tryParse(widget.lead!.nextFollowUpDate) ??
+                                    DateTime.tryParse(
+                                            widget.lead!.nextFollowUpDate) ??
                                         DateTime(2000, 1, 1))
                                 : '';
                         leadsProvider.messageController.clear();
@@ -374,193 +378,182 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
               children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: AppColors.grey)),
+                        height: 32,
+                        width: 32,
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/lead_icon_4.png',
+                            height: 16,
+                            width: 16,
+                            color: AppColors.parseColor(lead.colorCode),
+                          ),
+                        )),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(color: AppColors.grey)),
-                              height: 32,
-                              width: 32,
-                              child: Center(
-                                child: Image.asset(
-                                  'assets/images/lead_icon_4.png',
-                                  height: 16,
-                                  width: 16,
-                                  color: AppColors.parseColor(lead.colorCode),
-                                ),
-                              )),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
+                          Text(
+                            lead.statusName,
+                            style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textBlack),
+                          ),
+                          const SizedBox(height: 2),
+                          RichText(
+                            text: TextSpan(
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textGrey3,
+                              ),
                               children: [
-                                Text(
-                                  lead.statusName,
+                                const TextSpan(text: 'by '),
+                                TextSpan(
+                                  text: lead.byUserName,
                                   style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textBlack),
-                                ),
-                                const SizedBox(height: 2),
-                                RichText(
-                                  text: TextSpan(
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.textGrey3,
-                                    ),
-                                    children: [
-                                      const TextSpan(text: 'by '),
-                                      TextSpan(
-                                        text: lead.byUserName,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textGrey3,
-                                        ),
-                                      ),
-                                      const TextSpan(text: ' to '),
-                                      TextSpan(
-                                        text: lead.toUserName,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textGrey3,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' • ${lead.entryDate.toDate()}',
-                                      ),
-                                    ],
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textGrey3,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                if (lead.remark.isNotEmpty)
-                                  Text(
-                                    lead.remark,
-                                    softWrap: true,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.textBlack,
-                                    ),
+                                const TextSpan(text: ' to '),
+                                TextSpan(
+                                  text: lead.toUserName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textGrey3,
                                   ),
-                                if (lead.remark.isNotEmpty)
-                                  const SizedBox(height: 8),
-                                RichText(
-                                  text: TextSpan(
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.textGrey3,
-                                    ),
-                                    children: [
-                                      const TextSpan(text: 'Next Follow-up, '),
-                                      TextSpan(
-                                        text:
-                                            lead.nextFollowUpDate.toWeekdayDate(),
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textGrey3,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
+                                ),
+                                TextSpan(
+                                  text: ' • ${lead.entryDate.toDate()}',
+                                ),
                               ],
                             ),
                           ),
+                          const SizedBox(height: 8),
+                          if (lead.remark.isNotEmpty)
+                            Text(
+                              lead.remark,
+                              softWrap: true,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textBlack,
+                              ),
+                            ),
+                          if (lead.remark.isNotEmpty) const SizedBox(height: 8),
+                          RichText(
+                            text: TextSpan(
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textGrey3,
+                              ),
+                              children: [
+                                const TextSpan(text: 'Next Follow-up, '),
+                                TextSpan(
+                                  text: lead.nextFollowUpDate.toWeekdayDate(),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textGrey3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                      if (lead.audios.isNotEmpty) ...[
-                        const Text("Audio",
-                            style: TextStyle(color: Colors.grey)),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () async {
-                                final url = lead.audios.first.filePath ?? '';
-                                if (url.isEmpty) return;
-                                await _togglePlay(
-                                  url: url,
-                                  audioIndex: index,
-                                );
-                              },
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF6F7F9),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Icon((_playingState != null &&
-                                        _playingState!.audioParentIndex ==
-                                            index &&
-                                        _playingState!.isPlaying)
-                                    ? Icons.pause
-                                    : Icons.play_arrow),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: SliderTheme(
-                                data: const SliderThemeData(trackHeight: 2),
-                                child: Slider(
-                                  min: 0,
-                                  max: (_playingState != null &&
-                                          _playingState!.audioParentIndex ==
-                                              index
-                                      ? _playingState!.duration.inMilliseconds
-                                          .toDouble()
-                                          .clamp(0.0, double.infinity)
-                                      : 1.0),
-                                  value: (_playingState != null &&
-                                          _playingState!.audioParentIndex ==
-                                              index
-                                      ? _playingState!.position.inMilliseconds
-                                          .clamp(
-                                              0,
-                                              _playingState!
-                                                  .duration.inMilliseconds)
-                                          .toDouble()
-                                      : 0.0),
-                                  onChanged: (_playingState != null &&
-                                          _playingState!.audioParentIndex ==
-                                              index)
-                                      ? (v) async {
-                                          final pos =
-                                              Duration(milliseconds: v.toInt());
-                                          await _playingState!.player
-                                              ?.seek(pos);
-                                        }
-                                      : null,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                                (_playingState != null &&
-                                        _playingState!.audioParentIndex ==
-                                            index)
-                                    ? '${_format(_playingState!.position)} / ${_format(_playingState!.duration)}'
-                                    : '${_format(Duration.zero)} / ${_format(Duration.zero)}',
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
-                          ],
+                    ),
+                  ],
+                ),
+                if (lead.audios.isNotEmpty) ...[
+                  const Text("Audio", style: TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          final url = lead.audios.first.filePath ?? '';
+                          if (url.isEmpty) return;
+                          await _togglePlay(
+                            url: url,
+                            audioIndex: index,
+                          );
+                        },
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF6F7F9),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Icon((_playingState != null &&
+                                  _playingState!.audioParentIndex == index &&
+                                  _playingState!.isPlaying)
+                              ? Icons.pause
+                              : Icons.play_arrow),
                         ),
-                      ],
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: SliderTheme(
+                          data: const SliderThemeData(trackHeight: 2),
+                          child: Slider(
+                            min: 0,
+                            max: (_playingState != null &&
+                                    _playingState!.audioParentIndex == index
+                                ? _playingState!.duration.inMilliseconds
+                                    .toDouble()
+                                    .clamp(0.0, double.infinity)
+                                : 1.0),
+                            value: (_playingState != null &&
+                                    _playingState!.audioParentIndex == index
+                                ? _playingState!.position.inMilliseconds
+                                    .clamp(0,
+                                        _playingState!.duration.inMilliseconds)
+                                    .toDouble()
+                                : 0.0),
+                            onChanged: (_playingState != null &&
+                                    _playingState!.audioParentIndex == index)
+                                ? (v) async {
+                                    final pos =
+                                        Duration(milliseconds: v.toInt());
+                                    await _playingState!.player?.seek(pos);
+                                  }
+                                : null,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                          (_playingState != null &&
+                                  _playingState!.audioParentIndex == index)
+                              ? '${_format(_playingState!.position)} / ${_format(_playingState!.duration)}'
+                              : '${_format(Duration.zero)} / ${_format(Duration.zero)}',
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.grey)),
                     ],
                   ),
-                ),
-              );
-            },
-          );
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildVisitFlow() {

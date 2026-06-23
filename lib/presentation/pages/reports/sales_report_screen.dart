@@ -145,50 +145,53 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
 
   Widget _buildSearchField(SalesReportProvider provider) {
     return Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
+      width: 280,
+      height: 38,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {},
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
+      child: TextField(
+        controller: searchController,
+        focusNode: searchFocusNodeWeb,
+        textAlignVertical: TextAlignVertical.center,
+        onTap: () {
+          Future.microtask(() {
+            if (searchController.text.isNotEmpty &&
+                searchController.selection.baseOffset == 0 &&
+                searchController.selection.extentOffset ==
+                    searchController.text.length) {
+              searchController.selection =
+                  TextSelection.collapsed(offset: searchController.text.length);
+            }
+          });
+        },
+        onSubmitted: (query) {},
+        decoration: InputDecoration(
+          hintText: 'Search here....',
+          hintStyle: GoogleFonts.plusJakartaSans(
+            color: const Color(0xFF94A3B8),
+            fontSize: 13,
+          ),
+          border: InputBorder.none,
+          isDense: true,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          suffixIcon: GestureDetector(
+            onTap: () {},
+            child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+          ),
+        ),
       ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {},
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-);
+    );
   }
 
   Widget _buildExportButton(SalesReportProvider provider) {
@@ -296,7 +299,8 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
               Expanded(
                 child: _buildDropdownFilter(
                   label: 'Enquiry For',
-                  value: provider.enquiryFor.isEmpty ? null : provider.enquiryFor,
+                  value:
+                      provider.enquiryFor.isEmpty ? null : provider.enquiryFor,
                   items: [
                     const DropdownMenuItem(
                         value: null, child: Text('All Enquiry For')),
@@ -443,14 +447,14 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(4),
@@ -567,7 +571,8 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                         String title = dateButtonTitles[index];
                         return ActionChip(
                           onPressed: () {
-                            if (reportsProvider.selectedDateFilterIndex == index) {
+                            if (reportsProvider.selectedDateFilterIndex ==
+                                index) {
                               reportsProvider.selectDateFilterOption(null);
                               reportsProvider.setDateFilter('');
                             } else {
@@ -652,13 +657,14 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                           reportsProvider.getSalesReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -672,11 +678,14 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                       height: 40,
                       child: TextButton(
                         onPressed: () {
-                          reportsProvider.setSearchCriteria(fromDate: '', toDate: '');
+                          reportsProvider.setSearchCriteria(
+                              fromDate: '', toDate: '');
                           Navigator.pop(context);
                           reportsProvider.getSalesReport(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

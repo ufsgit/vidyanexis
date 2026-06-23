@@ -145,29 +145,36 @@ class EnquiryForSummaryProvider extends ChangeNotifier {
     await Loader.showLoader(context);
 
     // Format dates to parameters yyyy-MM-dd
-    String fromDateParam = _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : '';
-    String toDateParam = _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : '';
+    String fromDateParam =
+        _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : '';
+    String toDateParam =
+        _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : '';
 
     try {
       final response = await HttpRequest.httpGetRequest(
-        endPoint: '${HttpUrls.enquiryForSummaryReport}?from_date=$fromDateParam&to_date=$toDateParam',
+        endPoint:
+            '${HttpUrls.enquiryForSummaryReport}?from_date=$fromDateParam&to_date=$toDateParam',
       );
 
       // Status code 200 implies success, else fallback gracefully to mock data
       if (response.statusCode == 200 && response.data != null) {
         final List<dynamic> data = response.data is List ? response.data : [];
         if (data.isNotEmpty) {
-          _rawEnquiryReport = data.map((x) => EnquiryForSummaryModel.fromJson(x)).toList();
+          _rawEnquiryReport =
+              data.map((x) => EnquiryForSummaryModel.fromJson(x)).toList();
         } else {
-          print('Enquiry For API returned empty list. Falling back to mock data...');
+          print(
+              'Enquiry For API returned empty list. Falling back to mock data...');
           _loadMockData();
         }
       } else {
-        print('Enquiry For API response code: ${response.statusCode}. Falling back to mock data...');
+        print(
+            'Enquiry For API response code: ${response.statusCode}. Falling back to mock data...');
         _loadMockData();
       }
     } catch (e) {
-      print('Exception in getEnquiryForSummary: $e. Falling back to mock data...');
+      print(
+          'Exception in getEnquiryForSummary: $e. Falling back to mock data...');
       _loadMockData();
     } finally {
       Loader.stopLoader(context);
@@ -178,33 +185,16 @@ class EnquiryForSummaryProvider extends ChangeNotifier {
 
   void _loadMockData() {
     final List<Map<String, dynamic>> mockJSON = [
-      {
-        "Enquiry_For": "Solar - Subsidy Full payment",
-        "No_of_Clients": 7
-      },
-      {
-        "Enquiry_For": "Job placement",
-        "No_of_Clients": 3
-      },
-      {
-        "Enquiry_For": "schedule",
-        "No_of_Clients": 3
-      },
-      {
-        "Enquiry_For": "test for pdf",
-        "No_of_Clients": 2
-      },
-      {
-        "Enquiry_For": "Traning",
-        "No_of_Clients": 2
-      },
-      {
-        "Enquiry_For": "Test",
-        "No_of_Clients": 2
-      }
+      {"Enquiry_For": "Solar - Subsidy Full payment", "No_of_Clients": 7},
+      {"Enquiry_For": "Job placement", "No_of_Clients": 3},
+      {"Enquiry_For": "schedule", "No_of_Clients": 3},
+      {"Enquiry_For": "test for pdf", "No_of_Clients": 2},
+      {"Enquiry_For": "Traning", "No_of_Clients": 2},
+      {"Enquiry_For": "Test", "No_of_Clients": 2}
     ];
 
-    _rawEnquiryReport = mockJSON.map((x) => EnquiryForSummaryModel.fromJson(x)).toList();
+    _rawEnquiryReport =
+        mockJSON.map((x) => EnquiryForSummaryModel.fromJson(x)).toList();
   }
 
   void _applyFilters() {

@@ -319,8 +319,10 @@ class ProcessFlowProvider extends ChangeNotifier {
               .map((item) => DocumentTypeModel.fromJson(item))
               .toList();
           processFlowModel.templateId = data["data"]["template_id"]?.toString();
-          processFlowModel.leadStatusId = data["data"]["lead_status_id"]?.toInt();
-          processFlowModel.leadStatusName = data["data"]["lead_status_name"]?.toString();
+          processFlowModel.leadStatusId =
+              data["data"]["lead_status_id"]?.toInt();
+          processFlowModel.leadStatusName =
+              data["data"]["lead_status_name"]?.toString();
           _showLeadStatus = data["data"]["Show_Lead_Status"]?.toString() == "1";
           var showCustomFieldsData = data["data"]["show_custom_fields"] ??
               data["data"]["show_custom_field"] ??

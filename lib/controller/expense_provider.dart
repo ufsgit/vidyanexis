@@ -773,10 +773,11 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchItemDropdownList({required BuildContext context, required int itemTypeId}) async {
+  Future<void> searchItemDropdownList(
+      {required BuildContext context, required int itemTypeId}) async {
     try {
-      final response =
-          await HttpRequest.httpGetRequest(endPoint: '${HttpUrls.getItemsDropdown}/$itemTypeId');
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getItemsDropdown}/$itemTypeId');
 
       if (response.statusCode == 200) {
         final data = response.data;

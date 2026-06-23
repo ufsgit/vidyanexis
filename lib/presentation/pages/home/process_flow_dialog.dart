@@ -489,7 +489,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     icon: Icons.calendar_today,
                                     readOnly: true,
                                     onTap: () async {
-                                      DateTime? pickedDate = await showDatePicker(
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
                                         firstDate: DateTime.now(),
@@ -525,14 +526,14 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     icon: Icons.access_time,
                                     readOnly: true,
                                     onTap: () async {
-                                      TimeOfDay? pickedTime = await showTimePicker(
+                                      TimeOfDay? pickedTime =
+                                          await showTimePicker(
                                         context: context,
                                         initialTime: TimeOfDay.now(),
                                       );
                                       if (pickedTime != null) {
-                                        reportsProvider
-                                                .followUpTimeController.text =
-                                            pickedTime.format(context);
+                                        reportsProvider.followUpTimeController
+                                            .text = pickedTime.format(context);
                                       }
                                     },
                                   ),

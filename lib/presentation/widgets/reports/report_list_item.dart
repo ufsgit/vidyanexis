@@ -125,7 +125,8 @@ class ReportListItem extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
-                          if (description != null && description!.isNotEmpty) ...[
+                          if (description != null &&
+                              description!.isNotEmpty) ...[
                             const SizedBox(height: 2),
                             Text(
                               description!,

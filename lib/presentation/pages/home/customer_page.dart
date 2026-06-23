@@ -201,7 +201,8 @@ class _CustomerPageState extends State<CustomerPage> {
                           left: 16.0, right: 16.0, top: 8.0, bottom: 0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: [                          Wrap(
+                        children: [
+                          Wrap(
                             spacing: 8,
                             runSpacing: 8,
                             crossAxisAlignment: WrapCrossAlignment.center,
@@ -213,14 +214,19 @@ class _CustomerPageState extends State<CustomerPage> {
                                   GestureDetector(
                                     onTap: () {
                                       customerProvider.setEntryType('myown');
-                                      customerProvider.getSearchCustomers(context, isSilent: true);
+                                      customerProvider.getSearchCustomers(
+                                          context,
+                                          isSilent: true);
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.only(bottom: 2),
                                       decoration: BoxDecoration(
                                         border: Border(
                                           bottom: BorderSide(
-                                            color: customerProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                            color: customerProvider.entryType !=
+                                                    'all'
+                                                ? AppColors.primaryBlue
+                                                : Colors.transparent,
                                             width: 2.0,
                                           ),
                                         ),
@@ -228,8 +234,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                       child: Text(
                                         'ME',
                                         style: TextStyle(
-                                          color: customerProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.grey,
-                                          fontWeight: customerProvider.entryType != 'all' ? FontWeight.w600 : FontWeight.normal,
+                                          color: customerProvider.entryType !=
+                                                  'all'
+                                              ? AppColors.primaryBlue
+                                              : Colors.grey,
+                                          fontWeight:
+                                              customerProvider.entryType !=
+                                                      'all'
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -239,14 +252,19 @@ class _CustomerPageState extends State<CustomerPage> {
                                   GestureDetector(
                                     onTap: () {
                                       customerProvider.setEntryType('all');
-                                      customerProvider.getSearchCustomers(context, isSilent: true);
+                                      customerProvider.getSearchCustomers(
+                                          context,
+                                          isSilent: true);
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.only(bottom: 2),
                                       decoration: BoxDecoration(
                                         border: Border(
                                           bottom: BorderSide(
-                                            color: customerProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                            color: customerProvider.entryType ==
+                                                    'all'
+                                                ? AppColors.primaryBlue
+                                                : Colors.transparent,
                                             width: 2.0,
                                           ),
                                         ),
@@ -254,8 +272,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                       child: Text(
                                         'ALL',
                                         style: TextStyle(
-                                          color: customerProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.grey,
-                                          fontWeight: customerProvider.entryType == 'all' ? FontWeight.w600 : FontWeight.normal,
+                                          color: customerProvider.entryType ==
+                                                  'all'
+                                              ? AppColors.primaryBlue
+                                              : Colors.grey,
+                                          fontWeight:
+                                              customerProvider.entryType ==
+                                                      'all'
+                                                  ? FontWeight.w600
+                                                  : FontWeight.normal,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -287,9 +312,16 @@ class _CustomerPageState extends State<CustomerPage> {
                                   onTap: () {
                                     Future.microtask(() {
                                       if (searchController.text.isNotEmpty &&
-                                          searchController.selection.baseOffset == 0 &&
-                                          searchController.selection.extentOffset == searchController.text.length) {
-                                        searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                          searchController
+                                                  .selection.baseOffset ==
+                                              0 &&
+                                          searchController
+                                                  .selection.extentOffset ==
+                                              searchController.text.length) {
+                                        searchController.selection =
+                                            TextSelection.collapsed(
+                                                offset: searchController
+                                                    .text.length);
                                       }
                                     });
                                   },
@@ -396,7 +428,6 @@ class _CustomerPageState extends State<CustomerPage> {
                         runSpacing: 10,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-
                           Container(
                             width: double.infinity,
                             height: 38,
@@ -413,9 +444,14 @@ class _CustomerPageState extends State<CustomerPage> {
                               onTap: () {
                                 Future.microtask(() {
                                   if (searchController.text.isNotEmpty &&
-                                      searchController.selection.baseOffset == 0 &&
-                                      searchController.selection.extentOffset == searchController.text.length) {
-                                    searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                      searchController.selection.baseOffset ==
+                                          0 &&
+                                      searchController.selection.extentOffset ==
+                                          searchController.text.length) {
+                                    searchController.selection =
+                                        TextSelection.collapsed(
+                                            offset:
+                                                searchController.text.length);
                                   }
                                 });
                               },
@@ -513,16 +549,16 @@ class _CustomerPageState extends State<CustomerPage> {
                   margin: const EdgeInsets.symmetric(horizontal: 16.0),
                   padding: const EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   child: Wrap(
                     spacing: 10,
                     runSpacing: 10,
@@ -570,7 +606,6 @@ class _CustomerPageState extends State<CustomerPage> {
                       _buildAssignedStaffFilter(customerProvider),
                       _buildEnquiryForFilter(customerProvider),
                       _buildEnquirySourceFilter(customerProvider),
-
                       if (customerProvider.fromDate != null ||
                           customerProvider.toDate != null ||
                           (customerProvider.selectedStatusIds.isNotEmpty &&
@@ -592,7 +627,9 @@ class _CustomerPageState extends State<CustomerPage> {
                             customerProvider.getSearchCustomers(context,
                                 isSilent: true);
                           },
-                          style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4)),
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.textRed,
                             side: BorderSide(color: AppColors.textRed),
@@ -609,19 +646,22 @@ class _CustomerPageState extends State<CustomerPage> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      left: 16.0, right: 16.0, top: 0, bottom: 4.0), // Further reduced vertical
+                      left: 16.0,
+                      right: 16.0,
+                      top: 0,
+                      bottom: 4.0), // Further reduced vertical
                   child: Container(
                     decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.02),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -1422,7 +1462,9 @@ class _CustomerPageState extends State<CustomerPage> {
                           customerProvider.getSearchCustomers(context,
                               isSilent: true);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -1457,7 +1499,9 @@ class _CustomerPageState extends State<CustomerPage> {
                           customerProvider.getSearchCustomers(context,
                               isSilent: true);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -1887,14 +1931,17 @@ class _CustomerPageState extends State<CustomerPage> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: dropdownValue,
-              hint: const Text('Assigned Staff: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              hint: const Text('Assigned Staff: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: dropdownItems,
               selectedItemBuilder: (BuildContext context) {
                 return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Assigned Staff: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      const Text('Assigned Staff: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -1926,27 +1973,27 @@ class _CustomerPageState extends State<CustomerPage> {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
         final List<DropdownMenuItem<int>> items = [
-          const DropdownMenuItem<int>(
-            value: 0,
-            child: Text(
-              'All',
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-        ] +
-        dropDownProvider.enquiryForList
-            .map((item) => DropdownMenuItem<int>(
-                  value: item.enquiryForId,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
-                    child: Text(
-                      item.enquiryForName,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ))
-            .toList();
+              const DropdownMenuItem<int>(
+                value: 0,
+                child: Text(
+                  'All',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ] +
+            dropDownProvider.enquiryForList
+                .map((item) => DropdownMenuItem<int>(
+                      value: item.enquiryForId,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        child: Text(
+                          item.enquiryForName,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ))
+                .toList();
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -1963,14 +2010,17 @@ class _CustomerPageState extends State<CustomerPage> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: customerProvider.selectedEnquiryFor ?? 0,
-              hint: const Text('Enquiry For: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              hint: const Text('Enquiry For: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Enquiry For: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      const Text('Enquiry For: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -1995,27 +2045,27 @@ class _CustomerPageState extends State<CustomerPage> {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
         final List<DropdownMenuItem<int>> items = [
-          const DropdownMenuItem<int>(
-            value: 0,
-            child: Text(
-              'All',
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-        ] +
-        dropDownProvider.enquiryData
-            .map((item) => DropdownMenuItem<int>(
-                  value: item.enquirySourceId,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
-                    child: Text(
-                      item.enquirySourceName,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ))
-            .toList();
+              const DropdownMenuItem<int>(
+                value: 0,
+                child: Text(
+                  'All',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ] +
+            dropDownProvider.enquiryData
+                .map((item) => DropdownMenuItem<int>(
+                      value: item.enquirySourceId,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        child: Text(
+                          item.enquirySourceName,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ))
+                .toList();
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -2032,14 +2082,17 @@ class _CustomerPageState extends State<CustomerPage> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: customerProvider.selectedEnquirySource ?? 0,
-              hint: const Text('Enquiry Source: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              hint: const Text('Enquiry Source: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Enquiry Source: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      const Text('Enquiry Source: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -2270,7 +2323,9 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
                         backgroundColor: const Color(0xFF152D70),
                         foregroundColor: Colors.white,
                       ),

@@ -51,7 +51,9 @@ class ConversionModel {
 
   factory ConversionModel.fromJson(Map<String, dynamic> json) {
     DateTime parseDate(dynamic value) {
-      if (value == null || value.toString().isEmpty || value.toString() == 'null') return DateTime.now();
+      if (value == null ||
+          value.toString().isEmpty ||
+          value.toString() == 'null') return DateTime.now();
       String dateStr = value.toString();
       try {
         return DateTime.parse(dateStr);
@@ -65,7 +67,9 @@ class ConversionModel {
     }
 
     DateTime? parseDateNullable(dynamic value) {
-      if (value == null || value.toString().isEmpty || value.toString() == 'null') return null;
+      if (value == null ||
+          value.toString().isEmpty ||
+          value.toString() == 'null') return null;
       String dateStr = value.toString();
       try {
         return DateTime.parse(dateStr);
@@ -85,7 +89,8 @@ class ConversionModel {
       registeredDate: parseDate(json["Registered_Date"]),
       statusName: json["Status_Name"] ?? '',
       enquiryForName: json["Enquiry_For_Name"] ?? '',
-      colorCode: (json["Color_Code"] == null || json["Color_Code"].toString() == 'null')
+      colorCode: (json["Color_Code"] == null ||
+              json["Color_Code"].toString() == 'null')
           ? ''
           : json["Color_Code"].toString(),
       customerId: json["Customer_Id"] ?? 0,

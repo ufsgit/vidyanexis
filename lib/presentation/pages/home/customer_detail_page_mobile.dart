@@ -39,7 +39,11 @@ class CustomerDetailPageMobile extends StatefulWidget {
   final String? initialTab;
 
   const CustomerDetailPageMobile(
-      {super.key, this.lead, required this.fromLead, required this.customerId, this.initialTab});
+      {super.key,
+      this.lead,
+      required this.fromLead,
+      required this.customerId,
+      this.initialTab});
 
   @override
   State<CustomerDetailPageMobile> createState() =>
@@ -57,7 +61,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
 
     final settingsprovider =
         Provider.of<SettingsProvider>(context, listen: false);
-    
+
     _buildTabs(settingsprovider);
 
     if (widget.initialTab != null) {
@@ -83,26 +87,28 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
 
   void _buildTabs(SettingsProvider settingsprovider) {
     tabLabels = ["Details"];
-    tabPages = [
-      DetailsTabMobile(customerId: widget.customerId.toString())
-    ];
+    tabPages = [DetailsTabMobile(customerId: widget.customerId.toString())];
 
     if (settingsprovider.menuIsViewMap[13] == 1) {
       tabLabels.add("Summary");
-      tabPages.add(CustomerTaskOverviewTab(customerId: widget.customerId.toString()));
-      
+      tabPages.add(
+          CustomerTaskOverviewTab(customerId: widget.customerId.toString()));
+
       tabLabels.add("Tasks");
-      tabPages.add(TaskListPageMobile(customerId: widget.customerId.toString()));
+      tabPages
+          .add(TaskListPageMobile(customerId: widget.customerId.toString()));
     }
 
     if (settingsprovider.menuIsViewMap[16] == 1) {
       tabLabels.add("Quotations");
-      tabPages.add(QuotationMobileView(customerId: widget.customerId.toString()));
+      tabPages
+          .add(QuotationMobileView(customerId: widget.customerId.toString()));
     }
 
     if (settingsprovider.menuIsViewMap[19] == 1) {
       tabLabels.add("Documents");
-      tabPages.add(DocumentsListPagePhone(customerId: widget.customerId.toString()));
+      tabPages.add(
+          DocumentsListPagePhone(customerId: widget.customerId.toString()));
     }
 
     if (settingsprovider.menuIsViewMap[85] == 1) {
@@ -112,30 +118,34 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
 
     if (settingsprovider.menuIsViewMap[100] == 1) {
       tabLabels.add("Activity");
-      tabPages.add(ActivityTabPage(lead: widget.lead, customerId: widget.customerId));
+      tabPages.add(
+          ActivityTabPage(lead: widget.lead, customerId: widget.customerId));
     }
 
     if (!widget.fromLead && settingsprovider.menuIsViewMap[14] == 1) {
       tabLabels.add("Complaints");
-      tabPages.add(ComplaintsPageMobile(customerId: widget.customerId.toString()));
+      tabPages
+          .add(ComplaintsPageMobile(customerId: widget.customerId.toString()));
     }
 
     if (!widget.fromLead && settingsprovider.menuIsViewMap[15] == 1) {
       tabLabels.add("Periodic Services");
-      tabPages.add(PeriodicServicesMobile(customerId: widget.customerId.toString()));
+      tabPages.add(
+          PeriodicServicesMobile(customerId: widget.customerId.toString()));
     }
 
     if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1) {
       tabLabels.add("Receipt");
       tabPages.add(RecieptPhone(widget.customerId.toString()));
-      
+
       tabLabels.add("Expense");
       tabPages.add(ExpenseTabWidget(customerId: widget.customerId.toString()));
     }
 
     if (settingsprovider.menuIsViewMap[70] == 1) {
       tabLabels.add("Payment Schedule");
-      tabPages.add(PaymentScheduleTabWidget(customerId: widget.customerId.toString()));
+      tabPages.add(
+          PaymentScheduleTabWidget(customerId: widget.customerId.toString()));
     }
 
     if (settingsprovider.menuIsViewMap[81] == 1) {
@@ -145,7 +155,8 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
 
     if (!widget.fromLead && settingsprovider.menuIsViewMap[37] == 1) {
       tabLabels.add("CheckList Management");
-      tabPages.add(CheckListManagementWidget(customerId: widget.customerId.toString()));
+      tabPages.add(
+          CheckListManagementWidget(customerId: widget.customerId.toString()));
     }
 
     if (settingsprovider.menuIsViewMap[21] == 1) {
@@ -158,7 +169,8 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
   Widget build(BuildContext context) {
     final settingsprovider = Provider.of<SettingsProvider>(context);
     final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
-    final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context);
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
 
     Color getAvatarColor(String name) {
       final colors = [
@@ -250,17 +262,15 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
                       final leadsProvider =
                           Provider.of<LeadsProvider>(context, listen: false);
                       await leadsProvider.getLeadDropdowns(context);
-                      final dropDownProvider = Provider.of<DropDownProvider>(
-                          context,
-                          listen: false);
+                      final dropDownProvider =
+                          Provider.of<DropDownProvider>(context, listen: false);
                       if (leadDetailsProvider.leadDetails != null &&
                           leadDetailsProvider.leadDetails!.isNotEmpty) {
                         leadsProvider.enquirySourceController.text =
                             leadDetailsProvider
                                 .leadDetails![0].enquirySourceName;
                         leadsProvider.enquiryForController.text =
-                            leadDetailsProvider
-                                .leadDetails![0].enquiryForName;
+                            leadDetailsProvider.leadDetails![0].enquiryForName;
                       }
                       dropDownProvider.selectedEnquirySourceId = int.parse(
                           widget.lead?.enquirySourceId.toString() ?? '0');
@@ -294,8 +304,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
                           final customerId = widget.customerId.toString();
 
                           leadsProvider.removeLeadFromList(customerId);
-                          Provider.of<CustomerProvider>(context,
-                                  listen: false)
+                          Provider.of<CustomerProvider>(context, listen: false)
                               .removeCustomerFromList(customerId);
 
                           await leadsProvider.deleteLead(context, customerId);

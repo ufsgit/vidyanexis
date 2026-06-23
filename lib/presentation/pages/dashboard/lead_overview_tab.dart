@@ -78,17 +78,17 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
       countsGrid = Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-      ],
-    ),
         child: LayoutBuilder(
           builder: (context, constraints) {
             int crossAxisCount = 2;
@@ -178,15 +178,16 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.02),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             padding: const EdgeInsets.all(6),
                             child: Icon(Icons.analytics_outlined,
@@ -207,9 +208,8 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
       builder: (context, constraints) {
         final isWeb = AppStyles.isWebScreen(context);
         final double spacing = 10.0;
-        final double chartWidth = isWeb 
-            ? (constraints.maxWidth - spacing) / 2 
-            : constraints.maxWidth;
+        final double chartWidth =
+            isWeb ? (constraints.maxWidth - spacing) / 2 : constraints.maxWidth;
 
         return Wrap(
           runSpacing: spacing,
@@ -251,139 +251,139 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
             ),
             // Container(
             //   padding: const EdgeInsets.all(10),
-        //   decoration: BoxDecoration(boxShadow: const [
-        //     BoxShadow(color: Colors.black12, blurRadius: 5)
-        //   ], color: Colors.white, borderRadius: BorderRadius.circular(4)),
-        //   constraints: const BoxConstraints(
-        //       minWidth: 100, maxWidth: 1650, minHeight: 300, maxHeight: 370),
-        //   child: ListView(
-        //     children: [
-        //       Row(
-        //         children: [
-        //           Text(
-        //             'Follow-Up Summary',
-        //             style: AppStyles.getBodyTextStyle(
-        //                 fontSize: 14, fontColor: Colors.grey.shade400),
-        //           ),
-        //           // const Spacer(),
-        //           // Expanded(
-        //           //   child: TextField(
-        //           //     decoration: InputDecoration(
-        //           //       border: OutlineInputBorder(
-        //           //         borderRadius: BorderRadius.circular(4),
-        //           //       ),
-        //           //       prefixIcon: const Icon(Icons.search),
-        //           //       hintText: "Search here...",
-        //           //     ),
-        //           //   ),
-        //           // ),
-        //         ],
-        //       ),
-        //       // const SizedBox(height: 15),
-        //       Padding(
-        //         padding: const EdgeInsets.all(16.0),
-        //         child: Container(
-        //           decoration: BoxDecoration(
-        //             color: Colors.white,
-        //             borderRadius: BorderRadius.circular(4),
-        //           ),
-        //           child: Padding(
-        //             padding: const EdgeInsets.all(8.0),
-        //             child: Column(
-        //               children: [
-        //                 Container(
-        //                   decoration: BoxDecoration(
-        //                     color: const Color(0xFFEFF2F5),
-        //                     borderRadius: BorderRadius.circular(4),
-        //                   ),
-        //                   child: Row(
-        //                     children: [
-        //                       if (MediaQuery.of(context).size.width > 700) ...[
-        //                         const SizedBox(
-        //                           width: 80,
-        //                           child: Padding(
-        //                             padding: EdgeInsets.symmetric(
-        //                                 vertical: 12.0, horizontal: 25.0),
-        //                             child: Text('Sl No.',
-        //                                 style: TextStyle(
-        //                                     fontWeight: FontWeight.bold,
-        //                                     color: Color(0xFF607185))),
-        //                           ),
-        //                         ),
-        //                         const TableWidget(
-        //                             flex: 3,
-        //                             title: 'Employee name',
-        //                             color: Color(0xFF607185)),
-        //                         const TableWidget(
-        //                             flex: 1,
-        //                             title: 'Assigned',
-        //                             color: Color(0xFF607185)),
-        //                         const TableWidget(
-        //                             flex: 2,
-        //                             title: 'Pending',
-        //                             color: Color(0xFF607185)),
-        //                         const TableWidget(
-        //                             flex: 1,
-        //                             title: 'Completed',
-        //                             color: Color(0xFF607185)),
-        //                         const TableWidget(
-        //                             flex: 1,
-        //                             title: 'Performance Rate',
-        //                             color: Color(0xFF607185)),
-        //                       ] else ...[
-        //                         const Expanded(
-        //                           child: Padding(
-        //                             padding: EdgeInsets.all(12.0),
-        //                             child: Row(
-        //                               mainAxisAlignment:
-        //                                   MainAxisAlignment.spaceBetween,
-        //                               children: [
-        //                                 Text('Employee',
-        //                                     style: TextStyle(
-        //                                         fontWeight: FontWeight.bold,
-        //                                         color: Color(0xFF607185))),
-        //                                 Text('Stats',
-        //                                     style: TextStyle(
-        //                                         fontWeight: FontWeight.bold,
-        //                                         color: Color(0xFF607185))),
-        //                               ],
-        //                             ),
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ],
-        //                   ),
-        //                 ),
-        //                 ListView.builder(
-        //                   shrinkWrap: true,
-        //                   physics: const NeverScrollableScrollPhysics(),
-        //                   itemCount: followUpLeadData.length,
-        //                   itemBuilder: (context, index) {
-        //                     return Container(
-        //                       decoration: BoxDecoration(
-        //                         color: index % 2 == 0
-        //                             ? Colors.white
-        //                             : const Color(0xFFF6F7F9),
-        //                         borderRadius: BorderRadius.circular(4),
-        //                       ),
-        //                       child: MediaQuery.of(context).size.width > 700
-        //                           ? _buildDesktopRow(
-        //                               context, index, followUpLeadData)
-        //                           : _buildMobileRow(
-        //                               context, index, followUpLeadData),
-        //                     );
-        //                   },
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //         ),
-        //       )
-        //     ],
-        //   ),
-        // ),
-      ],
-    );
+            //   decoration: BoxDecoration(boxShadow: const [
+            //     BoxShadow(color: Colors.black12, blurRadius: 5)
+            //   ], color: Colors.white, borderRadius: BorderRadius.circular(4)),
+            //   constraints: const BoxConstraints(
+            //       minWidth: 100, maxWidth: 1650, minHeight: 300, maxHeight: 370),
+            //   child: ListView(
+            //     children: [
+            //       Row(
+            //         children: [
+            //           Text(
+            //             'Follow-Up Summary',
+            //             style: AppStyles.getBodyTextStyle(
+            //                 fontSize: 14, fontColor: Colors.grey.shade400),
+            //           ),
+            //           // const Spacer(),
+            //           // Expanded(
+            //           //   child: TextField(
+            //           //     decoration: InputDecoration(
+            //           //       border: OutlineInputBorder(
+            //           //         borderRadius: BorderRadius.circular(4),
+            //           //       ),
+            //           //       prefixIcon: const Icon(Icons.search),
+            //           //       hintText: "Search here...",
+            //           //     ),
+            //           //   ),
+            //           // ),
+            //         ],
+            //       ),
+            //       // const SizedBox(height: 15),
+            //       Padding(
+            //         padding: const EdgeInsets.all(16.0),
+            //         child: Container(
+            //           decoration: BoxDecoration(
+            //             color: Colors.white,
+            //             borderRadius: BorderRadius.circular(4),
+            //           ),
+            //           child: Padding(
+            //             padding: const EdgeInsets.all(8.0),
+            //             child: Column(
+            //               children: [
+            //                 Container(
+            //                   decoration: BoxDecoration(
+            //                     color: const Color(0xFFEFF2F5),
+            //                     borderRadius: BorderRadius.circular(4),
+            //                   ),
+            //                   child: Row(
+            //                     children: [
+            //                       if (MediaQuery.of(context).size.width > 700) ...[
+            //                         const SizedBox(
+            //                           width: 80,
+            //                           child: Padding(
+            //                             padding: EdgeInsets.symmetric(
+            //                                 vertical: 12.0, horizontal: 25.0),
+            //                             child: Text('Sl No.',
+            //                                 style: TextStyle(
+            //                                     fontWeight: FontWeight.bold,
+            //                                     color: Color(0xFF607185))),
+            //                           ),
+            //                         ),
+            //                         const TableWidget(
+            //                             flex: 3,
+            //                             title: 'Employee name',
+            //                             color: Color(0xFF607185)),
+            //                         const TableWidget(
+            //                             flex: 1,
+            //                             title: 'Assigned',
+            //                             color: Color(0xFF607185)),
+            //                         const TableWidget(
+            //                             flex: 2,
+            //                             title: 'Pending',
+            //                             color: Color(0xFF607185)),
+            //                         const TableWidget(
+            //                             flex: 1,
+            //                             title: 'Completed',
+            //                             color: Color(0xFF607185)),
+            //                         const TableWidget(
+            //                             flex: 1,
+            //                             title: 'Performance Rate',
+            //                             color: Color(0xFF607185)),
+            //                       ] else ...[
+            //                         const Expanded(
+            //                           child: Padding(
+            //                             padding: EdgeInsets.all(12.0),
+            //                             child: Row(
+            //                               mainAxisAlignment:
+            //                                   MainAxisAlignment.spaceBetween,
+            //                               children: [
+            //                                 Text('Employee',
+            //                                     style: TextStyle(
+            //                                         fontWeight: FontWeight.bold,
+            //                                         color: Color(0xFF607185))),
+            //                                 Text('Stats',
+            //                                     style: TextStyle(
+            //                                         fontWeight: FontWeight.bold,
+            //                                         color: Color(0xFF607185))),
+            //                               ],
+            //                             ),
+            //                           ),
+            //                         ),
+            //                       ],
+            //                     ],
+            //                   ),
+            //                 ),
+            //                 ListView.builder(
+            //                   shrinkWrap: true,
+            //                   physics: const NeverScrollableScrollPhysics(),
+            //                   itemCount: followUpLeadData.length,
+            //                   itemBuilder: (context, index) {
+            //                     return Container(
+            //                       decoration: BoxDecoration(
+            //                         color: index % 2 == 0
+            //                             ? Colors.white
+            //                             : const Color(0xFFF6F7F9),
+            //                         borderRadius: BorderRadius.circular(4),
+            //                       ),
+            //                       child: MediaQuery.of(context).size.width > 700
+            //                           ? _buildDesktopRow(
+            //                               context, index, followUpLeadData)
+            //                           : _buildMobileRow(
+            //                               context, index, followUpLeadData),
+            //                     );
+            //                   },
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //         ),
+            //       )
+            //     ],
+            //   ),
+            // ),
+          ],
+        );
       },
     );
   }

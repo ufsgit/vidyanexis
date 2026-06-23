@@ -71,6 +71,7 @@ import 'package:vidyanexis/controller/customer_outstanding_report_provider.dart'
 import 'package:vidyanexis/controller/customer_lead_search_provider.dart';
 import 'package:vidyanexis/controller/customer_task_month_provider.dart';
 import 'package:vidyanexis/controller/sales_report_provider.dart';
+import 'package:vidyanexis/controller/target_enquiry_source_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -186,6 +187,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) => CustomerTaskMonthProvider()),
         ChangeNotifierProvider(create: (context) => SalesReportProvider()),
+        ChangeNotifierProvider(
+            create: (context) => TargetEnquirySourceProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {

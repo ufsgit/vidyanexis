@@ -321,7 +321,6 @@ class _LeadsPageState extends State<LeadPage> {
                               const SizedBox(
                                 width: 8,
                               ),
-
                           ],
                         ),
                         Wrap(
@@ -343,7 +342,9 @@ class _LeadsPageState extends State<LeadPage> {
                                     decoration: BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                          color: leadProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                          color: leadProvider.entryType != 'all'
+                                              ? AppColors.primaryBlue
+                                              : Colors.transparent,
                                           width: 2.0,
                                         ),
                                       ),
@@ -351,8 +352,13 @@ class _LeadsPageState extends State<LeadPage> {
                                     child: Text(
                                       'ME',
                                       style: TextStyle(
-                                        color: leadProvider.entryType != 'all' ? AppColors.primaryBlue : Colors.grey,
-                                        fontWeight: leadProvider.entryType != 'all' ? FontWeight.w600 : FontWeight.normal,
+                                        color: leadProvider.entryType != 'all'
+                                            ? AppColors.primaryBlue
+                                            : Colors.grey,
+                                        fontWeight:
+                                            leadProvider.entryType != 'all'
+                                                ? FontWeight.w600
+                                                : FontWeight.normal,
                                         fontSize: 14,
                                       ),
                                     ),
@@ -369,7 +375,9 @@ class _LeadsPageState extends State<LeadPage> {
                                     decoration: BoxDecoration(
                                       border: Border(
                                         bottom: BorderSide(
-                                          color: leadProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.transparent,
+                                          color: leadProvider.entryType == 'all'
+                                              ? AppColors.primaryBlue
+                                              : Colors.transparent,
                                           width: 2.0,
                                         ),
                                       ),
@@ -377,8 +385,13 @@ class _LeadsPageState extends State<LeadPage> {
                                     child: Text(
                                       'ALL',
                                       style: TextStyle(
-                                        color: leadProvider.entryType == 'all' ? AppColors.primaryBlue : Colors.grey,
-                                        fontWeight: leadProvider.entryType == 'all' ? FontWeight.w600 : FontWeight.normal,
+                                        color: leadProvider.entryType == 'all'
+                                            ? AppColors.primaryBlue
+                                            : Colors.grey,
+                                        fontWeight:
+                                            leadProvider.entryType == 'all'
+                                                ? FontWeight.w600
+                                                : FontWeight.normal,
                                         fontSize: 14,
                                       ),
                                     ),
@@ -409,9 +422,15 @@ class _LeadsPageState extends State<LeadPage> {
                                 onTap: () {
                                   Future.microtask(() {
                                     if (searchController.text.isNotEmpty &&
-                                        searchController.selection.baseOffset == 0 &&
-                                        searchController.selection.extentOffset == searchController.text.length) {
-                                      searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                        searchController.selection.baseOffset ==
+                                            0 &&
+                                        searchController
+                                                .selection.extentOffset ==
+                                            searchController.text.length) {
+                                      searchController.selection =
+                                          TextSelection.collapsed(
+                                              offset:
+                                                  searchController.text.length);
                                     }
                                   });
                                 },
@@ -570,7 +589,6 @@ class _LeadsPageState extends State<LeadPage> {
                           const SizedBox(
                             width: 8,
                           ),
-
                         Flexible(child: Container()),
                         Container(
                           width: MediaQuery.of(context).size.width / 4,
@@ -587,9 +605,13 @@ class _LeadsPageState extends State<LeadPage> {
                             onTap: () {
                               Future.microtask(() {
                                 if (searchController.text.isNotEmpty &&
-                                    searchController.selection.baseOffset == 0 &&
-                                    searchController.selection.extentOffset == searchController.text.length) {
-                                  searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
+                                    searchController.selection.baseOffset ==
+                                        0 &&
+                                    searchController.selection.extentOffset ==
+                                        searchController.text.length) {
+                                  searchController.selection =
+                                      TextSelection.collapsed(
+                                          offset: searchController.text.length);
                                 }
                               });
                             },
@@ -698,7 +720,9 @@ class _LeadsPageState extends State<LeadPage> {
                             },
                             icon: const Icon(Icons.add),
                             label: const Text('New Lead'),
-                            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4)),
                               backgroundColor: AppColors.primaryBlue,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
@@ -716,16 +740,16 @@ class _LeadsPageState extends State<LeadPage> {
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: Wrap(
                   spacing: 10,
                   runSpacing: 10,
@@ -776,7 +800,6 @@ class _LeadsPageState extends State<LeadPage> {
                     ],
                     _buildEnquiryForFilter(leadProvider),
                     _buildEnquirySourceFilter(leadProvider),
-
                     if (leadProvider.fromDate != null ||
                         leadProvider.toDate != null ||
                         (leadProvider.selectedStatus != null &&
@@ -799,7 +822,9 @@ class _LeadsPageState extends State<LeadPage> {
                               leadId: '0');
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: Colors.white,
                           foregroundColor: AppColors.textRed,
                           side: BorderSide(color: AppColors.textRed),
@@ -819,16 +844,16 @@ class _LeadsPageState extends State<LeadPage> {
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                 child: Container(
                   decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Scrollbar(
@@ -933,7 +958,8 @@ class _LeadsPageState extends State<LeadPage> {
 
                                 Expanded(
                                   child: leadProvider.leadData.isEmpty
-                                      ? const CommonEmptyState(message: 'No data available')
+                                      ? const CommonEmptyState(
+                                          message: 'No data available')
                                       : ScrollConfiguration(
                                           behavior:
                                               ScrollConfiguration.of(context)
@@ -1226,7 +1252,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     1)
                                                                   (onHover) =>
                                                                       MenuItemButton(
-                                                                        onHover: onHover,
+                                                                        onHover:
+                                                                            onHover,
                                                                         onPressed: () => _handleLeadAction(
                                                                             'convert',
                                                                             lead),
@@ -1247,7 +1274,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     1)
                                                                   (onHover) =>
                                                                       MenuItemButton(
-                                                                        onHover: onHover,
+                                                                        onHover:
+                                                                            onHover,
                                                                         onPressed: () => _handleLeadAction(
                                                                             'quotation',
                                                                             lead),
@@ -1268,7 +1296,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     1)
                                                                   (onHover) =>
                                                                       MenuItemButton(
-                                                                        onHover: onHover,
+                                                                        onHover:
+                                                                            onHover,
                                                                         onPressed: () => _handleLeadAction(
                                                                             'document',
                                                                             lead),
@@ -1289,7 +1318,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     1)
                                                                   (onHover) =>
                                                                       MenuItemButton(
-                                                                        onHover: onHover,
+                                                                        onHover:
+                                                                            onHover,
                                                                         onPressed: () => _handleLeadAction(
                                                                             'edit',
                                                                             lead),
@@ -1433,9 +1463,10 @@ class _LeadsPageState extends State<LeadPage> {
                                             ),
                                             TableWidget(
                                               width: 120,
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 4.0,
-                                                  horizontal: 12.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                               alignment: Alignment.centerLeft,
                                               data: const Text(
                                                 'History',
@@ -1673,7 +1704,11 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 ),
                                                               ),
                                                             ),
-                                                            if (lead.enquiryForId == 25 && settingsProvider.leadInSales == 1) ...[
+                                                            if (lead.enquiryForId ==
+                                                                    25 &&
+                                                                settingsProvider
+                                                                        .leadInSales ==
+                                                                    1) ...[
                                                               const SizedBox(
                                                                   width: 4),
                                                               MouseRegion(
@@ -1902,8 +1937,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                         ),
                                                       ),
                                                       TableWidget(
-                                                        padding: const EdgeInsets
-                                                            .symmetric(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
                                                                 vertical: 4.0,
                                                                 horizontal:
                                                                     12.0),
@@ -1912,28 +1948,45 @@ class _LeadsPageState extends State<LeadPage> {
                                                             .centerLeft,
                                                         data: TextButton.icon(
                                                           onPressed: () {
-                                                            LeadHistoryDialog.show(
+                                                            LeadHistoryDialog
+                                                                .show(
                                                               context,
-                                                              customerId: lead.customerId.toString(),
-                                                              customerName: lead.customerName,
+                                                              customerId: lead
+                                                                  .customerId
+                                                                  .toString(),
+                                                              customerName: lead
+                                                                  .customerName,
                                                             );
                                                           },
                                                           icon: const Icon(
-                                                            Icons.history_rounded,
+                                                            Icons
+                                                                .history_rounded,
                                                             size: 15,
-                                                            color: AppColors.primaryBlue,
+                                                            color: AppColors
+                                                                .primaryBlue,
                                                           ),
                                                           label: const Text(
                                                             'History',
                                                             style: TextStyle(
                                                               fontSize: 13,
-                                                              color: AppColors.primaryBlue,
-                                                              fontWeight: FontWeight.w600,
+                                                              color: AppColors
+                                                                  .primaryBlue,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
                                                             ),
                                                           ),
-                                                          style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
-                                                            padding: EdgeInsets.zero,
-                                                            alignment: Alignment.centerLeft,
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4)),
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            alignment: Alignment
+                                                                .centerLeft,
                                                           ),
                                                         ),
                                                       ),
@@ -2340,7 +2393,9 @@ class _LeadsPageState extends State<LeadPage> {
                               searchController.text, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -2373,7 +2428,9 @@ class _LeadsPageState extends State<LeadPage> {
                               searchController.text, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -2595,14 +2652,17 @@ class _LeadsPageState extends State<LeadPage> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: dropdownValue,
-              hint: const Text('Assigned Staff: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              hint: const Text('Assigned Staff: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: dropdownItems,
               selectedItemBuilder: (BuildContext context) {
                 return dropdownItems.map<Widget>((DropdownMenuItem<int> item) {
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Assigned Staff: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      const Text('Assigned Staff: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -2642,27 +2702,27 @@ class _LeadsPageState extends State<LeadPage> {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
         final List<DropdownMenuItem<int>> items = [
-          const DropdownMenuItem<int>(
-            value: 0,
-            child: Text(
-              'All',
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-        ] +
-        dropDownProvider.enquiryForList
-            .map((user) => DropdownMenuItem<int>(
-                  value: user.enquiryForId,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
-                    child: Text(
-                      user.enquiryForName,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ))
-            .toList();
+              const DropdownMenuItem<int>(
+                value: 0,
+                child: Text(
+                  'All',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ] +
+            dropDownProvider.enquiryForList
+                .map((user) => DropdownMenuItem<int>(
+                      value: user.enquiryForId,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        child: Text(
+                          user.enquiryForName,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ))
+                .toList();
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -2679,14 +2739,17 @@ class _LeadsPageState extends State<LeadPage> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: leadProvider.selectedEnquiryFor ?? 0,
-              hint: const Text('Enquiry For: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              hint: const Text('Enquiry For: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Enquiry For: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      const Text('Enquiry For: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -2715,27 +2778,27 @@ class _LeadsPageState extends State<LeadPage> {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
         final List<DropdownMenuItem<int>> items = [
-          const DropdownMenuItem<int>(
-            value: 0,
-            child: Text(
-              'All',
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-        ] +
-        dropDownProvider.enquiryData
-            .map((user) => DropdownMenuItem<int>(
-                  value: user.enquirySourceId,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
-                    child: Text(
-                      user.enquirySourceName,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ))
-            .toList();
+              const DropdownMenuItem<int>(
+                value: 0,
+                child: Text(
+                  'All',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ] +
+            dropDownProvider.enquiryData
+                .map((user) => DropdownMenuItem<int>(
+                      value: user.enquirySourceId,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        child: Text(
+                          user.enquirySourceName,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ))
+                .toList();
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -2752,14 +2815,17 @@ class _LeadsPageState extends State<LeadPage> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: leadProvider.selectedEnquirySource ?? 0,
-              hint: const Text('Enquiry Source: All', style: TextStyle(fontSize: 14, color: Colors.black87)),
+              hint: const Text('Enquiry Source: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
               items: items,
               selectedItemBuilder: (BuildContext context) {
                 return items.map<Widget>((DropdownMenuItem<int> item) {
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Enquiry Source: ', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                      const Text('Enquiry Source: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
                       item.child,
                     ],
                   );
@@ -3287,7 +3353,9 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                       widget.onApply(_tempSelected);
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
                       backgroundColor: AppColors.primaryBlue,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(80, 40),

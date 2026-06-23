@@ -24,7 +24,8 @@ class _StockReturnPageState extends State<StockReturnPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final stockReturnProvider = Provider.of<StockreturnProvider>(context, listen: false);
+      final stockReturnProvider =
+          Provider.of<StockreturnProvider>(context, listen: false);
       stockReturnProvider.searchItemListStock(context);
       stockReturnProvider.searchStockReturnList(
           context: context, customerId: widget.customerId.toString());
@@ -42,7 +43,8 @@ class _StockReturnPageState extends State<StockReturnPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(context, stockReturnProvider, settingsProvider, isMobile),
-        if (stockReturnProvider.isFilter) _buildFilterPanel(context, stockReturnProvider),
+        if (stockReturnProvider.isFilter)
+          _buildFilterPanel(context, stockReturnProvider),
         const SizedBox(height: 12),
         stockReturnProvider.stockReturnList.isEmpty
             ? _buildEmptyState()
@@ -51,32 +53,41 @@ class _StockReturnPageState extends State<StockReturnPage> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: stockReturnProvider.stockReturnList.length,
                 itemBuilder: (context, index) {
-                  final stockReturn = stockReturnProvider.stockReturnList[index];
+                  final stockReturn =
+                      stockReturnProvider.stockReturnList[index];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: InventoryListItem(
-                      title: stockReturn.description.isNotEmpty ? stockReturn.description : 'Stock Return Entry',
+                      title: stockReturn.description.isNotEmpty
+                          ? stockReturn.description
+                          : 'Stock Return Entry',
                       subtitle: 'Date: ${stockReturn.returnDate}',
                       description: 'Return ID: ${stockReturn.stockReturnId}',
-                      onEdit: settingsProvider.menuIsEditMap[79] == 1 ? () async {
-                        stockReturnProvider.getStockReturnDetails(
-                            context: context,
-                            masterId: stockReturn.stockReturnId.toString());
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AddStockReturnPage(
-                                customerId: widget.customerId,
-                                isEdit: true,
-                                editId: stockReturn.stockReturnId,
-                                stockUse: stockReturn);
-                          },
-                        );
-                      } : null,
-                      onDelete: settingsProvider.menuIsDeleteMap[79] == 1 ? () {
-                        _showDeleteDialog(context, stockReturnProvider, stockReturn.stockReturnId);
-                      } : null,
+                      onEdit: settingsProvider.menuIsEditMap[79] == 1
+                          ? () async {
+                              stockReturnProvider.getStockReturnDetails(
+                                  context: context,
+                                  masterId:
+                                      stockReturn.stockReturnId.toString());
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AddStockReturnPage(
+                                      customerId: widget.customerId,
+                                      isEdit: true,
+                                      editId: stockReturn.stockReturnId,
+                                      stockUse: stockReturn);
+                                },
+                              );
+                            }
+                          : null,
+                      onDelete: settingsProvider.menuIsDeleteMap[79] == 1
+                          ? () {
+                              _showDeleteDialog(context, stockReturnProvider,
+                                  stockReturn.stockReturnId);
+                            }
+                          : null,
                     ),
                   );
                 },
@@ -85,7 +96,8 @@ class _StockReturnPageState extends State<StockReturnPage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, StockreturnProvider provider, SettingsProvider settings, bool isMobile) {
+  Widget _buildHeader(BuildContext context, StockreturnProvider provider,
+      SettingsProvider settings, bool isMobile) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -107,12 +119,15 @@ class _StockReturnPageState extends State<StockReturnPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Date Filter', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('Date Filter',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           CommonReportDateFilter(
             fromDate: provider.fromDate?.toString(),
@@ -127,13 +142,16 @@ class _StockReturnPageState extends State<StockReturnPage> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    provider.searchStockReturnList(context: context, customerId: widget.customerId.toString());
+                    provider.searchStockReturnList(
+                        context: context,
+                        customerId: widget.customerId.toString());
                     provider.toggleFilter();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                   child: const Text('Apply'),
                 ),
@@ -143,7 +161,9 @@ class _StockReturnPageState extends State<StockReturnPage> {
                 onReset: () {
                   provider.selectDateFilterOption(null);
                   provider.setSearchCriteria('', '', '', '', '');
-                  provider.searchStockReturnList(context: context, customerId: widget.customerId.toString());
+                  provider.searchStockReturnList(
+                      context: context,
+                      customerId: widget.customerId.toString());
                 },
               ),
             ],
@@ -159,15 +179,24 @@ class _StockReturnPageState extends State<StockReturnPage> {
       builder: (contextx) => Consumer<StockreturnProvider>(
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Choose Date', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text('Choose Date',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 Wrap(
                   spacing: 8,
-                  children: ['Yesterday', 'Today', 'Tomorrow', 'This Week', 'This Month']
+                  children: [
+                    'Yesterday',
+                    'Today',
+                    'Tomorrow',
+                    'This Week',
+                    'This Month'
+                  ]
                       .asMap()
                       .entries
                       .map((e) => ActionChip(
@@ -176,8 +205,16 @@ class _StockReturnPageState extends State<StockReturnPage> {
                               reportsProvider.setDateFilter(e.value);
                               reportsProvider.selectDateFilterOption(e.key);
                             },
-                            backgroundColor: reportsProvider.selectedDateFilterIndex == e.key ? AppColors.primaryBlue : Colors.white,
-                            labelStyle: TextStyle(color: reportsProvider.selectedDateFilterIndex == e.key ? Colors.white : Colors.black),
+                            backgroundColor:
+                                reportsProvider.selectedDateFilterIndex == e.key
+                                    ? AppColors.primaryBlue
+                                    : Colors.white,
+                            labelStyle: TextStyle(
+                                color:
+                                    reportsProvider.selectedDateFilterIndex ==
+                                            e.key
+                                        ? Colors.white
+                                        : Colors.black),
                           ))
                       .toList(),
                 ),
@@ -187,9 +224,12 @@ class _StockReturnPageState extends State<StockReturnPage> {
                   onTap: () => reportsProvider.selectDate(context, true),
                   decoration: InputDecoration(
                     labelText: 'Pick a date',
-                    hintText: reportsProvider.fromDate != null ? reportsProvider.formattedFromDate : 'Select',
+                    hintText: reportsProvider.fromDate != null
+                        ? reportsProvider.formattedFromDate
+                        : 'Select',
                     suffixIcon: const Icon(Icons.calendar_month),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -198,9 +238,15 @@ class _StockReturnPageState extends State<StockReturnPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      reportsProvider.searchStockReturnList(context: context, customerId: widget.customerId.toString());
+                      reportsProvider.searchStockReturnList(
+                          context: context,
+                          customerId: widget.customerId.toString());
                     },
-                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white),
                     child: const Text('Apply'),
                   ),
                 )
@@ -216,22 +262,28 @@ class _StockReturnPageState extends State<StockReturnPage> {
     return const CommonEmptyState(message: 'No stock return entries found');
   }
 
-  void _showDeleteDialog(BuildContext context, StockreturnProvider provider, int id) {
+  void _showDeleteDialog(
+      BuildContext context, StockreturnProvider provider, int id) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: const Text('Confirm Delete'),
-          content: const Text('Are you sure you want to delete this stock return entry?'),
+          content: const Text(
+              'Are you sure you want to delete this stock return entry?'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel')),
             TextButton(
               onPressed: () async {
                 provider.deleteStockReturn(context, id, widget.customerId);
                 Navigator.pop(context);
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+              child: const Text('Delete',
+                  style: TextStyle(
+                      color: Colors.red, fontWeight: FontWeight.bold)),
             ),
           ],
         );

@@ -185,50 +185,56 @@ class _CustomerTaskMonthReportScreenState
                       const Spacer(),
                       // Web Search Bar
                       Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {},
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {},
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                        width: 280,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                              color: const Color(0xFFCBD5E1), width: 1.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.02),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          controller: searchController,
+                          focusNode: searchFocusNodeWeb,
+                          textAlignVertical: TextAlignVertical.center,
+                          onTap: () {
+                            Future.microtask(() {
+                              if (searchController.text.isNotEmpty &&
+                                  searchController.selection.baseOffset == 0 &&
+                                  searchController.selection.extentOffset ==
+                                      searchController.text.length) {
+                                searchController.selection =
+                                    TextSelection.collapsed(
+                                        offset: searchController.text.length);
+                              }
+                            });
+                          },
+                          onSubmitted: (query) {},
+                          decoration: InputDecoration(
+                            hintText: 'Search here....',
+                            hintStyle: GoogleFonts.plusJakartaSans(
+                              color: const Color(0xFF94A3B8),
+                              fontSize: 13,
+                            ),
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            suffixIcon: GestureDetector(
+                              onTap: () {},
+                              child: const Icon(Icons.search,
+                                  color: Color(0xFF64748B), size: 18),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -244,9 +250,7 @@ class _CustomerTaskMonthReportScreenState
                     showingLabel: 'Showing',
                     showingCount: filteredCustomers.length,
                   ),
-
                 if (!isMobile) _buildGridHeader(datesInRange),
-
                 Expanded(
                   child: provider.isLoading
                       ? const Center(child: CircularProgressIndicator())
@@ -257,8 +261,8 @@ class _CustomerTaskMonthReportScreenState
                                   filteredCustomers, datesInRange, groupedData)
                               : SingleChildScrollView(
                                   controller: _verticalScrollController,
-                                  child: _buildWebGridView(
-                                      filteredCustomers, datesInRange, groupedData),
+                                  child: _buildWebGridView(filteredCustomers,
+                                      datesInRange, groupedData),
                                 ),
                 ),
               ],
@@ -308,7 +312,8 @@ class _CustomerTaskMonthReportScreenState
               highlightColor: Colors.transparent,
             ),
             child: ExpansionTile(
-              tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              tilePadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               initiallyExpanded: false,
               title: Text(
                 customerName,
@@ -339,7 +344,11 @@ class _CustomerTaskMonthReportScreenState
                 ),
               ),
               children: [
-                const Divider(height: 1, indent: 16, endIndent: 16, color: Color(0xFFF1F5F9)),
+                const Divider(
+                    height: 1,
+                    indent: 16,
+                    endIndent: 16,
+                    color: Color(0xFFF1F5F9)),
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Align(
@@ -364,8 +373,9 @@ class _CustomerTaskMonthReportScreenState
                                   .withOpacity(0.08),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
-                                color: _getStatusColor(tasks.first.taskStatusName)
-                                    .withOpacity(0.2),
+                                color:
+                                    _getStatusColor(tasks.first.taskStatusName)
+                                        .withOpacity(0.2),
                                 width: 1,
                               ),
                             ),
@@ -383,7 +393,8 @@ class _CustomerTaskMonthReportScreenState
                                 ),
                                 const SizedBox(width: 6),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 2),
                                   decoration: BoxDecoration(
                                     color: _getStatusColor(
                                         tasks.first.taskStatusName),
@@ -851,10 +862,11 @@ class _CustomerTaskMonthReportScreenState
   Widget _buildFilterPanel(
       BuildContext context, CustomerTaskMonthProvider reportsProvider) {
     final fromDate = reportsProvider.fromDate ??
-        DateTime(reportsProvider.selectedMonth.year, reportsProvider.selectedMonth.month, 1);
+        DateTime(reportsProvider.selectedMonth.year,
+            reportsProvider.selectedMonth.month, 1);
     final toDate = reportsProvider.toDate ??
-        DateTime(
-            reportsProvider.selectedMonth.year, reportsProvider.selectedMonth.month + 1, 0);
+        DateTime(reportsProvider.selectedMonth.year,
+            reportsProvider.selectedMonth.month + 1, 0);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
@@ -913,7 +925,8 @@ class _CustomerTaskMonthReportScreenState
             ],
           ),
           const SizedBox(height: 24),
-          if (reportsProvider.fromDate != null || reportsProvider.toDate != null)
+          if (reportsProvider.fromDate != null ||
+              reportsProvider.toDate != null)
             SizedBox(
               width: double.infinity,
               child: CommonReportResetButton(
@@ -929,7 +942,8 @@ class _CustomerTaskMonthReportScreenState
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: const BorderSide(color: AppColors.textRed),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),

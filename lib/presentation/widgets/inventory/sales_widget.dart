@@ -278,7 +278,8 @@ class _SalesWidgetState extends State<SalesWidget> {
             expenseProvider.clearSalesItemFields();
             Navigator.pop(context);
           },
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Colors.black, size: 20),
         ),
         title: Text(
           widget.isEdit ? 'Edit Sales' : 'Add Sales',
@@ -297,7 +298,8 @@ class _SalesWidgetState extends State<SalesWidget> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(AppStyles.isWebScreen(context) ? 24 : 16),
+                  padding:
+                      EdgeInsets.all(AppStyles.isWebScreen(context) ? 24 : 16),
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,10 +325,12 @@ class _SalesWidgetState extends State<SalesWidget> {
                         decoration: BoxDecoration(
                           color: const Color(0xFFF8FAFC),
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                          border: Border.all(
+                              color: const Color(0xFFCBD5E1), width: 1.0),
                         ),
                         child: CustomTextField(
-                          controller: expenseProvider.descriptionSalesController,
+                          controller:
+                              expenseProvider.descriptionSalesController,
                           height: 56,
                           hintText: 'Notes / Description',
                           labelText: '',
@@ -379,199 +383,202 @@ class _SalesWidgetState extends State<SalesWidget> {
                       flex: 3,
                       child: _buildItemDropdown(expenseProvider),
                     ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 3,
-                  child: _buildCategoryField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildUnitField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildHSNField(expenseProvider),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: _buildPriceField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildQuantityField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildDiscountPercentField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildDiscountAmountField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildAmountField(expenseProvider),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: _buildNetValueField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildCGSTField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildSGSTField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildGSTField(expenseProvider),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: _buildTotalAmountField(expenseProvider),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Expanded(
-                  flex: 5,
-                  child: SizedBox(),
-                ),
-                const SizedBox(width: 12),
-                SizedBox(
-                  width: 52,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () => _handleAddItem(expenseProvider),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E293B),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                      elevation: 0,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 3,
+                      child: _buildCategoryField(expenseProvider),
                     ),
-                    child: Icon(
-                      expenseProvider.editSalesItemIndex != null
-                          ? Icons.check_circle_outline
-                          : Icons.add_rounded,
-                      size: 24,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildUnitField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildHSNField(expenseProvider),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: _buildPriceField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildQuantityField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildDiscountPercentField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildDiscountAmountField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildAmountField(expenseProvider),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: _buildNetValueField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildCGSTField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildSGSTField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildGSTField(expenseProvider),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: _buildTotalAmountField(expenseProvider),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const Expanded(
+                      flex: 5,
+                      child: SizedBox(),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 52,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: () => _handleAddItem(expenseProvider),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1E293B),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                          elevation: 0,
+                        ),
+                        child: Icon(
+                          expenseProvider.editSalesItemIndex != null
+                              ? Icons.check_circle_outline
+                              : Icons.add_rounded,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ] else ...[
+                // Mobile stacked grid view
+                Row(
+                  children: [
+                    Expanded(child: _buildItemDropdown(expenseProvider)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildCategoryField(expenseProvider)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _buildUnitField(expenseProvider)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildHSNField(expenseProvider)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _buildPriceField(expenseProvider)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildQuantityField(expenseProvider)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                        child: _buildDiscountPercentField(expenseProvider)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildDiscountAmountField(expenseProvider)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _buildAmountField(expenseProvider)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildNetValueField(expenseProvider)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _buildCGSTField(expenseProvider)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildSGSTField(expenseProvider)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _buildGSTField(expenseProvider)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _buildTotalAmountField(expenseProvider)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: SizedBox(
+                    width: 52,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: () => _handleAddItem(expenseProvider),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1E293B),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                        elevation: 0,
+                      ),
+                      child: Icon(
+                        expenseProvider.editSalesItemIndex != null
+                            ? Icons.check_circle_outline
+                            : Icons.add_rounded,
+                        size: 24,
+                      ),
                     ),
                   ),
                 ),
               ],
-            ),
-          ] else ...[
-            // Mobile stacked grid view
-            Row(
-              children: [
-                Expanded(child: _buildItemDropdown(expenseProvider)),
-                const SizedBox(width: 12),
-                Expanded(child: _buildCategoryField(expenseProvider)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _buildUnitField(expenseProvider)),
-                const SizedBox(width: 12),
-                Expanded(child: _buildHSNField(expenseProvider)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _buildPriceField(expenseProvider)),
-                const SizedBox(width: 12),
-                Expanded(child: _buildQuantityField(expenseProvider)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _buildDiscountPercentField(expenseProvider)),
-                const SizedBox(width: 12),
-                Expanded(child: _buildDiscountAmountField(expenseProvider)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _buildAmountField(expenseProvider)),
-                const SizedBox(width: 12),
-                Expanded(child: _buildNetValueField(expenseProvider)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _buildCGSTField(expenseProvider)),
-                const SizedBox(width: 12),
-                Expanded(child: _buildSGSTField(expenseProvider)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _buildGSTField(expenseProvider)),
-                const SizedBox(width: 12),
-                Expanded(child: _buildTotalAmountField(expenseProvider)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerRight,
-              child: SizedBox(
-                width: 52,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: () => _handleAddItem(expenseProvider),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1E293B),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    elevation: 0,
-                  ),
-                  child: Icon(
-                    expenseProvider.editSalesItemIndex != null
-                        ? Icons.check_circle_outline
-                        : Icons.add_rounded,
-                    size: 24,
-                  ),
-                ),
-              ),
-            ),
             ],
-          ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget _buildItemDropdown(ExpenseProvider expenseProvider) {
     return CommonDropdown(
@@ -781,8 +788,8 @@ class _SalesWidgetState extends State<SalesWidget> {
 
     String stockId = '';
     try {
-      final selectedItem = expenseProvider.itemListSales.firstWhere(
-          (item) => item.itemId.toString() == expenseProvider.itemDrop.toString());
+      final selectedItem = expenseProvider.itemListSales.firstWhere((item) =>
+          item.itemId.toString() == expenseProvider.itemDrop.toString());
       stockId = selectedItem.stockId.toString();
     } catch (e) {}
 
@@ -994,7 +1001,8 @@ class _SalesWidgetState extends State<SalesWidget> {
                 const SizedBox(width: 12),
                 // 7. Actions (Edit / Delete)
                 IconButton(
-                  icon: const Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
+                  icon: const Icon(Icons.edit_outlined,
+                      color: Colors.blue, size: 20),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {
@@ -1003,7 +1011,8 @@ class _SalesWidgetState extends State<SalesWidget> {
                 ),
                 const SizedBox(width: 12),
                 IconButton(
-                  icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444), size: 20),
+                  icon: const Icon(Icons.delete_outline_rounded,
+                      color: Color(0xFFEF4444), size: 20),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {
@@ -1237,18 +1246,15 @@ class _SalesWidgetState extends State<SalesWidget> {
                         .toList(),
                     controller: TextEditingController(),
                     onItemSelected: (selectedId) {
-                      final selectedPerson = settingsProvider
-                          .searchInventoryCustomer
-                          .firstWhere(
+                      final selectedPerson =
+                          settingsProvider.searchInventoryCustomer.firstWhere(
                         (item) => item.customerId == selectedId,
                       );
                       expenseProvider.addressSalesController.text =
                           selectedPerson.address;
-                      expenseProvider
-                          .setSelectedSalesCustomerId(selectedId);
+                      expenseProvider.setSelectedSalesCustomerId(selectedId);
                     },
-                    selectedValue:
-                        expenseProvider.selectedSalesCustomerId,
+                    selectedValue: expenseProvider.selectedSalesCustomerId,
                   ),
           ),
           const SizedBox(width: 12),
@@ -1309,8 +1315,7 @@ class _SalesWidgetState extends State<SalesWidget> {
                       ? widget.data!.customerName
                       : null,
                   onSelected: (model) {
-                    expenseProvider.addressSalesController.text =
-                        model.address;
+                    expenseProvider.addressSalesController.text = model.address;
                     expenseProvider
                         .setSelectedSalesCustomerId(model.customerId);
                   },
@@ -1325,18 +1330,15 @@ class _SalesWidgetState extends State<SalesWidget> {
                       .toList(),
                   controller: TextEditingController(),
                   onItemSelected: (selectedId) {
-                    final selectedPerson = settingsProvider
-                        .searchInventoryCustomer
-                        .firstWhere(
+                    final selectedPerson =
+                        settingsProvider.searchInventoryCustomer.firstWhere(
                       (item) => item.customerId == selectedId,
                     );
                     expenseProvider.addressSalesController.text =
                         selectedPerson.address;
-                    expenseProvider
-                        .setSelectedSalesCustomerId(selectedId);
+                    expenseProvider.setSelectedSalesCustomerId(selectedId);
                   },
-                  selectedValue:
-                      expenseProvider.selectedSalesCustomerId,
+                  selectedValue: expenseProvider.selectedSalesCustomerId,
                 ),
           const SizedBox(height: 16),
           CustomTextField(
@@ -1443,7 +1445,9 @@ class _SalesWidgetState extends State<SalesWidget> {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
+            mainAxisAlignment: AppStyles.isWebScreen(context)
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.center,
             children: [
               ResponsiveButtonWrapper(
                 child: OutlinedButton(
@@ -1456,7 +1460,8 @@ class _SalesWidgetState extends State<SalesWidget> {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: const BorderSide(color: Color(0xFFE2E8F0)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                   child: Text(
                     'Cancel',
@@ -1483,15 +1488,18 @@ class _SalesWidgetState extends State<SalesWidget> {
 
                     // Validate input
                     if (expenseProvider.invoiceNOSalesControler.text.isEmpty ||
-                        expenseProvider.invoiceDateSalesController.text.isEmpty ||
+                        expenseProvider
+                            .invoiceDateSalesController.text.isEmpty ||
                         expenseProvider.selectedSalesCustomerId == null ||
                         expenseProvider.salesItems.isEmpty) {
                       String errorMessage =
                           'Please fill all required fields and add at least one item\n\n';
-                      if (expenseProvider.invoiceNOSalesControler.text.isEmpty) {
+                      if (expenseProvider
+                          .invoiceNOSalesControler.text.isEmpty) {
                         errorMessage += '• Invoice No is required\n';
                       }
-                      if (expenseProvider.invoiceDateSalesController.text.isEmpty) {
+                      if (expenseProvider
+                          .invoiceDateSalesController.text.isEmpty) {
                         errorMessage += '• Invoice Date is required\n';
                       }
                       if (expenseProvider.selectedSalesCustomerId == null) {
@@ -1507,19 +1515,31 @@ class _SalesWidgetState extends State<SalesWidget> {
 
                     var data = {
                       "Sales_Master_Id": widget.editId,
-                      "Sales_Date": expenseProvider.invoiceDateSalesController.text.toyyyymmdd(),
+                      "Sales_Date": expenseProvider
+                          .invoiceDateSalesController.text
+                          .toyyyymmdd(),
                       "Customer_Id": expenseProvider.selectedSalesCustomerId,
-                      "Invoice_No": expenseProvider.invoiceNOSalesControler.text,
-                      "TotalAmount": expenseProvider.grandTotal.toStringAsFixed(2),
-                      "TaxableAmount": expenseProvider.totalTaxableAmount.toStringAsFixed(2),
-                      "Total_CGST": expenseProvider.totalCGST.toStringAsFixed(2),
-                      "Total_SGST": expenseProvider.totalSGST.toStringAsFixed(2),
+                      "Invoice_No":
+                          expenseProvider.invoiceNOSalesControler.text,
+                      "TotalAmount":
+                          expenseProvider.grandTotal.toStringAsFixed(2),
+                      "TaxableAmount":
+                          expenseProvider.totalTaxableAmount.toStringAsFixed(2),
+                      "Total_CGST":
+                          expenseProvider.totalCGST.toStringAsFixed(2),
+                      "Total_SGST":
+                          expenseProvider.totalSGST.toStringAsFixed(2),
                       "Total_IGST": 0,
                       "Total_GST": expenseProvider.totalGST.toStringAsFixed(2),
-                      "TotalDiscount": expenseProvider.totalDiscount.toStringAsFixed(2),
-                      "NetTotal": expenseProvider.finalGrandTotal.toStringAsFixed(2),
-                      "Description": expenseProvider.descriptionSalesController.text,
-                      "sales_details": expenseProvider.salesItems.map((item) => item.toJson()).toList(),
+                      "TotalDiscount":
+                          expenseProvider.totalDiscount.toStringAsFixed(2),
+                      "NetTotal":
+                          expenseProvider.finalGrandTotal.toStringAsFixed(2),
+                      "Description":
+                          expenseProvider.descriptionSalesController.text,
+                      "sales_details": expenseProvider.salesItems
+                          .map((item) => item.toJson())
+                          .toList(),
                     };
 
                     print('Data to be sent: $data');
@@ -1534,7 +1554,8 @@ class _SalesWidgetState extends State<SalesWidget> {
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                   child: Text(
                     'Save',

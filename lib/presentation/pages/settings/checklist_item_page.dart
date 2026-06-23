@@ -55,8 +55,7 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return AddCheckListItemPage(
-            checkListItemModel: CheckListItemModel());
+        return AddCheckListItemPage(checkListItemModel: CheckListItemModel());
       },
     ).then((value) {
       if (null != value && value) {
@@ -86,7 +85,6 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,
@@ -171,7 +169,8 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
                                                 fontWeight: FontWeight.w600,
                                                 color: AppColors.primaryBlue),
                                           )),
-                                    if (settingsProvider.menuIsDeleteMap[38] == 1)
+                                    if (settingsProvider.menuIsDeleteMap[38] ==
+                                        1)
                                       TextButton(
                                           onPressed: () {
                                             showDialog(
@@ -185,7 +184,8 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
                                                   actions: [
                                                     TextButton(
                                                       onPressed: () =>
-                                                          Navigator.pop(context),
+                                                          Navigator.pop(
+                                                              context),
                                                       child:
                                                           const Text('Cancel'),
                                                     ),

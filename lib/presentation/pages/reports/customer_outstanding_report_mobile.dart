@@ -145,15 +145,18 @@ class _CustomerOutstandingReportMobileState
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: ConstrainedBox(
-                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 200),
                                       child: CustomText(
-                                        provider.fromDate == null && provider.toDate == null
+                                        provider.fromDate == null &&
+                                                provider.toDate == null
                                             ? 'Date'
                                             : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
                                         fontSize: 14,
@@ -164,7 +167,8 @@ class _CustomerOutstandingReportMobileState
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                  Icon(Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3, size: 18),
                                 ],
                               ),
                             ),
@@ -192,17 +196,17 @@ class _CustomerOutstandingReportMobileState
                                 provider.setEnquirySource(null);
                               },
                             ),
-                            ...dropDownProvider.enquiryData.map((e) =>
-                                FilterChipWidget(
-                                  label: e.enquirySourceName,
-                                  isSelected:
-                                      provider.selectedEnquirySourceId ==
-                                          e.enquirySourceId,
-                                  onTap: () {
-                                    provider.setEnquirySource(
-                                        e.enquirySourceId);
-                                  },
-                                )),
+                            ...dropDownProvider.enquiryData
+                                .map((e) => FilterChipWidget(
+                                      label: e.enquirySourceName,
+                                      isSelected:
+                                          provider.selectedEnquirySourceId ==
+                                              e.enquirySourceId,
+                                      onTap: () {
+                                        provider.setEnquirySource(
+                                            e.enquirySourceId);
+                                      },
+                                    )),
                           ],
                         );
                       },
@@ -343,7 +347,8 @@ class _CustomerOutstandingReportMobileState
                   onPressed: () {
                     provider.getReport(context);
                     provider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -391,7 +396,8 @@ class _CustomerOutstandingReportMobileState
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                               borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.fromDate != null
                               ? provider.formattedFromDate
@@ -406,7 +412,8 @@ class _CustomerOutstandingReportMobileState
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                               borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.toDate != null
                               ? provider.formattedToDate

@@ -57,8 +57,9 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
 
         // Calculate height similar to existing implementation
         final double screenHeight = MediaQuery.of(context).size.height;
-        final double headerOffset = 250; 
-        final double taskSectionHeight = (screenHeight - headerOffset).clamp(400.0, 2000.0);
+        final double headerOffset = 250;
+        final double taskSectionHeight =
+            (screenHeight - headerOffset).clamp(400.0, 2000.0);
 
         return SizedBox(
           height: taskSectionHeight,
@@ -75,7 +76,8 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
                     : ListView.separated(
                         padding: const EdgeInsets.only(bottom: 20),
                         itemCount: taskInfoList.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 12),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final taskInfo = taskInfoList[index];
                           return _buildCustomerCard(taskInfo, index);
@@ -94,7 +96,7 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
 
   Widget _buildSummaryHeader(DashboardProvider provider) {
     int totalCustomers = provider.taskTotalCount;
-    // We don't easily have total tasks across all pages without more API info, 
+    // We don't easily have total tasks across all pages without more API info,
     // but we can show stats for current page
     int currentTasks = 0;
     for (var info in provider.pagedTaskInfoModel) {
@@ -210,7 +212,8 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: getAvatarColor(taskInfo.customerName ?? '').withOpacity(0.1),
+                    color: getAvatarColor(taskInfo.customerName ?? '')
+                        .withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -240,7 +243,8 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
                   icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
                   onPressed: () {
                     if (taskInfo.customerId != null) {
-                      context.push('${CustomerDetailPageMobile.route}${taskInfo.customerId}/false');
+                      context.push(
+                          '${CustomerDetailPageMobile.route}${taskInfo.customerId}/false');
                     }
                   },
                   visualDensity: VisualDensity.compact,
@@ -264,7 +268,8 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
                         controller: _scrollControllers[index],
                         scrollDirection: Axis.horizontal,
                         itemCount: tasks.length,
-                        separatorBuilder: (context, _) => const SizedBox(width: 10),
+                        separatorBuilder: (context, _) =>
+                            const SizedBox(width: 10),
                         itemBuilder: (context, taskIndex) {
                           return _buildTaskItemCard(tasks[taskIndex]);
                         },
@@ -350,7 +355,8 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
     );
   }
 
-  Widget _buildPaginationControls(BuildContext context, DashboardProvider provider) {
+  Widget _buildPaginationControls(
+      BuildContext context, DashboardProvider provider) {
     int startItem = provider.taskStartLimit;
     int endItem = provider.taskEndLimit;
     int total = provider.taskTotalCount;
@@ -383,28 +389,35 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
           ),
           _buildPaginationButton(
             icon: Icons.arrow_forward_ios_rounded,
-            onPressed: (provider.taskCurrentPage + 1) * provider.taskItemsPerPage < provider.taskTotalCount
-                ? () => provider.fetchNextPageTasks(context)
-                : null,
+            onPressed:
+                (provider.taskCurrentPage + 1) * provider.taskItemsPerPage <
+                        provider.taskTotalCount
+                    ? () => provider.fetchNextPageTasks(context)
+                    : null,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPaginationButton({required IconData icon, required VoidCallback? onPressed}) {
+  Widget _buildPaginationButton(
+      {required IconData icon, required VoidCallback? onPressed}) {
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(4),
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: onPressed != null ? AppColors.secondaryBlue.withOpacity(0.1) : Colors.transparent,
+          color: onPressed != null
+              ? AppColors.secondaryBlue.withOpacity(0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(4),
         ),
-        child: Icon(icon, 
-          size: 16, 
-          color: onPressed != null ? AppColors.secondaryBlue : AppColors.textGrey2),
+        child: Icon(icon,
+            size: 16,
+            color: onPressed != null
+                ? AppColors.secondaryBlue
+                : AppColors.textGrey2),
       ),
     );
   }
@@ -418,7 +431,8 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.assignment_ind_outlined, size: 64, color: AppColors.textGrey2.withOpacity(0.5)),
+          Icon(Icons.assignment_ind_outlined,
+              size: 64, color: AppColors.textGrey2.withOpacity(0.5)),
           const SizedBox(height: 16),
           Text(
             message,

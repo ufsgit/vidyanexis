@@ -95,13 +95,15 @@ class _UpcomingWarrentyReportScreen
                 reportsProvider.toggleFilter();
               },
               onSearchTap: () {
-                Provider.of<SidebarProvider>(context, listen: false).startSearch();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .startSearch();
                 reportsProvider.toggleFilter();
               },
               onClearTap: () {
                 searchController.clear();
                 reportsProvider.toggleFilter();
-                Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .stopSearch();
                 reportsProvider.setTaskSearchCriteria(
                   '',
                   reportsProvider.fromDateS,
@@ -183,50 +185,58 @@ class _UpcomingWarrentyReportScreen
                     const Spacer(),
                     // Search Bar
                     Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) => _applySearch(reportsProvider),
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () { _applySearch(reportsProvider); },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                      width: 280,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: searchController,
+                        focusNode: searchFocusNodeWeb,
+                        textAlignVertical: TextAlignVertical.center,
+                        onTap: () {
+                          Future.microtask(() {
+                            if (searchController.text.isNotEmpty &&
+                                searchController.selection.baseOffset == 0 &&
+                                searchController.selection.extentOffset ==
+                                    searchController.text.length) {
+                              searchController.selection =
+                                  TextSelection.collapsed(
+                                      offset: searchController.text.length);
+                            }
+                          });
+                        },
+                        onSubmitted: (query) => _applySearch(reportsProvider),
+                        decoration: InputDecoration(
+                          hintText: 'Search here....',
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            color: const Color(0xFF94A3B8),
+                            fontSize: 13,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              _applySearch(reportsProvider);
+                            },
+                            child: const Icon(Icons.search,
+                                color: Color(0xFF64748B), size: 18),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     CustomFilterButton(
                       onPressed: () => reportsProvider.toggleFilter(),
@@ -238,8 +248,8 @@ class _UpcomingWarrentyReportScreen
                       buttonText: 'Export to Excel',
                       textColor: AppColors.whiteColor,
                       borderColor: AppColors.primaryBlue,
-                          backgroundColor: AppColors.primaryBlue,
-                          radius: 4,
+                      backgroundColor: AppColors.primaryBlue,
+                      radius: 4,
                     ),
                   ],
                 ),
@@ -282,15 +292,18 @@ class _UpcomingWarrentyReportScreen
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Flexible(
                                       child: ConstrainedBox(
-                                        constraints: const BoxConstraints(maxWidth: 200),
+                                        constraints:
+                                            const BoxConstraints(maxWidth: 200),
                                         child: CustomText(
-                                          reportsProvider.fromDate == null && reportsProvider.toDate == null
+                                          reportsProvider.fromDate == null &&
+                                                  reportsProvider.toDate == null
                                               ? 'Date'
                                               : 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
                                           fontSize: 14,
@@ -301,7 +314,8 @@ class _UpcomingWarrentyReportScreen
                                       ),
                                     ),
                                     const SizedBox(width: 4),
-                                    Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                    Icon(Icons.keyboard_arrow_down,
+                                        color: AppColors.textGrey3, size: 18),
                                   ],
                                 ),
                               ),
@@ -332,7 +346,8 @@ class _UpcomingWarrentyReportScreen
                                 '',
                                 '',
                               );
-                              reportsProvider.getSearchUpcomingWarrantyReport(context);
+                              reportsProvider
+                                  .getSearchUpcomingWarrantyReport(context);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
@@ -362,9 +377,11 @@ class _UpcomingWarrentyReportScreen
                             children: [
                               CommonReportSummaryBar(
                                 totalLabel: 'Total Records',
-                                totalCount: reportsProvider.upcomingWarrantyReport.length,
+                                totalCount: reportsProvider
+                                    .upcomingWarrantyReport.length,
                                 showingLabel: 'Showing',
-                                showingCount: reportsProvider.upcomingWarrantyReport.length,
+                                showingCount: reportsProvider
+                                    .upcomingWarrantyReport.length,
                               ),
                               Expanded(
                                 child: _buildMobileList(reportsProvider),
@@ -386,7 +403,8 @@ class _UpcomingWarrentyReportScreen
                   onPressed: () {
                     reportsProvider.getSearchUpcomingWarrantyReport(context);
                     reportsProvider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -438,14 +456,14 @@ class _UpcomingWarrentyReportScreen
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -488,17 +506,17 @@ class _UpcomingWarrentyReportScreen
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-      ],
-    ),
         child: Column(
           children: [
             // Header Row
@@ -602,7 +620,8 @@ class _UpcomingWarrentyReportScreen
   }
 
   Widget _buildEmptyState() {
-    return const CommonEmptyState(message: 'No upcoming warranty reports found');
+    return const CommonEmptyState(
+        message: 'No upcoming warranty reports found');
   }
 
   void onClickTopButton(BuildContext context) {
@@ -699,7 +718,9 @@ class _UpcomingWarrentyReportScreen
                         reportsProvider.formatDate();
                         _applySearch(reportsProvider);
                       },
-                      style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.appViolet,
                           foregroundColor: Colors.white),
                       child: const Text('Apply'),

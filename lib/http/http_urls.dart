@@ -14,7 +14,7 @@ class HttpUrls {
   // static String baseUrl = 'https://ecoamicaapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
-  //static String baseUrl = 'https://demo3api.trackbox.net.in/';
+  // static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://uniquesolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
@@ -30,19 +30,19 @@ class HttpUrls {
   // static String baseUrl = 'https://exactsystem.trackbox.net.in/';
   // static String baseUrl = 'https://jbsolarapi.ufstech.net.in/';
   // static String baseUrl = 'https://disunenergyapi.ufstech.net.in/';
-  // static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
+  //static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
   // static String baseUrl = 'https://lucidpowerapi.ufstech.net.in/';
   // static String baseUrl = 'https://linoraapi.ufstech.net.in/';
   // static String baseUrl = 'https://izzapower.trackbox.net.in/';
 //   static String baseUrl = 'https://demo2api.ufstech.net.in/';
   // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
   // static String baseUrl = 'https://bodhieapi.ufstech.net.in/';
-  // static String baseUrl = 'https://solarisapi.ufstech.net.in/';
+//   static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
-  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+//   static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -337,6 +337,8 @@ class HttpUrls {
   static String deletePaymentSchedule = "service/Delete_Payment_Schedule";
   static String getQuotationMasterPdf =
       "quotation_master/Get_quotation_master_pdf";
+  static String getCommercialCustomFields = 
+      "quotation_master/get_commercial_custom_fields";
   static String balanceReport = "service/Payment_Balance_Report";
   static String upcomingPaymentReport = "service/Get_Upcoming_Payment_Report";
   static String totalOutstandingReport = "service/Get_Total_Outstanding_Report";
@@ -424,4 +426,11 @@ class HttpUrls {
   static String followupAmountReport = "followup/Followup_Amount_Report";
   static String getMultipleItemMaterials = "item/get_multiple_item_details";
   static String getFollowupAssignedUser = "followup/Get_Followup_Assigned_User";
+  static String saveTargetEnquirySource =
+      "lead/Save_Target_Enquiry_Source";
+  static String getTargetEnquirySource =
+      "lead/Get_Target_Enquiry_Source";
+  static String deleteTargetEnquirySource =
+      "lead/Delete_Target_Enquiry_Source";
+  static String saveRegistrationDate = "lead/Save_Registration_Date";
 }

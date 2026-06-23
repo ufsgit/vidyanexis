@@ -169,7 +169,7 @@ class FollowupAmountReportProvider extends ChangeNotifier {
   Future<void> getReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
-      
+
       String fromStr = _formattedFromDate;
       String toStr = _formattedToDate;
       String toUserId = (_selectedUser ?? 0).toString();

@@ -66,7 +66,6 @@ class _LocationPageState extends State<LocationPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,
@@ -100,12 +99,10 @@ class _LocationPageState extends State<LocationPage> {
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
-                                    borderRadius:
-                                        BorderRadius.circular(4)),
+                                    borderRadius: BorderRadius.circular(4)),
                                 child: Text(
                                   settingsProvider
-                                      .locationModelList[index]
-                                      .locationName,
+                                      .locationModelList[index].locationName,
                                   style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
@@ -124,8 +121,7 @@ class _LocationPageState extends State<LocationPage> {
                                     builder: (BuildContext context) {
                                       return AddLocation(
                                         editId: settingsProvider
-                                            .locationModelList[index]
-                                            .locationId
+                                            .locationModelList[index].locationId
                                             .toString(),
                                         locationName: settingsProvider
                                             .locationModelList[index]
@@ -149,8 +145,7 @@ class _LocationPageState extends State<LocationPage> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: const Text(
-                                            'Confirm Delete'),
+                                        title: const Text('Confirm Delete'),
                                         content: const Text(
                                             'Are you sure you want to delete?'),
                                         actions: [
@@ -172,8 +167,8 @@ class _LocationPageState extends State<LocationPage> {
                                             },
                                             child: const Text(
                                               'Delete',
-                                              style: TextStyle(
-                                                  color: Colors.red),
+                                              style:
+                                                  TextStyle(color: Colors.red),
                                             ),
                                           ),
                                         ],

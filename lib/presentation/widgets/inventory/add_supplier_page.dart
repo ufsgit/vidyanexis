@@ -139,7 +139,8 @@ class _AddSupplierState extends State<AddSupplier> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1E293B), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -148,186 +149,200 @@ class _AddSupplierState extends State<AddSupplier> {
           width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
           child: Column(
             children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Basic Information'),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.supplierNameController,
-                    hintText: 'Supplier Name*',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  _buildSectionTitle('Contact Information'),
-                  const SizedBox(height: 16),
-                  Row(
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: CustomTextField(
-                          readOnly: false,
-                          height: 56,
-                          controller: settingsProvider.supplierPhoneController,
-                          hintText: 'Phone',
-                          labelText: '',
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        ),
+                      _buildSectionTitle('Basic Information'),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.supplierNameController,
+                        hintText: 'Supplier Name*',
+                        labelText: '',
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: CustomTextField(
-                          readOnly: false,
-                          height: 56,
-                          controller: settingsProvider.supplierMobileController,
-                          hintText: 'Mobile',
-                          labelText: '',
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        ),
+                      const SizedBox(height: 16),
+                      _buildSectionTitle('Contact Information'),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller:
+                                  settingsProvider.supplierPhoneController,
+                              hintText: 'Phone',
+                              labelText: '',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 56,
+                              controller:
+                                  settingsProvider.supplierMobileController,
+                              hintText: 'Mobile',
+                              labelText: '',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.supplierEmailController,
+                        hintText: 'Email Address',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.supplierGstNoController,
+                        hintText: 'GST Number',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 32),
+                      _buildSectionTitle('Address Details'),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.supplierAddressController,
+                        hintText: 'Primary Address*',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.supplierAddress1Controller,
+                        hintText: 'Address Line 1',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.supplierAddress2Controller,
+                        hintText: 'Address Line 2',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.supplierAddress3Controller,
+                        hintText: 'Address Line 3',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 32),
+                      _buildSectionTitle('Financial Information'),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller:
+                            settingsProvider.supplierOpeningBalanceController,
+                        hintText: 'Opening Balance',
+                        labelText: '',
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                      ),
+                      const SizedBox(height: 40),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.supplierEmailController,
-                    hintText: 'Email Address',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.supplierGstNoController,
-                    hintText: 'GST Number',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 32),
-                  _buildSectionTitle('Address Details'),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.supplierAddressController,
-                    hintText: 'Primary Address*',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.supplierAddress1Controller,
-                    hintText: 'Address Line 1',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.supplierAddress2Controller,
-                    hintText: 'Address Line 2',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.supplierAddress3Controller,
-                    hintText: 'Address Line 3',
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 32),
-                  _buildSectionTitle('Financial Information'),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.supplierOpeningBalanceController,
-                    hintText: 'Opening Balance',
-                    labelText: '',
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  ),
-                  const SizedBox(height: 40),
-                ],
+                ),
               ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
-              children: [
-                ResponsiveButtonWrapper(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      settingsProvider.supplierClear();
-                      Navigator.pop(context);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: Color(0xFFE2E8F0)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
                     ),
-                    child: Text(
-                      'Cancel',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF64748B),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.center,
+                  children: [
+                    ResponsiveButtonWrapper(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          settingsProvider.supplierClear();
+                          Navigator.pop(context);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          side: const BorderSide(color: Color(0xFFE2E8F0)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                ResponsiveButtonWrapper(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final validationError = validateInputs(context, settingsProvider);
-                      if (validationError != null) {
-                        showErrorDialog(context, validationError);
-                        return;
-                      }
-                      settingsProvider.addSupplier(
-                        context: context,
-                        statusId: widget.editId,
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondaryBlue,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    ),
-                    child: Text(
-                      'Save',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w600,
+                    const SizedBox(width: 16),
+                    ResponsiveButtonWrapper(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final validationError =
+                              validateInputs(context, settingsProvider);
+                          if (validationError != null) {
+                            showErrorDialog(context, validationError);
+                            return;
+                          }
+                          settingsProvider.addSupplier(
+                            context: context,
+                            statusId: widget.editId,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.secondaryBlue,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                        ),
+                        child: Text(
+                          'Save',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-      ),
+        ),
       ),
     );
   }

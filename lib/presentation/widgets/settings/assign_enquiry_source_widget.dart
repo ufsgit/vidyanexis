@@ -63,7 +63,8 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
             children: [
               // Pinned Header Section
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -88,7 +89,8 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
 
               // Select All action bar for mobile
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -121,12 +123,14 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                       )
                     : _items.isNotEmpty
                         ? ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 12.0),
                             itemCount: _items.length,
                             itemBuilder: (context, index) {
                               final item = _items[index];
                               return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 6.0),
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 6.0),
                                 padding: const EdgeInsets.all(12.0),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -184,7 +188,8 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                                         setState(() {
                                           item.isview = (value == true) ? 1 : 0;
                                           _selectAll = _items.every(
-                                              (selected) => selected.isview == 1);
+                                              (selected) =>
+                                                  selected.isview == 1);
                                         });
                                       },
                                     ),
@@ -293,7 +298,8 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
             else ...[
               // Table Header
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(4),
@@ -351,7 +357,8 @@ class _AssignEnquirySourceWidgetState extends State<AssignEnquirySourceWidget> {
                         final item = _items[index];
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 4),
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 12),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),

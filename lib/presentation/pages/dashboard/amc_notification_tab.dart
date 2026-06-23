@@ -11,7 +11,6 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class AmcNotificationTab extends StatefulWidget {
   const AmcNotificationTab({super.key});
 
@@ -83,7 +82,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                   children: [
                     // Task Type
                     DropdownButtonFormField<int>(
-                      decoration: const InputDecoration(labelText: 'AMC Service Task Type'),
+                      decoration: const InputDecoration(
+                          labelText: 'AMC Service Task Type'),
                       value: selectedTaskTypeId,
                       items: dropdownProvider.taskType.map((taskType) {
                         return DropdownMenuItem<int>(
@@ -95,7 +95,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                         setState(() {
                           selectedTaskTypeId = value;
                           selectedTaskTypeName = dropdownProvider.taskType
-                              .firstWhere((element) => element.taskTypeId == value)
+                              .firstWhere(
+                                  (element) => element.taskTypeId == value)
                               .taskTypeName;
                         });
                       },
@@ -103,14 +104,17 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                     const SizedBox(height: 10),
                     // Interval Date
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Selected Interval Date'),
-                      initialValue: _formatDate(interval?.intervalDate ?? item.serviceDate),
+                      decoration: const InputDecoration(
+                          labelText: 'Selected Interval Date'),
+                      initialValue: _formatDate(
+                          interval?.intervalDate ?? item.serviceDate),
                       readOnly: true,
                     ),
                     const SizedBox(height: 10),
                     // Assigned Staff
                     DropdownButtonFormField<int>(
-                      decoration: const InputDecoration(labelText: 'Assigned Staff'),
+                      decoration:
+                          const InputDecoration(labelText: 'Assigned Staff'),
                       value: selectedUserId,
                       items: dropdownProvider.searchUserDetails.map((user) {
                         return DropdownMenuItem<int>(
@@ -122,7 +126,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                         setState(() {
                           selectedUserId = value;
                           selectedUserName = dropdownProvider.searchUserDetails
-                              .firstWhere((element) => element.userDetailsId == value)
+                              .firstWhere(
+                                  (element) => element.userDetailsId == value)
                               .userDetailsName;
                         });
                       },
@@ -145,13 +150,15 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: const Text('Cancel', style: TextStyle(color: AppColors.appViolet)),
+                  child: const Text('Cancel',
+                      style: TextStyle(color: AppColors.appViolet)),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     if (selectedTaskTypeId == null || selectedUserId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please select Task Type and Staff')),
+                        const SnackBar(
+                            content: Text('Please select Task Type and Staff')),
                       );
                       return;
                     }
@@ -279,7 +286,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                 Expanded(
                   child: _buildSummaryCard(
                     title: "Upcoming Services",
-                    value: _countUpcomingServices(provider.amcNotificationList).toString(),
+                    value: _countUpcomingServices(provider.amcNotificationList)
+                        .toString(),
                     icon: Icons.event_available_rounded,
                     color: const Color(0xFFFBBF24),
                   ),
@@ -299,7 +307,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(bottom: 20),
                 itemCount: provider.amcNotificationList.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 16),
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 16),
                 itemBuilder: (context, index) {
                   final item = provider.amcNotificationList[index];
                   return _buildAmcCard(item);
@@ -315,7 +324,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
     int count = 0;
     for (var item in list) {
       if (item.intervalDetails != null) {
-        count += item.intervalDetails!.where((i) => i.completedStatus == 0).length;
+        count +=
+            item.intervalDetails!.where((i) => i.completedStatus == 0).length;
       }
     }
     return count;
@@ -378,191 +388,208 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
   Widget _buildAmcCard(dynamic item) {
     return InkWell(
       onTap: () {
-        final provider = Provider.of<WarrentyReportProvider>(context, listen: false);
-        final dropdownProvider = Provider.of<DropDownProvider>(context, listen: false);
+        final provider =
+            Provider.of<WarrentyReportProvider>(context, listen: false);
+        final dropdownProvider =
+            Provider.of<DropDownProvider>(context, listen: false);
         _showIntervalPopup(context, item, null, dropdownProvider, provider);
       },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: getAvatarColor(item.customerName).withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      _getInitials(item.customerName),
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: getAvatarColor(item.customerName),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: getAvatarColor(item.customerName).withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _getInitials(item.customerName),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: getAvatarColor(item.customerName),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.customerName,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textBlack,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.customerName,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textBlack,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          const Icon(Icons.timer_outlined, size: 12, color: AppColors.textRed),
-                          const SizedBox(width: 4),
-                          Text(
-                            "Expiry: ${_formatDate(item.serviceDate)}",
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textRed,
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            const Icon(Icons.timer_outlined,
+                                size: 12, color: AppColors.textRed),
+                            const SizedBox(width: 4),
+                            Text(
+                              "Expiry: ${_formatDate(item.serviceDate)}",
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textRed,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Details Section
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                _buildDetailRow(Icons.inventory_2_outlined, "Product", item.amcProductName),
-                _buildDetailRow(Icons.settings_outlined, "Service", item.serviceName),
-                _buildDetailRow(Icons.person_outline_rounded, "Staff", item.staffName),
-              ],
-            ),
-          ),
-
-          // Intervals Section
-          if (item.intervalDetails != null && item.intervalDetails!.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-                border: Border(
-                  top: BorderSide(color: Color(0xFFF1F5F9)),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.calendar_month_rounded, 
-                        size: 14, color: AppColors.textGrey3),
-                      const SizedBox(width: 6),
-                      Text(
-                        "Service Intervals",
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textGrey3,
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: item.intervalDetails!.map<Widget>((interval) {
-                      bool isCompleted = interval.completedStatus == 1;
-                      return InkWell(
-                        onTap: () {
-                          final provider = Provider.of<WarrentyReportProvider>(context, listen: false);
-                          final dropdownProvider = Provider.of<DropDownProvider>(context, listen: false);
-                          _showIntervalPopup(context, item, interval, dropdownProvider, provider);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(
-                              color: isCompleted 
-                                ? const Color(0xFF34C759).withOpacity(0.3)
-                                : const Color(0xFFFB923C).withOpacity(0.3),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.01),
-                                blurRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                isCompleted ? Icons.check_circle_rounded : Icons.schedule_rounded,
-                                size: 14,
-                                color: isCompleted ? const Color(0xFF34C759) : const Color(0xFFFB923C),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                _formatDate(interval.intervalDate),
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlack,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
+
+            // Details Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  _buildDetailRow(Icons.inventory_2_outlined, "Product",
+                      item.amcProductName),
+                  _buildDetailRow(
+                      Icons.settings_outlined, "Service", item.serviceName),
+                  _buildDetailRow(
+                      Icons.person_outline_rounded, "Staff", item.staffName),
+                ],
+              ),
+            ),
+
+            // Intervals Section
+            if (item.intervalDetails != null &&
+                item.intervalDetails!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                  border: Border(
+                    top: BorderSide(color: Color(0xFFF1F5F9)),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.calendar_month_rounded,
+                            size: 14, color: AppColors.textGrey3),
+                        const SizedBox(width: 6),
+                        Text(
+                          "Service Intervals",
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textGrey3,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: item.intervalDetails!.map<Widget>((interval) {
+                        bool isCompleted = interval.completedStatus == 1;
+                        return InkWell(
+                          onTap: () {
+                            final provider =
+                                Provider.of<WarrentyReportProvider>(context,
+                                    listen: false);
+                            final dropdownProvider =
+                                Provider.of<DropDownProvider>(context,
+                                    listen: false);
+                            _showIntervalPopup(context, item, interval,
+                                dropdownProvider, provider);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: isCompleted
+                                    ? const Color(0xFF34C759).withOpacity(0.3)
+                                    : const Color(0xFFFB923C).withOpacity(0.3),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.01),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  isCompleted
+                                      ? Icons.check_circle_rounded
+                                      : Icons.schedule_rounded,
+                                  size: 14,
+                                  color: isCompleted
+                                      ? const Color(0xFF34C759)
+                                      : const Color(0xFFFB923C),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  _formatDate(interval.intervalDate),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textBlack,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
-    ),
     );
   }
 
@@ -601,23 +628,27 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
 
   Widget _buildShimmerLoading() {
     return Column(
-      children: List.generate(3, (index) => Container(
-        height: 150,
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-        ),
-        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      )),
+      children: List.generate(
+          3,
+          (index) => Container(
+                height: 150,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2)),
+              )),
     );
   }
 
@@ -628,7 +659,8 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.history_edu_rounded, size: 64, color: AppColors.textGrey2.withOpacity(0.5)),
+          Icon(Icons.history_edu_rounded,
+              size: 64, color: AppColors.textGrey2.withOpacity(0.5)),
           const SizedBox(height: 16),
           Text(
             message,

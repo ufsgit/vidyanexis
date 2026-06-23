@@ -60,6 +60,4 @@ class Item {
       priceRangeTo: json['Price_Range_To']?.toString(),
     );
   }
-
 }
-

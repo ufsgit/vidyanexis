@@ -71,7 +71,8 @@ class _ManageStatusWidgetState extends State<ManageStatusWidget> {
                     ),
                     child: Row(
                       children: [
-                        SizedBox(width: 48, child: const Center(child: Text('No.'))),
+                        SizedBox(
+                            width: 48, child: const Center(child: Text('No.'))),
                         Expanded(child: Text('User')),
                         SizedBox(
                           width: 48,

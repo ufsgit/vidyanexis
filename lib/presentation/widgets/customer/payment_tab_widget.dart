@@ -73,7 +73,8 @@ class _PaymentTabWidgetState extends State<PaymentTabWidget> {
                               borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.secondaryBlue.withOpacity(0.3),
+                                  color:
+                                      AppColors.secondaryBlue.withOpacity(0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),

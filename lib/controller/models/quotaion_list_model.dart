@@ -82,7 +82,9 @@ class QuatationListModel {
         paymentTermDescription: json["Payment_Term_Description"] ?? '',
         totalAmount: json["TotalAmount"] ?? '0.0',
         subsidyAmount: json["Subsidy_Amount"] ?? '0.0',
-        subsidyticked: json["Subsidyticked"] != null ? int.tryParse(json["Subsidyticked"].toString()) : null,
+        subsidyticked: json["Subsidyticked"] != null
+            ? int.tryParse(json["Subsidyticked"].toString())
+            : null,
         netTotal: json["NetTotal"] ?? '0.0',
         productName: json["Product_Name"] ?? '',
         warranty: json["Warranty"] ?? '',

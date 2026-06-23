@@ -32,7 +32,8 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
   void _onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      final quotationProvider = Provider.of<QuotationReportProvider>(context, listen: false);
+      final quotationProvider =
+          Provider.of<QuotationReportProvider>(context, listen: false);
       quotationProvider.setQuotationSearch(
         searchController.text,
         quotationProvider.fromDateS,
@@ -178,17 +179,23 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                           padding: const EdgeInsets.all(16),
                           itemCount: quotationProvider.quotationReports.length,
                           itemBuilder: (context, index) {
-                            final quotation = quotationProvider.quotationReports[index];
+                            final quotation =
+                                quotationProvider.quotationReports[index];
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: ReportListItem(
                                 title: quotation.customerName ?? 'No Name',
                                 subtitle: quotation.productName ?? 'No Product',
-                                description: 'Phone: ${quotation.phoneNumber ?? "-"}',
-                                status: quotation.quotationStatusName ?? 'Pending',
-                                statusColor: getAvatarColor(quotation.quotationStatusName ?? ''),
+                                description:
+                                    'Phone: ${quotation.phoneNumber ?? "-"}',
+                                status:
+                                    quotation.quotationStatusName ?? 'Pending',
+                                statusColor: getAvatarColor(
+                                    quotation.quotationStatusName ?? ''),
                                 bottomLeftIcon: Icons.calendar_today_outlined,
-                                bottomLeftText: quotation.entryDate.toString().toFormattedDate(),
+                                bottomLeftText: quotation.entryDate
+                                    .toString()
+                                    .toFormattedDate(),
                                 bottomRightText: '₹ ${quotation.totalAmount}',
                               ),
                             );
@@ -232,7 +239,8 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
     );
   }
 
-  Widget _buildFilterPanel(BuildContext context, QuotationReportProvider quotationProvider, DropDownProvider provider) {
+  Widget _buildFilterPanel(BuildContext context,
+      QuotationReportProvider quotationProvider, DropDownProvider provider) {
     final searchProvider = Provider.of<SidebarProvider>(context, listen: false);
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
@@ -250,7 +258,8 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
             children: [
               FilterChipWidget(
                 label: 'All',
-                isSelected: quotationProvider.selectedStatus == 0 || quotationProvider.selectedStatus == null,
+                isSelected: quotationProvider.selectedStatus == 0 ||
+                    quotationProvider.selectedStatus == null,
                 onTap: () => quotationProvider.setStatus(0),
               ),
               FilterChipWidget(
@@ -312,26 +321,30 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                       const SizedBox(width: 6),
                       Text(
                         quotationProvider.selectedDateFilterIndex != null
-                            ? dateButtonTitles[quotationProvider.selectedDateFilterIndex!]
+                            ? dateButtonTitles[
+                                quotationProvider.selectedDateFilterIndex!]
                             : 'Select Date Range',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: quotationProvider.selectedDateFilterIndex != null
-                              ? AppColors.primaryBlue
-                              : Colors.grey[600],
+                          color:
+                              quotationProvider.selectedDateFilterIndex != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              if (quotationProvider.fromDate != null || quotationProvider.toDate != null)
+              if (quotationProvider.fromDate != null ||
+                  quotationProvider.toDate != null)
                 Container(
                   height: 32,
                   decoration: BoxDecoration(
                     color: AppColors.primaryBlue.withOpacity(0.05),
-                    border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
+                    border: Border.all(
+                        color: AppColors.primaryBlue.withOpacity(0.3)),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -351,7 +364,8 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
           const SizedBox(height: 24),
           if (quotationProvider.fromDate != null ||
               quotationProvider.toDate != null ||
-              (quotationProvider.selectedStatus != null && quotationProvider.selectedStatus != 0))
+              (quotationProvider.selectedStatus != null &&
+                  quotationProvider.selectedStatus != 0))
             SizedBox(
               width: double.infinity,
               child: CommonReportResetButton(
@@ -376,7 +390,8 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.calendar_month_outlined, size: 80, color: Colors.grey[300]),
+          Icon(Icons.calendar_month_outlined,
+              size: 80, color: Colors.grey[300]),
           const SizedBox(height: 16),
           Text(
             'Select a date range to view reports',
@@ -395,7 +410,8 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4)),
             ),
           ),
         ],
@@ -404,7 +420,8 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
   }
 
   Widget _buildEmptyState() {
-    return const CommonEmptyState(message: 'No reports found for the selected range');
+    return const CommonEmptyState(
+        message: 'No reports found for the selected range');
   }
 
   void onClickTopButton(BuildContext context) {
@@ -527,13 +544,14 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
