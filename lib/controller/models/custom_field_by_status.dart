@@ -128,8 +128,8 @@ class DropdownValue {
       );
 
   factory DropdownValue.fromJson(Map<String, dynamic> json) => DropdownValue(
-        dropdownId: json["dropdown_id"],
-        dropdownValue: json["dropdown_value"]?.toString(),
+        dropdownId: json["dropdown_id"] ?? json["id"],
+        dropdownValue: (json["dropdown_value"] ?? json["value"])?.toString(),
       );
 
   Map<String, dynamic> toJson() => {

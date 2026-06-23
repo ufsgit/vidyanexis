@@ -19,6 +19,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_item_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/commercial_custom_fields_table.dart';
 import 'package:vidyanexis/presentation/widgets/customer/commercial_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/scope_of_work_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/structure_material_card.dart';
@@ -527,75 +528,21 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           },
                         ),
                       ],
-                      Row(
-                        children: [
-                          if (settingsProvider.companyDetails.isNotEmpty && settingsProvider.companyDetails.first.commercialProposal == 1)
-                            Expanded(
-                              child: CustomElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => const AddCommercialCustomFieldsDialog(),
-                                  );
-                                },
-                                buttonText: 'Add Commercial',
-                                backgroundColor: Colors.white,
-                                borderColor: AppColors.primaryBlue,
-                                textColor: AppColors.primaryBlue,
-                              ),
-                            ),
-                          if (settingsProvider.companyDetails.isNotEmpty && settingsProvider.companyDetails.first.commercialProposal == 1)
-                            const SizedBox(width: 16),
-                          Expanded(
-                            child: loadFromCustomField(context),
-                          ),
-                        ],
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 200,
+                          child: loadFromCustomField(context),
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      Builder(
-                        builder: (context) {
-                          final selectedCommercialFields = customerDetailsProvider.selectedCommercialFields;
-                          if (selectedCommercialFields.isEmpty) return const SizedBox.shrink();
-                          return Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: AppColors.textGrey2),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Column(
-                                  children: [
-                                    CustomFieldSectionWidget(
-                                      key: customFieldCommercialKey,
-                                      customFields: selectedCommercialFields,
-                                      initialFieldValues: selectedCommercialFields
-                                          .map((e) => FieldValueModel(
-                                                customFieldId: e.customFieldId,
-                                                value: e.datavalue,
-                                              ))
-                                          .toList(),
-                                      controllerKey: 'commercial',
-                                      showEditButton: true,
-                                      showMore: false,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    CustomTextField(
-                                      readOnly: false,
-                                      height: 54,
-                                      controller: customerDetailsProvider
-                                          .commercialDescriptionController,
-                                      hintText: 'Description',
-                                      labelText: '',
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                          );
-                        },
-                      ),
+                      if (settingsProvider.companyDetails.isNotEmpty && settingsProvider.companyDetails.first.commercialProposal == 1)
+                        const Column(
+                          children: [
+                            CommercialCustomFieldsTableWidget(),
+                            SizedBox(height: 16),
+                          ],
+                        ),
                       if (customerDetailsProvider.selectedQuotationType ==
                           1) ...[
                         residentialItemWidget(context),

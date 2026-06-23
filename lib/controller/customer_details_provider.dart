@@ -118,6 +118,115 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  final Map<int, TextEditingController> commercialTableRowControllers = {};
+  final Map<int, String> commercialTableRowDropdowns = {};
+
+  void initCommercialTableRow() {
+    commercialTableRowControllers.clear();
+    commercialTableRowDropdowns.clear();
+    for (var field in _commercialCustomFields) {
+      commercialTableRowControllers[field.customFieldId!] = TextEditingController();
+    }
+  }
+
+  void updateCommercialTableRowDropdown(int id, String value) {
+    commercialTableRowDropdowns[id] = value;
+    notifyListeners();
+  }
+
+  TextEditingController getCommercialTableRowController(int fieldId) {
+    if (!commercialTableRowControllers.containsKey(fieldId)) {
+      commercialTableRowControllers[fieldId] = TextEditingController();
+    }
+    return commercialTableRowControllers[fieldId]!;
+  }
+
+  List<Map<int, CustomFieldByStatusId>> get commercialTableRows {
+    List<Map<int, CustomFieldByStatusId>> rows = [];
+    Map<int, CustomFieldByStatusId> currentRow = {};
+    
+    for (var field in _selectedCommercialFields) {
+      int realId = virtualToRealCommercialFieldId[field.customFieldId!] ?? field.customFieldId!;
+      
+      if (currentRow.containsKey(realId)) {
+        rows.add(currentRow);
+        currentRow = {};
+      }
+      currentRow[realId] = field;
+    }
+    if (currentRow.isNotEmpty) {
+      rows.add(currentRow);
+    }
+    return rows;
+  }
+
+  void addCommercialTableRow() {
+    int minVirtualId = -1000;
+    virtualToRealCommercialFieldId.keys.forEach((vId) {
+      if (vId < minVirtualId) minVirtualId = vId;
+    });
+    int virtualIdCounter = minVirtualId - 1;
+
+    for (var field in _commercialCustomFields) {
+      final clonedField = CustomFieldByStatusId.fromJson(field.toJson());
+      clonedField.isChecked = 1;
+      
+      String val = '';
+      if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
+        val = commercialTableRowDropdowns[field.customFieldId!] ?? '';
+      } else {
+        val = commercialTableRowControllers[field.customFieldId!]?.text ?? '';
+      }
+      clonedField.datavalue = val;
+
+      final vId = virtualIdCounter--;
+      virtualToRealCommercialFieldId[vId] = field.customFieldId!;
+      clonedField.customFieldId = vId;
+      _selectedCommercialFields.add(clonedField);
+    }
+    
+    for (var controller in commercialTableRowControllers.values) {
+      controller.clear();
+    }
+    commercialTableRowDropdowns.clear();
+    notifyListeners();
+  }
+
+  void deleteCommercialTableRow(int rowIndex) {
+    var rows = commercialTableRows;
+    if (rowIndex >= 0 && rowIndex < rows.length) {
+      var rowToDelete = rows[rowIndex];
+      for (var field in rowToDelete.values) {
+        _selectedCommercialFields.remove(field);
+      }
+      notifyListeners();
+    }
+  }
+
+  void editCommercialTableRow(int rowIndex) {
+    var rows = commercialTableRows;
+    if (rowIndex >= 0 && rowIndex < rows.length) {
+      var rowToEdit = rows[rowIndex];
+      
+      for (var field in _commercialCustomFields) {
+        int realId = field.customFieldId!;
+        var existingField = rowToEdit[realId];
+        String val = existingField?.datavalue ?? '';
+        
+        if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
+          commercialTableRowDropdowns[realId] = val;
+        } else {
+          getCommercialTableRowController(realId).text = val;
+        }
+      }
+      
+      for (var field in rowToEdit.values) {
+        _selectedCommercialFields.remove(field);
+      }
+      notifyListeners();
+    }
+  }
+
   Map<int, int> virtualToRealCommercialFieldId = {};
   String customerId = '0';
   String _selectedTaskTypeName = '';
@@ -2898,11 +3007,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "ScopeOfWorkItems": scopeOfWorkItems.map((e) => e.toJson()).toList(),
         "customFields": [
           ...?customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
-          ...?customFieldCommercialKey.currentState?.getFieldValuesAsJson().map((json) {
-            int vId = json['custom_field_id'];
+          ..._selectedCommercialFields.map((field) {
+            int vId = field.customFieldId!;
             return {
               "custom_field_id": virtualToRealCommercialFieldId[vId] ?? vId,
-              "value": json['value']
+              "value": field.datavalue ?? ''
             };
           }),
         ],
