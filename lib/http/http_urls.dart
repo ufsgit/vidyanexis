@@ -432,4 +432,5 @@ class HttpUrls {
       "lead/Get_Target_Enquiry_Source";
   static String deleteTargetEnquirySource =
       "lead/Delete_Target_Enquiry_Source";
+  static String saveRegistrationDate = "lead/Save_Registration_Date";
 }

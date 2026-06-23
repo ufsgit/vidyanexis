@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
@@ -200,6 +201,69 @@ class _LeadDataPageState extends State<LeadDataPage> {
       return DateFormat('dd MMM yyyy').format(date);
     } catch (e) {
       return '';
+    }
+  }
+
+  Future<void> _selectRegistrationDate(
+      BuildContext context, SearchLeadModel lead) async {
+    DateTime initialDate =
+        DateTime.tryParse(lead.registeredDate) ?? DateTime.now();
+
+    // Safety check for initialDate range: it must be between 1900 and 2100.
+    if (initialDate.year < 1900 || initialDate.year > 2100) {
+      initialDate = DateTime.now();
+    }
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null && mounted) {
+      final formattedDate = DateFormat('yyyy-MM-dd').format(picked);
+
+      try {
+        Loader.showLoader(context, message: "Saving Date...");
+
+        final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveRegistrationDate,
+          bodyData: {
+            'Customer_Id': lead.customerId,
+            'Registration_Date': formattedDate,
+          },
+        );
+
+        if (mounted) {
+          Loader.stopLoader(context);
+        }
+
+        if (response?.statusCode == 200) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Registration Date updated successfully')),
+            );
+            _fetchLeads();
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      'Failed to update: ${response?.statusMessage ?? "Unknown error"}')),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          Loader.stopLoader(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      }
     }
   }
 
@@ -645,7 +709,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                       // Fixed columns section
                                       SizedBox(
                                         width: widget.source == 'Closed_Leads'
-                                            ? 710
+                                            ? 740
                                             : 600,
                                         child: Column(
                                           mainAxisAlignment:
@@ -731,7 +795,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                   if (widget.source ==
                                                       'Closed_Leads')
                                                     const TableWidget(
-                                                        width: 110,
+                                                        width: 140,
                                                         padding: EdgeInsets
                                                             .symmetric(
                                                                 vertical: 6.0,
@@ -949,22 +1013,51 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         6.0,
                                                                     horizontal:
                                                                         8.0),
-                                                                width: 110,
-                                                                data: Align(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  child: Text(
-                                                                    _formatDateSafely(
-                                                                        lead.registeredDate),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                    style: const TextStyle(
-                                                                        fontSize:
-                                                                            12),
-                                                                  ),
+                                                                width: 140,
+                                                                data: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          Align(
+                                                                        alignment:
+                                                                            Alignment.centerLeft,
+                                                                        child:
+                                                                            Text(
+                                                                          _formatDateSafely(
+                                                                              lead.registeredDate),
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          maxLines:
+                                                                              1,
+                                                                          style:
+                                                                              const TextStyle(fontSize: 12),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    GestureDetector(
+                                                                      onTap: () => _selectRegistrationDate(
+                                                                          context,
+                                                                          lead),
+                                                                      child:
+                                                                          const Icon(
+                                                                        Icons
+                                                                            .edit_calendar,
+                                                                        size:
+                                                                            22,
+                                                                        color: Colors
+                                                                            .blue,
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             TableWidget(
