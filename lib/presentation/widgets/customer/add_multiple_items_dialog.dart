@@ -251,6 +251,8 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
           itemId: mainItem.itemId,
           itemName: mainItem.itemName,
           quantity: mainQty,
+          make: mainItem.hsnCode,
+          unitName: mainItem.unitName,
           materials: materials,
         ));
       }
