@@ -181,8 +181,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<AddedMultiItem> _multiItems = [];
   List<AddedMultiItem> get multiItems => _multiItems;
 
+  double _mutipleItemsTotalAmount = 0.0;
+  double get mutipleItemsTotalAmount => _mutipleItemsTotalAmount;
+  set mutipleItemsTotalAmount(double value) {
+    _mutipleItemsTotalAmount = value;
+    notifyListeners();
+  }
+
   void clearMultiItems() {
     _multiItems.clear();
+    _mutipleItemsTotalAmount = 0.0;
     notifyListeners();
   }
 
@@ -470,6 +478,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController(text: '200');
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
+  TextEditingController feasibilityFeeThreeController = TextEditingController();
+  TextEditingController registrationFeeThreeController =
+      TextEditingController();
 
   // when qutaion item is tick in company
   TextEditingController newItemNameController = TextEditingController();
@@ -1895,6 +1906,64 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  void moveBillOfMaterialsItemUp(int index) {
+    if (index > 0 && index < _billOfMaterialsItems.length) {
+      final item = _billOfMaterialsItems.removeAt(index);
+      _billOfMaterialsItems.insert(index - 1, item);
+      final settingsProvider = SettingsProvider();
+      if (settingsProvider.quotationItem == 1) {
+        recalculateCompanyQuotationItem();
+      }
+      notifyListeners();
+    }
+  }
+
+  void moveBillOfMaterialsItemDown(int index) {
+    if (index >= 0 && index < _billOfMaterialsItems.length - 1) {
+      final item = _billOfMaterialsItems.removeAt(index);
+      _billOfMaterialsItems.insert(index + 1, item);
+      final settingsProvider = SettingsProvider();
+      if (settingsProvider.quotationItem == 1) {
+        recalculateCompanyQuotationItem();
+      }
+      notifyListeners();
+    }
+  }
+
+  void moveItemUp(int index) {
+    if (index > 0 && index < _items.length) {
+      final item = _items.removeAt(index);
+      _items.insert(index - 1, item);
+      updateSubtotal();
+      notifyListeners();
+    }
+  }
+
+  void moveItemDown(int index) {
+    if (index >= 0 && index < _items.length - 1) {
+      final item = _items.removeAt(index);
+      _items.insert(index + 1, item);
+      updateSubtotal();
+      notifyListeners();
+    }
+  }
+
+  void moveStructureMaterialUp(int index) {
+    if (index > 0 && index < _structureMaterialsItems.length) {
+      final item = _structureMaterialsItems.removeAt(index);
+      _structureMaterialsItems.insert(index - 1, item);
+      notifyListeners();
+    }
+  }
+
+  void moveStructureMaterialDown(int index) {
+    if (index >= 0 && index < _structureMaterialsItems.length - 1) {
+      final item = _structureMaterialsItems.removeAt(index);
+      _structureMaterialsItems.insert(index + 1, item);
+      notifyListeners();
+    }
+  }
+
   Future<void> saveStructureMaterials(
       String quotationId, BuildContext context) async {
     try {
@@ -2844,6 +2913,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Profit_Amount": profitController.text.toString(),
         "Is_Profit_Percentage": isPercentage ? "1" : "0",
         "Multiple_Item_Material": _multiItems.map((e) => e.toJson()).toList(),
+        "Multiple_Items_TotalAmount": _mutipleItemsTotalAmount,
+        "KSEB_Feasibility_Study_Fees_3Phase":
+            double.tryParse(feasibilityFeeThreeController.text) ?? 0.0,
+        "KSEB_Registration_Fees_3Phase":
+            double.tryParse(registrationFeeThreeController.text) ?? 0.0,
       });
 
       if (response!.statusCode == 200) {
@@ -3034,6 +3108,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     profitController.clear();
     isPercentage = false;
     clearMultiItems();
+    feasibilityFeeThreeController.clear();
+    registrationFeeThreeController.clear();
     notifyListeners();
   }
 
@@ -4639,6 +4715,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     profitController.text = quotation.profit;
     isPercentage = quotation.isProfitPercentage == "1";
     _multiItems = quotation.multiItems;
+    _mutipleItemsTotalAmount = quotation.multipleItemsTotalAmount;
 
     // String nameOfItem = '';
     // if (quotation.quotationTypeId == 1 && quotation.quotationDetails.isNotEmpty) {
@@ -4684,6 +4761,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     systemPriceController.text = quotation.ksebSystemPrice.toString();
     additionalStructureController.text =
         quotation.additionalStructure.toString();
+    feasibilityFeeThreeController.text =
+        quotation.ksebFeasibilityFeeThreePhase.toString();
+    registrationFeeThreeController.text =
+        quotation.ksebRegistrationFeeThreePhase.toString();
 
     // ---- TOTALS ----
     subtotalController.text = quotation.totalAmount.toString();

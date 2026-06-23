@@ -422,6 +422,43 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                                 ),
                                               ),
                                               TextButton(
+                                                onPressed: index > 0
+                                                    ? () =>
+                                                        customerDetailsProvider
+                                                            .moveItemUp(index)
+                                                    : null,
+                                                child: Text(
+                                                  'Move Up',
+                                                  style: TextStyle(
+                                                    color: index > 0
+                                                        ? Colors.blue[400]
+                                                        : Colors.grey,
+                                                  ),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: index <
+                                                        customerDetailsProvider
+                                                                .items.length -
+                                                            1
+                                                    ? () =>
+                                                        customerDetailsProvider
+                                                            .moveItemDown(index)
+                                                    : null,
+                                                child: Text(
+                                                  'Move Down',
+                                                  style: TextStyle(
+                                                    color: index <
+                                                            customerDetailsProvider
+                                                                    .items
+                                                                    .length -
+                                                                1
+                                                        ? Colors.blue[400]
+                                                        : Colors.grey,
+                                                  ),
+                                                ),
+                                              ),
+                                              TextButton(
                                                 onPressed: () =>
                                                     customerDetailsProvider
                                                         .deleteItem(index),
@@ -468,6 +505,17 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                             customerDetailsProvider
                                                 .deleteItem(index);
                                           },
+                                          onMoveUp: index > 0
+                                              ? () => customerDetailsProvider
+                                                  .moveItemUp(index)
+                                              : null,
+                                          onMoveDown: index <
+                                                  customerDetailsProvider
+                                                          .items.length -
+                                                      1
+                                              ? () => customerDetailsProvider
+                                                  .moveItemDown(index)
+                                              : null,
                                         );
                                       },
                                     ),
@@ -1338,6 +1386,17 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                         EditBomItemDialog(index: index),
                                   );
                                 },
+                                onMoveUp: index > 0
+                                    ? () => customerDetailsProvider
+                                        .moveBillOfMaterialsItemUp(index)
+                                    : null,
+                                onMoveDown: index <
+                                        customerDetailsProvider
+                                                .billOfMaterialsItems.length -
+                                            1
+                                    ? () => customerDetailsProvider
+                                        .moveBillOfMaterialsItemDown(index)
+                                    : null,
                               );
                             },
                           ),

@@ -152,8 +152,21 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
         if (targetStatusId != '0' && targetStatusId != 'null') {
           final transferStatusesData = await settingsProvider
               .getTransferStatusById(context, targetStatusId);
+
           bool transferHasAmount = transferStatusesData.isNotEmpty &&
               transferStatusesData.first.isAmount == 1;
+
+          int? prefillDeptId;
+          String prefillDeptName = '';
+
+          if (transferStatusesData.isNotEmpty &&
+              transferStatusesData.first.departmentId != null &&
+              transferStatusesData.first.departmentId! > 0) {
+            prefillDeptId = transferStatusesData.first.departmentId;
+            prefillDeptName = transferStatusesData.first.departmentName ?? '';
+          }
+
+
           if (mounted) {
             setState(() {
               showTransferStatus =
@@ -170,19 +183,27 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                           .toList() ??
                       []
                   : [];
+
+              // Pre-fill department from transfer status API response
+              if (prefillDeptId != null) {
+                settingsProvider.selectedDepartmentId = prefillDeptId;
+                leadProvider.departmentController.text = prefillDeptName;
+              }
             });
+
+            // Fetch and pre-fill assigned user based on department from API
+            final effectiveDeptId = prefillDeptId ?? settingsProvider.selectedDepartmentId;
+            if (effectiveDeptId != null && effectiveDeptId > 0) {
+              dropDownProvider.fetchAndSetAssignedUser(
+                context: context,
+                leadId: leadProvider.customerId.toString(),
+                branchId: settingsProvider.selectedBranchId,
+                departmentId: effectiveDeptId,
+                leadProvider: leadProvider,
+              );
+            }
           }
         }
-      }
-      if (settingsProvider.selectedDepartmentId != null &&
-          settingsProvider.selectedDepartmentId != 0) {
-        dropDownProvider.fetchAndSetAssignedUser(
-          context: context,
-          leadId: leadProvider.customerId.toString(),
-          branchId: settingsProvider.selectedBranchId,
-          departmentId: settingsProvider.selectedDepartmentId,
-          leadProvider: leadProvider,
-        );
       }
     });
     super.initState();
@@ -536,6 +557,16 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                         (transferStatusesData.isNotEmpty &&
                             transferStatusesData.first.isAmount == 1);
 
+                // Extract department info before setState so we can use it outside
+                int? prefillDeptId;
+                String prefillDeptName = '';
+                if (transferStatusesData.isNotEmpty &&
+                    transferStatusesData.first.departmentId != null &&
+                    transferStatusesData.first.departmentId! > 0) {
+                  prefillDeptId = transferStatusesData.first.departmentId;
+                  prefillDeptName = transferStatusesData.first.departmentName ?? '';
+                }
+
                 if (mounted) {
                   setState(() {
                     showAmountForMain = mainHasAmount;
@@ -556,9 +587,28 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                                 .toList() ??
                             []
                         : [];
+
+                    // Pre-fill department from transfer status API response
+                    if (prefillDeptId != null) {
+                      settingsProvider.selectedDepartmentId = prefillDeptId;
+                      leadProvider.departmentController.text = prefillDeptName;
+                    }
                   });
+
+                  // Fetch and pre-fill assigned user after department is set
+                  final effectiveDeptId = prefillDeptId ?? settingsProvider.selectedDepartmentId;
+                  if (effectiveDeptId != null && effectiveDeptId > 0) {
+                    dropDownProvider.fetchAndSetAssignedUser(
+                      context: context,
+                      leadId: leadProvider.customerId.toString(),
+                      branchId: settingsProvider.selectedBranchId,
+                      departmentId: effectiveDeptId,
+                      leadProvider: leadProvider,
+                    );
+                  }
                 }
               }
+
             },
 
             // ✅ Only set value if it exists EXACTLY ONCE

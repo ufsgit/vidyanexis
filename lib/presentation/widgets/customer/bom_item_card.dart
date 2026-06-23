@@ -11,12 +11,16 @@ class BomItemCard extends StatefulWidget {
   final BillOfMaterialItem item;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
+  final VoidCallback? onMoveUp;
+  final VoidCallback? onMoveDown;
 
   const BomItemCard({
     super.key,
     required this.item,
     required this.onDelete,
     required this.onEdit,
+    this.onMoveUp,
+    this.onMoveDown,
   });
 
   @override
@@ -145,18 +149,52 @@ class _BomItemCardState extends State<BomItemCard> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      _showDeleteConfirmation(context);
-                    },
-                    child: Text(
-                      'Delete',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textRed,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (widget.onMoveUp != null || widget.onMoveDown != null) ...[
+                        GestureDetector(
+                          onTap: widget.onMoveUp,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Icon(
+                              Icons.arrow_upward_rounded,
+                              size: 20,
+                              color: widget.onMoveUp != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: widget.onMoveDown,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Icon(
+                              Icons.arrow_downward_rounded,
+                              size: 20,
+                              color: widget.onMoveDown != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      GestureDetector(
+                        onTap: () {
+                          _showDeleteConfirmation(context);
+                        },
+                        child: Text(
+                          'Delete',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textRed,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

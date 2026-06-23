@@ -31,6 +31,8 @@ class GetQuotationbyMasterIdmodel {
   final String ksebFeasibilityFee;
   final String additionalStructure;
   final String ksebSystemPrice;
+  final String ksebRegistrationFeeThreePhase;
+  final String ksebFeasibilityFeeThreePhase;
 
   final String isConfirm;
   final String? orderNo;
@@ -97,6 +99,7 @@ class GetQuotationbyMasterIdmodel {
   final String profit;
   final String isProfitPercentage;
   final List<AddedMultiItem> multiItems;
+  final double multipleItemsTotalAmount;
 
   GetQuotationbyMasterIdmodel({
     required this.quotationMasterId,
@@ -120,6 +123,8 @@ class GetQuotationbyMasterIdmodel {
     required this.ksebFeasibilityFee,
     required this.additionalStructure,
     required this.ksebSystemPrice,
+    required this.ksebFeasibilityFeeThreePhase,
+    required this.ksebRegistrationFeeThreePhase,
     required this.isConfirm,
     this.orderNo,
     this.orderDate,
@@ -180,6 +185,7 @@ class GetQuotationbyMasterIdmodel {
     this.profit = "0",
     this.isProfitPercentage = "0",
     this.multiItems = const [],
+    this.multipleItemsTotalAmount = 0.0,
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -284,6 +290,12 @@ class GetQuotationbyMasterIdmodel {
       multiItems: (json['Multiple_Item_Material'] as List? ?? [])
           .map((e) => AddedMultiItem.fromJson(e))
           .toList(),
+      multipleItemsTotalAmount:
+          toDouble(json['Multiple_Items_TotalAmount'] ?? 0.0),
+      ksebFeasibilityFeeThreePhase:
+          toStr(json['KSEB_Feasibility_Study_Fees_3Phase'] ?? "0.0"),
+      ksebRegistrationFeeThreePhase:
+          toStr(json['KSEB_Registration_Fees_3Phase'] ?? "0.0"),
     );
   }
 }
