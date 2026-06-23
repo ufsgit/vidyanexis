@@ -29,6 +29,7 @@ import 'package:vidyanexis/presentation/pages/settings/source_category_page.dart
 import 'package:vidyanexis/presentation/pages/settings/stage_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/task_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/user_content_page.dart';
+import 'package:vidyanexis/presentation/pages/settings/target_enquiry_source_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -942,6 +943,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         return const FormContent();
       case 'Campaign':
         return const CampaignContent();
+      case 'Target Enquiry Source':
+        return const TargetEnquirySourcePage();
       default:
         return const SizedBox.shrink();
     }
@@ -1002,6 +1005,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         _buildMenuItem(context, 'Forms', Icons.format_list_bulleted,
             isMobile: isMobile),
       _buildMenuItem(context, 'Campaign', Icons.campaign, isMobile: isMobile),
+      if (settingsProvider.menuIsViewMap[155].toString() == '1')
+        _buildMenuItem(context, 'Target Enquiry Source', Icons.track_changes,
+            isMobile: isMobile),
     ];
   }
 }
