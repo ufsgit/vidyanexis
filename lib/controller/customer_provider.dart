@@ -70,7 +70,7 @@ class CustomerProvider extends ChangeNotifier {
   String get fromDateS => _fromDateS;
   String get toDateS => _toDateS;
   String get status => _status;
-  
+
   String _entryType = 'myown';
   String get entryType => _entryType;
   void setEntryType(String value) {
@@ -80,7 +80,8 @@ class CustomerProvider extends ChangeNotifier {
 
   int? expandedIndex;
 
-  int _selectedSortOption = 0; // 0: Default, 1: ID, 2: Creation Date, 3: Followup Date
+  int _selectedSortOption =
+      0; // 0: Default, 1: ID, 2: Creation Date, 3: Followup Date
   int get selectedSortOption => _selectedSortOption;
 
   String _sortOrder = 'DESC'; // ASC or DESC

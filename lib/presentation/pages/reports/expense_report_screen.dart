@@ -875,8 +875,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                             title,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
-                              fontWeight:
-                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               color: isSelected
                                   ? Colors.white
                                   : const Color(0xFF475569),
@@ -907,7 +908,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => reportsProvider.selectDate(contextx, true),
+                            onTap: () =>
+                                reportsProvider.selectDate(contextx, true),
                             style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
@@ -930,8 +932,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month,
-                                  size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),
@@ -939,7 +941,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => reportsProvider.selectDate(contextx, false),
+                            onTap: () =>
+                                reportsProvider.selectDate(contextx, false),
                             style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
@@ -962,8 +965,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month,
-                                  size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),

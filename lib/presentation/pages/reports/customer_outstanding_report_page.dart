@@ -105,50 +105,58 @@ class _CustomerOutstandingReportPageState
                     ),
                     const Spacer(),
                     Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (val) => provider.getReport(context),
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () { provider.getReport(context); },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                      width: 280,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: searchController,
+                        focusNode: searchFocusNodeWeb,
+                        textAlignVertical: TextAlignVertical.center,
+                        onTap: () {
+                          Future.microtask(() {
+                            if (searchController.text.isNotEmpty &&
+                                searchController.selection.baseOffset == 0 &&
+                                searchController.selection.extentOffset ==
+                                    searchController.text.length) {
+                              searchController.selection =
+                                  TextSelection.collapsed(
+                                      offset: searchController.text.length);
+                            }
+                          });
+                        },
+                        onSubmitted: (val) => provider.getReport(context),
+                        decoration: InputDecoration(
+                          hintText: 'Search here....',
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            color: const Color(0xFF94A3B8),
+                            fontSize: 13,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              provider.getReport(context);
+                            },
+                            child: const Icon(Icons.search,
+                                color: Color(0xFF64748B), size: 18),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     CustomFilterButton(
                       onPressed: () => provider.toggleFilter(),
@@ -568,8 +576,9 @@ class _CustomerOutstandingReportPageState
                             title,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
-                              fontWeight:
-                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               color: isSelected
                                   ? Colors.white
                                   : const Color(0xFF475569),
@@ -623,8 +632,8 @@ class _CustomerOutstandingReportPageState
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month,
-                                  size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),
@@ -655,8 +664,8 @@ class _CustomerOutstandingReportPageState
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month,
-                                  size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),

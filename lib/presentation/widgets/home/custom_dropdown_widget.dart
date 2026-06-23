@@ -69,24 +69,26 @@ class CommonDropdown<T> extends StatelessWidget {
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
-            label: labelWidget ?? RichText(
-              text: TextSpan(
-                text: hintText.replaceAll('*', ''),
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textGrey4,
-                ),
-                children: <TextSpan>[
-                  if (hasAsterisk)
-                    const TextSpan(
-                      text: ' *',
-                      style: TextStyle(color: Colors.red),
+            label: labelWidget ??
+                RichText(
+                  text: TextSpan(
+                    text: hintText.replaceAll('*', ''),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textGrey4,
                     ),
-                ],
-              ),
-            ),
-            floatingLabelBehavior: floatingLabelBehavior ?? FloatingLabelBehavior.auto,
+                    children: <TextSpan>[
+                      if (hasAsterisk)
+                        const TextSpan(
+                          text: ' *',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                    ],
+                  ),
+                ),
+            floatingLabelBehavior:
+                floatingLabelBehavior ?? FloatingLabelBehavior.auto,
             floatingLabelStyle: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w500,

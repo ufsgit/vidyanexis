@@ -85,7 +85,6 @@ class _CustomFieldState extends State<CustomField> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Container(
                     decoration: BoxDecoration(
                       color: AppColors.surfaceGrey,
@@ -120,8 +119,7 @@ class _CustomFieldState extends State<CustomField> {
                                         horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
                                         color: AppColors.surfaceGrey,
-                                        borderRadius:
-                                            BorderRadius.circular(4)),
+                                        borderRadius: BorderRadius.circular(4)),
                                     child: Text(
                                       fieldModel.customFieldName.toString(),
                                       style: GoogleFonts.plusJakartaSans(

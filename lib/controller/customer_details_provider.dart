@@ -107,6 +107,18 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool get isLoadingQuotationCustomFields => _isLoadingQuotationCustomFields;
   List<CustomFieldByStatusId> _customFieldQuotation = [];
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
+  
+  List<CustomFieldByStatusId> _commercialCustomFields = [];
+  List<CustomFieldByStatusId> get commercialCustomFields => _commercialCustomFields;
+
+  List<CustomFieldByStatusId> _selectedCommercialFields = [];
+  List<CustomFieldByStatusId> get selectedCommercialFields => _selectedCommercialFields;
+  set selectedCommercialFields(List<CustomFieldByStatusId> value) {
+    _selectedCommercialFields = value;
+    notifyListeners();
+  }
+
+  Map<int, int> virtualToRealCommercialFieldId = {};
   String customerId = '0';
   String _selectedTaskTypeName = '';
 
@@ -1120,6 +1132,45 @@ class CustomerDetailsProvider extends ChangeNotifier {
           .showSnackBar(const SnackBar(content: Text('An error occurred')));
     } finally {
       _isLoadingQuotationCustomFields = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getCommercialCustomFieldsApi(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getCommercialCustomFields);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<dynamic> fieldsData = [];
+          if (data is Map<String, dynamic> && data.containsKey('data')) {
+            fieldsData = data['data'] as List<dynamic>;
+          } else if (data is List) {
+            fieldsData = data;
+          }
+          
+          if (fieldsData.isNotEmpty) {
+            _commercialCustomFields = fieldsData
+                .map((e) => CustomFieldByStatusId.fromJson(e))
+                .toList();
+          } else {
+            _commercialCustomFields = [];
+          }
+        } else {
+          _commercialCustomFields = [];
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Error fetching commercial custom fields: $e');
+      _commercialCustomFields = [];
+    } finally {
       notifyListeners();
     }
   }
@@ -2745,6 +2796,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         //
         "QuotationTypeId": _selectedQuotationType,
         "QuotationTypeName": quotationTypeController.text,
+        "Commercial_Description": commercialDescriptionController.text.toString(),
         "CommercialItems": _commercialItems.map((e) => e.toJson()).toList(),
         "CableStructure": cableStructureController.text,
         "CableType": cableTypeController.text,
@@ -2775,8 +2827,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Shipping_Charges":
             double.tryParse(shippingChargesController.text) ?? 0.0,
         "ScopeOfWorkItems": scopeOfWorkItems.map((e) => e.toJson()).toList(),
-        "customFields":
-            customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
+        "customFields": [
+          ...?customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
+          ...?customFieldCommercialKey.currentState?.getFieldValuesAsJson().map((json) {
+            int vId = json['custom_field_id'];
+            return {
+              "custom_field_id": virtualToRealCommercialFieldId[vId] ?? vId,
+              "value": json['value']
+            };
+          }),
+        ],
         "Description_2": quotationDescription2Controller.text.toString(),
         "Description_3": quotationDescription3Controller.text.toString(),
         "Purchase_Total": _billTotalAmount.toStringAsFixed(2),
@@ -2957,6 +3017,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     clientScopeController.clear();
     _scopeOfWorkItems.clear();
     _customFieldQuotation.clear();
+    _commercialCustomFields.clear();
     customFieldQuotationKey.currentState?.resetForm();
     quotationDescriptionController.clear();
     quotationDescription2Controller.clear();
@@ -4357,13 +4418,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
           endPoint: HttpUrls.loadQuotationFromCustomFields,
           bodyData: {
             "custom_fields":
-                (customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
-                        [])
+                ((customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
+                        []) +
+                    (customFieldCommercialKey.currentState?.getFieldValuesAsJson() ?? []))
                     .where((field) {
               final fieldId = field['custom_field_id'];
               return _customFieldQuotation.any((element) =>
-                  element.customFieldId == fieldId &&
-                  element.isQuotationCustom == 1);
+                      element.customFieldId == fieldId &&
+                      element.isQuotationCustom == 1) ||
+                  _commercialCustomFields.any((element) =>
+                      element.customFieldId == fieldId);
             }).toList(),
             "type": type,
             "quotation_type_id": quotationType
@@ -4700,6 +4764,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
       List<Map<String, dynamic>> masterCustomFields) {
     log('Populating custom fields from master: ${masterCustomFields.length} items');
 
+    _selectedCommercialFields.clear();
+    virtualToRealCommercialFieldId.clear();
+    int virtualIdCounter = -1000;
+
     for (var masterField in masterCustomFields) {
       final fieldId =
           int.tryParse(masterField['custom_field_id']?.toString() ?? '');
@@ -4710,10 +4778,24 @@ class CustomerDetailsProvider extends ChangeNotifier {
         for (var i = 0; i < _customFieldQuotation.length; i++) {
           if (_customFieldQuotation[i].customFieldId == fieldId) {
             _customFieldQuotation[i].datavalue = value;
-            break;
           }
         }
-
+        
+        for (var i = 0; i < _commercialCustomFields.length; i++) {
+          if (_commercialCustomFields[i].customFieldId == fieldId) {
+            // Clone to support duplicates
+            final clonedField = CustomFieldByStatusId.fromJson(_commercialCustomFields[i].toJson());
+            clonedField.datavalue = value;
+            clonedField.isChecked = 1;
+            
+            // Assign virtual ID
+            final vId = virtualIdCounter--;
+            virtualToRealCommercialFieldId[vId] = fieldId;
+            clonedField.customFieldId = vId;
+            
+            _selectedCommercialFields.add(clonedField);
+          }
+        }
         // Update the widget state via its global key if it exists
         customFieldQuotationKey.currentState?.updateFieldValue(fieldId, value);
       }

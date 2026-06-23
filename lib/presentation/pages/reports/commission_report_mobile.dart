@@ -152,15 +152,18 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: ConstrainedBox(
-                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 200),
                                       child: CustomText(
-                                        provider.fromDate == null && provider.toDate == null
+                                        provider.fromDate == null &&
+                                                provider.toDate == null
                                             ? 'Date'
                                             : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
                                         fontSize: 14,
@@ -171,7 +174,8 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                  Icon(Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3, size: 18),
                                 ],
                               ),
                             ),
@@ -197,16 +201,16 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                             provider.setEnquirySourceFilter(0);
                           },
                         ),
-                        ...dropDownProvider.enquiryData.map((e) =>
-                            FilterChipWidget(
-                              label: e.enquirySourceName,
-                              isSelected: provider.selectedEnquirySource ==
-                                  e.enquirySourceId,
-                              onTap: () {
-                                provider.setEnquirySourceFilter(
-                                    e.enquirySourceId);
-                              },
-                            )),
+                        ...dropDownProvider.enquiryData
+                            .map((e) => FilterChipWidget(
+                                  label: e.enquirySourceName,
+                                  isSelected: provider.selectedEnquirySource ==
+                                      e.enquirySourceId,
+                                  onTap: () {
+                                    provider.setEnquirySourceFilter(
+                                        e.enquirySourceId);
+                                  },
+                                )),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -227,15 +231,16 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                             provider.setEnquiryForFilter(0);
                           },
                         ),
-                        ...dropDownProvider.enquiryForList.map((e) =>
-                            FilterChipWidget(
-                              label: e.enquiryForName,
-                              isSelected: provider.selectedEnquiryFor ==
-                                  e.enquiryForId,
-                              onTap: () {
-                                provider.setEnquiryForFilter(e.enquiryForId);
-                              },
-                            )),
+                        ...dropDownProvider.enquiryForList
+                            .map((e) => FilterChipWidget(
+                                  label: e.enquiryForName,
+                                  isSelected: provider.selectedEnquiryFor ==
+                                      e.enquiryForId,
+                                  onTap: () {
+                                    provider
+                                        .setEnquiryForFilter(e.enquiryForId);
+                                  },
+                                )),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -272,7 +277,8 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
           if (!provider.isFilter)
             Expanded(
               child: provider.commissionReport.isEmpty
-                  ? const CommonEmptyState(message: 'No commission reports found')
+                  ? const CommonEmptyState(
+                      message: 'No commission reports found')
                   : Column(
                       children: [
                         CommonReportSummaryBar(
@@ -292,7 +298,8 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                               return ReportListItem(
                                 title: item.customerName,
                                 subtitle: item.contactNumber,
-                                description: 'Source: ${item.enquirySourceName}',
+                                description:
+                                    'Source: ${item.enquirySourceName}',
                                 status: item.statusName,
                                 statusColor: Colors.green,
                                 bottomLeftIcon: Icons.calendar_today_outlined,
@@ -363,7 +370,8 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                   onPressed: () {
                     provider.getCommissionReport(context);
                     provider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -411,7 +419,8 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                               borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.fromDate != null
                               ? provider.formattedFromDate
@@ -426,7 +435,8 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                               borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.toDate != null
                               ? provider.formattedToDate

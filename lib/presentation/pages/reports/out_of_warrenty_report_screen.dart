@@ -95,13 +95,15 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                 reportsProvider.toggleFilter();
               },
               onSearchTap: () {
-                Provider.of<SidebarProvider>(context, listen: false).startSearch();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .startSearch();
                 reportsProvider.toggleFilter();
               },
               onClearTap: () {
                 searchController.clear();
                 reportsProvider.toggleFilter();
-                Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .stopSearch();
                 reportsProvider.setTaskSearchCriteria(
                   '',
                   reportsProvider.fromDateS,
@@ -210,34 +212,38 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                     ),
                     Flexible(child: Container()),
                     Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                      width: 280,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: searchController,
+                        focusNode: searchFocusNodeWeb,
+                        textAlignVertical: TextAlignVertical.center,
+                        onTap: () {
+                          Future.microtask(() {
+                            if (searchController.text.isNotEmpty &&
+                                searchController.selection.baseOffset == 0 &&
+                                searchController.selection.extentOffset ==
+                                    searchController.text.length) {
+                              searchController.selection =
+                                  TextSelection.collapsed(
+                                      offset: searchController.text.length);
+                            }
+                          });
+                        },
+                        onSubmitted: (query) {
                           reportsProvider.setTaskSearchCriteria(
                             query,
                             reportsProvider.fromDateS,
@@ -245,35 +251,36 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                             reportsProvider.Status,
                             reportsProvider.AssignedTo,
                           );
-                          reportsProvider
-                              .getSearchOutOfWarrentyReport(context);
+                          reportsProvider.getSearchOutOfWarrentyReport(context);
                         },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                          reportsProvider.setTaskSearchCriteria(
-                            searchController.text,
-                            reportsProvider.fromDateS,
-                            reportsProvider.toDateS,
-                            reportsProvider.Status,
-                            reportsProvider.AssignedTo,
-                          );
-                          reportsProvider
-                              .getSearchOutOfWarrentyReport(context);
-                        },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                        decoration: InputDecoration(
+                          hintText: 'Search here....',
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            color: const Color(0xFF94A3B8),
+                            fontSize: 13,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              reportsProvider.setTaskSearchCriteria(
+                                searchController.text,
+                                reportsProvider.fromDateS,
+                                reportsProvider.toDateS,
+                                reportsProvider.Status,
+                                reportsProvider.AssignedTo,
+                              );
+                              reportsProvider
+                                  .getSearchOutOfWarrentyReport(context);
+                            },
+                            child: const Icon(Icons.search,
+                                color: Color(0xFF64748B), size: 18),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     CustomFilterButton(
                       onPressed: () {
@@ -308,10 +315,9 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                               'Address': task.address1,
                               'District': task.district,
                               'Company': task.company,
-                              'From Date': task.installationDate
-                                  .toDayMonthYearFormat(),
-                              'To Date':
-                                  task.expiryDate.toDayMonthYearFormat(),
+                              'From Date':
+                                  task.installationDate.toDayMonthYearFormat(),
+                              'To Date': task.expiryDate.toDayMonthYearFormat(),
                             };
                           }).toList(),
                           fileName: 'Out_Of_Warranty_Report',
@@ -320,8 +326,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                       buttonText: 'Export to Excel',
                       textColor: AppColors.whiteColor,
                       borderColor: AppColors.primaryBlue,
-                          backgroundColor: AppColors.primaryBlue,
-                          radius: 4,
+                      backgroundColor: AppColors.primaryBlue,
+                      radius: 4,
                     ),
                   ],
                 ),
@@ -357,15 +363,18 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Flexible(
                                       child: ConstrainedBox(
-                                        constraints: const BoxConstraints(maxWidth: 200),
+                                        constraints:
+                                            const BoxConstraints(maxWidth: 200),
                                         child: CustomText(
-                                          reportsProvider.fromDate == null && reportsProvider.toDate == null
+                                          reportsProvider.fromDate == null &&
+                                                  reportsProvider.toDate == null
                                               ? 'Date'
                                               : 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
                                           fontSize: 14,
@@ -376,7 +385,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                       ),
                                     ),
                                     const SizedBox(width: 4),
-                                    Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                    Icon(Icons.keyboard_arrow_down,
+                                        color: AppColors.textGrey3, size: 18),
                                   ],
                                 ),
                               ),
@@ -407,7 +417,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                 '',
                                 '',
                               );
-                              reportsProvider.getSearchOutOfWarrentyReport(context);
+                              reportsProvider
+                                  .getSearchOutOfWarrentyReport(context);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
@@ -434,17 +445,18 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                         padding: const EdgeInsets.all(16.0),
                         child: Container(
                           decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -457,7 +469,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                   ),
                                   child: const Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         width: 60,
@@ -505,7 +518,9 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                 Expanded(
                                   child: reportsProvider
                                           .outOfWarrentyReport.isEmpty
-                                      ? const CommonEmptyState(message: 'No out of warranty reports found')
+                                      ? const CommonEmptyState(
+                                          message:
+                                              'No out of warranty reports found')
                                       : ListView.builder(
                                           shrinkWrap: true,
                                           physics:
@@ -533,8 +548,10 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                                           vertical: 12.0,
                                                           horizontal: 15.0),
                                                       child: Text(
-                                                          (index + 1).toString(),
-                                                          style: const TextStyle(
+                                                          (index + 1)
+                                                              .toString(),
+                                                          style:
+                                                              const TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                           )),
@@ -548,11 +565,13 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                                             '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
                                                       },
                                                       child: Container(
-                                                        padding: const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 4),
-                                                        decoration: BoxDecoration(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 4),
+                                                        decoration:
+                                                            BoxDecoration(
                                                           color: const Color(
                                                               0xFFE9EDF1),
                                                           borderRadius:
@@ -564,7 +583,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           maxLines: 1,
-                                                          style: const TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
@@ -576,7 +596,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                                   ),
                                                   TableWidget(
                                                       flex: 1,
-                                                      title: item.contactNumber),
+                                                      title:
+                                                          item.contactNumber),
                                                   TableWidget(
                                                     flex: 2,
                                                     data: Tooltip(
@@ -584,8 +605,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                                       child: Text(
                                                         item.address1,
                                                         maxLines: 1,
-                                                        overflow:
-                                                            TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                         style: const TextStyle(
                                                           fontSize: 14,
                                                         ),
@@ -600,7 +621,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                                       title: item.company),
                                                   TableWidget(
                                                       flex: 1,
-                                                      title: item.installationDate
+                                                      title: item
+                                                          .installationDate
                                                           .toDayMonthYearFormat()),
                                                   TableWidget(
                                                       flex: 1,
@@ -622,15 +644,18 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           if (reportsProvider.outOfWarrentyReport.isNotEmpty)
                             CommonReportSummaryBar(
                               totalLabel: 'Total Records',
-                              totalCount: reportsProvider.outOfWarrentyReport.length,
+                              totalCount:
+                                  reportsProvider.outOfWarrentyReport.length,
                               showingLabel: 'Showing',
-                              showingCount: reportsProvider.outOfWarrentyReport.length,
+                              showingCount:
+                                  reportsProvider.outOfWarrentyReport.length,
                             ),
                           Expanded(
                             child: reportsProvider.outOfWarrentyReport.isEmpty
                                 ? Center(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(Icons.assignment_outlined,
                                             size: 64, color: Colors.grey[400]),
@@ -650,9 +675,11 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                     padding: const EdgeInsets.all(16),
                                     separatorBuilder: (context, index) =>
                                         const SizedBox(height: 12),
-                                    itemCount: reportsProvider.outOfWarrentyReport.length,
+                                    itemCount: reportsProvider
+                                        .outOfWarrentyReport.length,
                                     itemBuilder: (context, index) {
-                                      var item = reportsProvider.outOfWarrentyReport[index];
+                                      var item = reportsProvider
+                                          .outOfWarrentyReport[index];
                                       return ReportListItem(
                                         title: item.customerName,
                                         subtitle: item.contactNumber,
@@ -660,10 +687,14 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                                           context.push(
                                               '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
                                         },
-                                        status: 'Expired: ${item.expiryDate.toDayMonthYearFormat()}',
+                                        status:
+                                            'Expired: ${item.expiryDate.toDayMonthYearFormat()}',
                                         statusColor: AppColors.textRed,
-                                        description: '${item.address1} ${item.district}'.trim(),
-                                        bottomLeftIcon: Icons.medical_services_outlined,
+                                        description:
+                                            '${item.address1} ${item.district}'
+                                                .trim(),
+                                        bottomLeftIcon:
+                                            Icons.medical_services_outlined,
                                         bottomLeftText: 'Warranty',
                                       );
                                     },
@@ -686,7 +717,8 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                   onPressed: () {
                     reportsProvider.getSearchOutOfWarrentyReport(context);
                     reportsProvider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -828,13 +860,14 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           reportsProvider.getSearchOutOfWarrentyReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -865,7 +898,9 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           );
                           reportsProvider.getSearchOutOfWarrentyReport(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

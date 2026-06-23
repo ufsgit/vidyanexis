@@ -283,15 +283,15 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Flexible(
                                       child: ConstrainedBox(
-                                        constraints: const BoxConstraints(
-                                            maxWidth: 200),
+                                        constraints:
+                                            const BoxConstraints(maxWidth: 200),
                                         child: CustomText(
                                           reportsProvider.fromDate == null &&
                                                   reportsProvider.toDate == null
@@ -423,69 +423,70 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
             if (!reportsProvider.isFilter)
               Expanded(
                 child: reportsProvider.taskReport.isEmpty
-                  ? const CommonEmptyState(message: 'No task reports found')
-                  : SingleChildScrollView(
-                      controller: scrollController,
-                      child: Column(
-                        children: [
-                          ListView.separated(
-                            separatorBuilder: (context, index) {
-                              return Divider(
-                                height: 1,
-                                color: AppColors.grey.withOpacity(0.5),
-                              );
-                            },
-                            itemCount: reportsProvider.taskReport.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              final task = reportsProvider.taskReport[index];
+                    ? const CommonEmptyState(message: 'No task reports found')
+                    : SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          children: [
+                            ListView.separated(
+                              separatorBuilder: (context, index) {
+                                return Divider(
+                                  height: 1,
+                                  color: AppColors.grey.withOpacity(0.5),
+                                );
+                              },
+                              itemCount: reportsProvider.taskReport.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                final task = reportsProvider.taskReport[index];
 
-                              Color statusColor =
-                                  task.taskStatusName == "Completed"
-                                      ? Colors.green
-                                      : task.taskStatusName == "In Progress"
-                                          ? Colors.orange
-                                          : Colors.red;
+                                Color statusColor =
+                                    task.taskStatusName == "Completed"
+                                        ? Colors.green
+                                        : task.taskStatusName == "In Progress"
+                                            ? Colors.orange
+                                            : Colors.red;
 
-                              return ReportListItem(
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) {
-                                      return TaskDetailsPagePhone(
-                                          taskId: task.taskId.toString(),
-                                          taskMasterId:
-                                              task.taskMasterId.toString(),
-                                          customerId:
-                                              task.customerId.toString());
-                                    },
-                                  ));
-                                },
-                                title: task.taskTypeName,
-                                subtitle: task.customerName,
-                                id: task.taskId.toString(),
-                                status: task.taskStatusName,
-                                statusColor: statusColor,
-                                description: task.description,
-                                bottomLeftIcon: Icons.calendar_month_outlined,
-                                bottomLeftText:
-                                    task.taskDate.toString().toFormattedDate(),
-                                bottomRightText:
-                                    task.entryDate.toString().toTimeAgo(),
-                              );
-                            },
-                          ),
-                          if (isLoadingMore)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
+                                return ReportListItem(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return TaskDetailsPagePhone(
+                                            taskId: task.taskId.toString(),
+                                            taskMasterId:
+                                                task.taskMasterId.toString(),
+                                            customerId:
+                                                task.customerId.toString());
+                                      },
+                                    ));
+                                  },
+                                  title: task.taskTypeName,
+                                  subtitle: task.customerName,
+                                  id: task.taskId.toString(),
+                                  status: task.taskStatusName,
+                                  statusColor: statusColor,
+                                  description: task.description,
+                                  bottomLeftIcon: Icons.calendar_month_outlined,
+                                  bottomLeftText: task.taskDate
+                                      .toString()
+                                      .toFormattedDate(),
+                                  bottomRightText:
+                                      task.entryDate.toString().toTimeAgo(),
+                                );
+                              },
                             ),
-                        ],
+                            if (isLoadingMore)
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
-            ),
+              ),
           ],
         ),
       ),
@@ -659,13 +660,14 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           _refreshData();
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -701,7 +703,9 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           );
                           _refreshData();
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withAlpha(25),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -969,7 +973,9 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                       widget.onApply(_tempSelected);
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
                       backgroundColor: AppColors.primaryBlue,
                       foregroundColor: Colors.white,
                     ),

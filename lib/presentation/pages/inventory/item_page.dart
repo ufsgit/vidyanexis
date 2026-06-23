@@ -52,7 +52,8 @@ class _ItemPageState extends State<ItemPage> {
           child: expenseProvider.itemList.isEmpty
               ? _buildEmptyState()
               : Column(
-                  children: expenseProvider.itemList.asMap().entries.map((entry) {
+                  children:
+                      expenseProvider.itemList.asMap().entries.map((entry) {
                     final i = entry.key;
                     final item = entry.value;
                     return Column(
@@ -85,7 +86,9 @@ class _ItemPageState extends State<ItemPage> {
                         ),
                         if (i < expenseProvider.itemList.length - 1)
                           const Divider(
-                              height: 1, thickness: 1, color: Color(0xFFE2E8F0)),
+                              height: 1,
+                              thickness: 1,
+                              color: Color(0xFFE2E8F0)),
                       ],
                     );
                   }).toList(),
@@ -136,9 +139,12 @@ class _ItemPageState extends State<ItemPage> {
           if (onEdit != null)
             TextButton(
               onPressed: onEdit,
-              style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
                 foregroundColor: const Color(0xFFD97706),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -154,9 +160,12 @@ class _ItemPageState extends State<ItemPage> {
           if (onDelete != null)
             TextButton(
               onPressed: onDelete,
-              style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
                 foregroundColor: Colors.red,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
@@ -184,8 +193,7 @@ class _ItemPageState extends State<ItemPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: const Text('Confirm Delete'),
           content: const Text('Are you sure you want to delete this item?'),
           actions: [
@@ -200,7 +208,8 @@ class _ItemPageState extends State<ItemPage> {
               },
               child: const Text(
                 'Delete',
-                style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
               ),
             ),
           ],

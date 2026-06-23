@@ -70,7 +70,7 @@ class _EnquirySourceReportsScreenState
   Widget build(BuildContext context) {
     final reportsProvider = Provider.of<EnquiryReportProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
-    
+
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.scaffoldColor,
@@ -109,7 +109,8 @@ class _EnquirySourceReportsScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildWebHeader(context, reportsProvider),
-                  if (reportsProvider.isFilter) _buildWebFilterPanel(context, reportsProvider, provider),
+                  if (reportsProvider.isFilter)
+                    _buildWebFilterPanel(context, reportsProvider, provider),
                   _buildWebDataTable(context, reportsProvider),
                 ],
               ),
@@ -229,7 +230,8 @@ class _EnquirySourceReportsScreenState
                           reportsProvider.formattedToDate,
                           (status.statusId ?? 0).toString(),
                           reportsProvider.AssignedTo);
-                      reportsProvider.getSearchTaskReport(widget.userId, context);
+                      reportsProvider.getSearchTaskReport(
+                          widget.userId, context);
                     },
                   );
                 }),
@@ -293,34 +295,36 @@ class _EnquirySourceReportsScreenState
           ),
           Flexible(child: Container()),
           Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+            width: 280,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: searchController,
+              focusNode: searchFocusNodeWeb,
+              textAlignVertical: TextAlignVertical.center,
+              onTap: () {
+                Future.microtask(() {
+                  if (searchController.text.isNotEmpty &&
+                      searchController.selection.baseOffset == 0 &&
+                      searchController.selection.extentOffset ==
+                          searchController.text.length) {
+                    searchController.selection = TextSelection.collapsed(
+                        offset: searchController.text.length);
+                  }
+                });
+              },
+              onSubmitted: (query) {
                 reportsProvider.setTaskSearchCriteria(
                   query,
                   reportsProvider.fromDateS,
@@ -330,31 +334,33 @@ class _EnquirySourceReportsScreenState
                 );
                 reportsProvider.getSearchTaskReport(widget.userId, context);
               },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                reportsProvider.setTaskSearchCriteria(
-                  searchController.text,
-                  reportsProvider.fromDateS,
-                  reportsProvider.toDateS,
-                  reportsProvider.Status,
-                  reportsProvider.AssignedTo,
-                );
-                reportsProvider.getSearchTaskReport(widget.userId, context);
-              },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+              decoration: InputDecoration(
+                hintText: 'Search here....',
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  color: const Color(0xFF94A3B8),
+                  fontSize: 13,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    reportsProvider.setTaskSearchCriteria(
+                      searchController.text,
+                      reportsProvider.fromDateS,
+                      reportsProvider.toDateS,
+                      reportsProvider.Status,
+                      reportsProvider.AssignedTo,
+                    );
+                    reportsProvider.getSearchTaskReport(widget.userId, context);
+                  },
+                  child: const Icon(Icons.search,
+                      color: Color(0xFF64748B), size: 18),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 16),
           CustomFilterButton(
             onPressed: () {
@@ -394,8 +400,8 @@ class _EnquirySourceReportsScreenState
             buttonText: 'Export to Excel',
             textColor: AppColors.whiteColor,
             borderColor: AppColors.primaryBlue,
-                          backgroundColor: AppColors.primaryBlue,
-                          radius: 4,
+            backgroundColor: AppColors.primaryBlue,
+            radius: 4,
           )
         ],
       ),
@@ -408,17 +414,17 @@ class _EnquirySourceReportsScreenState
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Container(
@@ -515,17 +521,17 @@ class _EnquirySourceReportsScreenState
         padding: const EdgeInsets.all(16.0),
         child: Container(
           decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -566,7 +572,9 @@ class _EnquirySourceReportsScreenState
                       TableWidget(
                           flex: 3, title: 'Remark', color: Color(0xFF607185)),
                       TableWidget(
-                          flex: 1, title: 'Entry Date', color: Color(0xFF607185)),
+                          flex: 1,
+                          title: 'Entry Date',
+                          color: Color(0xFF607185)),
                       TableWidget(
                           flex: 1,
                           title: 'Follow Up Date',
@@ -828,13 +836,14 @@ class _EnquirySourceReportsScreenState
                               widget.userId, context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -868,7 +877,9 @@ class _EnquirySourceReportsScreenState
                           reportsProvider.getSearchTaskReport(
                               widget.userId, context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

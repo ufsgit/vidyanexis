@@ -84,7 +84,8 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
                 // For Android, try to save automatically to the Downloads folder
                 try {
                   final fileName = '${widget.title.replaceAll(' ', '_')}.pdf';
-                  final path = await FileDownloader.saveFile(widget.pdfData, fileName);
+                  final path =
+                      await FileDownloader.saveFile(widget.pdfData, fileName);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Downloaded to Downloads folder'),

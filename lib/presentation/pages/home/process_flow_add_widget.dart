@@ -158,7 +158,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CustomElevatedButton(
-                          radius: 4,
+                radius: 4,
                 buttonText: 'Cancel',
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -175,7 +175,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2))
                   : CustomElevatedButton(
-                          radius: 4,
+                      radius: 4,
                       buttonText: 'Save',
                       onPressed: saveData,
                       backgroundColor: AppColors.secondaryBlue,
@@ -317,24 +317,30 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             prefixIcon: Transform.scale(
                               scale: 0.8,
                               child: Checkbox(
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
                                 value: processFlowProvider.showLeadStatus,
                                 onChanged: (value) {
-                                  processFlowProvider.showLeadStatus = value ?? false;
+                                  processFlowProvider.showLeadStatus =
+                                      value ?? false;
                                 },
                               ),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: AppColors.textGrey2, width: 1),
+                              borderSide: BorderSide(
+                                  color: AppColors.textGrey2, width: 1),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(
-                                  color: isWeb ? AppColors.textGrey2 : AppColors.grey,
+                                  color: isWeb
+                                      ? AppColors.textGrey2
+                                      : AppColors.grey,
                                   width: 1),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 16),
                           ),
                           child: const SizedBox(height: 0),
                         );
@@ -529,7 +535,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   final assignStatusButton = TextButton.icon(
                     icon: const Icon(Icons.add_circle_outline, size: 16),
                     label: const Text('Assign Status'),
-                    style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
                       foregroundColor: AppColors.secondaryBlue,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -567,7 +575,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                   children: [
                                     Expanded(child: leadStatusWidget),
                                     const SizedBox(width: 10),
-                                    Expanded(child: Container()),  // remove this to add new fields
+                                    Expanded(
+                                        child:
+                                            Container()), // remove this to add new fields
                                     const SizedBox(width: 10),
                                     Expanded(child: Container()),
                                   ],
@@ -707,7 +717,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           CustomElevatedButton(
-                          radius: 4,
+                            radius: 4,
                             buttonText: isEditingTaskFlow
                                 ? 'Update Task'
                                 : 'Add Task to Flow',
@@ -769,7 +779,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             CustomElevatedButton(
-                          radius: 4,
+                              radius: 4,
                               buttonText:
                                   isEditingMandatoryTask ? 'Update' : "Add",
                               onPressed: _addMandatoryTask,
@@ -1172,7 +1182,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
               ),
               actions: [
                 CustomElevatedButton(
-                          radius: 4,
+                  radius: 4,
                   onPressed: () {
                     Navigator.pop(context); // Close dialog without saving
                   },
@@ -1182,7 +1192,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   textColor: AppColors.secondaryBlue,
                 ),
                 CustomElevatedButton(
-                          radius: 4,
+                  radius: 4,
                   onPressed: () {
                     processFlowProvider.mandatoryTaskModel.statusIds =
                         selectedStatusIds;
@@ -1350,15 +1360,16 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                  borderRadius: BorderRadius.circular(4),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1523,10 +1534,12 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   itemCount: allCustomFields.length,
                   itemBuilder: (context, index) {
                     final field = allCustomFields[index];
-                    final selectedItemIndex = _showCustomFields
-                        .indexWhere((e) => e.customFieldId == field.customFieldId);
+                    final selectedItemIndex = _showCustomFields.indexWhere(
+                        (e) => e.customFieldId == field.customFieldId);
                     bool isSelected = selectedItemIndex != -1;
-                    final selectedItem = isSelected ? _showCustomFields[selectedItemIndex] : null;
+                    final selectedItem = isSelected
+                        ? _showCustomFields[selectedItemIndex]
+                        : null;
 
                     return InkWell(
                       onTap: () {
@@ -1600,7 +1613,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 value: selectedItem.isChecked == 1,
                                 onChanged: (bool? val) {
                                   setStateDialog(() {
-                                    selectedItem.isChecked = (val == true) ? 1 : 0;
+                                    selectedItem.isChecked =
+                                        (val == true) ? 1 : 0;
                                     field.isChecked = (val == true) ? 1 : 0;
                                   });
                                 },

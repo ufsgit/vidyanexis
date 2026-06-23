@@ -4,8 +4,8 @@ class DepartmentCustomFieldMapping {
   final int departmentId;
   final int enquiryForId;
   final String enquiryForName;
-  final List<int> customFieldIds;           // From API
-  List<CustomFieldModel> customFields;      // Resolved full objects
+  final List<int> customFieldIds; // From API
+  List<CustomFieldModel> customFields; // Resolved full objects
 
   DepartmentCustomFieldMapping({
     required this.departmentId,
@@ -17,7 +17,8 @@ class DepartmentCustomFieldMapping {
         customFields = customFields ?? [];
 
   // Factory to handle API response (custom_field_ids)
-  factory DepartmentCustomFieldMapping.fromApi(Map<String, dynamic> json, int deptId) {
+  factory DepartmentCustomFieldMapping.fromApi(
+      Map<String, dynamic> json, int deptId) {
     return DepartmentCustomFieldMapping(
       departmentId: deptId,
       enquiryForId: json['enquiry_for_id'] ?? 0,
@@ -31,7 +32,8 @@ class DepartmentCustomFieldMapping {
     return {
       "enquiry_for_id": enquiryForId,
       "enquiry_for_name": enquiryForName,
-      "custom_field_ids": customFields.map((f) => f.customFieldId ?? 0).toList(),
+      "custom_field_ids":
+          customFields.map((f) => f.customFieldId ?? 0).toList(),
     };
   }
 }

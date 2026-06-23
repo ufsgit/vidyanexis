@@ -74,7 +74,8 @@ class PdfActionHelper {
                           : '${HttpUrls.baseUrl}$pdfUrl';
                       final response = await dio.Dio().get<Uint8List>(
                         fullUrl,
-                        options: dio.Options(responseType: dio.ResponseType.bytes),
+                        options:
+                            dio.Options(responseType: dio.ResponseType.bytes),
                       );
                       bytes = response.data;
                     }
@@ -83,7 +84,8 @@ class PdfActionHelper {
                       Loader.stopLoader(context);
                       await Printing.sharePdf(
                         bytes: bytes,
-                        filename: fileName ?? '${title.replaceAll(' ', '_')}.pdf',
+                        filename:
+                            fileName ?? '${title.replaceAll(' ', '_')}.pdf',
                       );
                     }
                   } catch (e) {
@@ -116,9 +118,8 @@ class PdfActionHelper {
                     }
 
                     if (bytes != null && bytes.isNotEmpty) {
-                      final fileName =
-                          '${title.replaceAll(' ', '_')}.pdf';
-                      
+                      final fileName = '${title.replaceAll(' ', '_')}.pdf';
+
                       if (Platform.isAndroid) {
                         try {
                           await FileDownloader.saveFile(bytes, fileName);
@@ -131,11 +132,13 @@ class PdfActionHelper {
                           );
                         } catch (e) {
                           Loader.stopLoader(context);
-                          await Printing.sharePdf(bytes: bytes, filename: fileName);
+                          await Printing.sharePdf(
+                              bytes: bytes, filename: fileName);
                         }
                       } else {
                         Loader.stopLoader(context);
-                        await Printing.sharePdf(bytes: bytes, filename: fileName);
+                        await Printing.sharePdf(
+                            bytes: bytes, filename: fileName);
                       }
                     } else {
                       Loader.stopLoader(context);
@@ -200,7 +203,8 @@ class PdfActionHelper {
                           : '${HttpUrls.baseUrl}$pdfUrl';
                       final response = await dio.Dio().get<Uint8List>(
                         fullUrl,
-                        options: dio.Options(responseType: dio.ResponseType.bytes),
+                        options:
+                            dio.Options(responseType: dio.ResponseType.bytes),
                       );
                       bytes = response.data;
                     }
@@ -209,7 +213,8 @@ class PdfActionHelper {
                       Loader.stopLoader(context);
                       await Printing.sharePdf(
                         bytes: bytes,
-                        filename: fileName ?? '${title.replaceAll(' ', '_')}.pdf',
+                        filename:
+                            fileName ?? '${title.replaceAll(' ', '_')}.pdf',
                       );
                     }
                   } catch (e) {
@@ -281,4 +286,3 @@ class PdfActionHelper {
     );
   }
 }
-

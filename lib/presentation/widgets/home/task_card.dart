@@ -61,8 +61,6 @@ class _TaskCardState extends State<TaskCard> {
     final mappedEnquiryForName = dropDownProvider.getEnquiryForNameById(
         widget.task.enquiryForId, widget.task.enquiryForName);
 
-
-
     return Column(
       children: [
         InkWell(
@@ -445,7 +443,8 @@ class _TaskCardState extends State<TaskCard> {
     return CustomActionButton(
       imageColor: AppColors.secondaryBlue,
       onTap: () async {
-        final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+        final customerDetailsProvider =
+            Provider.of<CustomerDetailsProvider>(context, listen: false);
         customerDetailsProvider.customerId = widget.task.customerId.toString();
 
         await customerDetailsProvider.getTaskUsers(widget.task.taskMasterId);
@@ -457,11 +456,16 @@ class _TaskCardState extends State<TaskCard> {
           widget.task.taskStatusId,
           widget.task.taskStatusName,
         );
-        customerDetailsProvider.taskDescriptionController.text = widget.task.description.toString();
-        customerDetailsProvider.taskChoosedateController.text = widget.task.taskDate.toString() != 'null' && widget.task.taskDate.toString().isNotEmpty == true
-                ? DateFormat('dd MMM yyyy').format(DateTime.parse(widget.task.taskDate.toString()))
+        customerDetailsProvider.taskDescriptionController.text =
+            widget.task.description.toString();
+        customerDetailsProvider.taskChoosedateController.text =
+            widget.task.taskDate.toString() != 'null' &&
+                    widget.task.taskDate.toString().isNotEmpty == true
+                ? DateFormat('dd MMM yyyy')
+                    .format(DateTime.parse(widget.task.taskDate.toString()))
                 : '';
-        customerDetailsProvider.taskChoosetimeController.text = widget.task.taskTime.toString();
+        customerDetailsProvider.taskChoosetimeController.text =
+            widget.task.taskTime.toString();
 
         customerDetailsProvider.addTaskModel.taskUser = [
           UserInTaskModel(

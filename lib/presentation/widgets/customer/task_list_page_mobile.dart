@@ -99,7 +99,8 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                             color: const Color(0xFF1E293B),
                           ),
                         ),
-                        if (Provider.of<SettingsProvider>(context, listen: false)
+                        if (Provider.of<SettingsProvider>(context,
+                                    listen: false)
                                 .menuIsSaveMap[13] ==
                             1)
                           GestureDetector(
@@ -107,7 +108,8 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                               final customerDetailsProvider =
                                   Provider.of<CustomerDetailsProvider>(context,
                                       listen: false);
-                              customerDetailsProvider.customerId = widget.customerId;
+                              customerDetailsProvider.customerId =
+                                  widget.customerId;
                               customerDetailsProvider.clearTaskDetails();
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
@@ -126,7 +128,8 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                                 borderRadius: BorderRadius.circular(4),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.secondaryBlue.withOpacity(0.3),
+                                    color: AppColors.secondaryBlue
+                                        .withOpacity(0.3),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
@@ -181,39 +184,41 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                                       color: AppColors.grey,
                                     );
                                   },
-                                  itemCount: customerDetailsProvider.taskList.length,
+                                  itemCount:
+                                      customerDetailsProvider.taskList.length,
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index) {
                                     final task =
                                         customerDetailsProvider.taskList[index];
 
-                                    Color statusColor =
-                                        task.taskStatusName == "Completed"
-                                            ? Colors.green
-                                            : task.taskStatusName == "In Progress"
-                                                ? Colors.orange
-                                                : Colors.red;
+                                    Color statusColor = task.taskStatusName ==
+                                            "Completed"
+                                        ? Colors.green
+                                        : task.taskStatusName == "In Progress"
+                                            ? Colors.orange
+                                            : Colors.red;
                                     return InkWell(
                                       onTap: () {
                                         // context.push(
                                         //     '${TaskDetailsPagePhone.route}${task.taskMasterId}/${task.taskId}');
 
-                                        Navigator.push(context, MaterialPageRoute(
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
                                           builder: (context) {
                                             return TaskDetailsPagePhone(
                                                 taskId: task.taskId.toString(),
-                                                taskMasterId:
-                                                    task.taskMasterId.toString(),
-                                                customerId:
-                                                    widget.customerId.toString());
+                                                taskMasterId: task.taskMasterId
+                                                    .toString(),
+                                                customerId: widget.customerId
+                                                    .toString());
                                           },
                                         ));
                                       },
                                       child: Container(
                                         width: MediaQuery.sizeOf(context).width,
-                                        decoration:
-                                            BoxDecoration(color: AppColors.whiteColor),
+                                        decoration: BoxDecoration(
+                                            color: AppColors.whiteColor),
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16, vertical: 12),
@@ -227,8 +232,9 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                                                       decoration: BoxDecoration(
                                                           color: statusColor,
                                                           borderRadius:
-                                                              BorderRadius.circular(
-                                                                  16))),
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      16))),
                                                   const SizedBox(
                                                     width: 8,
                                                   ),
@@ -238,9 +244,11 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                                                       child: Image.asset(
                                                         task.taskTypeId == 1
                                                             ? 'assets/images/icon_site.png'
-                                                            : task.taskTypeId == 2
+                                                            : task.taskTypeId ==
+                                                                    2
                                                                 ? 'assets/images/icon_installation.png'
-                                                                : task.taskTypeId == 3
+                                                                : task.taskTypeId ==
+                                                                        3
                                                                     ? 'assets/images/icon_service.png'
                                                                     : 'assets/images/icon_amc.png',
                                                       )),
@@ -249,36 +257,45 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                                                   ),
                                                   Text(
                                                     task.taskTypeName,
-                                                    style: GoogleFonts.plusJakartaSans(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w500,
-                                                        color: AppColors.textBlack),
+                                                    style: GoogleFonts
+                                                        .plusJakartaSans(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: AppColors
+                                                                .textBlack),
                                                   ),
                                                   const Spacer(),
                                                   Container(
                                                       height: 22,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius.circular(4),
-                                                        color:
-                                                            statusColor.withOpacity(.1),
+                                                            BorderRadius
+                                                                .circular(4),
+                                                        color: statusColor
+                                                            .withOpacity(.1),
                                                       ),
                                                       child: Center(
                                                         child: Padding(
-                                                          padding: const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 10,
-                                                              vertical: 2),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 2),
                                                           child: Text(
                                                             StatusUtils
-                                                                .getDisplayStatus(task
-                                                                    .taskStatusName),
+                                                                .getDisplayStatus(
+                                                                    task.taskStatusName),
                                                             style: GoogleFonts
                                                                 .plusJakartaSans(
-                                                                    fontSize: 12,
+                                                                    fontSize:
+                                                                        12,
                                                                     fontWeight:
-                                                                        FontWeight.w500,
-                                                                    color: statusColor),
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color:
+                                                                        statusColor),
                                                           ),
                                                         ),
                                                       )),
@@ -292,11 +309,15 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                                                 child: Text(
                                                   task.description,
                                                   maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
-                                                      color: AppColors.textGrey3),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: AppColors
+                                                              .textGrey3),
                                                 ),
                                               ),
                                             ],

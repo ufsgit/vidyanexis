@@ -42,7 +42,8 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
 
   Color _getColorForTask(String? taskType) {
     if (taskType == null) return AppColors.secondaryBlue;
-    return _taskColors[taskType] ?? _taskColors.values.elementAt(taskType.hashCode % _taskColors.length);
+    return _taskColors[taskType] ??
+        _taskColors.values.elementAt(taskType.hashCode % _taskColors.length);
   }
 
   int _calculateTotalTasks(List<Department> departments) {
@@ -173,7 +174,9 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: isExpanded ? AppColors.secondaryBlue.withOpacity(0.3) : const Color(0xFFF1F5F9),
+          color: isExpanded
+              ? AppColors.secondaryBlue.withOpacity(0.3)
+              : const Color(0xFFF1F5F9),
         ),
         boxShadow: [
           BoxShadow(
@@ -210,8 +213,8 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
                       color: AppColors.secondaryBlue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Icon(Icons.business_rounded, 
-                      size: 20, color: AppColors.secondaryBlue),
+                    child: const Icon(Icons.business_rounded,
+                        size: 20, color: AppColors.secondaryBlue),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -238,23 +241,26 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
                     ),
                   ),
                   Icon(
-                    isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                    isExpanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
                     color: AppColors.textGrey3,
                   ),
                 ],
               ),
             ),
           ),
-          
+
           // Task List
           if (isExpanded)
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
               child: tasks.isEmpty
-                ? _buildEmptyTasksState()
-                : Column(
-                    children: tasks.map((task) => _buildTaskItem(task)).toList(),
-                  ),
+                  ? _buildEmptyTasksState()
+                  : Column(
+                      children:
+                          tasks.map((task) => _buildTaskItem(task)).toList(),
+                    ),
             ),
         ],
       ),
@@ -295,15 +301,15 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Text(
               task.subTaskCount?.toString() ?? '0',
@@ -340,23 +346,27 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
 
   Widget _buildLoadingState() {
     return Column(
-      children: List.generate(4, (index) => Container(
-        height: 80,
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      )),
+      children: List.generate(
+          4,
+          (index) => Container(
+                height: 80,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2)),
+              )),
     );
   }
 
@@ -367,7 +377,8 @@ class _TaskOverviewTabState extends State<TaskOverviewTab> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.assignment_turned_in_outlined, size: 64, color: AppColors.textGrey2.withOpacity(0.5)),
+          Icon(Icons.assignment_turned_in_outlined,
+              size: 64, color: AppColors.textGrey2.withOpacity(0.5)),
           const SizedBox(height: 16),
           Text(
             message,

@@ -199,15 +199,15 @@ class _ComplaintPageReportsMobileState
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Flexible(
                                       child: ConstrainedBox(
-                                        constraints: const BoxConstraints(
-                                            maxWidth: 200),
+                                        constraints:
+                                            const BoxConstraints(maxWidth: 200),
                                         child: CustomText(
                                           reportsProvider.fromDate == null &&
                                                   reportsProvider.toDate == null
@@ -249,14 +249,15 @@ class _ComplaintPageReportsMobileState
                                 reportsProvider.selectedUser == null,
                             onTap: () => reportsProvider.setUserFilterStatus(0),
                           ),
-                          ...provider.searchUserDetails.map((u) =>
-                              FilterChipWidget(
-                                label: u.userDetailsName ?? 'Unknown',
-                                isSelected: reportsProvider.selectedUser ==
-                                    u.userDetailsId,
-                                onTap: () => reportsProvider
-                                    .setUserFilterStatus(u.userDetailsId ?? 0),
-                              )),
+                          ...provider.searchUserDetails
+                              .map((u) => FilterChipWidget(
+                                    label: u.userDetailsName ?? 'Unknown',
+                                    isSelected: reportsProvider.selectedUser ==
+                                        u.userDetailsId,
+                                    onTap: () =>
+                                        reportsProvider.setUserFilterStatus(
+                                            u.userDetailsId ?? 0),
+                                  )),
                         ],
                       ),
                       const SizedBox(height: 24),
@@ -309,7 +310,8 @@ class _ComplaintPageReportsMobileState
               Expanded(
                 child: !reportsProvider.isLoading &&
                         reportsProvider.serviceReport.isEmpty
-                    ? const CommonEmptyState(message: 'No complaint reports found')
+                    ? const CommonEmptyState(
+                        message: 'No complaint reports found')
                     : ListView.separated(
                         separatorBuilder: (context, index) {
                           return const Divider(
@@ -533,13 +535,14 @@ class _ComplaintPageReportsMobileState
                           reportsProvider.getSearchServiceReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -572,7 +575,9 @@ class _ComplaintPageReportsMobileState
                           );
                           reportsProvider.getSearchServiceReport(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

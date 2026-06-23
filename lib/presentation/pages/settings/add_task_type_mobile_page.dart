@@ -134,8 +134,7 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
 
         settingsProvider
             .toggleConversionCheckbox(widget.taskType?.conversionTask != 0);
-        settingsProvider
-            .toggleLocation(widget.taskType?.locationTracking != 0);
+        settingsProvider.toggleLocation(widget.taskType?.locationTracking != 0);
         settingsProvider
             .toggleCommission(widget.taskType?.commissionNumber != 0);
         settingsProvider
@@ -291,24 +290,21 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
         .toList();
 
     final requestData = {
-      "Task_Type_Id":
-          widget.isEdit ? int.tryParse(widget.editId) ?? 0 : 0,
+      "Task_Type_Id": widget.isEdit ? int.tryParse(widget.editId) ?? 0 : 0,
       "Task_Type_Name": settingsProvider.taskTypeController.text,
       "Task_Type_Color": "",
       "Task_Type_Image": "",
       "Department_Ids": settingsProvider.selectedDepartmentId.toString(),
       "Branch_Ids": "",
       "default_status_id": settingsProvider.selectedDefaultStatusId,
-      "Duration":
-          int.tryParse(settingsProvider.durationController.text) ?? 0,
+      "Duration": int.tryParse(settingsProvider.durationController.text) ?? 0,
       "Description": settingsProvider.taskTypeDescriptionController.text,
       "task_type_status": taskTypeStatus,
       "Is_Active": settingsProvider.isConversionChecked ? 1 : 0,
       "Location_Tracking": settingsProvider.isLocationTracking ? 1 : 0,
       "Commission_Number": settingsProvider.isCommissionChecked ? 1 : 0,
       "Manual_Creation": settingsProvider.isManualCreation ? 1 : 0,
-      "order_by":
-          int.tryParse(settingsProvider.orderByController.text) ?? 0,
+      "order_by": int.tryParse(settingsProvider.orderByController.text) ?? 0,
       "Enquiry_For_Ids": enquiryForList,
       "Enquiry_For_Visible": settingsProvider.isEnquiryForVisible ? 1 : 0,
     };
@@ -490,8 +486,7 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
                         _CheckRow(
                           label: 'Location Tracking',
                           value: settingsProvider.isLocationTracking,
-                          onChanged: (v) =>
-                              settingsProvider.toggleLocation(v!),
+                          onChanged: (v) => settingsProvider.toggleLocation(v!),
                         ),
                         _CheckRow(
                           label: 'Amount',
@@ -610,8 +605,8 @@ class _AddTaskTypeMobilePageState extends State<AddTaskTypeMobilePage> {
                               ? const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 24),
                                   child: Center(
-                                      child:
-                                          Text('No enquiry for data available')),
+                                      child: Text(
+                                          'No enquiry for data available')),
                                 )
                               : ListView.builder(
                                   shrinkWrap: true,
@@ -824,10 +819,8 @@ class _StatusRow extends StatelessWidget {
               name,
               style: TextStyle(
                 fontSize: 14,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.w400,
-                color:
-                    isSelected ? const Color(0xFF1E232C) : Colors.grey[700],
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected ? const Color(0xFF1E232C) : Colors.grey[700],
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

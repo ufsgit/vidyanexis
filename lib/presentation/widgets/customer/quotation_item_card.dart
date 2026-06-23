@@ -74,7 +74,8 @@ class QuotationItemCard extends StatelessWidget {
                 'Unit Price', '₹${item.UnitPrice.toStringAsFixed(2)}'),
             if (item.priceRangeFrom != null && item.priceRangeTo != null) ...[
               const SizedBox(height: 8),
-              _buildDetailRow('Price Range', '₹${item.priceRangeFrom} - ₹${item.priceRangeTo}'),
+              _buildDetailRow('Price Range',
+                  '₹${item.priceRangeFrom} - ₹${item.priceRangeTo}'),
             ],
             const SizedBox(height: 8),
             _buildDetailRow('GST', '₹${item.GST.toStringAsFixed(2)}'),

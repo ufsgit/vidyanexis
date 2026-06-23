@@ -17,7 +17,8 @@ class SalesReportModel {
     required this.totalAmount,
   });
 
-  factory SalesReportModel.fromJson(Map<String, dynamic> json) => SalesReportModel(
+  factory SalesReportModel.fromJson(Map<String, dynamic> json) =>
+      SalesReportModel(
         customerName: json["Customer_Name"]?.toString() ?? "",
         enquiryFor: json["Enquiry_For"]?.toString() ?? "",
         date: json["Date"]?.toString() ?? "",

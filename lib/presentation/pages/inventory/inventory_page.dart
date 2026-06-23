@@ -35,7 +35,8 @@ class InventoryPage extends StatefulWidget {
 }
 
 class _InventoryPageState extends State<InventoryPage> {
-  final TextEditingController _purchaseSearchController = TextEditingController();
+  final TextEditingController _purchaseSearchController =
+      TextEditingController();
   final TextEditingController _salesSearchController = TextEditingController();
 
   @override
@@ -58,17 +59,15 @@ class _InventoryPageState extends State<InventoryPage> {
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
-
       drawer: isMobile ? const SidebarDrawer() : null,
-
-
       body: isMobile
           ? _buildMobileLayout(expenseProvider, settingsProvider)
           : _buildDesktopLayout(expenseProvider, settingsProvider),
     );
   }
 
-  Widget _buildMobileLayout(ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
+  Widget _buildMobileLayout(
+      ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
     final List<String> menuItems = _getMenuItems(settingsProvider);
     return Column(
       children: [
@@ -140,7 +139,8 @@ class _InventoryPageState extends State<InventoryPage> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4),
-                            color: isSelected ? Colors.white : Colors.transparent,
+                            color:
+                                isSelected ? Colors.white : Colors.transparent,
                             boxShadow: isSelected
                                 ? [
                                     BoxShadow(
@@ -155,8 +155,12 @@ class _InventoryPageState extends State<InventoryPage> {
                             title,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 13,
-                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                              color: isSelected ? AppColors.textBlue800 : const Color(0xFF64748B),
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                              color: isSelected
+                                  ? AppColors.textBlue800
+                                  : const Color(0xFF64748B),
                             ),
                           ),
                         ),
@@ -180,7 +184,8 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 
-  Widget _buildDesktopLayout(ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
+  Widget _buildDesktopLayout(
+      ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -245,7 +250,8 @@ class _InventoryPageState extends State<InventoryPage> {
                   ],
                 ),
               ),
-              ..._getMenuItems(settingsProvider).map((title) => _buildMenuItem(title)),
+              ..._getMenuItems(settingsProvider)
+                  .map((title) => _buildMenuItem(title)),
             ],
           ),
         ),
@@ -256,11 +262,13 @@ class _InventoryPageState extends State<InventoryPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if (expenseProvider.selectedMenu == 'Purchase' || expenseProvider.selectedMenu == 'Sales')
+                    if (expenseProvider.selectedMenu == 'Purchase' ||
+                        expenseProvider.selectedMenu == 'Sales')
                       _buildDesktopSearchAndFilter(expenseProvider),
                     Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: _buildAddButton(context, expenseProvider, settingsProvider),
+                      child: _buildAddButton(
+                          context, expenseProvider, settingsProvider),
                     ),
                   ],
                 ),
@@ -280,14 +288,21 @@ class _InventoryPageState extends State<InventoryPage> {
   List<String> _getMenuItems(SettingsProvider settingsProvider) {
     List<String> items = [];
     if (settingsProvider.menuIsViewMap[43].toString() == '1') items.add('Item');
-    if (settingsProvider.menuIsViewMap[44].toString() == '1') items.add('Purchase');
-    if (settingsProvider.menuIsViewMap[45].toString() == '1') items.add('Supplier');
-    if (settingsProvider.menuIsViewMap[46].toString() == '1') items.add('Category');
+    if (settingsProvider.menuIsViewMap[44].toString() == '1')
+      items.add('Purchase');
+    if (settingsProvider.menuIsViewMap[45].toString() == '1')
+      items.add('Supplier');
+    if (settingsProvider.menuIsViewMap[46].toString() == '1')
+      items.add('Category');
     if (settingsProvider.menuIsViewMap[47].toString() == '1') items.add('Unit');
-    if (settingsProvider.menuIsViewMap[87].toString() == '1') items.add('Sales');
-    if (settingsProvider.menuIsViewMap[78].toString() == '1') items.add('Stock Use');
-    if (settingsProvider.menuIsViewMap[79].toString() == '1') items.add('Stock Return');
-    if (settingsProvider.menuIsViewMap[143].toString() == '1') items.add('Customer');
+    if (settingsProvider.menuIsViewMap[87].toString() == '1')
+      items.add('Sales');
+    if (settingsProvider.menuIsViewMap[78].toString() == '1')
+      items.add('Stock Use');
+    if (settingsProvider.menuIsViewMap[79].toString() == '1')
+      items.add('Stock Return');
+    if (settingsProvider.menuIsViewMap[143].toString() == '1')
+      items.add('Customer');
     return items;
   }
 
@@ -356,14 +371,21 @@ class _InventoryPageState extends State<InventoryPage> {
 
     if (!isPurchase && !isSales) return const SizedBox.shrink();
 
-    TextEditingController controller = isPurchase ? _purchaseSearchController : _salesSearchController;
+    TextEditingController controller =
+        isPurchase ? _purchaseSearchController : _salesSearchController;
 
     // Sync clear if reset from filter panel
-    if (isPurchase && provider.search.isEmpty && controller.text.isNotEmpty && !FocusScope.of(context).hasFocus) {
+    if (isPurchase &&
+        provider.search.isEmpty &&
+        controller.text.isNotEmpty &&
+        !FocusScope.of(context).hasFocus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.clear();
       });
-    } else if (isSales && provider.searchSales.isEmpty && controller.text.isNotEmpty && !FocusScope.of(context).hasFocus) {
+    } else if (isSales &&
+        provider.searchSales.isEmpty &&
+        controller.text.isNotEmpty &&
+        !FocusScope.of(context).hasFocus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.clear();
       });
@@ -376,26 +398,30 @@ class _InventoryPageState extends State<InventoryPage> {
           height: 40,
           decoration: BoxDecoration(
             color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: TextField(
             controller: controller,
             onSubmitted: (query) {
               if (isPurchase) {
-                provider.setSearchCriteria(
-                    query, provider.fromDateS, provider.toDateS, provider.status, provider.enquiryForS);
+                provider.setSearchCriteria(query, provider.fromDateS,
+                    provider.toDateS, provider.status, provider.enquiryForS);
                 provider.getPurchaseDataMaster(context);
               } else if (isSales) {
                 provider.setSearchCriteriaSales(
-                    query, provider.fromDateSSales, provider.toDateSSales, provider.status, provider.enquiryForS);
+                    query,
+                    provider.fromDateSSales,
+                    provider.toDateSSales,
+                    provider.status,
+                    provider.enquiryForS);
                 provider.getSalesMaster(context);
               }
             },
@@ -406,19 +432,29 @@ class _InventoryPageState extends State<InventoryPage> {
               hintText: 'Search...',
               prefixIcon: const Icon(Icons.search, size: 20),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               suffixIcon: controller.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFF64748B)),
+                      icon: const Icon(Icons.close_rounded,
+                          size: 18, color: Color(0xFF64748B)),
                       onPressed: () {
                         controller.clear();
                         if (isPurchase) {
                           provider.setSearchCriteria(
-                              '', provider.fromDateS, provider.toDateS, provider.status, provider.enquiryForS);
+                              '',
+                              provider.fromDateS,
+                              provider.toDateS,
+                              provider.status,
+                              provider.enquiryForS);
                           provider.getPurchaseDataMaster(context);
                         } else {
                           provider.setSearchCriteriaSales(
-                              '', provider.fromDateSSales, provider.toDateSSales, provider.status, provider.enquiryForS);
+                              '',
+                              provider.fromDateSSales,
+                              provider.toDateSSales,
+                              provider.status,
+                              provider.enquiryForS);
                           provider.getSalesMaster(context);
                         }
                         setState(() {});
@@ -471,7 +507,8 @@ class _InventoryPageState extends State<InventoryPage> {
         onTap = () => _showAddUnitDialog(context);
         break;
       case 'Customer':
-        menuId = 0; // Inventory Customer - skipped permission check to show Add button
+        menuId =
+            0; // Inventory Customer - skipped permission check to show Add button
         onTap = () => _showAddCustomerDialog(context);
         break;
       case 'Stock Use':
@@ -488,7 +525,8 @@ class _InventoryPageState extends State<InventoryPage> {
         break;
     }
 
-    if (onTap == null || (menuId != 0 && settingsProvider.menuIsSaveMap[menuId] == 0)) {
+    if (onTap == null ||
+        (menuId != 0 && settingsProvider.menuIsSaveMap[menuId] == 0)) {
       return const SizedBox(width: 44, height: 44);
     }
 

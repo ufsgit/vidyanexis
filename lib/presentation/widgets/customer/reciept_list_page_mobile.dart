@@ -138,14 +138,16 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                       children: [
                         Container(
                           height: 54,
-                          decoration: BoxDecoration(color: AppColors.scaffoldColor),
+                          decoration:
+                              BoxDecoration(color: AppColors.scaffoldColor),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 6),
                             child: Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     CustomText(
                                       'Total Invoiced',
@@ -165,7 +167,8 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                                   height: 2,
                                 ),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     CustomText(
                                       'Total Payments Recieved',

@@ -87,7 +87,8 @@ class _EmployeeSummaryReportScreenState
           children: [
             if (isWeb) ...[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
                 child: Row(
                   children: [
                     Builder(
@@ -176,10 +177,12 @@ class _EmployeeSummaryReportScreenState
                 child: FloatingActionButton.extended(
                   heroTag: 'apply_employee_summary_filter_fab',
                   onPressed: () {
-                    reportsProvider.setTaskSearchCriteria(searchController.text);
+                    reportsProvider
+                        .setTaskSearchCriteria(searchController.text);
                     reportsProvider.getEmployeeSummary(context);
                     reportsProvider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -217,7 +220,8 @@ class _EmployeeSummaryReportScreenState
             decoration: InputDecoration(
               hintText: 'Search by employee name...',
               prefixIcon: const Icon(Icons.search, size: 20),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
                 borderSide: BorderSide(color: Colors.grey[300]!),
@@ -267,7 +271,9 @@ class _EmployeeSummaryReportScreenState
             ],
           ),
           const SizedBox(height: 40),
-          if (reportsProvider.fromDate != null || reportsProvider.toDate != null || searchController.text.isNotEmpty)
+          if (reportsProvider.fromDate != null ||
+              reportsProvider.toDate != null ||
+              searchController.text.isNotEmpty)
             SizedBox(
               width: double.infinity,
               child: CommonReportResetButton(
@@ -283,7 +289,8 @@ class _EmployeeSummaryReportScreenState
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: const BorderSide(color: AppColors.textRed),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),
@@ -409,7 +416,8 @@ class _EmployeeSummaryReportScreenState
                               color: AppColors.primaryBlue.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
-                                  color: AppColors.primaryBlue.withOpacity(0.12)),
+                                  color:
+                                      AppColors.primaryBlue.withOpacity(0.12)),
                             ),
                             child: Text(
                               '${item.noOfClients ?? 0}',
@@ -687,8 +695,9 @@ class _EmployeeSummaryReportScreenState
                             title,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
-                              fontWeight:
-                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               color: isSelected
                                   ? Colors.white
                                   : const Color(0xFF475569),
@@ -727,10 +736,12 @@ class _EmployeeSummaryReportScreenState
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide(color: Colors.grey[300]!)),
+                                  borderSide:
+                                      BorderSide(color: Colors.grey[300]!)),
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide(color: Colors.grey[300]!)),
+                                  borderSide:
+                                      BorderSide(color: Colors.grey[300]!)),
                               hintText: reportsProvider.fromDate != null
                                   ? '${reportsProvider.fromDate!.toLocal()}'
                                       .split(' ')[0]
@@ -756,10 +767,12 @@ class _EmployeeSummaryReportScreenState
                                   horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide(color: Colors.grey[300]!)),
+                                  borderSide:
+                                      BorderSide(color: Colors.grey[300]!)),
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(4),
-                                  borderSide: BorderSide(color: Colors.grey[300]!)),
+                                  borderSide:
+                                      BorderSide(color: Colors.grey[300]!)),
                               hintText: reportsProvider.toDate != null
                                   ? '${reportsProvider.toDate!.toLocal()}'
                                       .split(' ')[0]

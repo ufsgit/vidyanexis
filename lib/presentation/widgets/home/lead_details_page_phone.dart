@@ -111,7 +111,10 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                     icon:
                                         const Icon(Icons.location_on, size: 16),
                                     label: const Text('Check In'),
-                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
                                       backgroundColor: Colors.green,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
@@ -133,7 +136,10 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                     icon: const Icon(Icons.location_off,
                                         size: 16),
                                     label: const Text('Check Out'),
-                                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
                                       backgroundColor: Colors.red,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(

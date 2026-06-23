@@ -66,11 +66,12 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
     _leadNameFocusNode = FocusNode();
     statusNode = FocusNode();
     staffNode = FocusNode();
-    
+
     double? parsedAmount = double.tryParse(widget.amount ?? '');
     if (parsedAmount != null && parsedAmount > 0) {
       if (parsedAmount == parsedAmount.toInt()) {
-        amountController = TextEditingController(text: parsedAmount.toInt().toString());
+        amountController =
+            TextEditingController(text: parsedAmount.toInt().toString());
       } else {
         amountController = TextEditingController(text: parsedAmount.toString());
       }
@@ -85,10 +86,12 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
 
     if (leadProvider.nextFollowUpDateController.text.isNotEmpty) {
       try {
-        originalFollowUpDate = DateFormat('dd MMM yyyy').parse(leadProvider.nextFollowUpDateController.text);
+        originalFollowUpDate = DateFormat('dd MMM yyyy')
+            .parse(leadProvider.nextFollowUpDateController.text);
       } catch (_) {
         try {
-          originalFollowUpDate = DateTime.parse(leadProvider.nextFollowUpDateController.text);
+          originalFollowUpDate =
+              DateTime.parse(leadProvider.nextFollowUpDateController.text);
         } catch (_) {}
       }
     }
@@ -128,7 +131,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       if (targetStatusId != '0' && targetStatusId != 'null') {
         final parentStatuses =
             await settingsProvider.getStatusById(context, targetStatusId);
-        bool parentHasAmount = parentStatuses.isNotEmpty && parentStatuses.first.isAmount == 1;
+        bool parentHasAmount =
+            parentStatuses.isNotEmpty && parentStatuses.first.isAmount == 1;
         if (mounted) {
           setState(() {
             showAmountForMain = parentHasAmount;
@@ -148,7 +152,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
         if (targetStatusId != '0' && targetStatusId != 'null') {
           final transferStatusesData = await settingsProvider
               .getTransferStatusById(context, targetStatusId);
-          bool transferHasAmount = transferStatusesData.isNotEmpty && transferStatusesData.first.isAmount == 1;
+          bool transferHasAmount = transferStatusesData.isNotEmpty &&
+              transferStatusesData.first.isAmount == 1;
           if (mounted) {
             setState(() {
               showTransferStatus =
@@ -500,7 +505,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
               if (selectedId != null) {
                 final selectedItem = dropDownProvider.followUpData.firstWhere(
                   (status) => status.statusId == selectedId,
-                  orElse: () => SearchLeadStatusModel(statusId: selectedId, statusName: ''),
+                  orElse: () => SearchLeadStatusModel(
+                      statusId: selectedId, statusName: ''),
                 );
 
                 // ✅ Sync controller text
@@ -508,9 +514,11 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                     selectedItem.statusName ?? '';
 
                 if (selectedItem.isShowFollowupDate == 1) {
-                  int durationVal = int.tryParse(selectedItem.statusDuration ?? '') ?? 0;
+                  int durationVal =
+                      int.tryParse(selectedItem.statusDuration ?? '') ?? 0;
                   DateTime baseDate = originalFollowUpDate ?? DateTime.now();
-                  DateTime targetDate = baseDate.add(Duration(days: durationVal));
+                  DateTime targetDate =
+                      baseDate.add(Duration(days: durationVal));
                   leadProvider.nextFollowUpDateController.text =
                       DateFormat('dd MMM yyyy').format(targetDate);
                 } else {
@@ -518,22 +526,27 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 }
 
                 // Check if selected status has isAmount == 1
-                final statusData = await settingsProvider
-                    .getStatusById(context, selectedId.toString());
+                final statusData = await settingsProvider.getStatusById(
+                    context, selectedId.toString());
                 final transferStatusesData = await settingsProvider
                     .getTransferStatusById(context, selectedId.toString());
 
-                bool mainHasAmount = (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
-                                     (transferStatusesData.isNotEmpty && transferStatusesData.first.isAmount == 1);
+                bool mainHasAmount =
+                    (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
+                        (transferStatusesData.isNotEmpty &&
+                            transferStatusesData.first.isAmount == 1);
 
                 if (mounted) {
                   setState(() {
                     showAmountForMain = mainHasAmount;
-                    showAmountForSecondary = false; // reset secondary when main changes
+                    showAmountForSecondary =
+                        false; // reset secondary when main changes
                     showTransferStatus = transferStatusesData.isNotEmpty &&
                         transferStatusesData.first.isTransferStatus == 1;
-                    showTime = transferStatusesData.isNotEmpty && transferStatusesData.first.isTime == 1;
-                    showTransfer = transferStatusesData.isNotEmpty && transferStatusesData.first.isTransfer == 1;
+                    showTime = transferStatusesData.isNotEmpty &&
+                        transferStatusesData.first.isTime == 1;
+                    showTransfer = transferStatusesData.isNotEmpty &&
+                        transferStatusesData.first.isTransfer == 1;
                     _filteredTransferStatuses = transferStatusesData.isNotEmpty
                         ? transferStatusesData.first.transferStatuses
                                 ?.map((s) => SearchLeadStatusModel(
@@ -573,7 +586,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 if (selectedId != null) {
                   final selectedItem = _filteredTransferStatuses.firstWhere(
                     (status) => status.statusId == selectedId,
-                    orElse: () => SearchLeadStatusModel(statusId: selectedId, statusName: ''),
+                    orElse: () => SearchLeadStatusModel(
+                        statusId: selectedId, statusName: ''),
                   );
 
                   // ✅ Sync controller text
@@ -581,13 +595,15 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                       selectedItem.statusName ?? '';
 
                   // Check if secondary status requires amount
-                  final statusData = await settingsProvider
-                      .getStatusById(context, selectedId.toString());
+                  final statusData = await settingsProvider.getStatusById(
+                      context, selectedId.toString());
                   final transferStatusesData = await settingsProvider
                       .getTransferStatusById(context, selectedId.toString());
 
-                  bool secondaryHasAmount = (statusData.isNotEmpty && statusData.first.isAmount == 1) ||
-                                           (transferStatusesData.isNotEmpty && transferStatusesData.first.isAmount == 1);
+                  bool secondaryHasAmount = (statusData.isNotEmpty &&
+                          statusData.first.isAmount == 1) ||
+                      (transferStatusesData.isNotEmpty &&
+                          transferStatusesData.first.isAmount == 1);
 
                   if (mounted) {
                     setState(() {

@@ -337,6 +337,8 @@ class HttpUrls {
   static String deletePaymentSchedule = "service/Delete_Payment_Schedule";
   static String getQuotationMasterPdf =
       "quotation_master/Get_quotation_master_pdf";
+  static String getCommercialCustomFields = 
+      "quotation_master/get_commercial_custom_fields";
   static String balanceReport = "service/Payment_Balance_Report";
   static String upcomingPaymentReport = "service/Get_Upcoming_Payment_Report";
   static String totalOutstandingReport = "service/Get_Total_Outstanding_Report";

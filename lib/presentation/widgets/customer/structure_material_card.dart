@@ -115,7 +115,8 @@ class StructureMaterialCard extends StatelessWidget {
               const SizedBox(height: 12),
               _buildDetailRow('Quantity', item.qty),
               const SizedBox(height: 8),
-              _buildDetailRow('Brand', item.brand.isNotEmpty ? item.brand : '-'),
+              _buildDetailRow(
+                  'Brand', item.brand.isNotEmpty ? item.brand : '-'),
             ],
           ),
         ),

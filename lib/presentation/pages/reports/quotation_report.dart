@@ -86,8 +86,10 @@ class _QuotationReport extends State<QuotationReport> {
                                 onPressed: () {
                                   ScaffoldState? parent;
                                   context.visitAncestorElements((element) {
-                                    if (element is StatefulElement && element.state is ScaffoldState) {
-                                      ScaffoldState scaffold = element.state as ScaffoldState;
+                                    if (element is StatefulElement &&
+                                        element.state is ScaffoldState) {
+                                      ScaffoldState scaffold =
+                                          element.state as ScaffoldState;
                                       if (scaffold.hasDrawer) {
                                         parent = scaffold;
                                         return false;
@@ -100,7 +102,8 @@ class _QuotationReport extends State<QuotationReport> {
                                 icon: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: AppColors.secondaryBlue.withOpacity(0.1),
+                                    color: AppColors.secondaryBlue
+                                        .withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: const Icon(
@@ -136,34 +139,39 @@ class _QuotationReport extends State<QuotationReport> {
                         ),
                         Flexible(child: Container()),
                         Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                          width: 280,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            controller: searchController,
+                            focusNode: searchFocusNodeWeb,
+                            textAlignVertical: TextAlignVertical.center,
+                            onTap: () {
+                              Future.microtask(() {
+                                if (searchController.text.isNotEmpty &&
+                                    searchController.selection.baseOffset ==
+                                        0 &&
+                                    searchController.selection.extentOffset ==
+                                        searchController.text.length) {
+                                  searchController.selection =
+                                      TextSelection.collapsed(
+                                          offset: searchController.text.length);
+                                }
+                              });
+                            },
+                            onSubmitted: (query) {
                               reportsProvider.setQuotationSearch(
                                 query,
                                 reportsProvider.fromDateS,
@@ -172,30 +180,32 @@ class _QuotationReport extends State<QuotationReport> {
                               );
                               reportsProvider.getQuotationReports(context);
                             },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                              reportsProvider.setQuotationSearch(
-                                searchController.text,
-                                reportsProvider.fromDateS,
-                                reportsProvider.toDateS,
-                                reportsProvider.Status,
-                              );
-                              reportsProvider.getQuotationReports(context);
-                            },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                            decoration: InputDecoration(
+                              hintText: 'Search here....',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: const Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 10),
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  reportsProvider.setQuotationSearch(
+                                    searchController.text,
+                                    reportsProvider.fromDateS,
+                                    reportsProvider.toDateS,
+                                    reportsProvider.Status,
+                                  );
+                                  reportsProvider.getQuotationReports(context);
+                                },
+                                child: const Icon(Icons.search,
+                                    color: Color(0xFF64748B), size: 18),
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(width: 16),
                         CustomFilterButton(
                           onPressed: () {
@@ -252,34 +262,41 @@ class _QuotationReport extends State<QuotationReport> {
                         Column(
                           children: [
                             Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                              width: 280,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                    color: const Color(0xFFCBD5E1), width: 1.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.02),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                controller: searchController,
+                                focusNode: searchFocusNodeWeb,
+                                textAlignVertical: TextAlignVertical.center,
+                                onTap: () {
+                                  Future.microtask(() {
+                                    if (searchController.text.isNotEmpty &&
+                                        searchController.selection.baseOffset ==
+                                            0 &&
+                                        searchController
+                                                .selection.extentOffset ==
+                                            searchController.text.length) {
+                                      searchController.selection =
+                                          TextSelection.collapsed(
+                                              offset:
+                                                  searchController.text.length);
+                                    }
+                                  });
+                                },
+                                onSubmitted: (query) {
                                   reportsProvider.setQuotationSearch(
                                     query,
                                     reportsProvider.fromDateS,
@@ -288,30 +305,33 @@ class _QuotationReport extends State<QuotationReport> {
                                   );
                                   reportsProvider.getQuotationReports(context);
                                 },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                                  reportsProvider.setQuotationSearch(
-                                    searchController.text,
-                                    reportsProvider.fromDateS,
-                                    reportsProvider.toDateS,
-                                    reportsProvider.Status,
-                                  );
-                                  reportsProvider.getQuotationReports(context);
-                                },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                                decoration: InputDecoration(
+                                  hintText: 'Search here....',
+                                  hintStyle: GoogleFonts.plusJakartaSans(
+                                    color: const Color(0xFF94A3B8),
+                                    fontSize: 13,
+                                  ),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      reportsProvider.setQuotationSearch(
+                                        searchController.text,
+                                        reportsProvider.fromDateS,
+                                        reportsProvider.toDateS,
+                                        reportsProvider.Status,
+                                      );
+                                      reportsProvider
+                                          .getQuotationReports(context);
+                                    },
+                                    child: const Icon(Icons.search,
+                                        color: Color(0xFF64748B), size: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             Row(
                               children: [
@@ -354,8 +374,8 @@ class _QuotationReport extends State<QuotationReport> {
                                   buttonText: 'Export to Excel',
                                   textColor: AppColors.whiteColor,
                                   borderColor: AppColors.primaryBlue,
-                          backgroundColor: AppColors.primaryBlue,
-                          radius: 4,
+                                  backgroundColor: AppColors.primaryBlue,
+                                  radius: 4,
                                 )
                               ],
                             ),
@@ -370,17 +390,18 @@ class _QuotationReport extends State<QuotationReport> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Row(
                         children: [
                           Container(
@@ -520,7 +541,7 @@ class _QuotationReport extends State<QuotationReport> {
                           //     );
                           //     reportsProvider.getSearchCustomers(context);
                           //   },
-                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                           //     backgroundColor: Colors.white,
                           //     foregroundColor: AppColors.primaryBlue,
                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -556,7 +577,9 @@ class _QuotationReport extends State<QuotationReport> {
                                 );
                                 reportsProvider.getQuotationReports(context);
                               },
-                              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4)),
                                 backgroundColor: Colors.white,
                                 foregroundColor: AppColors.textRed,
                                 side: BorderSide(color: AppColors.textRed),
@@ -575,17 +598,18 @@ class _QuotationReport extends State<QuotationReport> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Wrap(
                         runSpacing: 10,
                         crossAxisAlignment: WrapCrossAlignment.center,
@@ -734,7 +758,9 @@ class _QuotationReport extends State<QuotationReport> {
                                 );
                                 reportsProvider.getQuotationReports(context);
                               },
-                              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4)),
                                 backgroundColor: Colors.white,
                                 foregroundColor: AppColors.textRed,
                                 side: BorderSide(color: AppColors.textRed),
@@ -752,22 +778,26 @@ class _QuotationReport extends State<QuotationReport> {
                 ? Expanded(
                     child: reportsProvider.hasFetched
                         ? reportsProvider.quotationReports.isEmpty
-                            ? const CommonEmptyState(message: 'No reports found for the selected range')
+                            ? const CommonEmptyState(
+                                message:
+                                    'No reports found for the selected range')
                             : Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(
                                   decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                        color: const Color(0xFFCBD5E1),
+                                        width: 1.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.02),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
@@ -1050,8 +1080,7 @@ class _QuotationReport extends State<QuotationReport> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 24, vertical: 12),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4)),
+                                        borderRadius: BorderRadius.circular(4)),
                                   ),
                                 ),
                               ],
@@ -1062,22 +1091,26 @@ class _QuotationReport extends State<QuotationReport> {
                 : Expanded(
                     child: reportsProvider.hasFetched
                         ? reportsProvider.quotationReports.isEmpty
-                            ? const CommonEmptyState(message: 'No reports found for the selected range')
+                            ? const CommonEmptyState(
+                                message:
+                                    'No reports found for the selected range')
                             : Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Container(
                                   decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                        color: const Color(0xFFCBD5E1),
+                                        width: 1.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.02),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
@@ -1238,8 +1271,7 @@ class _QuotationReport extends State<QuotationReport> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 24, vertical: 12),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4)),
+                                        borderRadius: BorderRadius.circular(4)),
                                   ),
                                 ),
                               ],
@@ -1384,13 +1416,14 @@ class _QuotationReport extends State<QuotationReport> {
                           reportsProvider.getQuotationReports(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1424,7 +1457,9 @@ class _QuotationReport extends State<QuotationReport> {
                           );
                           reportsProvider.getQuotationReports(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

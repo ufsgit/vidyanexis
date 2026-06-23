@@ -122,7 +122,8 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1E293B), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -131,223 +132,245 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
           width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
           child: Column(
             children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Basic Information'),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    onTap: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2101),
-                      );
-                      if (picked != null) {
-                        expenseProvider.returnDateController.text =
-                            DateFormat('dd MMM yyyy').format(picked);
-                      }
-                    },
-                    readOnly: true,
-                    height: 56,
-                    controller: expenseProvider.returnDateController,
-                    hintText: 'Return Date',
-                    suffixIcon: const Icon(Icons.calendar_today_rounded, size: 20),
-                    labelText: '',
-                  ),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: expenseProvider.returnDescriptionController,
-                    hintText: 'Description',
-                    labelText: '',
-                    keyboardType: TextInputType.multiline,
-                  ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionTitle('Items'),
-                      Text(
-                        '${expenseProvider.stockReturnItems.where((item) => item.isChecked).length} Selected',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.secondaryBlue,
-                        ),
+                      _buildSectionTitle('Basic Information'),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (picked != null) {
+                            expenseProvider.returnDateController.text =
+                                DateFormat('dd MMM yyyy').format(picked);
+                          }
+                        },
+                        readOnly: true,
+                        height: 56,
+                        controller: expenseProvider.returnDateController,
+                        hintText: 'Return Date',
+                        suffixIcon:
+                            const Icon(Icons.calendar_today_rounded, size: 20),
+                        labelText: '',
                       ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: expenseProvider.returnDescriptionController,
+                        hintText: 'Description',
+                        labelText: '',
+                        keyboardType: TextInputType.multiline,
+                      ),
+                      const SizedBox(height: 32),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildSectionTitle('Items'),
+                          Text(
+                            '${expenseProvider.stockReturnItems.where((item) => item.isChecked).length} Selected',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.secondaryBlue,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: expenseProvider.stockReturnItems.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final item = expenseProvider.stockReturnItems[index];
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: item.isChecked
+                                  ? const Color(0xFFF0F7FF)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: item.isChecked
+                                    ? const Color(0xFF3B82F6)
+                                    : const Color(0xFFE2E8F0),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Transform.scale(
+                                  scale: 0.9,
+                                  child: Checkbox(
+                                    value: item.isChecked,
+                                    onChanged: (value) {
+                                      expenseProvider.toggleItemCheck(
+                                          index, value ?? false);
+                                    },
+                                    activeColor: const Color(0xFF3B82F6),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4)),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.itemName,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF1E293B),
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        item.categoryName,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          color: const Color(0xFF64748B),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                SizedBox(
+                                  width: 70,
+                                  child: TextFormField(
+                                    initialValue: item.quantity.toString(),
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: 'Qty',
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 8),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
+                                      isDense: true,
+                                    ),
+                                    onChanged: (value) {
+                                      expenseProvider.updateItemQuantity(
+                                          index, value);
+                                    },
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d*\.?\d{0,2}')),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_outline_rounded,
+                                      color: Color(0xFFEF4444), size: 22),
+                                  onPressed: () {
+                                    expenseProvider
+                                        .deleteStockReturnItem(index);
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 40),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: expenseProvider.stockReturnItems.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final item = expenseProvider.stockReturnItems[index];
-                      return Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: item.isChecked ? const Color(0xFFF0F7FF) : Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: item.isChecked ? const Color(0xFF3B82F6) : const Color(0xFFE2E8F0),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.center,
+                  children: [
+                    ResponsiveButtonWrapper(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          side: const BorderSide(color: Color(0xFFE2E8F0)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF64748B),
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Transform.scale(
-                              scale: 0.9,
-                              child: Checkbox(
-                                value: item.isChecked,
-                                onChanged: (value) {
-                                  expenseProvider.toggleItemCheck(index, value ?? false);
-                                },
-                                activeColor: const Color(0xFF3B82F6),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.itemName,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF1E293B),
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    item.categoryName,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      color: const Color(0xFF64748B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            SizedBox(
-                              width: 70,
-                              child: TextFormField(
-                                initialValue: item.quantity.toString(),
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                decoration: InputDecoration(
-                                  hintText: 'Qty',
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
-                                  isDense: true,
-                                ),
-                                onChanged: (value) {
-                                  expenseProvider.updateItemQuantity(index, value);
-                                },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                                ],
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444), size: 22),
-                              onPressed: () {
-                                expenseProvider.deleteStockReturnItem(index);
-                              },
-                            ),
-                          ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    ResponsiveButtonWrapper(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final validationError =
+                              validateInputs(context, expenseProvider);
+                          if (validationError != null) {
+                            showErrorDialog(context, validationError);
+                            return;
+                          }
+                          expenseProvider.saveStockReturn(
+                            widget.editId,
+                            widget.customerId,
+                            context,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.secondaryBlue,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                         ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                ],
+                        child: Text(
+                          'Save',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
-              children: [
-                ResponsiveButtonWrapper(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: Color(0xFFE2E8F0)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    ),
-                    child: Text(
-                      'Cancel',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF64748B),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                ResponsiveButtonWrapper(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final validationError = validateInputs(context, expenseProvider);
-                      if (validationError != null) {
-                        showErrorDialog(context, validationError);
-                        return;
-                      }
-                      expenseProvider.saveStockReturn(
-                        widget.editId,
-                        widget.customerId,
-                        context,
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondaryBlue,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                    ),
-                    child: Text(
-                      'Save',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      ),
+        ),
       ),
     );
   }

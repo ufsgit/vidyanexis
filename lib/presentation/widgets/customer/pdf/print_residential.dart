@@ -60,7 +60,6 @@ Future<void> printResidentialPDFs({
   }
 }
 
-
 Future<void> _addItemPage(pw.Document pdf) async {
   final font = await PdfGoogleFonts.openSansRegular();
   final boldFont = await PdfGoogleFonts.openSansBold();

@@ -196,11 +196,15 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                           child: Container(
                             height: 32,
                             decoration: BoxDecoration(
-                              color: followUpReportsProvider.selectedDateFilterIndex != null
+                              color: followUpReportsProvider
+                                          .selectedDateFilterIndex !=
+                                      null
                                   ? AppColors.primaryBlue.withOpacity(0.1)
                                   : Colors.grey[100],
                               border: Border.all(
-                                color: followUpReportsProvider.selectedDateFilterIndex != null
+                                color: followUpReportsProvider
+                                            .selectedDateFilterIndex !=
+                                        null
                                     ? AppColors.primaryBlue
                                     : Colors.transparent,
                               ),
@@ -213,19 +217,26 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                                 Icon(
                                   Icons.calendar_today_outlined,
                                   size: 14,
-                                  color: followUpReportsProvider.selectedDateFilterIndex != null
+                                  color: followUpReportsProvider
+                                              .selectedDateFilterIndex !=
+                                          null
                                       ? AppColors.primaryBlue
                                       : Colors.grey[600],
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  followUpReportsProvider.selectedDateFilterIndex != null
-                                      ? dateButtonTitles[followUpReportsProvider.selectedDateFilterIndex!]
+                                  followUpReportsProvider
+                                              .selectedDateFilterIndex !=
+                                          null
+                                      ? dateButtonTitles[followUpReportsProvider
+                                          .selectedDateFilterIndex!]
                                       : 'Select Date Range',
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
-                                    color: followUpReportsProvider.selectedDateFilterIndex != null
+                                    color: followUpReportsProvider
+                                                .selectedDateFilterIndex !=
+                                            null
                                         ? AppColors.primaryBlue
                                         : Colors.grey[600],
                                   ),
@@ -234,12 +245,15 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                             ),
                           ),
                         ),
-                        if (followUpReportsProvider.fromDate != null || followUpReportsProvider.toDate != null)
+                        if (followUpReportsProvider.fromDate != null ||
+                            followUpReportsProvider.toDate != null)
                           Container(
                             height: 32,
                             decoration: BoxDecoration(
                               color: AppColors.primaryBlue.withOpacity(0.05),
-                              border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
+                              border: Border.all(
+                                  color:
+                                      AppColors.primaryBlue.withOpacity(0.3)),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -299,7 +313,8 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                         child: CommonReportResetButton(
                           label: 'Reset',
                           onReset: () {
-                            followUpReportsProvider.selectDateFilterOption(null);
+                            followUpReportsProvider
+                                .selectDateFilterOption(null);
                             followUpReportsProvider.removeStatus();
                             searchController.clear();
                             followUpReportsProvider.setFollowupSearch(
@@ -512,13 +527,14 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                           followUprovider.formatDate();
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Select',
                         ),
@@ -533,7 +549,9 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                           Navigator.pop(context);
                           followUprovider.selectDateFilterOption(null);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

@@ -75,8 +75,6 @@ class _UsersContentState extends State<UsersContent> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-
             // Table section
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -91,7 +89,8 @@ class _UsersContentState extends State<UsersContent> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                          border: Border.all(
+                              color: const Color(0xFFCBD5E1), width: 1.0),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.02),
@@ -623,10 +622,12 @@ class _UsersContentState extends State<UsersContent> {
                                         width: 120,
                                         child: Center(
                                           child: ActionChip(
-                                            onPressed: () => assignEnquiryForDialogue(
-                                                context,
-                                                settingsProvider
-                                                    .searchUserDetails[index]),
+                                            onPressed: () =>
+                                                assignEnquiryForDialogue(
+                                                    context,
+                                                    settingsProvider
+                                                            .searchUserDetails[
+                                                        index]),
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 4),
                                             backgroundColor:
@@ -658,10 +659,12 @@ class _UsersContentState extends State<UsersContent> {
                                         width: 130,
                                         child: Center(
                                           child: ActionChip(
-                                            onPressed: () => assignEnquirySourceDialogue(
-                                                context,
-                                                settingsProvider
-                                                    .searchUserDetails[index]),
+                                            onPressed: () =>
+                                                assignEnquirySourceDialogue(
+                                                    context,
+                                                    settingsProvider
+                                                            .searchUserDetails[
+                                                        index]),
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 4),
                                             backgroundColor:
@@ -693,10 +696,12 @@ class _UsersContentState extends State<UsersContent> {
                                         width: 120,
                                         child: Center(
                                           child: ActionChip(
-                                            onPressed: () => assignTaskTypeDialogue(
-                                                context,
-                                                settingsProvider
-                                                    .searchUserDetails[index]),
+                                            onPressed: () =>
+                                                assignTaskTypeDialogue(
+                                                    context,
+                                                    settingsProvider
+                                                            .searchUserDetails[
+                                                        index]),
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 4),
                                             backgroundColor:
@@ -1191,7 +1196,8 @@ class _UsersContentState extends State<UsersContent> {
                                           spacing: 8,
                                           runSpacing: 8,
                                           alignment: WrapAlignment.end,
-                                          crossAxisAlignment: WrapCrossAlignment.center,
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.center,
                                           children: [
                                             OutlinedButton.icon(
                                               style: OutlinedButton.styleFrom(
@@ -1208,15 +1214,18 @@ class _UsersContentState extends State<UsersContent> {
                                                         .withOpacity(0.2)),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(4)),
+                                                        BorderRadius.circular(
+                                                            4)),
                                                 backgroundColor: AppColors
                                                     .primaryBlue
                                                     .withOpacity(0.05),
                                               ),
-                                              onPressed: () => assignTeamDialogue(
-                                                  context,
-                                                  settingsProvider
-                                                      .searchUserDetails[index]),
+                                              onPressed: () =>
+                                                  assignTeamDialogue(
+                                                      context,
+                                                      settingsProvider
+                                                              .searchUserDetails[
+                                                          index]),
                                               icon: const Icon(
                                                   Icons.group_add_rounded,
                                                   size: 15,
@@ -1242,18 +1251,23 @@ class _UsersContentState extends State<UsersContent> {
                                                     MaterialTapTargetSize
                                                         .shrinkWrap,
                                                 side: BorderSide(
-                                                    color: const Color(0xFF6D28D9)
-                                                        .withOpacity(0.2)),
+                                                    color:
+                                                        const Color(0xFF6D28D9)
+                                                            .withOpacity(0.2)),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(4)),
-                                                backgroundColor: const Color(0xFF6D28D9)
-                                                    .withOpacity(0.05),
+                                                        BorderRadius.circular(
+                                                            4)),
+                                                backgroundColor:
+                                                    const Color(0xFF6D28D9)
+                                                        .withOpacity(0.05),
                                               ),
-                                              onPressed: () => assignEnquiryForDialogue(
-                                                  context,
-                                                  settingsProvider
-                                                      .searchUserDetails[index]),
+                                              onPressed: () =>
+                                                  assignEnquiryForDialogue(
+                                                      context,
+                                                      settingsProvider
+                                                              .searchUserDetails[
+                                                          index]),
                                               icon: const Icon(
                                                   Icons.assignment_rounded,
                                                   size: 15,
@@ -1264,7 +1278,8 @@ class _UsersContentState extends State<UsersContent> {
                                                     GoogleFonts.plusJakartaSans(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w600,
-                                                  color: const Color(0xFF6D28D9),
+                                                  color:
+                                                      const Color(0xFF6D28D9),
                                                 ),
                                               ),
                                             ),
@@ -1279,18 +1294,23 @@ class _UsersContentState extends State<UsersContent> {
                                                     MaterialTapTargetSize
                                                         .shrinkWrap,
                                                 side: BorderSide(
-                                                    color: const Color(0xFF059669)
-                                                        .withOpacity(0.2)),
+                                                    color:
+                                                        const Color(0xFF059669)
+                                                            .withOpacity(0.2)),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(4)),
-                                                backgroundColor: const Color(0xFF059669)
-                                                    .withOpacity(0.05),
+                                                        BorderRadius.circular(
+                                                            4)),
+                                                backgroundColor:
+                                                    const Color(0xFF059669)
+                                                        .withOpacity(0.05),
                                               ),
-                                              onPressed: () => assignEnquirySourceDialogue(
-                                                  context,
-                                                  settingsProvider
-                                                      .searchUserDetails[index]),
+                                              onPressed: () =>
+                                                  assignEnquirySourceDialogue(
+                                                      context,
+                                                      settingsProvider
+                                                              .searchUserDetails[
+                                                          index]),
                                               icon: const Icon(
                                                   Icons.campaign_rounded,
                                                   size: 15,
@@ -1301,7 +1321,8 @@ class _UsersContentState extends State<UsersContent> {
                                                     GoogleFonts.plusJakartaSans(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w600,
-                                                  color: const Color(0xFF059669),
+                                                  color:
+                                                      const Color(0xFF059669),
                                                 ),
                                               ),
                                             ),
@@ -1316,18 +1337,23 @@ class _UsersContentState extends State<UsersContent> {
                                                     MaterialTapTargetSize
                                                         .shrinkWrap,
                                                 side: BorderSide(
-                                                    color: const Color(0xFFEA580C)
-                                                        .withOpacity(0.2)),
+                                                    color:
+                                                        const Color(0xFFEA580C)
+                                                            .withOpacity(0.2)),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(4)),
-                                                backgroundColor: const Color(0xFFEA580C)
-                                                    .withOpacity(0.05),
+                                                        BorderRadius.circular(
+                                                            4)),
+                                                backgroundColor:
+                                                    const Color(0xFFEA580C)
+                                                        .withOpacity(0.05),
                                               ),
-                                              onPressed: () => assignTaskTypeDialogue(
-                                                  context,
-                                                  settingsProvider
-                                                      .searchUserDetails[index]),
+                                              onPressed: () =>
+                                                  assignTaskTypeDialogue(
+                                                      context,
+                                                      settingsProvider
+                                                              .searchUserDetails[
+                                                          index]),
                                               icon: const Icon(
                                                   Icons.task_rounded,
                                                   size: 15,
@@ -1338,7 +1364,8 @@ class _UsersContentState extends State<UsersContent> {
                                                     GoogleFonts.plusJakartaSans(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w600,
-                                                  color: const Color(0xFFEA580C),
+                                                  color:
+                                                      const Color(0xFFEA580C),
                                                 ),
                                               ),
                                             ),
@@ -1353,10 +1380,12 @@ class _UsersContentState extends State<UsersContent> {
                                                     MaterialTapTargetSize
                                                         .shrinkWrap,
                                                 side: const BorderSide(
-                                                    color: AppColors.primaryBlue),
+                                                    color:
+                                                        AppColors.primaryBlue),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(4)),
+                                                        BorderRadius.circular(
+                                                            4)),
                                                 backgroundColor: Colors.white,
                                               ),
                                               onPressed: () async {

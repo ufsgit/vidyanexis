@@ -28,6 +28,8 @@ final GlobalKey<_CustomFieldSectionWidgetState> customFieldQuotationKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldTaskStatusKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
+final GlobalKey<_CustomFieldSectionWidgetState> customFieldCommercialKey =
+    GlobalKey<_CustomFieldSectionWidgetState>();
 
 class CustomFieldSectionWidget extends StatefulWidget {
   final List<CustomFieldByStatusId> customFields;

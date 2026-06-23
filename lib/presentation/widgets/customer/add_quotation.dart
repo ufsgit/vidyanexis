@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_commercial_custom_fields_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_commercial_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -68,6 +69,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       // Fetch custom field definitions for quotations
       // await customerDetailsProvider.getCustomFieldsByQuotationId(context);
       await customerDetailsProvider.getQuotationFieldsApi();
+      await customerDetailsProvider.getCommercialCustomFieldsApi(context);
 
       if (widget.isEdit) {
         // Fetch existing quotation details if editing
@@ -498,34 +500,110 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         multiItemsWidget(context),
                       ],
                       const SizedBox(height: 16),
-                      if (customerDetailsProvider
-                          .customFieldQuotation.isNotEmpty) ...[
-                        CustomFieldSectionWidget(
-                          key: customFieldQuotationKey,
-                          customFields:
-                              customerDetailsProvider.customFieldQuotation,
-                          initialFieldValues:
-                              customerDetailsProvider.customFieldQuotation
-                                  .map((e) => FieldValueModel(
-                                        customFieldId: e.customFieldId,
-                                        value: e.datavalue,
-                                      ))
-                                  .toList(),
-                          controllerKey: 'quotation',
-                          showEditButton: true,
+                      if (customerDetailsProvider.customFieldQuotation.isNotEmpty) ...[
+                        Builder(
+                          builder: (context) {
+                            final nonCommercialFields = customerDetailsProvider.customFieldQuotation
+                                .where((e) => e.isCommercial != 1)
+                                .toList();
+                            if (nonCommercialFields.isEmpty) return const SizedBox.shrink();
+                            return Column(
+                              children: [
+                                CustomFieldSectionWidget(
+                                  key: customFieldQuotationKey,
+                                  customFields: nonCommercialFields,
+                                  initialFieldValues: nonCommercialFields
+                                      .map((e) => FieldValueModel(
+                                            customFieldId: e.customFieldId,
+                                            value: e.datavalue,
+                                          ))
+                                      .toList(),
+                                  controllerKey: 'quotation',
+                                  showEditButton: true,
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            );
+                          },
                         ),
-                        const SizedBox(height: 16),
                       ],
-                      loadFromCustomField(context),
+                      Row(
+                        children: [
+                          if (settingsProvider.companyDetails.isNotEmpty && settingsProvider.companyDetails.first.commercialProposal == 1)
+                            Expanded(
+                              child: CustomElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const AddCommercialCustomFieldsDialog(),
+                                  );
+                                },
+                                buttonText: 'Add Commercial',
+                                backgroundColor: Colors.white,
+                                borderColor: AppColors.primaryBlue,
+                                textColor: AppColors.primaryBlue,
+                              ),
+                            ),
+                          if (settingsProvider.companyDetails.isNotEmpty && settingsProvider.companyDetails.first.commercialProposal == 1)
+                            const SizedBox(width: 16),
+                          Expanded(
+                            child: loadFromCustomField(context),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 16),
+                      Builder(
+                        builder: (context) {
+                          final selectedCommercialFields = customerDetailsProvider.selectedCommercialFields;
+                          if (selectedCommercialFields.isEmpty) return const SizedBox.shrink();
+                          return Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.textGrey2),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Column(
+                                  children: [
+                                    CustomFieldSectionWidget(
+                                      key: customFieldCommercialKey,
+                                      customFields: selectedCommercialFields,
+                                      initialFieldValues: selectedCommercialFields
+                                          .map((e) => FieldValueModel(
+                                                customFieldId: e.customFieldId,
+                                                value: e.datavalue,
+                                              ))
+                                          .toList(),
+                                      controllerKey: 'commercial',
+                                      showEditButton: true,
+                                      showMore: false,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    CustomTextField(
+                                      readOnly: false,
+                                      height: 54,
+                                      controller: customerDetailsProvider
+                                          .commercialDescriptionController,
+                                      hintText: 'Description',
+                                      labelText: '',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                          );
+                        },
+                      ),
                       if (customerDetailsProvider.selectedQuotationType ==
                           1) ...[
                         residentialItemWidget(context),
                       ],
-                      if (customerDetailsProvider.selectedQuotationType ==
-                          2) ...[
-                        commercialItemWidget(context),
-                      ],
+                      // if (customerDetailsProvider.selectedQuotationType ==
+                      //     2) ...[
+                      //   commercialItemWidget(context),
+                      // ],
                     ],
                   ),
 

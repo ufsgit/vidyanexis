@@ -112,7 +112,8 @@ class _AddCategoryWidgetState extends State<AddCategoryWidget> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B), size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1E293B), size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -121,83 +122,87 @@ class _AddCategoryWidgetState extends State<AddCategoryWidget> {
           width: AppStyles.isWebScreen(context) ? 800 : double.infinity,
           child: Column(
             children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Category Information'),
-                  const SizedBox(height: 16),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 56,
-                    controller: settingsProvider.categoryNameController,
-                    hintText: 'Category Name*',
-                    labelText: '',
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionTitle('Category Information'),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: settingsProvider.categoryNameController,
+                        hintText: 'Category Name*',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 40),
+                    ],
                   ),
-                  const SizedBox(height: 40),
-                ],
+                ),
               ),
-            ),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.center,
+                  children: [
+                    ResponsiveButtonWrapper(
+                      child: CustomElevatedButton(
+                        buttonText: 'Cancel',
+                        onPressed: () {
+                          settingsProvider.categoryNameController.clear();
+                          Navigator.pop(context);
+                        },
+                        radius: 4,
+                        backgroundColor: AppColors.whiteColor,
+                        borderColor: const Color(0xFFE2E8F0),
+                        textColor: const Color(0xFF64748B),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    ResponsiveButtonWrapper(
+                      child: CustomElevatedButton(
+                        buttonText: 'Save',
+                        onPressed: () async {
+                          final validationError =
+                              validateInputs(context, settingsProvider);
+                          if (validationError != null) {
+                            showErrorDialog(context, validationError);
+                            return;
+                          }
+                          settingsProvider.addCategoryName(
+                            context: context,
+                            statusId: widget.editId,
+                            statusName:
+                                settingsProvider.categoryNameController.text,
+                          );
+                        },
+                        radius: 4,
+                        backgroundColor: AppColors.secondaryBlue,
+                        borderColor: AppColors.secondaryBlue,
+                        textColor: AppColors.whiteColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
-              children: [
-                ResponsiveButtonWrapper(
-                  child: CustomElevatedButton(
-                    buttonText: 'Cancel',
-                    onPressed: () {
-                      settingsProvider.categoryNameController.clear();
-                      Navigator.pop(context);
-                    },
-                    radius: 4,
-                    backgroundColor: AppColors.whiteColor,
-                    borderColor: const Color(0xFFE2E8F0),
-                    textColor: const Color(0xFF64748B),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                ResponsiveButtonWrapper(
-                  child: CustomElevatedButton(
-                    buttonText: 'Save',
-                    onPressed: () async {
-                      final validationError = validateInputs(context, settingsProvider);
-                      if (validationError != null) {
-                        showErrorDialog(context, validationError);
-                        return;
-                      }
-                      settingsProvider.addCategoryName(
-                        context: context,
-                        statusId: widget.editId,
-                        statusName: settingsProvider.categoryNameController.text,
-                      );
-                    },
-                    radius: 4,
-                    backgroundColor: AppColors.secondaryBlue,
-                    borderColor: AppColors.secondaryBlue,
-                    textColor: AppColors.whiteColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      ),
+        ),
       ),
     );
   }

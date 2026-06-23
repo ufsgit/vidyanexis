@@ -149,34 +149,39 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                         ),
                         const Spacer(),
                         Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                          width: 280,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            controller: searchController,
+                            focusNode: searchFocusNodeWeb,
+                            textAlignVertical: TextAlignVertical.center,
+                            onTap: () {
+                              Future.microtask(() {
+                                if (searchController.text.isNotEmpty &&
+                                    searchController.selection.baseOffset ==
+                                        0 &&
+                                    searchController.selection.extentOffset ==
+                                        searchController.text.length) {
+                                  searchController.selection =
+                                      TextSelection.collapsed(
+                                          offset: searchController.text.length);
+                                }
+                              });
+                            },
+                            onSubmitted: (query) {
                               // reportsProvider.selectDateFilterOption(null);
                               // reportsProvider.removeStatus();
                               reportsProvider.setTaskSearchCriteria(
@@ -189,34 +194,36 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               );
                               reportsProvider.getSearchTaskReport(context);
                             },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                              // reportsProvider.selectDateFilterOption(null);
-                              // reportsProvider.removeStatus();
-                              reportsProvider.setTaskSearchCriteria(
-                                searchController.text,
-                                reportsProvider.fromDateS,
-                                reportsProvider.toDateS,
-                                reportsProvider.Status,
-                                reportsProvider.AssignedTo,
-                                reportsProvider.TaskType,
-                              );
-                              reportsProvider.getSearchTaskReport(context);
-                            },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                            decoration: InputDecoration(
+                              hintText: 'Search here....',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: const Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 10),
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  // reportsProvider.selectDateFilterOption(null);
+                                  // reportsProvider.removeStatus();
+                                  reportsProvider.setTaskSearchCriteria(
+                                    searchController.text,
+                                    reportsProvider.fromDateS,
+                                    reportsProvider.toDateS,
+                                    reportsProvider.Status,
+                                    reportsProvider.AssignedTo,
+                                    reportsProvider.TaskType,
+                                  );
+                                  reportsProvider.getSearchTaskReport(context);
+                                },
+                                child: const Icon(Icons.search,
+                                    color: Color(0xFF64748B), size: 18),
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(width: 16),
                         CustomFilterButton(
                           onPressed: () {
@@ -242,13 +249,14 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           icon: const Icon(Icons.add),
                           label: const Text('Add Attendance'),
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
                             ),
+                          ),
                         ),
                         const SizedBox(width: 16),
                         CustomElevatedButton(
@@ -294,34 +302,39 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           width: 10,
                         ),
                         Container(
-  width: double.infinity,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeMobile,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                          width: double.infinity,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                                color: const Color(0xFFCBD5E1), width: 1.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            controller: searchController,
+                            focusNode: searchFocusNodeMobile,
+                            textAlignVertical: TextAlignVertical.center,
+                            onTap: () {
+                              Future.microtask(() {
+                                if (searchController.text.isNotEmpty &&
+                                    searchController.selection.baseOffset ==
+                                        0 &&
+                                    searchController.selection.extentOffset ==
+                                        searchController.text.length) {
+                                  searchController.selection =
+                                      TextSelection.collapsed(
+                                          offset: searchController.text.length);
+                                }
+                              });
+                            },
+                            onSubmitted: (query) {
                               // reportsProvider.selectDateFilterOption(null);
                               // reportsProvider.removeStatus();
                               reportsProvider.setTaskSearchCriteria(
@@ -334,34 +347,36 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               );
                               reportsProvider.getSearchTaskReport(context);
                             },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                              // reportsProvider.selectDateFilterOption(null);
-                              // reportsProvider.removeStatus();
-                              reportsProvider.setTaskSearchCriteria(
-                                searchController.text,
-                                reportsProvider.fromDateS,
-                                reportsProvider.toDateS,
-                                reportsProvider.Status,
-                                reportsProvider.AssignedTo,
-                                reportsProvider.TaskType,
-                              );
-                              reportsProvider.getSearchTaskReport(context);
-                            },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                            decoration: InputDecoration(
+                              hintText: 'Search here....',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: const Color(0xFF94A3B8),
+                                fontSize: 13,
+                              ),
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 10),
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  // reportsProvider.selectDateFilterOption(null);
+                                  // reportsProvider.removeStatus();
+                                  reportsProvider.setTaskSearchCriteria(
+                                    searchController.text,
+                                    reportsProvider.fromDateS,
+                                    reportsProvider.toDateS,
+                                    reportsProvider.Status,
+                                    reportsProvider.AssignedTo,
+                                    reportsProvider.TaskType,
+                                  );
+                                  reportsProvider.getSearchTaskReport(context);
+                                },
+                                child: const Icon(Icons.search,
+                                    color: Color(0xFF64748B), size: 18),
+                              ),
+                            ),
+                          ),
+                        ),
                         CustomFilterButton(
                           onPressed: () {
                             reportsProvider.toggleFilter();
@@ -386,13 +401,14 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           icon: const Icon(Icons.add),
                           label: const Text('Add Attendance'),
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
                             ),
+                          ),
                         ),
                         const SizedBox(width: 16),
                         CustomElevatedButton(
@@ -438,17 +454,18 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Row(
                         children: [
                           CommonReportDateFilter(
@@ -564,7 +581,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           //     );
                           //     reportsProvider.getSearchCustomers(context);
                           //   },
-                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                          //   style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                           //     backgroundColor: Colors.white,
                           //     foregroundColor: AppColors.primaryBlue,
                           //     side: BorderSide(color: AppColors.primaryBlue),
@@ -610,17 +627,18 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Wrap(
                         runSpacing: 10,
                         crossAxisAlignment: WrapCrossAlignment.center,
@@ -754,24 +772,26 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
             AppStyles.isWebScreen(context)
                 ? (reportsProvider.taskReport.isEmpty
                     ? Expanded(
-                        child: const CommonEmptyState(message: 'No attendance reports found'),
+                        child: const CommonEmptyState(
+                            message: 'No attendance reports found'),
                       )
                     : Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Container(
                             decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.02),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
@@ -966,7 +986,9 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       )
                     : reportsProvider.taskReport.isEmpty
                         ? Expanded(
-                            child: const CommonEmptyState(message: 'No reports found for the selected range'),
+                            child: const CommonEmptyState(
+                                message:
+                                    'No reports found for the selected range'),
                           )
                         : Expanded(
                             child: Padding(
@@ -1271,13 +1293,14 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           reportsProvider.getSearchTaskReport(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1313,7 +1336,9 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           );
                           reportsProvider.getSearchTaskReport(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

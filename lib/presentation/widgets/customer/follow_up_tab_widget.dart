@@ -65,10 +65,13 @@ class FollowUpTabWidget extends StatelessWidget {
                                     Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: AppColors.primaryBlue.withOpacity(0.1),
+                                        color: AppColors.primaryBlue
+                                            .withOpacity(0.1),
                                         shape: BoxShape.circle,
                                       ),
-                                      child: const Icon(Icons.history, size: 16, color: AppColors.primaryBlue),
+                                      child: const Icon(Icons.history,
+                                          size: 16,
+                                          color: AppColors.primaryBlue),
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
@@ -82,7 +85,8 @@ class FollowUpTabWidget extends StatelessWidget {
                                   ],
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 6),
                                   decoration: BoxDecoration(
                                     color: AppColors.lightGreen,
                                     borderRadius: BorderRadius.circular(4),
@@ -100,32 +104,41 @@ class FollowUpTabWidget extends StatelessWidget {
                             ),
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Divider(color: Color(0xFFE9EDF1), height: 1),
+                              child:
+                                  Divider(color: Color(0xFFE9EDF1), height: 1),
                             ),
                             // Middle Row: Assignment & Next Follow up
                             Wrap(
                               spacing: 24,
                               runSpacing: 16,
                               children: [
-                                _buildInfoColumn('Assigned To', _buildUserCell(history.assignedToName)),
-                                _buildInfoColumn('Assigned By', _buildUserCell(history.assignedByName)),
+                                _buildInfoColumn('Assigned To',
+                                    _buildUserCell(history.assignedToName)),
+                                _buildInfoColumn('Assigned By',
+                                    _buildUserCell(history.assignedByName)),
                                 _buildInfoColumn(
                                   'Next Follow-up',
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(Icons.event, size: 16, color: Colors.blueGrey),
+                                      const Icon(Icons.event,
+                                          size: 16, color: Colors.blueGrey),
                                       const SizedBox(width: 6),
                                       Text(
-                                        _formatDate(history.nextFollowUpDate ?? ''),
-                                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87),
+                                        _formatDate(
+                                            history.nextFollowUpDate ?? ''),
+                                        style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black87),
                                       ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                            if (history.remarks != null && history.remarks!.isNotEmpty) ...[
+                            if (history.remarks != null &&
+                                history.remarks!.isNotEmpty) ...[
                               const SizedBox(height: 16),
                               Container(
                                 width: double.infinity,
@@ -133,19 +146,26 @@ class FollowUpTabWidget extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF8FAFC),
                                   borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(color: const Color(0xFFE9EDF1)),
+                                  border: Border.all(
+                                      color: const Color(0xFFE9EDF1)),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
                                       'Remarks',
-                                      style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w600),
+                                      style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
                                       history.remarks!,
-                                      style: const TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
+                                      style: const TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.black87,
+                                          height: 1.4),
                                     ),
                                   ],
                                 ),
@@ -185,7 +205,8 @@ class FollowUpTabWidget extends StatelessWidget {
 
   Widget _buildUserCell(String? userName) {
     if (userName == null || userName.isEmpty || userName == 'null') {
-      return const Text("-", style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500));
+      return const Text("-",
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500));
     }
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -195,13 +216,15 @@ class FollowUpTabWidget extends StatelessWidget {
           backgroundColor: getAvatarColor(userName),
           child: Text(
             userName[0].toUpperCase(),
-            style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(width: 8),
         Text(
           userName,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87),
+          style: const TextStyle(
+              fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87),
         ),
       ],
     );

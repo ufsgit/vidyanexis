@@ -52,7 +52,6 @@ Future<void> ksebPdf({
   }
 }
 
-
 List<pw.Widget> _buildTitleSection(pw.TextStyle style) {
   return [
     pw.Center(

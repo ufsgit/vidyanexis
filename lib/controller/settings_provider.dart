@@ -214,8 +214,7 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController statusController = TextEditingController();
   final TextEditingController whatsappTemplateIdController =
       TextEditingController();
-  final TextEditingController templateIdController =
-      TextEditingController();
+  final TextEditingController templateIdController = TextEditingController();
   final TextEditingController statusDurationController =
       TextEditingController();
 
@@ -492,6 +491,7 @@ class SettingsProvider extends ChangeNotifier {
   int _leadInSales = 0;
   int _quotationItem = 0;
   int _additionalExpense = 0;
+  int _commercialProposal = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -502,6 +502,7 @@ class SettingsProvider extends ChangeNotifier {
   int get leadInSales => _leadInSales;
   int get quotationItem => _quotationItem;
   int get additionalExpense => _additionalExpense;
+  int get commercialProposal => _commercialProposal;
 
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
@@ -565,7 +566,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   int? _selectedTaskTypeFilterEnquiryForId = 0;
-  int? get selectedTaskTypeFilterEnquiryForId => _selectedTaskTypeFilterEnquiryForId;
+  int? get selectedTaskTypeFilterEnquiryForId =>
+      _selectedTaskTypeFilterEnquiryForId;
 
   set selectedTaskTypeFilterEnquiryForId(int? id) {
     _selectedTaskTypeFilterEnquiryForId = id ?? 0;
@@ -1060,6 +1062,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setAdditionalExpense(int value) {
     _additionalExpense = value;
+    notifyListeners();
+  }
+
+  void setCommercialProposal(int value) {
+    _commercialProposal = value;
     notifyListeners();
   }
 
@@ -2542,8 +2549,7 @@ class SettingsProvider extends ChangeNotifier {
             response.data['data'] != null) {
           final responseData = response.data['data'];
           List<dynamic> dataList;
-          if (responseData is Map &&
-              responseData['enquiry_for_list'] != null) {
+          if (responseData is Map && responseData['enquiry_for_list'] != null) {
             dataList = responseData['enquiry_for_list'] as List<dynamic>;
           } else if (responseData is List) {
             dataList = responseData;
@@ -2690,17 +2696,15 @@ class SettingsProvider extends ChangeNotifier {
             response.data['data'] != null) {
           final responseData = response.data['data'];
           List<dynamic> dataList;
-          if (responseData is Map &&
-              responseData['task_type_list'] != null) {
+          if (responseData is Map && responseData['task_type_list'] != null) {
             dataList = responseData['task_type_list'] as List<dynamic>;
           } else if (responseData is List) {
             dataList = responseData;
           } else {
             dataList = [];
           }
-          userList = dataList
-              .map((item) => UserTaskTypeModel.fromJson(item))
-              .toList();
+          userList =
+              dataList.map((item) => UserTaskTypeModel.fromJson(item)).toList();
         }
       } catch (e) {
         print('Error fetching user Task Type: $e');
@@ -2897,7 +2901,8 @@ class SettingsProvider extends ChangeNotifier {
   }) async {
     try {
       Loader.showLoader(context);
-      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
 
       final response = await HttpRequest.httpPostRequest(
@@ -2933,7 +2938,8 @@ class SettingsProvider extends ChangeNotifier {
             "Form_Name": _selectedFormName,
             "Is_Amount": _isAmount ? 1 : 0,
             "Department_Id": _selectedDepartmentId,
-            "Department_Name": leadProvider.departmentController.text.toString(),
+            "Department_Name":
+                leadProvider.departmentController.text.toString(),
             "User_Id": dropDownProvider.selectedUserId,
             "User_Name": leadProvider.searchUserController.text.toString(),
             "Duration": int.tryParse(statusDurationController.text) ?? 0,
@@ -3504,6 +3510,9 @@ class SettingsProvider extends ChangeNotifier {
   bool _isViewInQuotation = false;
   bool get isViewInQuotation => _isViewInQuotation;
 
+  bool _isCommercial = false;
+  bool get isCommercial => _isCommercial;
+
   void toggleEnquiryForVisible(bool value) {
     _isEnquiryForVisible = value;
     notifyListeners();
@@ -3516,6 +3525,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void toggleViewInQuotation(bool value) {
     _isViewInQuotation = value;
+    notifyListeners();
+  }
+
+  void toggleCommercial(bool value) {
+    _isCommercial = value;
     notifyListeners();
   }
 
@@ -3636,6 +3650,7 @@ class SettingsProvider extends ChangeNotifier {
               _leadInSales = _companyDetails[0].leadInSales;
               _quotationItem = _companyDetails[0].quotationItemValue;
               _additionalExpense = _companyDetails[0].additionalExpense;
+              _commercialProposal = _companyDetails[0].commercialProposal;
             }
           } catch (e) {
             print(
@@ -3687,6 +3702,7 @@ class SettingsProvider extends ChangeNotifier {
           _leadInSales = data['Lead_In_Sales'] ?? 0;
           _quotationItem = data['Quotation_Item_Value'] ?? 0;
           _additionalExpense = data['Additional_Expense'] ?? 0;
+          _commercialProposal = data['Commercial_Proposal'] ?? 0;
 
           if (newLogo != logo ||
               newTitle != title ||
@@ -3761,6 +3777,7 @@ class SettingsProvider extends ChangeNotifier {
             "Lead_In_Sales": _leadInSales,
             "Quotation_Item_Value": _quotationItem,
             "Additional_Expense": _additionalExpense,
+            "Commercial_Proposal": _commercialProposal,
           });
 
       if (response!.statusCode == 200) {

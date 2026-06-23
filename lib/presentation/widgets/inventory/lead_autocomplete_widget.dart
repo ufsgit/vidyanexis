@@ -187,7 +187,8 @@ class _LeadAutocompleteWidgetState extends State<LeadAutocompleteWidget> {
                                           : FontStyle.normal,
                                     ),
                                   ),
-                                  if (!isDummy && option.address.isNotEmpty) ...[
+                                  if (!isDummy &&
+                                      option.address.isNotEmpty) ...[
                                     const SizedBox(height: 4),
                                     Text(
                                       option.address,

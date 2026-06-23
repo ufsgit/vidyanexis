@@ -157,8 +157,9 @@ class QuotationCard extends StatelessWidget {
                                       '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=${quotation!.quotationMasterId}',
                                   onGenerate: () async {
                                     final bytes = await customerDetailsProvider
-                                        .getQuotationMasterPdfBytes(
-                                            quotation!.quotationMasterId.toString());
+                                        .getQuotationMasterPdfBytes(quotation!
+                                            .quotationMasterId
+                                            .toString());
                                     return bytes ?? Uint8List(0);
                                   },
                                 );
@@ -171,13 +172,15 @@ class QuotationCard extends StatelessWidget {
                           IconButton(
                             tooltip: 'Download PDF',
                             icon: const Icon(Icons.download,
-                                size: 22, color: Color(0xFF10B981)), // Green for download
+                                size: 22,
+                                color: Color(0xFF10B981)), // Green for download
                             onPressed: () async {
                               await Loader.showLoader(context);
                               try {
                                 final bytes = await customerDetailsProvider
-                                    .getQuotationMasterPdfBytes(
-                                        quotation!.quotationMasterId.toString());
+                                    .getQuotationMasterPdfBytes(quotation!
+                                        .quotationMasterId
+                                        .toString());
                                 if (bytes != null && bytes.isNotEmpty) {
                                   final fileName =
                                       'Quotation_${quotation!.quotationMasterId}.pdf';
@@ -186,8 +189,8 @@ class QuotationCard extends StatelessWidget {
                                         bytes, fileName);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text(
-                                            'Downloaded successfully'),
+                                        content:
+                                            Text('Downloaded successfully'),
                                         backgroundColor: Colors.green,
                                       ),
                                     );
@@ -195,7 +198,8 @@ class QuotationCard extends StatelessWidget {
                                     try {
                                       await FileDownloader.saveFile(
                                           bytes, fileName);
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
                                           content: Text(
                                               'Downloaded to Downloads folder'),
@@ -311,11 +315,12 @@ class QuotationCard extends StatelessWidget {
                                     .getQuatationListByMasterId(
                                         quotation!.quotationMasterId.toString(),
                                         context);
-                                await customerDetailsProvider
-                                    .fetchLeadDetails(customerId, context);
+                                await customerDetailsProvider.fetchLeadDetails(
+                                    customerId, context);
                                 await settingsprovider.getCompanyDetails();
 
-                                if (settingsprovider.companyDetails.isNotEmpty &&
+                                if (settingsprovider
+                                        .companyDetails.isNotEmpty &&
                                     (customerDetailsProvider
                                             .leadDetails?.isNotEmpty ??
                                         false) &&
@@ -345,17 +350,20 @@ class QuotationCard extends StatelessWidget {
                                   }
 
                                   if (bytes != null && bytes.isNotEmpty) {
-                                    final fileName = quotation?.quotationTypeId == 2
+                                    final fileName = quotation
+                                                ?.quotationTypeId ==
+                                            2
                                         ? 'Commercial_${quotation!.quotationMasterId}.pdf'
                                         : 'Residential_${quotation!.quotationMasterId}.pdf';
 
                                     if (kIsWeb) {
                                       await FileDownloader.saveFile(
                                           bytes, fileName);
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
-                                          content: Text(
-                                              'Downloaded successfully'),
+                                          content:
+                                              Text('Downloaded successfully'),
                                           backgroundColor: Colors.green,
                                         ),
                                       );
@@ -363,7 +371,8 @@ class QuotationCard extends StatelessWidget {
                                       try {
                                         await FileDownloader.saveFile(
                                             bytes, fileName);
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           const SnackBar(
                                             content: Text(
                                                 'Downloaded to Downloads folder'),
@@ -399,8 +408,8 @@ class QuotationCard extends StatelessWidget {
                                   .getQuatationListByMasterId(
                                       quotation!.quotationMasterId.toString(),
                                       context);
-                              await customerDetailsProvider
-                                  .fetchLeadDetails(customerId, context);
+                              await customerDetailsProvider.fetchLeadDetails(
+                                  customerId, context);
                               await settingsprovider.getCompanyDetails();
 
                               if (settingsprovider.companyDetails.isNotEmpty &&
@@ -433,10 +442,6 @@ class QuotationCard extends StatelessWidget {
                             },
                           ),
                         ],
-
-
-
-
                       ],
                     ),
                 ],

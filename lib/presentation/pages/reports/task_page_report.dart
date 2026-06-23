@@ -144,34 +144,38 @@ class _tasksPageReportState extends State<TaskPageReport> {
                   const SizedBox(width: 32),
                   const Spacer(),
                   Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                    width: 280,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                          color: const Color(0xFFCBD5E1), width: 1.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.02),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: searchController,
+                      focusNode: searchFocusNodeWeb,
+                      textAlignVertical: TextAlignVertical.center,
+                      onTap: () {
+                        Future.microtask(() {
+                          if (searchController.text.isNotEmpty &&
+                              searchController.selection.baseOffset == 0 &&
+                              searchController.selection.extentOffset ==
+                                  searchController.text.length) {
+                            searchController.selection =
+                                TextSelection.collapsed(
+                                    offset: searchController.text.length);
+                          }
+                        });
+                      },
+                      onSubmitted: (query) {
                         reportsProvider.setTaskSearchCriteria(
                           query,
                           reportsProvider.fromDateS,
@@ -183,35 +187,36 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         reportsProvider.getSearchTaskReport(context,
                             resetPage: true);
                       },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                        reportsProvider.setTaskSearchCriteria(
-                          searchController.text,
-                          reportsProvider.fromDateS,
-                          reportsProvider.toDateS,
-                          reportsProvider.Status,
-                          reportsProvider.AssignedTo,
-                          reportsProvider.TaskType,
-                        );
-                        reportsProvider.getSearchTaskReport(context,
-                            resetPage: true);
-                      },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                      decoration: InputDecoration(
+                        hintText: 'Search here....',
+                        hintStyle: GoogleFonts.plusJakartaSans(
+                          color: const Color(0xFF94A3B8),
+                          fontSize: 13,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            reportsProvider.setTaskSearchCriteria(
+                              searchController.text,
+                              reportsProvider.fromDateS,
+                              reportsProvider.toDateS,
+                              reportsProvider.Status,
+                              reportsProvider.AssignedTo,
+                              reportsProvider.TaskType,
+                            );
+                            reportsProvider.getSearchTaskReport(context,
+                                resetPage: true);
+                          },
+                          child: const Icon(Icons.search,
+                              color: Color(0xFF64748B), size: 18),
+                        ),
+                      ),
+                    ),
+                  ),
                   CustomFilterButton(
-
                     onPressed: () {
                       reportsProvider.toggleFilter();
                     },
@@ -284,17 +289,18 @@ class _tasksPageReportState extends State<TaskPageReport> {
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: Row(
                   children: [
                     _buildStatusFilter(reportsProvider, provider),
@@ -518,17 +524,18 @@ class _tasksPageReportState extends State<TaskPageReport> {
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     child: Container(
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
@@ -655,7 +662,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                             ),
                             // Data Rows
                             reportsProvider.taskReport.isEmpty
-                                ? const CommonEmptyState(message: 'No task reports found')
+                                ? const CommonEmptyState(
+                                    message: 'No task reports found')
                                 : Column(
                                     children: List.generate(
                                         reportsProvider.taskReport.length,
@@ -1019,13 +1027,14 @@ class _tasksPageReportState extends State<TaskPageReport> {
                               resetPage: true);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -1062,7 +1071,9 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           reportsProvider.getSearchTaskReport(context,
                               resetPage: true);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(
@@ -1435,7 +1446,9 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                       widget.onApply(_tempSelected);
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
                       backgroundColor: AppColors.primaryBlue,
                       foregroundColor: Colors.white,
                     ),

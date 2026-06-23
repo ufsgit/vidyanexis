@@ -35,7 +35,8 @@ Widget textFieldWidget(
           fontSize: 14,
           fontWeight: FontWeight.w400,
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         fillColor: const Color(0xFFF0F2F5),
         filled: true,
         border: OutlineInputBorder(
@@ -84,5 +85,3 @@ Widget buttonWidget(
         )),
   );
 }
-
-

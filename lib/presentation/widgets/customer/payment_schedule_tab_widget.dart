@@ -97,7 +97,8 @@ class _PaymentScheduleTabWidgetState extends State<PaymentScheduleTabWidget> {
                 child: paymentScheduleProvider.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : paymentScheduleProvider.paymentScheduleList.isEmpty
-                        ? const CommonEmptyState(message: 'No Payment Schedules found')
+                        ? const CommonEmptyState(
+                            message: 'No Payment Schedules found')
                         : ListView.builder(
                             itemCount: paymentScheduleProvider
                                 .paymentScheduleList.length,

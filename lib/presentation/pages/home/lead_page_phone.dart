@@ -274,7 +274,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               children: [
                 Container(
                   color: AppColors.whiteColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -509,7 +510,6 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               ],
                             ),
                           ],
-
                           const SizedBox(height: 16),
                           CustomText(
                             'Enquiry For',
@@ -623,7 +623,6 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                       child: CustomScrollView(
                         controller: leadProvider.scrollController,
                         slivers: [
-
                           SliverToBoxAdapter(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -889,7 +888,9 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           );
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
@@ -925,7 +926,9 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           );
                           leadProvider.getSearchLeads(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

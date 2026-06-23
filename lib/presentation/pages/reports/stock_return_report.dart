@@ -94,14 +94,14 @@ class _StockReturnReportState extends State<StockReturnReport> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: TextField(
           controller: customerController,
@@ -157,8 +157,7 @@ class _StockReturnReportState extends State<StockReturnReport> {
                 context.visitAncestorElements((element) {
                   if (element is StatefulElement &&
                       element.state is ScaffoldState) {
-                    ScaffoldState scaffold =
-                        element.state as ScaffoldState;
+                    ScaffoldState scaffold = element.state as ScaffoldState;
                     if (scaffold.hasDrawer) {
                       parent = scaffold;
                       return false;
@@ -199,14 +198,14 @@ class _StockReturnReportState extends State<StockReturnReport> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: TextField(
               onChanged: (value) => provider.setCustomerName(value),

@@ -60,7 +60,6 @@ Future<void> printCommercialPDFs({
   }
 }
 
-
 Future<void> _addFirstPage(pw.Document pdf, int pageNumber) async {
   String contentImagePath = 'assets/images/commercial_$pageNumber.jpg';
   Uint8List? contentImageBytes;

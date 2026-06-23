@@ -71,7 +71,7 @@ class WarrentyReportProvider extends ChangeNotifier {
     _toDate = toDate;
     _selectedUser = selectedUser;
     formatDate();
-    // We don't notifyListeners here as it's usually called during tab loading 
+    // We don't notifyListeners here as it's usually called during tab loading
     // which will notify once data is fetched
   }
 

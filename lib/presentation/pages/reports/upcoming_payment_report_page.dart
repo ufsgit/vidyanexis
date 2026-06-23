@@ -89,8 +89,7 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
                     context.visitAncestorElements((element) {
                       if (element is StatefulElement &&
                           element.state is ScaffoldState) {
-                        ScaffoldState scaffold =
-                            element.state as ScaffoldState;
+                        ScaffoldState scaffold = element.state as ScaffoldState;
                         if (scaffold.hasDrawer) {
                           parent = scaffold;
                           return false;
@@ -140,7 +139,8 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
         _buildWebTableHeader(),
         Expanded(
           child: provider.upcomingPaymentReportList.isEmpty
-              ? const CommonEmptyState(message: 'No upcoming payment reports found')
+              ? const CommonEmptyState(
+                  message: 'No upcoming payment reports found')
               : ListView.builder(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
@@ -160,17 +160,17 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           GestureDetector(
@@ -205,7 +205,9 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
           const Spacer(),
           ElevatedButton(
             onPressed: () => provider.getUpcomingPaymentReport(context),
-            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4)),
               backgroundColor: Colors.white,
               foregroundColor: AppColors.primaryBlue,
               side: BorderSide(color: AppColors.primaryBlue),
@@ -339,7 +341,8 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
           ),
         Expanded(
           child: provider.upcomingPaymentReportList.isEmpty
-              ? const CommonEmptyState(message: 'No upcoming payment reports found')
+              ? const CommonEmptyState(
+                  message: 'No upcoming payment reports found')
               : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: provider.upcomingPaymentReportList.length,
@@ -468,13 +471,14 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),

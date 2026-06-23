@@ -130,7 +130,8 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(
                                 builder: (context) {
-                                  return PeriodicServiceDetailsPageMobile(item: item);
+                                  return PeriodicServiceDetailsPageMobile(
+                                      item: item);
                                 },
                               ));
                             },
@@ -149,17 +150,20 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                                     const SizedBox(width: 6),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             item.productName,
                                             style: AppStyles.getBoldTextStyle(
-                                                fontSize: 12, fontColor: Color(0xff7D8B9B)),
+                                                fontSize: 12,
+                                                fontColor: Color(0xff7D8B9B)),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
                                             item.serviceName,
-                                            style: AppStyles.getBoldTextStyle(fontSize: 14),
+                                            style: AppStyles.getBoldTextStyle(
+                                                fontSize: 14),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ],
@@ -178,8 +182,9 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                                         item.amcStatusName,
                                         style: AppStyles.getBoldTextStyle(
                                           fontSize: 12,
-                                          fontColor: StatusUtils.getStatusMobileColor(
-                                              item.amcStatusName),
+                                          fontColor:
+                                              StatusUtils.getStatusMobileColor(
+                                                  item.amcStatusName),
                                         ),
                                       ),
                                     ),
@@ -201,11 +206,13 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                                     Text(
                                       '₹ ${item.amount}',
                                       style: AppStyles.getBodyTextStyle(
-                                          fontSize: 14, fontColor: Colors.grey.shade800),
+                                          fontSize: 14,
+                                          fontColor: Colors.grey.shade800),
                                     ),
                                     const SizedBox(width: 5),
                                     const Text('•',
-                                        style: TextStyle(fontSize: 14, color: Colors.grey)),
+                                        style: TextStyle(
+                                            fontSize: 14, color: Colors.grey)),
                                     const SizedBox(width: 5),
                                     Expanded(
                                       flex: 4,
@@ -213,11 +220,13 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                                         padding: EdgeInsets.all(4),
                                         decoration: BoxDecoration(
                                           color: Color(0xffF6F7F9),
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                         ),
                                         child: Center(
                                           child: Text(
-                                            style: AppStyles.getBoldTextStyle(fontSize: 12),
+                                            style: AppStyles.getBoldTextStyle(
+                                                fontSize: 12),
                                             '${item.fromDate.toDayMonthYearFormat()} - ${item.toDate.toDayMonthYearFormat()}',
                                           ),
                                         ),

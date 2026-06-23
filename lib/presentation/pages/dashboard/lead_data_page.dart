@@ -203,7 +203,8 @@ class _LeadDataPageState extends State<LeadDataPage> {
     }
   }
 
-  Future<void> _onStatusClick(BuildContext context, SearchLeadModel lead) async {
+  Future<void> _onStatusClick(
+      BuildContext context, SearchLeadModel lead) async {
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
     final settingsProvider =
@@ -643,7 +644,9 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                     children: [
                                       // Fixed columns section
                                       SizedBox(
-                                        width: widget.source == 'Closed_Leads' ? 710 : 600,
+                                        width: widget.source == 'Closed_Leads'
+                                            ? 710
+                                            : 600,
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -729,10 +732,11 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                       'Closed_Leads')
                                                     const TableWidget(
                                                         width: 110,
-                                                        padding:
-                                                            EdgeInsets.symmetric(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
                                                                 vertical: 6.0,
-                                                                horizontal: 8.0),
+                                                                horizontal:
+                                                                    8.0),
                                                         data: Align(
                                                           alignment: Alignment
                                                               .centerLeft,
@@ -745,7 +749,8 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                             ),
                                                           ),
                                                         ),
-                                                        color: Color(0xFF607185)),
+                                                        color:
+                                                            Color(0xFF607185)),
                                                   const TableWidget(
                                                       flex: 3,
                                                       padding:
@@ -940,14 +945,15 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                               TableWidget(
                                                                 padding: const EdgeInsets
                                                                     .symmetric(
-                                                                        vertical:
-                                                                            6.0,
-                                                                        horizontal:
-                                                                            8.0),
+                                                                    vertical:
+                                                                        6.0,
+                                                                    horizontal:
+                                                                        8.0),
                                                                 width: 110,
                                                                 data: Align(
-                                                                  alignment: Alignment
-                                                                      .centerLeft,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft,
                                                                   child: Text(
                                                                     _formatDateSafely(
                                                                         lead.registeredDate),
@@ -1086,7 +1092,8 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                   Container(
                                                     height: tableHeaderHeight,
                                                     decoration: BoxDecoration(
-                                                      color: AppColors.primaryBlue,
+                                                      color:
+                                                          AppColors.primaryBlue,
                                                       borderRadius:
                                                           BorderRadius.only(
                                                               topRight: Radius
@@ -1221,13 +1228,15 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                 0xFF607185)),
                                                         TableWidget(
                                                             width: 120,
-                                                            padding: const EdgeInsets
-                                                                .symmetric(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
                                                                     vertical:
                                                                         6.0,
                                                                     horizontal:
                                                                         8.0),
-                                                            alignment: Alignment.centerLeft,
+                                                            alignment: Alignment
+                                                                .centerLeft,
                                                             data: const Text(
                                                                 'History',
                                                                 style: TextStyle(
@@ -1442,46 +1451,77 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               maxLines: 1,
                                                                               overflow: TextOverflow.ellipsis,
                                                                               style: const TextStyle(fontSize: 13)))),
-                                                                   TableWidget(
-                                                                       padding: const EdgeInsets.symmetric(
-                                                                           vertical: 6.0,
-                                                                           horizontal: 8.0),
-                                                                       width: 120,
-                                                                       alignment: Alignment.centerLeft,
-                                                                       data: TextButton.icon(
-                                                                           onPressed: () {
-                                                                             LeadHistoryDialog.show(
-                                                                               context,
-                                                                               customerId: lead.customerId.toString(),
-                                                                               customerName: lead.customerName,
-                                                                             );
-                                                                           },
-                                                                           icon: const Icon(
-                                                                             Icons.history_rounded,
-                                                                             size: 15,
-                                                                             color: AppColors.primaryBlue,
-                                                                           ),
-                                                                           label: const Text(
-                                                                             'History',
-                                                                             style: TextStyle(
-                                                                               color: AppColors.primaryBlue,
-                                                                               fontSize: 13,
-                                                                               fontWeight: FontWeight.w600,
-                                                                             ),
-                                                                           ),
-                                                                           style: TextButton.styleFrom(
-                                                                             backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
-                                                                             shape: RoundedRectangleBorder(
-                                                                               borderRadius: BorderRadius.circular(6),
-                                                                             ),
-                                                                             padding: const EdgeInsets.symmetric(
-                                                                               horizontal: 10,
-                                                                               vertical: 6,
-                                                                             ),
-                                                                             minimumSize: const Size(0, 0),
-                                                                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                           ),
-                                                                       )),
+                                                                  TableWidget(
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              6.0,
+                                                                          horizontal:
+                                                                              8.0),
+                                                                      width:
+                                                                          120,
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerLeft,
+                                                                      data: TextButton
+                                                                          .icon(
+                                                                        onPressed:
+                                                                            () {
+                                                                          LeadHistoryDialog
+                                                                              .show(
+                                                                            context,
+                                                                            customerId:
+                                                                                lead.customerId.toString(),
+                                                                            customerName:
+                                                                                lead.customerName,
+                                                                          );
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .history_rounded,
+                                                                          size:
+                                                                              15,
+                                                                          color:
+                                                                              AppColors.primaryBlue,
+                                                                        ),
+                                                                        label:
+                                                                            const Text(
+                                                                          'History',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            color:
+                                                                                AppColors.primaryBlue,
+                                                                            fontSize:
+                                                                                13,
+                                                                            fontWeight:
+                                                                                FontWeight.w600,
+                                                                          ),
+                                                                        ),
+                                                                        style: TextButton
+                                                                            .styleFrom(
+                                                                          backgroundColor: AppColors
+                                                                              .primaryBlue
+                                                                              .withValues(alpha: 0.1),
+                                                                          shape:
+                                                                              RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(6),
+                                                                          ),
+                                                                          padding:
+                                                                              const EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                10,
+                                                                            vertical:
+                                                                                6,
+                                                                          ),
+                                                                          minimumSize: const Size(
+                                                                              0,
+                                                                              0),
+                                                                          tapTargetSize:
+                                                                              MaterialTapTargetSize.shrinkWrap,
+                                                                        ),
+                                                                      )),
                                                                   TableWidget(
                                                                       padding: const EdgeInsets
                                                                           .symmetric(

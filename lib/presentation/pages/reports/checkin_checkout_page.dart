@@ -329,7 +329,9 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                           );
                           reportsProvider.getSearchTaskReport(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                         ),

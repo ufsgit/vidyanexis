@@ -117,7 +117,8 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildChartCard('Lead Status Funnel', provider.reportData),
+                              _buildChartCard(
+                                  'Lead Status Funnel', provider.reportData),
                               const SizedBox(height: 24),
                               CustomText('Status Summary',
                                   fontSize: 16,
@@ -127,18 +128,20 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                             ],
                           );
                         }
-                        final totalLeads = provider.reportData.fold(0, (sum, item) => sum + (item.leadCount ?? 0));
+                        final totalLeads = provider.reportData.fold(
+                            0, (sum, item) => sum + (item.leadCount ?? 0));
                         final report = provider.reportData[index - 1];
-                        final percentage = totalLeads > 0 
-                            ? ((report.leadCount ?? 0) / totalLeads * 100) 
+                        final percentage = totalLeads > 0
+                            ? ((report.leadCount ?? 0) / totalLeads * 100)
                             : 0.0;
-                            
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: ReportListItem(
                             title: report.statusName ?? 'Unknown',
                             subtitle: '${percentage.toStringAsFixed(1)}%',
-                            description: 'Total Leads: ${report.leadCount ?? 0}',
+                            description:
+                                'Total Leads: ${report.leadCount ?? 0}',
                             statusColor: AppColors.primaryBlue,
                             trailingText: (report.leadCount ?? 0).toString(),
                           ),
@@ -304,54 +307,60 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                     ),
                     const Spacer(),
                     Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+                      width: 280,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: searchController,
+                        focusNode: searchFocusNodeWeb,
+                        textAlignVertical: TextAlignVertical.center,
+                        onTap: () {
+                          Future.microtask(() {
+                            if (searchController.text.isNotEmpty &&
+                                searchController.selection.baseOffset == 0 &&
+                                searchController.selection.extentOffset ==
+                                    searchController.text.length) {
+                              searchController.selection =
+                                  TextSelection.collapsed(
+                                      offset: searchController.text.length);
+                            }
+                          });
+                        },
+                        onSubmitted: (query) {
                           provider.fetchReportData(context);
                         },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                          provider.fetchReportData(context);
-                        },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                        decoration: InputDecoration(
+                          hintText: 'Search here....',
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            color: const Color(0xFF94A3B8),
+                            fontSize: 13,
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              provider.fetchReportData(context);
+                            },
+                            child: const Icon(Icons.search,
+                                color: Color(0xFF64748B), size: 18),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 16),
                     CustomFilterButton(
                       onPressed: () {
@@ -361,7 +370,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                     ),
                     const SizedBox(width: 16),
                     CustomElevatedButton(
-                          radius: 4,
+                      radius: 4,
                       onPressed: () {
                         exportToExcel(
                           headers: ['Status ID', 'Status Name', 'Lead Count'],
@@ -509,7 +518,9 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                           Navigator.pop(context);
                           provider.fetchReportData(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: const Color(0xFFCD9C11),
                           foregroundColor: Colors.white,
                         ),
@@ -526,7 +537,9 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                           provider.selectDateFilterOption(null);
                           provider.fetchReportData(context);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                         ),

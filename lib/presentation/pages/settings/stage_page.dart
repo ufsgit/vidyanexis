@@ -68,7 +68,6 @@ class _StagePageState extends State<StagePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,
@@ -100,8 +99,7 @@ class _StagePageState extends State<StagePage> {
                                     height: 22,
                                     decoration: BoxDecoration(
                                         color: AppColors.surfaceGrey,
-                                        borderRadius:
-                                            BorderRadius.circular(4)),
+                                        borderRadius: BorderRadius.circular(4)),
                                     child: Center(
                                       child: Padding(
                                         padding: const EdgeInsets.only(

@@ -160,15 +160,18 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: ConstrainedBox(
-                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 200),
                                       child: CustomText(
-                                        reportsProvider.fromDate == null && reportsProvider.toDate == null
+                                        reportsProvider.fromDate == null &&
+                                                reportsProvider.toDate == null
                                             ? 'Date'
                                             : 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
                                         fontSize: 14,
@@ -179,7 +182,8 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                  Icon(Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3, size: 18),
                                 ],
                               ),
                             ),
@@ -205,15 +209,16 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                             reportsProvider.setUserFilterStatus(0);
                           },
                         ),
-                        ...provider.searchUserDetails.map((u) => FilterChipWidget(
-                              label: u.userDetailsName ?? 'Unknown',
-                              isSelected:
-                                  reportsProvider.selectedUser == u.userDetailsId,
-                              onTap: () {
-                                reportsProvider
-                                    .setUserFilterStatus(u.userDetailsId);
-                              },
-                            )),
+                        ...provider.searchUserDetails
+                            .map((u) => FilterChipWidget(
+                                  label: u.userDetailsName ?? 'Unknown',
+                                  isSelected: reportsProvider.selectedUser ==
+                                      u.userDetailsId,
+                                  onTap: () {
+                                    reportsProvider
+                                        .setUserFilterStatus(u.userDetailsId);
+                                  },
+                                )),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -332,7 +337,8 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                   onPressed: () {
                     reportsProvider.getSearchWorkSummary(context);
                     reportsProvider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -459,13 +465,14 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                           reportsProvider.formatDate();
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),

@@ -70,11 +70,12 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
               _buildFilters(context, reportProvider, dropdownProvider),
             if (!reportProvider.isFilter)
               Expanded(
-                child: reportProvider.isLoading && reportProvider.reports.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : reportProvider.reports.isEmpty
-                        ? _buildEmptyState()
-                        : _buildReportList(reportProvider),
+                child:
+                    reportProvider.isLoading && reportProvider.reports.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : reportProvider.reports.isEmpty
+                            ? _buildEmptyState()
+                            : _buildReportList(reportProvider),
               ),
           ],
         ),
@@ -90,7 +91,8 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                   onPressed: () {
                     reportProvider.fetchReports(context);
                     reportProvider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -328,7 +330,8 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                             child: ConstrainedBox(
                               constraints: const BoxConstraints(maxWidth: 200),
                               child: CustomText(
-                                provider.fromDate == null && provider.toDate == null
+                                provider.fromDate == null &&
+                                        provider.toDate == null
                                     ? 'Date'
                                     : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
                                 fontSize: 14,
@@ -339,7 +342,8 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                             ),
                           ),
                           const SizedBox(width: 4),
-                          Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                          Icon(Icons.keyboard_arrow_down,
+                              color: AppColors.textGrey3, size: 18),
                         ],
                       ),
                     ),
@@ -417,12 +421,14 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
               children: [
                 Wrap(
                   spacing: 8,
-                  children: List.generate(provider.dateButtonTitles.length, (index) {
+                  children:
+                      List.generate(provider.dateButtonTitles.length, (index) {
                     return ChoiceChip(
                       label: Text(provider.dateButtonTitles[index]),
                       selected: provider.selectedDateFilterIndex == index,
                       onSelected: (selected) {
-                        provider.setDateFilter(provider.dateButtonTitles[index]);
+                        provider
+                            .setDateFilter(provider.dateButtonTitles[index]);
                         provider.selectDateFilterOption(index);
                       },
                     );
@@ -437,7 +443,8 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                               borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.fromDate != null
                               ? provider.formattedFromDate
@@ -452,7 +459,8 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                               borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.toDate != null
                               ? provider.formattedToDate

@@ -74,21 +74,26 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
       await settingsProvider.searchSupplierApi('', context);
-      final expenseProvider = Provider.of<ExpenseProvider>(context, listen: false);
+      final expenseProvider =
+          Provider.of<ExpenseProvider>(context, listen: false);
       await expenseProvider.searchItemListPurchase(context);
-      
+
       expenseProvider.resetPurchaseItems();
       expenseProvider.clearPurchaseItemFields();
       expenseProvider.resetPurchaseValues();
 
       if (widget.isEdit && widget.data != null) {
         expenseProvider.setSelectedSupplierId(widget.data!.supplierId);
-        expenseProvider.invoiceNoPurchaseController.text = widget.data!.invoiceNo;
-        expenseProvider.invoiceDatePurchaseController.text = formatPurchaseDate(widget.data!.purchaseDate);
-        expenseProvider.descriptionPurchaseController.text = widget.data!.descriptions;
-        
+        expenseProvider.invoiceNoPurchaseController.text =
+            widget.data!.invoiceNo;
+        expenseProvider.invoiceDatePurchaseController.text =
+            formatPurchaseDate(widget.data!.purchaseDate);
+        expenseProvider.descriptionPurchaseController.text =
+            widget.data!.descriptions;
+
         final selectedPerson = settingsProvider.searchSupplier.firstWhere(
           (item) => item.supplierId == widget.data!.supplierId,
           orElse: () => settingsProvider.searchSupplier.first,
@@ -97,7 +102,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
 
         // Fetch purchase details
         await expenseProvider.searchPurchaseDetails(widget.editId, context);
-        
+
         expenseProvider.purchaseItems.clear();
         for (var item in expenseProvider.purchaseDetails) {
           expenseProvider.purchaseItems.add(item);
@@ -117,7 +122,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
             backgroundColor: Colors.white,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                  color: Colors.black, size: 20),
               onPressed: () => Navigator.pop(context),
             ),
             title: Text(
@@ -135,65 +141,72 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
               width: double.infinity,
               child: Column(
                 children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildBasicInfoColumn(expenseProvider, settingsProvider),
-                      const SizedBox(height: 24),
-                      _buildAddItemColumn(expenseProvider),
-                      if (expenseProvider.purchaseItems.isNotEmpty) ...[
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildSectionTitle('Added Items (${expenseProvider.purchaseItems.length})'),
-                            TextButton.icon(
-                              onPressed: () {
-                                expenseProvider.purchaseItems.clear();
-                                expenseProvider.calculateGrandTotal();
-                                setState(() {});
-                              },
-                              icon: const Icon(Icons.clear_all, color: Colors.red),
-                              label: Text('Clear All', style: GoogleFonts.plusJakartaSans(color: Colors.red)),
-                            )
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildBasicInfoColumn(
+                              expenseProvider, settingsProvider),
+                          const SizedBox(height: 24),
+                          _buildAddItemColumn(expenseProvider),
+                          if (expenseProvider.purchaseItems.isNotEmpty) ...[
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildSectionTitle(
+                                    'Added Items (${expenseProvider.purchaseItems.length})'),
+                                TextButton.icon(
+                                  onPressed: () {
+                                    expenseProvider.purchaseItems.clear();
+                                    expenseProvider.calculateGrandTotal();
+                                    setState(() {});
+                                  },
+                                  icon: const Icon(Icons.clear_all,
+                                      color: Colors.red),
+                                  label: Text('Clear All',
+                                      style: GoogleFonts.plusJakartaSans(
+                                          color: Colors.red)),
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            _buildAddedItemsList(expenseProvider),
                           ],
-                        ),
-                        const SizedBox(height: 12),
-                        _buildAddedItemsList(expenseProvider),
-                      ],
-                      const SizedBox(height: 24),
-                      _buildSectionTitle('Additional Details'),
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                        ),
-                        child: CustomTextField(
-                          controller: expenseProvider.descriptionPurchaseController,
-                          height: 56,
-                          hintText: 'Notes / Description',
-                          labelText: '',
-                          keyboardType: TextInputType.multiline,
-                          minLines: 2,
-                        ),
+                          const SizedBox(height: 24),
+                          _buildSectionTitle('Additional Details'),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
+                            ),
+                            child: CustomTextField(
+                              controller:
+                                  expenseProvider.descriptionPurchaseController,
+                              height: 56,
+                              hintText: 'Notes / Description',
+                              labelText: '',
+                              keyboardType: TextInputType.multiline,
+                              minLines: 2,
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                        ],
                       ),
-                      const SizedBox(height: 40),
-                    ],
+                    ),
                   ),
-                ),
+                  _buildBottomBar(expenseProvider),
+                ],
               ),
-              _buildBottomBar(expenseProvider),
-            ],
+            ),
           ),
-        ),
-      ),
         );
       },
     );
@@ -210,7 +223,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
     );
   }
 
-  Widget _buildBasicInfoColumn(ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
+  Widget _buildBasicInfoColumn(
+      ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
     bool isWeb = AppStyles.isWebScreen(context);
 
     Widget content;
@@ -230,10 +244,12 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   .toList(),
               controller: TextEditingController(),
               onItemSelected: (selectedId) {
-                final selectedPerson = settingsProvider.searchSupplier.firstWhere(
+                final selectedPerson =
+                    settingsProvider.searchSupplier.firstWhere(
                   (item) => item.supplierId == selectedId,
                 );
-                expenseProvider.addressPurchaseController.text = selectedPerson.address;
+                expenseProvider.addressPurchaseController.text =
+                    selectedPerson.address;
                 expenseProvider.setSelectedSupplierId(selectedId);
               },
               selectedValue: expenseProvider.selectedSupplierId,
@@ -302,7 +318,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
               final selectedPerson = settingsProvider.searchSupplier.firstWhere(
                 (item) => item.supplierId == selectedId,
               );
-              expenseProvider.addressPurchaseController.text = selectedPerson.address;
+              expenseProvider.addressPurchaseController.text =
+                  selectedPerson.address;
               expenseProvider.setSelectedSupplierId(selectedId);
             },
             selectedValue: expenseProvider.selectedSupplierId,
@@ -345,7 +362,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   height: 52,
                   controller: expenseProvider.invoiceDatePurchaseController,
                   hintText: 'Invoice Date*',
-                  suffixIcon: const Icon(Icons.calendar_today_rounded, size: 20),
+                  suffixIcon:
+                      const Icon(Icons.calendar_today_rounded, size: 20),
                   labelText: '',
                 ),
               ),
@@ -366,13 +384,15 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
             color: isWeb ? Colors.white : const Color(0xFFF8FAFC),
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-            boxShadow: isWeb ? [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.02),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ] : null,
+            boxShadow: isWeb
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null,
           ),
           child: content,
         ),
@@ -395,7 +415,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
     if (expenseProvider.itemNamePurchaseController.text.isEmpty ||
         expenseProvider.quantityPurchaseController.text.isEmpty ||
         expenseProvider.pricePurchaseController.text.isEmpty) {
-      showErrorDialog(context, 'Please fill in all required fields (Item, Unit Price, Qty)');
+      showErrorDialog(context,
+          'Please fill in all required fields (Item, Unit Price, Qty)');
       return;
     }
     final purchaseItem = PurchaseItemModel(
@@ -405,25 +426,44 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
       categoryName: expenseProvider.categoryPurchaseController.text,
       unitId: expenseProvider.selectedUnitId.toString(),
       unitName: expenseProvider.unitPurchaseController.text,
-      quantity: double.tryParse(expenseProvider.quantityPurchaseController.text) ?? 0.0,
-      price: double.tryParse(expenseProvider.pricePurchaseController.text) ?? 0.0,
-      amount: double.tryParse(expenseProvider.amountPurchaseController.text) ?? 0.0,
-      discount: double.tryParse(expenseProvider.discountAmountPurchaseController.text.isEmpty
-          ? '0'
-          : expenseProvider.discountAmountPurchaseController.text) ?? 0.0,
-      discountPercentage: double.tryParse(expenseProvider.discountPurchaseController.text.isEmpty
-          ? '0'
-          : expenseProvider.discountPurchaseController.text) ?? 0.0,
-      netValue: double.tryParse(expenseProvider.netValuePurchaseController.text) ?? 0.0,
-      cgst: double.tryParse(expenseProvider.cgstPerPurchaseController.text) ?? 0.0,
-      sgst: double.tryParse(expenseProvider.sgstPerPurchaseController.text) ?? 0.0,
-      gst: double.tryParse(expenseProvider.gstPerPurchaseController.text) ?? 0.0,
-      igst: double.tryParse(expenseProvider.igstPerPurchaseController.text) ?? 0.0,
-      gstAmount: double.tryParse(expenseProvider.gstPurchaseController.text) ?? 0.0,
-      cgstAmount: double.tryParse(expenseProvider.cgstPurchaseController.text) ?? 0.0,
-      sgstAmount: double.tryParse(expenseProvider.sgstPurchaseController.text) ?? 0.0,
+      quantity:
+          double.tryParse(expenseProvider.quantityPurchaseController.text) ??
+              0.0,
+      price:
+          double.tryParse(expenseProvider.pricePurchaseController.text) ?? 0.0,
+      amount:
+          double.tryParse(expenseProvider.amountPurchaseController.text) ?? 0.0,
+      discount: double.tryParse(
+              expenseProvider.discountAmountPurchaseController.text.isEmpty
+                  ? '0'
+                  : expenseProvider.discountAmountPurchaseController.text) ??
+          0.0,
+      discountPercentage: double.tryParse(
+              expenseProvider.discountPurchaseController.text.isEmpty
+                  ? '0'
+                  : expenseProvider.discountPurchaseController.text) ??
+          0.0,
+      netValue:
+          double.tryParse(expenseProvider.netValuePurchaseController.text) ??
+              0.0,
+      cgst: double.tryParse(expenseProvider.cgstPerPurchaseController.text) ??
+          0.0,
+      sgst: double.tryParse(expenseProvider.sgstPerPurchaseController.text) ??
+          0.0,
+      gst:
+          double.tryParse(expenseProvider.gstPerPurchaseController.text) ?? 0.0,
+      igst: double.tryParse(expenseProvider.igstPerPurchaseController.text) ??
+          0.0,
+      gstAmount:
+          double.tryParse(expenseProvider.gstPurchaseController.text) ?? 0.0,
+      cgstAmount:
+          double.tryParse(expenseProvider.cgstPurchaseController.text) ?? 0.0,
+      sgstAmount:
+          double.tryParse(expenseProvider.sgstPurchaseController.text) ?? 0.0,
       igstAmount: 0.0,
-      totalAmount: double.tryParse(expenseProvider.totalAmountPurchaseController.text) ?? 0.0,
+      totalAmount:
+          double.tryParse(expenseProvider.totalAmountPurchaseController.text) ??
+              0.0,
       hsnCode: expenseProvider.hsnPurchaseController.text,
       description: '',
       model: '',
@@ -471,20 +511,30 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                         .toList(),
                     controller: expenseProvider.itemNamePurchaseController,
                     onItemSelected: (selectedItem) {
-                      final selectedData = expenseProvider.itemListPurchase.firstWhere(
+                      final selectedData =
+                          expenseProvider.itemListPurchase.firstWhere(
                         (item) => item.itemId == selectedItem,
                       );
                       expenseProvider.setSelectedPurchaseItemId(selectedItem);
-                      expenseProvider.categoryPurchaseController.text = selectedData.categoryName.toString();
-                      expenseProvider.unitPurchaseController.text = selectedData.unitName;
-                      expenseProvider.selectedCategoryId = selectedData.categoryId;
+                      expenseProvider.categoryPurchaseController.text =
+                          selectedData.categoryName.toString();
+                      expenseProvider.unitPurchaseController.text =
+                          selectedData.unitName;
+                      expenseProvider.selectedCategoryId =
+                          selectedData.categoryId;
                       expenseProvider.selectedUnitId = selectedData.unitId;
-                      expenseProvider.pricePurchaseController.text = selectedData.unitPrice;
-                      expenseProvider.cgstPerPurchaseController.text = selectedData.cgst;
-                      expenseProvider.sgstPerPurchaseController.text = selectedData.sgst;
-                      expenseProvider.igstPerPurchaseController.text = selectedData.igst;
-                      expenseProvider.gstPerPurchaseController.text = selectedData.gst;
-                      expenseProvider.hsnPurchaseController.text = selectedData.hsnCode;
+                      expenseProvider.pricePurchaseController.text =
+                          selectedData.unitPrice;
+                      expenseProvider.cgstPerPurchaseController.text =
+                          selectedData.cgst;
+                      expenseProvider.sgstPerPurchaseController.text =
+                          selectedData.sgst;
+                      expenseProvider.igstPerPurchaseController.text =
+                          selectedData.igst;
+                      expenseProvider.gstPerPurchaseController.text =
+                          selectedData.gst;
+                      expenseProvider.hsnPurchaseController.text =
+                          selectedData.hsnCode;
                       expenseProvider.updateCalculations();
                     },
                     selectedValue: expenseProvider.itemDrop,
@@ -569,7 +619,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   flex: 3,
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.discountAmountPurchaseController,
+                    controller:
+                        expenseProvider.discountAmountPurchaseController,
                     hintText: 'Discount Amount',
                     readOnly: true,
                     labelText: '',
@@ -669,7 +720,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                       backgroundColor: const Color(0xFF1E293B),
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
                       elevation: 0,
                     ),
                     child: Icon(
@@ -707,20 +759,29 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   .toList(),
               controller: expenseProvider.itemNamePurchaseController,
               onItemSelected: (selectedItem) {
-                final selectedData = expenseProvider.itemListPurchase.firstWhere(
+                final selectedData =
+                    expenseProvider.itemListPurchase.firstWhere(
                   (item) => item.itemId == selectedItem,
                 );
                 expenseProvider.setSelectedPurchaseItemId(selectedItem);
-                expenseProvider.categoryPurchaseController.text = selectedData.categoryName.toString();
-                expenseProvider.unitPurchaseController.text = selectedData.unitName;
+                expenseProvider.categoryPurchaseController.text =
+                    selectedData.categoryName.toString();
+                expenseProvider.unitPurchaseController.text =
+                    selectedData.unitName;
                 expenseProvider.selectedCategoryId = selectedData.categoryId;
                 expenseProvider.selectedUnitId = selectedData.unitId;
-                expenseProvider.pricePurchaseController.text = selectedData.unitPrice;
-                expenseProvider.cgstPerPurchaseController.text = selectedData.cgst;
-                expenseProvider.sgstPerPurchaseController.text = selectedData.sgst;
-                expenseProvider.igstPerPurchaseController.text = selectedData.igst;
-                expenseProvider.gstPerPurchaseController.text = selectedData.gst;
-                expenseProvider.hsnPurchaseController.text = selectedData.hsnCode;
+                expenseProvider.pricePurchaseController.text =
+                    selectedData.unitPrice;
+                expenseProvider.cgstPerPurchaseController.text =
+                    selectedData.cgst;
+                expenseProvider.sgstPerPurchaseController.text =
+                    selectedData.sgst;
+                expenseProvider.igstPerPurchaseController.text =
+                    selectedData.igst;
+                expenseProvider.gstPerPurchaseController.text =
+                    selectedData.gst;
+                expenseProvider.hsnPurchaseController.text =
+                    selectedData.hsnCode;
                 expenseProvider.updateCalculations();
               },
               selectedValue: expenseProvider.itemDrop,
@@ -804,7 +865,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 Expanded(
                   child: CustomTextField(
                     height: 52,
-                    controller: expenseProvider.discountAmountPurchaseController,
+                    controller:
+                        expenseProvider.discountAmountPurchaseController,
                     hintText: 'Discount Amount',
                     readOnly: true,
                     labelText: '',
@@ -895,7 +957,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                     backgroundColor: const Color(0xFF1E293B),
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                     elevation: 0,
                   ),
                   child: Icon(
@@ -923,7 +986,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
       separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final item = expenseProvider.purchaseItems[index];
-        
+
         if (isWeb) {
           // Web View - Single horizontal row
           return Container(
@@ -1020,7 +1083,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 const SizedBox(width: 12),
                 // 7. Actions (Edit / Delete)
                 IconButton(
-                  icon: const Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
+                  icon: const Icon(Icons.edit_outlined,
+                      color: Colors.blue, size: 20),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {
@@ -1030,7 +1094,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 ),
                 const SizedBox(width: 12),
                 IconButton(
-                  icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444), size: 20),
+                  icon: const Icon(Icons.delete_outline_rounded,
+                      color: Color(0xFFEF4444), size: 20),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {
@@ -1112,14 +1177,16 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 ),
                 const SizedBox(width: 8),
                 IconButton(
-                  icon: const Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
+                  icon: const Icon(Icons.edit_outlined,
+                      color: Colors.blue, size: 20),
                   onPressed: () {
                     expenseProvider.editPurchaseItem(index);
                     setState(() {});
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFFEF4444), size: 20),
+                  icon: const Icon(Icons.delete_outline_rounded,
+                      color: Color(0xFFEF4444), size: 20),
                   onPressed: () {
                     expenseProvider.purchaseItems.removeAt(index);
                     expenseProvider.calculateGrandTotal();
@@ -1173,7 +1240,9 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: AppStyles.isWebScreen(context) ? MainAxisAlignment.end : MainAxisAlignment.center,
+            mainAxisAlignment: AppStyles.isWebScreen(context)
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.center,
             children: [
               ResponsiveButtonWrapper(
                 child: OutlinedButton(
@@ -1181,7 +1250,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: const BorderSide(color: Color(0xFFE2E8F0)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                   child: Text(
                     'Cancel',
@@ -1197,27 +1267,41 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (expenseProvider.selectedSupplierId == null ||
-                        expenseProvider.invoiceNoPurchaseController.text.isEmpty ||
+                        expenseProvider
+                            .invoiceNoPurchaseController.text.isEmpty ||
                         expenseProvider.purchaseItems.isEmpty) {
-                      showErrorDialog(context, 'Please fill in all required fields and add at least one item');
+                      showErrorDialog(context,
+                          'Please fill in all required fields and add at least one item');
                       return;
                     }
 
                     var data = {
                       "Purchase_Master_Id": widget.editId,
-                      "Purchase_Date": expenseProvider.invoiceDatePurchaseController.text.toyyyymmdd(),
+                      "Purchase_Date": expenseProvider
+                          .invoiceDatePurchaseController.text
+                          .toyyyymmdd(),
                       "Supplier_Id": expenseProvider.selectedSupplierId,
-                      "Invoice_No": expenseProvider.invoiceNoPurchaseController.text,
-                      "TotalAmount": expenseProvider.grandTotal.toStringAsFixed(2),
-                      "TaxableAmount": expenseProvider.totalTaxableAmount.toStringAsFixed(2),
-                      "Total_CGST": expenseProvider.totalCGST.toStringAsFixed(2),
-                      "Total_SGST": expenseProvider.totalSGST.toStringAsFixed(2),
+                      "Invoice_No":
+                          expenseProvider.invoiceNoPurchaseController.text,
+                      "TotalAmount":
+                          expenseProvider.grandTotal.toStringAsFixed(2),
+                      "TaxableAmount":
+                          expenseProvider.totalTaxableAmount.toStringAsFixed(2),
+                      "Total_CGST":
+                          expenseProvider.totalCGST.toStringAsFixed(2),
+                      "Total_SGST":
+                          expenseProvider.totalSGST.toStringAsFixed(2),
                       "Total_IGST": 0,
                       "Total_GST": expenseProvider.totalGST.toStringAsFixed(2),
-                      "TotalDiscount": expenseProvider.totalDiscount.toStringAsFixed(2),
-                      "NetTotal": expenseProvider.finalGrandTotal.toStringAsFixed(2),
-                      "descriptions": expenseProvider.descriptionPurchaseController.text,
-                      "purchase_details": expenseProvider.purchaseItems.map((item) => item.toJson()).toList(),
+                      "TotalDiscount":
+                          expenseProvider.totalDiscount.toStringAsFixed(2),
+                      "NetTotal":
+                          expenseProvider.finalGrandTotal.toStringAsFixed(2),
+                      "descriptions":
+                          expenseProvider.descriptionPurchaseController.text,
+                      "purchase_details": expenseProvider.purchaseItems
+                          .map((item) => item.toJson())
+                          .toList(),
                     };
 
                     expenseProvider.savePurchase(
@@ -1231,7 +1315,8 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                   child: Text(
                     'Save',
