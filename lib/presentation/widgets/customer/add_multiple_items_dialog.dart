@@ -252,6 +252,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             priceTo: mat.priceTo,
             amount: mat.price * scaledQty,
             includeInTotal: mat.includeInTotal,
+            itemTypeId: mat.itemTypeId,
           );
         }).toList();
 
@@ -262,6 +263,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
           make: mainItem.hsnCode,
           unitName: mainItem.unitName,
           materials: materials,
+          itemTypeId: mainItem.primaryCheckBox.toString(),
         ));
       }
 
