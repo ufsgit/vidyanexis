@@ -707,8 +707,11 @@ class TaskPageProvider extends ChangeNotifier {
             "Description": descriptionController.text,
             // "Next_FollowUp_Date":
             //     DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            "Next_FollowUp_Date": statusModel.followup == 1 ? followUpDateController.text.toyyyymmdd() : "",
-            "Followup_Time": statusModel.isTime == 1 ? followUpTimeController.text : "",
+            "Next_FollowUp_Date": statusModel.followup == 1
+                ? followUpDateController.text.toyyyymmdd()
+                : "",
+            "Followup_Time":
+                statusModel.isTime == 1 ? followUpTimeController.text : "",
             "Tasks": _selectedTaskTypeIds.join(","),
             "CustomFields": customFieldsData,
             "flow_id": _flowId,

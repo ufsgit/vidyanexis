@@ -201,7 +201,9 @@ class _StockReportState extends State<StockReport> {
                       onPressed: () {
                         reportsProvider.toggleFilter();
                       },
-                      buttonText: reportsProvider.isFilter ? 'Hide Filters' : 'Show Filters',
+                      buttonText: reportsProvider.isFilter
+                          ? 'Hide Filters'
+                          : 'Show Filters',
                       textColor: AppColors.primaryBlue,
                       borderColor: AppColors.primaryBlue,
                       backgroundColor: Colors.white,
@@ -238,8 +240,8 @@ class _StockReportState extends State<StockReport> {
                       buttonText: 'Export to Excel',
                       textColor: AppColors.whiteColor,
                       borderColor: AppColors.primaryBlue,
-                          backgroundColor: AppColors.primaryBlue,
-                          radius: 4,
+                      backgroundColor: AppColors.primaryBlue,
+                      radius: 4,
                     ),
                   ],
                 ),
@@ -247,14 +249,18 @@ class _StockReportState extends State<StockReport> {
 
             // ── Web Filters ──
             if (isWeb && reportsProvider.isFilter)
-              _buildWebFilters(context, reportsProvider, settingsProvider, expenseProvider),
+              _buildWebFilters(
+                  context, reportsProvider, settingsProvider, expenseProvider),
 
             // ── Mobile Filters Panel ──
             if (!isWeb && reportsProvider.isFilter)
-              _buildMobileFilterPanel(context, reportsProvider, settingsProvider, expenseProvider),
+              _buildMobileFilterPanel(
+                  context, reportsProvider, settingsProvider, expenseProvider),
 
             // ── Summary Bar (when filters are not open on mobile) ──
-            if (!isWeb && !reportsProvider.isFilter && reportsProvider.taskReport.isNotEmpty)
+            if (!isWeb &&
+                !reportsProvider.isFilter &&
+                reportsProvider.taskReport.isNotEmpty)
               CommonReportSummaryBar(
                 totalLabel: 'Total Stock Items',
                 totalCount: reportsProvider.taskReport.length,
@@ -288,13 +294,15 @@ class _StockReportState extends State<StockReport> {
                           reportsProvider.selectDateFilterOption(null);
                           reportsProvider.removeStatus();
                           searchController.clear();
-                          reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+                          reportsProvider.setTaskSearchCriteria(
+                              '', '', '', '', '');
                           reportsProvider.getSearchWorkSummary(context);
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.textRed,
                           side: BorderSide(color: AppColors.textRed),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                         child: Text(
                           'Reset',
@@ -312,8 +320,10 @@ class _StockReportState extends State<StockReport> {
                       height: 48,
                       child: ElevatedButton(
                         onPressed: () {
-                          String status = reportsProvider.selectedStatus.toString();
-                          String assignedTo = reportsProvider.selectedUser.toString();
+                          String status =
+                              reportsProvider.selectedStatus.toString();
+                          String assignedTo =
+                              reportsProvider.selectedUser.toString();
                           String fromDate = reportsProvider.formattedFromDate;
                           String toDate = reportsProvider.formattedToDate;
                           reportsProvider.setTaskSearchCriteria(
@@ -329,7 +339,8 @@ class _StockReportState extends State<StockReport> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                         child: Text(
                           'Apply Filter',
@@ -361,8 +372,7 @@ class _StockReportState extends State<StockReport> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.02),
@@ -380,7 +390,8 @@ class _StockReportState extends State<StockReport> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: reportsProvider.selectedStatus != null && reportsProvider.selectedStatus != 0
+                color: reportsProvider.selectedStatus != null &&
+                        reportsProvider.selectedStatus != 0
                     ? AppColors.primaryBlue
                     : Colors.grey[300]!,
               ),
@@ -390,12 +401,14 @@ class _StockReportState extends State<StockReport> {
               children: [
                 Text(
                   'Item: ',
-                  style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13, fontWeight: FontWeight.w600),
                 ),
                 DropdownButtonHideUnderline(
                   child: DropdownButton<int>(
                     value: reportsProvider.selectedStatus,
-                    hint: Text('All', style: GoogleFonts.plusJakartaSans(fontSize: 13)),
+                    hint: Text('All',
+                        style: GoogleFonts.plusJakartaSans(fontSize: 13)),
                     items: [
                           const DropdownMenuItem<int>(
                             value: 0,
@@ -405,7 +418,8 @@ class _StockReportState extends State<StockReport> {
                         expenseProvider.itemListStock
                             .map((item) => DropdownMenuItem<int>(
                                   value: item.itemId,
-                                  child: Text(item.itemName, style: const TextStyle(fontSize: 13)),
+                                  child: Text(item.itemName,
+                                      style: const TextStyle(fontSize: 13)),
                                 ))
                             .toList(),
                     onChanged: (newValue) {
@@ -426,7 +440,8 @@ class _StockReportState extends State<StockReport> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: reportsProvider.selectedUser != null && reportsProvider.selectedUser != 0
+                color: reportsProvider.selectedUser != null &&
+                        reportsProvider.selectedUser != 0
                     ? AppColors.primaryBlue
                     : Colors.grey[300]!,
               ),
@@ -436,12 +451,14 @@ class _StockReportState extends State<StockReport> {
               children: [
                 Text(
                   'Category: ',
-                  style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13, fontWeight: FontWeight.w600),
                 ),
                 DropdownButtonHideUnderline(
                   child: DropdownButton<int>(
                     value: reportsProvider.selectedUser,
-                    hint: Text('All', style: GoogleFonts.plusJakartaSans(fontSize: 13)),
+                    hint: Text('All',
+                        style: GoogleFonts.plusJakartaSans(fontSize: 13)),
                     items: [
                           const DropdownMenuItem<int>(
                             value: 0,
@@ -451,7 +468,8 @@ class _StockReportState extends State<StockReport> {
                         settingsProvider.searchCategory
                             .map((category) => DropdownMenuItem<int>(
                                   value: category.categoryId,
-                                  child: Text(category.categoryName, style: const TextStyle(fontSize: 13)),
+                                  child: Text(category.categoryName,
+                                      style: const TextStyle(fontSize: 13)),
                                 ))
                             .toList(),
                     onChanged: (newValue) {
@@ -502,15 +520,18 @@ class _StockReportState extends State<StockReport> {
             ),
             child: Text(
               'Search',
-              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13),
+              style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w600, fontSize: 13),
             ),
           ),
           const Spacer(),
           // Reset Button
           if (reportsProvider.fromDate != null ||
               reportsProvider.toDate != null ||
-              (reportsProvider.selectedStatus != null && reportsProvider.selectedStatus != 0) ||
-              (reportsProvider.selectedUser != null && reportsProvider.selectedUser != 0))
+              (reportsProvider.selectedStatus != null &&
+                  reportsProvider.selectedStatus != 0) ||
+              (reportsProvider.selectedUser != null &&
+                  reportsProvider.selectedUser != 0))
             CommonReportResetButton(
               onReset: () {
                 reportsProvider.selectDateFilterOption(null);
@@ -524,7 +545,8 @@ class _StockReportState extends State<StockReport> {
                 foregroundColor: AppColors.textRed,
                 elevation: 0,
                 side: const BorderSide(color: AppColors.textRed),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -560,14 +582,14 @@ class _StockReportState extends State<StockReport> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<int>(
@@ -607,19 +629,20 @@ class _StockReportState extends State<StockReport> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<int>(
                   value: reportsProvider.selectedUser,
-                  hint: CustomText('All Categories', color: AppColors.textGrey3),
+                  hint:
+                      CustomText('All Categories', color: AppColors.textGrey3),
                   isExpanded: true,
                   items: [
                         const DropdownMenuItem<int>(
@@ -654,33 +677,38 @@ class _StockReportState extends State<StockReport> {
                 onClickTopButton(context);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primaryBlue),
+                    Icon(Icons.calendar_today_outlined,
+                        size: 18, color: AppColors.primaryBlue),
                     const SizedBox(width: 10),
                     Expanded(
                       child: CustomText(
-                        reportsProvider.formattedFromDate.isEmpty && reportsProvider.formattedToDate.isEmpty
+                        reportsProvider.formattedFromDate.isEmpty &&
+                                reportsProvider.formattedToDate.isEmpty
                             ? 'Select Date Range'
                             : '${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
                         fontSize: 14,
                         color: AppColors.textBlack,
                       ),
                     ),
-                    Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                    Icon(Icons.keyboard_arrow_down,
+                        color: AppColors.textGrey3, size: 18),
                   ],
                 ),
               ),
@@ -698,8 +726,10 @@ class _StockReportState extends State<StockReport> {
       itemCount: reportsProvider.taskReport.length,
       itemBuilder: (context, index) {
         final task = reportsProvider.taskReport[index];
-        final itemName = task.itemName.trim().isEmpty ? 'Unnamed Item' : task.itemName;
-        final categoryName = task.categoryName.trim().isEmpty ? 'General' : task.categoryName;
+        final itemName =
+            task.itemName.trim().isEmpty ? 'Unnamed Item' : task.itemName;
+        final categoryName =
+            task.categoryName.trim().isEmpty ? 'General' : task.categoryName;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
@@ -749,9 +779,11 @@ class _StockReportState extends State<StockReport> {
                               ),
                               if (task.unitName.isNotEmpty)
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: AppColors.primaryBlue.withOpacity(0.08),
+                                    color:
+                                        AppColors.primaryBlue.withOpacity(0.08),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -794,7 +826,9 @@ class _StockReportState extends State<StockReport> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      task.unitPrice.isEmpty ? '₹0.00' : '₹${task.unitPrice}',
+                                      task.unitPrice.isEmpty
+                                          ? '₹0.00'
+                                          : '₹${task.unitPrice}',
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
@@ -819,7 +853,9 @@ class _StockReportState extends State<StockReport> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      task.purchaseRate.isEmpty ? '₹0.00' : '₹${task.purchaseRate}',
+                                      task.purchaseRate.isEmpty
+                                          ? '₹0.00'
+                                          : '₹${task.purchaseRate}',
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
@@ -840,7 +876,8 @@ class _StockReportState extends State<StockReport> {
                                   if (task.cgst.isNotEmpty)
                                     Container(
                                       margin: const EdgeInsets.only(right: 6),
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFF1F5F9),
                                         borderRadius: BorderRadius.circular(4),
@@ -856,7 +893,8 @@ class _StockReportState extends State<StockReport> {
                                     ),
                                   if (task.sgst.isNotEmpty)
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFF1F5F9),
                                         borderRadius: BorderRadius.circular(4),
@@ -873,11 +911,13 @@ class _StockReportState extends State<StockReport> {
                                 ],
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF0FDF4),
                                   borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(color: const Color(0xFFDCFCE7)),
+                                  border: Border.all(
+                                      color: const Color(0xFFDCFCE7)),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -922,8 +962,7 @@ class _StockReportState extends State<StockReport> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -948,21 +987,36 @@ class _StockReportState extends State<StockReport> {
                     SizedBox(
                       width: 80,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 25.0),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12.0, horizontal: 25.0),
                         child: Text(
                           'No.',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF607185)),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF607185)),
                         ),
                       ),
                     ),
-                    TableWidget(flex: 2, title: 'Item Name', color: Color(0xFF607185)),
-                    TableWidget(flex: 2, title: 'Category Name', color: Color(0xFF607185)),
-                    TableWidget(flex: 1, title: 'Unit Name', color: Color(0xFF607185)),
-                    TableWidget(flex: 1, title: 'Unit Price', color: Color(0xFF607185)),
-                    TableWidget(flex: 1, title: 'Purchase Rate', color: Color(0xFF607185)),
-                    TableWidget(flex: 1, title: 'CGST', color: Color(0xFF607185)),
-                    TableWidget(flex: 1, title: 'SGST', color: Color(0xFF607185)),
-                    TableWidget(flex: 1, title: 'Quantity', color: Color(0xFF607185)),
+                    TableWidget(
+                        flex: 2, title: 'Item Name', color: Color(0xFF607185)),
+                    TableWidget(
+                        flex: 2,
+                        title: 'Category Name',
+                        color: Color(0xFF607185)),
+                    TableWidget(
+                        flex: 1, title: 'Unit Name', color: Color(0xFF607185)),
+                    TableWidget(
+                        flex: 1, title: 'Unit Price', color: Color(0xFF607185)),
+                    TableWidget(
+                        flex: 1,
+                        title: 'Purchase Rate',
+                        color: Color(0xFF607185)),
+                    TableWidget(
+                        flex: 1, title: 'CGST', color: Color(0xFF607185)),
+                    TableWidget(
+                        flex: 1, title: 'SGST', color: Color(0xFF607185)),
+                    TableWidget(
+                        flex: 1, title: 'Quantity', color: Color(0xFF607185)),
                   ],
                 ),
               ),
@@ -975,7 +1029,9 @@ class _StockReportState extends State<StockReport> {
                     var task = reportsProvider.taskReport[index];
                     return Container(
                       decoration: BoxDecoration(
-                        color: index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
+                        color: index % 2 == 0
+                            ? Colors.white
+                            : const Color(0xFFF6F7F9),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
@@ -983,23 +1039,28 @@ class _StockReportState extends State<StockReport> {
                           SizedBox(
                             width: 80,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 25.0),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12.0, horizontal: 25.0),
                               child: Text(
                                 (index + 1).toString(),
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
                           TableWidget(
                             flex: 2,
                             data: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFE9EDF1),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               child: Text(
-                                task.itemName.isEmpty ? 'Unnamed Item' : task.itemName,
+                                task.itemName.isEmpty
+                                    ? 'Unnamed Item'
+                                    : task.itemName,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: const TextStyle(
@@ -1012,7 +1073,9 @@ class _StockReportState extends State<StockReport> {
                           ),
                           TableWidget(
                             flex: 2,
-                            title: task.categoryName.isEmpty ? 'General' : task.categoryName,
+                            title: task.categoryName.isEmpty
+                                ? 'General'
+                                : task.categoryName,
                           ),
                           TableWidget(flex: 1, title: task.unitName),
                           TableWidget(flex: 1, title: '₹${task.unitPrice}'),
@@ -1071,9 +1134,11 @@ class _StockReportState extends State<StockReport> {
                     Wrap(
                       spacing: 10,
                       runSpacing: 10,
-                      children: List<Widget>.generate(dateButtonTitles.length, (index) {
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
                         String title = dateButtonTitles[index];
-                        final bool isSelected = reportsProvider.selectedDateFilterIndex == index;
+                        final bool isSelected =
+                            reportsProvider.selectedDateFilterIndex == index;
                         return ChoiceChip(
                           onSelected: (_) {
                             reportsProvider.setDateFilter(title);
@@ -1087,14 +1152,20 @@ class _StockReportState extends State<StockReport> {
                             title,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
-                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                              color: isSelected ? Colors.white : const Color(0xFF475569),
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF475569),
                             ),
                           ),
                           selectedColor: AppColors.primaryBlue,
                           backgroundColor: Colors.white,
                           side: BorderSide(
-                            color: isSelected ? Colors.transparent : Colors.grey[300]!,
+                            color: isSelected
+                                ? Colors.transparent
+                                : Colors.grey[300]!,
                           ),
                         );
                       }),
@@ -1114,26 +1185,32 @@ class _StockReportState extends State<StockReport> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => reportsProvider.selectDate(context, true),
+                            onTap: () =>
+                                reportsProvider.selectDate(context, true),
                             style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.fromDate != null
-                                  ? '${reportsProvider.fromDate!.toLocal()}'.split(' ')[0]
+                                  ? '${reportsProvider.fromDate!.toLocal()}'
+                                      .split(' ')[0]
                                   : 'From',
                               hintStyle: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month, size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),
@@ -1141,26 +1218,32 @@ class _StockReportState extends State<StockReport> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => reportsProvider.selectDate(context, false),
+                            onTap: () =>
+                                reportsProvider.selectDate(context, false),
                             style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.toDate != null
-                                  ? '${reportsProvider.toDate!.toLocal()}'.split(' ')[0]
+                                  ? '${reportsProvider.toDate!.toLocal()}'
+                                      .split(' ')[0]
                                   : 'To',
                               hintStyle: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month, size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),

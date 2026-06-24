@@ -2,7 +2,10 @@ import 'dart:io';
 
 void main() {
   final dir = Directory('lib');
-  final files = dir.listSync(recursive: true).whereType<File>().where((f) => f.path.endsWith('.dart'));
+  final files = dir
+      .listSync(recursive: true)
+      .whereType<File>()
+      .where((f) => f.path.endsWith('.dart'));
 
   for (final file in files) {
     String content = file.readAsStringSync();
@@ -18,20 +21,22 @@ void main() {
       if (lineStart != -1) {
         String linePrefix = content.substring(lineStart, iconIndex);
         if (linePrefix.contains('//')) {
-           content = content.replaceFirst('Icons.filter', 'Icons.REPLACED_FILTER', iconIndex);
-           continue;
+          content = content.replaceFirst(
+              'Icons.filter', 'Icons.REPLACED_FILTER', iconIndex);
+          continue;
         }
       }
 
       // Find the start of the button
       int startIdx = content.lastIndexOf('ElevatedButton.icon', iconIndex);
       int startIdx2 = content.lastIndexOf('OutlinedButton.icon', iconIndex);
-      
+
       int buttonStart = startIdx > startIdx2 ? startIdx : startIdx2;
-      
+
       if (buttonStart == -1 || (iconIndex - buttonStart > 800)) {
-         content = content.replaceFirst('Icons.filter', 'Icons.REPLACED_FILTER', iconIndex);
-         continue;
+        content = content.replaceFirst(
+            'Icons.filter', 'Icons.REPLACED_FILTER', iconIndex);
+        continue;
       }
 
       // Find matching closing parenthesis
@@ -52,7 +57,8 @@ void main() {
       }
 
       if (endIndex == -1) {
-        content = content.replaceFirst('Icons.filter', 'Icons.REPLACED_FILTER', iconIndex);
+        content = content.replaceFirst(
+            'Icons.filter', 'Icons.REPLACED_FILTER', iconIndex);
         continue;
       }
 
@@ -60,11 +66,13 @@ void main() {
 
       int onPressedStart = buttonCode.indexOf('onPressed:');
       if (onPressedStart == -1) {
-        content = content.replaceFirst('Icons.filter', 'Icons.REPLACED_FILTER', iconIndex);
+        content = content.replaceFirst(
+            'Icons.filter', 'Icons.REPLACED_FILTER', iconIndex);
         continue;
       }
 
-      int nextParamStart = buttonCode.length - 1; // End right before the closing ')'
+      int nextParamStart =
+          buttonCode.length - 1; // End right before the closing ')'
       List<String> otherParams = ['icon:', 'label:', 'style:'];
       for (String param in otherParams) {
         int idx = buttonCode.indexOf(param);
@@ -73,9 +81,11 @@ void main() {
         }
       }
 
-      String onPressedCode = buttonCode.substring(onPressedStart + 10, nextParamStart).trim();
+      String onPressedCode =
+          buttonCode.substring(onPressedStart + 10, nextParamStart).trim();
       if (onPressedCode.endsWith(',')) {
-         onPressedCode = onPressedCode.substring(0, onPressedCode.length - 1).trim();
+        onPressedCode =
+            onPressedCode.substring(0, onPressedCode.length - 1).trim();
       }
 
       // Extract provider.isFilter
@@ -98,11 +108,14 @@ void main() {
     content = content.replaceAll('Icons.REPLACED_FILTER', 'Icons.filter');
 
     if (changed) {
-      String importStr = "import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';\n";
+      String importStr =
+          "import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';\n";
       if (!content.contains('custom_filter_button.dart')) {
         int importIdx = content.indexOf('import ');
         if (importIdx != -1) {
-          content = content.substring(0, importIdx) + importStr + content.substring(importIdx);
+          content = content.substring(0, importIdx) +
+              importStr +
+              content.substring(importIdx);
         } else {
           content = importStr + content;
         }

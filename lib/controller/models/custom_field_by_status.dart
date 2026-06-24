@@ -11,6 +11,7 @@ class CustomFieldByStatusId {
   int? isQuotationCustom;
   int? isViewInQuotation;
   int? isChecked;
+  int? isCommercial;
 
   CustomFieldByStatusId({
     this.isMandatory,
@@ -25,6 +26,7 @@ class CustomFieldByStatusId {
     this.isQuotationCustom,
     this.isViewInQuotation,
     this.isChecked,
+    this.isCommercial,
   });
 
   CustomFieldByStatusId copyWith({
@@ -39,6 +41,7 @@ class CustomFieldByStatusId {
     int? isQuotationCustom,
     int? isViewInQuotation,
     int? isChecked,
+    int? isCommercial,
   }) =>
       CustomFieldByStatusId(
         isMandatory: isMandatory ?? this.isMandatory,
@@ -54,6 +57,7 @@ class CustomFieldByStatusId {
         isQuotationCustom: isQuotationCustom ?? this.isQuotationCustom,
         isViewInQuotation: isViewInQuotation ?? this.isViewInQuotation,
         isChecked: isChecked ?? this.isChecked,
+        isCommercial: isCommercial ?? this.isCommercial,
       );
 
   factory CustomFieldByStatusId.fromJson(Map<String, dynamic> json) =>
@@ -66,6 +70,7 @@ class CustomFieldByStatusId {
         isQuotationCustom: json["quotation_custom"],
         isViewInQuotation: json["view_in_quotation"],
         isChecked: json["is_checked"] != null ? int.tryParse(json["is_checked"].toString()) : null,
+        isCommercial: json["is_commercial"],
         dropdownValues: json["dropdown_values"] == null
             ? []
             : List<DropdownValue>.from(
@@ -89,6 +94,7 @@ class CustomFieldByStatusId {
         "quotation_custom": isQuotationCustom,
         "view_in_quotation": isViewInQuotation,
         "is_checked": isChecked,
+        "is_commercial": isCommercial,
         "dropdown_values": dropdownValues == null
             ? []
             : List<dynamic>.from(dropdownValues!.map((x) => x.toJson())),
@@ -122,8 +128,8 @@ class DropdownValue {
       );
 
   factory DropdownValue.fromJson(Map<String, dynamic> json) => DropdownValue(
-        dropdownId: json["dropdown_id"],
-        dropdownValue: json["dropdown_value"]?.toString(),
+        dropdownId: json["dropdown_id"] ?? json["id"],
+        dropdownValue: (json["dropdown_value"] ?? json["value"])?.toString(),
       );
 
   Map<String, dynamic> toJson() => {

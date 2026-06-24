@@ -155,7 +155,6 @@ Future<void> rtsFeasibilityReportPdf({
   }
 }
 
-
 pw.Widget buildEHSRequirementHeaderTable() {
   return pw.Table(
     border: pw.TableBorder.all(),

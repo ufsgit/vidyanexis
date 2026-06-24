@@ -17,10 +17,12 @@ class AddStructureMaterialDialog extends StatefulWidget {
   });
 
   @override
-  State<AddStructureMaterialDialog> createState() => _AddStructureMaterialDialogState();
+  State<AddStructureMaterialDialog> createState() =>
+      _AddStructureMaterialDialogState();
 }
 
-class _AddStructureMaterialDialogState extends State<AddStructureMaterialDialog> {
+class _AddStructureMaterialDialogState
+    extends State<AddStructureMaterialDialog> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CustomerDetailsProvider>(context);
@@ -39,7 +41,9 @@ class _AddStructureMaterialDialogState extends State<AddStructureMaterialDialog>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.isEdit ? 'Edit Structure Material' : 'Add Structure Material',
+                    widget.isEdit
+                        ? 'Edit Structure Material'
+                        : 'Add Structure Material',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -128,8 +132,7 @@ class _AddStructureMaterialDialogState extends State<AddStructureMaterialDialog>
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: Text(
             'Confirm Delete',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),

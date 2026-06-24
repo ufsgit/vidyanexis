@@ -45,7 +45,6 @@ class _ProjectTypeScreenState extends State<ProjectTypeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,

@@ -51,8 +51,7 @@ class LeadGraphBarChart extends StatelessWidget {
         leadReportProvider.setEnquirySourceFilter(resolvedSourceId ?? 0);
         leadReportProvider.setUserFilterStatus(dashBoardProvider.selectedUser);
         leadReportProvider.setEnquiryForFilter(0);
-        leadReportProvider.setFromandToDate(
-            dashBoardProvider.formattedFromDate,
+        leadReportProvider.setFromandToDate(dashBoardProvider.formattedFromDate,
             dashBoardProvider.formattedToDate);
         await leadReportProvider.getSearchLeadReports(
             '',
@@ -75,15 +74,15 @@ class LeadGraphBarChart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,14 +108,17 @@ class LeadGraphBarChart extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           SizedBox(
-            height: isWeb ? 250 : 350, // Slightly taller on mobile for vertical category lists
+            height: isWeb
+                ? 250
+                : 350, // Slightly taller on mobile for vertical category lists
             child: SfCartesianChart(
               primaryXAxis: isWeb
                   ? const CategoryAxis(labelRotation: 270)
                   : CategoryAxis(
                       labelRotation: 0,
                       labelIntersectAction: AxisLabelIntersectAction.none,
-                      labelStyle: const TextStyle(fontSize: 8, fontWeight: FontWeight.w500),
+                      labelStyle: const TextStyle(
+                          fontSize: 8, fontWeight: FontWeight.w500),
                       interval: 1,
                       maximumLabels: leadData.length,
                       labelAlignment: LabelAlignment.center,
@@ -217,8 +219,7 @@ class ConversionGraphBarChart extends StatelessWidget {
         leadReportProvider.setEnquirySourceFilter(resolvedSourceId ?? 0);
         leadReportProvider.setUserFilterStatus(dashBoardProvider.selectedUser);
         leadReportProvider.setEnquiryForFilter(0);
-        leadReportProvider.setFromandToDate(
-            dashBoardProvider.formattedFromDate,
+        leadReportProvider.setFromandToDate(dashBoardProvider.formattedFromDate,
             dashBoardProvider.formattedToDate);
 
         await leadReportProvider.getSearchLeadReports(
@@ -242,15 +243,15 @@ class ConversionGraphBarChart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,7 +273,8 @@ class ConversionGraphBarChart extends StatelessWidget {
                   : CategoryAxis(
                       labelRotation: 0,
                       labelIntersectAction: AxisLabelIntersectAction.none,
-                      labelStyle: const TextStyle(fontSize: 8, fontWeight: FontWeight.w500),
+                      labelStyle: const TextStyle(
+                          fontSize: 8, fontWeight: FontWeight.w500),
                       interval: 1,
                       maximumLabels: leadData.length,
                       labelAlignment: LabelAlignment.center,
@@ -334,15 +336,15 @@ class LeadDistributionPieChart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -452,15 +454,15 @@ class TaskAllocationBarChart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [

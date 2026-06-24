@@ -65,8 +65,6 @@ class _StatusPageState extends State<StatusPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,
@@ -100,8 +98,7 @@ class _StatusPageState extends State<StatusPage> {
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
-                                    borderRadius:
-                                        BorderRadius.circular(4)),
+                                    borderRadius: BorderRadius.circular(4)),
                                 child: Text(
                                   settingsProvider.status[index].statusName,
                                   style: GoogleFonts.plusJakartaSans(
@@ -127,12 +124,12 @@ class _StatusPageState extends State<StatusPage> {
                                 );
                               },
                               child: Text(
-                                  'Edit',
-                                  style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primaryBlue),
-                                )),
+                                'Edit',
+                                style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primaryBlue),
+                              )),
                           TextButton(
                               onPressed: () {
                                 showDialog(
@@ -158,8 +155,7 @@ class _StatusPageState extends State<StatusPage> {
                                           },
                                           child: const Text(
                                             'Delete',
-                                            style: TextStyle(
-                                                color: Colors.red),
+                                            style: TextStyle(color: Colors.red),
                                           ),
                                         ),
                                       ],

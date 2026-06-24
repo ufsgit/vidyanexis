@@ -264,56 +264,60 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
           ),
           const Spacer(),
           Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+            width: 280,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: searchController,
+              focusNode: searchFocusNodeWeb,
+              textAlignVertical: TextAlignVertical.center,
+              onTap: () {
+                Future.microtask(() {
+                  if (searchController.text.isNotEmpty &&
+                      searchController.selection.baseOffset == 0 &&
+                      searchController.selection.extentOffset ==
+                          searchController.text.length) {
+                    searchController.selection = TextSelection.collapsed(
+                        offset: searchController.text.length);
+                  }
+                });
+              },
+              onSubmitted: (query) {
                 reportProvider.setLeadSearch(query);
                 reportProvider.fetchReports(context);
               },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                reportProvider.setLeadSearch(searchController.text);
-                reportProvider.fetchReports(context);
-              },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+              decoration: InputDecoration(
+                hintText: 'Search here....',
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  color: const Color(0xFF94A3B8),
+                  fontSize: 13,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    reportProvider.setLeadSearch(searchController.text);
+                    reportProvider.fetchReports(context);
+                  },
+                  child: const Icon(Icons.search,
+                      color: Color(0xFF64748B), size: 18),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 16),
           CustomFilterButton(
             onPressed: () {
@@ -323,7 +327,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
           ),
           const SizedBox(width: 8),
           CustomElevatedButton(
-                          radius: 4,
+            radius: 4,
             onPressed: () {
               exportToExcel(
                 headers: [
@@ -375,17 +379,17 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Container(

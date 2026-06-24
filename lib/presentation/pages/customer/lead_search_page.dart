@@ -61,8 +61,7 @@ class LeadSearchPage extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(
-                  color: const Color(0xFFCBD5E1), width: 1.0),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.02),
@@ -78,8 +77,11 @@ class LeadSearchPage extends StatelessWidget {
                 Future.microtask(() {
                   if (provider.contactNoController.text.isNotEmpty &&
                       provider.contactNoController.selection.baseOffset == 0 &&
-                      provider.contactNoController.selection.extentOffset == provider.contactNoController.text.length) {
-                    provider.contactNoController.selection = TextSelection.collapsed(offset: provider.contactNoController.text.length);
+                      provider.contactNoController.selection.extentOffset ==
+                          provider.contactNoController.text.length) {
+                    provider.contactNoController.selection =
+                        TextSelection.collapsed(
+                            offset: provider.contactNoController.text.length);
                   }
                 });
               },
@@ -92,11 +94,12 @@ class LeadSearchPage extends StatelessWidget {
                 ),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 10),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 suffixIcon: GestureDetector(
                   onTap: () => provider.searchLeadByContact(),
-                  child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
+                  child: const Icon(Icons.search,
+                      color: Color(0xFF64748B), size: 18),
                 ),
               ),
             ),

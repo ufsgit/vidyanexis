@@ -46,118 +46,124 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
           ),
         ),
         child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 80), // Increased top spacing
-                          // Minimal Logo
-                          settingsProvider.isLogoLoading && settingsProvider.logo.isEmpty
-                              ? const SizedBox(
-                                  height: 40,
-                                  width: 40,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                                )
-                              : Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: displayLogo.startsWith('http')
-                                      ? Image.network(
-                                          displayLogo,
-                                          height: 40,
-                                          fit: BoxFit.contain,
-                                          color: Colors.white,
-                                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.business_center, size: 30, color: Colors.white),
-                                        )
-                                      : Image.asset(
-                                          displayLogo,
-                                          height: 40,
-                                          fit: BoxFit.contain,
-                                          color: Colors.white,
-                                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.business_center, size: 30, color: Colors.white),
-                                        ),
+          child: LayoutBuilder(builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 80), // Increased top spacing
+                        // Minimal Logo
+                        settingsProvider.isLogoLoading &&
+                                settingsProvider.logo.isEmpty
+                            ? const SizedBox(
+                                height: 40,
+                                width: 40,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: Colors.white),
+                              )
+                            : Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
-                          
-                          const SizedBox(height: 50),
-            
-                          // Bold Heading
-                          Text(
-                            'Sign in.',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 48,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                              letterSpacing: -1.5,
-                            ),
+                                child: displayLogo.startsWith('http')
+                                    ? Image.network(
+                                        displayLogo,
+                                        height: 40,
+                                        fit: BoxFit.contain,
+                                        color: Colors.white,
+                                        errorBuilder: (context, error,
+                                                stackTrace) =>
+                                            const Icon(Icons.business_center,
+                                                size: 30, color: Colors.white),
+                                      )
+                                    : Image.asset(
+                                        displayLogo,
+                                        height: 40,
+                                        fit: BoxFit.contain,
+                                        color: Colors.white,
+                                        errorBuilder: (context, error,
+                                                stackTrace) =>
+                                            const Icon(Icons.business_center,
+                                                size: 30, color: Colors.white),
+                                      ),
+                              ),
+
+                        const SizedBox(height: 50),
+
+                        // Bold Heading
+                        Text(
+                          'Sign in.',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 48,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: -1.5,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Welcome back to ${settingsProvider.displayTitle}',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white.withOpacity(0.7),
-                            ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Welcome back to ${settingsProvider.displayTitle}',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white.withOpacity(0.7),
                           ),
-                          
-                          const SizedBox(height: 50),
-            
-                          // Minimal Form
-                          SignUpForm(
-                            passwordController: loginProvider.passWordController,
-                            userNameController: loginProvider.userNameController,
-                            onPressed: () {
-                              loginProvider.login(
-                                context: context,
-                                passWord: loginProvider.passWordController.text,
-                                userName: loginProvider.userNameController.text,
-                              );
-                            },
-                          ),
-                          
-                          const Spacer(), // Pushes branding to the bottom
-                          
-                          // Bottom Branding
-                          Center(
-                            child: Column(
-                              children: [
-                                Text(
-                                  'SOLARIS',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: Colors.white.withOpacity(0.3),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 4,
-                                  ),
+                        ),
+
+                        const SizedBox(height: 50),
+
+                        // Minimal Form
+                        SignUpForm(
+                          passwordController: loginProvider.passWordController,
+                          userNameController: loginProvider.userNameController,
+                          onPressed: () {
+                            loginProvider.login(
+                              context: context,
+                              passWord: loginProvider.passWordController.text,
+                              userName: loginProvider.userNameController.text,
+                            );
+                          },
+                        ),
+
+                        const Spacer(), // Pushes branding to the bottom
+
+                        // Bottom Branding
+                        Center(
+                          child: Column(
+                            children: [
+                              Text(
+                                'SOLARIS',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: Colors.white.withOpacity(0.3),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 4,
                                 ),
-                                const SizedBox(height: 40), // Space at the very bottom
-                              ],
-                            ),
+                              ),
+                              const SizedBox(
+                                  height: 40), // Space at the very bottom
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              );
-            }
-          ),
+              ),
+            );
+          }),
         ),
       ),
     );
   }
 }
-
 
 class SignUpForm extends StatelessWidget {
   final TextEditingController userNameController;
@@ -194,9 +200,7 @@ class SignUpForm extends StatelessWidget {
             labelText: 'user name ',
             height: 56,
           ),
-          
           const SizedBox(height: 32),
-          
           Text(
             'PASSWORD',
             style: GoogleFonts.plusJakartaSans(
@@ -235,9 +239,7 @@ class SignUpForm extends StatelessWidget {
               );
             },
           ),
-          
           const SizedBox(height: 48),
-          
           buttonWidget(
             context: context,
             text: 'Sign in',
@@ -252,6 +254,3 @@ class SignUpForm extends StatelessWidget {
     );
   }
 }
-
-
-

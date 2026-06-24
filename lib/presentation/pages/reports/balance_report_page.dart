@@ -88,7 +88,8 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
           SliverToBoxAdapter(child: _buildWebTableHeader()),
           if (provider.balanceReportList.isEmpty)
             SliverFillRemaining(
-              child: const CommonEmptyState(message: 'No balance reports found'),
+              child:
+                  const CommonEmptyState(message: 'No balance reports found'),
             )
           else
             SliverList(
@@ -118,8 +119,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                 context.visitAncestorElements((element) {
                   if (element is StatefulElement &&
                       element.state is ScaffoldState) {
-                    ScaffoldState scaffold =
-                        element.state as ScaffoldState;
+                    ScaffoldState scaffold = element.state as ScaffoldState;
                     if (scaffold.hasDrawer) {
                       parent = scaffold;
                       return false;
@@ -154,56 +154,60 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
           ),
           const Spacer(),
           Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+            width: 280,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: searchController,
+              focusNode: searchFocusNodeWeb,
+              textAlignVertical: TextAlignVertical.center,
+              onTap: () {
+                Future.microtask(() {
+                  if (searchController.text.isNotEmpty &&
+                      searchController.selection.baseOffset == 0 &&
+                      searchController.selection.extentOffset ==
+                          searchController.text.length) {
+                    searchController.selection = TextSelection.collapsed(
+                        offset: searchController.text.length);
+                  }
+                });
+              },
+              onSubmitted: (query) {
                 provider.setSearch(query);
                 provider.getBalanceReport(context);
               },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                provider.setSearch(searchController.text);
-                provider.getBalanceReport(context);
-              },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+              decoration: InputDecoration(
+                hintText: 'Search here....',
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  color: const Color(0xFF94A3B8),
+                  fontSize: 13,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    provider.setSearch(searchController.text);
+                    provider.getBalanceReport(context);
+                  },
+                  child: const Icon(Icons.search,
+                      color: Color(0xFF64748B), size: 18),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 16),
           CustomFilterButton(
             onPressed: () {
@@ -218,7 +222,9 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
             label: Text(MediaQuery.of(context).size.width > 860
                 ? 'Export To Excel'
                 : ''),
-            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4)),
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -236,17 +242,17 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
       child: Container(
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-      ],
-    ),
         child: Row(
           children: [
             CommonReportDateFilter(
@@ -260,7 +266,9 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
             const SizedBox(width: 16),
             ElevatedButton(
               onPressed: () => provider.getBalanceReport(context),
-              style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
                 backgroundColor: AppColors.primaryBlue,
                 foregroundColor: Colors.white,
                 padding:

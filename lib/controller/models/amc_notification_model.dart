@@ -38,11 +38,12 @@ class AmcNotificationModel {
     serviceName = json['Service_Name'] ?? '';
     serviceDate = json['Service_Date'] ?? '';
     staffName = json['Staff_Name'] ?? '';
-    customerId = int.tryParse(json['Customer_Id']?.toString() ?? 
-        json['Customer_id']?.toString() ?? 
-        json['customer_id']?.toString() ?? 
-        json['CustomerId']?.toString() ?? 
-        json['customerId']?.toString() ?? '0');
+    customerId = int.tryParse(json['Customer_Id']?.toString() ??
+        json['Customer_id']?.toString() ??
+        json['customer_id']?.toString() ??
+        json['CustomerId']?.toString() ??
+        json['customerId']?.toString() ??
+        '0');
     if (customerId == 0) customerId = null;
     if (json['Interval_Details'] != null) {
       intervalDetails = <IntervalDetail>[];

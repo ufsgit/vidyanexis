@@ -7,6 +7,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_commercial_custom_fields_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_commercial_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -18,6 +19,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_item_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/commercial_custom_fields_table.dart';
 import 'package:vidyanexis/presentation/widgets/customer/commercial_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/scope_of_work_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/structure_material_card.dart';
@@ -68,6 +70,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       // Fetch custom field definitions for quotations
       // await customerDetailsProvider.getCustomFieldsByQuotationId(context);
       await customerDetailsProvider.getQuotationFieldsApi();
+      await customerDetailsProvider.getCommercialCustomFieldsApi(context);
 
       if (widget.isEdit) {
         // Fetch existing quotation details if editing
@@ -498,34 +501,56 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         multiItemsWidget(context),
                       ],
                       const SizedBox(height: 16),
-                      if (customerDetailsProvider
-                          .customFieldQuotation.isNotEmpty) ...[
-                        CustomFieldSectionWidget(
-                          key: customFieldQuotationKey,
-                          customFields:
-                              customerDetailsProvider.customFieldQuotation,
-                          initialFieldValues:
-                              customerDetailsProvider.customFieldQuotation
-                                  .map((e) => FieldValueModel(
-                                        customFieldId: e.customFieldId,
-                                        value: e.datavalue,
-                                      ))
-                                  .toList(),
-                          controllerKey: 'quotation',
-                          showEditButton: true,
+                      if (customerDetailsProvider.customFieldQuotation.isNotEmpty) ...[
+                        Builder(
+                          builder: (context) {
+                            final nonCommercialFields = customerDetailsProvider.customFieldQuotation
+                                .where((e) => e.isCommercial != 1)
+                                .toList();
+                            if (nonCommercialFields.isEmpty) return const SizedBox.shrink();
+                            return Column(
+                              children: [
+                                CustomFieldSectionWidget(
+                                  key: customFieldQuotationKey,
+                                  customFields: nonCommercialFields,
+                                  initialFieldValues: nonCommercialFields
+                                      .map((e) => FieldValueModel(
+                                            customFieldId: e.customFieldId,
+                                            value: e.datavalue,
+                                          ))
+                                      .toList(),
+                                  controllerKey: 'quotation',
+                                  showEditButton: true,
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            );
+                          },
                         ),
-                        const SizedBox(height: 16),
                       ],
-                      loadFromCustomField(context),
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 200,
+                          child: loadFromCustomField(context),
+                        ),
+                      ),
                       const SizedBox(height: 16),
+                      if (settingsProvider.companyDetails.isNotEmpty && settingsProvider.companyDetails.first.commercialProposal == 1)
+                        const Column(
+                          children: [
+                            CommercialCustomFieldsTableWidget(),
+                            SizedBox(height: 16),
+                          ],
+                        ),
                       if (customerDetailsProvider.selectedQuotationType ==
                           1) ...[
                         residentialItemWidget(context),
                       ],
-                      if (customerDetailsProvider.selectedQuotationType ==
-                          2) ...[
-                        commercialItemWidget(context),
-                      ],
+                      // if (customerDetailsProvider.selectedQuotationType ==
+                      //     2) ...[
+                      //   commercialItemWidget(context),
+                      // ],
                     ],
                   ),
 
@@ -1448,12 +1473,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     return;
                   }
 
+                  bool isCommercialProposal = settingsProvider.companyDetails.isNotEmpty &&
+                      settingsProvider.companyDetails.first.commercialProposal == 1;
+
                   if (customerDetailsProvider.items.isEmpty &&
                       customerDetailsProvider.commercialItems.isEmpty &&
                       customerDetailsProvider.billOfMaterialsItems.isEmpty) {
-                    _showValidationDialog(
-                        context, 'Cannot Save', 'No items added');
-                    return;
+                    if (!isCommercialProposal) {
+                      _showValidationDialog(
+                          context, 'Cannot Save', 'No items added');
+                      return;
+                    }
                   }
 
                   try {
@@ -1573,6 +1603,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
   Widget residentialItemWidget(BuildContext context) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+    bool isCommercialProposal = settingsProvider.companyDetails.isNotEmpty &&
+        settingsProvider.companyDetails.first.commercialProposal == 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1608,7 +1641,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 ),
               ),
               const SizedBox(height: 16),
-              if (!companyQuotationItems)
+              if (!companyQuotationItems && !isCommercialProposal)
                 Align(
                   alignment: Alignment.centerLeft,
                   child: OutlinedButton.icon(
@@ -1671,7 +1704,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   );
                 },
               ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1701,7 +1734,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1732,7 +1765,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1763,7 +1796,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1794,7 +1827,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1825,7 +1858,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1856,7 +1889,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty || customerDetailsProvider.selectedCommercialFields.isNotEmpty)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1921,7 +1954,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1973,7 +2006,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -2026,7 +2059,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end

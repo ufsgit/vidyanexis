@@ -92,7 +92,8 @@ class PurchaseItemModel {
       description: json['Description']?.toString() ?? '',
       model: json['Model']?.toString() ?? '',
       brand: json['Brand']?.toString() ?? '',
-      unitDiscount: double.tryParse(json['UnitDiscount']?.toString() ?? '0') ?? 0.0,
+      unitDiscount:
+          double.tryParse(json['UnitDiscount']?.toString() ?? '0') ?? 0.0,
     );
   }
 

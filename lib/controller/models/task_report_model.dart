@@ -82,10 +82,12 @@ class TaskReportModel {
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
     String parseString(dynamic value) => value?.toString() ?? '';
-    if (json['Customer_Name'] == 'test site visit' || json['Customer_Name'] == 'akash') {
+    if (json['Customer_Name'] == 'test site visit' ||
+        json['Customer_Name'] == 'akash') {
       try {
-        io.File('task_json_debug.txt').writeAsStringSync(json.toString() + '\n', mode: io.FileMode.append);
-      } catch(e) {}
+        io.File('task_json_debug.txt').writeAsStringSync(json.toString() + '\n',
+            mode: io.FileMode.append);
+      } catch (e) {}
     }
     return TaskReportModel(
       taskId: json['Task_Id'] ?? 0,

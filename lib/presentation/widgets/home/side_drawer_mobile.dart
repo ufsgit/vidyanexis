@@ -79,19 +79,31 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
-    
+
     // Report items
     final List<Map<String, dynamic>> reportItems = [
       if (settingsProvider.menuIsViewMap[7].toString() == '1')
         {'title': 'Task Reports', 'page': const TaskPageReportMobile()},
       if (settingsProvider.menuIsViewMap[8].toString() == '1')
-        {'title': 'Complaint Reports', 'page': const ComplaintPageReportsMobile()},
+        {
+          'title': 'Complaint Reports',
+          'page': const ComplaintPageReportsMobile()
+        },
       if (settingsProvider.menuIsViewMap[9].toString() == '1')
-        {'title': 'Periodic Service Reports', 'page': const PeriodicServiceReportPageMobile()},
+        {
+          'title': 'Periodic Service Reports',
+          'page': const PeriodicServiceReportPageMobile()
+        },
       if (settingsProvider.menuIsViewMap[112].toString() == '1')
-        {'title': 'Out Of Warranty Reports', 'page': const OutOfWarrentyReportScreen()},
+        {
+          'title': 'Out Of Warranty Reports',
+          'page': const OutOfWarrentyReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[117].toString() == '1')
-        {'title': 'Upcoming Warranty Reports', 'page': const UpcomingWarrentyReportScreen()},
+        {
+          'title': 'Upcoming Warranty Reports',
+          'page': const UpcomingWarrentyReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[10].toString() == '1')
         {'title': 'Conversion Reports', 'page': const ConversionReportPage()},
       if (settingsProvider.menuIsViewMap[11].toString() == '1')
@@ -103,11 +115,22 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
         {'title': 'Expense Reports', 'page': const ExpenseReportScreen()},
       if (settingsProvider.menuIsViewMap[119].toString() == '1')
-        {'title': 'Enquiry Source Reports', 'page': const EnquirySourceSummaryReportScreen()},
-      if (settingsProvider.menuIsViewMap[119].toString() == '1' || settingsProvider.menuIsViewMap[89].toString() == '1')
-        {'title': 'Employee Summary Reports', 'page': const EmployeeSummaryReportScreen()},
-      if (settingsProvider.menuIsViewMap[119].toString() == '1' || settingsProvider.menuIsViewMap[89].toString() == '1')
-        {'title': 'Enquiry For Summary Reports', 'page': const EnquiryForSummaryReportScreen()},
+        {
+          'title': 'Enquiry Source Reports',
+          'page': const EnquirySourceSummaryReportScreen()
+        },
+      if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
+          settingsProvider.menuIsViewMap[89].toString() == '1')
+        {
+          'title': 'Employee Summary Reports',
+          'page': const EmployeeSummaryReportScreen()
+        },
+      if (settingsProvider.menuIsViewMap[119].toString() == '1' ||
+          settingsProvider.menuIsViewMap[89].toString() == '1')
+        {
+          'title': 'Enquiry For Summary Reports',
+          'page': const EnquiryForSummaryReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[26].toString() == '1')
         {'title': 'Attendance Reports', 'page': const AttendanceReport()},
       if (settingsProvider.menuIsViewMap[96].toString() == '1')
@@ -115,7 +138,10 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if (settingsProvider.menuIsViewMap[115].toString() == '1')
         {'title': 'Followup Reports', 'page': const FollowupReportMobile()},
       if (settingsProvider.menuIsViewMap[153].toString() == '1')
-        {'title': 'Followup Amount Report', 'page': const FollowupAmountReportPage()},
+        {
+          'title': 'Followup Amount Report',
+          'page': const FollowupAmountReportPage()
+        },
       if (settingsProvider.menuIsViewMap[118].toString() == '1')
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')
@@ -129,13 +155,22 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if (settingsProvider.menuIsViewMap[72].toString() == '1')
         {'title': 'Payment Reports', 'page': const PaymentReportPage()},
       if (settingsProvider.menuIsViewMap[73].toString() == '1')
-        {'title': 'Upcoming Payment Reports', 'page': const UpcomingPaymentReportPage()},
+        {
+          'title': 'Upcoming Payment Reports',
+          'page': const UpcomingPaymentReportPage()
+        },
       if (settingsProvider.menuIsViewMap[74].toString() == '1')
-        {'title': 'Total Outstanding Reports', 'page': const TotalOutstandingReportPage()},
+        {
+          'title': 'Total Outstanding Reports',
+          'page': const TotalOutstandingReportPage()
+        },
       if (settingsProvider.menuIsViewMap[75].toString() == '1')
         {'title': 'Outstanding Reports', 'page': const OutstandingReportPage()},
       if (settingsProvider.menuIsViewMap[89].toString() == '1')
-        {'title': 'Task Summary Reports', 'page': const TaskSummaryReportScreen()},
+        {
+          'title': 'Task Summary Reports',
+          'page': const TaskSummaryReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[80].toString() == '1')
         {'title': 'Stock Reports', 'page': const StockReport()},
       if (settingsProvider.menuIsViewMap[121].toString() == '1')
@@ -145,15 +180,24 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if (settingsProvider.menuIsViewMap[113].toString() == '1')
         {'title': 'Commission Reports', 'page': const CommissionReportMobile()},
       if (settingsProvider.menuIsViewMap[114].toString() == '1')
-        {'title': 'Sub Contract Reports', 'page': const SubContractReportMobile()},
+        {
+          'title': 'Sub Contract Reports',
+          'page': const SubContractReportMobile()
+        },
       if (settingsProvider.menuIsViewMap[88].toString() == '1')
         {'title': 'Receipt Reports', 'page': const ReceiptReportPage()},
       if (settingsProvider.menuIsViewMap[123].toString() == '1')
-        {'title': 'Customer Task Month Report', 'page': const CustomerTaskMonthReportScreen()},
+        {
+          'title': 'Customer Task Month Report',
+          'page': const CustomerTaskMonthReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[144].toString() == '1')
         {'title': 'Sales Reports', 'page': const SalesReportScreenPhone()},
       if (settingsProvider.menuIsViewMap[152].toString() == '1')
-        {'title': 'Customer Outstanding Reports', 'page': const CustomerOutstandingReportMobile()},
+        {
+          'title': 'Customer Outstanding Reports',
+          'page': const CustomerOutstandingReportMobile()
+        },
     ];
 
     Future<String> getUserName() async {
@@ -174,7 +218,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         children: [
           // Premium Header Section
           _buildHeader(settingsProvider, getUserName),
-          
+
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -182,7 +226,6 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               children: [
                 const SizedBox(height: 12),
                 _buildSectionTitle('MAIN MENU'),
-                
                 if (settingsProvider.menuIsViewMap[29].toString() == '1')
                   _buildModernMenuItem(
                     context: context,
@@ -193,7 +236,6 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFF7B61FF), // Purple
                     lightColor: const Color(0xFFE9EAFB),
                   ),
-                
                 if (settingsProvider.menuIsViewMap[36].toString() == '1')
                   _buildModernMenuItem(
                     context: context,
@@ -204,7 +246,6 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFF63B3ED), // Blue
                     lightColor: const Color(0xFFE6F5FF),
                   ),
-                  
                 if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
                   _buildModernMenuItem(
                     context: context,
@@ -215,20 +256,16 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFFFF9D6E), // Orange
                     lightColor: const Color(0xFFFFF1E8),
                   ),
-
                 const SizedBox(height: 16),
                 _buildSectionTitle('ANALYSIS'),
-
                 if (reportItems.isNotEmpty)
                   _buildReportsExpansionTile(
                     context: context,
                     reportItems: reportItems,
                     sideProvider: sideProvider,
                   ),
-
                 const SizedBox(height: 16),
                 _buildSectionTitle('OTHERS'),
-
                 if (settingsProvider.menuIsViewMap[2].toString() == '1')
                   _buildModernMenuItem(
                     context: context,
@@ -239,12 +276,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     activeColor: const Color(0xFF48BB78), // Green
                     lightColor: const Color(0xFFEDF7ED),
                   ),
-                
                 const SizedBox(height: 32),
               ],
             ),
           ),
-          
+
           // Footer Section
           _buildFooter(context, packageInfo),
         ],
@@ -252,7 +288,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
     );
   }
 
-  Widget _buildHeader(SettingsProvider settingsProvider, Future<String> Function() getUserName) {
+  Widget _buildHeader(SettingsProvider settingsProvider,
+      Future<String> Function() getUserName) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
       decoration: BoxDecoration(
@@ -293,7 +330,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   ],
                 ),
                 child: const Center(
-                  child: Icon(Icons.person_rounded, color: Colors.white, size: 28),
+                  child:
+                      Icon(Icons.person_rounded, color: Colors.white, size: 28),
                 ),
               ),
               const SizedBox(width: 16),
@@ -337,8 +375,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                       settingsProvider.displayLogo,
                       height: 40,
                       fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => 
-                        Image.asset(AppStyles.logo(), height: 40),
+                      errorBuilder: (context, error, stackTrace) =>
+                          Image.asset(AppStyles.logo(), height: 40),
                     )
                   : Image.asset(
                       settingsProvider.displayLogo,
@@ -418,7 +456,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     ),
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, size: 20, color: Colors.grey[300]),
+                Icon(Icons.chevron_right_rounded,
+                    size: 20, color: Colors.grey[300]),
               ],
             ),
           ),
@@ -452,7 +491,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               'assets/images/Reports.svg',
               width: 18,
               height: 18,
-              colorFilter: const ColorFilter.mode(Color(0xFF7B61FF), BlendMode.srcIn),
+              colorFilter:
+                  const ColorFilter.mode(Color(0xFF7B61FF), BlendMode.srcIn),
             ),
           ),
           title: Text(
@@ -471,7 +511,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               dense: true,
               visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4)),
               title: Text(
                 report['title'],
                 style: GoogleFonts.plusJakartaSans(
@@ -508,14 +549,16 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFFF3B30).withOpacity(0.2)),
+                  border: Border.all(
+                      color: const Color(0xFFFF3B30).withOpacity(0.2)),
                   borderRadius: BorderRadius.circular(4),
                   color: const Color(0xFFFF3B30).withOpacity(0.05),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.logout_rounded, color: Color(0xFFFF3B30), size: 20),
+                    const Icon(Icons.logout_rounded,
+                        color: Color(0xFFFF3B30), size: 20),
                     const SizedBox(width: 12),
                     Text(
                       'Logout',
@@ -532,8 +575,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           ),
           const SizedBox(height: 16),
           Text(
-            packageInfo != null 
-                ? "v${packageInfo.version} (${packageInfo.buildNumber})" 
+            packageInfo != null
+                ? "v${packageInfo.version} (${packageInfo.buildNumber})"
                 : "v1.0.0",
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
@@ -575,7 +618,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               margin: const EdgeInsets.only(right: 8),
               child: ElevatedButton(
                 onPressed: () async {
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
 
                   // Backup attendance state
                   String? userId = prefs.getString('userId');
@@ -593,7 +637,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     try {
                       if (!kIsWeb && userId.isNotEmpty) {
                         final String topicName = '${AppStyles.name()}-$userId';
-                        await FirebaseMessaging.instance.unsubscribeFromTopic(topicName);
+                        await FirebaseMessaging.instance
+                            .unsubscribeFromTopic(topicName);
                       }
                     } catch (e) {
                       if (kDebugMode) print(e);
@@ -608,15 +653,23 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
 
                   // Restore attendance state
                   if (userId != null) {
-                    if (isCheckedIn != null) await prefs.setBool('is_checked_in_$userId', isCheckedIn);
-                    if (checkInDate != null) await prefs.setString('check_in_date_$userId', checkInDate);
-                    if (checkInTime != null) await prefs.setString('check_in_time_$userId', checkInTime);
-                    if (attendanceId != null) await prefs.setInt('attendance_id_$userId', attendanceId);
+                    if (isCheckedIn != null)
+                      await prefs.setBool('is_checked_in_$userId', isCheckedIn);
+                    if (checkInDate != null)
+                      await prefs.setString(
+                          'check_in_date_$userId', checkInDate);
+                    if (checkInTime != null)
+                      await prefs.setString(
+                          'check_in_time_$userId', checkInTime);
+                    if (attendanceId != null)
+                      await prefs.setInt('attendance_id_$userId', attendanceId);
                   }
 
                   // Restore branding state
-                  if (cachedLogo != null) await prefs.setString('cached_company_logo', cachedLogo);
-                  if (cachedTitle != null) await prefs.setString('cached_company_title', cachedTitle);
+                  if (cachedLogo != null)
+                    await prefs.setString('cached_company_logo', cachedLogo);
+                  if (cachedTitle != null)
+                    await prefs.setString('cached_company_title', cachedTitle);
 
                   if (context.mounted) {
                     Navigator.of(context).pop();
@@ -627,11 +680,13 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   backgroundColor: const Color(0xFFFF3B30),
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
                 ),
                 child: Text(
                   'Logout',
-                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+                  style:
+                      GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -640,5 +695,4 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       },
     );
   }
-
 }

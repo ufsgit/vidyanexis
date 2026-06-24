@@ -59,8 +59,6 @@ class _FormContentState extends State<FormContent> {
         Widget contentBody = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-
             // Form List
             Container(
               decoration: BoxDecoration(
@@ -137,15 +135,15 @@ class _FormContentState extends State<FormContent> {
       height: 40,
       decoration: BoxDecoration(
         color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextField(
         onChanged: (query) {
@@ -207,7 +205,8 @@ class _FormContentState extends State<FormContent> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,
                     borderRadius: BorderRadius.circular(4)),
@@ -307,7 +306,8 @@ class _FormContentState extends State<FormContent> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                         color: AppColors.surfaceGrey,
                         borderRadius: BorderRadius.circular(4)),

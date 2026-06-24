@@ -30,7 +30,9 @@ class _DateRangePickerExampleState extends State<DateRangePickerExample> {
               onSurface: Colors.black, // body text color
             ),
             textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
                 foregroundColor: Colors.blue, // button text color
               ),
             ),

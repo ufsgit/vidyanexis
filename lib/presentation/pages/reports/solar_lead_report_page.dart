@@ -104,13 +104,15 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                 provider.toggleFilter();
               },
               onSearchTap: () {
-                Provider.of<SidebarProvider>(context, listen: false).startSearch();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .startSearch();
                 provider.toggleFilter();
               },
               onClearTap: () {
                 searchController.clear();
                 provider.toggleFilter();
-                Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                Provider.of<SidebarProvider>(context, listen: false)
+                    .stopSearch();
                 provider.getSolarLeadReport(
                   context,
                   '',
@@ -144,11 +146,13 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                   if (isWeb) ...[
                     _buildHeader(context, provider, dropDownProvider),
                     if (provider.isFilter)
-                      _buildFilterContainer(context, provider, dropDownProvider),
+                      _buildFilterContainer(
+                          context, provider, dropDownProvider),
                   ],
                   if (isMobile && provider.isFilter)
                     Expanded(
-                      child: _buildMobileFilterPanel(context, provider, dropDownProvider),
+                      child: _buildMobileFilterPanel(
+                          context, provider, dropDownProvider),
                     ),
                   if (isWeb || !provider.isFilter)
                     Expanded(
@@ -279,7 +283,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 200),
                             child: CustomText(
-                              provider.fromDate == null && provider.toDate == null
+                              provider.fromDate == null &&
+                                      provider.toDate == null
                                   ? 'Date'
                                   : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
                               fontSize: 14,
@@ -345,7 +350,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: BorderSide(color: AppColors.textRed),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),
@@ -371,8 +377,7 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                   context.visitAncestorElements((element) {
                     if (element is StatefulElement &&
                         element.state is ScaffoldState) {
-                      ScaffoldState scaffold =
-                          element.state as ScaffoldState;
+                      ScaffoldState scaffold = element.state as ScaffoldState;
                       if (scaffold.hasDrawer) {
                         parent = scaffold;
                         return false;
@@ -408,34 +413,36 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
           ],
           const Spacer(),
           Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (query) {
+            width: 280,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: searchController,
+              focusNode: searchFocusNodeWeb,
+              textAlignVertical: TextAlignVertical.center,
+              onTap: () {
+                Future.microtask(() {
+                  if (searchController.text.isNotEmpty &&
+                      searchController.selection.baseOffset == 0 &&
+                      searchController.selection.extentOffset ==
+                          searchController.text.length) {
+                    searchController.selection = TextSelection.collapsed(
+                        offset: searchController.text.length);
+                  }
+                });
+              },
+              onSubmitted: (query) {
                 provider.getSolarLeadReport(
                   context,
                   query,
@@ -445,31 +452,33 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                   provider.AssignedTo,
                 );
               },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                provider.getSolarLeadReport(
-                  context,
-                  searchController.text,
-                  provider.fromDateS,
-                  provider.toDateS,
-                  provider.Status,
-                  provider.AssignedTo,
-                );
-              },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+              decoration: InputDecoration(
+                hintText: 'Search here....',
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  color: const Color(0xFF94A3B8),
+                  fontSize: 13,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    provider.getSolarLeadReport(
+                      context,
+                      searchController.text,
+                      provider.fromDateS,
+                      provider.toDateS,
+                      provider.Status,
+                      provider.AssignedTo,
+                    );
+                  },
+                  child: const Icon(Icons.search,
+                      color: Color(0xFF64748B), size: 18),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 16),
           CustomFilterButton(
             onPressed: () {
@@ -488,17 +497,17 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Container(
@@ -779,13 +788,14 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text('Apply'),
                       ),
                     ),
@@ -806,7 +816,9 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                             reportsProvider.selectedUser.toString(),
                           );
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

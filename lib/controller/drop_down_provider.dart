@@ -547,7 +547,6 @@ class DropDownProvider extends ChangeNotifier {
     return false;
   }
 
-
   void getDuration(BuildContext context) async {
     try {
       final response =
@@ -642,7 +641,8 @@ class DropDownProvider extends ChangeNotifier {
                 List<dynamic> dataList;
                 if (responseData is Map &&
                     responseData['enquiry_source_list'] != null) {
-                  dataList = responseData['enquiry_source_list'] as List<dynamic>;
+                  dataList =
+                      responseData['enquiry_source_list'] as List<dynamic>;
                 } else if (responseData is List) {
                   dataList = responseData;
                 } else {
@@ -897,7 +897,8 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  void getTaskType(BuildContext context, {String enquiryForId = '0', bool fetchUserSpecific = true}) async {
+  void getTaskType(BuildContext context,
+      {String enquiryForId = '0', bool fetchUserSpecific = true}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1099,7 +1100,10 @@ class DropDownProvider extends ChangeNotifier {
     required int? departmentId,
     required dynamic leadProvider,
   }) async {
-    if (leadId.isEmpty || leadId == '0' || departmentId == null || departmentId == 0) {
+    if (leadId.isEmpty ||
+        leadId == '0' ||
+        departmentId == null ||
+        departmentId == 0) {
       return;
     }
 
@@ -1114,7 +1118,9 @@ class DropDownProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 && response.data != null) {
         dynamic responseData = response.data;
-        if (responseData is Map<String, dynamic> && responseData.containsKey('success') && responseData['success'] == true) {
+        if (responseData is Map<String, dynamic> &&
+            responseData.containsKey('success') &&
+            responseData['success'] == true) {
           responseData = responseData['data'];
         }
 
@@ -1128,27 +1134,32 @@ class DropDownProvider extends ChangeNotifier {
         if (userMap != null) {
           int? parsedUserId;
           final rawUserId = userMap['User_Details_Id'] ??
-                            userMap['user_details_id'] ??
-                            userMap['User_Id'] ??
-                            userMap['user_id'] ??
-                            userMap['Id'] ??
-                            userMap['id'];
+              userMap['user_details_id'] ??
+              userMap['User_Id'] ??
+              userMap['user_id'] ??
+              userMap['Id'] ??
+              userMap['id'];
           if (rawUserId != null) {
             parsedUserId = int.tryParse(rawUserId.toString());
           }
 
           final String parsedUserName = (userMap['User_Details_Name'] ??
-                                         userMap['user_details_name'] ??
-                                         userMap['User_Name'] ??
-                                         userMap['user_name'] ??
-                                         userMap['To_User_Name'] ??
-                                         userMap['to_user_name'] ??
-                                         userMap['Name'] ??
-                                         userMap['name'] ??
-                                         '').toString().trim();
+                  userMap['user_details_name'] ??
+                  userMap['User_Name'] ??
+                  userMap['user_name'] ??
+                  userMap['To_User_Name'] ??
+                  userMap['to_user_name'] ??
+                  userMap['Name'] ??
+                  userMap['name'] ??
+                  '')
+              .toString()
+              .trim();
 
-          if (parsedUserId != null && parsedUserId > 0 && parsedUserName.isNotEmpty) {
-            final alreadyInSearchUser = _searchUserDetails.any((u) => u.userDetailsId == parsedUserId);
+          if (parsedUserId != null &&
+              parsedUserId > 0 &&
+              parsedUserName.isNotEmpty) {
+            final alreadyInSearchUser =
+                _searchUserDetails.any((u) => u.userDetailsId == parsedUserId);
             if (!alreadyInSearchUser) {
               _searchUserDetails.add(SearchUserDetails(
                 userDetailsId: parsedUserId,
@@ -1159,7 +1170,8 @@ class DropDownProvider extends ChangeNotifier {
               ));
             }
 
-            final alreadyInFilteredStaff = filteredStaffData.any((u) => u.userDetailsId == parsedUserId);
+            final alreadyInFilteredStaff =
+                filteredStaffData.any((u) => u.userDetailsId == parsedUserId);
             if (!alreadyInFilteredStaff) {
               filteredStaffData.add(SearchUserDetails(
                 userDetailsId: parsedUserId,

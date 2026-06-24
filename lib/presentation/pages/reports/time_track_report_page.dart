@@ -34,7 +34,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
       providerTimeTrack.clearFilters();
       await providerTimeTrack.initializeWithLoggedInUser();
       providerTimeTrack.setDateFilter('Today'); // Set both from and to dates
-      providerTimeTrack.selectDateFilterOption(1); // Optional: highlight "Today" chip if there's an index 1
+      providerTimeTrack.selectDateFilterOption(
+          1); // Optional: highlight "Today" chip if there's an index 1
       providerTimeTrack.getTimeTrackReport(context);
 
       Provider.of<DropDownProvider>(context, listen: false)
@@ -253,7 +254,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                                       ),
                                       borderColor: AppColors.primaryBlue,
                                       borderWidth: 2,
-                                      markerSettings: const MarkerSettings(isVisible: true),
+                                      markerSettings:
+                                          const MarkerSettings(isVisible: true),
                                     ),
                                   ],
                                 ),
@@ -305,9 +307,10 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
-                color: provider.selectedUser != null && provider.selectedUser != 0
-                    ? AppColors.primaryBlue
-                    : Colors.grey[300]!,
+                color:
+                    provider.selectedUser != null && provider.selectedUser != 0
+                        ? AppColors.primaryBlue
+                        : Colors.grey[300]!,
               ),
             ),
             child: Row(
@@ -322,8 +325,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                   items: [
                         const DropdownMenuItem<int>(
                           value: 0,
-                          child:
-                              Text('All', style: TextStyle(fontSize: 14)),
+                          child: Text('All', style: TextStyle(fontSize: 14)),
                         ),
                       ] +
                       dropDownProvider.searchUserDetails
@@ -360,8 +362,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               elevation: 0,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -431,8 +432,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
               children: [
                 FilterChipWidget(
                   label: 'All Users',
-                  isSelected:
-                      provider.selectedUser == null || provider.selectedUser == 0,
+                  isSelected: provider.selectedUser == null ||
+                      provider.selectedUser == 0,
                   onTap: () {
                     provider.setUserFilter(0);
                   },
@@ -525,8 +526,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: List<Widget>.generate(
-                          _dateButtonTitles.length, (index) {
+                      children: List<Widget>.generate(_dateButtonTitles.length,
+                          (index) {
                         String title = _dateButtonTitles[index];
                         return ActionChip(
                           onPressed: () {
@@ -582,13 +583,14 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                           // Don't auto-fetch here — user will press Apply
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text('Select'),
                       ),
                     ),
@@ -601,7 +603,9 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                           Navigator.pop(context);
                           reportsProvider.selectDateFilterOption(null);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

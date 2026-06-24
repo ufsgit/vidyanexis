@@ -108,9 +108,14 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                 widget.task?.commissionNumber.toString() ??
                 '';
         customerDetailsProvider.taskDescriptionController.text =
-            widget.taskDetails?.description ?? widget.task?.description ?? widget.taskReportModel?.description ?? '';
+            widget.taskDetails?.description ??
+                widget.task?.description ??
+                widget.taskReportModel?.description ??
+                '';
 
-        String? dateStr = widget.taskDetails?.taskDate ?? widget.task?.taskDate.toString() ?? widget.taskReportModel?.taskDate;
+        String? dateStr = widget.taskDetails?.taskDate ??
+            widget.task?.taskDate.toString() ??
+            widget.taskReportModel?.taskDate;
         if (dateStr != null && dateStr.isNotEmpty) {
           try {
             DateTime date = DateTime.parse(dateStr);
@@ -314,9 +319,11 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                 }
                                 customerDetailsProvider.updateTaskType(
                                     taskType.taskTypeId, taskType.taskTypeName);
-                                customerDetailsProvider.taskChoosedateController.text =
+                                customerDetailsProvider
+                                        .taskChoosedateController.text =
                                     DateFormat('dd MMM yyyy').format(
-                                        DateTime.now().add(Duration(days: taskType.duration)));
+                                        DateTime.now().add(
+                                            Duration(days: taskType.duration)));
 
                                 final defaultStatusId =
                                     taskType.defaultStatusId;

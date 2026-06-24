@@ -296,17 +296,26 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                         (status) =>
                                             status.statusId == selectedId,
                                         orElse: () => SearchLeadStatusModel(
-                                            statusId: selectedId, statusName: ''),
+                                            statusId: selectedId,
+                                            statusName: ''),
                                       );
                                       leadProvider.statusController.text =
                                           selectedItem.statusName ?? '';
-                                      if (selectedItem.isShowFollowupDate == 1) {
-                                        int durationVal = int.tryParse(selectedItem.statusDuration ?? '') ?? 0;
-                                        DateTime targetDate = DateTime.now().add(Duration(days: durationVal));
-                                        leadProvider.nextFollowUpDateController.text =
-                                            DateFormat('dd MMM yyyy').format(targetDate);
+                                      if (selectedItem.isShowFollowupDate ==
+                                          1) {
+                                        int durationVal = int.tryParse(
+                                                selectedItem.statusDuration ??
+                                                    '') ??
+                                            0;
+                                        DateTime targetDate = DateTime.now()
+                                            .add(Duration(days: durationVal));
+                                        leadProvider.nextFollowUpDateController
+                                                .text =
+                                            DateFormat('dd MMM yyyy')
+                                                .format(targetDate);
                                       } else {
-                                        leadProvider.nextFollowUpDateController.clear();
+                                        leadProvider.nextFollowUpDateController
+                                            .clear();
                                       }
                                     },
                                     selectedValue:
@@ -432,7 +441,8 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                       color: AppColors.textGrey3,
                                     ),
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(4), // Rounded corners
+                                      borderRadius: BorderRadius.circular(
+                                          4), // Rounded corners
                                       borderSide: BorderSide(
                                         color:
                                             AppColors.textGrey2, // Border color
@@ -440,7 +450,8 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(4), // Rounded corners
+                                      borderRadius: BorderRadius.circular(
+                                          4), // Rounded corners
                                       borderSide: BorderSide(
                                         color:
                                             AppColors.textGrey2, // Border color
@@ -448,7 +459,8 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                       ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(4), // Rounded corners
+                                      borderRadius: BorderRadius.circular(
+                                          4), // Rounded corners
                                       borderSide: BorderSide(
                                         color:
                                             AppColors.textGrey2, // Border color

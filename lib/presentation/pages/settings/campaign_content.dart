@@ -75,7 +75,6 @@ class _CampaignContentState extends State<CampaignContent> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // List section
               Container(
                 decoration: BoxDecoration(
@@ -188,7 +187,8 @@ class _CampaignContentState extends State<CampaignContent> {
                                       isEdit: true,
                                       campaignId: campaign.campaignId,
                                       campaignName: campaign.campaignName,
-                                      campaignIdString: campaign.campaignIdString,
+                                      campaignIdString:
+                                          campaign.campaignIdString,
                                       userIds: campaign.userIds,
                                       enquirySourceId: campaign.enquirySourceId,
                                       enquiryForId: campaign.enquiryForId,

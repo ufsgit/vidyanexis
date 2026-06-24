@@ -151,11 +151,13 @@ class EmployeeSummaryProvider extends ChangeNotifier {
       final String toDateParam = _formattedToDate;
 
       final response = await HttpRequest.httpGetRequest(
-        endPoint: '${HttpUrls.employeeSummaryReport}?from_date=$fromDateParam&to_date=$toDateParam',
+        endPoint:
+            '${HttpUrls.employeeSummaryReport}?from_date=$fromDateParam&to_date=$toDateParam',
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final List<dynamic> listData = response.data is List ? response.data : [];
+        final List<dynamic> listData =
+            response.data is List ? response.data : [];
         List<EmployeeSummaryModel> parsedList = listData
             .map((item) => EmployeeSummaryModel.fromJson(item))
             .toList();
@@ -179,7 +181,8 @@ class EmployeeSummaryProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       Loader.stopLoader(context);
-      print('Exception in getEmployeeSummary: $e. Falling back to mock data...');
+      print(
+          'Exception in getEmployeeSummary: $e. Falling back to mock data...');
       _loadMockData();
       notifyListeners();
     }
@@ -198,7 +201,10 @@ class EmployeeSummaryProvider extends ChangeNotifier {
     List<EmployeeSummaryModel> results = [];
     for (var emp in baseEmployees) {
       if (_search.isNotEmpty &&
-          !emp['Employee_Name'].toString().toLowerCase().contains(_search.toLowerCase())) {
+          !emp['Employee_Name']
+              .toString()
+              .toLowerCase()
+              .contains(_search.toLowerCase())) {
         continue;
       }
       results.add(EmployeeSummaryModel.fromJson(emp));

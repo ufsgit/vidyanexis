@@ -26,7 +26,8 @@ class _SalesScreenState extends State<SalesScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final expenseProvider = Provider.of<ExpenseProvider>(context, listen: false);
+      final expenseProvider =
+          Provider.of<ExpenseProvider>(context, listen: false);
       expenseProvider.getSalesMaster(context);
       await expenseProvider.searchItemListPurchase(context);
       expenseProvider.resetPurchaseItems();
@@ -50,7 +51,8 @@ class _SalesScreenState extends State<SalesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(context, expenseProvider, settingsProvider),
-                if (expenseProvider.isFilterSales) _buildFilterPanel(context, expenseProvider, settingsProvider),
+                if (expenseProvider.isFilterSales)
+                  _buildFilterPanel(context, expenseProvider, settingsProvider),
                 const SizedBox(height: 10),
                 AppStyles.isWebScreen(context)
                     ? _buildDesktopTable(expenseProvider, settingsProvider)
@@ -63,7 +65,8 @@ class _SalesScreenState extends State<SalesScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
+  Widget _buildHeader(BuildContext context, ExpenseProvider expenseProvider,
+      SettingsProvider settingsProvider) {
     if (AppStyles.isWebScreen(context)) {
       return const SizedBox.shrink();
     } else {
@@ -80,15 +83,15 @@ class _SalesScreenState extends State<SalesScreen> {
       height: 40,
       decoration: BoxDecoration(
         color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextField(
         controller: searchController,
@@ -97,7 +100,8 @@ class _SalesScreenState extends State<SalesScreen> {
           hintText: 'Search...',
           prefixIcon: const Icon(Icons.search, size: 20),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ),
       ),
     );
@@ -127,12 +131,15 @@ class _SalesScreenState extends State<SalesScreen> {
                   fontSize: 14,
                   color: const Color(0xFF94A3B8),
                 ),
-                prefixIcon: const Icon(Icons.search_rounded, size: 20, color: Color(0xFF64748B)),
+                prefixIcon: const Icon(Icons.search_rounded,
+                    size: 20, color: Color(0xFF64748B)),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 suffixIcon: provider.searchSales.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFF64748B)),
+                        icon: const Icon(Icons.close_rounded,
+                            size: 18, color: Color(0xFF64748B)),
                         onPressed: () {
                           searchController.clear();
                           _handleSearch(provider, '');
@@ -151,12 +158,16 @@ class _SalesScreenState extends State<SalesScreen> {
             height: 48,
             width: 48,
             decoration: BoxDecoration(
-              color: provider.isFilterSales ? AppColors.textBlue800 : const Color(0xFFF1F5F9),
+              color: provider.isFilterSales
+                  ? AppColors.textBlue800
+                  : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(
               Icons.tune_rounded,
-              color: provider.isFilterSales ? Colors.white : const Color(0xFF64748B),
+              color: provider.isFilterSales
+                  ? Colors.white
+                  : const Color(0xFF64748B),
               size: 20,
             ),
           ),
@@ -166,23 +177,28 @@ class _SalesScreenState extends State<SalesScreen> {
   }
 
   void _handleSearch(ExpenseProvider provider, String query) {
-    provider.setSearchCriteriaSales(query, provider.fromDateS, provider.toDateS, provider.status, provider.enquiryForS);
+    provider.setSearchCriteriaSales(query, provider.fromDateS, provider.toDateS,
+        provider.status, provider.enquiryForS);
     provider.getSalesMaster(context);
   }
 
-  Widget _buildFilterPanel(BuildContext context, ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
+  Widget _buildFilterPanel(BuildContext context,
+      ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Date Filter', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('Date Filter',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           CommonReportDateFilter(
             fromDate: expenseProvider.fromDateSales?.toString(),
@@ -203,7 +219,8 @@ class _SalesScreenState extends State<SalesScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                   child: const Text('Apply'),
                 ),
@@ -232,25 +249,44 @@ class _SalesScreenState extends State<SalesScreen> {
       builder: (contextx) => Consumer<ExpenseProvider>(
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Choose Date', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text('Choose Date',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 Wrap(
                   spacing: 8,
-                  children: ['Yesterday', 'Today', 'Tomorrow', 'This Week', 'This Month']
+                  children: [
+                    'Yesterday',
+                    'Today',
+                    'Tomorrow',
+                    'This Week',
+                    'This Month'
+                  ]
                       .asMap()
                       .entries
                       .map((e) => ActionChip(
                             label: Text(e.value),
                             onPressed: () {
                               reportsProvider.setDateFilterSales(e.value);
-                              reportsProvider.selectDateFilterOptionSales(e.key);
+                              reportsProvider
+                                  .selectDateFilterOptionSales(e.key);
                             },
-                            backgroundColor: reportsProvider.selectedDateFilterIndexSales == e.key ? AppColors.primaryBlue : Colors.white,
-                            labelStyle: TextStyle(color: reportsProvider.selectedDateFilterIndexSales == e.key ? Colors.white : Colors.black),
+                            backgroundColor:
+                                reportsProvider.selectedDateFilterIndexSales ==
+                                        e.key
+                                    ? AppColors.primaryBlue
+                                    : Colors.white,
+                            labelStyle: TextStyle(
+                                color: reportsProvider
+                                            .selectedDateFilterIndexSales ==
+                                        e.key
+                                    ? Colors.white
+                                    : Colors.black),
                           ))
                       .toList(),
                 ),
@@ -260,9 +296,12 @@ class _SalesScreenState extends State<SalesScreen> {
                   onTap: () => reportsProvider.selectDateSales(context, true),
                   decoration: InputDecoration(
                     labelText: 'Pick a date',
-                    hintText: reportsProvider.fromDateSales != null ? reportsProvider.formattedFromDateSales : 'Select',
+                    hintText: reportsProvider.fromDateSales != null
+                        ? reportsProvider.formattedFromDateSales
+                        : 'Select',
                     suffixIcon: const Icon(Icons.calendar_month),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -273,7 +312,11 @@ class _SalesScreenState extends State<SalesScreen> {
                       Navigator.pop(context);
                       reportsProvider.getSalesMaster(context);
                     },
-                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white),
                     child: const Text('Apply'),
                   ),
                 )
@@ -285,7 +328,8 @@ class _SalesScreenState extends State<SalesScreen> {
     );
   }
 
-  Widget _buildMobileList(ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
+  Widget _buildMobileList(
+      ExpenseProvider expenseProvider, SettingsProvider settingsProvider) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -297,8 +341,10 @@ class _SalesScreenState extends State<SalesScreen> {
           padding: const EdgeInsets.only(bottom: 12),
           child: InventoryListItem(
             title: sale.customerName ?? 'Unknown Customer',
-            subtitle: 'Inv: ${sale.invoiceNo} • ${formatSalesDate(sale.salesDate)}',
-            description: 'Total Amount: ${NumberFormat.currency(symbol: '₹', decimalDigits: 0).format(double.parse(sale.netTotal ?? '0'))}',
+            subtitle:
+                'Inv: ${sale.invoiceNo} • ${formatSalesDate(sale.salesDate)}',
+            description:
+                'Total Amount: ${NumberFormat.currency(symbol: '₹', decimalDigits: 0).format(double.parse(sale.netTotal ?? '0'))}',
             onEdit: settingsProvider.menuIsEditMap[87] == 1
                 ? () async {
                     await expenseProvider.searchSalesDetails(
@@ -316,9 +362,10 @@ class _SalesScreenState extends State<SalesScreen> {
     );
   }
 
-  Widget _buildDesktopTable(ExpenseProvider provider, SettingsProvider settingsProvider) {
+  Widget _buildDesktopTable(
+      ExpenseProvider provider, SettingsProvider settingsProvider) {
     const headerStyle = TextStyle(
-      fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF475569));
+        fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF475569));
     const cellStyle = TextStyle(fontSize: 13, color: Color(0xFF1E293B));
 
     return Padding(
@@ -343,13 +390,20 @@ class _SalesScreenState extends State<SalesScreen> {
               // Header
               Container(
                 color: const Color(0xFFF8FAFC),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                 child: Row(children: [
-                  Expanded(flex: 3, child: Text('Customer Name', style: headerStyle)),
-                  Expanded(flex: 2, child: Text('Invoice No', style: headerStyle)),
-                  Expanded(flex: 2, child: Text('Sales Date', style: headerStyle)),
-                  Expanded(flex: 3, child: Text('Description', style: headerStyle)),
-                  Expanded(flex: 2, child: Text('Total Amount', style: headerStyle)),
+                  Expanded(
+                      flex: 3,
+                      child: Text('Customer Name', style: headerStyle)),
+                  Expanded(
+                      flex: 2, child: Text('Invoice No', style: headerStyle)),
+                  Expanded(
+                      flex: 2, child: Text('Sales Date', style: headerStyle)),
+                  Expanded(
+                      flex: 3, child: Text('Description', style: headerStyle)),
+                  Expanded(
+                      flex: 2, child: Text('Total Amount', style: headerStyle)),
                   Expanded(flex: 1, child: Text('Actions', style: headerStyle)),
                 ]),
               ),
@@ -358,11 +412,14 @@ class _SalesScreenState extends State<SalesScreen> {
                   ? const Padding(
                       padding: EdgeInsets.all(60),
                       child: Center(
-                        child: Column(mainAxisSize: MainAxisSize.min, children: [
-                          Icon(Icons.receipt_long_outlined, size: 48, color: Color(0xFFCBD5E1)),
+                        child:
+                            Column(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(Icons.receipt_long_outlined,
+                              size: 48, color: Color(0xFFCBD5E1)),
                           SizedBox(height: 12),
                           Text('No sales data available',
-                              style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14)),
+                              style: TextStyle(
+                                  color: Color(0xFF94A3B8), fontSize: 14)),
                         ]),
                       ),
                     )
@@ -372,95 +429,133 @@ class _SalesScreenState extends State<SalesScreen> {
                         final s = entry.value;
                         return Column(children: [
                           Container(
-                            color: i.isEven ? Colors.white : const Color(0xFFF8FAFC),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                            color: i.isEven
+                                ? Colors.white
+                                : const Color(0xFFF8FAFC),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 13),
                             child: Row(children: [
                               Expanded(
                                 flex: 3,
                                 child: Text(
-                                  s.customerName.isNotEmpty ? s.customerName : '-',
-                                  style: cellStyle.copyWith(fontWeight: FontWeight.w500),
+                                  s.customerName.isNotEmpty
+                                      ? s.customerName
+                                      : '-',
+                                  style: cellStyle.copyWith(
+                                      fontWeight: FontWeight.w500),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               Expanded(
                                 flex: 2,
-                                child: Text(s.invoiceNo.isNotEmpty ? s.invoiceNo : '-',
-                                    style: cellStyle, overflow: TextOverflow.ellipsis),
+                                child: Text(
+                                    s.invoiceNo.isNotEmpty ? s.invoiceNo : '-',
+                                    style: cellStyle,
+                                    overflow: TextOverflow.ellipsis),
                               ),
                               Expanded(
                                 flex: 2,
                                 child: Text(formatSalesDate(s.salesDate),
-                                    style: cellStyle, overflow: TextOverflow.ellipsis),
+                                    style: cellStyle,
+                                    overflow: TextOverflow.ellipsis),
                               ),
                               Expanded(
                                 flex: 3,
                                 child: Text(
-                                  s.description.isNotEmpty ? s.description : '-',
-                                  style: cellStyle, maxLines: 2, overflow: TextOverflow.ellipsis,
+                                  s.description.isNotEmpty
+                                      ? s.description
+                                      : '-',
+                                  style: cellStyle,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               Expanded(
                                 flex: 2,
                                 child: Text(
-                                  NumberFormat.currency(symbol: '\u20b9', decimalDigits: 0)
+                                  NumberFormat.currency(
+                                          symbol: '\u20b9', decimalDigits: 0)
                                       .format(double.tryParse(s.netTotal) ?? 0),
                                   style: cellStyle.copyWith(
-                                    fontWeight: FontWeight.w600, color: const Color(0xFF0F766E)),
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF0F766E)),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               Expanded(
                                 flex: 1,
-                                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                  if (settingsProvider.menuIsEditMap[87] == 1)
-                                    Tooltip(
-                                      message: 'Edit',
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(4),
-                                        onTap: () async {
-                                          await provider.searchSalesDetails(
-                                              s.salesMasterId.toString(), context);
-                                          _showSalesDialog(context, true, data: s);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFEFF6FF),
-                                            borderRadius: BorderRadius.circular(4),
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (settingsProvider.menuIsEditMap[87] ==
+                                          1)
+                                        Tooltip(
+                                          message: 'Edit',
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            onTap: () async {
+                                              await provider.searchSalesDetails(
+                                                  s.salesMasterId.toString(),
+                                                  context);
+                                              _showSalesDialog(context, true,
+                                                  data: s);
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFEFF6FF),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: const Icon(
+                                                  Icons.edit_outlined,
+                                                  color: AppColors.primaryBlue,
+                                                  size: 15),
+                                            ),
                                           ),
-                                          child: const Icon(Icons.edit_outlined,
-                                              color: AppColors.primaryBlue, size: 15),
                                         ),
-                                      ),
-                                    ),
-                                  if (settingsProvider.menuIsEditMap[87] == 1 &&
-                                      settingsProvider.menuIsDeleteMap[87] == 1)
-                                    const SizedBox(width: 6),
-                                  if (settingsProvider.menuIsDeleteMap[87] == 1)
-                                    Tooltip(
-                                      message: 'Delete',
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(4),
-                                        onTap: () => _showDeleteDialog(
-                                            context, provider, s.salesMasterId),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFFFF1F2),
-                                            borderRadius: BorderRadius.circular(4),
+                                      if (settingsProvider.menuIsEditMap[87] ==
+                                              1 &&
+                                          settingsProvider
+                                                  .menuIsDeleteMap[87] ==
+                                              1)
+                                        const SizedBox(width: 6),
+                                      if (settingsProvider
+                                              .menuIsDeleteMap[87] ==
+                                          1)
+                                        Tooltip(
+                                          message: 'Delete',
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            onTap: () => _showDeleteDialog(
+                                                context,
+                                                provider,
+                                                s.salesMasterId),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFFFF1F2),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: const Icon(
+                                                  Icons.delete_outline,
+                                                  color: Colors.red,
+                                                  size: 15),
+                                            ),
                                           ),
-                                          child: const Icon(Icons.delete_outline,
-                                              color: Colors.red, size: 15),
                                         ),
-                                      ),
-                                    ),
-                                ]),
+                                    ]),
                               ),
                             ]),
                           ),
                           if (i < provider.salesList.length - 1)
-                            const Divider(height: 1, thickness: 1, color: Color(0xFFE2E8F0)),
+                            const Divider(
+                                height: 1,
+                                thickness: 1,
+                                color: Color(0xFFE2E8F0)),
                         ]);
                       }).toList(),
                     ),
@@ -470,7 +565,6 @@ class _SalesScreenState extends State<SalesScreen> {
       ),
     );
   }
-
 
   void _showSalesDialog(BuildContext context, bool isEdit, {dynamic data}) {
     Navigator.push(
@@ -485,7 +579,8 @@ class _SalesScreenState extends State<SalesScreen> {
     );
   }
 
-  void _showDeleteDialog(BuildContext context, ExpenseProvider provider, dynamic id) {
+  void _showDeleteDialog(
+      BuildContext context, ExpenseProvider provider, dynamic id) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -493,7 +588,9 @@ class _SalesScreenState extends State<SalesScreen> {
           title: const Text('Confirm Delete'),
           content: const Text('Are you sure you want to delete this sale?'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel')),
             TextButton(
               onPressed: () async {
                 await provider.deleteSalesItem(context, id);

@@ -269,8 +269,7 @@ class _AddCampaignWidgetState extends State<AddCampaignWidget> {
           InkWell(
             onTap: _showUserSelectionDialog,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
                 border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
                 borderRadius: BorderRadius.circular(4),

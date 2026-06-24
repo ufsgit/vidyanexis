@@ -1566,7 +1566,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           },
                                           hoverColor: const Color(0xFFF8FAFC),
                                           child: Container(
-                                            constraints: BoxConstraints(minHeight: rowHeight),
+                                            constraints: BoxConstraints(
+                                                minHeight: rowHeight),
                                             decoration: BoxDecoration(
                                               color: index % 2 == 0
                                                   ? Colors.white
@@ -2040,18 +2041,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 ),
                                                 TableWidget(
                                                   width: 110,
-                                                  padding: const EdgeInsets.symmetric(
-                                                      vertical: 4.0, horizontal: 12.0),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
                                                   data: Tooltip(
                                                     message: task.mobile,
                                                     child: Text(
-                                                      task.mobile.isNotEmpty ? task.mobile : '-',
-                                                      overflow: TextOverflow.ellipsis,
+                                                      task.mobile.isNotEmpty
+                                                          ? task.mobile
+                                                          : '-',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                       maxLines: 1,
                                                       style: const TextStyle(
                                                         fontSize: 13,
-                                                        color: Color(0xFF334155),
-                                                        fontWeight: FontWeight.w500,
+                                                        color:
+                                                            Color(0xFF334155),
+                                                        fontWeight:
+                                                            FontWeight.w500,
                                                       ),
                                                     ),
                                                   ),
@@ -2234,7 +2242,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(30),
-                                                        color: (task.colorCode ?? const Color(0xFF3B82F6))
+                                                        color: (task.colorCode ??
+                                                                const Color(
+                                                                    0xFF3B82F6))
                                                             .withOpacity(0.2),
                                                       ),
                                                       child: Center(
@@ -2256,7 +2266,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
-                                                              color: task.colorCode ?? const Color(0xFF3B82F6),
+                                                              color: task
+                                                                      .colorCode ??
+                                                                  const Color(
+                                                                      0xFF3B82F6),
                                                             ),
                                                           ),
                                                         ),
@@ -2532,8 +2545,8 @@ class _tasksPageReportState extends State<TaskPage> {
 
                         final ValueNotifier<TaskTypeStatusModel>
                             selectedStatus = ValueNotifier(defaultStatus);
-                        final ValueNotifier<SubStatus?>
-                            selectedSubStatus = ValueNotifier(null);
+                        final ValueNotifier<SubStatus?> selectedSubStatus =
+                            ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -2584,16 +2597,24 @@ class _tasksPageReportState extends State<TaskPage> {
                               ValueListenableBuilder<TaskTypeStatusModel>(
                                 valueListenable: selectedStatus,
                                 builder: (context, currentStatus, _) {
-                                  final validSubStatuses = currentStatus.subStatuses
-                                      ?.where((s) => s.subStatusId != null && s.subStatusId != 0 && s.subStatusName != null && s.subStatusName!.isNotEmpty)
-                                      .toList() ?? [];
+                                  final validSubStatuses = currentStatus
+                                          .subStatuses
+                                          ?.where((s) =>
+                                              s.subStatusId != null &&
+                                              s.subStatusId != 0 &&
+                                              s.subStatusName != null &&
+                                              s.subStatusName!.isNotEmpty)
+                                          .toList() ??
+                                      [];
                                   if (validSubStatuses.isEmpty) {
                                     return const SizedBox.shrink();
                                   }
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text('Select Sub Status',
                                             style: TextStyle(
@@ -2604,33 +2625,58 @@ class _tasksPageReportState extends State<TaskPage> {
                                         ValueListenableBuilder<SubStatus?>(
                                           valueListenable: selectedSubStatus,
                                           builder: (context, subVal, _) {
-                                            return DropdownButtonFormField<SubStatus>(
+                                            return DropdownButtonFormField<
+                                                SubStatus>(
                                               value: subVal,
                                               decoration: InputDecoration(
-                                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 14,
+                                                        vertical: 12),
                                                 border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  borderSide: BorderSide(
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      width: 1),
                                                 ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  borderSide: BorderSide(
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      width: 1),
                                                 ),
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderSide: const BorderSide(color: Color(0xFF1A7AE8), width: 1),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  borderSide: const BorderSide(
+                                                      color: Color(0xFF1A7AE8),
+                                                      width: 1),
                                                 ),
                                                 hintText: 'Select Sub Status',
-                                                hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                                                hintStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    color:
+                                                        Colors.grey.shade400),
                                               ),
                                               isExpanded: true,
                                               onChanged: (sub) {
                                                 selectedSubStatus.value = sub;
                                               },
-                                              items: validSubStatuses.map((sub) {
-                                                return DropdownMenuItem<SubStatus>(
+                                              items:
+                                                  validSubStatuses.map((sub) {
+                                                return DropdownMenuItem<
+                                                    SubStatus>(
                                                   value: sub,
-                                                  child: Text(sub.subStatusName ?? '', style: const TextStyle(fontSize: 14)),
+                                                  child: Text(
+                                                      sub.subStatusName ?? '',
+                                                      style: const TextStyle(
+                                                          fontSize: 14)),
                                                 );
                                               }).toList(),
                                             );
@@ -2704,7 +2750,7 @@ class _tasksPageReportState extends State<TaskPage> {
                         );
 
                         return Column(
-                           mainAxisSize: MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Flexible(
                               child: SingleChildScrollView(
@@ -2761,7 +2807,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ? await reportsProvider
                                                             .getCurrentLocation()
                                                         : null,
-                                                    subStatus: selectedSubStatus.value,
+                                                    subStatus:
+                                                        selectedSubStatus.value,
                                                   );
                                                   if (isSuccess) {
                                                     Navigator.of(context)
@@ -3056,8 +3103,8 @@ class _tasksPageReportState extends State<TaskPage> {
 
                         final ValueNotifier<TaskTypeStatusModel>
                             selectedStatus = ValueNotifier(defaultStatus);
-                        final ValueNotifier<SubStatus?>
-                            selectedSubStatus = ValueNotifier(null);
+                        final ValueNotifier<SubStatus?> selectedSubStatus =
+                            ValueNotifier(null);
                         final ValueNotifier<bool> isSaving =
                             ValueNotifier(false);
 
@@ -3117,16 +3164,24 @@ class _tasksPageReportState extends State<TaskPage> {
                               ValueListenableBuilder<TaskTypeStatusModel>(
                                 valueListenable: selectedStatus,
                                 builder: (context, currentStatus, _) {
-                                  final validSubStatuses = currentStatus.subStatuses
-                                      ?.where((s) => s.subStatusId != null && s.subStatusId != 0 && s.subStatusName != null && s.subStatusName!.isNotEmpty)
-                                      .toList() ?? [];
+                                  final validSubStatuses = currentStatus
+                                          .subStatuses
+                                          ?.where((s) =>
+                                              s.subStatusId != null &&
+                                              s.subStatusId != 0 &&
+                                              s.subStatusName != null &&
+                                              s.subStatusName!.isNotEmpty)
+                                          .toList() ??
+                                      [];
                                   if (validSubStatuses.isEmpty) {
                                     return const SizedBox.shrink();
                                   }
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text('Select Sub Status',
                                             style: TextStyle(
@@ -3137,33 +3192,58 @@ class _tasksPageReportState extends State<TaskPage> {
                                         ValueListenableBuilder<SubStatus?>(
                                           valueListenable: selectedSubStatus,
                                           builder: (context, subVal, _) {
-                                            return DropdownButtonFormField<SubStatus>(
+                                            return DropdownButtonFormField<
+                                                SubStatus>(
                                               value: subVal,
                                               decoration: InputDecoration(
-                                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 14,
+                                                        vertical: 12),
                                                 border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  borderSide: BorderSide(
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      width: 1),
                                                 ),
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  borderSide: BorderSide(
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      width: 1),
                                                 ),
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(4),
-                                                  borderSide: const BorderSide(color: Color(0xFF1A7AE8), width: 1),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  borderSide: const BorderSide(
+                                                      color: Color(0xFF1A7AE8),
+                                                      width: 1),
                                                 ),
                                                 hintText: 'Select Sub Status',
-                                                hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                                                hintStyle: TextStyle(
+                                                    fontSize: 13,
+                                                    color:
+                                                        Colors.grey.shade400),
                                               ),
                                               isExpanded: true,
                                               onChanged: (sub) {
                                                 selectedSubStatus.value = sub;
                                               },
-                                              items: validSubStatuses.map((sub) {
-                                                return DropdownMenuItem<SubStatus>(
+                                              items:
+                                                  validSubStatuses.map((sub) {
+                                                return DropdownMenuItem<
+                                                    SubStatus>(
                                                   value: sub,
-                                                  child: Text(sub.subStatusName ?? '', style: const TextStyle(fontSize: 14)),
+                                                  child: Text(
+                                                      sub.subStatusName ?? '',
+                                                      style: const TextStyle(
+                                                          fontSize: 14)),
                                                 );
                                               }).toList(),
                                             );
@@ -3211,8 +3291,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                           // Optional: You can also handle here if needed
                                           reportsProvider
                                               .fetchTaskTypesWithCustomFields(
-                                                  selectedStatus.value.taskTypeId ?? 0,
-                                                  selectedStatus.value.statusId ?? 0,
+                                                  selectedStatus
+                                                          .value.taskTypeId ??
+                                                      0,
+                                                  selectedStatus
+                                                          .value.statusId ??
+                                                      0,
                                                   customerId,
                                                   enquiryForId,
                                                   context);
@@ -3514,7 +3598,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                             )
                                           : const SizedBox.shrink();
 
-                                      if (!showDate && !showTime && !showRightList) {
+                                      if (!showDate &&
+                                          !showTime &&
+                                          !showRightList) {
                                         return const SizedBox.shrink();
                                       }
 
@@ -3544,11 +3630,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                               children: [
                                                 if (showDate || showTime)
                                                   Expanded(child: leftSide),
-                                                if ((showDate || showTime) && showRightList)
+                                                if ((showDate || showTime) &&
+                                                    showRightList)
                                                   const SizedBox(width: 16),
                                                 if (showRightList)
                                                   Expanded(child: rightSide),
-                                                if (!showRightList && (showDate || showTime))
+                                                if (!showRightList &&
+                                                    (showDate || showTime))
                                                   const Expanded(
                                                       child: SizedBox()),
                                               ],
@@ -4188,7 +4276,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     ? await provider
                                                                         .getCurrentLocation()
                                                                     : null,
-                                                                subStatus: selectedSubStatus.value);
+                                                                subStatus:
+                                                                    selectedSubStatus
+                                                                        .value);
 
                                                         if (!context.mounted) {
                                                           return;
@@ -4677,8 +4767,7 @@ class _tasksPageReportState extends State<TaskPage> {
               initialTime: TimeOfDay.now(),
             );
             if (picked != null) {
-              taskProvider.followUpTimeController.text =
-                  picked.format(context);
+              taskProvider.followUpTimeController.text = picked.format(context);
             }
           },
           borderRadius: BorderRadius.circular(4),

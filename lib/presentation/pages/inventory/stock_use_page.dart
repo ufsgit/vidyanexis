@@ -24,7 +24,8 @@ class _StockUsePageState extends State<StockUsePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final stockuseprovider = Provider.of<StockUseProvider>(context, listen: false);
+      final stockuseprovider =
+          Provider.of<StockUseProvider>(context, listen: false);
       stockuseprovider.searchItemListStock(context);
       stockuseprovider.searchStockUseList(
           context: context, customerId: widget.customerId.toString());
@@ -42,7 +43,8 @@ class _StockUsePageState extends State<StockUsePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHeader(context, stockuseprovider, settingsProvider, isMobile),
-        if (stockuseprovider.isFilter) _buildFilterPanel(context, stockuseprovider),
+        if (stockuseprovider.isFilter)
+          _buildFilterPanel(context, stockuseprovider),
         const SizedBox(height: 12),
         stockuseprovider.stockUseList.isEmpty
             ? _buildEmptyState()
@@ -55,28 +57,35 @@ class _StockUsePageState extends State<StockUsePage> {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: InventoryListItem(
-                      title: stockUse.description.isNotEmpty ? stockUse.description : 'Stock Use Entry',
+                      title: stockUse.description.isNotEmpty
+                          ? stockUse.description
+                          : 'Stock Use Entry',
                       subtitle: 'Date: ${stockUse.date}',
                       description: 'Entry ID: ${stockUse.stockUseId}',
-                      onEdit: settingsProvider.menuIsEditMap[78] == 1 ? () async {
-                        stockuseprovider.getStockUseDetails(
-                            context: context,
-                            masterId: stockUse.stockUseId.toString());
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AddStockUseWidget(
-                                customerId: widget.customerId,
-                                isEdit: true,
-                                editId: stockUse.stockUseId,
-                                stockUse: stockUse);
-                          },
-                        );
-                      } : null,
-                      onDelete: settingsProvider.menuIsDeleteMap[78] == 1 ? () {
-                        _showDeleteDialog(context, stockuseprovider, stockUse.stockUseId);
-                      } : null,
+                      onEdit: settingsProvider.menuIsEditMap[78] == 1
+                          ? () async {
+                              stockuseprovider.getStockUseDetails(
+                                  context: context,
+                                  masterId: stockUse.stockUseId.toString());
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AddStockUseWidget(
+                                      customerId: widget.customerId,
+                                      isEdit: true,
+                                      editId: stockUse.stockUseId,
+                                      stockUse: stockUse);
+                                },
+                              );
+                            }
+                          : null,
+                      onDelete: settingsProvider.menuIsDeleteMap[78] == 1
+                          ? () {
+                              _showDeleteDialog(context, stockuseprovider,
+                                  stockUse.stockUseId);
+                            }
+                          : null,
                     ),
                   );
                 },
@@ -85,7 +94,8 @@ class _StockUsePageState extends State<StockUsePage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, StockUseProvider provider, SettingsProvider settings, bool isMobile) {
+  Widget _buildHeader(BuildContext context, StockUseProvider provider,
+      SettingsProvider settings, bool isMobile) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -107,12 +117,15 @@ class _StockUsePageState extends State<StockUsePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Date Filter', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('Date Filter',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           CommonReportDateFilter(
             fromDate: provider.fromDate?.toString(),
@@ -127,13 +140,16 @@ class _StockUsePageState extends State<StockUsePage> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    provider.searchStockUseList(context: context, customerId: widget.customerId.toString());
+                    provider.searchStockUseList(
+                        context: context,
+                        customerId: widget.customerId.toString());
                     provider.toggleFilter();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                   child: const Text('Apply'),
                 ),
@@ -143,7 +159,9 @@ class _StockUsePageState extends State<StockUsePage> {
                 onReset: () {
                   provider.selectDateFilterOption(null);
                   provider.setSearchCriteria('', '', '', '', '');
-                  provider.searchStockUseList(context: context, customerId: widget.customerId.toString());
+                  provider.searchStockUseList(
+                      context: context,
+                      customerId: widget.customerId.toString());
                 },
               ),
             ],
@@ -159,15 +177,24 @@ class _StockUsePageState extends State<StockUsePage> {
       builder: (contextx) => Consumer<StockUseProvider>(
         builder: (contextx, reportsProvider, child) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('Choose Date', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text('Choose Date',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 Wrap(
                   spacing: 8,
-                  children: ['Yesterday', 'Today', 'Tomorrow', 'This Week', 'This Month']
+                  children: [
+                    'Yesterday',
+                    'Today',
+                    'Tomorrow',
+                    'This Week',
+                    'This Month'
+                  ]
                       .asMap()
                       .entries
                       .map((e) => ActionChip(
@@ -176,8 +203,16 @@ class _StockUsePageState extends State<StockUsePage> {
                               reportsProvider.setDateFilter(e.value);
                               reportsProvider.selectDateFilterOption(e.key);
                             },
-                            backgroundColor: reportsProvider.selectedDateFilterIndex == e.key ? AppColors.primaryBlue : Colors.white,
-                            labelStyle: TextStyle(color: reportsProvider.selectedDateFilterIndex == e.key ? Colors.white : Colors.black),
+                            backgroundColor:
+                                reportsProvider.selectedDateFilterIndex == e.key
+                                    ? AppColors.primaryBlue
+                                    : Colors.white,
+                            labelStyle: TextStyle(
+                                color:
+                                    reportsProvider.selectedDateFilterIndex ==
+                                            e.key
+                                        ? Colors.white
+                                        : Colors.black),
                           ))
                       .toList(),
                 ),
@@ -187,9 +222,12 @@ class _StockUsePageState extends State<StockUsePage> {
                   onTap: () => reportsProvider.selectDate(context, true),
                   decoration: InputDecoration(
                     labelText: 'Pick a date',
-                    hintText: reportsProvider.fromDate != null ? reportsProvider.formattedFromDate : 'Select',
+                    hintText: reportsProvider.fromDate != null
+                        ? reportsProvider.formattedFromDate
+                        : 'Select',
                     suffixIcon: const Icon(Icons.calendar_month),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -198,9 +236,15 @@ class _StockUsePageState extends State<StockUsePage> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      reportsProvider.searchStockUseList(context: context, customerId: widget.customerId.toString());
+                      reportsProvider.searchStockUseList(
+                          context: context,
+                          customerId: widget.customerId.toString());
                     },
-                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white),
                     child: const Text('Apply'),
                   ),
                 )
@@ -216,22 +260,28 @@ class _StockUsePageState extends State<StockUsePage> {
     return const CommonEmptyState(message: 'No stock use entries found');
   }
 
-  void _showDeleteDialog(BuildContext context, StockUseProvider provider, int id) {
+  void _showDeleteDialog(
+      BuildContext context, StockUseProvider provider, int id) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: const Text('Confirm Delete'),
-          content: const Text('Are you sure you want to delete this stock use entry?'),
+          content: const Text(
+              'Are you sure you want to delete this stock use entry?'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel')),
             TextButton(
               onPressed: () async {
                 provider.deleteStockUse(context, id, widget.customerId);
                 Navigator.pop(context);
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+              child: const Text('Delete',
+                  style: TextStyle(
+                      color: Colors.red, fontWeight: FontWeight.bold)),
             ),
           ],
         );

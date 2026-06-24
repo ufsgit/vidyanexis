@@ -608,8 +608,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                           "Show Enquiry For",
                                           style: TextStyle(fontSize: 14),
                                         ),
-                                        value:
-                                            settingsProvider.isEnquiryForVisible,
+                                        value: settingsProvider
+                                            .isEnquiryForVisible,
                                         onChanged: (value) {
                                           settingsProvider
                                               .toggleEnquiryForVisible(value!);
@@ -799,43 +799,46 @@ class _AddTaskTypeState extends State<AddTaskType> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            if(settingsProvider.isEnquiryForVisible)
-                            // Enquiry For Section
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[50],
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Manage Enquiry For',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
+                            if (settingsProvider.isEnquiryForVisible)
+                              // Enquiry For Section
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[50],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Manage Enquiry For',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Row(
-                                        children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: Row(
+                                          children: [
                                             const SizedBox(
                                               width: 48,
                                               child: CommonEmptyState(
@@ -843,96 +846,101 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                                 height: 40,
                                               ),
                                             ),
-                                          Expanded(child: Text('Enquiry For')),
-                                          Center(
-                                            child: Checkbox(
-                                              value: _selectAllEnquiryFor,
-                                              onChanged: (value) =>
-                                                  _toggleSelectAllEnquiryFor(),
+                                            Expanded(
+                                                child: Text('Enquiry For')),
+                                            Center(
+                                              child: Checkbox(
+                                                value: _selectAllEnquiryFor,
+                                                onChanged: (value) =>
+                                                    _toggleSelectAllEnquiryFor(),
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Consumer<DropDownProvider>(
-                                        builder:
-                                            (context, dropDownProvider, child) {
-                                          if (dropDownProvider
-                                              .enquiryForList.isEmpty) {
-                                            return const Center(
-                                                child: Text(
-                                                    'No enquiry categories available'));
-                                          }
-                                          return ListView.builder(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8),
-                                            itemCount: dropDownProvider
-                                                .enquiryForList.length,
-                                            itemBuilder: (context, index) {
-                                              final item = dropDownProvider
-                                                  .enquiryForList[index];
-                                              final id = item.enquiryForId;
-                                              if (!_selectedEnquiryFor
-                                                  .containsKey(id)) {
-                                                _selectedEnquiryFor[id] = false;
-                                              }
-                                              return Container(
-                                                margin:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 4,
-                                                        horizontal: 8),
-                                                padding:
-                                                    const EdgeInsets.all(12),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                  boxShadow: const [
-                                                    BoxShadow(
-                                                        color: Colors.black12,
-                                                        blurRadius: 2)
-                                                  ],
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    SizedBox(
-                                                        width: 48,
-                                                        child: Center(
-                                                            child: Text(
-                                                                '${index + 1}'))),
-                                                    Expanded(
-                                                        child: Text(item
-                                                            .enquiryForName)),
-                                                    Checkbox(
-                                                      value:
-                                                          _selectedEnquiryFor[
-                                                                  id] ??
-                                                              false,
-                                                      onChanged: (bool? value) {
-                                                        setState(() {
-                                                          _selectedEnquiryFor[
-                                                                  id] =
-                                                              value ?? false;
-                                                          _updateSelectAllEnquiryForState();
-                                                        });
-                                                      },
-                                                      materialTapTargetSize:
-                                                          MaterialTapTargetSize
-                                                              .shrinkWrap,
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
+                                      Expanded(
+                                        child: Consumer<DropDownProvider>(
+                                          builder: (context, dropDownProvider,
+                                              child) {
+                                            if (dropDownProvider
+                                                .enquiryForList.isEmpty) {
+                                              return const Center(
+                                                  child: Text(
+                                                      'No enquiry categories available'));
+                                            }
+                                            return ListView.builder(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8),
+                                              itemCount: dropDownProvider
+                                                  .enquiryForList.length,
+                                              itemBuilder: (context, index) {
+                                                final item = dropDownProvider
+                                                    .enquiryForList[index];
+                                                final id = item.enquiryForId;
+                                                if (!_selectedEnquiryFor
+                                                    .containsKey(id)) {
+                                                  _selectedEnquiryFor[id] =
+                                                      false;
+                                                }
+                                                return Container(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4,
+                                                      horizontal: 8),
+                                                  padding:
+                                                      const EdgeInsets.all(12),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
+                                                    boxShadow: const [
+                                                      BoxShadow(
+                                                          color: Colors.black12,
+                                                          blurRadius: 2)
+                                                    ],
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      SizedBox(
+                                                          width: 48,
+                                                          child: Center(
+                                                              child: Text(
+                                                                  '${index + 1}'))),
+                                                      Expanded(
+                                                          child: Text(item
+                                                              .enquiryForName)),
+                                                      Checkbox(
+                                                        value:
+                                                            _selectedEnquiryFor[
+                                                                    id] ??
+                                                                false,
+                                                        onChanged:
+                                                            (bool? value) {
+                                                          setState(() {
+                                                            _selectedEnquiryFor[
+                                                                    id] =
+                                                                value ?? false;
+                                                            _updateSelectAllEnquiryForState();
+                                                          });
+                                                        },
+                                                        materialTapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ), //End Enquiry for section
+                              ), //End Enquiry for section
                           ],
                         )
                       : // Mobile Layout - Stacked vertically

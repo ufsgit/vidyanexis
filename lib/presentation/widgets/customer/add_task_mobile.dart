@@ -17,7 +17,11 @@ class AddTaskMobile extends StatefulWidget {
   final TaskReportModel? taskReportModel;
 
   const AddTaskMobile(
-      {super.key, required this.isEdit, required this.taskId, this.task, this.taskReportModel});
+      {super.key,
+      required this.isEdit,
+      required this.taskId,
+      this.task,
+      this.taskReportModel});
 
   @override
   State<AddTaskMobile> createState() => _AddTaskMobileState();
@@ -97,9 +101,12 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         customerDetailsProvider.commissionController.text =
             widget.task?.commissionNumber.toString() ?? '';
         customerDetailsProvider.taskDescriptionController.text =
-            widget.task?.description ?? widget.taskReportModel?.description ?? '';
-        
-        String? taskDateStr = widget.task?.taskDate ?? widget.taskReportModel?.taskDate;
+            widget.task?.description ??
+                widget.taskReportModel?.description ??
+                '';
+
+        String? taskDateStr =
+            widget.task?.taskDate ?? widget.taskReportModel?.taskDate;
         if (taskDateStr != null && taskDateStr.isNotEmpty) {
           try {
             DateTime date = DateTime.parse(taskDateStr);
@@ -133,8 +140,9 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         widget.taskReportModel?.taskId.toString() ??
             widget.task?.taskId.first.toString() ??
             '0', //taking first item from list
-        widget.taskReportModel?.taskMasterId.toString() ?? 
-            widget.task?.taskMasterId.toString() ?? '0',
+        widget.taskReportModel?.taskMasterId.toString() ??
+            widget.task?.taskMasterId.toString() ??
+            '0',
         customerDetailsProvider.selectedTaskType.toString(),
         customerDetailsProvider.taskDescriptionController.text.toString(),
         customerDetailsProvider.taskChoosedateController.text.toString(),
@@ -316,9 +324,12 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                         taskType.taskTypeId,
                                         taskType.taskTypeName);
 
-                                    customerDetailsProvider.taskChoosedateController.text =
-                                        DateFormat('dd MMM yyyy').format(
-                                            DateTime.now().add(Duration(days: taskType.duration)));
+                                    customerDetailsProvider
+                                        .taskChoosedateController
+                                        .text = DateFormat(
+                                            'dd MMM yyyy')
+                                        .format(DateTime.now().add(
+                                            Duration(days: taskType.duration)));
 
                                     final defaultStatusId =
                                         taskType.defaultStatusId;

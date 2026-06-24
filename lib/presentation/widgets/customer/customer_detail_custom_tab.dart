@@ -38,8 +38,8 @@ class CustomerDetailCustomTab extends StatelessWidget {
                 onTap: () => onTabChanged(index),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  margin: isSelected 
-                      ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2) 
+                  margin: isSelected
+                      ? const EdgeInsets.symmetric(vertical: 4, horizontal: 2)
                       : const EdgeInsets.symmetric(vertical: 4),
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   alignment: Alignment.center,
@@ -60,8 +60,11 @@ class CustomerDetailCustomTab extends StatelessWidget {
                     tabs[index],
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected ? AppColors.secondaryBlue : const Color(0xFF64748B),
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: isSelected
+                          ? AppColors.secondaryBlue
+                          : const Color(0xFF64748B),
                     ),
                   ),
                 ),

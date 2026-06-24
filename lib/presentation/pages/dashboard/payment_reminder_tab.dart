@@ -47,7 +47,8 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
   void _navigateToCustomerDetails(BuildContext context, int customerId) {
     if (AppStyles.isWebScreen(context)) {
       final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
-      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
 
       int index = 0;
       if (settingsProvider.menuIsViewMap[12].toString() == '1') {
@@ -61,7 +62,8 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
       sideProvider.setSelectedIndex(index);
       sideProvider.replaceWidgetCustomer(false, customerId.toString());
     } else {
-      context.push('${CustomerDetailPageMobile.route}$customerId/true?tab=Payment');
+      context.push(
+          '${CustomerDetailPageMobile.route}$customerId/true?tab=Payment');
     }
   }
 
@@ -264,15 +266,15 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
               height: 48,
               decoration: BoxDecoration(
                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.02),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: TextField(
                 controller: _searchController,
@@ -470,7 +472,8 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
               hoverColor: Colors.blue.withOpacity(0.05),
               borderRadius: BorderRadius.circular(4),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     // Project Column: Avatar + Name
@@ -665,17 +668,18 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                 height: 100,
                 margin: const EdgeInsets.symmetric(vertical: 6),
                 decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
                 child: const Center(
                     child: CircularProgressIndicator(strokeWidth: 2)),
               )),

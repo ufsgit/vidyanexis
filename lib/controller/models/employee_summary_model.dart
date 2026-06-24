@@ -57,21 +57,26 @@ class EmployeeSummaryModel {
     int total = parsedClients ?? 0;
     if (total > 0) {
       if (total == 1) {
-        dynamicStatuses.add(EmployeeSummaryStatus(statusName: 'Converted', count: 1));
+        dynamicStatuses
+            .add(EmployeeSummaryStatus(statusName: 'Converted', count: 1));
       } else {
         int conv = (total * 0.55).round().clamp(1, total - 1);
         int rem = total - conv;
-        dynamicStatuses.add(EmployeeSummaryStatus(statusName: 'Converted', count: conv));
-        
+        dynamicStatuses
+            .add(EmployeeSummaryStatus(statusName: 'Converted', count: conv));
+
         if (rem > 1) {
           int scheduled = (rem * 0.6).round().clamp(1, rem - 1);
           int left = rem - scheduled;
-          dynamicStatuses.add(EmployeeSummaryStatus(statusName: 'Interview Scheduled', count: scheduled));
+          dynamicStatuses.add(EmployeeSummaryStatus(
+              statusName: 'Interview Scheduled', count: scheduled));
           if (left > 0) {
-            dynamicStatuses.add(EmployeeSummaryStatus(statusName: 'Cold', count: left));
+            dynamicStatuses
+                .add(EmployeeSummaryStatus(statusName: 'Cold', count: left));
           }
         } else if (rem > 0) {
-          dynamicStatuses.add(EmployeeSummaryStatus(statusName: 'Cold', count: rem));
+          dynamicStatuses
+              .add(EmployeeSummaryStatus(statusName: 'Cold', count: rem));
         }
       }
     }

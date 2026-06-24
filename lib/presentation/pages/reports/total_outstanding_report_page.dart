@@ -108,7 +108,8 @@ class _TotalOutstandingReportPageState
                   onPressed: () {
                     provider.getTotalOutstandingReport(context);
                     provider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -143,8 +144,7 @@ class _TotalOutstandingReportPageState
                     context.visitAncestorElements((element) {
                       if (element is StatefulElement &&
                           element.state is ScaffoldState) {
-                        ScaffoldState scaffold =
-                            element.state as ScaffoldState;
+                        ScaffoldState scaffold = element.state as ScaffoldState;
                         if (scaffold.hasDrawer) {
                           parent = scaffold;
                           return false;
@@ -194,7 +194,8 @@ class _TotalOutstandingReportPageState
         _buildWebTableHeader(),
         Expanded(
           child: provider.totalOutstandingReportList.isEmpty
-              ? const CommonEmptyState(message: 'No total outstanding reports found')
+              ? const CommonEmptyState(
+                  message: 'No total outstanding reports found')
               : ListView.builder(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
@@ -214,17 +215,17 @@ class _TotalOutstandingReportPageState
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           GestureDetector(
@@ -327,7 +328,9 @@ class _TotalOutstandingReportPageState
           const Spacer(),
           ElevatedButton(
             onPressed: () => provider.getTotalOutstandingReport(context),
-            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4)),
               backgroundColor: Colors.white,
               foregroundColor: AppColors.primaryBlue,
               side: BorderSide(color: AppColors.primaryBlue),
@@ -468,7 +471,8 @@ class _TotalOutstandingReportPageState
           ),
         Expanded(
           child: provider.totalOutstandingReportList.isEmpty
-              ? const CommonEmptyState(message: 'No total outstanding reports found')
+              ? const CommonEmptyState(
+                  message: 'No total outstanding reports found')
               : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: provider.totalOutstandingReportList.length,
@@ -479,7 +483,8 @@ class _TotalOutstandingReportPageState
                     return ReportListItem(
                       title: item.customerName,
                       subtitle: '',
-                      status: '₹ ${item.totalOutstandingAmount.toStringAsFixed(2)}',
+                      status:
+                          '₹ ${item.totalOutstandingAmount.toStringAsFixed(2)}',
                       statusColor: AppColors.textRed,
                       description:
                           'Sch: ₹${item.totalScheduleAmount.toStringAsFixed(0)} | Paid: ₹${item.totalPaidAmount.toStringAsFixed(0)}',
@@ -528,7 +533,8 @@ class _TotalOutstandingReportPageState
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 200),
                             child: CustomText(
-                              provider.fromDate == null && provider.toDate == null
+                              provider.fromDate == null &&
+                                      provider.toDate == null
                                   ? 'Date'
                                   : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
                               fontSize: 14,
@@ -567,7 +573,8 @@ class _TotalOutstandingReportPageState
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: BorderSide(color: AppColors.textRed),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),
@@ -687,13 +694,14 @@ class _TotalOutstandingReportPageState
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),

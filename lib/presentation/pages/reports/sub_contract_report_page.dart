@@ -106,56 +106,62 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                       ),
                       const Spacer(),
                       Container(
-  width: 280,
-  height: 38,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(4),
-    border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.02),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: TextField(
-    controller: searchController,
-    focusNode: searchFocusNodeWeb,
-    textAlignVertical: TextAlignVertical.center,
-    onTap: () {
-      Future.microtask(() {
-        if (searchController.text.isNotEmpty &&
-            searchController.selection.baseOffset == 0 &&
-            searchController.selection.extentOffset == searchController.text.length) {
-          searchController.selection = TextSelection.collapsed(offset: searchController.text.length);
-        }
-      });
-    },
-    onSubmitted: (val) {
+                        width: 280,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                              color: const Color(0xFFCBD5E1), width: 1.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.02),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          controller: searchController,
+                          focusNode: searchFocusNodeWeb,
+                          textAlignVertical: TextAlignVertical.center,
+                          onTap: () {
+                            Future.microtask(() {
+                              if (searchController.text.isNotEmpty &&
+                                  searchController.selection.baseOffset == 0 &&
+                                  searchController.selection.extentOffset ==
+                                      searchController.text.length) {
+                                searchController.selection =
+                                    TextSelection.collapsed(
+                                        offset: searchController.text.length);
+                              }
+                            });
+                          },
+                          onSubmitted: (val) {
                             provider.setSearch(val);
                             provider.getSubContractReport(context);
                           },
-    decoration: InputDecoration(
-      hintText: 'Search here....',
-      hintStyle: GoogleFonts.plusJakartaSans(
-        color: const Color(0xFF94A3B8),
-        fontSize: 13,
-      ),
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      suffixIcon: GestureDetector(
-        onTap: () {
-                            provider.setSearch(searchController.text);
-                            provider.getSubContractReport(context);
-                          },
-        child: const Icon(Icons.search, color: Color(0xFF64748B), size: 18),
-      ),
-    ),
-  ),
-),
+                          decoration: InputDecoration(
+                            hintText: 'Search here....',
+                            hintStyle: GoogleFonts.plusJakartaSans(
+                              color: const Color(0xFF94A3B8),
+                              fontSize: 13,
+                            ),
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                provider.setSearch(searchController.text);
+                                provider.getSubContractReport(context);
+                              },
+                              child: const Icon(Icons.search,
+                                  color: Color(0xFF64748B), size: 18),
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 16),
                       CustomFilterButton(
                         onPressed: () => provider.toggleFilter(),
@@ -206,17 +212,18 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: const Color(0xFFCBD5E1), width: 1.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Wrap(
                         spacing: 12,
                         runSpacing: 10,
@@ -350,7 +357,9 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                     ),
                                     Expanded(
                                       child: provider.subContractReport.isEmpty
-                                          ? const CommonEmptyState(message: 'No sub contract reports found')
+                                          ? const CommonEmptyState(
+                                              message:
+                                                  'No sub contract reports found')
                                           : ListView.separated(
                                               itemCount: provider
                                                   .subContractReport.length,

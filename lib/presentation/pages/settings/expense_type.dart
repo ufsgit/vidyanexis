@@ -66,7 +66,6 @@ class _ExpenseTypeState extends State<ExpenseType> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surfaceGrey,
@@ -100,12 +99,10 @@ class _ExpenseTypeState extends State<ExpenseType> {
                                     horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                     color: AppColors.surfaceGrey,
-                                    borderRadius:
-                                        BorderRadius.circular(4)),
+                                    borderRadius: BorderRadius.circular(4)),
                                 child: Text(
                                   settingsProvider
-                                      .expenseTypeList[index]
-                                      .expenseTypeName,
+                                      .expenseTypeList[index].expenseTypeName,
                                   style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
@@ -149,8 +146,7 @@ class _ExpenseTypeState extends State<ExpenseType> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: const Text(
-                                            'Confirm Delete'),
+                                        title: const Text('Confirm Delete'),
                                         content: const Text(
                                             'Are you sure you want to delete?'),
                                         actions: [
@@ -172,8 +168,8 @@ class _ExpenseTypeState extends State<ExpenseType> {
                                             },
                                             child: const Text(
                                               'Delete',
-                                              style: TextStyle(
-                                                  color: Colors.red),
+                                              style:
+                                                  TextStyle(color: Colors.red),
                                             ),
                                           ),
                                         ],

@@ -290,15 +290,17 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                                   Transform.scale(
                                     scale: 0.8, // Smaller switch for mobile
                                     child: Switch(
-                                      value:
-                                          selectedFields[f]['isMandatoryAtRegistration'] == 1,
+                                      value: selectedFields[f]
+                                              ['isMandatoryAtRegistration'] ==
+                                          1,
                                       onChanged: (value) {
                                         setStateDialog(() {
                                           final f = selectedFields.indexWhere(
                                               (e) =>
                                                   e['custom_field_id'] ==
                                                   field.customFieldId);
-                                          selectedFields[f]['isMandatoryAtRegistration'] =
+                                          selectedFields[f][
+                                                  'isMandatoryAtRegistration'] =
                                               value ? 1 : 0;
                                         });
                                       },
@@ -409,7 +411,9 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),

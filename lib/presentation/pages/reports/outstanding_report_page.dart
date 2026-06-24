@@ -110,8 +110,7 @@ class _OutstandingReportPageState extends State<OutstandingReportPage> {
                     context.visitAncestorElements((element) {
                       if (element is StatefulElement &&
                           element.state is ScaffoldState) {
-                        ScaffoldState scaffold =
-                            element.state as ScaffoldState;
+                        ScaffoldState scaffold = element.state as ScaffoldState;
                         if (scaffold.hasDrawer) {
                           parent = scaffold;
                           return false;
@@ -181,17 +180,17 @@ class _OutstandingReportPageState extends State<OutstandingReportPage> {
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.02),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           CommonReportDateFilter(
@@ -272,7 +271,9 @@ class _OutstandingReportPageState extends State<OutstandingReportPage> {
           const Spacer(),
           ElevatedButton(
             onPressed: () => provider.getOutstandingReport(context),
-            style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4)),
               backgroundColor: Colors.white,
               foregroundColor: AppColors.primaryBlue,
               side: BorderSide(color: AppColors.primaryBlue),
@@ -536,13 +537,14 @@ class _OutstandingReportPageState extends State<OutstandingReportPage> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),

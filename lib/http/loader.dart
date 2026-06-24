@@ -46,8 +46,8 @@ class Loader {
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.bluebutton),
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(AppColors.bluebutton),
                       ),
                     ),
                     if (message != null && message.isNotEmpty) ...[

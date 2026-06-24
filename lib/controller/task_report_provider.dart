@@ -13,7 +13,8 @@ class TaskReportProvider extends ChangeNotifier {
   bool _hasFetched = false;
   bool get hasFetched => _hasFetched;
 
-  int _selectedSortOption = 0; // 0: Default, 1: ID, 2: Creation Date, 3: Followup Date
+  int _selectedSortOption =
+      0; // 0: Default, 1: ID, 2: Creation Date, 3: Followup Date
   int get selectedSortOption => _selectedSortOption;
 
   void setSortOption(int option, BuildContext context) {
@@ -21,6 +22,7 @@ class TaskReportProvider extends ChangeNotifier {
     notifyListeners();
     getSearchTaskReport(context);
   }
+
   DateTime? _fromDate = DateTime.now();
   DateTime? _toDate = DateTime.now();
   String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -325,7 +327,6 @@ class TaskReportProvider extends ChangeNotifier {
             'PageSize': _pageSize,
             'Order_By_': _selectedSortOption,
           });
-
 
       if (response.statusCode == 200) {
         final data = response.data;

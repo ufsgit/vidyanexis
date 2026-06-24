@@ -219,15 +219,18 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: ConstrainedBox(
-                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 200),
                                       child: CustomText(
-                                        reportsProvider.fromDate == null && reportsProvider.toDate == null
+                                        reportsProvider.fromDate == null &&
+                                                reportsProvider.toDate == null
                                             ? 'Date'
                                             : 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
                                         fontSize: 14,
@@ -238,7 +241,8 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                  Icon(Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3, size: 18),
                                 ],
                               ),
                             ),
@@ -310,11 +314,12 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                             itemBuilder: (context, index) {
                               var service = reportsProvider.taskReport[index];
 
-                              Color statusColor = service.statusName == "Completed"
-                                  ? Colors.green
-                                  : service.statusName == "In Progress"
-                                      ? Colors.orange
-                                      : Colors.red;
+                              Color statusColor =
+                                  service.statusName == "Completed"
+                                      ? Colors.green
+                                      : service.statusName == "In Progress"
+                                          ? Colors.orange
+                                          : Colors.red;
                               return ReportListItem(
                                 title: service.customer,
                                 subtitle: service.statusName,
@@ -333,7 +338,8 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => CustomerDetailPageMobile(
+                                      builder: (context) =>
+                                          CustomerDetailPageMobile(
                                         customerId: service.customerId,
                                         fromLead: false,
                                       ),
@@ -360,7 +366,8 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                   onPressed: () {
                     reportsProvider.getSearchTaskReport(widget.userId, context);
                     reportsProvider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -487,13 +494,14 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                           reportsProvider.formatDate();
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -510,7 +518,9 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                           Navigator.pop(context);
                           reportsProvider.selectDateFilterOption(null);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withAlpha(26),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

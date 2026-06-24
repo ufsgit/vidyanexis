@@ -166,15 +166,17 @@ class _PeriodicServiceReportPageMobileState
                                 reportsProvider.setStatus(0);
                               },
                             ),
-                            ...dropDownProvider.amcStatus.map((s) =>
-                                FilterChipWidget(
-                                  label: s.amcStatusName ?? 'Unknown',
-                                  isSelected: reportsProvider.selectedStatus ==
-                                      s.amcStatusId,
-                                  onTap: () {
-                                    reportsProvider.setStatus(s.amcStatusId);
-                                  },
-                                )),
+                            ...dropDownProvider.amcStatus
+                                .map((s) => FilterChipWidget(
+                                      label: s.amcStatusName ?? 'Unknown',
+                                      isSelected:
+                                          reportsProvider.selectedStatus ==
+                                              s.amcStatusId,
+                                      onTap: () {
+                                        reportsProvider
+                                            .setStatus(s.amcStatusId);
+                                      },
+                                    )),
                           ],
                         );
                       },
@@ -201,15 +203,18 @@ class _PeriodicServiceReportPageMobileState
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: ConstrainedBox(
-                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 200),
                                       child: CustomText(
-                                        reportsProvider.fromDate == null && reportsProvider.toDate == null
+                                        reportsProvider.fromDate == null &&
+                                                reportsProvider.toDate == null
                                             ? 'Date'
                                             : 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}',
                                         fontSize: 14,
@@ -220,7 +225,8 @@ class _PeriodicServiceReportPageMobileState
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                  Icon(Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3, size: 18),
                                 ],
                               ),
                             ),
@@ -248,16 +254,17 @@ class _PeriodicServiceReportPageMobileState
                                 reportsProvider.setUserFilterStatus(0);
                               },
                             ),
-                            ...dropDownProvider.searchUserDetails.map((u) =>
-                                FilterChipWidget(
-                                  label: u.userDetailsName ?? 'Unknown',
-                                  isSelected: reportsProvider.selectedUser ==
-                                      u.userDetailsId,
-                                  onTap: () {
-                                    reportsProvider
-                                        .setUserFilterStatus(u.userDetailsId);
-                                  },
-                                )),
+                            ...dropDownProvider.searchUserDetails
+                                .map((u) => FilterChipWidget(
+                                      label: u.userDetailsName ?? 'Unknown',
+                                      isSelected:
+                                          reportsProvider.selectedUser ==
+                                              u.userDetailsId,
+                                      onTap: () {
+                                        reportsProvider.setUserFilterStatus(
+                                            u.userDetailsId);
+                                      },
+                                    )),
                           ],
                         );
                       },
@@ -387,7 +394,8 @@ class _PeriodicServiceReportPageMobileState
                   onPressed: () {
                     reportsProvider.getSearchAmcReport(context);
                     reportsProvider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -512,13 +520,14 @@ class _PeriodicServiceReportPageMobileState
                           reportsProvider.formatDate();
                         },
                         style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
                         child: const Text(
                           'Apply',
                         ),
@@ -535,7 +544,9 @@ class _PeriodicServiceReportPageMobileState
                           Navigator.pop(context);
                           reportsProvider.selectDateFilterOption(null);
                         },
-                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
                           padding: const EdgeInsets.symmetric(

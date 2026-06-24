@@ -146,15 +146,18 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
                                     child: ConstrainedBox(
-                                      constraints: const BoxConstraints(maxWidth: 200),
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 200),
                                       child: CustomText(
-                                        provider.fromDate == null && provider.toDate == null
+                                        provider.fromDate == null &&
+                                                provider.toDate == null
                                             ? 'Date'
                                             : 'Date : ${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
                                         fontSize: 14,
@@ -165,7 +168,8 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                                  Icon(Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3, size: 18),
                                 ],
                               ),
                             ),
@@ -192,15 +196,15 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                                 provider.setUserId(0);
                               },
                             ),
-                            ...dropDownProvider.searchUserDetails.map((u) =>
-                                FilterChipWidget(
-                                  label: u.userDetailsName ?? 'Unknown',
-                                  isSelected: provider.selectedUserId ==
-                                      u.userDetailsId,
-                                  onTap: () {
-                                    provider.setUserId(u.userDetailsId);
-                                  },
-                                )),
+                            ...dropDownProvider.searchUserDetails
+                                .map((u) => FilterChipWidget(
+                                      label: u.userDetailsName ?? 'Unknown',
+                                      isSelected: provider.selectedUserId ==
+                                          u.userDetailsId,
+                                      onTap: () {
+                                        provider.setUserId(u.userDetailsId);
+                                      },
+                                    )),
                           ],
                         );
                       },
@@ -224,15 +228,17 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                                 provider.setEnquiryForId(0);
                               },
                             ),
-                            ...dropDownProvider.enquiryForList.map((e) =>
-                                FilterChipWidget(
-                                  label: e.enquiryForName ?? 'Unknown',
-                                  isSelected: provider.selectedEnquiryForId ==
-                                      e.enquiryForId,
-                                  onTap: () {
-                                    provider.setEnquiryForId(e.enquiryForId);
-                                  },
-                                )),
+                            ...dropDownProvider.enquiryForList
+                                .map((e) => FilterChipWidget(
+                                      label: e.enquiryForName ?? 'Unknown',
+                                      isSelected:
+                                          provider.selectedEnquiryForId ==
+                                              e.enquiryForId,
+                                      onTap: () {
+                                        provider
+                                            .setEnquiryForId(e.enquiryForId);
+                                      },
+                                    )),
                           ],
                         );
                       },
@@ -269,7 +275,8 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
           if (!provider.isFilter)
             Expanded(
               child: provider.subContractReport.isEmpty
-                  ? const CommonEmptyState(message: 'No sub contract reports found')
+                  ? const CommonEmptyState(
+                      message: 'No sub contract reports found')
                   : Column(
                       children: [
                         CommonReportSummaryBar(
@@ -318,7 +325,8 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                             children: [
                               const Text('Total Commission',
                                   style: TextStyle(
-                                      fontSize: 14, fontWeight: FontWeight.w600)),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600)),
                               Text('₹${provider.totalCommission}',
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -343,7 +351,8 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                   onPressed: () {
                     provider.getSubContractReport(context);
                     provider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -391,7 +400,8 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                               borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.fromDate != null
                               ? provider.formattedFromDate
@@ -406,7 +416,8 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                         child: Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                              border: Border.all(
+                                  color: const Color(0xFFCBD5E1), width: 1.0),
                               borderRadius: BorderRadius.circular(4)),
                           child: Text(provider.toDate != null
                               ? provider.formattedToDate

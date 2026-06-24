@@ -249,7 +249,8 @@ class ConversionReportProvider extends ChangeNotifier {
 
       String toUserIdStr = (_selectedToUserId ?? 0).toString();
       String byUserIdStr = (_selectedByUserId ?? 0).toString();
-      String registeredByStr = (_selectedByUserId ?? _selectedUser ?? 0).toString();
+      String registeredByStr =
+          (_selectedByUserId ?? _selectedUser ?? 0).toString();
       String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
@@ -305,7 +306,8 @@ class ConversionReportProvider extends ChangeNotifier {
 
       String toUserIdStr = (_selectedToUserId ?? 0).toString();
       String byUserIdStr = (_selectedByUserId ?? 0).toString();
-      String registeredByStr = (_selectedByUserId ?? _selectedUser ?? 0).toString();
+      String registeredByStr =
+          (_selectedByUserId ?? _selectedUser ?? 0).toString();
       String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(

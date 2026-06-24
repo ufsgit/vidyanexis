@@ -234,7 +234,8 @@ class InvoiceReportProvider extends ChangeNotifier {
       // Fallback strategy if first endpoint returns 404, 0 or any non-200 status code
       if (response.statusCode != 200) {
         if (kDebugMode) {
-          print("Billing_Payment_Report returned ${response.statusCode}, falling back to Search_Invoice_Report...");
+          print(
+              "Billing_Payment_Report returned ${response.statusCode}, falling back to Search_Invoice_Report...");
         }
         response = await HttpRequest.httpGetRequest(
             endPoint:

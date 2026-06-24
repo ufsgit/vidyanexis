@@ -211,8 +211,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
             if (widget.searchController != null &&
                 widget.searchController!.text.isNotEmpty &&
                 widget.searchController!.selection.baseOffset == 0 &&
-                widget.searchController!.selection.extentOffset == widget.searchController!.text.length) {
-              widget.searchController!.selection = TextSelection.collapsed(offset: widget.searchController!.text.length);
+                widget.searchController!.selection.extentOffset ==
+                    widget.searchController!.text.length) {
+              widget.searchController!.selection = TextSelection.collapsed(
+                  offset: widget.searchController!.text.length);
             }
           });
         },
@@ -221,8 +223,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
               hintText: widget.searchHintText,
               border: InputBorder.none,
               isDense: true,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              hintStyle: widget.searchHintStyle ?? 
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              hintStyle: widget.searchHintStyle ??
                   GoogleFonts.plusJakartaSans(
                     color: const Color(0xFF94A3B8),
                     fontSize: 13,
@@ -238,7 +241,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     )
                   : null,
             ),
-        style: widget.searchTextStyle ?? const TextStyle(color: Colors.black, fontSize: 13),
+        style: widget.searchTextStyle ??
+            const TextStyle(color: Colors.black, fontSize: 13),
         textInputAction: TextInputAction.search,
         onChanged: (query) {
           // searchProvider.setSearchQuery(query); // Prevents constant rebuilds which break cursor
@@ -282,7 +286,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: widget.actionsPadding,
         child: Row(
           children: [
-            if (widget.showFilterIcon && onFilterTap != null && !widget.showSearch)
+            if (widget.showFilterIcon &&
+                onFilterTap != null &&
+                !widget.showSearch)
               IconButton(
                 icon: Icon(
                   Icons.filter_list,

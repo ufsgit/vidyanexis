@@ -56,7 +56,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
   @override
   Widget build(BuildContext context) {
     final isMobile = !AppStyles.isWebScreen(context);
-    
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
       drawer: isMobile ? const SidebarDrawer() : null,
@@ -78,7 +78,8 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
 
                   return ListView.builder(
                     controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     itemCount: provider.processFlowFilteredList.length,
                     itemBuilder: (context, index) {
                       return _buildProcessFlowCard(
@@ -131,7 +132,8 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
                   onPressed: () {
                     ScaffoldState? parent;
                     context.visitAncestorElements((element) {
-                      if (element is StatefulElement && element.state is ScaffoldState) {
+                      if (element is StatefulElement &&
+                          element.state is ScaffoldState) {
                         ScaffoldState scaffold = element.state as ScaffoldState;
                         if (scaffold.hasDrawer) {
                           parent = scaffold;
@@ -167,8 +169,7 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
           ),
           const Spacer(),
           if (!isMobile) ..._buildWebFilters(),
-          if (settingsProvider.menuIsSaveMap[36] == 1)
-            _buildAddButton(),
+          if (settingsProvider.menuIsSaveMap[36] == 1) _buildAddButton(),
         ],
       ),
     );
@@ -245,7 +246,8 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isActive ? AppColors.secondaryBlue : const Color(0xFFF1F5F9),
+              color:
+                  isActive ? AppColors.secondaryBlue : const Color(0xFFF1F5F9),
             ),
           ),
           child: DropdownButtonHideUnderline(
@@ -315,7 +317,8 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isActive ? AppColors.secondaryBlue : const Color(0xFFF1F5F9),
+              color:
+                  isActive ? AppColors.secondaryBlue : const Color(0xFFF1F5F9),
             ),
           ),
           child: DropdownButtonHideUnderline(
@@ -360,13 +363,15 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(isHeader ? 12 : 16),
         border: isHeader ? Border.all(color: const Color(0xFFF1F5F9)) : null,
-        boxShadow: isHeader ? [] : [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: isHeader
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: TextField(
         controller: searchController,
@@ -377,9 +382,11 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
             color: const Color(0xFF94A3B8),
             fontSize: 14,
           ),
-          prefixIcon: Icon(Icons.search_rounded, color: const Color(0xFF64748B), size: isHeader ? 20 : 24),
+          prefixIcon: Icon(Icons.search_rounded,
+              color: const Color(0xFF64748B), size: isHeader ? 20 : 24),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: isHeader ? 10 : 12),
+          contentPadding: EdgeInsets.symmetric(
+              horizontal: 16, vertical: isHeader ? 10 : 12),
         ),
       ),
     );
@@ -529,7 +536,8 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: isWeb ? 8 : 10, vertical: isWeb ? 2 : 4),
+      padding: EdgeInsets.symmetric(
+          horizontal: isWeb ? 8 : 10, vertical: isWeb ? 2 : 4),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(4),
@@ -596,13 +604,15 @@ class _ProcessFlowPageState extends State<ProcessFlowPage> {
             onPressed: () => Navigator.pop(context),
             child: Text(
               'Cancel',
-              style: GoogleFonts.plusJakartaSans(color: const Color(0xFF64748B)),
+              style:
+                  GoogleFonts.plusJakartaSans(color: const Color(0xFF64748B)),
             ),
           ),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              await processFlowProvider.deleteProcessFlowById(context, model.flowId!);
+              await processFlowProvider.deleteProcessFlowById(
+                  context, model.flowId!);
               getData();
             },
             child: Text(

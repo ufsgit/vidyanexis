@@ -44,7 +44,10 @@ class CommonReportDateFilter extends StatelessWidget {
               !hasDates
                   ? '$label: All'
                   : '$label : $formattedFromDate - $formattedToDate',
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Color(0xFF1E293B)),
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1E293B)),
             ),
             const SizedBox(width: 10),
             const Icon(

@@ -18,6 +18,7 @@ class CustomFieldModel {
   int? deletedStatus;
   int? isQuotationCustom;
   int? isViewInQuotation;
+  int? isCommercial;
   int? isChecked; // Added this property
   List<String>? dropDownValues;
   List<String>? checkBoxValues;
@@ -34,6 +35,7 @@ class CustomFieldModel {
     this.deletedStatus,
     this.isQuotationCustom,
     this.isViewInQuotation,
+    this.isCommercial,
     this.isChecked,
     this.createdAt,
     this.quotationTypeId,
@@ -48,6 +50,7 @@ class CustomFieldModel {
     int? deletedStatus,
     int? isQuotationCustom,
     int? isViewInQuotation,
+    int? isCommercial,
     int? isChecked,
     DateTime? createdAt,
     int? quotationTypeId,
@@ -59,6 +62,7 @@ class CustomFieldModel {
         deletedStatus: deletedStatus ?? this.deletedStatus,
         isQuotationCustom: isQuotationCustom ?? this.isQuotationCustom,
         isViewInQuotation: isViewInQuotation ?? this.isViewInQuotation,
+        isCommercial: isCommercial ?? this.isCommercial,
         isChecked: isChecked ?? this.isChecked,
         dropDownValues: dropDownValues ?? this.dropDownValues,
         checkBoxValues: checkBoxValues ?? this.checkBoxValues,
@@ -77,8 +81,9 @@ class CustomFieldModel {
             json["quotation_custom"] ?? json["isQuotationCustom"],
         isViewInQuotation:
             json["view_in_quotation"] ?? json["isViewInQuotation"],
-        isChecked: json["is_checked"] != null 
-            ? int.tryParse(json["is_checked"].toString()) 
+        isCommercial: json["is_commercial"] ?? json["isCommercial"],
+        isChecked: json["is_checked"] != null
+            ? int.tryParse(json["is_checked"].toString())
             : null,
         dropDownValues:
             (json["Dropdown_Values"] ?? json["dropdown_values"]) == null
@@ -103,6 +108,7 @@ class CustomFieldModel {
         "Deleted_Status": deletedStatus,
         "quotation_custom": isQuotationCustom,
         "view_in_quotation": isViewInQuotation,
+        "is_commercial": isCommercial,
         "is_checked": isChecked,
         "Dropdown_Values": dropDownValues == null
             ? []

@@ -78,7 +78,6 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surfaceGrey,
@@ -110,8 +109,7 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
                                     height: 22,
                                     decoration: BoxDecoration(
                                         color: AppColors.surfaceGrey,
-                                        borderRadius:
-                                            BorderRadius.circular(4)),
+                                        borderRadius: BorderRadius.circular(4)),
                                     child: Center(
                                       child: Padding(
                                         padding: const EdgeInsets.only(

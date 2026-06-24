@@ -119,7 +119,15 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
 
   bool _getMaterialChecked(int itemIndex, int matIndex) {
     final key = '${itemIndex}_$matIndex';
-    return _materialChecked.putIfAbsent(key, () => true);
+
+    if (_materialChecked.containsKey(key)) {
+      return _materialChecked[key]!;
+    }
+
+    final mat = _addedItems[itemIndex].materials[matIndex];
+    final checked = mat.includeInTotal == '1';
+    _materialChecked[key] = checked;
+    return checked;
   }
 
   // ================== Update Methods ==================
@@ -251,6 +259,8 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
           itemId: mainItem.itemId,
           itemName: mainItem.itemName,
           quantity: mainQty,
+          make: mainItem.hsnCode,
+          unitName: mainItem.unitName,
           materials: materials,
         ));
       }

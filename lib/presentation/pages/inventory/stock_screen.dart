@@ -418,7 +418,9 @@ class _StockScreenState extends State<StockScreen> {
                             children: [
                               Expanded(
                                 child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4)),
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
                                     padding: const EdgeInsets.symmetric(
@@ -436,7 +438,9 @@ class _StockScreenState extends State<StockScreen> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                                  style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4)),
                                     backgroundColor: AppColors.primaryBlue,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(

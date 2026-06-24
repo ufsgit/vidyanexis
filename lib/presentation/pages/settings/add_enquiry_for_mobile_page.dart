@@ -29,7 +29,8 @@ class AddEnquiryForMobilePage extends StatefulWidget {
   });
 
   @override
-  State<AddEnquiryForMobilePage> createState() => _AddEnquiryForMobilePageState();
+  State<AddEnquiryForMobilePage> createState() =>
+      _AddEnquiryForMobilePageState();
 }
 
 class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
@@ -250,15 +251,17 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                                   Transform.scale(
                                     scale: 0.8,
                                     child: Switch(
-                                      value:
-                                          selectedFields[f]['isMandatoryAtRegistration'] == 1,
+                                      value: selectedFields[f]
+                                              ['isMandatoryAtRegistration'] ==
+                                          1,
                                       onChanged: (value) {
                                         setStateDialog(() {
                                           final f = selectedFields.indexWhere(
                                               (e) =>
                                                   e['custom_field_id'] ==
                                                   field.customFieldId);
-                                          selectedFields[f]['isMandatoryAtRegistration'] =
+                                          selectedFields[f][
+                                                  'isMandatoryAtRegistration'] =
                                               value ? 1 : 0;
                                         });
                                       },
@@ -366,7 +369,9 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                     setState(() {});
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
                     backgroundColor: Colors.blue.shade600,
                     foregroundColor: Colors.white,
                   ),
@@ -627,12 +632,13 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                               settingsProvider.sourceCategoryEnquiryController,
                           onItemSelected: (selectedId) {
                             settingsProvider.setSourceId(selectedId);
-                            final selectedItem =
-                                settingsProvider.searchSourceCategory.firstWhere(
+                            final selectedItem = settingsProvider
+                                .searchSourceCategory
+                                .firstWhere(
                               (user) => user.sourceId == selectedId,
                             );
-                            settingsProvider.sourceCategoryEnquiryController.text =
-                                selectedItem.sourceName ?? '';
+                            settingsProvider.sourceCategoryEnquiryController
+                                .text = selectedItem.sourceName ?? '';
                           },
                         ),
                         const SizedBox(height: 14),
@@ -694,7 +700,8 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                           Wrap(
                             spacing: 6,
                             runSpacing: 6,
-                            children: selectedTaskTypes.asMap().entries.map((entry) {
+                            children:
+                                selectedTaskTypes.asMap().entries.map((entry) {
                               final idx = entry.key;
                               final task = entry.value;
                               return Chip(
@@ -734,7 +741,8 @@ class _AddEnquiryForMobilePageState extends State<AddEnquiryForMobilePage> {
                           Wrap(
                             spacing: 6,
                             runSpacing: 6,
-                            children: selectedFields.asMap().entries.map((entry) {
+                            children:
+                                selectedFields.asMap().entries.map((entry) {
                               final idx = entry.key;
                               final field = entry.value;
                               return Container(

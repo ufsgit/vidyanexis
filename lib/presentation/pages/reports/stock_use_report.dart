@@ -115,18 +115,18 @@ class _StockUseReportState extends State<StockUseReport> {
       body: Column(
         children: [
           if (!isSmallScreen) _buildWebHeader(provider),
-          
-          if (isSmallScreen && !provider.isFilter && provider.reportList.isNotEmpty)
+          if (isSmallScreen &&
+              !provider.isFilter &&
+              provider.reportList.isNotEmpty)
             CommonReportSummaryBar(
               totalLabel: 'Total Records',
               totalCount: provider.reportList.length,
               showingLabel: 'Showing',
               showingCount: provider.reportList.length,
             ),
-            
           if (!isSmallScreen && provider.isFilter) _buildFilters(provider),
-          if (isSmallScreen && provider.isFilter) _buildMobileFilterPanel(context, provider),
-          
+          if (isSmallScreen && provider.isFilter)
+            _buildMobileFilterPanel(context, provider),
           if (!provider.isFilter || !isSmallScreen)
             Expanded(
               child: isSmallScreen
@@ -155,7 +155,8 @@ class _StockUseReportState extends State<StockUseReport> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.textRed,
                           side: BorderSide(color: AppColors.textRed),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                         child: Text(
                           'Reset',
@@ -179,7 +180,8 @@ class _StockUseReportState extends State<StockUseReport> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
                         ),
                         child: Text(
                           'Apply Filter',
@@ -206,8 +208,7 @@ class _StockUseReportState extends State<StockUseReport> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -248,7 +249,8 @@ class _StockUseReportState extends State<StockUseReport> {
                 ),
                 child: Text(
                   'Search',
-                  style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -270,8 +272,7 @@ class _StockUseReportState extends State<StockUseReport> {
                 context.visitAncestorElements((element) {
                   if (element is StatefulElement &&
                       element.state is ScaffoldState) {
-                    ScaffoldState scaffold =
-                        element.state as ScaffoldState;
+                    ScaffoldState scaffold = element.state as ScaffoldState;
                     if (scaffold.hasDrawer) {
                       parent = scaffold;
                       return false;
@@ -311,14 +312,14 @@ class _StockUseReportState extends State<StockUseReport> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: TextField(
               onChanged: (value) => provider.setCustomerName(value),
@@ -494,7 +495,8 @@ class _StockUseReportState extends State<StockUseReport> {
     );
   }
 
-  Widget _buildMobileFilterPanel(BuildContext context, StockUseReportProvider provider) {
+  Widget _buildMobileFilterPanel(
+      BuildContext context, StockUseReportProvider provider) {
     return Expanded(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
@@ -512,8 +514,9 @@ class _StockUseReportState extends State<StockUseReport> {
               height: 48,
               child: CommonDropdown<String>(
                 hintText: 'Select Customer',
-                selectedValue:
-                    provider.customerName.isEmpty ? null : provider.customerName,
+                selectedValue: provider.customerName.isEmpty
+                    ? null
+                    : provider.customerName,
                 items: [
                   DropdownItem(id: '', name: 'All Customers'),
                   ...provider.customers.map((c) => DropdownItem(
@@ -573,33 +576,38 @@ class _StockUseReportState extends State<StockUseReport> {
                 _showDateFilterDialog(context, provider);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+                  border:
+                      Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primaryBlue),
+                    Icon(Icons.calendar_today_outlined,
+                        size: 18, color: AppColors.primaryBlue),
                     const SizedBox(width: 10),
                     Expanded(
                       child: CustomText(
-                        provider.formattedFromDate.isEmpty && provider.formattedToDate.isEmpty
+                        provider.formattedFromDate.isEmpty &&
+                                provider.formattedToDate.isEmpty
                             ? 'Select Date Range'
                             : '${provider.formattedFromDate.toString().toDayMonthYearFormat()} - ${provider.formattedToDate.toString().toDayMonthYearFormat()}',
                         fontSize: 14,
                         color: AppColors.textBlack,
                       ),
                     ),
-                    Icon(Icons.keyboard_arrow_down, color: AppColors.textGrey3, size: 18),
+                    Icon(Icons.keyboard_arrow_down,
+                        color: AppColors.textGrey3, size: 18),
                   ],
                 ),
               ),
@@ -622,8 +630,7 @@ class _StockUseReportState extends State<StockUseReport> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-
+          border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -643,11 +650,21 @@ class _StockUseReportState extends State<StockUseReport> {
                 ),
                 child: const Row(
                   children: [
-                    TableWidget(title: 'Sl No', width: 80, flex: 0, color: Color(0xFF607185)),
-                    TableWidget(title: 'Customer Name', flex: 3, color: Color(0xFF607185)),
-                    TableWidget(title: 'Date', flex: 2, color: Color(0xFF607185)),
-                    TableWidget(title: 'Item Name', flex: 3, color: Color(0xFF607185)),
-                    TableWidget(title: 'Quantity', flex: 1, color: Color(0xFF607185)),
+                    TableWidget(
+                        title: 'Sl No',
+                        width: 80,
+                        flex: 0,
+                        color: Color(0xFF607185)),
+                    TableWidget(
+                        title: 'Customer Name',
+                        flex: 3,
+                        color: Color(0xFF607185)),
+                    TableWidget(
+                        title: 'Date', flex: 2, color: Color(0xFF607185)),
+                    TableWidget(
+                        title: 'Item Name', flex: 3, color: Color(0xFF607185)),
+                    TableWidget(
+                        title: 'Quantity', flex: 1, color: Color(0xFF607185)),
                   ],
                 ),
               ),
@@ -660,7 +677,9 @@ class _StockUseReportState extends State<StockUseReport> {
                     final item = provider.reportList[index];
                     return Container(
                       decoration: BoxDecoration(
-                        color: index % 2 == 0 ? Colors.white : const Color(0xFFF6F7F9),
+                        color: index % 2 == 0
+                            ? Colors.white
+                            : const Color(0xFFF6F7F9),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
@@ -679,8 +698,11 @@ class _StockUseReportState extends State<StockUseReport> {
                           TableWidget(
                             flex: 3,
                             data: Text(
-                              item.customerName.isEmpty ? 'N/A' : item.customerName,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              item.customerName.isEmpty
+                                  ? 'N/A'
+                                  : item.customerName,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
                           TableWidget(
@@ -697,7 +719,9 @@ class _StockUseReportState extends State<StockUseReport> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                item.itemName.isEmpty ? 'Unnamed Item' : item.itemName,
+                                item.itemName.isEmpty
+                                    ? 'Unnamed Item'
+                                    : item.itemName,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: const TextStyle(
@@ -712,7 +736,8 @@ class _StockUseReportState extends State<StockUseReport> {
                             flex: 1,
                             data: Text(
                               item.quantity,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -739,8 +764,10 @@ class _StockUseReportState extends State<StockUseReport> {
       itemCount: provider.reportList.length,
       itemBuilder: (context, index) {
         final item = provider.reportList[index];
-        final itemName = item.itemName.trim().isEmpty ? 'Unnamed Item' : item.itemName;
-        final customerName = item.customerName.trim().isEmpty ? 'N/A' : item.customerName;
+        final itemName =
+            item.itemName.trim().isEmpty ? 'Unnamed Item' : item.itemName;
+        final customerName =
+            item.customerName.trim().isEmpty ? 'N/A' : item.customerName;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
@@ -788,11 +815,13 @@ class _StockUseReportState extends State<StockUseReport> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFEFF6FF),
                                   borderRadius: BorderRadius.circular(4),
-                                  border: Border.all(color: const Color(0xFFDBEAFE)),
+                                  border: Border.all(
+                                      color: const Color(0xFFDBEAFE)),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -819,7 +848,8 @@ class _StockUseReportState extends State<StockUseReport> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Icon(Icons.person_outline, size: 14, color: Colors.grey[600]),
+                              Icon(Icons.person_outline,
+                                  size: 14, color: Colors.grey[600]),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
@@ -840,7 +870,8 @@ class _StockUseReportState extends State<StockUseReport> {
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey[400]),
+                              Icon(Icons.calendar_today_outlined,
+                                  size: 14, color: Colors.grey[400]),
                               const SizedBox(width: 6),
                               Text(
                                 item.entryDate.toDayMonthYearFormat(),
@@ -905,7 +936,8 @@ class _StockUseReportState extends State<StockUseReport> {
                       children: List<Widget>.generate(
                           reportsProvider.dateButtonTitles.length, (index) {
                         String title = reportsProvider.dateButtonTitles[index];
-                        final bool isSelected = reportsProvider.selectedDateFilterIndex == index;
+                        final bool isSelected =
+                            reportsProvider.selectedDateFilterIndex == index;
                         return ChoiceChip(
                           onSelected: (_) {
                             reportsProvider.setDateFilterByIndex(index);
@@ -919,14 +951,20 @@ class _StockUseReportState extends State<StockUseReport> {
                             title,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
-                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                              color: isSelected ? Colors.white : const Color(0xFF475569),
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF475569),
                             ),
                           ),
                           selectedColor: AppColors.primaryBlue,
                           backgroundColor: Colors.white,
                           side: BorderSide(
-                            color: isSelected ? Colors.transparent : Colors.grey[300]!,
+                            color: isSelected
+                                ? Colors.transparent
+                                : Colors.grey[300]!,
                           ),
                         );
                       }),
@@ -950,23 +988,28 @@ class _StockUseReportState extends State<StockUseReport> {
                                 reportsProvider.selectDate(context, true),
                             style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.fromDate != null
-                                  ? '${reportsProvider.fromDate!.toLocal()}'.split(' ')[0]
+                                  ? '${reportsProvider.fromDate!.toLocal()}'
+                                      .split(' ')[0]
                                   : 'From',
                               hintStyle: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month, size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),
@@ -978,23 +1021,28 @@ class _StockUseReportState extends State<StockUseReport> {
                                 reportsProvider.selectDate(context, false),
                             style: GoogleFonts.plusJakartaSans(fontSize: 13),
                             decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4),
-                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderSide:
+                                    BorderSide(color: Colors.grey[300]!),
                               ),
                               hintText: reportsProvider.toDate != null
-                                  ? '${reportsProvider.toDate!.toLocal()}'.split(' ')[0]
+                                  ? '${reportsProvider.toDate!.toLocal()}'
+                                      .split(' ')[0]
                                   : 'To',
                               hintStyle: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month, size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),

@@ -4,12 +4,16 @@ class AddedMultiItem {
   final int itemId;
   final String itemName;
   double quantity;
+  final String make;
+  final String unitName;
   final List<ItemSettings> materials;
 
   AddedMultiItem({
     required this.itemId,
     required this.itemName,
     required this.quantity,
+    required this.make,
+    required this.unitName,
     required this.materials,
   });
 
@@ -19,6 +23,8 @@ class AddedMultiItem {
       itemId: json['itemId'] ?? 0,
       itemName: json['itemName'] ?? '',
       quantity: (json['quantity'] as num?)?.toDouble() ?? 0.0,
+      make: json['make']?.toString() ?? '',
+      unitName: json['unitName']?.toString() ?? '',
       materials: (json['materials'] as List<dynamic>? ?? [])
           .map((mat) => ItemSettings.fromJson(mat as Map<String, dynamic>))
           .toList(),
@@ -31,6 +37,8 @@ class AddedMultiItem {
       'itemId': itemId,
       'itemName': itemName,
       'quantity': quantity,
+      'make': make,
+      'unitName': unitName,
       'materials': materials.map((mat) => mat.toJson()).toList(),
     };
   }

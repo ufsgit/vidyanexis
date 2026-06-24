@@ -106,20 +106,38 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                                           IconButton(
                                             tooltip: 'Edit',
                                             onPressed: () {
-                                              final expProvider = Provider.of<ExpenseProvider>(context, listen: false);
-                                              expProvider.userController.clear();
-                                              expProvider.dateController.clear();
-                                              expProvider.expenseTypeController.clear();
-                                              expProvider.amountController.clear();
-                                              expProvider.taxPercentageController.clear();
-                                              expProvider.amountWithoutTaxController.clear();
-                                              expProvider.cgstController.clear();
-                                              expProvider.sgstController.clear();
-                                              expProvider.expenseHeadController.clear();
-                                              expProvider.commentController.clear();
-                                              expProvider.projectController.clear();
-                                              expProvider.projectTypeController.clear();
-                                              expProvider.leadController.clear();
+                                              final expProvider =
+                                                  Provider.of<ExpenseProvider>(
+                                                      context,
+                                                      listen: false);
+                                              expProvider.userController
+                                                  .clear();
+                                              expProvider.dateController
+                                                  .clear();
+                                              expProvider.expenseTypeController
+                                                  .clear();
+                                              expProvider.amountController
+                                                  .clear();
+                                              expProvider
+                                                  .taxPercentageController
+                                                  .clear();
+                                              expProvider
+                                                  .amountWithoutTaxController
+                                                  .clear();
+                                              expProvider.cgstController
+                                                  .clear();
+                                              expProvider.sgstController
+                                                  .clear();
+                                              expProvider.expenseHeadController
+                                                  .clear();
+                                              expProvider.commentController
+                                                  .clear();
+                                              expProvider.projectController
+                                                  .clear();
+                                              expProvider.projectTypeController
+                                                  .clear();
+                                              expProvider.leadController
+                                                  .clear();
 
                                               showDialog(
                                                 context: context,
@@ -131,8 +149,11 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
                                                       isEdit: true);
                                                 },
                                               ).then((_) {
-                                                customerDetailsProvider.getExpenseListApi(
-                                                    widget.customerId.toString(), context);
+                                                customerDetailsProvider
+                                                    .getExpenseListApi(
+                                                        widget.customerId
+                                                            .toString(),
+                                                        context);
                                               });
                                             },
                                             icon: const Icon(

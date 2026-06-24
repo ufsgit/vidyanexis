@@ -20,7 +20,6 @@ import 'dart:typed_data';
 import 'package:vidyanexis/utils/pdf_action_helper.dart';
 import 'package:vidyanexis/http/loader.dart';
 
-
 class DetailsTabMobile extends StatefulWidget {
   final String customerId;
 
@@ -68,442 +67,447 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                     _buildStyledCard(
                       child: TileWidget(
                         title: 'Documents & Actions',
-                        iconAssetPath: 'assets/images/icon_bookmark_details.png',
+                        iconAssetPath:
+                            'assets/images/icon_bookmark_details.png',
                         initiallyExpanded: false,
                         showDivider: false,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-                          child: Wrap(
-                            spacing: 6.0,
-                            runSpacing: 6.0,
-                            children: [
-                              if (settingsProvider.menuIsViewMap[61] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'KSEB',
-                                  icon: Icons.electric_bolt_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'KSEB PDF',
-                                      onGenerate: () async {
-                                        return await generateKsebPdfBytes(
-                                              customerDetails:
-                                                  leadDetailsProvider
-                                                      .leadDetails!.first,
-                                              context: context,
-                                            ) ??
-                                            Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[63] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Vendor Agreement',
-                                  icon: Icons.handshake_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Vendor Agreement',
-                                      onGenerate: () async {
-                                        return await generateVendorAgreementPdfBytes(
-                                              customerDetails:
-                                                  leadDetailsProvider
-                                                      .leadDetails!.first,
-                                              context: context,
-                                            ) ??
-                                            Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[62] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Vendor Feasibility',
-                                  icon: Icons.fact_check_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Vendor Feasibility',
-                                      onGenerate: () async {
-                                        return await generateRtsFeasibilityReportPdfBytes(
-                                              customerDetails:
-                                                  leadDetailsProvider
-                                                      .leadDetails!.first,
-                                              context: context,
-                                            ) ??
-                                            Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[101] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Annexure 1',
-                                  icon: Icons.description_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Annexure 1',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfAnnexure1}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[102] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Annexure 2',
-                                  icon: Icons.description_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Annexure 2',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfAnnexure2}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[103] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Annexure 3',
-                                  icon: Icons.description_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Annexure 3',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfAnnexure3}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[105] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Net Meter',
-                                  icon: Icons.history_edu_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Net Meter Agreement',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[106] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'MNRE Agreement',
-                                  icon: Icons.gavel_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'MNRE Agreement',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfMnreAgreement}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[107] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Loan Agreement',
-                                  icon: Icons.account_balance_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Loan Agreement',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfLoanAgreement}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[108] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Schedule',
-                                  icon: Icons.calendar_month_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Schedule',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfSchedule}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfSchedule}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[109] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Completion Report',
-                                  icon: Icons.assignment_turned_in_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Completion Report',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfCompletionReport}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[110] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'KSEB Net Meter',
-                                  icon: Icons.electric_bolt_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'KSEB Net Meter',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[111] == 1)
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Agreement A3s',
-                                  icon: Icons.handshake_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Vendor Agreement A3s',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfVendorAgreement}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                              if (settingsProvider.menuIsViewMap[112] == 1 &&
-                                  sideProvider.name != 'Lead /')
-                                _buildActionBtn(
-                                  context,
-                                  text: 'Warranty',
-                                  icon: Icons.verified_user_outlined,
-                                  onTap: () async {
-                                    PdfActionHelper.showPdfOptions(
-                                      context: context,
-                                      title: 'Warranty',
-                                      pdfUrl:
-                                          '${HttpUrls.getPdfWarranty}${widget.customerId}',
-                                      onGenerate: () async {
-                                        await Loader.showLoader(context);
-                                        final bytes =
-                                            await customerDetailsProvider
-                                                .getAnnexurePdfBytes(
-                                                    '${HttpUrls.getPdfWarranty}${widget.customerId}');
-                                        Loader.stopLoader(context);
-                                        return bytes ?? Uint8List(0);
-                                      },
-                                    );
-                                  },
-                                ),
-                            ],
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            child: Wrap(
+                              spacing: 6.0,
+                              runSpacing: 6.0,
+                              children: [
+                                if (settingsProvider.menuIsViewMap[61] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'KSEB',
+                                    icon: Icons.electric_bolt_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'KSEB PDF',
+                                        onGenerate: () async {
+                                          return await generateKsebPdfBytes(
+                                                customerDetails:
+                                                    leadDetailsProvider
+                                                        .leadDetails!.first,
+                                                context: context,
+                                              ) ??
+                                              Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[63] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Vendor Agreement',
+                                    icon: Icons.handshake_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Vendor Agreement',
+                                        onGenerate: () async {
+                                          return await generateVendorAgreementPdfBytes(
+                                                customerDetails:
+                                                    leadDetailsProvider
+                                                        .leadDetails!.first,
+                                                context: context,
+                                              ) ??
+                                              Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[62] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Vendor Feasibility',
+                                    icon: Icons.fact_check_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Vendor Feasibility',
+                                        onGenerate: () async {
+                                          return await generateRtsFeasibilityReportPdfBytes(
+                                                customerDetails:
+                                                    leadDetailsProvider
+                                                        .leadDetails!.first,
+                                                context: context,
+                                              ) ??
+                                              Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[101] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Annexure 1',
+                                    icon: Icons.description_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Annexure 1',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfAnnexure1}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[102] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Annexure 2',
+                                    icon: Icons.description_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Annexure 2',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfAnnexure2}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[103] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Annexure 3',
+                                    icon: Icons.description_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Annexure 3',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfAnnexure3}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[105] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Net Meter',
+                                    icon: Icons.history_edu_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Net Meter Agreement',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[106] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'MNRE Agreement',
+                                    icon: Icons.gavel_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'MNRE Agreement',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfMnreAgreement}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[107] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Loan Agreement',
+                                    icon: Icons.account_balance_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Loan Agreement',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfLoanAgreement}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[108] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Schedule',
+                                    icon: Icons.calendar_month_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Schedule',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfSchedule}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfSchedule}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[109] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Completion Report',
+                                    icon: Icons.assignment_turned_in_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Completion Report',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfCompletionReport}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[110] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'KSEB Net Meter',
+                                    icon: Icons.electric_bolt_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'KSEB Net Meter',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfKsebNetMeter}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[111] == 1)
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Agreement A3s',
+                                    icon: Icons.handshake_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Vendor Agreement A3s',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfVendorAgreement}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if (settingsProvider.menuIsViewMap[112] == 1 &&
+                                    sideProvider.name != 'Lead /')
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Warranty',
+                                    icon: Icons.verified_user_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Warranty',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfWarranty}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfWarranty}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  _buildStyledCard(
+                    _buildStyledCard(
                       child: TileWidget(
                         initiallyExpanded: true,
                         title: 'Basic details',
                         iconAssetPath: 'assets/images/icon_profile_details.png',
                         showDivider: false,
                         children: [
-                        LabelValueWidget(
-                          label: 'Name',
-                          value:
-                              leadDetailsProvider.leadDetails![0].customerName,
-                        ),
-                        const SizedBox(height: 8),
-                        LabelValueWidget(
-                          label: 'Enquiry source',
-                          value: dropDownProvider.getEnquirySourceNameById(
-                              leadDetailsProvider
-                                  .leadDetails![0].enquirySourceId,
-                              leadDetailsProvider
-                                  .leadDetails![0].enquirySourceName),
-                        ),
-                        const SizedBox(height: 8),
-                        if (leadDetailsProvider
-                            .leadDetails![0].referenceName.isNotEmpty)
                           LabelValueWidget(
-                            label: 'Sub Source',
+                            label: 'Name',
                             value: leadDetailsProvider
-                                .leadDetails![0].referenceName,
+                                .leadDetails![0].customerName,
                           ),
-                        if (leadDetailsProvider
-                            .leadDetails![0].referenceName.isNotEmpty)
                           const SizedBox(height: 8),
-                        LabelValueWidget(
-                          label: 'Mobile no',
-                          value: leadDetailsProvider
-                              .leadDetails![0].contactNumber
-                              .toString(),
-                        ),
-                        // const SizedBox(height: 8),
-                        // LabelValueWidget(
-                        //   label: 'Email id',
-                        //   value: leadDetailsProvider.leadDetails![0].email,
-                        // ),
-                        const SizedBox(height: 8),
-                        LabelValueWidget(
-                          label: 'Enquiry for',
-                          value: dropDownProvider.getEnquiryForNameById(
-                              leadDetailsProvider.leadDetails![0].enquiryForId,
-                              leadDetailsProvider
-                                  .leadDetails![0].enquiryForName),
-                        ),
-                        const SizedBox(height: 8),
-                      ],
-                    ),
+                          LabelValueWidget(
+                            label: 'Enquiry source',
+                            value: dropDownProvider.getEnquirySourceNameById(
+                                leadDetailsProvider
+                                    .leadDetails![0].enquirySourceId,
+                                leadDetailsProvider
+                                    .leadDetails![0].enquirySourceName),
+                          ),
+                          const SizedBox(height: 8),
+                          if (leadDetailsProvider
+                              .leadDetails![0].referenceName.isNotEmpty)
+                            LabelValueWidget(
+                              label: 'Sub Source',
+                              value: leadDetailsProvider
+                                  .leadDetails![0].referenceName,
+                            ),
+                          if (leadDetailsProvider
+                              .leadDetails![0].referenceName.isNotEmpty)
+                            const SizedBox(height: 8),
+                          LabelValueWidget(
+                            label: 'Mobile no',
+                            value: leadDetailsProvider
+                                .leadDetails![0].contactNumber
+                                .toString(),
+                          ),
+                          // const SizedBox(height: 8),
+                          // LabelValueWidget(
+                          //   label: 'Email id',
+                          //   value: leadDetailsProvider.leadDetails![0].email,
+                          // ),
+                          const SizedBox(height: 8),
+                          LabelValueWidget(
+                            label: 'Enquiry for',
+                            value: dropDownProvider.getEnquiryForNameById(
+                                leadDetailsProvider
+                                    .leadDetails![0].enquiryForId,
+                                leadDetailsProvider
+                                    .leadDetails![0].enquiryForName),
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
                     ),
 
                     // Address
                     _buildStyledCard(
                       child: TileWidget(
                         title: 'Address',
-                        iconAssetPath: 'assets/images/icon_location_details.png',
+                        iconAssetPath:
+                            'assets/images/icon_location_details.png',
                         showDivider: false,
                         children: [
-                        LabelValueWidget(
-                          label: 'Address',
-                          value: leadDetailsProvider.leadDetails![0].address,
-                        ),
-                        SizedBox(height: 8),
-                        InkWell(
-                          onTap: () => _openMaps(
-                              leadDetailsProvider.leadDetails![0].location),
-                          child: LabelValueWidget(
-                            label: 'Location',
-                            labelColor: AppColors.bluebutton,
-                            value: leadDetailsProvider.leadDetails![0].location,
+                          LabelValueWidget(
+                            label: 'Address',
+                            value: leadDetailsProvider.leadDetails![0].address,
                           ),
-                        ),
-                        SizedBox(height: 8),
-                        // LabelValueWidget(
-                        //   label: 'City',
-                        //   value: leadDetailsProvider.leadDetails![0].address2 ??
-                        //       "",
-                        // ),
-                        // SizedBox(height: 8),
-                        // LabelValueWidget(
-                        //   label: 'District',
-                        //   value: leadDetailsProvider.leadDetails![0].address3 ??
-                        //       "",
-                        // ),
-                        // SizedBox(height: 8),
-                        // LabelValueWidget(
-                        //   label: 'Pin code',
-                        //   value: leadDetailsProvider.leadDetails![0].pincode,
-                        // ),
-                        // SizedBox(height: 8),
-                        // LabelValueWidget(
-                        //   label: 'State',
-                        //   value: leadDetailsProvider.leadDetails![0].address4 ??
-                        //       "",
-                        // ),
-                        SizedBox(height: 8),
-                      ],
-                    ),
+                          SizedBox(height: 8),
+                          InkWell(
+                            onTap: () => _openMaps(
+                                leadDetailsProvider.leadDetails![0].location),
+                            child: LabelValueWidget(
+                              label: 'Location',
+                              labelColor: AppColors.bluebutton,
+                              value:
+                                  leadDetailsProvider.leadDetails![0].location,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          // LabelValueWidget(
+                          //   label: 'City',
+                          //   value: leadDetailsProvider.leadDetails![0].address2 ??
+                          //       "",
+                          // ),
+                          // SizedBox(height: 8),
+                          // LabelValueWidget(
+                          //   label: 'District',
+                          //   value: leadDetailsProvider.leadDetails![0].address3 ??
+                          //       "",
+                          // ),
+                          // SizedBox(height: 8),
+                          // LabelValueWidget(
+                          //   label: 'Pin code',
+                          //   value: leadDetailsProvider.leadDetails![0].pincode,
+                          // ),
+                          // SizedBox(height: 8),
+                          // LabelValueWidget(
+                          //   label: 'State',
+                          //   value: leadDetailsProvider.leadDetails![0].address4 ??
+                          //       "",
+                          // ),
+                          SizedBox(height: 8),
+                        ],
+                      ),
                     ),
 
                     // Invertor and panel details

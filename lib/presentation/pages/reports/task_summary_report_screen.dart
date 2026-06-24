@@ -126,8 +126,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                       buttonText: 'Export to Excel',
                       textColor: AppColors.whiteColor,
                       borderColor: AppColors.primaryBlue,
-                          backgroundColor: AppColors.primaryBlue,
-                          radius: 4,
+                      backgroundColor: AppColors.primaryBlue,
+                      radius: 4,
                     ),
                   ],
                 ),
@@ -177,7 +177,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                   onPressed: () {
                     provider.getTaskSummary(context);
                     provider.toggleFilter();
-                    Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+                    Provider.of<SidebarProvider>(context, listen: false)
+                        .stopSearch();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(
@@ -266,14 +267,14 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -726,8 +727,9 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                             title,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
-                              fontWeight:
-                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               color: isSelected
                                   ? Colors.white
                                   : const Color(0xFF475569),
@@ -782,8 +784,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month,
-                                  size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),
@@ -815,8 +817,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                                 fontSize: 13,
                                 color: Colors.grey[500],
                               ),
-                              suffixIcon: const Icon(Icons.calendar_month,
-                                  size: 18),
+                              suffixIcon:
+                                  const Icon(Icons.calendar_month, size: 18),
                             ),
                           ),
                         ),

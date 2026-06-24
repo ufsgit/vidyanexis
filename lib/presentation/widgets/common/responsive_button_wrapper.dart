@@ -3,7 +3,8 @@ import 'package:vidyanexis/constants/app_styles.dart';
 
 class ResponsiveButtonWrapper extends StatelessWidget {
   final Widget child;
-  const ResponsiveButtonWrapper({Key? key, required this.child}) : super(key: key);
+  const ResponsiveButtonWrapper({Key? key, required this.child})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
