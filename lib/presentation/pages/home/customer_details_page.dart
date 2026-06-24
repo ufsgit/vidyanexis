@@ -472,7 +472,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       ),
                                     ),
                               const SizedBox(width: 10),
-                              if (settingsprovider.menuIsEditMap[4] == 1)
+                              if (settingsprovider.menuIsEditMap[
+                                      sideprovider.name == 'Lead /' ? 3 : 4] ==
+                                  1)
                                 IconButton(
                                     onPressed: () async {
                                       await leadDetailsProvider

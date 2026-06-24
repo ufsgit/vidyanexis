@@ -744,17 +744,18 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               ],
             ),
             actions: [
-              TextButton(
-                onPressed: _saveLead,
-                child: Text(
-                  'Save',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.bluebutton,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+              if (!widget.isEdit || (settingsProvider.menuIsEditMap[3] == 1))
+                TextButton(
+                  onPressed: _saveLead,
+                  child: Text(
+                    'Save',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.bluebutton,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
             ],
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(60),

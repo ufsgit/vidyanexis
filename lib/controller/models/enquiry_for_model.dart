@@ -1,11 +1,13 @@
+import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
+
 class EnquiryForModel {
   final int enquiryForId;
   final String enquiryForName;
   final int deleteStatus;
   final int sourceCategoryId;
   final String sourceCategoryName;
-  final List<Map<String, dynamic>>? customFields;
-  final List<Map<String, dynamic>>? taskTypes;
+  final List<CustomFieldByStatusId> parsedCustomFields;
+  final List<dynamic>? taskTypes;
 
   // Constructor with default values
   EnquiryForModel({
@@ -14,23 +16,28 @@ class EnquiryForModel {
     required this.deleteStatus,
     required this.sourceCategoryId,
     required this.sourceCategoryName,
-    this.customFields,
+    this.parsedCustomFields = const [],
     this.taskTypes,
   });
 
   // Factory method to create an instance from JSON, using ?? for null checks
   factory EnquiryForModel.fromJson(Map<String, dynamic> json) {
+    List<CustomFieldByStatusId> customFieldsList = [];
+    if (json['custom_fields'] != null) {
+      customFieldsList = (json['custom_fields'] as List)
+          .map((e) => CustomFieldByStatusId.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    }
+
     return EnquiryForModel(
       sourceCategoryId: json["Source_Category_Id"] ?? 0,
       sourceCategoryName: json["Source_Category_Name"] ?? '',
       enquiryForId: json['Enquiry_For_Id'] ?? 0,
       enquiryForName: json['Enquiry_For_Name'] ?? '',
       deleteStatus: json['DeleteStatus'] ?? 0,
-      customFields: json['custom_fields'] != null
-          ? List<Map<String, dynamic>>.from(json['custom_fields'])
-          : null,
+      parsedCustomFields: customFieldsList,
       taskTypes: json['Task_Types'] != null
-          ? List<Map<String, dynamic>>.from(json['Task_Types'])
+          ? List<dynamic>.from(json['Task_Types'])
           : null,
     );
   }
@@ -41,8 +48,15 @@ class EnquiryForModel {
       'Enquiry_For_Id': enquiryForId,
       'Enquiry_For_Name': enquiryForName,
       'DeleteStatus': deleteStatus,
-      if (customFields != null) 'Custom_Fields': customFields,
+      'Source_Category_Id': sourceCategoryId,
+      'Source_Category_Name': sourceCategoryName,
+      'custom_fields': parsedCustomFields.map((e) => e.toJson()).toList(),
       if (taskTypes != null) 'Task_Types': taskTypes,
     };
+  }
+
+  // Backward compatibility getter
+  List<Map<String, dynamic>> get customFields {
+    return parsedCustomFields.map((e) => e.toJson()).toList();
   }
 }

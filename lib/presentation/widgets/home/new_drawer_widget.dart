@@ -537,8 +537,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 ),
                               ],
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
+                            if (!widget.isEdit || (settingsProvider.menuIsEditMap[3] == 1))
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primaryBlue,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
@@ -967,19 +968,23 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 4.0),
                                         child: CommonDropdown<int>(
+                                          isMultiLine: true,
                                           hintText:
                                               'Enquiry For${settingsProvider.enquiryForMandatory == 1 ? '*' : ''}',
                                           enabled: dropDownProvider
                                                   .selectedSourceId !=
                                               null,
-                                          items: dropDownProvider
+                                          items: (() {
+                                            print('DEBUG: Total records rendered in UI: ${dropDownProvider.filteredEnquiryForData.length}');
+                                            return dropDownProvider
                                               .filteredEnquiryForData
                                               .map((status) =>
                                                   DropdownItem<int>(
                                                     id: status.enquiryForId,
                                                     name: status.enquiryForName,
                                                   ))
-                                              .toList(),
+                                              .toList();
+                                          })(),
                                           controller:
                                               leadProvider.enquiryForController,
                                           onItemSelected: (int? newValue) {
@@ -997,14 +1002,31 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                           .enquiryForName);
                                               leadProvider.customFieldEnquiryFor
                                                   .clear();
-                                              leadProvider
-                                                  .getCustomFieldsByEnquiryForId(
-                                                context,
-                                                leadId: widget.isEdit
-                                                    ? leadProvider.customerId
-                                                    : 0,
-                                                enquiryForId: newValue,
-                                              );
+                                              if (widget.isEdit) {
+                                                leadProvider
+                                                    .getCustomFieldsByEnquiryForId(
+                                                  context,
+                                                  leadId:
+                                                      leadProvider.customerId,
+                                                  enquiryForId: newValue,
+                                                );
+                                              } else {
+                                                if (selectedEnquiryFor
+                                                        .parsedCustomFields
+                                                        .isNotEmpty) {
+                                                  leadProvider
+                                                      .setCustomFieldEnquiryFor(
+                                                          selectedEnquiryFor
+                                                              .parsedCustomFields);
+                                                } else {
+                                                  leadProvider
+                                                      .getCustomFieldsByEnquiryForId(
+                                                    context,
+                                                    leadId: 0,
+                                                    enquiryForId: newValue,
+                                                  );
+                                                }
+                                              }
                                             }
                                           },
                                           selectedValue: dropDownProvider
