@@ -534,6 +534,14 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 leadProvider.statusController.text =
                     selectedItem.statusName ?? '';
 
+                settingsProvider
+                    .setSelectedDepartmentId(selectedItem.departmentId ?? 0);
+                leadProvider.departmentController.text =
+                    selectedItem.departmentName ?? '';
+                dropDownProvider.setSelectedUserId(selectedItem.userId ?? 0);
+                leadProvider.searchUserController.text =
+                    selectedItem.userName ?? '';
+
                 if (selectedItem.isShowFollowupDate == 1) {
                   int durationVal =
                       int.tryParse(selectedItem.statusDuration ?? '') ?? 0;

@@ -1853,6 +1853,26 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                     .text = selectedStatus
                                                         .statusName ??
                                                     '';
+
+                                                settingsProvider
+                                                    .setSelectedDepartmentId(
+                                                        selectedStatus
+                                                                .departmentId ??
+                                                            0);
+                                                leadProvider
+                                                    .departmentController
+                                                    .text = selectedStatus
+                                                        .departmentName ??
+                                                    '';
+                                                dropDownProvider
+                                                    .setSelectedUserId(
+                                                        selectedStatus.userId ??
+                                                            0);
+                                                leadProvider
+                                                        .searchUserController
+                                                        .text =
+                                                    selectedStatus.userName ??
+                                                        '';
                                                 if (selectedStatus
                                                         .isShowFollowupDate ==
                                                     1) {
