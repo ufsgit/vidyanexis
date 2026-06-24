@@ -6,6 +6,7 @@ class AddedMultiItem {
   double quantity;
   final String make;
   final String unitName;
+  final String itemTypeId;
   final List<ItemSettings> materials;
 
   AddedMultiItem({
@@ -15,6 +16,7 @@ class AddedMultiItem {
     required this.make,
     required this.unitName,
     required this.materials,
+    required this.itemTypeId,
   });
 
   // Factory constructor for JSON deserialization
@@ -28,6 +30,7 @@ class AddedMultiItem {
       materials: (json['materials'] as List<dynamic>? ?? [])
           .map((mat) => ItemSettings.fromJson(mat as Map<String, dynamic>))
           .toList(),
+      itemTypeId: json['Item_Type_Id']?.toString() ?? '0',
     );
   }
 
@@ -39,6 +42,7 @@ class AddedMultiItem {
       'quantity': quantity,
       'make': make,
       'unitName': unitName,
+      'Item_Type_Id': itemTypeId,
       'materials': materials.map((mat) => mat.toJson()).toList(),
     };
   }

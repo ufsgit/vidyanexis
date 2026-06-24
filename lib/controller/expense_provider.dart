@@ -1415,6 +1415,7 @@ class ExpenseProvider extends ChangeNotifier {
       priceFrom: materialPriceFromController.text,
       priceTo: materialPriceToController.text,
       includeInTotal: _isQuantity ? "1" : "0",
+      itemTypeId: _selectedItemTypeId.toString(),
     );
 
     if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
@@ -2013,6 +2014,7 @@ class ExpenseProvider extends ChangeNotifier {
           manufacture: realItem.manufacture,
           unit: realItem.unit,
           includeInTotal: realItem.includeInTotal,
+          itemTypeId: realItem.itemTypeId,
         ));
       }
     }
