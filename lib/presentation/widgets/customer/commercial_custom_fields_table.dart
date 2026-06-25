@@ -87,47 +87,107 @@ class _CommercialCustomFieldsTableWidgetState
                       ),
                     );
                   }),
-                  SizedBox(
-                      height: 54,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          // Basic validation: at least one field must not be empty
-                          bool hasData = false;
-                          for (var col in columns) {
-                            if (col.customFieldTypeId == 3 ||
-                                col.customFieldTypeId == 4) {
-                              if (provider.commercialTableRowDropdowns[col.customFieldId]?.isNotEmpty == true) {
-                                hasData = true;
-                              }
-                            } else {
-                              if (provider.commercialTableRowControllers[col.customFieldId]?.text.isNotEmpty == true) {
-                                hasData = true;
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 54,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            // Basic validation: at least one field must not be empty
+                            bool hasData = false;
+                            for (var col in columns) {
+                              if (col.customFieldTypeId == 3 ||
+                                  col.customFieldTypeId == 4) {
+                                if (provider.commercialTableRowDropdowns[col.customFieldId]?.isNotEmpty == true) {
+                                  hasData = true;
+                                }
+                              } else {
+                                if (provider.commercialTableRowControllers[col.customFieldId]?.text.isNotEmpty == true) {
+                                  hasData = true;
+                                }
                               }
                             }
-                          }
 
-                          if (!hasData) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please enter at least one value to add.'),
-                              ),
-                            );
-                            return;
-                          }
-                          provider.addCommercialTableRow();
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          side: BorderSide(color: AppColors.primaryBlue),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
+                            if (!hasData) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please enter at least one value to add.'),
+                                ),
+                              );
+                              return;
+                            }
+                            provider.addCommercialTableRow();
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primaryBlue,
+                            side: BorderSide(color: AppColors.primaryBlue),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
+                          child: const Text('Add'),
                         ),
-                        child: const Text('Add'),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        height: 54,
+                        child: OutlinedButton(
+                          onPressed: provider.editingCommercialRowIndex == null
+                              ? () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please select a row to edit first.'),
+                                    ),
+                                  );
+                                }
+                              : () {
+                                  bool hasData = false;
+                                  for (var col in columns) {
+                                    if (col.customFieldTypeId == 3 ||
+                                        col.customFieldTypeId == 4) {
+                                      if (provider.commercialTableRowDropdowns[col.customFieldId]?.isNotEmpty == true) {
+                                        hasData = true;
+                                      }
+                                    } else {
+                                      if (provider.commercialTableRowControllers[col.customFieldId]?.text.isNotEmpty == true) {
+                                        hasData = true;
+                                      }
+                                    }
+                                  }
+
+                                  if (!hasData) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Please enter at least one value to update.'),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  provider.updateCommercialTableRow();
+                                },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: provider.editingCommercialRowIndex != null
+                                ? AppColors.primaryBlue
+                                : Colors.grey.shade400,
+                            side: BorderSide(
+                              color: provider.editingCommercialRowIndex != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey.shade400,
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          child: const Text('Edit'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -147,6 +207,7 @@ class _CommercialCustomFieldsTableWidgetState
                             borderRadius: BorderRadius.circular(4),
                           ),
                     child: DataTable(
+                      showCheckboxColumn: false,
                       headingRowColor: WidgetStateProperty.all(Colors.grey.shade100),
                       dividerThickness: 1,
                       border: TableBorder(
@@ -175,6 +236,12 @@ class _CommercialCustomFieldsTableWidgetState
                       rows: List.generate(rows.length, (rowIndex) {
                         final rowData = rows[rowIndex];
                         return DataRow(
+                          selected: provider.editingCommercialRowIndex == rowIndex,
+                          onSelectChanged: (bool? selected) {
+                            if (selected == true) {
+                              provider.editCommercialTableRow(rowIndex);
+                            }
+                          },
                           cells: [
                             ...columns.map((col) {
                               final field = rowData[col.customFieldId];
@@ -184,12 +251,6 @@ class _CommercialCustomFieldsTableWidgetState
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit, color: AppColors.primaryBlue, size: 20),
-                                    onPressed: () {
-                                      provider.editCommercialTableRow(rowIndex);
-                                    },
-                                  ),
                                   IconButton(
                                     icon: const Icon(Icons.delete, color: Colors.red, size: 20),
                                     onPressed: () {

@@ -121,9 +121,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final Map<int, TextEditingController> commercialTableRowControllers = {};
   final Map<int, String> commercialTableRowDropdowns = {};
 
+  int? _editingCommercialRowIndex;
+  int? get editingCommercialRowIndex => _editingCommercialRowIndex;
+
   void initCommercialTableRow() {
     commercialTableRowControllers.clear();
     commercialTableRowDropdowns.clear();
+    _editingCommercialRowIndex = null;
     for (var field in _commercialCustomFields) {
       commercialTableRowControllers[field.customFieldId!] = TextEditingController();
     }
@@ -189,6 +193,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       controller.clear();
     }
     commercialTableRowDropdowns.clear();
+    _editingCommercialRowIndex = null;
     notifyListeners();
   }
 
@@ -199,6 +204,15 @@ class CustomerDetailsProvider extends ChangeNotifier {
       for (var field in rowToDelete.values) {
         _selectedCommercialFields.remove(field);
       }
+      if (_editingCommercialRowIndex == rowIndex) {
+        _editingCommercialRowIndex = null;
+        for (var controller in commercialTableRowControllers.values) {
+          controller.clear();
+        }
+        commercialTableRowDropdowns.clear();
+      } else if (_editingCommercialRowIndex != null && rowIndex < _editingCommercialRowIndex!) {
+        _editingCommercialRowIndex = _editingCommercialRowIndex! - 1;
+      }
       notifyListeners();
     }
   }
@@ -206,6 +220,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void editCommercialTableRow(int rowIndex) {
     var rows = commercialTableRows;
     if (rowIndex >= 0 && rowIndex < rows.length) {
+      _editingCommercialRowIndex = rowIndex;
       var rowToEdit = rows[rowIndex];
       
       for (var field in _commercialCustomFields) {
@@ -220,9 +235,35 @@ class CustomerDetailsProvider extends ChangeNotifier {
         }
       }
       
-      for (var field in rowToEdit.values) {
-        _selectedCommercialFields.remove(field);
+      notifyListeners();
+    }
+  }
+
+  void updateCommercialTableRow() {
+    if (_editingCommercialRowIndex == null) return;
+    var rows = commercialTableRows;
+    if (_editingCommercialRowIndex! >= 0 && _editingCommercialRowIndex! < rows.length) {
+      var rowToEdit = rows[_editingCommercialRowIndex!];
+      
+      for (var field in _commercialCustomFields) {
+        int realId = field.customFieldId!;
+        var existingField = rowToEdit[realId];
+        if (existingField != null) {
+          String val = '';
+          if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
+            val = commercialTableRowDropdowns[realId] ?? '';
+          } else {
+            val = commercialTableRowControllers[realId]?.text ?? '';
+          }
+          existingField.datavalue = val;
+        }
       }
+      
+      for (var controller in commercialTableRowControllers.values) {
+        controller.clear();
+      }
+      commercialTableRowDropdowns.clear();
+      _editingCommercialRowIndex = null;
       notifyListeners();
     }
   }
@@ -3201,6 +3242,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _scopeOfWorkItems.clear();
     _customFieldQuotation.clear();
     _commercialCustomFields.clear();
+    _selectedCommercialFields.clear();
+    virtualToRealCommercialFieldId.clear();
+    commercialDescriptionController.clear();
+    commercialTableRowControllers.clear();
+    commercialTableRowDropdowns.clear();
     customFieldQuotationKey.currentState?.resetForm();
     quotationDescriptionController.clear();
     quotationDescription2Controller.clear();
