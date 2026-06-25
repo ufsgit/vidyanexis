@@ -501,13 +501,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         multiItemsWidget(context),
                       ],
                       const SizedBox(height: 16),
-                      if (customerDetailsProvider.customFieldQuotation.isNotEmpty) ...[
+                      if (customerDetailsProvider
+                          .customFieldQuotation.isNotEmpty) ...[
                         Builder(
                           builder: (context) {
-                            final nonCommercialFields = customerDetailsProvider.customFieldQuotation
+                            final nonCommercialFields = customerDetailsProvider
+                                .customFieldQuotation
                                 .where((e) => e.isCommercial != 1)
                                 .toList();
-                            if (nonCommercialFields.isEmpty) return const SizedBox.shrink();
+                            if (nonCommercialFields.isEmpty)
+                              return const SizedBox.shrink();
                             return Column(
                               children: [
                                 CustomFieldSectionWidget(
@@ -536,7 +539,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      if (settingsProvider.companyDetails.isNotEmpty && settingsProvider.companyDetails.first.commercialProposal == 1)
+                      if (settingsProvider.companyDetails.isNotEmpty &&
+                          settingsProvider
+                                  .companyDetails.first.commercialProposal ==
+                              1)
                         const Column(
                           children: [
                             CommercialCustomFieldsTableWidget(),
@@ -633,6 +639,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     tilePadding: EdgeInsets.zero,
                     initiallyExpanded: false,
                     children: [
+                      const SizedBox(height: 16),
                       CustomTextField(
                         readOnly: false,
                         keyboardType: TextInputType.number,
@@ -642,7 +649,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         height: 54,
                         controller:
                             customerDetailsProvider.systemPriceController,
-                        hintText: 'System price excluding KSEB paper work',
+                        hintText: customerDetailsProvider.getQuotationFieldName(
+                            22, 'System price excluding KSEB paper work'),
                         labelText: '',
                       ),
                       const SizedBox(height: 16),
@@ -651,7 +659,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         height: 54,
                         controller: customerDetailsProvider
                             .additionalStructureController,
-                        hintText: 'Additional Paper Work',
+                        hintText: customerDetailsProvider.getQuotationFieldName(
+                            23, 'Additional Paper Work'),
                         labelText: '',
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -1473,8 +1482,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     return;
                   }
 
-                  bool isCommercialProposal = settingsProvider.companyDetails.isNotEmpty &&
-                      settingsProvider.companyDetails.first.commercialProposal == 1;
+                  bool isCommercialProposal =
+                      settingsProvider.companyDetails.isNotEmpty &&
+                          settingsProvider
+                                  .companyDetails.first.commercialProposal ==
+                              1;
 
                   if (customerDetailsProvider.items.isEmpty &&
                       customerDetailsProvider.commercialItems.isEmpty &&
@@ -1704,7 +1716,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   );
                 },
               ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1734,7 +1747,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1765,7 +1779,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1796,7 +1811,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1827,7 +1843,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1858,7 +1875,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1889,7 +1907,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty || customerDetailsProvider.selectedCommercialFields.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty ||
+                  customerDetailsProvider.selectedCommercialFields.isNotEmpty)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -1954,7 +1973,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -2006,7 +2026,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -2059,7 +2080,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ],
                 ),
-              if (customerDetailsProvider.items.isNotEmpty && !isCommercialProposal)
+              if (customerDetailsProvider.items.isNotEmpty &&
+                  !isCommercialProposal)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
