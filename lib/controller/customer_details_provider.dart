@@ -346,7 +346,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void removeMultiItem(int index) {
     if (index >= 0 && index < _multiItems.length) {
+      final removedItem = _multiItems[index];
+
+      // Calculate total amount of all materials in this item
+      final totalAmount = removedItem.materials
+          .map((m) => m.amount)
+          .fold<double>(0.0, (a, b) => a + b);
+
       _multiItems.removeAt(index);
+      _mutipleItemsTotalAmount -= totalAmount;
+
       notifyListeners();
     }
   }

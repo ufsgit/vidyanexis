@@ -1775,6 +1775,11 @@ class LeadsProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void setCustomFieldEnquiryFor(List<CustomFieldByStatusId> fields) {
+    _customFieldEnquiryFor = fields;
+    notifyListeners();
+  }
   // saveFollowUp({
   //   required BuildContext context,
   //   required int statusId,

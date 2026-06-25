@@ -275,6 +275,12 @@ class ExpenseProvider extends ChangeNotifier {
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
   int? _selectedClient;
   int? get selectedClient => _selectedClient;
+  bool _isQuantity = false;
+  bool get isQuantity => _isQuantity;
+  set isQuantity(bool value) {
+    _isQuantity = value;
+    notifyListeners();
+  }
 
   //client filter
   List<CustomerModel> _clientList = [];
@@ -1408,6 +1414,8 @@ class ExpenseProvider extends ChangeNotifier {
       unit: itemMaterialUnitController.text,
       priceFrom: materialPriceFromController.text,
       priceTo: materialPriceToController.text,
+      includeInTotal: _isQuantity ? "1" : "0",
+      itemTypeId: _selectedItemTypeId.toString(),
     );
 
     if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
@@ -1441,6 +1449,7 @@ class ExpenseProvider extends ChangeNotifier {
     materialPriceToController.clear();
     setSubId(-1);
     _subItemId = null;
+    _isQuantity = false;
     notifyListeners();
   }
 
@@ -1457,6 +1466,7 @@ class ExpenseProvider extends ChangeNotifier {
       itemMaterialUnitController.text = itemToEdit.unit;
       materialPriceFromController.text = itemToEdit.priceFrom;
       materialPriceToController.text = itemToEdit.priceTo;
+      _isQuantity = itemToEdit.includeInTotal == "1";
       setSubId(itemToEdit.subItemId);
       setEditItemIndex(index);
       notifyListeners();
@@ -2003,6 +2013,8 @@ class ExpenseProvider extends ChangeNotifier {
           specification: realItem.specification,
           manufacture: realItem.manufacture,
           unit: realItem.unit,
+          includeInTotal: realItem.includeInTotal,
+          itemTypeId: realItem.itemTypeId,
         ));
       }
     }

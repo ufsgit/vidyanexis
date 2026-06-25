@@ -153,11 +153,12 @@ class DropDownProvider extends ChangeNotifier {
   // }
 
   void filterEnquiryForByCategory(int sourceCategoryId) {
-    filteredEnquiryForData = enquiryForList
-        .where((enquiry) => enquiry.sourceCategoryId == sourceCategoryId)
-        .toList();
+    // Display all records without filtering by sourceCategoryId
+    filteredEnquiryForData = enquiryForList;
+    print('DEBUG: filterEnquiryForByCategory called. Total records bound to dropdown: ${filteredEnquiryForData.length}');
     notifyListeners();
   }
+
 
   void filterStaffByBranchAndDepartment({
     required int? branchId,
@@ -746,46 +747,14 @@ class DropDownProvider extends ChangeNotifier {
           List<EnquiryForModel> allEnquiryFor = (data as List<dynamic>)
               .map((item) => EnquiryForModel.fromJson(item))
               .toList();
+              
+          print('DEBUG: getEnquiryFor - Total records received from API: ${allEnquiryFor.length}');
 
-          if (fetchUserSpecific && userId.isNotEmpty) {
-            try {
-              final userResponse = await HttpRequest.httpGetRequest(
-                endPoint: '${HttpUrls.getUserEnquiryFor}/$userId',
-              );
-              if (userResponse.statusCode == 200 &&
-                  userResponse.data != null &&
-                  userResponse.data['data'] != null) {
-                final responseData = userResponse.data['data'];
-                List<dynamic> dataList;
-                if (responseData is Map &&
-                    responseData['enquiry_for_list'] != null) {
-                  dataList = responseData['enquiry_for_list'] as List<dynamic>;
-                } else if (responseData is List) {
-                  dataList = responseData;
-                } else {
-                  dataList = [];
-                }
-                final userEnquiryFor = dataList
-                    .map((item) => UserEnquiryForModel.fromJson(item))
-                    .toList();
-
-                allEnquiryFor = allEnquiryFor.where((enquiry) {
-                  final matched = userEnquiryFor.firstWhere(
-                    (u) => u.enquiryForId == enquiry.enquiryForId,
-                    orElse: () => UserEnquiryForModel(isview: 0),
-                  );
-                  return matched.isview == 1;
-                }).toList();
-              } else {
-                allEnquiryFor = [];
-              }
-            } catch (e) {
-              print('Exception occurred while fetching user enquiry for: $e');
-              allEnquiryFor = [];
-            }
-          }
-
+          // Removed duplicate filtering logic (fetchUserSpecific) that was removing valid records
           _enquiryForList = allEnquiryFor;
+          filteredEnquiryForData = List.from(allEnquiryFor);
+          print('DEBUG: getEnquiryFor - Total records bound to dropdown: ${filteredEnquiryForData.length}');
+          
           notifyListeners();
         }
       } else {

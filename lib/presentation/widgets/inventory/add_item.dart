@@ -256,7 +256,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               readOnly: false,
                               height: 56,
                               controller: expenseProvider.itemHSNController,
-                              hintText: 'HSN Code',
+                              hintText: 'Make',
                               labelText: '',
                             ),
                           ),
@@ -543,6 +543,13 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                     ),
                                   ),
                                 ],
+                              ),
+                              CheckboxListTile(
+                                title: const Text(''),
+                                value: expenseProvider.isQuantity,
+                                onChanged: (value) {
+                                  expenseProvider.isQuantity = value ?? false;
+                                },
                               ),
                               const SizedBox(height: 12),
                               _buildSectionTitle('Price Range'),

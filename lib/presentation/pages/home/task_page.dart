@@ -1759,7 +1759,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 ),
                                                           if (settingsProvider
                                                                       .menuIsEditMap[
-                                                                  13] ==
+                                                                  3] ==
                                                               1)
                                                             (onHover) =>
                                                                 MenuItemButton(
