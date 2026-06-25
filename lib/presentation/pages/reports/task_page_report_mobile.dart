@@ -395,8 +395,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                               foregroundColor: AppColors.textRed,
                               elevation: 0,
                               side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
                             ),
@@ -662,8 +661,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -708,10 +706,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withAlpha(25),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',
@@ -752,8 +747,9 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
+      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
@@ -902,7 +898,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
                   const Expanded(
@@ -933,8 +929,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   return InkWell(
                     onTap: () => _toggle(id),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
                         children: [
                           Icon(

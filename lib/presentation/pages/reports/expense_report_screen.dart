@@ -165,25 +165,10 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 isFilter: provider.isFilter,
               ),
               const SizedBox(width: 16),
-              ElevatedButton.icon(
-                onPressed: () => _handleExport(provider),
-                icon: const Icon(Icons.file_upload_outlined, size: 16),
-                label: Text('Export',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    )),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
+              CommonReportExportButton(
+                      onPressed: () => _handleExport(provider),
+                      label: 'Export',
+                    ),
               const SizedBox(width: 16),
             ],
           ),
@@ -265,8 +250,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           const SizedBox(width: 16),
           // User dropdown
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
+            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
@@ -321,8 +307,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           const SizedBox(width: 16),
           // Expense Type dropdown
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
+            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
@@ -384,7 +371,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
               ),

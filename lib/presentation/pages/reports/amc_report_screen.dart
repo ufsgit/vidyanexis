@@ -257,8 +257,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
-                          onPressed: () {
+                        CommonReportExportButton(
+                      onPressed: () {
                             exportToExcel(
                               headers: [
                                 'Customer Name',
@@ -295,22 +295,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               fileName: 'Periodic_Service_Report',
                             );
                           },
-                          icon: const Icon(Icons.download, size: 18),
-                          label: const Text('Export',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 15,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                        )
+                      label: 'Export',
+                    )
                       ],
                     ),
                   )
@@ -410,8 +396,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               isFilter: reportsProvider.isFilter,
                             ),
                             const SizedBox(width: 16),
-                            ElevatedButton.icon(
-                              onPressed: () {
+                            CommonReportExportButton(
+                      onPressed: () {
                                 exportToExcel(
                                   headers: [
                                     'Customer Name',
@@ -458,23 +444,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                   fileName: 'Periodic_Service_Report',
                                 );
                               },
-                              icon: const Icon(Icons.download, size: 18),
-                              label: const Text('Export',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryBlue,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 15,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            )
+                      label: 'Export',
+                    )
                           ],
                         ),
                         const SizedBox(width: 16),
@@ -485,7 +456,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
               AppStyles.isWebScreen(context)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -502,7 +473,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                       child: Row(
                         children: [
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -586,7 +557,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                             width: 10,
                           ),
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -775,8 +746,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     foregroundColor: AppColors.textRed,
                                     elevation: 0,
                                     side: BorderSide(color: AppColors.textRed),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(4)),
                                   ),
@@ -1270,8 +1240,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1313,10 +1282,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

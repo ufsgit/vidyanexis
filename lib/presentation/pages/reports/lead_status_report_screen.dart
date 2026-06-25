@@ -369,8 +369,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                       isFilter: provider.isFilter,
                     ),
                     const SizedBox(width: 16),
-                    CustomElevatedButton(
-                      radius: 4,
+                    CommonReportExportButton(
                       onPressed: () {
                         exportToExcel(
                           headers: ['Status ID', 'Status Name', 'Lead Count'],
@@ -384,10 +383,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                           fileName: 'Sales_Pipeline_Report',
                         );
                       },
-                      buttonText: 'Export to Excel',
-                      textColor: AppColors.whiteColor,
-                      borderColor: const Color(0xFFCD9C11),
-                      backgroundColor: const Color(0xFFCD9C11),
+                      label: 'Export to Excel',
                     )
                   ],
                 ),

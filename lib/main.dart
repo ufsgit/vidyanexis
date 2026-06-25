@@ -75,7 +75,7 @@ import 'package:vidyanexis/controller/target_enquiry_source_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
-bool isCompanyCode = true;
+bool isCompanyCode = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

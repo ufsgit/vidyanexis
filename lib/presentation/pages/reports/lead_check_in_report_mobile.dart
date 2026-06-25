@@ -166,9 +166,9 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                   ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
+                  height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                     color: AppColors.primaryBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -396,8 +396,7 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                     foregroundColor: AppColors.textRed,
                     elevation: 0,
                     side: BorderSide(color: AppColors.textRed),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4)),
                   ),

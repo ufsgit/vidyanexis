@@ -103,7 +103,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                       ),
                     ),
                     const Spacer(),
-                    CustomElevatedButton(
+                    CommonReportExportButton(
                       onPressed: () {
                         exportToExcel(
                           headers: [
@@ -123,11 +123,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                           fileName: 'Task_Summary_Report',
                         );
                       },
-                      buttonText: 'Export to Excel',
-                      textColor: AppColors.whiteColor,
-                      borderColor: AppColors.primaryBlue,
-                      backgroundColor: AppColors.primaryBlue,
-                      radius: 4,
+                      label: 'Export to Excel',
                     ),
                   ],
                 ),
@@ -247,8 +243,7 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: const BorderSide(color: AppColors.textRed),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),
@@ -262,22 +257,11 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
   Widget _buildWebFilterBar(
       BuildContext context, TaskSummaryProvider provider) {
     bool hasDates = provider.fromDate != null || provider.to_toDate != null;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
+    return Wrap(
+      spacing: 12,
+      runSpacing: 10,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
           CommonReportDateFilter(
             fromDate: provider.fromDate?.toString(),
             toDate: provider.to_toDate?.toString(),
@@ -323,7 +307,6 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
               ),
             ),
         ],
-      ),
     );
   }
 
@@ -550,8 +533,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryBlue.withOpacity(0.08),
                                 borderRadius: BorderRadius.circular(4),
@@ -571,9 +554,9 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                     ),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
+                    height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(4),
                     ),

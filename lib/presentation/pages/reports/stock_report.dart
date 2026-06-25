@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -197,19 +198,14 @@ class _StockReportState extends State<StockReport> {
                       ),
                     ),
                     const Spacer(),
-                    CustomElevatedButton(
+                    CustomFilterButton(
                       onPressed: () {
                         reportsProvider.toggleFilter();
                       },
-                      buttonText: reportsProvider.isFilter
-                          ? 'Hide Filters'
-                          : 'Show Filters',
-                      textColor: AppColors.primaryBlue,
-                      borderColor: AppColors.primaryBlue,
-                      backgroundColor: Colors.white,
+                      isFilter: reportsProvider.isFilter,
                     ),
                     const SizedBox(width: 12),
-                    CustomElevatedButton(
+                    CommonReportExportButton(
                       onPressed: () {
                         exportToExcel(
                           headers: [
@@ -237,11 +233,7 @@ class _StockReportState extends State<StockReport> {
                           fileName: 'Stock_Report',
                         );
                       },
-                      buttonText: 'Export to Excel',
-                      textColor: AppColors.whiteColor,
-                      borderColor: AppColors.primaryBlue,
-                      backgroundColor: AppColors.primaryBlue,
-                      radius: 4,
+                      label: 'Export to Excel',
                     ),
                   ],
                 ),
@@ -385,7 +377,8 @@ class _StockReportState extends State<StockReport> {
         children: [
           // Item Select Dropdown
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
@@ -427,6 +420,8 @@ class _StockReportState extends State<StockReport> {
                         reportsProvider.setStatus(newValue);
                       }
                     },
+                    isDense: true,
+                    iconSize: 18,
                   ),
                 ),
               ],
@@ -435,7 +430,8 @@ class _StockReportState extends State<StockReport> {
           const SizedBox(width: 12),
           // Category Select Dropdown
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
@@ -477,6 +473,8 @@ class _StockReportState extends State<StockReport> {
                         reportsProvider.setUserFilterStatus(newValue);
                       }
                     },
+                    isDense: true,
+                    iconSize: 18,
                   ),
                 ),
               ],
@@ -578,8 +576,9 @@ class _StockReportState extends State<StockReport> {
             ),
             const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
+              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
@@ -625,8 +624,9 @@ class _StockReportState extends State<StockReport> {
             ),
             const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
+              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
@@ -677,9 +677,9 @@ class _StockReportState extends State<StockReport> {
                 onClickTopButton(context);
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
+                height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
                   border:
@@ -779,9 +779,9 @@ class _StockReportState extends State<StockReport> {
                               ),
                               if (task.unitName.isNotEmpty)
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
+                                  height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                     color:
                                         AppColors.primaryBlue.withOpacity(0.08),
                                     borderRadius: BorderRadius.circular(4),
@@ -876,9 +876,8 @@ class _StockReportState extends State<StockReport> {
                                   if (task.cgst.isNotEmpty)
                                     Container(
                                       margin: const EdgeInsets.only(right: 6),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                         color: const Color(0xFFF1F5F9),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
@@ -893,9 +892,9 @@ class _StockReportState extends State<StockReport> {
                                     ),
                                   if (task.sgst.isNotEmpty)
                                     Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
+                                      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                         color: const Color(0xFFF1F5F9),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
@@ -911,9 +910,9 @@ class _StockReportState extends State<StockReport> {
                                 ],
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
+                                height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                   color: const Color(0xFFF0FDF4),
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
@@ -1051,8 +1050,8 @@ class _StockReportState extends State<StockReport> {
                           TableWidget(
                             flex: 2,
                             data: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFE9EDF1),
                                 borderRadius: BorderRadius.circular(50),

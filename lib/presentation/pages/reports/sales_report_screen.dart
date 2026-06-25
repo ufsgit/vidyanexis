@@ -195,8 +195,8 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
   }
 
   Widget _buildExportButton(SalesReportProvider provider) {
-    return ElevatedButton.icon(
-      onPressed: () {
+    return CommonReportExportButton(
+                      onPressed: () {
         if (provider.salesReport.isEmpty) return;
         exportToExcel(
           headers: [
@@ -220,15 +220,8 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
           fileName: 'Sales_Report',
         );
       },
-      icon: const Icon(Icons.download, size: 18),
-      label: const Text('Export'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryBlue,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      ),
-    );
+                      label: 'Export',
+                    );
   }
 
   Widget _buildFilterPanel(BuildContext context, SalesReportProvider provider,
@@ -248,84 +241,68 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
       child: Column(
         children: [
           // Date Filter (Kept as original)
-          Row(
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Expanded(
-                child: CommonReportDateFilter(
-                  fromDate: provider.fromDate?.toString(),
-                  toDate: provider.toDate?.toString(),
-                  formattedFromDate: provider.formattedFromDate,
-                  formattedToDate: provider.formattedToDate,
-                  onTap: () => onClickTopButton(context),
-                ),
+              CommonReportDateFilter(
+                fromDate: provider.fromDate?.toString(),
+                toDate: provider.toDate?.toString(),
+                formattedFromDate: provider.formattedFromDate,
+                formattedToDate: provider.formattedToDate,
+                onTap: () => onClickTopButton(context),
               ),
-              const SizedBox(width: 12),
 
               // Invoice No
-              Expanded(
-                child: _buildTextFilter(
-                  label: 'Invoice No',
-                  controller: invoiceController,
-                  hint: 'Enter Invoice No',
-                  onChanged: (val) => _onFilterChanged(val, provider),
-                  isActive: provider.invoiceNo.isNotEmpty,
-                ),
+              _buildTextFilter(
+                label: 'Invoice No',
+                controller: invoiceController,
+                hint: 'Enter Invoice No',
+                onChanged: (val) => _onFilterChanged(val, provider),
+                isActive: provider.invoiceNo.isNotEmpty,
               ),
-              const SizedBox(width: 12),
 
               // Item Name
-              Expanded(
-                child: _buildDropdownFilter(
-                  label: 'Item Name',
-                  value: provider.itemName.isEmpty ? null : provider.itemName,
-                  items: [
-                    const DropdownMenuItem(
-                        value: null, child: Text('All Items')),
-                    ...expenseProvider.itemList.map((e) => DropdownMenuItem(
-                          value: e.itemId.toString(),
-                          child: Text(e.itemName),
-                        )),
-                  ],
-                  onChanged: (val) {
-                    provider.setSearchCriteria(itemName: val ?? '');
-                    provider.getSalesReport(context);
-                  },
-                  isActive: provider.itemName.isNotEmpty,
-                ),
+              _buildDropdownFilter(
+                label: 'Item Name',
+                value: provider.itemName.isEmpty ? null : provider.itemName,
+                items: [
+                  const DropdownMenuItem(
+                      value: null, child: Text('All Items')),
+                  ...expenseProvider.itemList.map((e) => DropdownMenuItem(
+                        value: e.itemId.toString(),
+                        child: Text(e.itemName),
+                      )),
+                ],
+                onChanged: (val) {
+                  provider.setSearchCriteria(itemName: val ?? '');
+                  provider.getSalesReport(context);
+                },
+                isActive: provider.itemName.isNotEmpty,
               ),
-              const SizedBox(width: 12),
 
               // Enquiry For
-              Expanded(
-                child: _buildDropdownFilter(
-                  label: 'Enquiry For',
-                  value:
-                      provider.enquiryFor.isEmpty ? null : provider.enquiryFor,
-                  items: [
-                    const DropdownMenuItem(
-                        value: null, child: Text('All Enquiry For')),
-                    ...settingsProvider.searchEnquiryFor
-                        .map((e) => DropdownMenuItem(
-                              value: e.enquiryForId.toString(),
-                              child: Text(e.enquiryForName),
-                            )),
-                  ],
-                  onChanged: (val) {
-                    provider.setSearchCriteria(enquiryFor: val ?? '');
-                    provider.getSalesReport(context);
-                  },
-                  isActive: provider.enquiryFor.isNotEmpty,
-                ),
+              _buildDropdownFilter(
+                label: 'Enquiry For',
+                value: provider.enquiryFor.isEmpty ? null : provider.enquiryFor,
+                items: [
+                  const DropdownMenuItem(
+                      value: null, child: Text('All Enquiry For')),
+                  ...settingsProvider.searchEnquiryFor
+                      .map((e) => DropdownMenuItem(
+                            value: e.enquiryForId.toString(),
+                            child: Text(e.enquiryForName),
+                          )),
+                ],
+                onChanged: (val) {
+                  provider.setSearchCriteria(enquiryFor: val ?? '');
+                  provider.getSalesReport(context);
+                },
+                isActive: provider.enquiryFor.isNotEmpty,
               ),
-            ],
-          ),
 
-          const SizedBox(height: 16),
-
-          // Action Buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
+              // Action Buttons
               CommonReportResetButton(onReset: () {
                 provider.resetFilters();
                 invoiceController.clear();
@@ -348,6 +325,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
   }) {
     return Container(
       height: 38,
+      width: 250,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -395,6 +373,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
   }) {
     return Container(
       height: 38,
+      width: 250,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -659,8 +638,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -688,10 +666,7 @@ class _SalesReportScreenState extends State<SalesReportScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

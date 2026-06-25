@@ -173,9 +173,9 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
+                                  height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                     color: AppColors.primaryBlue.withAlpha(25),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
@@ -282,8 +282,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
   ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                              decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: AppColors.grey),
@@ -302,7 +302,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
           const SizedBox(width: 12),
           // User dropdown
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
@@ -356,20 +357,23 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
           ),
           const SizedBox(width: 12),
           // Apply button
-          ElevatedButton(
-            onPressed: () => provider.getTimeTrackReport(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
+          SizedBox(
+            height: 40,
+            child: ElevatedButton(
+              onPressed: () => provider.getTimeTrackReport(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryBlue,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ),
-            ),
-            child: Text(
-              'Apply',
-              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+              child: Text(
+                'Apply',
+                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+              ),
             ),
           ),
           const Spacer(),
@@ -585,8 +589,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -608,10 +611,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text('Clear'),
                       ),

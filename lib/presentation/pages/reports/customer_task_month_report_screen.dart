@@ -366,9 +366,9 @@ class _CustomerTaskMonthReportScreenState
                           onTap: () => _showTaskDetails(context, tasks),
                           borderRadius: BorderRadius.circular(4),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: _getStatusColor(tasks.first.taskStatusName)
                                   .withOpacity(0.08),
                               borderRadius: BorderRadius.circular(4),
@@ -393,9 +393,9 @@ class _CustomerTaskMonthReportScreenState
                                 ),
                                 const SizedBox(width: 6),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 2),
-                                  decoration: BoxDecoration(
+                                  height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                     color: _getStatusColor(
                                         tasks.first.taskStatusName),
                                     borderRadius: BorderRadius.circular(4),
@@ -827,9 +827,9 @@ class _CustomerTaskMonthReportScreenState
                   ],
                 ),
                 trailing: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
+                  height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                     color:
                         _getStatusColor(task.taskStatusName).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
@@ -942,8 +942,7 @@ class _CustomerTaskMonthReportScreenState
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: const BorderSide(color: AppColors.textRed),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),

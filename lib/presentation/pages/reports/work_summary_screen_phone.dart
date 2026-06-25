@@ -246,8 +246,7 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                             foregroundColor: AppColors.textRed,
                             elevation: 0,
                             side: BorderSide(color: AppColors.textRed),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4)),
                           ),
@@ -467,8 +466,7 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),

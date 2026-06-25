@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -40,8 +41,10 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   late ProcessFlowProvider processFlowProvider;
   final TextEditingController taskTypeController = TextEditingController();
   final TextEditingController taskStatusController = TextEditingController();
+  final TextEditingController taskSubStatusController = TextEditingController();
   final TextEditingController enquiryForController = TextEditingController();
   final TextEditingController leadStatusController = TextEditingController();
+  final TextEditingController leadSubStatusController = TextEditingController();
   final TextEditingController templateIdController = TextEditingController();
   bool isEditingMandatoryTask = false;
   bool isSavingData = false;
@@ -109,9 +112,11 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
   void dispose() {
     taskTypeController.dispose();
     taskStatusController.dispose();
+    taskSubStatusController.dispose();
     templateIdController.dispose();
     enquiryForController.dispose();
     leadStatusController.dispose();
+    leadSubStatusController.dispose();
     for (var controller in _customFieldControllers.values) {
       controller.dispose();
     }
@@ -298,6 +303,45 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                     },
                   );
 
+                  final selectedLeadStatus = searchLeadStatusList
+                      .where((element) =>
+                          element.statusId ==
+                          processFlowProvider.processFlowModel.leadStatusId)
+                      .firstOrNull;
+
+                  final leadSubStatusDropdown = (selectedLeadStatus?.subStatuses?.isNotEmpty ?? false)
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: CommonDropdown<SubStatus>(
+                            hintText: 'Lead sub status',
+                            items: selectedLeadStatus!.subStatuses!
+                                .map((sub) => DropdownItem<SubStatus>(
+                                      id: sub,
+                                      name: sub.subStatusName ?? '',
+                                    ))
+                                .toList(),
+                            controller: leadSubStatusController,
+                            key: ValueKey('leadSub_'),
+                            onItemSelected: (SubStatus? newValue) {
+                              if (newValue != null) {
+                                processFlowProvider.processFlowModel.leadSubStatusId =
+                                    newValue.subStatusId;
+                                processFlowProvider.processFlowModel.leadSubStatusName =
+                                    newValue.subStatusName;
+                                processFlowProvider.setProcessFlowModel(
+                                    processFlowProvider.processFlowModel);
+                                setState(() {});
+                              }
+                            },
+                            selectedValue: selectedLeadStatus.subStatuses!
+                                .where((element) =>
+                                    element.subStatusId ==
+                                    processFlowProvider.processFlowModel.leadSubStatusId)
+                                .firstOrNull,
+                          ),
+                        )
+                      : const SizedBox.shrink();
+
                   final leadStatusWidget = processFlowProvider.showLeadStatus
                       ? leadStatusDropdown
                       : InputDecorator(
@@ -413,6 +457,47 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 processFlowProvider.processFlowModel.statusId))
                         .firstOrNull,
                   );
+                  
+                  final selectedTaskTypeStatus = taskTypeStatusList
+                      .where((element) =>
+                          element.taskTypeId ==
+                              processFlowProvider.processFlowModel.taskTypeId &&
+                          element.statusId ==
+                              processFlowProvider.processFlowModel.statusId)
+                      .firstOrNull;
+
+                  final taskTypeSubStatusDropdown = (selectedTaskTypeStatus?.subStatuses?.isNotEmpty ?? false)
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: CommonDropdown<SubStatus>(
+                            hintText: 'Task type sub status',
+                            items: selectedTaskTypeStatus!.subStatuses!
+                                .map((sub) => DropdownItem<SubStatus>(
+                                      id: sub,
+                                      name: sub.subStatusName ?? '',
+                                    ))
+                                .toList(),
+                            controller: taskSubStatusController,
+                            key: ValueKey('taskSub_'),
+                            onItemSelected: (SubStatus? newValue) {
+                              if (newValue != null) {
+                                processFlowProvider.processFlowModel.taskSubStatusId =
+                                    newValue.subStatusId;
+                                processFlowProvider.processFlowModel.taskSubStatusName =
+                                    newValue.subStatusName;
+                                processFlowProvider.setProcessFlowModel(
+                                    processFlowProvider.processFlowModel);
+                                setState(() {});
+                              }
+                            },
+                            selectedValue: selectedTaskTypeStatus.subStatuses!
+                                .where((element) =>
+                                    element.subStatusId ==
+                                    processFlowProvider.processFlowModel.taskSubStatusId)
+                                .firstOrNull,
+                          ),
+                        )
+                      : const SizedBox.shrink();
 
                   final branchDropdown = CommonDropdown<int>(
                     hintText: 'Branch *',
@@ -562,22 +647,36 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                           ? Column(
                               children: [
                                 Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Expanded(child: enquiryForDropdown),
                                     const SizedBox(width: 10),
                                     Expanded(child: taskTypeDropdown),
                                     const SizedBox(width: 10),
-                                    Expanded(child: taskTypeStatusDropdown),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          taskTypeStatusDropdown,
+                                          taskTypeSubStatusDropdown,
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 16),
                                 Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(child: leadStatusWidget),
-                                    const SizedBox(width: 10),
                                     Expanded(
-                                        child:
-                                            Container()), // remove this to add new fields
+                                      child: Column(
+                                        children: [
+                                          leadStatusWidget,
+                                          if (processFlowProvider.showLeadStatus) leadSubStatusDropdown,
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(child: Container()),
                                     const SizedBox(width: 10),
                                     Expanded(child: Container()),
                                   ],
@@ -592,7 +691,13 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 const SizedBox(height: 16),
                                 taskTypeStatusDropdown,
                                 const SizedBox(height: 16),
+                                taskTypeSubStatusDropdown,
+                                const SizedBox(height: 16),
                                 leadStatusWidget,
+                                if (processFlowProvider.showLeadStatus)
+                                  const SizedBox(height: 16),
+                                if (processFlowProvider.showLeadStatus)
+                                  leadSubStatusDropdown,
                               ],
                             ),
                       const SizedBox(height: 16),

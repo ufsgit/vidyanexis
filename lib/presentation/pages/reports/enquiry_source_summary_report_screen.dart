@@ -153,7 +153,9 @@ class _EnquirySourceSummaryReportScreenState
                 ),
               ),
             ],
-            if (reportsProvider.isFilter)
+            if (isWeb && reportsProvider.isFilter)
+              _buildWebFilterBar(context, reportsProvider),
+            if (!isWeb && reportsProvider.isFilter)
               Expanded(
                 child: _buildFilterPanel(context, reportsProvider),
               )
@@ -176,7 +178,7 @@ class _EnquirySourceSummaryReportScreenState
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 32),
-        child: reportsProvider.isFilter
+        child: (!isWeb && reportsProvider.isFilter)
             ? SizedBox(
                 height: 40,
                 child: FloatingActionButton.extended(
@@ -209,6 +211,87 @@ class _EnquirySourceSummaryReportScreenState
                 ),
               )
             : null,
+      ),
+    );
+  }
+
+  
+  Widget _buildWebFilterBar(
+      BuildContext context, EnquirySourceProvider reportsProvider) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: AppColors.grey),
+      ),
+      child: Row(
+        children: [
+          CommonReportDateFilter(
+            fromDate: reportsProvider.fromDate?.toString(),
+            toDate: reportsProvider.toDate?.toString(),
+            formattedFromDate: reportsProvider.formattedFromDate,
+            formattedToDate: reportsProvider.formattedToDate,
+            onTap: () => onClickTopButton(context, isConversion: false),
+            label: 'Entry Date',
+          ),
+          const SizedBox(width: 12),
+          CommonReportDateFilter(
+            fromDate: reportsProvider.conversionFromDate?.toString(),
+            toDate: reportsProvider.conversionToDate?.toString(),
+            formattedFromDate: reportsProvider.formattedConversionFromDate,
+            formattedToDate: reportsProvider.formattedConversionToDate,
+            onTap: () => onClickTopButton(context, isConversion: true),
+            label: 'Registered Date',
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            height: 40,
+            child: ElevatedButton(
+              onPressed: () {
+                reportsProvider.setTaskSearchCriteria(
+                  searchController.text,
+                  reportsProvider.formattedFromDate,
+                  reportsProvider.formattedToDate,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                  conversionFromDate: reportsProvider.formattedConversionFromDate,
+                  conversionToDate: reportsProvider.formattedConversionToDate,
+                );
+                reportsProvider.getEnquirySummary(context);
+                Provider.of<SidebarProvider>(context, listen: false).stopSearch();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryBlue,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              child: Text(
+                'Search',
+                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          const Spacer(),
+          if (reportsProvider.fromDate != null ||
+              reportsProvider.toDate != null ||
+              reportsProvider.conversionFromDate != null ||
+              reportsProvider.conversionToDate != null)
+            CommonReportResetButton(
+              onReset: () {
+                reportsProvider.removeStatus();
+                searchController.clear();
+                reportsProvider.setTaskSearchCriteria('', '', '', '', '',
+                    conversionFromDate: '', conversionToDate: '');
+                reportsProvider.getEnquirySummary(context);
+              },
+            ),
+        ],
       ),
     );
   }
@@ -328,8 +411,7 @@ class _EnquirySourceSummaryReportScreenState
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: const BorderSide(color: AppColors.textRed),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),
@@ -449,9 +531,9 @@ class _EnquirySourceSummaryReportScreenState
                         flex: 2,
                         child: Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: AppColors.primaryBlue.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -516,8 +598,9 @@ class _EnquirySourceSummaryReportScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
+      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
         color: bgCol,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: textCol.withOpacity(0.15), width: 1),
@@ -585,9 +668,9 @@ class _EnquirySourceSummaryReportScreenState
                 color: const Color(0xFF0F172A),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
+                height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                   color: const Color(0xFF1E3A8A), // Navy Blue
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: [
@@ -656,8 +739,9 @@ class _EnquirySourceSummaryReportScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
+      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
         color: bgCol,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.12)),

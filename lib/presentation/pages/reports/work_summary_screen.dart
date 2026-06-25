@@ -196,7 +196,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                 !AppStyles.isWebScreen(context)
                     ? Container(
                         margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(4),
@@ -224,8 +224,8 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                               onTap: () => onClickTopButton(context),
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -344,7 +344,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                       )
                     : Container(
                         margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(4),
@@ -372,8 +372,8 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                               width: 10,
                             ),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -513,10 +513,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                   backgroundColor: Colors.white,
                                   foregroundColor: AppColors.textRed,
                                   side: BorderSide(color: AppColors.textRed),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                 ),
                                 child: const Text('Reset'),
                               ),
@@ -1185,8 +1182,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1228,10 +1224,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',
@@ -1260,8 +1253,9 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
         tabController.animateTo(index);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        decoration: BoxDecoration(
+        height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
           color: isSelected ? AppColors.primaryBlue : Colors.white,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(

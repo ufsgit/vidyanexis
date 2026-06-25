@@ -310,7 +310,7 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
               AppStyles.isWebScreen(context)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -393,7 +393,7 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                   //Mobile
                   : Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -423,7 +423,7 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                             width: 10,
                           ),
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -1038,8 +1038,7 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1081,10 +1080,7 @@ class _WarrentyReportScreen extends State<WarrentyReportScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

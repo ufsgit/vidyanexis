@@ -289,8 +289,7 @@ class _EmployeeSummaryReportScreenState
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: const BorderSide(color: AppColors.textRed),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),
@@ -410,9 +409,9 @@ class _EmployeeSummaryReportScreenState
                         flex: 2,
                         child: Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: AppColors.primaryBlue.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -468,8 +467,9 @@ class _EmployeeSummaryReportScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-      decoration: BoxDecoration(
+      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
         color: bgCol,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: textCol.withOpacity(0.15), width: 1),
@@ -545,9 +545,9 @@ class _EmployeeSummaryReportScreenState
                 color: const Color(0xFF0F172A),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
+                height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                   color: const Color(0xFF1E3A8A), // Navy Blue
                   borderRadius: BorderRadius.circular(4),
                   boxShadow: [
@@ -607,8 +607,9 @@ class _EmployeeSummaryReportScreenState
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
+      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
         color: bgCol,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color.withOpacity(0.12)),

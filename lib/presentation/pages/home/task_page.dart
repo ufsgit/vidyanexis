@@ -613,32 +613,40 @@ class _tasksPageReportState extends State<TaskPage> {
                               },
                               isFilter: reportsProvider.isFilter,
                             ),
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                await reportsProvider
-                                    .fetchTasksForExport(context);
-                              },
-                              icon: const Icon(Icons.download, size: 16),
-                              label: const Text(
-                                'Export to Excel',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 13,
+                            if (settingsProvider.menuIsViewMap[156] == 1)
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext context) {
+                                      return const NewLeadDrawerWidget(
+                                        isEdit: false,
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.add, size: 16),
+                                label: Text(
+                                  'New Lead',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryBlue,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
                                 ),
                               ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryBlue,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                       ],
@@ -2667,6 +2675,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                               isExpanded: true,
                                               onChanged: (sub) {
                                                 selectedSubStatus.value = sub;
+                                                if (sub != null) {
+                                                  reportsProvider.fetchTaskTypes(
+                                                    task.taskTypeId,
+                                                    sub.subStatusId ?? 0,
+                                                    task.customerId,
+                                                    task.enquiryForId,
+                                                    context,
+                                                  );
+                                                }
                                               },
                                               items:
                                                   validSubStatuses.map((sub) {
@@ -3234,6 +3251,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                               isExpanded: true,
                                               onChanged: (sub) {
                                                 selectedSubStatus.value = sub;
+                                                if (sub != null) {
+                                                  reportsProvider.fetchTaskTypes(
+                                                    task.taskTypeId,
+                                                    sub.subStatusId ?? 0,
+                                                    task.customerId,
+                                                    task.enquiryForId,
+                                                    context,
+                                                  );
+                                                }
                                               },
                                               items:
                                                   validSubStatuses.map((sub) {

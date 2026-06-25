@@ -251,16 +251,15 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryBlue,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        CustomElevatedButton(
-                          onPressed: () {
+                        CommonReportExportButton(
+                      onPressed: () {
                             exportToExcel(
                               headers: [
                                 'Name',
@@ -282,12 +281,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               fileName: 'Attendance_Report',
                             );
                           },
-                          buttonText: 'Export to Excel',
-                          textColor: AppColors.whiteColor,
-                          borderColor: AppColors.primaryBlue,
-                          backgroundColor: AppColors.primaryBlue,
-                          radius: 4,
-                        ),
+                      label: 'Export to Excel',
+                    ),
                       ],
                     ),
                   )
@@ -403,16 +398,15 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryBlue,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        CustomElevatedButton(
-                          onPressed: () {
+                        CommonReportExportButton(
+                      onPressed: () {
                             exportToExcel(
                               headers: [
                                 'Name',
@@ -439,12 +433,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               fileName: 'Attendance_Report',
                             );
                           },
-                          buttonText: 'Export to Excel',
-                          textColor: AppColors.whiteColor,
-                          borderColor: AppColors.primaryBlue,
-                          backgroundColor: AppColors.primaryBlue,
-                          radius: 4,
-                        ),
+                      label: 'Export to Excel',
+                    ),
                       ],
                     ),
                   ),
@@ -452,7 +442,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
               AppStyles.isWebScreen(context)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -480,8 +470,9 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             width: 10,
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -625,7 +616,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                     )
                   : Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -655,8 +646,9 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             width: 10,
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -1295,8 +1287,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1341,10 +1332,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

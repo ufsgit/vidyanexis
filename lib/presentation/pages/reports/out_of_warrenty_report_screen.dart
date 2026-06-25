@@ -289,7 +289,7 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                       isFilter: reportsProvider.isFilter,
                     ),
                     const SizedBox(width: 16),
-                    CustomElevatedButton(
+                    CommonReportExportButton(
                       onPressed: () {
                         exportToExcel(
                           headers: [
@@ -323,11 +323,7 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           fileName: 'Out_Of_Warranty_Report',
                         );
                       },
-                      buttonText: 'Export to Excel',
-                      textColor: AppColors.whiteColor,
-                      borderColor: AppColors.primaryBlue,
-                      backgroundColor: AppColors.primaryBlue,
-                      radius: 4,
+                      label: 'Export to Excel',
                     ),
                   ],
                 ),
@@ -425,8 +421,7 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                               foregroundColor: AppColors.textRed,
                               elevation: 0,
                               side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
                             ),
@@ -862,8 +857,7 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -903,10 +897,7 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

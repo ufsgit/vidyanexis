@@ -276,7 +276,7 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
               AppStyles.isWebScreen(context)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -358,7 +358,7 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                   //Mobile
                   : Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -377,7 +377,7 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -462,7 +462,7 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                             width: 10,
                           ),
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -1116,8 +1116,7 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1159,10 +1158,7 @@ class _FeedbackReportScreen extends State<FeedbackReportScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

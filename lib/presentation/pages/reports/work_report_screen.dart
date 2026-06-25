@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class WorkReportScreen extends StatefulWidget {
   static const String route = '/workReport/';
@@ -222,8 +223,8 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                     isFilter: reportsProvider.isFilter,
                   ),
                   const SizedBox(width: 16),
-                  CustomElevatedButton(
-                    onPressed: () {
+                  CommonReportExportButton(
+                      onPressed: () {
                       exportToExcel(
                         headers: [
                           'Customer Name',
@@ -250,19 +251,15 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                         fileName: 'Work_Report',
                       );
                     },
-                    buttonText: 'Export to Excel',
-                    textColor: AppColors.whiteColor,
-                    borderColor: AppColors.primaryBlue,
-                    backgroundColor: AppColors.primaryBlue,
-                    radius: 4,
-                  )
+                      label: 'Export to Excel',
+                    )
                 ],
               ),
             ),
             if (reportsProvider.isFilter)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
@@ -279,8 +276,9 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
+                      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
@@ -389,7 +387,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                     //   width: 10,
                     // ),
                     // Container(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                    //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     //   decoration: BoxDecoration(
                     //     color: Colors.white,
                     //     borderRadius: BorderRadius.circular(4),
@@ -523,10 +521,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                           foregroundColor: AppColors.textRed,
                           elevation: 0,
                           side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1066,8 +1061,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1110,10 +1104,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

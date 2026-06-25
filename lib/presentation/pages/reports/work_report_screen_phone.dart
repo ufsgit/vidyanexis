@@ -276,8 +276,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                             foregroundColor: AppColors.textRed,
                             elevation: 0,
                             side: BorderSide(color: AppColors.textRed),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4)),
                           ),
@@ -496,8 +495,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -523,10 +521,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withAlpha(26),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

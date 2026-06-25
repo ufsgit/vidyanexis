@@ -21,6 +21,10 @@ class ProcessFlowModel {
   String? templateId;
   int? leadStatusId;
   String? leadStatusName;
+  int? taskSubStatusId;
+  String? taskSubStatusName;
+  int? leadSubStatusId;
+  String? leadSubStatusName;
 
   ProcessFlowModel({
     this.flowId,
@@ -33,6 +37,10 @@ class ProcessFlowModel {
     this.templateId,
     this.leadStatusId,
     this.leadStatusName,
+    this.taskSubStatusId,
+    this.taskSubStatusName,
+    this.leadSubStatusId,
+    this.leadSubStatusName,
   });
 
   ProcessFlowModel copyWith({
@@ -46,6 +54,10 @@ class ProcessFlowModel {
     String? templateId,
     int? leadStatusId,
     String? leadStatusName,
+    int? taskSubStatusId,
+    String? taskSubStatusName,
+    int? leadSubStatusId,
+    String? leadSubStatusName,
   }) =>
       ProcessFlowModel(
         flowId: flowId ?? this.flowId,
@@ -58,6 +70,10 @@ class ProcessFlowModel {
         templateId: templateId ?? this.templateId,
         leadStatusId: leadStatusId ?? this.leadStatusId,
         leadStatusName: leadStatusName ?? this.leadStatusName,
+        taskSubStatusId: taskSubStatusId ?? this.taskSubStatusId,
+        taskSubStatusName: taskSubStatusName ?? this.taskSubStatusName,
+        leadSubStatusId: leadSubStatusId ?? this.leadSubStatusId,
+        leadSubStatusName: leadSubStatusName ?? this.leadSubStatusName,
       );
 
   factory ProcessFlowModel.fromJson(Map<String, dynamic> json) =>
@@ -72,6 +88,10 @@ class ProcessFlowModel {
         templateId: json["template_id"],
         leadStatusId: json["lead_status_id"],
         leadStatusName: json["lead_status_name"],
+        taskSubStatusId: json["task_sub_status_id"],
+        taskSubStatusName: json["task_sub_status_name"],
+        leadSubStatusId: json["lead_sub_status_id"],
+        leadSubStatusName: json["lead_sub_status_name"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -85,5 +105,9 @@ class ProcessFlowModel {
         "template_id": templateId,
         "lead_status_id": leadStatusId,
         "lead_status_name": leadStatusName,
+        "task_sub_status_id": taskSubStatusId,
+        "task_sub_status_name": taskSubStatusName,
+        "lead_sub_status_id": leadSubStatusId,
+        "lead_sub_status_name": leadSubStatusName,
       };
 }

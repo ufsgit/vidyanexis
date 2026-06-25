@@ -245,7 +245,7 @@ class _StockUseReportState extends State<StockUseReport> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
                 child: Text(
                   'Search',
@@ -307,8 +307,8 @@ class _StockUseReportState extends State<StockUseReport> {
           ),
           const Spacer(),
           Container(
-            width: MediaQuery.of(context).size.width / 4,
-            height: 48,
+            width: 280,
+            height: 40,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
@@ -322,43 +322,25 @@ class _StockUseReportState extends State<StockUseReport> {
               ],
             ),
             child: TextField(
+              controller: customerController,
+              textAlignVertical: TextAlignVertical.center,
               onChanged: (value) => provider.setCustomerName(value),
               onSubmitted: (value) => provider.searchReport(context),
               decoration: InputDecoration(
                 hintText: 'Search by Customer Name...',
                 hintStyle: GoogleFonts.plusJakartaSans(
-                  color: Colors.grey[400],
-                  fontSize: 14,
+                  color: const Color(0xFF94A3B8),
+                  fontSize: 13,
                 ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.grey[400],
-                  size: 20,
+                suffixIcon: GestureDetector(
+                  onTap: () => provider.searchReport(context),
+                  child: const Icon(Icons.search,
+                      color: Color(0xFF64748B), size: 18),
                 ),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: ElevatedButton(
-                    onPressed: () => provider.searchReport(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFBB03B),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                    ),
-                    child: Text(
-                      'Search',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 10),
               ),
             ),
           ),
@@ -368,8 +350,8 @@ class _StockUseReportState extends State<StockUseReport> {
             isFilter: provider.isFilter,
           ),
           const SizedBox(width: 16),
-          ElevatedButton.icon(
-            onPressed: () {
+          CommonReportExportButton(
+                      onPressed: () {
               exportToExcel(
                 headers: ['Customer Name', 'Date', 'Item Name', 'Quantity'],
                 data: provider.reportList.map((item) {
@@ -383,16 +365,8 @@ class _StockUseReportState extends State<StockUseReport> {
                 fileName: 'Stock_Use_Report',
               );
             },
-            icon: const Icon(Icons.download, size: 18),
-            label: const Text('Export'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4)),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            ),
-          ),
+                      label: 'Export',
+                    ),
         ],
       ),
     );
@@ -576,9 +550,9 @@ class _StockUseReportState extends State<StockUseReport> {
                 _showDateFilterDialog(context, provider);
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
+                height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
                   border:
@@ -712,8 +686,8 @@ class _StockUseReportState extends State<StockUseReport> {
                           TableWidget(
                             flex: 3,
                             data: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFE9EDF1),
                                 borderRadius: BorderRadius.circular(4),
@@ -815,9 +789,9 @@ class _StockUseReportState extends State<StockUseReport> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
+                                height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                   color: const Color(0xFFEFF6FF),
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
