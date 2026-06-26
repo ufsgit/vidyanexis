@@ -178,8 +178,8 @@ class _FollowupReports extends State<FollowupReports> {
                           isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
-                          onPressed: () {
+                        CommonReportExportButton(
+                      onPressed: () {
                             exportToExcel(
                               headers: [
                                 'Customer Name',
@@ -206,22 +206,8 @@ class _FollowupReports extends State<FollowupReports> {
                               fileName: 'Followup_Report',
                             );
                           },
-                          icon: const Icon(Icons.download, size: 18),
-                          label: const Text('Export',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 15,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                        )
+                      label: 'Export',
+                    )
                       ],
                     ),
                   )
@@ -319,8 +305,8 @@ class _FollowupReports extends State<FollowupReports> {
                                 ),
                                 const SizedBox(width: 10),
                                 const SizedBox(width: 8),
-                                ElevatedButton.icon(
-                                  onPressed: () {
+                                CommonReportExportButton(
+                      onPressed: () {
                                     exportToExcel(
                                       headers: [
                                         'Customer Name',
@@ -349,19 +335,8 @@ class _FollowupReports extends State<FollowupReports> {
                                       fileName: 'Followup_Report',
                                     );
                                   },
-                                  icon: const Icon(Icons.download, size: 18),
-                                  label: const Text('Export'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primaryBlue,
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 8),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                )
+                      label: 'Export',
+                    )
                               ],
                             ),
                           ],
@@ -373,7 +348,7 @@ class _FollowupReports extends State<FollowupReports> {
               AppStyles.isWebScreen(context)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -390,8 +365,9 @@ class _FollowupReports extends State<FollowupReports> {
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -478,8 +454,9 @@ class _FollowupReports extends State<FollowupReports> {
                             width: 10,
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -616,7 +593,7 @@ class _FollowupReports extends State<FollowupReports> {
                   // mobile
                   : Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -635,8 +612,9 @@ class _FollowupReports extends State<FollowupReports> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -724,8 +702,9 @@ class _FollowupReports extends State<FollowupReports> {
                             width: 10,
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -1354,8 +1333,7 @@ class _FollowupReports extends State<FollowupReports> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1399,10 +1377,7 @@ class _FollowupReports extends State<FollowupReports> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

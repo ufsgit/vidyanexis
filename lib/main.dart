@@ -75,7 +75,7 @@ import 'package:vidyanexis/controller/target_enquiry_source_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
-bool isCompanyCode = true;
+bool isCompanyCode = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -140,8 +140,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) => FollowupAmountReportProvider()),
         ChangeNotifierProvider(create: (context) => QuotationReportProvider()),
-        ChangeNotifierProvider(
-            create: (_) => SettingsProvider()..getCompanyDetails()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
         ChangeNotifierProvider(create: (_) => EnquirySourceProvider()),
         ChangeNotifierProvider(create: (_) => EmployeeSummaryProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryForSummaryProvider()),
@@ -149,8 +148,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProcessFlowProvider()),
         ChangeNotifierProvider(create: (_) => CheckInOutProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
-        ChangeNotifierProvider(
-            create: (_) => FormProvider()..fetchAvailableFields()),
+        ChangeNotifierProvider(create: (_) => FormProvider()),
         ChangeNotifierProvider(create: (_) => FormBuilderProvider()),
         ChangeNotifierProvider(create: (context) => AudioFileProvider()),
         ChangeNotifierProvider(create: (context) => TimeTrackReportProvider()),

@@ -405,7 +405,9 @@ class _QuotationReport extends State<QuotationReport> {
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            width: 250,
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
@@ -417,9 +419,11 @@ class _QuotationReport extends State<QuotationReport> {
                                       : Colors.grey[300]!),
                             ),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('Status: '),
-                                DropdownButton<int>(
+                                const Text('Status: ', style: TextStyle(fontSize: 13, color: Colors.black54)),
+                                Expanded(child: DropdownButton<int>(
+                                  isExpanded: true,
                                   value: reportsProvider.selectedStatus,
                                   hint: const Text('All'),
                                   items: [
@@ -477,7 +481,7 @@ class _QuotationReport extends State<QuotationReport> {
                                   underline: Container(),
                                   isDense: true,
                                   iconSize: 18,
-                                ),
+                                ),)
                               ],
                             ),
                           ),
@@ -489,8 +493,10 @@ class _QuotationReport extends State<QuotationReport> {
                               onClickTopButton(context);
                             },
                             child: Container(
+                              width: 250,
+                              height: 40,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
+                                  horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -500,18 +506,24 @@ class _QuotationReport extends State<QuotationReport> {
                                         ? AppColors.primaryBlue
                                         : Colors.grey[300]!),
                               ),
-                              child: Row(
+                                                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   if (reportsProvider.fromDate == null &&
                                       reportsProvider.toDate == null)
-                                    const Text('Date: All'),
+                                    const Expanded(
+                                      child: Text('Date: All',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(fontSize: 13, color: Colors.black87)),
+                                    ),
                                   if (reportsProvider.fromDate != null &&
                                       reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
+                                    Expanded(
+                                      child: Text(
+                                          'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(fontSize: 13, color: Colors.black87)),
+                                    ),
                                   const Icon(
                                     Icons.arrow_drop_down_outlined,
                                     color: Colors.black45,

@@ -223,8 +223,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                     isFilter: reportsProvider.isFilter,
                   ),
                   const SizedBox(width: 16),
-                  ElevatedButton.icon(
-                    onPressed: () async {
+                  CommonReportExportButton(
+                      onPressed: () async {
                       final allTasks =
                           await reportsProvider.fetchAllTasksForExport(context);
                       if (allTasks.isNotEmpty) {
@@ -265,29 +265,15 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         );
                       }
                     },
-                    icon: const Icon(Icons.download, size: 18),
-                    label: const Text('Export',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 15,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                  )
+                      label: 'Export',
+                    )
                 ],
               ),
             ),
             if (reportsProvider.isFilter)
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
@@ -318,8 +304,9 @@ class _tasksPageReportState extends State<TaskPageReport> {
                       width: 10,
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
+                      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
@@ -396,8 +383,9 @@ class _tasksPageReportState extends State<TaskPageReport> {
                       width: 10,
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
+                      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
@@ -501,10 +489,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           foregroundColor: AppColors.textRed,
                           elevation: 0,
                           side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1029,8 +1014,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1076,10 +1060,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',
@@ -1224,8 +1205,9 @@ class _tasksPageReportState extends State<TaskPageReport> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
+      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
@@ -1375,7 +1357,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
                   const Expanded(
@@ -1406,8 +1388,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                   return InkWell(
                     onTap: () => _toggle(id),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
                         children: [
                           Icon(

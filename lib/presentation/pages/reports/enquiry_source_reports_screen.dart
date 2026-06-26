@@ -369,8 +369,8 @@ class _EnquirySourceReportsScreenState
             isFilter: reportsProvider.isFilter,
           ),
           const SizedBox(width: 16),
-          CustomElevatedButton(
-            onPressed: () {
+          CommonReportExportButton(
+                      onPressed: () {
               exportToExcel(
                 headers: [
                   'Customer Name',
@@ -397,12 +397,8 @@ class _EnquirySourceReportsScreenState
                 fileName: 'Work_Report',
               );
             },
-            buttonText: 'Export to Excel',
-            textColor: AppColors.whiteColor,
-            borderColor: AppColors.primaryBlue,
-            backgroundColor: AppColors.primaryBlue,
-            radius: 4,
-          )
+                      label: 'Export to Excel',
+                    )
         ],
       ),
     );
@@ -412,7 +408,7 @@ class _EnquirySourceReportsScreenState
       EnquiryReportProvider reportsProvider, DropDownProvider provider) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
@@ -428,8 +424,9 @@ class _EnquirySourceReportsScreenState
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
+            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: AppColors.primaryBlue),
@@ -622,9 +619,9 @@ class _EnquirySourceReportsScreenState
                                             '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                       },
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
+                                        height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                           color: const Color(0xFFE9EDF1),
                                           borderRadius:
                                               BorderRadius.circular(50),
@@ -838,8 +835,7 @@ class _EnquirySourceReportsScreenState
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -882,10 +878,7 @@ class _EnquirySourceReportsScreenState
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

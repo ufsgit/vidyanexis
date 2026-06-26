@@ -534,13 +534,19 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 leadProvider.statusController.text =
                     selectedItem.statusName ?? '';
 
-                settingsProvider
-                    .setSelectedDepartmentId(selectedItem.departmentId ?? 0);
-                leadProvider.departmentController.text =
-                    selectedItem.departmentName ?? '';
-                dropDownProvider.setSelectedUserId(selectedItem.userId ?? 0);
-                leadProvider.searchUserController.text =
-                    selectedItem.userName ?? '';
+                if (selectedItem.departmentId != null &&
+                    selectedItem.departmentId != 0) {
+                  settingsProvider
+                      .setSelectedDepartmentId(selectedItem.departmentId ?? 0);
+                  leadProvider.departmentController.text =
+                      selectedItem.departmentName ?? '';
+                }
+                if (selectedItem.userId != null &&
+                    selectedItem.userId != 0) {
+                  dropDownProvider.setSelectedUserId(selectedItem.userId ?? 0);
+                  leadProvider.searchUserController.text =
+                      selectedItem.userName ?? '';
+                }
 
                 if (selectedItem.isShowFollowupDate == 1) {
                   int durationVal =

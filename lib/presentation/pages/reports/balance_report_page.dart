@@ -216,20 +216,10 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
             isFilter: provider.isFilter,
           ),
           const SizedBox(width: 16),
-          ElevatedButton.icon(
-            onPressed: () => _exportData(provider),
-            icon: const Icon(Icons.download),
-            label: Text(MediaQuery.of(context).size.width > 860
-                ? 'Export To Excel'
-                : ''),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4)),
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            ),
-          ),
+          CommonReportExportButton(
+                      onPressed: () => _exportData(provider),
+                      label: 'Export',
+                    ),
         ],
       ),
     );
@@ -440,8 +430,7 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                           foregroundColor: AppColors.textRed,
                           elevation: 0,
                           side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4)),
                         ),

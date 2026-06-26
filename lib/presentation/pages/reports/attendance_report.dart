@@ -226,20 +226,9 @@ class _AttendanceReportState extends State<AttendanceReport> {
                     ),
                     const SizedBox(width: 16),
                     // Export Button
-                    ElevatedButton.icon(
+                    CommonReportExportButton(
                       onPressed: () {},
-                      icon: const Icon(Icons.file_upload_outlined, size: 20),
-                      label: const Text('Export'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEAB308),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
+                      label: 'Export',
                     ),
                   ],
                 ),
@@ -266,8 +255,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                 child: reportsProvider.taskReport.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         itemCount: reportsProvider.taskReport.length,
                         itemBuilder: (context, index) {
                           final task = reportsProvider.taskReport[index];
@@ -362,9 +350,9 @@ class _AttendanceReportState extends State<AttendanceReport> {
                                     ),
                                     // Row Number pill
                                     Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
+                                      height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                         color: Colors.grey[100],
                                         borderRadius: BorderRadius.circular(4),
                                       ),
@@ -525,9 +513,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
             if (isWeb) ...[
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                   color: const Color(0xFFF3F4F6).withOpacity(0.8),
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -551,8 +538,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                         itemBuilder: (context, index) {
                           final task = reportsProvider.taskReport[index];
                           return Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: const BoxDecoration(
                               border: Border(
                                   bottom: BorderSide(color: Color(0xFFF3F4F6))),
@@ -645,8 +631,8 @@ class _AttendanceReportState extends State<AttendanceReport> {
   ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                              decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: AppColors.grey),
@@ -665,7 +651,9 @@ class _AttendanceReportState extends State<AttendanceReport> {
           const SizedBox(width: 12),
           // User dropdown
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            width: 250,
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
@@ -677,13 +665,16 @@ class _AttendanceReportState extends State<AttendanceReport> {
               ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Staff: ',
-                  style: GoogleFonts.plusJakartaSans(fontSize: 14),
+                  style: GoogleFonts.plusJakartaSans(fontSize: 13, color: Colors.black54),
                 ),
-                DropdownButton<int>(
-                  value: int.tryParse(reportsProvider.AssignedTo) ?? 0,
+                Expanded(
+                  child: DropdownButton<int>(
+                    value: int.tryParse(reportsProvider.AssignedTo) ?? 0,
+                    isExpanded: true,
                   hint: const Text('All'),
                   items: [
                         const DropdownMenuItem<int>(
@@ -713,6 +704,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                   underline: Container(),
                   isDense: true,
                   iconSize: 18,
+                ),
                 ),
               ],
             ),
@@ -902,8 +894,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                   foregroundColor: AppColors.textRed,
                   elevation: 0,
                   side: const BorderSide(color: AppColors.textRed),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4)),
                 ),

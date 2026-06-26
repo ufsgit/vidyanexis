@@ -27,6 +27,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/utils/pdf_function.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class LeadPageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -143,11 +144,40 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   size: 24,
                                   color: Color(0xFF152D70),
                                 ),
+                              )
+                            else
+                              Builder(
+                                builder: (context) => IconButton(
+                                  onPressed: () {
+                                    ScaffoldState? parent;
+                                    context.visitAncestorElements((element) {
+                                      if (element is StatefulElement &&
+                                          element.state is ScaffoldState) {
+                                        ScaffoldState scaffold = element.state as ScaffoldState;
+                                        if (scaffold.hasDrawer) {
+                                          parent = scaffold;
+                                          return false;
+                                        }
+                                      }
+                                      return true;
+                                    });
+                                    parent?.openDrawer();
+                                  },
+                                  icon: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.secondaryBlue.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: const Icon(
+                                      Icons.sort,
+                                      size: 20,
+                                      color: AppColors.secondaryBlue,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            if (widget.fromDashBoard)
-                              const SizedBox(
-                                width: 8,
-                              ),
+                            const SizedBox(width: 8),
                             const Text(
                               'Leads Report',
                               style: TextStyle(
@@ -259,9 +289,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            CustomElevatedButton(
-                              radius: 4,
-                              onPressed: () async {
+                            CommonReportExportButton(
+                      onPressed: () async {
                                 final allLeads = await leadReportProvider
                                     .fetchAllLeadsForExport(context);
                                 if (allLeads.isNotEmpty) {
@@ -321,15 +350,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   );
                                 }
                               },
-                              buttonText: 'Export to Excel',
-                              textColor: AppColors.whiteColor,
-                              borderColor: const Color(0xFFEBB12B),
-                              backgroundColor: const Color(0xFFEBB12B),
-                            ),
+                      label: 'Export to Excel',
+                    ),
                             const SizedBox(width: 8),
-                            CustomElevatedButton(
-                              radius: 4,
-                              onPressed: () async {
+                            CommonReportExportButton(
+                      onPressed: () async {
                                 final allLeads = await leadReportProvider
                                     .fetchAllLeadsForExport(context);
                                 if (allLeads.isNotEmpty) {
@@ -389,11 +414,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   );
                                 }
                               },
-                              buttonText: 'Export to PDF',
-                              textColor: AppColors.whiteColor,
-                              borderColor: AppColors.primaryBlue,
-                              backgroundColor: AppColors.primaryBlue,
-                            ),
+                      label: 'Export to PDF',
+                    ),
                           ],
                         ),
                       ],
@@ -403,9 +425,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                 if (leadReportProvider.isFilter)
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                              decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
@@ -428,8 +449,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           children: [
                             // Status Dropdown
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 4),
+                              width: 250,
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -443,13 +465,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Status: ',
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 13)),
-                                  DropdownButton<int>(
+                                  Expanded(child: DropdownButton<int>(
                                     value:
                                         leadReportProvider.selectedStatus ?? 0,
                                     hint: const Text('All',
@@ -498,8 +520,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     },
                                     underline: Container(),
                                     isDense: true,
+                                    isExpanded: true,
                                     iconSize: 18,
-                                  ),
+                                  ),)
                                 ],
                               ),
                             ),
@@ -508,9 +531,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             GestureDetector(
                               onTap: () => onClickTopButton(context),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
+                                width: 250,
+                                height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
@@ -522,7 +546,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     if (leadReportProvider.fromDate == null &&
                                         leadReportProvider.toDate == null)
@@ -532,24 +556,29 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                               fontSize: 13)),
                                     if (leadReportProvider.fromDate == null &&
                                         leadReportProvider.toDate == null)
-                                      const Text('All',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 13)),
+                                      const Expanded(
+                                        child: Text('All',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 13)),
+                                      ),
                                     if (leadReportProvider.fromDate != null &&
                                         leadReportProvider.toDate != null)
                                       Text('Date: ',
                                           style: TextStyle(
                                               color: Colors.grey[600],
                                               fontSize: 13)),
-                                    if (leadReportProvider.fromDate != null &&
+                                                                        if (leadReportProvider.fromDate != null &&
                                         leadReportProvider.toDate != null)
-                                      Text(
-                                          '${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 13)),
-                                    const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                            '\ - ',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 13)),
+                                      ),
                                     const Icon(
                                       Icons.arrow_drop_down_outlined,
                                       color: Colors.black45,
@@ -562,8 +591,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
 
                             // Assigned Staff Dropdown
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 4),
+                              width: 250,
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -576,13 +606,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Assigned Staff: ',
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 13)),
-                                  DropdownButton<int>(
+                                  Expanded(child: DropdownButton<int>(
                                     value: leadReportProvider.selectedUser ?? 0,
                                     hint: const Text('All',
                                         style: TextStyle(
@@ -635,16 +665,18 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     },
                                     underline: Container(),
                                     isDense: true,
+                                    isExpanded: true,
                                     iconSize: 18,
-                                  ),
+                                  ),)
                                 ],
                               ),
                             ),
 
                             // Enquiry For Dropdown
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 4),
+                              width: 250,
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -660,13 +692,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Enquiry For: ',
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 13)),
-                                  DropdownButton<int>(
+                                  Expanded(child: DropdownButton<int>(
                                     value:
                                         leadReportProvider.selectedEnquiryFor ??
                                             0,
@@ -721,16 +753,18 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     },
                                     underline: Container(),
                                     isDense: true,
+                                    isExpanded: true,
                                     iconSize: 18,
-                                  ),
+                                  ),)
                                 ],
                               ),
                             ),
 
                             // Enquiry Source Dropdown
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 4),
+                              width: 250,
+                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -746,13 +780,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Enquiry Source: ',
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 13)),
-                                  DropdownButton<int>(
+                                  Expanded(child: DropdownButton<int>(
                                     value: leadReportProvider
                                             .selectedEnquirySource ??
                                         0,
@@ -808,8 +842,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     },
                                     underline: Container(),
                                     isDense: true,
+                                    isExpanded: true,
                                     iconSize: 18,
-                                  ),
+                                  ),)
                                 ],
                               ),
                             ),
@@ -1422,7 +1457,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Center(
                       child: Text(
@@ -1633,7 +1668,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                 ),
               ),
               Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ...List.generate(provider.totalPages, (index) {
                     int page = index + 1;
@@ -1753,7 +1788,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                   builder:
                       (context, dropDownProvider, settingsProvider, child) {
                     return Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(

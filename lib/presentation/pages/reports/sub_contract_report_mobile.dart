@@ -258,8 +258,7 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                             foregroundColor: AppColors.textRed,
                             elevation: 0,
                             side: BorderSide(color: AppColors.textRed),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4)),
                           ),

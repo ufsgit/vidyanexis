@@ -225,20 +225,10 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
             isFilter: provider.isFilter,
           ),
           const SizedBox(width: 16),
-          ElevatedButton.icon(
-            onPressed: () => _exportData(provider),
-            icon: const Icon(Icons.download),
-            label: Text(MediaQuery.of(context).size.width > 860
-                ? 'Export To Excel'
-                : ''),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4)),
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            ),
-          ),
+          CommonReportExportButton(
+                      onPressed: () => _exportData(provider),
+                      label: 'Export',
+                    ),
         ],
       ),
     );
@@ -248,8 +238,8 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
       DropDownProvider dropDownProvider) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                              decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: AppColors.grey),
@@ -266,7 +256,9 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
           ),
           const SizedBox(width: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            width: 250,
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
@@ -278,13 +270,16 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
               ),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'To Staff: ',
-                  style: GoogleFonts.plusJakartaSans(fontSize: 14),
+                  style: GoogleFonts.plusJakartaSans(fontSize: 13, color: Colors.black54),
                 ),
-                DropdownButton<int>(
-                  value: provider.selectedUser,
+                Expanded(
+                  child: DropdownButton<int>(
+                    value: provider.selectedUser,
+                    isExpanded: true,
                   hint: const Text('All'),
                   items: [
                         const DropdownMenuItem<int>(
@@ -313,6 +308,7 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
                   underline: Container(),
                   isDense: true,
                   iconSize: 18,
+                ),
                 ),
               ],
             ),
@@ -589,9 +585,9 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
                                           ),
                                         ),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
+                                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                             color: AppColors.primaryBlue
                                                 .withOpacity(0.1),
                                             borderRadius:
@@ -809,8 +805,7 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -836,10 +831,7 @@ class _FollowupAmountReportPageState extends State<FollowupAmountReportPage> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text('Clear'),
                       ),

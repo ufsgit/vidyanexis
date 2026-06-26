@@ -243,13 +243,9 @@ class _UpcomingWarrentyReportScreen
                       isFilter: reportsProvider.isFilter,
                     ),
                     const SizedBox(width: 12),
-                    CustomElevatedButton(
+                    CommonReportExportButton(
                       onPressed: () => _exportExcel(reportsProvider),
-                      buttonText: 'Export to Excel',
-                      textColor: AppColors.whiteColor,
-                      borderColor: AppColors.primaryBlue,
-                      backgroundColor: AppColors.primaryBlue,
-                      radius: 4,
+                      label: 'Export to Excel',
                     ),
                   ],
                 ),
@@ -354,8 +350,7 @@ class _UpcomingWarrentyReportScreen
                               foregroundColor: AppColors.textRed,
                               elevation: 0,
                               side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
                             ),

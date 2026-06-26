@@ -77,10 +77,15 @@ class TaskTypeStatusModel {
         taskTypeId: json["Task_Type_Id"],
         enquiryForId: json["Enquiry_For_Id"], // Added field mapping
         isTime: json["Is_Time"]?.toInt(),
-        subStatuses: json["Sub_Statuses"] == null
+        subStatuses: (json["Sub_Statuses"] ??
+                    json["sub_statuses"] ??
+                    json["Sub_Status"]) ==
+                null
             ? []
-            : List<SubStatus>.from(
-                json["Sub_Statuses"]!.map((x) => SubStatus.fromJson(x))),
+            : List<SubStatus>.from((json["Sub_Statuses"] ??
+                    json["sub_statuses"] ??
+                    json["Sub_Status"])!
+                .map((x) => SubStatus.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {

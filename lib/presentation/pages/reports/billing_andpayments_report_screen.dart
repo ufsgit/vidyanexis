@@ -223,8 +223,8 @@ class _BillingAndpaymentsReportScreenState
                     isFilter: reportsProvider.isFilter,
                   ),
                   const SizedBox(width: 16),
-                  ElevatedButton.icon(
-                    onPressed: () {
+                  CommonReportExportButton(
+                      onPressed: () {
                       exportToExcel(
                         headers: [
                           'Customer Name',
@@ -247,22 +247,8 @@ class _BillingAndpaymentsReportScreenState
                         fileName: 'Billing_And_Payments_Report',
                       );
                     },
-                    icon: const Icon(Icons.download, size: 18),
-                    label: const Text('Export',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 15,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+                      label: 'Export',
                     ),
-                  ),
                 ],
               ),
             ),
@@ -620,8 +606,7 @@ class _BillingAndpaymentsReportScreenState
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),

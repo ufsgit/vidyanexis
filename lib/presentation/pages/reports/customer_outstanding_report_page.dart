@@ -53,8 +53,9 @@ class _CustomerOutstandingReportPageState
         children: [
           // Header section
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            decoration: BoxDecoration(
+            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
               color: Colors.white,
               border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
             ),
@@ -507,8 +508,9 @@ class _CustomerOutstandingReportPageState
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
+        height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
           border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
           borderRadius: BorderRadius.circular(4),
         ),

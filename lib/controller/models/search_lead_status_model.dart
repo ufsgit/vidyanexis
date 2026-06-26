@@ -182,10 +182,10 @@ class SearchLeadStatusModel {
         whatsappTemplateId: json["Whatsapp_Template_Id"]?.toString() ??
             json["whatsapp_template_id"]?.toString() ??
             json["WhatsApp_Template_Id"]?.toString(),
-        subStatuses: json["Sub_Status"] == null
+        subStatuses: (json["Sub_Status"] == null && json["sub_statuses"] == null)
             ? []
-            : List<SubStatus>.from(
-                json["Sub_Status"]!.map((x) => SubStatus.fromJson(x))),
+            : List<SubStatus>.from((json["Sub_Status"] ?? json["sub_statuses"])!
+                .map((x) => SubStatus.fromJson(x))),
         transferStatuses: json["Transfer_Status"] == null
             ? []
             : List<SubStatus>.from(

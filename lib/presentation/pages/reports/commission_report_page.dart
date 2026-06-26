@@ -165,7 +165,7 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       isFilter: provider.isFilter,
                     ),
                     const SizedBox(width: 16),
-                    ElevatedButton.icon(
+                    CommonReportExportButton(
                       onPressed: () {
                         exportToExcel(
                           headers: [
@@ -189,18 +189,7 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                           fileName: 'Commission_Report',
                         );
                       },
-                      icon: const Icon(Icons.download, size: 18),
-                      label: const Text('Export',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryBlue,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4)),
-                      ),
+                      label: 'Export',
                     ),
                   ],
                 ),
@@ -411,11 +400,9 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                                           width: 140,
                                           child: Center(
                                             child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 6),
-                                              decoration: BoxDecoration(
+                                              height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                                 color: AppColors.primaryBlue
                                                     .withOpacity(0.1),
                                                 borderRadius:
@@ -534,8 +521,9 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
+        height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
           border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
           borderRadius: BorderRadius.circular(4),
         ),

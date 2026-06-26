@@ -16,4 +16,15 @@ class SubStatus {
         "sub_status_id": subStatusId,
         "sub_status_name": subStatusName,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SubStatus &&
+          runtimeType == other.runtimeType &&
+          subStatusId == other.subStatusId &&
+          subStatusName == other.subStatusName;
+
+  @override
+  int get hashCode => subStatusId.hashCode ^ subStatusName.hashCode;
 }

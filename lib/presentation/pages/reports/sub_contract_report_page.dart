@@ -168,8 +168,8 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                         isFilter: provider.isFilter,
                       ),
                       const SizedBox(width: 16),
-                      ElevatedButton.icon(
-                        onPressed: () {
+                      CommonReportExportButton(
+                      onPressed: () {
                           exportToExcel(
                             headers: [
                               'Lead Name',
@@ -192,19 +192,8 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                             fileName: 'Sub_Contract_Report',
                           );
                         },
-                        icon: const Icon(Icons.download, size: 18),
-                        label: const Text('Export',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4)),
-                        ),
-                      ),
+                      label: 'Export',
+                    ),
                     ],
                   ),
                   if (provider.isFilter) ...[
@@ -281,10 +270,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                               foregroundColor: AppColors.textRed,
                               elevation: 0,
                               side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
@@ -648,8 +634,9 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
+        height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
           border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
           borderRadius: BorderRadius.circular(4),
         ),

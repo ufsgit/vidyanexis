@@ -56,10 +56,8 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Center(
-                      child: Text(
-                        'Choose Date',
-                        style: TextStyle(
+                    Center(child: Text('Choose Date',
+                        style: GoogleFonts.plusJakartaSans(
                             fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                     ),
@@ -83,7 +81,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                               reportProvider.selectedDateFilterIndex == index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
-                          labelStyle: TextStyle(
+                          labelStyle: GoogleFonts.plusJakartaSans(
                             color:
                                 reportProvider.selectedDateFilterIndex == index
                                     ? Colors.white
@@ -93,10 +91,9 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                       }),
                     ),
                     const SizedBox(height: 15),
-                    const Text(
-                      'Pick a date',
+                    Text('Pick a date',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          GoogleFonts.plusJakartaSans(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -152,7 +149,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: AppColors.textRed),
                               foregroundColor: AppColors.textRed,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
@@ -171,7 +168,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryBlue,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
@@ -225,8 +222,8 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
     return Scaffold(
       appBar: !AppStyles.isWebScreen(context)
           ? AppBar(
-              title: const Text('Check-in Reports',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text('Check-in Reports',
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold)),
               backgroundColor: Colors.white,
               surfaceTintColor: Colors.white,
               elevation: 0,
@@ -252,14 +249,47 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
   Widget _buildHeader(
       BuildContext context, LeadCheckInReportProvider reportProvider) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
-          const Text(
+          Builder(
+            builder: (context) => IconButton(
+              onPressed: () {
+                ScaffoldState? parent;
+                context.visitAncestorElements((element) {
+                  if (element is StatefulElement &&
+                      element.state is ScaffoldState) {
+                    ScaffoldState scaffold = element.state as ScaffoldState;
+                    if (scaffold.hasDrawer) {
+                      parent = scaffold;
+                      return false;
+                    }
+                  }
+                  return true;
+                });
+                parent?.openDrawer();
+              },
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.secondaryBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Icon(
+                  Icons.sort,
+                  size: 20,
+                  color: AppColors.secondaryBlue,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
             'Check-in Reports',
-            style: TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
               fontWeight: FontWeight.bold,
+              color: AppColors.textBlack,
             ),
           ),
           const Spacer(),
@@ -306,7 +336,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 suffixIcon: GestureDetector(
                   onTap: () {
                     reportProvider.setLeadSearch(searchController.text);
@@ -326,9 +356,8 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             isFilter: reportProvider.isFilter,
           ),
           const SizedBox(width: 8),
-          CustomElevatedButton(
-            radius: 4,
-            onPressed: () {
+          CommonReportExportButton(
+                      onPressed: () {
               exportToExcel(
                 headers: [
                   'Staff Name',
@@ -356,11 +385,8 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                 fileName: 'Check_in_Reports',
               );
             },
-            buttonText: 'Export to Excel',
-            textColor: AppColors.whiteColor,
-            borderColor: const Color(0xFFEBB12B),
-            backgroundColor: const Color(0xFFEBB12B),
-          ),
+                      label: 'Export to Excel',
+                    ),
         ],
       ),
     );
@@ -377,8 +403,8 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      padding: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                              decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: const Color(0xFFCBD5E1), width: 1.0),
@@ -393,8 +419,9 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
+            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
@@ -408,12 +435,12 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                 DropdownButtonHideUnderline(
                   child: DropdownButton<int>(
                     value: reportProvider.selectedUserId,
-                    hint: const Text('All'),
+                    hint: Text('All'),
                     items: [
                       if (reportProvider.userType != "1")
-                        const DropdownMenuItem<int>(
+                        DropdownMenuItem<int>(
                           value: null,
-                          child: Text('All', style: TextStyle(fontSize: 14)),
+                          child: Text('All', style: GoogleFonts.plusJakartaSans(fontSize: 14)),
                         ),
                       ...dropdownProvider.searchUserDetails
                           .where((staff) =>
@@ -424,7 +451,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                         return DropdownMenuItem<int>(
                           value: staff.userDetailsId,
                           child: Text(staff.userDetailsName,
-                              style: const TextStyle(fontSize: 14)),
+                              style: GoogleFonts.plusJakartaSans(fontSize: 14)),
                         );
                       }),
                     ],
@@ -446,53 +473,12 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          GestureDetector(
+          CommonReportDateFilter(
+            fromDate: reportProvider.fromDate?.toString(),
+            toDate: reportProvider.toDate?.toString(),
+            formattedFromDate: reportProvider.formattedFromDate,
+            formattedToDate: reportProvider.formattedToDate,
             onTap: () => onClickTopButton(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  color: reportProvider.fromDate != null ||
-                          reportProvider.toDate != null
-                      ? AppColors.primaryBlue
-                      : Colors.grey[300]!,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (reportProvider.fromDate == null &&
-                      reportProvider.toDate == null)
-                    Text('Date: ',
-                        style:
-                            TextStyle(color: Colors.grey[600], fontSize: 13)),
-                  if (reportProvider.fromDate == null &&
-                      reportProvider.toDate == null)
-                    const Text('All',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 13)),
-                  if (reportProvider.fromDate != null &&
-                      reportProvider.toDate != null)
-                    Text('Date: ',
-                        style:
-                            TextStyle(color: Colors.grey[600], fontSize: 13)),
-                  if (reportProvider.fromDate != null &&
-                      reportProvider.toDate != null)
-                    Text(
-                        '${DateFormat('dd MMM yyyy').format(reportProvider.fromDate!)} - ${DateFormat('dd MMM yyyy').format(reportProvider.toDate!)}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 13)),
-                  const SizedBox(width: 10),
-                  const Icon(
-                    Icons.arrow_drop_down_outlined,
-                    color: Colors.black45,
-                    size: 20,
-                  ),
-                ],
-              ),
-            ),
           ),
           const Spacer(),
           if (reportProvider.fromDate != null ||
@@ -511,10 +497,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                 foregroundColor: AppColors.textRed,
                 elevation: 0,
                 side: BorderSide(color: AppColors.textRed),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -536,7 +519,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
         children: [
           // Header Row
@@ -545,7 +528,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
               color: const Color(0xFFEFF2F5),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: const Row(
+            child: Row(
               children: [
                 SizedBox(
                   width: 50,
@@ -553,7 +536,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                     padding: EdgeInsets.symmetric(vertical: 12.0),
                     child: Center(
                       child: Text('No.',
-                          style: TextStyle(
+                          style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                               color: Color(0xFF607185))),
@@ -599,16 +582,16 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                         width: 50,
                         child: Center(
                           child: Text((index + 1).toString(),
-                              style: const TextStyle(
+                              style: GoogleFonts.plusJakartaSans(
                                   fontWeight: FontWeight.bold, fontSize: 12)),
                         ),
                       ),
                       TableWidget(
                         flex: 2,
                         data: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: const Color(0xFFE9EDF1),
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -628,7 +611,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                                       'N/A',
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
-                                  style: const TextStyle(
+                                  style: GoogleFonts.plusJakartaSans(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12,
@@ -649,9 +632,9 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                             }
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: const Color(0xFFE9EDF1),
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -669,7 +652,7 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                                     record.leadName ?? 'N/A',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
-                                    style: const TextStyle(
+                                    style: GoogleFonts.plusJakartaSans(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12,
@@ -706,16 +689,16 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                       TableWidget(
                         width: 120,
                         data: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: const Color(
                                 0xFFFFFBE6), // Light yellow for highlight
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             reportProvider.calculateTimeDifference(record),
-                            style: const TextStyle(
+                            style: GoogleFonts.plusJakartaSans(
                                 color: Color(0xFFFAAD14),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11),

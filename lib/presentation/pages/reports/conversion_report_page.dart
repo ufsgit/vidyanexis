@@ -275,8 +275,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                       isFilter: reportsProvider.isFilter,
                     ),
                     const SizedBox(width: 16),
-                    CustomElevatedButton(
-                      radius: 4,
+                    CommonReportExportButton(
                       onPressed: () {
                         exportToExcel(
                           headers: _exportHeaders,
@@ -284,14 +283,10 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           fileName: 'Conversion_Report',
                         );
                       },
-                      buttonText: 'Export to Excel',
-                      textColor: AppColors.whiteColor,
-                      borderColor: const Color(0xFFEBB12B),
-                      backgroundColor: const Color(0xFFEBB12B),
+                      label: 'Export to Excel',
                     ),
                     const SizedBox(width: 8),
-                    CustomElevatedButton(
-                      radius: 4,
+                    CommonReportExportButton(
                       onPressed: () {
                         exportToPDF(
                           headers: _exportHeaders,
@@ -299,10 +294,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           fileName: 'Conversion_Report',
                         );
                       },
-                      buttonText: 'Export to PDF',
-                      textColor: AppColors.whiteColor,
-                      borderColor: AppColors.primaryBlue,
-                      backgroundColor: AppColors.primaryBlue,
+                      label: 'Export to PDF',
                     ),
                   ],
                 ),
@@ -312,9 +304,8 @@ class _ConversionReportPage extends State<ConversionReportPage> {
             if (reportsProvider.isFilter && AppStyles.isWebScreen(context))
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                              decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4),
                   border:
@@ -337,9 +328,9 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                       children: [
                         // Enquiry For
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -425,9 +416,9 @@ class _ConversionReportPage extends State<ConversionReportPage> {
 
                         // Enquiry Source
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -528,9 +519,9 @@ class _ConversionReportPage extends State<ConversionReportPage> {
 
                         // By User
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -620,9 +611,9 @@ class _ConversionReportPage extends State<ConversionReportPage> {
 
                         // Assigned Staff
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -711,9 +702,9 @@ class _ConversionReportPage extends State<ConversionReportPage> {
 
                         // Status
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -821,10 +812,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               foregroundColor: AppColors.textRed,
                               elevation: 0,
                               side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4),
                               ),
@@ -1106,8 +1094,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               foregroundColor: AppColors.textRed,
                               elevation: 0,
                               side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4)),
                             ),
@@ -1691,8 +1678,7 @@ void onClickTopButton(BuildContext context) {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4),
                         ),
@@ -1734,10 +1720,7 @@ void onClickTopButton(BuildContext context) {
                             borderRadius: BorderRadius.circular(4)),
                         backgroundColor: AppColors.textRed.withOpacity(0.1),
                         foregroundColor: AppColors.textRed,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       ),
                       child: const Text(
                         'Clear',

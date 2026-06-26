@@ -214,9 +214,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           isFilter: reportsProvider.isFilter,
                         ),
                         const SizedBox(width: 8),
-                        CustomElevatedButton(
-                          radius: 4,
-                          onPressed: () {
+                        CommonReportExportButton(
+                      onPressed: () {
                             exportToExcel(
                               headers: [
                                 'Customer Name',
@@ -252,11 +251,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               fileName: 'Invoice_Report',
                             );
                           },
-                          buttonText: 'Export to Excel',
-                          textColor: AppColors.whiteColor,
-                          borderColor: const Color(0xFFEBB12B),
-                          backgroundColor: const Color(0xFFEBB12B),
-                        ),
+                      label: 'Export to Excel',
+                    ),
                       ],
                     ),
                   )
@@ -353,8 +349,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                   isFilter: reportsProvider.isFilter,
                                 ),
                                 const SizedBox(width: 16),
-                                ElevatedButton.icon(
-                                  onPressed: () {
+                                CommonReportExportButton(
+                      onPressed: () {
                                     exportToExcel(
                                       headers: [
                                         'Customer Name',
@@ -397,23 +393,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                       fileName: 'Invoice_Report',
                                     );
                                   },
-                                  icon: const Icon(Icons.download, size: 18),
-                                  label: const Text('Export',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primaryBlue,
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                      vertical: 12,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                )
+                      label: 'Export',
+                    )
                               ],
                             ),
                           ],
@@ -425,7 +406,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
               AppStyles.isWebScreen(context)
                   ? Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -446,7 +427,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -523,9 +504,9 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             onTap: () => onClickTopButton(context),
                           ),
                           Container(
+                            height: 40,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 0),
-                            height: 30,
+                                horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
@@ -544,6 +525,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                   width: 10,
                                 ),
                                 Checkbox(
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: VisualDensity.compact,
                                   value: reportsProvider.isChecked,
                                   onChanged: (value) {
                                     reportsProvider.toggleCheckbox();
@@ -556,8 +539,9 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -642,8 +626,9 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
+                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
@@ -727,7 +712,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             ),
                           ),
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -863,7 +848,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                   //mobile
                   : Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -882,7 +867,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         runSpacing: 10,
                         children: [
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -962,7 +947,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           //   width: 10,
                           // ),
                           // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           //   decoration: BoxDecoration(
                           //     color: Colors.white,
                           //     borderRadius: BorderRadius.circular(4),
@@ -1859,8 +1844,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1903,10 +1887,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',

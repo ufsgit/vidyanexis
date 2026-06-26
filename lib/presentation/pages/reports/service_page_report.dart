@@ -232,8 +232,8 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                 isFilter: reportsProvider.isFilter,
               ),
               const SizedBox(width: 8),
-              ElevatedButton.icon(
-                onPressed: () {
+              CommonReportExportButton(
+                      onPressed: () {
                   exportToExcel(
                     headers: [
                       'Customer Name',
@@ -261,22 +261,8 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     fileName: 'Complaint_Report',
                   );
                 },
-                icon: const Icon(Icons.download, size: 18),
-                label: const Text('Export',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 15,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              )
+                      label: 'Export',
+                    )
             ],
           ),
         ],
@@ -292,7 +278,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
             ? (AppStyles.isWebScreen(context)
                 ? Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(4),
@@ -309,8 +295,9 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -433,7 +420,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                 //mobile
                 : Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(12.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(4),
@@ -452,8 +439,9 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
@@ -747,11 +735,9 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                     '${CustomerDetailsScreen.route}${Service.customerId.toString()}/${'true'}');
                                               },
                                               child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
+                                                height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                                   color:
                                                       const Color(0xFFE9EDF1),
                                                   borderRadius:
@@ -1011,9 +997,9 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                 '${CustomerDetailsScreen.route}${Service.customerId.toString()}/${'true'}');
                                           },
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
+                                            height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
                                               color: const Color(0xFFE9EDF1),
                                               borderRadius:
                                                   BorderRadius.circular(50),
@@ -1316,8 +1302,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),
@@ -1359,10 +1344,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                               borderRadius: BorderRadius.circular(4)),
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
                           foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
                           'Clear',
