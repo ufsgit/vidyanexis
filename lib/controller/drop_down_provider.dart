@@ -156,10 +156,10 @@ class DropDownProvider extends ChangeNotifier {
   void filterEnquiryForByCategory(int sourceCategoryId) {
     // Display all records without filtering by sourceCategoryId
     filteredEnquiryForData = enquiryForList;
-    print('DEBUG: filterEnquiryForByCategory called. Total records bound to dropdown: ${filteredEnquiryForData.length}');
+    print(
+        'DEBUG: filterEnquiryForByCategory called. Total records bound to dropdown: ${filteredEnquiryForData.length}');
     notifyListeners();
   }
-
 
   void filterStaffByBranchAndDepartment({
     required int? branchId,
@@ -748,14 +748,16 @@ class DropDownProvider extends ChangeNotifier {
           List<EnquiryForModel> allEnquiryFor = (data as List<dynamic>)
               .map((item) => EnquiryForModel.fromJson(item))
               .toList();
-              
-          print('DEBUG: getEnquiryFor - Total records received from API: ${allEnquiryFor.length}');
+
+          print(
+              'DEBUG: getEnquiryFor - Total records received from API: ${allEnquiryFor.length}');
 
           // Removed duplicate filtering logic (fetchUserSpecific) that was removing valid records
           _enquiryForList = allEnquiryFor;
           filteredEnquiryForData = List.from(allEnquiryFor);
-          print('DEBUG: getEnquiryFor - Total records bound to dropdown: ${filteredEnquiryForData.length}');
-          
+          print(
+              'DEBUG: getEnquiryFor - Total records bound to dropdown: ${filteredEnquiryForData.length}');
+
           notifyListeners();
         }
       } else {
