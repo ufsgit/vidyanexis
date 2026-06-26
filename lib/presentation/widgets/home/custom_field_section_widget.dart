@@ -428,11 +428,12 @@ class CustomFieldWidgetBuilder {
   }
 
   FieldValueModel? _getFieldValue(int fieldId) {
-    try {
-      return fieldValues.firstWhere((item) => item.customFieldId == fieldId);
-    } catch (e) {
-      return null;
+    for (final item in fieldValues) {
+      if (item.customFieldId == fieldId) {
+        return item;
+      }
     }
+    return null;
   }
 
   void _setFieldValue(int fieldId, String? value) {
@@ -1165,7 +1166,9 @@ class CustomFieldWidgetBuilder {
                             },
                             icon: const Icon(Icons.delete_outline, size: 18),
                             label: const Text('Clear Signature'),
-                            style: TextButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)), 
+                            style: TextButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4)),
                                 foregroundColor: Colors.red),
                           ),
                       ],

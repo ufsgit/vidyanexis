@@ -1012,44 +1012,15 @@ class DropDownProvider extends ChangeNotifier {
 
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              "${HttpUrls.getStatusAndSubStatusByTaskType}?Task_Type_Id=$taskTypeId");
+          endPoint: "${HttpUrls.getStatusByTaskTypeId}/$taskTypeId/$viewInId");
 
       if (response.statusCode == 200) {
-        final rawData = response.data;
-        if (rawData is List) {
-          List<Map<String, dynamic>> statusData = [];
-          for (var item in rawData) {
-            if (item is Map) {
-              statusData.add(Map<String, dynamic>.from(item));
-            }
-          }
+        final data = response.data;
 
-          statusList = statusData.map((item) {
-            var model = TaskTypeStatusModel.fromJson(item);
-            model.subStatuses = []; // Disable secondary dropdown
-            return model;
-          }).toList();
-
-          return statusList;
-        } else if (rawData is Map) {
-          final rawMap = Map<String, dynamic>.from(rawData);
-          if (rawMap.containsKey("success") && rawMap["success"] == true) {
-            var taskTypeStatusData = rawMap["data"] as List;
-            List<Map<String, dynamic>> statusData = [];
-            for (var item in taskTypeStatusData) {
-              if (item is Map) {
-                statusData.add(Map<String, dynamic>.from(item));
-              }
-            }
-
-            statusList = statusData.map((item) {
-              var model = TaskTypeStatusModel.fromJson(item);
-              model.subStatuses = []; // Disable secondary dropdown
-              return model;
-            }).toList();
-            return statusList;
-          }
+        if (data != null) {
+          statusList = (data as List<dynamic>)
+              .map((item) => TaskTypeStatusModel.fromJson(item))
+              .toList();
         }
         return statusList;
       } else {
