@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:vidyanexis/presentation/widgets/common/custom_filter_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -229,6 +228,77 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               },
               // onChanged: _onSearchChanged,
               searchController: searchController,
+              customActionWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        leadProvider.setEntryType('myown');
+                        leadProvider.getSearchLeads(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: leadProvider.entryType != 'all'
+                                  ? AppColors.primaryBlue
+                                  : Colors.transparent,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'ME',
+                          style: TextStyle(
+                            color: leadProvider.entryType != 'all'
+                                ? AppColors.primaryBlue
+                                : Colors.grey,
+                            fontWeight: leadProvider.entryType != 'all'
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () {
+                        leadProvider.setEntryType('all');
+                        leadProvider.getSearchLeads(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: leadProvider.entryType == 'all'
+                                  ? AppColors.primaryBlue
+                                  : Colors.transparent,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'ALL',
+                          style: TextStyle(
+                            color: leadProvider.entryType == 'all'
+                                ? AppColors.primaryBlue
+                                : Colors.grey,
+                            fontWeight: leadProvider.entryType == 'all'
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             )
           : CustomAppBar(
               onSearchTap: () {
@@ -265,6 +335,77 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 leadProvider.getSearchLeads(context);
               },
               searchController: searchController,
+              customActionWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        leadProvider.setEntryType('myown');
+                        leadProvider.getSearchLeads(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: leadProvider.entryType != 'all'
+                                  ? AppColors.primaryBlue
+                                  : Colors.transparent,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'ME',
+                          style: TextStyle(
+                            color: leadProvider.entryType != 'all'
+                                ? AppColors.primaryBlue
+                                : Colors.grey,
+                            fontWeight: leadProvider.entryType != 'all'
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () {
+                        leadProvider.setEntryType('all');
+                        leadProvider.getSearchLeads(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: leadProvider.entryType == 'all'
+                                  ? AppColors.primaryBlue
+                                  : Colors.transparent,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'ALL',
+                          style: TextStyle(
+                            color: leadProvider.entryType == 'all'
+                                ? AppColors.primaryBlue
+                                : Colors.grey,
+                            fontWeight: leadProvider.entryType == 'all'
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
       body: leadProvider.isLoading
           ? const Center(
@@ -272,93 +413,6 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
             )
           : Column(
               children: [
-                Container(
-                  color: AppColors.whiteColor,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Entry Type Filter
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              leadProvider.setEntryType('myown');
-                              leadProvider.getSearchLeads(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: leadProvider.entryType != 'all'
-                                        ? AppColors.primaryBlue
-                                        : Colors.transparent,
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                'ME',
-                                style: TextStyle(
-                                  color: leadProvider.entryType != 'all'
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey,
-                                  fontWeight: leadProvider.entryType != 'all'
-                                      ? FontWeight.w500
-                                      : FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          GestureDetector(
-                            onTap: () {
-                              leadProvider.setEntryType('all');
-                              leadProvider.getSearchLeads(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: leadProvider.entryType == 'all'
-                                        ? AppColors.primaryBlue
-                                        : Colors.transparent,
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
-                              child: Text(
-                                'ALL',
-                                style: TextStyle(
-                                  color: leadProvider.entryType == 'all'
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey,
-                                  fontWeight: leadProvider.entryType == 'all'
-                                      ? FontWeight.w500
-                                      : FontWeight.normal,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 16),
-                      CustomFilterButton(
-                        onPressed: () {
-                          leadProvider.toggleFilter();
-                        },
-                        isFilter: leadProvider.isFilter,
-                      ),
-                    ],
-                  ),
-                ),
                 if (leadProvider.isFilter)
                   Expanded(
                     child: SingleChildScrollView(
