@@ -648,6 +648,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   // Backup branding state
                   String? cachedLogo = prefs.getString('cached_company_logo');
                   String? cachedTitle = prefs.getString('cached_company_title');
+                  String? baseUrl = prefs.getString('company_base_url');
 
                   await prefs.clear();
 
@@ -670,6 +671,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     await prefs.setString('cached_company_logo', cachedLogo);
                   if (cachedTitle != null)
                     await prefs.setString('cached_company_title', cachedTitle);
+                  if (baseUrl != null)
+                    await prefs.setString('company_base_url', baseUrl);
 
                   if (context.mounted) {
                     Navigator.of(context).pop();
