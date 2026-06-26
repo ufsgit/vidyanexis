@@ -16,6 +16,7 @@ import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/user_task_type_model.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 
 import '../http/http_urls.dart';
@@ -1009,15 +1010,44 @@ class DropDownProvider extends ChangeNotifier {
 
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: "${HttpUrls.getStatusByTaskTypeId}/$taskTypeId/$viewInId");
+          endPoint:
+              "${HttpUrls.getStatusAndSubStatusByTaskType}?Task_Type_Id=$taskTypeId");
 
       if (response.statusCode == 200) {
-        final data = response.data;
+        final rawData = response.data;
+        if (rawData is List) {
+          List<Map<String, dynamic>> statusData = [];
+          for (var item in rawData) {
+            if (item is Map) {
+              statusData.add(Map<String, dynamic>.from(item));
+            }
+          }
 
-        if (data != null) {
-          statusList = (data as List<dynamic>)
-              .map((item) => TaskTypeStatusModel.fromJson(item))
-              .toList();
+          statusList = statusData.map((item) {
+            var model = TaskTypeStatusModel.fromJson(item);
+            model.subStatuses = []; // Disable secondary dropdown
+            return model;
+          }).toList();
+
+          return statusList;
+        } else if (rawData is Map) {
+          final rawMap = Map<String, dynamic>.from(rawData);
+          if (rawMap.containsKey("success") && rawMap["success"] == true) {
+            var taskTypeStatusData = rawMap["data"] as List;
+            List<Map<String, dynamic>> statusData = [];
+            for (var item in taskTypeStatusData) {
+              if (item is Map) {
+                statusData.add(Map<String, dynamic>.from(item));
+              }
+            }
+
+            statusList = statusData.map((item) {
+              var model = TaskTypeStatusModel.fromJson(item);
+              model.subStatuses = []; // Disable secondary dropdown
+              return model;
+            }).toList();
+            return statusList;
+          }
         }
         return statusList;
       } else {

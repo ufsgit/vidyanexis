@@ -247,6 +247,8 @@ class HttpUrls {
   static String getLeadDropdowns = "lead/Get_Lead_Dropdown";
   static String getProcessFlowData =
       "process_flow/get_all_dropDown_processFlow";
+  static String getStatusAndSubStatusByTaskType =
+      "process_flow/Get_Status_And_SubStatus_By_TaskType";
   static String getTaskTypeByDepartment =
       "process_flow/Get_Task_Type_Of_Department";
   static String saveProcessFlow = "process_flow/Save_Process_Flow";

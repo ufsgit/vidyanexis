@@ -105,6 +105,31 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
         _showCustomFields.clear();
         _showCustomFields.addAll(processFlowProvider.showCustomFields);
       }
+
+      if (processFlowProvider.processFlowModel.taskTypeId.isGreaterThanZero()) {
+        await processFlowProvider.getStatusAndSubStatusByTaskType(
+            context, processFlowProvider.processFlowModel.taskTypeId!);
+        
+        final selectedStatus = processFlowProvider.dynamicTaskTypeStatusList
+            .where((element) =>
+                element.statusId ==
+                processFlowProvider.processFlowModel.statusId)
+            .firstOrNull;
+        if (selectedStatus != null) {
+          taskStatusController.text = selectedStatus.statusName ?? '';
+          
+          final selectedSubStatus = selectedStatus.subStatuses
+              ?.where((element) =>
+                  element.subStatusId ==
+                  processFlowProvider.processFlowModel.taskSubStatusId)
+              .firstOrNull;
+          if (selectedSubStatus != null) {
+            taskSubStatusController.text =
+                selectedSubStatus.subStatusName ?? '';
+          }
+        }
+        setState(() {});
+      }
     });
   }
 
@@ -403,7 +428,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             element.taskTypeId ==
                             processFlowProvider.processFlowModel.taskTypeId)
                         .firstOrNull,
-                    onItemSelected: (TaskTypeModel? newValue) {
+                    onItemSelected: (TaskTypeModel? newValue) async {
                       if (newValue != null) {
                         processFlowProvider.processFlowModel.taskTypeId =
                             newValue.taskTypeId;
@@ -412,12 +437,19 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
 
                         processFlowProvider.processFlowModel.statusId = 0;
                         processFlowProvider.processFlowModel.statusName = "";
+                        processFlowProvider.processFlowModel.taskSubStatusId = 0;
+                        processFlowProvider.processFlowModel.taskSubStatusName = "";
 
                         processFlowProvider.setProcessFlowModel(
                             processFlowProvider.processFlowModel);
                         // Clear task status when task type changes
 
                         taskStatusController.clear();
+                        taskSubStatusController.clear();
+                        setState(() {});
+
+                        await processFlowProvider.getStatusAndSubStatusByTaskType(
+                            context, newValue.taskTypeId);
                         setState(() {});
                       }
                     },
@@ -426,10 +458,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                   final taskTypeStatusDropdown =
                       CommonDropdown<TaskTypeStatusModel>(
                     hintText: 'Task type status *',
-                    items: taskTypeStatusList
-                        .where((element) =>
-                            processFlowProvider.processFlowModel.taskTypeId ==
-                            element.taskTypeId)
+                    items: processFlowProvider.dynamicTaskTypeStatusList
                         .map((status) => DropdownItem<TaskTypeStatusModel>(
                               id: status,
                               name: status.statusName ?? "NA",
@@ -437,33 +466,32 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         .toList(),
                     controller: taskStatusController,
                     key: ValueKey(
-                        processFlowProvider.processFlowModel.taskTypeId),
+                        'status_${processFlowProvider.processFlowModel.taskTypeId}_${processFlowProvider.dynamicTaskTypeStatusList.length}'),
                     onItemSelected: (TaskTypeStatusModel? newValue) {
                       if (newValue != null) {
                         processFlowProvider.processFlowModel.statusId =
                             newValue.statusId;
                         processFlowProvider.processFlowModel.statusName =
                             newValue.statusName;
+                        processFlowProvider.processFlowModel.taskSubStatusId = 0;
+                        processFlowProvider.processFlowModel.taskSubStatusName = "";
                         processFlowProvider.setProcessFlowModel(
                             processFlowProvider.processFlowModel);
+                        taskSubStatusController.clear();
                         setState(() {});
                       }
                     },
-                    selectedValue: taskTypeStatusList
-                        .where((element) => (element.taskTypeId ==
-                                processFlowProvider
-                                    .processFlowModel.taskTypeId &&
+                    selectedValue: processFlowProvider.dynamicTaskTypeStatusList
+                        .where((element) =>
                             element.statusId ==
-                                processFlowProvider.processFlowModel.statusId))
+                            processFlowProvider.processFlowModel.statusId)
                         .firstOrNull,
                   );
                   
-                  final selectedTaskTypeStatus = taskTypeStatusList
+                  final selectedTaskTypeStatus = processFlowProvider.dynamicTaskTypeStatusList
                       .where((element) =>
-                          element.taskTypeId ==
-                              processFlowProvider.processFlowModel.taskTypeId &&
                           element.statusId ==
-                              processFlowProvider.processFlowModel.statusId)
+                          processFlowProvider.processFlowModel.statusId)
                       .firstOrNull;
 
                   final taskTypeSubStatusDropdown = (selectedTaskTypeStatus?.subStatuses?.isNotEmpty ?? false)
@@ -478,7 +506,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                     ))
                                 .toList(),
                             controller: taskSubStatusController,
-                            key: ValueKey('taskSub_'),
+                            key: ValueKey('taskSub_${processFlowProvider.processFlowModel.statusId}'),
                             onItemSelected: (SubStatus? newValue) {
                               if (newValue != null) {
                                 processFlowProvider.processFlowModel.taskSubStatusId =
