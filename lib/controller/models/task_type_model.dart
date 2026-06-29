@@ -32,6 +32,7 @@ class TaskTypeModel {
   List<Status> statuses;
   List<EnquiryFor>? enquiryFor;
   int enquiryForVisible;
+  int showUser;
 
   TaskTypeModel(
       {required this.taskTypeId,
@@ -52,6 +53,7 @@ class TaskTypeModel {
       required this.departmentName,
       this.enquiryFor,
       required this.enquiryForVisible,
+      required this.showUser,
       this.description});
 
   factory TaskTypeModel.fromJson(Map<String, dynamic> json) => TaskTypeModel(
@@ -108,6 +110,7 @@ class TaskTypeModel {
           : List<EnquiryFor>.from(json["Enquiry_For_Ids"].map((x) => EnquiryFor.fromJson(x))),
       enquiryForVisible: int.tryParse(json["Enquiry_For_Visible"]?.toString() ?? json["enquiry_for_visible"]?.toString() ?? '0') ?? 0,
       departmentName: json["Department_Name"],
+      showUser: int.tryParse(json["Show_User"]?.toString() ?? json["show_user"]?.toString() ?? '0') ?? 0,
       description: json["Description"]?.toString());
 
   bool get isEnabled => conversionTask == 1 && deleteStatus == 0;

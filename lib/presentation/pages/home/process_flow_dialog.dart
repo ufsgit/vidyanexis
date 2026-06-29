@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
@@ -14,6 +16,7 @@ import 'package:vidyanexis/controller/models/form_model.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
@@ -38,6 +41,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   bool showScheduleNotes = false;
   bool showDescription = false;
   bool showFollowUpDate = false;
+  FocusNode staffFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -50,6 +54,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       final formProvider = Provider.of<FormProvider>(context, listen: false);
+      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      leadProvider.searchUserController.clear();
 
       reportsProvider.descriptionController.clear();
       final imageProvider =
@@ -96,6 +102,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
         final reportsProvider =
             Provider.of<TaskPageProvider>(context, listen: false);
         reportsProvider.clearDescription();
+        staffFocusNode.dispose();
       }
     });
     super.dispose();
@@ -121,6 +128,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   Widget build(BuildContext context) {
     final reportsProvider =
         Provider.of<TaskPageProvider>(context, listen: false);
+    final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC), // Subtle grey background
       appBar: AppBar(
@@ -448,15 +456,87 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       bool isSelected = reportsProvider
                                           .selectedTaskTypeIds
                                           .contains(task.taskTypeId.toString());
-                                      return _buildInteractiveCard(
-                                        onTap: () => reportsProvider
-                                            .toggleTaskTypeSelection(
-                                                task.taskTypeId.toString()),
-                                        isSelected: isSelected,
-                                        title: task.departmentName != null &&
-                                                task.departmentName!.isNotEmpty
-                                            ? '${task.taskTypeName} (${task.departmentName})'
-                                            : task.taskTypeName,
+                                      return Column(
+                                        children: [
+                                          _buildInteractiveCard(
+                                            onTap: () => reportsProvider
+                                                .toggleTaskTypeSelection(
+                                                    task.taskTypeId.toString()),
+                                            isSelected: isSelected,
+                                            title: task.departmentName !=
+                                                        null &&
+                                                    task.departmentName!
+                                                        .isNotEmpty
+                                                ? '${task.taskTypeName} (${task.departmentName})'
+                                                : task.taskTypeName,
+                                          ),
+                                          //User DropDown
+                                          if (task.showUser == 1)
+                                            Consumer<DropDownProvider>(
+                                              builder: (context,
+                                                  dropDownProvider, child) {
+                                                return CustomAutocompleteSearch<
+                                                    SearchUserDetails>(
+                                                  showOptionsOnTap: true,
+                                                  focusNode: staffFocusNode,
+                                                  maxHeight: 300,
+                                                  optionsViewOpenDirection:
+                                                      OptionsViewOpenDirection
+                                                          .down,
+                                                  items: dropDownProvider
+                                                      .filteredStaffData,
+                                                  displayStringFunction:
+                                                      (staff) =>
+                                                          staff.userDetailsName,
+                                                  defaultText: leadProvider
+                                                      .searchUserController
+                                                      .text,
+                                                  labelText: 'User',
+                                                  controller: leadProvider
+                                                      .searchUserController,
+                                                  suffixIcon:
+                                                      const Icon(Icons.search),
+                                                  onSelected: (SearchUserDetails
+                                                      selected) {
+                                                    dropDownProvider
+                                                        .setSelectedUserId(
+                                                      selected.userDetailsId,
+                                                    );
+
+                                                    leadProvider
+                                                            .searchUserController
+                                                            .text =
+                                                        selected
+                                                            .userDetailsName;
+
+                                                    final taskTypeIdStr = task
+                                                        .taskTypeId
+                                                        .toString();
+                                                    reportsProvider.setTaskUser(
+                                                        taskTypeIdStr,
+                                                        selected.userDetailsId);
+                                                  },
+                                                  onChanged: (value) {
+                                                    int branchId =
+                                                        task.branchIds ?? 0;
+                                                    int departmentId =
+                                                        task.departmentIds ?? 0;
+                                                    dropDownProvider
+                                                        .filterStaffByBranchAndDepartment(
+                                                            branchId: branchId,
+                                                            departmentId:
+                                                                departmentId);
+                                                    dropDownProvider
+                                                        .filterStaff(value);
+                                                  },
+                                                  onSearch: (query) async {
+                                                    dropDownProvider
+                                                        .filterStaff(query);
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                        ],
                                       );
                                     }),
                                     const SizedBox(height: 8),
