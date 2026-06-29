@@ -312,8 +312,8 @@ class LeadDetails {
       colorCode: parseString(json['Color_Code']),
       deleteStatus: parseInt(json['DeleteStatus']),
       leadDetailsId: parseInt(json['Lead_Details_Id']),
-      consumerNumber: parseString(json['Consumer_Number']),
-      electricalSection: parseString(json['Electrical_Section']),
+      consumerNumber: parseString(json['consumer_number'] ?? json['Consumer_Number']),
+      electricalSection: parseString(json['electrical_section'] ?? json['Electrical_Section']),
       inverterCapacity:
           parseDouble(json['inverter_capacity'] ?? json['Inverter_Capacity']),
       inverterTypeId:

@@ -834,14 +834,14 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                       //     fontWeight: FontWeight.w600,
                       //   ),
                       // ),
-                      // Text(
-                      //   'Additional details',
-                      //   style: GoogleFonts.plusJakartaSans(
-                      //     color: AppColors.textGrey4,
-                      //     fontSize: 14,
-                      //     fontWeight: FontWeight.w600,
-                      //   ),
-                      // ),
+                      Text(
+                        'Additional details',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.textGrey4,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       if (!widget.isEdit)
                         Text(
                           'Follow-up Details',
@@ -859,7 +859,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                         buildInverterAndPanelDetails(),
                       // buildCostDetails(),
                       // buildDocumentsDetails(),
-                      // buildAdditionalDetails(),
+                      buildAdditionalDetails(),
                       if (!widget.isEdit) buildFollowupDetails()
                     ]),
               ),

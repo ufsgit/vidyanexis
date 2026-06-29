@@ -99,6 +99,13 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getTaskType(context);
       provider.getFollowUpStatus(context, "3");
       provider.getEnquiryFor(context);
+      
+      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+      provider.getEnquirySource(context);
+      settingsProvider.searchBranch(context);
+      settingsProvider.searchDepartment('', context);
+      settingsProvider.searchsourceCategoryData('', context);
+      provider.getDistricts(context);
     });
   }
 
@@ -615,8 +622,27 @@ class _tasksPageReportState extends State<TaskPage> {
                             ),
                             if (settingsProvider.menuIsViewMap[156] == 1)
                               ElevatedButton.icon(
-                                onPressed: () {
-                                  showDialog(
+                                onPressed: () async {
+                                  final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+                                  final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+
+                                  dropDownProvider.updateEnquiryForName(null, '');
+                                  dropDownProvider.updateDistrict(null, '');
+
+                                  await leadsProvider.getLeadDropdowns(context);
+                                  await dropDownProvider.getFollowUpStatus(context, "1");
+                                  
+                                  // Fetch missing dropdown data for the Lead drawer explicitly
+                                  await dropDownProvider.getEnquirySource(context);
+                                  await dropDownProvider.getEnquiryFor(context);
+                                  final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                                  await settingsProvider.searchsourceCategoryData('', context);
+                                  settingsProvider.searchBranch(context);
+                                  settingsProvider.searchDepartment('', context);
+
+                                  if (!context.mounted) return;
+
+                                  await showDialog(
                                     context: context,
                                     barrierDismissible: true,
                                     builder: (BuildContext context) {
@@ -625,6 +651,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                       );
                                     },
                                   );
+
+                                  if (context.mounted) {
+                                    dropDownProvider.getFollowUpStatus(context, "3");
+                                  }
                                 },
                                 icon: const Icon(Icons.add, size: 16),
                                 label: Text(
@@ -1844,10 +1874,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         return;
                                                                     }
 
+                                                                    await dropDownProvider.getFollowUpStatus(context, "1");
+                                                                    
+                                                                    // Fetch missing dropdown data for the Lead drawer explicitly
+                                                                    await dropDownProvider.getEnquirySource(context);
+                                                                    await dropDownProvider.getEnquiryFor(context);
+                                                                    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                                                                    await settingsProvider.searchsourceCategoryData('', context);
+                                                                    settingsProvider.searchBranch(context);
+                                                                    settingsProvider.searchDepartment('', context);
+                                                                    
+                                                                    if (!context.mounted) return;
+
                                                                     Navigator.pop(
                                                                         context); // Close loading dialog
 
-                                                                    showDialog(
+                                                                    await showDialog(
                                                                       context:
                                                                           context,
                                                                       builder:
@@ -1859,6 +1901,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         );
                                                                       },
                                                                     );
+
+                                                                    if (context.mounted) {
+                                                                      dropDownProvider.getFollowUpStatus(context, "3");
+                                                                    }
                                                                   },
                                                                   child: Row(
                                                                     children: [

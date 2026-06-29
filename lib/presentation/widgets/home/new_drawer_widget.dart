@@ -537,65 +537,66 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 ),
                               ],
                             ),
-                            if (!widget.isEdit || (settingsProvider.menuIsEditMap[3] == 1))
+                            if (!widget.isEdit ||
+                                (settingsProvider.menuIsEditMap[3] == 1))
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryBlue,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  backgroundColor: AppColors.primaryBlue,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24, vertical: 12),
-                              ),
-                              onPressed: () async {
-                                bool exists =
-                                    await leadProvider.checkLeadContactExists(
-                                        leadProvider.contactNoController.text);
-                                print(exists);
-                                if (exists) {
-                                  print('Dialog');
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title:
-                                            Text('Lead contact already exists'),
-                                        content: Text(
-                                            'Lead contact already exists. Do you want to save'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              print('Lead save');
-                                              _saveLead();
-                                            },
-                                            child: Text('Continue'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  print('Lead save');
-                                  _saveLead();
-                                }
-                              },
-                              child: Text(
-                                'Save',
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                                onPressed: () async {
+                                  bool exists = await leadProvider
+                                      .checkLeadContactExists(leadProvider
+                                          .contactNoController.text);
+                                  print(exists);
+                                  if (exists) {
+                                    print('Dialog');
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                              'Lead contact already exists'),
+                                          content: Text(
+                                              'Lead contact already exists. Do you want to save'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                print('Lead save');
+                                                _saveLead();
+                                              },
+                                              child: Text('Continue'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    print('Lead save');
+                                    _saveLead();
+                                  }
+                                },
+                                child: Text(
+                                  'Save',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
@@ -975,15 +976,17 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                   .selectedSourceId !=
                                               null,
                                           items: (() {
-                                            print('DEBUG: Total records rendered in UI: ${dropDownProvider.filteredEnquiryForData.length}');
+                                            print(
+                                                'DEBUG: Total records rendered in UI: ${dropDownProvider.filteredEnquiryForData.length}');
                                             return dropDownProvider
-                                              .filteredEnquiryForData
-                                              .map((status) =>
-                                                  DropdownItem<int>(
-                                                    id: status.enquiryForId,
-                                                    name: status.enquiryForName,
-                                                  ))
-                                              .toList();
+                                                .filteredEnquiryForData
+                                                .map((status) =>
+                                                    DropdownItem<int>(
+                                                      id: status.enquiryForId,
+                                                      name:
+                                                          status.enquiryForName,
+                                                    ))
+                                                .toList();
                                           })(),
                                           controller:
                                               leadProvider.enquiryForController,
@@ -1012,8 +1015,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                 );
                                               } else {
                                                 if (selectedEnquiryFor
-                                                        .parsedCustomFields
-                                                        .isNotEmpty) {
+                                                    .parsedCustomFields
+                                                    .isNotEmpty) {
                                                   leadProvider
                                                       .setCustomFieldEnquiryFor(
                                                           selectedEnquiryFor
@@ -1586,191 +1589,187 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ],
                         ),
 
-                      //consumer details
-                      // if (settingsProvider.menuIsViewMap[34] == 1)
-                      //   ExpansionTile(
-                      //     shape: const RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.zero,
-                      //     ),
-                      //     title: Text(
-                      //       'Additional details',
-                      //       style: GoogleFonts.plusJakartaSans(
-                      //         color: AppColors.textGrey3,
-                      //         fontSize: 14,
-                      //         fontWeight: FontWeight.w600,
-                      //       ),
-                      //     ),
-                      //     tilePadding: EdgeInsets.zero,
-                      //     initiallyExpanded: false,
-                      //     // leadProvider.consumerNoController.text.isEmpty
-                      //     //     ? false
-                      //     //     : true,
-                      //     children: [
-                      //       const SizedBox(
-                      //         height: 5,
-                      //       ),
-                      //       Row(
-                      //         children: [
-                      //           Expanded(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.only(right: 8.0),
-                      //               child: CustomTextField(
-                      //                 readOnly: false,
-                      //                 height: 54,
-                      //                 controller:
-                      //                     leadProvider.consumerNoController,
-                      //                 hintText: 'Consumer no',
-                      //                 labelText: '',
-                      //                 inputFormatters: [
-                      //                   FilteringTextInputFormatter.digitsOnly
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Expanded(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.symmetric(
-                      //                   horizontal: 4.0),
-                      //               child: CustomTextField(
-                      //                 readOnly: false,
-                      //                 height: 54,
-                      //                 controller: leadProvider
-                      //                     .electricalSectionController,
-                      //                 hintText: 'Electrical Section',
-                      //                 labelText: '',
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Expanded(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.only(left: 8.0),
-                      //               child: CustomTextField(
-                      //                 readOnly: false,
-                      //                 height: 54,
-                      //                 controller:
-                      //                     leadProvider.connectedLoadController,
-                      //                 hintText: 'Connected load',
-                      //                 labelText: '',
-                      //                 inputFormatters: [
-                      //                   FilteringTextInputFormatter.digitsOnly
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       const SizedBox(height: 8),
-                      //       // Row 2: REP, Lead By, Work Type
-                      //       Row(
-                      //         children: [
-                      //           Expanded(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.only(right: 8.0),
-                      //               child: CustomTextField(
-                      //                 readOnly: false,
-                      //                 height: 54,
-                      //                 controller: leadProvider.repController,
-                      //                 hintText: 'REP',
-                      //                 labelText: '',
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Expanded(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.symmetric(
-                      //                   horizontal: 4.0),
-                      //               child: CustomTextField(
-                      //                 readOnly: false,
-                      //                 height: 54,
-                      //                 controller: leadProvider.leadByController,
-                      //                 hintText: 'Lead By',
-                      //                 labelText: '',
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Expanded(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.only(left: 8.0),
-                      //               child: CommonDropdown<int>(
-                      //                 hintText: 'Work Type',
-                      //                 items: leadProvider
-                      //                     .leadDropdownData!.workType
-                      //                     .map((status) => DropdownItem<int>(
-                      //                           id: status.workTypeId,
-                      //                           name: status.workTypeName,
-                      //                         ))
-                      //                     .toList(),
-                      //                 controller:
-                      //                     leadProvider.workTypeController,
-                      //                 onItemSelected: (selectedId) {
-                      //                   leadProvider.setWorkTypeId(selectedId);
-                      //                   final selectedItem = leadProvider
-                      //                       .leadDropdownData!.workType
-                      //                       .firstWhere((status) =>
-                      //                           status.workTypeId ==
-                      //                           selectedId);
-                      //                   leadProvider.workTypeController.text =
-                      //                       selectedItem.workTypeName ?? '';
-                      //                 },
-                      //                 selectedValue:
-                      //                     leadProvider.selectedWorkTypeId,
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       const SizedBox(height: 8),
-                      //       // Row 3: Additional Comments, Roof Type, Empty space
-                      //       Row(
-                      //         children: [
-                      //           Expanded(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.only(right: 8.0),
-                      //               child: CustomTextField(
-                      //                 readOnly: false,
-                      //                 height: 54,
-                      //                 controller: leadProvider
-                      //                     .additionalCommentscONTROLLER,
-                      //                 hintText: 'Any Additional Comments',
-                      //                 labelText: '',
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Expanded(
-                      //             child: Padding(
-                      //               padding: const EdgeInsets.symmetric(
-                      //                   horizontal: 4.0),
-                      //               child: CommonDropdown<int>(
-                      //                 hintText: 'Roof Type',
-                      //                 items: leadProvider
-                      //                     .leadDropdownData!.roofType
-                      //                     .map((status) => DropdownItem<int>(
-                      //                           id: status.roofTypeId,
-                      //                           name: status.roofTypeName,
-                      //                         ))
-                      //                     .toList(),
-                      //                 controller:
-                      //                     leadProvider.roofTypeController,
-                      //                 onItemSelected: (selectedId) {
-                      //                   leadProvider.setRoofTypeId(selectedId);
-                      //                   final selectedItem = leadProvider
-                      //                       .leadDropdownData!.roofType
-                      //                       .firstWhere((status) =>
-                      //                           status.roofTypeId ==
-                      //                           selectedId);
-                      //                   leadProvider.roofTypeController.text =
-                      //                       selectedItem.roofTypeName ?? '';
-                      //                 },
-                      //                 selectedValue:
-                      //                     leadProvider.selectedRoofId,
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           const Spacer()
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
+                      // consumer details
+                      if (settingsProvider.menuIsViewMap[34] == 1)
+                      ExpansionTile(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
+
+                        title: Text(
+                          'Additional details',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textGrey3,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        tilePadding: EdgeInsets.zero,
+                        initiallyExpanded: false,
+                        // leadProvider.consumerNoController.text.isEmpty
+                        //     ? false
+                        //     : true,
+                        children: [
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CustomTextField(
+                                    readOnly: false,
+                                    height: 54,
+                                    controller:
+                                        leadProvider.consumerNoController,
+                                    hintText: 'Consumer no',
+                                    labelText: '',
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: CustomTextField(
+                                    readOnly: false,
+                                    height: 54,
+                                    controller: leadProvider
+                                        .electricalSectionController,
+                                    hintText: 'Electrical Section',
+                                    labelText: '',
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: CustomTextField(
+                                    readOnly: false,
+                                    height: 54,
+                                    controller:
+                                        leadProvider.connectedLoadController,
+                                    hintText: 'Connected load',
+                                    labelText: '',
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Row 2: REP, Lead By, Work Type
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CustomTextField(
+                                    readOnly: false,
+                                    height: 54,
+                                    controller: leadProvider.repController,
+                                    hintText: 'REP',
+                                    labelText: '',
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: CustomTextField(
+                                    readOnly: false,
+                                    height: 54,
+                                    controller: leadProvider.leadByController,
+                                    hintText: 'Lead By',
+                                    labelText: '',
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: CommonDropdown<int>(
+                                    hintText: 'Work Type',
+                                    items:
+                                        leadProvider.leadDropdownData!.workType
+                                            .map((status) => DropdownItem<int>(
+                                                  id: status.workTypeId,
+                                                  name: status.workTypeName,
+                                                ))
+                                            .toList(),
+                                    controller: leadProvider.workTypeController,
+                                    onItemSelected: (selectedId) {
+                                      leadProvider.setWorkTypeId(selectedId);
+                                      final selectedItem = leadProvider
+                                          .leadDropdownData!.workType
+                                          .firstWhere((status) =>
+                                              status.workTypeId == selectedId);
+                                      leadProvider.workTypeController.text =
+                                          selectedItem.workTypeName ?? '';
+                                    },
+                                    selectedValue:
+                                        leadProvider.selectedWorkTypeId,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Row 3: Additional Comments, Roof Type, Empty space
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CustomTextField(
+                                    readOnly: false,
+                                    height: 54,
+                                    controller: leadProvider
+                                        .additionalCommentscONTROLLER,
+                                    hintText: 'Any Additional Comments',
+                                    labelText: '',
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: CommonDropdown<int>(
+                                    hintText: 'Roof Type',
+                                    items:
+                                        leadProvider.leadDropdownData!.roofType
+                                            .map((status) => DropdownItem<int>(
+                                                  id: status.roofTypeId,
+                                                  name: status.roofTypeName,
+                                                ))
+                                            .toList(),
+                                    controller: leadProvider.roofTypeController,
+                                    onItemSelected: (selectedId) {
+                                      leadProvider.setRoofTypeId(selectedId);
+                                      final selectedItem = leadProvider
+                                          .leadDropdownData!.roofType
+                                          .firstWhere((status) =>
+                                              status.roofTypeId == selectedId);
+                                      leadProvider.roofTypeController.text =
+                                          selectedItem.roofTypeName ?? '';
+                                    },
+                                    selectedValue: leadProvider.selectedRoofId,
+                                  ),
+                                ),
+                              ),
+                              const Spacer()
+                            ],
+                          ),
+                        ],
+                      ),
 
                       //follow up
                       if (widget.isEdit == false)
