@@ -109,98 +109,135 @@ Future<void> _addItemPage(pw.Document pdf) async {
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('Prop. No: ${quotation?.quotationNo ?? ''}',
-                            style: pw.TextStyle(font: boldFont, fontSize: 12)),
-                        pw.SizedBox(height: 4),
-                        pw.Row(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text('Buyer Details : ',
-                                style:
-                                    pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text(customer?.customerName ?? '',
-                                style: pw.TextStyle(font: font, fontSize: 11)),
-                          ],
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Text(customer?.address ?? '',
-                            style: pw.TextStyle(font: font, fontSize: 11)),
-                        pw.SizedBox(height: 4),
-                        pw.Row(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text('Mob : ',
-                                style:
-                                    pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text(customer?.phoneNumber ?? '',
-                                style: pw.TextStyle(font: font, fontSize: 11)),
-                          ],
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Text('GST : 32AAXCA0127A1Z8',
-                            style: pw.TextStyle(font: boldFont, fontSize: 11)),
-                        pw.SizedBox(height: 4),
-                        pw.Text(
-                            'Scope of Work: ${quotation?.productName ?? ''}',
-                            style: pw.TextStyle(font: boldFont, fontSize: 12)),
-                      ],
+                    pw.Expanded(
+                      flex: 5,
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text('Prop. No: ${quotation?.quotationNo ?? ''}',
+                              style: pw.TextStyle(font: boldFont, fontSize: 12)),
+                          pw.SizedBox(height: 4),
+                          pw.Row(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('Buyer Details : ',
+                                  style:
+                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                              pw.Flexible(
+                                child: pw.Text(customer?.customerName ?? '',
+                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 4),
+                          pw.Text(customer?.address ?? '',
+                              maxLines: 3,
+                              style: pw.TextStyle(font: font, fontSize: 11)),
+                          pw.SizedBox(height: 4),
+                          pw.Row(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('Mob : ',
+                                  style:
+                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                              pw.Flexible(
+                                child: pw.Text(customer?.phoneNumber ?? '',
+                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 4),
+                          pw.Text('GST : 32AAXCA0127A1Z8',
+                              style: pw.TextStyle(font: boldFont, fontSize: 11)),
+                          pw.SizedBox(height: 4),
+                          pw.Text(
+                              'Scope of Work: ${quotation?.productName ?? ''}',
+                              style: pw.TextStyle(font: boldFont, fontSize: 12)),
+                        ],
+                      ),
                     ),
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.end,
-                      children: [
-                        pw.Row(
-                          children: [
-                            pw.Text('Date: ',
-                                style:
-                                    pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text(quotation?.entryDate.toDDMMYYYY() ?? '',
-                                style: pw.TextStyle(font: font, fontSize: 11)),
-                          ],
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Row(
-                          children: [
-                            pw.Text('Payment Terms : ',
-                                style:
-                                    pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text(quotation?.paymentTermsName ?? '',
-                                style: pw.TextStyle(font: font, fontSize: 11)),
-                          ],
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Row(
-                          children: [
-                            pw.Text('Inco Terms : ',
-                                style:
-                                    pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text(quotation?.incoTerms ?? '',
-                                style: pw.TextStyle(font: font, fontSize: 11)),
-                          ],
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Row(
-                          children: [
-                            pw.Text('Quote Validity : ',
-                                style:
-                                    pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text(quotation?.validity ?? '',
-                                style: pw.TextStyle(font: font, fontSize: 11)),
-                          ],
-                        ),
-                        pw.SizedBox(height: 4),
-                        pw.Row(
-                          children: [
-                            pw.Text('MNRE Empanelment Number : ',
-                                style:
-                                    pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text(quotation?.tendorNumber ?? '',
-                                style: pw.TextStyle(font: font, fontSize: 11)),
-                          ],
-                        ),
-                      ],
+                    pw.SizedBox(width: 20),
+                    pw.Expanded(
+                      flex: 5,
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.end,
+                        children: [
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.end,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('Date: ',
+                                  style:
+                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                              pw.Flexible(
+                                child: pw.Text(quotation?.entryDate.toDDMMYYYY() ?? '',
+                                    textAlign: pw.TextAlign.right,
+                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 4),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.end,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('Payment Terms : ',
+                                  style:
+                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                              pw.Flexible(
+                                child: pw.Text(quotation?.paymentTermsName ?? '',
+                                    textAlign: pw.TextAlign.right,
+                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 4),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.end,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('Inco Terms : ',
+                                  style:
+                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                              pw.Flexible(
+                                child: pw.Text(quotation?.incoTerms ?? '',
+                                    textAlign: pw.TextAlign.right,
+                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 4),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.end,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('Quote Validity : ',
+                                  style:
+                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                              pw.Flexible(
+                                child: pw.Text(quotation?.validity ?? '',
+                                    textAlign: pw.TextAlign.right,
+                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 4),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.end,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('MNRE Empanelment Number : ',
+                                  style:
+                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                              pw.Flexible(
+                                child: pw.Text(quotation?.tendorNumber ?? '',
+                                    textAlign: pw.TextAlign.right,
+                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

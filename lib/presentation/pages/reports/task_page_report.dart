@@ -238,6 +238,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                             'Assigned To',
                             'Description',
                             'Date',
+                            'Location',
                             'Status'
                           ],
                           data: allTasks.map((task) {
@@ -254,6 +255,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                   ? DateFormat('dd MMM yyyy')
                                       .format(DateTime.parse(task.entryDate))
                                   : '',
+                              'Location': task.location,
                               'Status': task.taskStatusName,
                             };
                           }).toList(),
@@ -623,6 +625,16 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                   fontSize: 14,
                                                   color: Color(0xFF607185))))),
                                   SizedBox(
+                                      width: 150,
+                                      child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12.0, horizontal: 8.0),
+                                          child: const Text('Location',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  color: Color(0xFF607185))))),
+                                  SizedBox(
                                       width: 100,
                                       child: Padding(
                                           padding: const EdgeInsets.symmetric(
@@ -764,6 +776,17 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                       .format(DateTime.parse(
                                                           task.entryDate))
                                                   : ''),
+                                            ),
+                                            SizedBox(
+                                              width: 150,
+                                              child: Tooltip(
+                                                message: task.location.isEmpty ? 'No Location' : task.location,
+                                                child: Text(
+                                                  task.location.isEmpty ? 'No Location' : task.location,
+                                                  style: const TextStyle(fontSize: 14),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
                                             ),
                                             SizedBox(
                                               width: 100,
