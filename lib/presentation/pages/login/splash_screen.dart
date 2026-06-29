@@ -38,9 +38,9 @@ class _SplashScreenState extends State<SplashScreen> {
         }
       }
 
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-      await settingsProvider.getCompanyDetails();
+      // final settingsProvider =
+      //     Provider.of<SettingsProvider>(context, listen: false);
+      // await settingsProvider.getCompanyDetails();
       _checkLoginStatus();
     });
   }

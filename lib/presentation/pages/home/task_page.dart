@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
@@ -61,6 +62,7 @@ class _tasksPageReportState extends State<TaskPage> {
   TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNodeWeb = FocusNode();
   final FocusNode searchFocusNodeMobile = FocusNode();
+  final FocusNode staffFocusNode = FocusNode();
   DropDownProvider provider = DropDownProvider();
   late TaskPageProvider reportsProvider;
   final ScrollController _scrollController = ScrollController();
@@ -76,6 +78,8 @@ class _tasksPageReportState extends State<TaskPage> {
       reportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
       final searchProvider =
           Provider.of<SidebarProvider>(context, listen: false);
+      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      leadProvider.searchUserController.clear();
 
       _updateScreenType();
       _setupScrollListener();
@@ -360,6 +364,79 @@ class _tasksPageReportState extends State<TaskPage> {
               },
               onChanged: _onSearchChanged,
               searchController: searchController,
+              customActionWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        reportsProvider.setEntryType('myown');
+                        reportsProvider.goToPage(1);
+                        reportsProvider.searchTaskByCustomer(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: reportsProvider.entryType != 'all'
+                                  ? AppColors.primaryBlue
+                                  : Colors.transparent,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'ME',
+                          style: TextStyle(
+                            color: reportsProvider.entryType != 'all'
+                                ? AppColors.primaryBlue
+                                : Colors.grey,
+                            fontWeight: reportsProvider.entryType != 'all'
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () {
+                        reportsProvider.setEntryType('all');
+                        reportsProvider.goToPage(1);
+                        reportsProvider.searchTaskByCustomer(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: reportsProvider.entryType == 'all'
+                                  ? AppColors.primaryBlue
+                                  : Colors.transparent,
+                              width: 2.0,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'ALL',
+                          style: TextStyle(
+                            color: reportsProvider.entryType == 'all'
+                                ? AppColors.primaryBlue
+                                : Colors.grey,
+                            fontWeight: reportsProvider.entryType == 'all'
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             )
           : null,
       drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
@@ -681,133 +758,7 @@ class _tasksPageReportState extends State<TaskPage> {
                         ),
                       ],
                     )
-                  : Column(
-                      children: [
-                        // Mobile Layout
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Left side: Tasks title only
-                            Row(
-                              children: [
-                                if (widget.initialStatusFilter != null) ...[
-                                  IconButton(
-                                    icon: const Icon(Icons.arrow_back,
-                                        color: Color(0xFF152D70)),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  const SizedBox(width: 8),
-                                ],
-                              ],
-                            ),
-                            Expanded(
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    // Entry Type Filter
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            reportsProvider
-                                                .setEntryType('myown');
-                                            reportsProvider.goToPage(1);
-                                            reportsProvider
-                                                .searchTaskByCustomer(context);
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 2),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: reportsProvider
-                                                              .entryType !=
-                                                          'all'
-                                                      ? AppColors.primaryBlue
-                                                      : Colors.transparent,
-                                                  width: 2.0,
-                                                ),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              'ME',
-                                              style: TextStyle(
-                                                color:
-                                                    reportsProvider.entryType !=
-                                                            'all'
-                                                        ? AppColors.primaryBlue
-                                                        : Colors.grey,
-                                                fontWeight:
-                                                    reportsProvider.entryType !=
-                                                            'all'
-                                                        ? FontWeight.w500
-                                                        : FontWeight.normal,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        GestureDetector(
-                                          onTap: () {
-                                            reportsProvider.setEntryType('all');
-                                            reportsProvider.goToPage(1);
-                                            reportsProvider
-                                                .searchTaskByCustomer(context);
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 2),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: reportsProvider
-                                                              .entryType ==
-                                                          'all'
-                                                      ? AppColors.primaryBlue
-                                                      : Colors.transparent,
-                                                  width: 2.0,
-                                                ),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              'ALL',
-                                              style: TextStyle(
-                                                color:
-                                                    reportsProvider.entryType ==
-                                                            'all'
-                                                        ? AppColors.primaryBlue
-                                                        : Colors.grey,
-                                                fontWeight:
-                                                    reportsProvider.entryType ==
-                                                            'all'
-                                                        ? FontWeight.w500
-                                                        : FontWeight.normal,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(width: 16),
-                                    CustomFilterButton(
-                                      onPressed: () {
-                                        reportsProvider.toggleFilter();
-                                      },
-                                      isFilter: reportsProvider.isFilter,
-                                    ),
-                                  ]),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  : const SizedBox.shrink(),
             ),
             if (reportsProvider.isFilter && AppStyles.isWebScreen(context))
               Container(
@@ -2722,7 +2673,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                               onChanged: (sub) {
                                                 selectedSubStatus.value = sub;
                                                 if (sub != null) {
-                                                  reportsProvider.fetchTaskTypes(
+                                                  reportsProvider
+                                                      .fetchTaskTypes(
                                                     task.taskTypeId,
                                                     sub.subStatusId ?? 0,
                                                     task.customerId,
@@ -3131,10 +3083,18 @@ class _tasksPageReportState extends State<TaskPage> {
                         final reportsProvider = Provider.of<TaskPageProvider>(
                             context,
                             listen: false);
+                        final dropDownProvider = Provider.of<DropDownProvider>(
+                            context,
+                            listen: false);
+                        final leadProvider =
+                            Provider.of<LeadsProvider>(context, listen: false);
 
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           reportsProvider.fetchTaskTypes(tasktypeId, statusId,
                               customerId, enquiryForId, context);
+                          dropDownProvider.getUserDetails(context);
+                          dropDownProvider.filteredStaffData.clear();
+                          leadProvider.searchUserController.clear();
                           reportsProvider.clearDescription();
 
                           // Also fetch forms for this customer
@@ -3298,7 +3258,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                               onChanged: (sub) {
                                                 selectedSubStatus.value = sub;
                                                 if (sub != null) {
-                                                  reportsProvider.fetchTaskTypes(
+                                                  reportsProvider
+                                                      .fetchTaskTypes(
                                                     task.taskTypeId,
                                                     sub.subStatusId ?? 0,
                                                     task.customerId,
@@ -3407,24 +3368,40 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       horizontal: 16,
                                                       vertical: 8),
                                               child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
                                                 children: [
-                                                  Text('New Task',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          color: Colors
-                                                              .grey.shade600,
-                                                          fontWeight:
-                                                              FontWeight.w500)),
-                                                  Text('Department',
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          color: Colors
-                                                              .grey.shade600,
-                                                          fontWeight:
-                                                              FontWeight.w500)),
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text('New Task',
+                                                        style: TextStyle(
+                                                            fontSize: 13,
+                                                            color: Colors
+                                                                .grey.shade600,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500)),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Text('Department',
+                                                        style: TextStyle(
+                                                            fontSize: 13,
+                                                            color: Colors
+                                                                .grey.shade600,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500)),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Text('User',
+                                                        style: TextStyle(
+                                                            fontSize: 13,
+                                                            color: Colors
+                                                                .grey.shade600,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500)),
+                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -3457,64 +3434,152 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         horizontal: 16,
                                                         vertical: 10),
                                                     child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
                                                       children: [
-                                                        Row(
-                                                          children: [
-                                                            Container(
-                                                              width: 18,
-                                                              height: 18,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: selected
-                                                                    ? AppColors
-                                                                        .darkGreen
-                                                                    : Colors
-                                                                        .white,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            4),
-                                                                border: Border.all(
-                                                                    color: selected
-                                                                        ? AppColors
-                                                                            .darkGreen
-                                                                        : Colors
-                                                                            .grey
-                                                                            .shade400),
+                                                        Expanded(
+                                                          flex: 2,
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                width: 18,
+                                                                height: 18,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: selected
+                                                                      ? AppColors
+                                                                          .darkGreen
+                                                                      : Colors
+                                                                          .white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              4),
+                                                                  border: Border.all(
+                                                                      color: selected
+                                                                          ? AppColors
+                                                                              .darkGreen
+                                                                          : Colors
+                                                                              .grey
+                                                                              .shade400),
+                                                                ),
+                                                                child: selected
+                                                                    ? const Icon(
+                                                                        Icons
+                                                                            .check,
+                                                                        size:
+                                                                            14,
+                                                                        color: Colors
+                                                                            .white)
+                                                                    : null,
                                                               ),
-                                                              child: selected
-                                                                  ? const Icon(
-                                                                      Icons
-                                                                          .check,
-                                                                      size: 14,
-                                                                      color: Colors
-                                                                          .white)
-                                                                  : null,
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 10),
-                                                            Text(
-                                                                taskItem.taskTypeName ??
-                                                                    '',
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500)),
-                                                          ],
+                                                              const SizedBox(
+                                                                  width: 10),
+                                                              Text(
+                                                                  taskItem.taskTypeName ??
+                                                                      '',
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500)),
+                                                            ],
+                                                          ),
                                                         ),
-                                                        Text(
-                                                            taskItem.departmentName ??
-                                                                '',
-                                                            style: TextStyle(
-                                                                fontSize: 13,
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade700)),
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: Text(
+                                                              taskItem.departmentName ??
+                                                                  '',
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade700)),
+                                                        ),
+                                                        //User DropDown
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: taskItem
+                                                                      .showUser ==
+                                                                  1
+                                                              ? Consumer<
+                                                                  DropDownProvider>(
+                                                                  builder: (context,
+                                                                      dropDownProvider,
+                                                                      child) {
+                                                                    return CustomAutocompleteSearch<
+                                                                        SearchUserDetails>(
+                                                                      showOptionsOnTap:
+                                                                          true,
+                                                                      focusNode:
+                                                                          staffFocusNode,
+                                                                      maxHeight:
+                                                                          300,
+                                                                      optionsViewOpenDirection:
+                                                                          OptionsViewOpenDirection
+                                                                              .down,
+                                                                      items: dropDownProvider
+                                                                          .filteredStaffData,
+                                                                      displayStringFunction:
+                                                                          (staff) =>
+                                                                              staff.userDetailsName,
+                                                                      defaultText: leadProvider
+                                                                          .searchUserController
+                                                                          .text,
+                                                                      labelText:
+                                                                          'User',
+                                                                      controller:
+                                                                          leadProvider
+                                                                              .searchUserController,
+                                                                      suffixIcon:
+                                                                          const Icon(
+                                                                              Icons.search),
+                                                                      onSelected:
+                                                                          (SearchUserDetails
+                                                                              selected) {
+                                                                        dropDownProvider
+                                                                            .setSelectedUserId(
+                                                                          selected
+                                                                              .userDetailsId,
+                                                                        );
+
+                                                                        leadProvider
+                                                                            .searchUserController
+                                                                            .text = selected.userDetailsName;
+
+                                                                        final taskTypeIdStr = taskItem
+                                                                            .taskTypeId
+                                                                            .toString();
+                                                                        reportsProvider.setTaskUser(
+                                                                            taskTypeIdStr,
+                                                                            selected.userDetailsId);
+                                                                      },
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        int branchId =
+                                                                            taskItem.branchIds ??
+                                                                                0;
+                                                                        int departmentId =
+                                                                            taskItem.departmentIds ??
+                                                                                0;
+                                                                        dropDownProvider.filterStaffByBranchAndDepartment(
+                                                                            branchId:
+                                                                                branchId,
+                                                                            departmentId:
+                                                                                departmentId);
+                                                                        dropDownProvider
+                                                                            .filterStaff(value);
+                                                                      },
+                                                                      onSearch:
+                                                                          (query) async {
+                                                                        dropDownProvider
+                                                                            .filterStaff(query);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                )
+                                                              : SizedBox(),
+                                                        )
                                                       ],
                                                     ),
                                                   ),

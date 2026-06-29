@@ -13,6 +13,7 @@ import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 
 class ProcessFlowProvider extends ChangeNotifier {
   ProcessFlowModel processFlowModel = ProcessFlowModel();
@@ -24,6 +25,8 @@ class ProcessFlowProvider extends ChangeNotifier {
   List<ProcessFlowModel> processFlowList = [];
   List<Map<String, dynamic>> savedCustomFields = [];
   List<CustomFieldModel> showCustomFields = [];
+  List<TaskTypeStatusModel> dynamicTaskTypeStatusList = [];
+  bool isLoadingTaskTypeStatuses = false;
 
   int? _selectedEnquiryForId;
   int? get selectedEnquiryForId => _selectedEnquiryForId;
@@ -69,6 +72,8 @@ class ProcessFlowProvider extends ChangeNotifier {
     _selectedDocuments = [];
     savedCustomFields = [];
     showCustomFields = [];
+    dynamicTaskTypeStatusList = [];
+    isLoadingTaskTypeStatuses = false;
   }
 
   void removeTaskFlow(int index) {
@@ -188,6 +193,61 @@ class ProcessFlowProvider extends ChangeNotifier {
       enquiryForList,
       searchLeadStatusList,
     );
+  }
+
+  Future<List<TaskTypeStatusModel>> getStatusAndSubStatusByTaskType(
+      BuildContext context, int taskTypeId) async {
+    isLoadingTaskTypeStatuses = true;
+    notifyListeners();
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              "${HttpUrls.getStatusAndSubStatusByTaskType}?Task_Type_Id=$taskTypeId");
+
+      if (response.statusCode == 200) {
+        final rawData = response.data;
+        if (rawData is List) {
+          List<Map<String, dynamic>> statusData = [];
+          for (var item in rawData) {
+            if (item is Map) {
+              statusData.add(Map<String, dynamic>.from(item));
+            }
+          }
+
+          dynamicTaskTypeStatusList = statusData.map((item) {
+            var model = TaskTypeStatusModel.fromJson(item);
+            model.subStatuses = []; // Disable secondary dropdown
+            return model;
+          }).toList();
+
+          return dynamicTaskTypeStatusList;
+        } else if (rawData is Map) {
+          final rawMap = Map<String, dynamic>.from(rawData);
+          if (rawMap.containsKey("success") && rawMap["success"] == true) {
+            var taskTypeStatusData = rawMap["data"] as List;
+            List<Map<String, dynamic>> statusData = [];
+            for (var item in taskTypeStatusData) {
+              if (item is Map) {
+                statusData.add(Map<String, dynamic>.from(item));
+              }
+            }
+
+            dynamicTaskTypeStatusList = statusData.map((item) {
+              var model = TaskTypeStatusModel.fromJson(item);
+              model.subStatuses = []; // Disable secondary dropdown
+              return model;
+            }).toList();
+            return dynamicTaskTypeStatusList;
+          }
+        }
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+    } finally {
+      isLoadingTaskTypeStatuses = false;
+      notifyListeners();
+    }
+    return [];
   }
 
   Future<List<ProcessFlowModel>> getProcessFlow(BuildContext context) async {
@@ -323,6 +383,14 @@ class ProcessFlowProvider extends ChangeNotifier {
               data["data"]["lead_status_id"]?.toInt();
           processFlowModel.leadStatusName =
               data["data"]["lead_status_name"]?.toString();
+          processFlowModel.taskSubStatusId =
+              data["data"]["task_sub_status_id"]?.toInt();
+          processFlowModel.taskSubStatusName =
+              data["data"]["task_sub_status_name"]?.toString();
+          processFlowModel.leadSubStatusId =
+              data["data"]["lead_sub_status_id"]?.toInt();
+          processFlowModel.leadSubStatusName =
+              data["data"]["lead_sub_status_name"]?.toString();
           _showLeadStatus = data["data"]["Show_Lead_Status"]?.toString() == "1";
           var showCustomFieldsData = data["data"]["show_custom_fields"] ??
               data["data"]["show_custom_field"] ??
@@ -395,6 +463,10 @@ class ProcessFlowProvider extends ChangeNotifier {
                 .toList(),
             "lead_status_id": processFlowModel.leadStatusId ?? 0,
             "lead_status_name": processFlowModel.leadStatusName ?? '',
+            "lead_sub_status_id": processFlowModel.leadSubStatusId ?? 0,
+            "lead_sub_status_name": processFlowModel.leadSubStatusName ?? '',
+            "task_sub_status_id": processFlowModel.taskSubStatusId ?? 0,
+            "task_sub_status_name": processFlowModel.taskSubStatusName ?? '',
             "Show_Lead_Status": _showLeadStatus ? "1" : "0",
           });
 

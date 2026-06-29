@@ -139,6 +139,7 @@ class _HomePageState extends State<HomePage> {
                 // Backup branding state
                 String? cachedLogo = prefs.getString('cached_company_logo');
                 String? cachedTitle = prefs.getString('cached_company_title');
+                String? baseUrl = prefs.getString('company_base_url');
 
                 await prefs.clear();
 
@@ -164,6 +165,9 @@ class _HomePageState extends State<HomePage> {
                 }
                 if (cachedTitle != null) {
                   await prefs.setString('cached_company_title', cachedTitle);
+                }
+                if (baseUrl != null) {
+                  await prefs.setString('company_base_url', baseUrl);
                 }
 
                 if (context.mounted) {

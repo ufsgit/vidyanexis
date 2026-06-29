@@ -35,11 +35,11 @@ class AttendanceRecord {
       userDetailsName: json['User_Details_Name'] ??
           '', // Default to empty string if 'User_Details_Name' is null
       photo: json['photo'] ?? '', // Default to empty string if 'photo' is null
-      location: json['location'] ??
+      location: json['Location'] ?? json['location'] ??
           '', // Default to empty string if 'location' is null
-      latitude: json['latitude'] ??
+      latitude: json['Latitude'] ?? json['latitude'] ??
           "0.0", // Convert to double and default to 0.0 if null
-      longitude: json['longitude'] ??
+      longitude: json['Longitude'] ?? json['longitude'] ??
           "0.0", // Convert to double and default to 0.0 if null
       updatedAt: json['updated_at'] ??
           '', // Default to empty string if 'updated_at' is null

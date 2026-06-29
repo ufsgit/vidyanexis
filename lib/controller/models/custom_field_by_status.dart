@@ -136,6 +136,17 @@ class DropdownValue {
         "dropdown_id": dropdownId,
         "dropdown_value": dropdownValue,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DropdownValue &&
+          runtimeType == other.runtimeType &&
+          dropdownId == other.dropdownId &&
+          dropdownValue == other.dropdownValue;
+
+  @override
+  int get hashCode => dropdownId.hashCode ^ dropdownValue.hashCode;
 }
 
 class CheckBoxValues {

@@ -16,6 +16,7 @@ import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/user_task_type_model.dart';
+import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 
 import '../http/http_urls.dart';
@@ -155,10 +156,10 @@ class DropDownProvider extends ChangeNotifier {
   void filterEnquiryForByCategory(int sourceCategoryId) {
     // Display all records without filtering by sourceCategoryId
     filteredEnquiryForData = enquiryForList;
-    print('DEBUG: filterEnquiryForByCategory called. Total records bound to dropdown: ${filteredEnquiryForData.length}');
+    print(
+        'DEBUG: filterEnquiryForByCategory called. Total records bound to dropdown: ${filteredEnquiryForData.length}');
     notifyListeners();
   }
-
 
   void filterStaffByBranchAndDepartment({
     required int? branchId,
@@ -710,14 +711,16 @@ class DropDownProvider extends ChangeNotifier {
           List<EnquiryForModel> allEnquiryFor = (data as List<dynamic>)
               .map((item) => EnquiryForModel.fromJson(item))
               .toList();
-              
-          print('DEBUG: getEnquiryFor - Total records received from API: ${allEnquiryFor.length}');
+
+          print(
+              'DEBUG: getEnquiryFor - Total records received from API: ${allEnquiryFor.length}');
 
           // Removed duplicate filtering logic (fetchUserSpecific) that was removing valid records
           _enquiryForList = allEnquiryFor;
           filteredEnquiryForData = List.from(allEnquiryFor);
-          print('DEBUG: getEnquiryFor - Total records bound to dropdown: ${filteredEnquiryForData.length}');
-          
+          print(
+              'DEBUG: getEnquiryFor - Total records bound to dropdown: ${filteredEnquiryForData.length}');
+
           notifyListeners();
         }
       } else {

@@ -108,6 +108,23 @@ class TaskPageProvider extends ChangeNotifier {
   int? get expandedIndex => _expandedIndex;
   int _flowId = 0;
 
+  Map<String, int> _taskTypeToUserMap = {};
+  Map<String, int> get taskTypeToUserMap => _taskTypeToUserMap;
+
+  void setTaskUser(String taskTypeId, int? userId) {
+    if (userId != null && userId > 0) {
+      _taskTypeToUserMap[taskTypeId] = userId;
+    } else {
+      _taskTypeToUserMap.remove(taskTypeId);
+    }
+    notifyListeners();
+  }
+
+  void clearTaskUserAssignments() {
+    _taskTypeToUserMap.clear();
+    notifyListeners();
+  }
+
   void toggleExpansion(int index) {
     if (_expandedIndex == index) {
       _expandedIndex = null;
@@ -678,6 +695,15 @@ class TaskPageProvider extends ChangeNotifier {
       double latitude = locationData?['latitude'] ?? 0.0;
       double longitude = locationData?['longitude'] ?? 0.0;
 
+      // Build TaskUsers list - ONLY where user is selected
+      List<Map<String, dynamic>> taskUsers = _taskTypeToUserMap.entries
+          .where((entry) => _selectedTaskTypeIds.contains(entry.key))
+          .map((entry) => {
+                "task_type_id": int.tryParse(entry.key) ?? 0,
+                "to_user_id": entry.value,
+              })
+          .toList();
+
       List<Map<String, dynamic>> customFieldsData = [];
       if (customFieldTaskStatusKey.currentState != null) {
         final fieldValues =
@@ -720,6 +746,7 @@ class TaskPageProvider extends ChangeNotifier {
             "sub_status_id": subStatus?.subStatusId,
             "sub_status_name": subStatus?.subStatusName,
             "Sub_Status": subStatus != null ? [subStatus.toJson()] : null,
+            "TaskUsers": taskUsers,
           });
 
       if (response?.statusCode == 200) {
@@ -730,6 +757,7 @@ class TaskPageProvider extends ChangeNotifier {
           if (isSuccess) {
             descriptionController.clear();
             _pageIndex = 1;
+            clearTaskUserAssignments();
             try {
               final dbProvider =
                   Provider.of<DashboardProvider>(context, listen: false);

@@ -193,6 +193,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                 'Assigned To',
                 'Description',
                 'Date',
+                'Location',
                 'Status'
               ],
               data: allTasks.map((task) {
@@ -209,6 +210,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                       ? DateFormat('dd MMM yyyy')
                           .format(DateTime.parse(task.entryDate))
                       : '',
+                  'Location': task.location,
                   'Status': task.taskStatusName,
                 };
               }).toList(),
@@ -466,6 +468,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                   status: task.taskStatusName,
                                   statusColor: statusColor,
                                   description: task.description,
+                                  locationText: task.location.isEmpty ? 'No Location' : task.location,
                                   bottomLeftIcon: Icons.calendar_month_outlined,
                                   bottomLeftText: task.taskDate
                                       .toString()

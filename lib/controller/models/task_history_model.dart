@@ -4,6 +4,9 @@ class TaskHistoryModel {
   String? description;
   String? statusName;
   String? byUserName;
+  String? location;
+  String? latitude;
+  String? longitude;
 
   TaskHistoryModel({
     this.taskHistoryId,
@@ -11,6 +14,9 @@ class TaskHistoryModel {
     this.description,
     this.statusName,
     this.byUserName,
+    this.location,
+    this.latitude,
+    this.longitude,
   });
 
   TaskHistoryModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +29,9 @@ class TaskHistoryModel {
         json['Status_Name']?.toString() ?? json['Task_Status']?.toString();
     byUserName =
         json['By_User_Name']?.toString() ?? json['User_Name']?.toString();
+    location = json['Location']?.toString() ?? json['location']?.toString();
+    latitude = json['Latitude']?.toString() ?? json['latitude']?.toString();
+    longitude = json['Longitude']?.toString() ?? json['longitude']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -32,6 +41,9 @@ class TaskHistoryModel {
     data['Description'] = description;
     data['Status_Name'] = statusName;
     data['By_User_Name'] = byUserName;
+    data['Location'] = location;
+    data['Latitude'] = latitude;
+    data['Longitude'] = longitude;
     return data;
   }
 }

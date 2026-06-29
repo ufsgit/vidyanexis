@@ -220,6 +220,26 @@ class TaskHistoryPopup extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
+                  if (history.location != null && history.location!.isNotEmpty) ...[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.location_on_outlined,
+                            size: 14, color: Color(0xFF94A3B8)),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            history.location!,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                   Row(
                     children: [
                       const Icon(Icons.person_outline,

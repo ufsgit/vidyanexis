@@ -54,6 +54,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool showUserName;
   final bool showAddIcon;
   final void Function()? onAddTap;
+  final Widget? customActionWidget;
 
   const CustomAppBar({
     super.key,
@@ -74,6 +75,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showUserName = true,
     this.showAddIcon = false,
     this.onAddTap,
+    this.customActionWidget,
     // Styling defaults
     this.titleStyle,
     this.leadingWidth = 56,
@@ -286,6 +288,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: widget.actionsPadding,
         child: Row(
           children: [
+            if (widget.customActionWidget != null)
+              widget.customActionWidget!,
             if (widget.showFilterIcon &&
                 onFilterTap != null &&
                 !widget.showSearch)

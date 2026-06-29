@@ -11,6 +11,7 @@ class ReportListItem extends StatelessWidget {
   final String? status;
   final Color statusColor;
   final String? description;
+  final String? locationText;
   final String? bottomLeftText;
   final IconData? bottomLeftIcon;
   final String? bottomRightText;
@@ -30,6 +31,7 @@ class ReportListItem extends StatelessWidget {
     this.status,
     required this.statusColor,
     this.description,
+    this.locationText,
     this.bottomLeftText,
     this.bottomLeftIcon,
     this.bottomRightText,
@@ -137,6 +139,32 @@ class ReportListItem extends StatelessWidget {
                                 fontWeight: FontWeight.w400,
                                 color: AppColors.textGrey4,
                               ),
+                            ),
+                          ],
+                          if (locationText != null &&
+                              locationText!.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on_outlined,
+                                  size: 14,
+                                  color: AppColors.textGrey3,
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    locationText!,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColors.textGrey4,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                           if (bottomLeftText != null &&
