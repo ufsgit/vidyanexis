@@ -572,6 +572,19 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         processFlowProvider.taskFlowModel.departmentId ?? 0,
                   );
 
+                  final showUserCheckboxWidget = Tooltip(
+                    message: 'Show User',
+                    child: Checkbox(
+                      value: processFlowProvider.taskFlowModel.showUser == 1,
+                      onChanged: (bool? value) {
+                        processFlowProvider.taskFlowModel.showUser =
+                            value == true ? 1 : 0;
+                        processFlowProvider
+                            .setTaskFlowModel(processFlowProvider.taskFlowModel);
+                      },
+                    ),
+                  );
+
                   final departmentTaskTypeDropdown =
                       FutureBuilder<List<TaskTypeModel>>(
                           future: _taskTypeByDepartmentFuture,
@@ -834,6 +847,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 Expanded(child: departmentDropdown),
                                 const SizedBox(width: 10),
                                 Expanded(child: departmentTaskTypeDropdown),
+                                const SizedBox(width: 10),
+                                showUserCheckboxWidget,
                               ],
                             )
                           : Column(
@@ -843,6 +858,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                 departmentDropdown,
                                 const SizedBox(height: 16),
                                 departmentTaskTypeDropdown,
+                                const SizedBox(height: 16),
+                                showUserCheckboxWidget,
                               ],
                             ),
                       const SizedBox(height: 16),
