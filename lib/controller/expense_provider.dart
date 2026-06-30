@@ -83,6 +83,8 @@ class ExpenseProvider extends ChangeNotifier {
   int get selectedItemCategory => _selectedItemCategory;
   int _selectedItemUnit = 0;
   int get selectedItemUnit => _selectedItemUnit;
+  int _selectedItemMaterialUnit = 0;
+  int get selectedItemMaterialUnit => _selectedItemMaterialUnit;
   final TextEditingController cgstController = TextEditingController();
   final TextEditingController sgstController = TextEditingController();
   final TextEditingController igstController = TextEditingController();
@@ -1324,6 +1326,11 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setItemMaterialUnit(int value) {
+    _selectedItemMaterialUnit = value;
+    notifyListeners();
+  }
+
   Future<void> searchItemListStock(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -1416,6 +1423,7 @@ class ExpenseProvider extends ChangeNotifier {
       priceTo: materialPriceToController.text,
       includeInTotal: _isQuantity ? "1" : "0",
       itemTypeId: _selectedItemTypeId.toString(),
+      unitId: _selectedItemMaterialUnit.toString(),
     );
 
     if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
@@ -1450,6 +1458,7 @@ class ExpenseProvider extends ChangeNotifier {
     setSubId(-1);
     _subItemId = null;
     _isQuantity = false;
+    _selectedItemMaterialUnit = 0;
     notifyListeners();
   }
 
@@ -1469,6 +1478,7 @@ class ExpenseProvider extends ChangeNotifier {
       _isQuantity = itemToEdit.includeInTotal == "1";
       setSubId(itemToEdit.subItemId);
       setEditItemIndex(index);
+      setItemMaterialUnit(int.tryParse(itemToEdit.unitId) ?? 0);
       notifyListeners();
     }
   }
@@ -2015,6 +2025,7 @@ class ExpenseProvider extends ChangeNotifier {
           unit: realItem.unit,
           includeInTotal: realItem.includeInTotal,
           itemTypeId: realItem.itemTypeId,
+          unitId: realItem.unitId,
         ));
       }
     }

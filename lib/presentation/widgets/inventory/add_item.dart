@@ -467,6 +467,20 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                                 item.itemId == selectedItem);
                                         expenseProvider
                                             .setSubId(selectedData.itemId);
+
+                                        expenseProvider.setItemMaterialUnit(
+                                            selectedData.unitId);
+                                        expenseProvider
+                                            .itemMaterialUnitController
+                                            .text = selectedData.unitName;
+                                        expenseProvider.itemPriceController
+                                            .text = selectedData.unitPrice;
+                                        expenseProvider
+                                            .materialPriceToController
+                                            .text = selectedData.priceTo;
+                                        expenseProvider
+                                            .materialPriceFromController
+                                            .text = selectedData.priceFrom;
                                       },
                                       selectedValue: expenseProvider.subItemId,
                                     ),
@@ -518,13 +532,28 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               Row(
                                 children: [
                                   Expanded(
-                                    child: CustomTextField(
-                                      readOnly: false,
-                                      height: 56,
+                                    child: CommonDropdown<int>(
+                                      hintText: 'Unit',
+                                      selectedValue: expenseProvider
+                                          .selectedItemMaterialUnit,
+                                      items: provider.searchUnit
+                                          .map((status) => DropdownItem<int>(
+                                                id: status.unitId,
+                                                name: status.unitName,
+                                              ))
+                                          .toList(),
                                       controller: expenseProvider
                                           .itemMaterialUnitController,
-                                      hintText: 'Unit',
-                                      labelText: '',
+                                      onItemSelected: (selectedId) {
+                                        expenseProvider
+                                            .setItemMaterialUnit(selectedId);
+                                        final selectedData = provider.searchUnit
+                                            .firstWhere((item) =>
+                                                item.unitId == selectedId);
+                                        expenseProvider
+                                            .itemMaterialUnitController
+                                            .text = selectedData.unitName;
+                                      },
                                     ),
                                   ),
                                   const SizedBox(width: 12),
