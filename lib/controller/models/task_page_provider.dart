@@ -212,12 +212,24 @@ class TaskPageProvider extends ChangeNotifier {
           Placemark place = placemarks.first;
 
           String? locality = place.locality;
+          String? subLocality = place.subLocality;
+          String? subAdminArea = place.subAdministrativeArea;
           String? adminArea = place.administrativeArea;
 
-          address = [
-            if (locality != null && locality.isNotEmpty) locality,
-            if (adminArea != null && adminArea.isNotEmpty) adminArea,
-          ].join(', ');
+          List<String> addressParts = [];
+          if (subLocality != null && subLocality.isNotEmpty) {
+            addressParts.add(subLocality);
+          }
+          if (locality != null && locality.isNotEmpty) {
+            addressParts.add(locality);
+          } else if (subAdminArea != null && subAdminArea.isNotEmpty) {
+            addressParts.add(subAdminArea);
+          }
+          if (adminArea != null && adminArea.isNotEmpty) {
+            addressParts.add(adminArea);
+          }
+
+          address = addressParts.join(', ');
 
           print("Resolved Address: $address");
         } else {
@@ -232,7 +244,7 @@ class TaskPageProvider extends ChangeNotifier {
         "longitude": position.longitude,
         "address": address.isNotEmpty
             ? address
-            : "${position.latitude},${position.longitude}"
+            : "Unknown Location"
       };
     } catch (e) {
       print("General error in getCurrentLocation: $e");

@@ -18,6 +18,7 @@ class TaskReportModel {
   final String taskTypeName;
   final int locationTracking;
   final String location;
+  final String locationName;
   final String latitude;
   final String longitude;
 
@@ -48,6 +49,7 @@ class TaskReportModel {
     required this.taskId,
     required this.locationTracking,
     required this.location,
+    required this.locationName,
     required this.latitude,
     required this.longitude,
     required this.taskMasterId,
@@ -100,6 +102,7 @@ class TaskReportModel {
       taskMasterId: json['Task_Master_Id'] ?? 0,
       locationTracking: json["Location_Tracking"] ?? 0,
       location: parseString(json['Location'] ?? json['location']),
+      locationName: parseString(json['Location_Name'] ?? json['location_name']),
       latitude: parseString(json['Latitude'] ?? json['latitude']),
       longitude: parseString(json['Longitude'] ?? json['longitude']),
       description: json['Description'] ?? '',
@@ -166,6 +169,7 @@ class TaskReportModel {
       'Task_Id': taskId,
       'Task_Master_Id': taskMasterId,
       'Location': location,
+      'Location_Name': locationName,
       'Latitude': latitude,
       'Longitude': longitude,
       'Description': description,

@@ -2772,10 +2772,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     context,
                                                     selectedStatus.value,
                                                     task.taskId,
-                                                    task.locationTracking == 1
-                                                        ? await reportsProvider
-                                                            .getCurrentLocation()
-                                                        : null,
+                                                    await reportsProvider
+                                                        .getCurrentLocation(),
                                                     subStatus:
                                                         selectedSubStatus.value,
                                                   );
@@ -4362,11 +4360,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 selectedStatus
                                                                     .value,
                                                                 task.taskId,
-                                                                task.locationTracking ==
-                                                                        1
-                                                                    ? await provider
-                                                                        .getCurrentLocation()
-                                                                    : null,
+                                                                await provider
+                                                                    .getCurrentLocation(),
                                                                 subStatus:
                                                                     selectedSubStatus
                                                                         .value);

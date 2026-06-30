@@ -502,9 +502,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
               ),
             Expanded(
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width < 1700
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width < 1700
                       ? 1700
                       : MediaQuery.of(context).size.width,
                   child: Padding(
@@ -780,9 +782,13 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                             SizedBox(
                                               width: 150,
                                               child: Tooltip(
-                                                message: task.location.isEmpty ? 'No Location' : task.location,
+                                                message: task.locationName.isNotEmpty 
+                                                    ? task.locationName 
+                                                    : task.location.isEmpty ? 'No Location' : task.location,
                                                 child: Text(
-                                                  task.location.isEmpty ? 'No Location' : task.location,
+                                                  task.locationName.isNotEmpty 
+                                                      ? task.locationName 
+                                                      : task.location.isEmpty ? 'No Location' : task.location,
                                                   style: const TextStyle(fontSize: 14),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
@@ -893,6 +899,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                   ),
                 ),
               ),
+            ),
             ),
           ],
         ),
