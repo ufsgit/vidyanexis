@@ -8,10 +8,12 @@ class ItemSettings {
   String specification;
   String manufacture;
   String unit;
+  String unitId;
   String priceFrom;
   String priceTo;
   double amount;
   String includeInTotal;
+  String showQuantity;
   String itemTypeId;
 
   // Constructor
@@ -29,7 +31,9 @@ class ItemSettings {
     this.priceTo = '',
     this.amount = 0.0,
     this.includeInTotal = "1",
+    this.showQuantity = "0",
     this.itemTypeId = '0',
+    this.unitId = '0',
   });
 
   // Factory method to create an instance from a JSON object
@@ -48,7 +52,9 @@ class ItemSettings {
       priceTo: json['Price_Range_To']?.toString() ?? '',
       amount: (json['Amount'] as num?)?.toDouble() ?? 0.0,
       includeInTotal: json['is_quantity']?.toString() ?? '1',
+      showQuantity: json['quantity_checkbox']?.toString() ?? '0',
       itemTypeId: json['Item_Type_Id']?.toString() ?? '0',
+      unitId: json['Unit_Id']?.toString() ?? '0',
     );
   }
 
@@ -68,7 +74,9 @@ class ItemSettings {
       'Price_Range_To': priceTo,
       'Amount': amount,
       'is_quantity': includeInTotal,
+      'quantity_checkbox': showQuantity,
       'Item_Type_Id': itemTypeId,
+      'Unit_Id': unitId,
     };
   }
 }

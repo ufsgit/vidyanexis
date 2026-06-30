@@ -35,6 +35,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   final Map<String, TextEditingController> _materialQtyControllers = {};
   final Map<String, TextEditingController> _materialNameControllers = {};
   final Map<String, bool> _materialChecked = {}; // New: Checkbox state
+  final Map<String, bool> _materialShowQtyChecked = {};
 
   List<AddedMultiItem> _addedItems = [];
 
@@ -63,6 +64,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
         _materialNameControllers[key] =
             TextEditingController(text: mat.itemMaterialName);
         _materialChecked[key] = mat.includeInTotal == '1' ? true : false;
+        _materialShowQtyChecked[key] = mat.showQuantity == '1' ? true : false;
       }
     }
   }
@@ -127,6 +129,19 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     final mat = _addedItems[itemIndex].materials[matIndex];
     final checked = mat.includeInTotal == '1';
     _materialChecked[key] = checked;
+    return checked;
+  }
+
+  bool _getMaterialShowQtyChecked(int itemIndex, int matIndex) {
+    final key = '${itemIndex}_$matIndex';
+
+    if (_materialShowQtyChecked.containsKey(key)) {
+      return _materialShowQtyChecked[key]!;
+    }
+
+    final mat = _addedItems[itemIndex].materials[matIndex];
+    final checked = mat.showQuantity == '1';
+    _materialShowQtyChecked[key] = checked;
     return checked;
   }
 
@@ -196,6 +211,15 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     });
   }
 
+  void _updateMaterialShowQtyChecked(int itemIndex, int matIndex, bool? value) {
+    final key = '${itemIndex}_$matIndex';
+    setState(() {
+      _materialShowQtyChecked[key] = value ?? false;
+      _addedItems[itemIndex].materials[matIndex].showQuantity =
+          value == true ? '1' : '0';
+    });
+  }
+
   void _removeItem(int index) {
     setState(() {
       _mainQtyControllers.remove(index);
@@ -253,6 +277,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
             amount: mat.price * scaledQty,
             includeInTotal: mat.includeInTotal,
             itemTypeId: mat.itemTypeId,
+            showQuantity: mat.showQuantity,
           );
         }).toList();
 
@@ -656,18 +681,43 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                                             val),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  width: 50,
-                                                  child: Checkbox(
-                                                    value: _getMaterialChecked(
-                                                        itemIndex, matIndex),
-                                                    onChanged: (val) =>
-                                                        _updateMaterialChecked(
-                                                            itemIndex,
-                                                            matIndex,
-                                                            val),
-                                                    activeColor:
-                                                        AppColors.primaryBlue,
+                                                Tooltip(
+                                                  message: "Show in Print",
+                                                  child: SizedBox(
+                                                    width: 50,
+                                                    child: Checkbox(
+                                                      value:
+                                                          _getMaterialChecked(
+                                                              itemIndex,
+                                                              matIndex),
+                                                      onChanged: (val) =>
+                                                          _updateMaterialChecked(
+                                                              itemIndex,
+                                                              matIndex,
+                                                              val),
+                                                      activeColor:
+                                                          AppColors.primaryBlue,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Tooltip(
+                                                  message:
+                                                      "Quantity as Required",
+                                                  child: SizedBox(
+                                                    width: 50,
+                                                    child: Checkbox(
+                                                      value:
+                                                          _getMaterialShowQtyChecked(
+                                                              itemIndex,
+                                                              matIndex),
+                                                      onChanged: (val) =>
+                                                          _updateMaterialShowQtyChecked(
+                                                              itemIndex,
+                                                              matIndex,
+                                                              val),
+                                                      activeColor:
+                                                          AppColors.primaryBlue,
+                                                    ),
                                                   ),
                                                 ),
                                                 const SizedBox(width: 12),

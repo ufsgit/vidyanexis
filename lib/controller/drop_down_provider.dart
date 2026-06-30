@@ -630,45 +630,8 @@ class DropDownProvider extends ChangeNotifier {
               .map((item) => Enquirysourcemodel.fromJson(item))
               .toList();
 
-          if (fetchUserSpecific && userId.isNotEmpty) {
-            try {
-              final userResponse = await HttpRequest.httpGetRequest(
-                endPoint: '${HttpUrls.getUserEnquirySource}/$userId',
-              );
-              if (userResponse.statusCode == 200 &&
-                  userResponse.data != null &&
-                  userResponse.data['data'] != null) {
-                final responseData = userResponse.data['data'];
-                List<dynamic> dataList;
-                if (responseData is Map &&
-                    responseData['enquiry_source_list'] != null) {
-                  dataList =
-                      responseData['enquiry_source_list'] as List<dynamic>;
-                } else if (responseData is List) {
-                  dataList = responseData;
-                } else {
-                  dataList = [];
-                }
-                final userSources = dataList
-                    .map((item) => UserEnquirySourceModel.fromJson(item))
-                    .toList();
-
-                allSources = allSources.where((source) {
-                  final matched = userSources.firstWhere(
-                    (u) => u.enquirySourceId == source.enquirySourceId,
-                    orElse: () => UserEnquirySourceModel(isview: 0),
-                  );
-                  return matched.isview == 1;
-                }).toList();
-              } else {
-                allSources = [];
-              }
-            } catch (e) {
-              print(
-                  'Exception occurred while fetching user enquiry sources: $e');
-              allSources = [];
-            }
-          }
+          // Removed duplicate filtering logic (fetchUserSpecific) that was removing valid records
+          // _enquiryData = allSources;
 
           _enquiryData = allSources;
           notifyListeners();
