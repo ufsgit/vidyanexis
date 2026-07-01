@@ -423,6 +423,25 @@ class SettingsProvider extends ChangeNotifier {
   final Map<int, int> _showDelete = {};
   Map<int, int> get showDelete => _showDelete;
 
+  //for print
+  final Map<int, int> _menuIsViewMapPrint = {};
+  Map<int, int> get menuIsViewMapPrint => _menuIsViewMapPrint;
+  final Map<int, int> _menuIsEditMapPrint = {};
+  Map<int, int> get menuIsEditMapPrint => _menuIsEditMapPrint;
+  final Map<int, int> _menuIsSaveMapPrint = {};
+  Map<int, int> get menuIsSaveMapPrint => _menuIsSaveMapPrint;
+  final Map<int, int> _menuIsDeleteMapPrint = {};
+  Map<int, int> get menuIsDeleteMapPrint => _menuIsDeleteMapPrint;
+  //show checkbox
+  final Map<int, int> _showViewPrint = {};
+  Map<int, int> get showViewPrint => _showViewPrint;
+  final Map<int, int> _showEditPrint = {};
+  Map<int, int> get showEditPrint => _showEditPrint;
+  final Map<int, int> _showSavePrint = {};
+  Map<int, int> get showSavePrint => _showSavePrint;
+  final Map<int, int> _showDeletePrint = {};
+  Map<int, int> get showDeletePrint => _showDeletePrint;
+
   List<Company> _companyDetails = [];
   List<Company> get companyDetails => _companyDetails;
   String logo = '';
@@ -1903,6 +1922,356 @@ class SettingsProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  Future<void> getMenuPermissionDataPrint(
+      String userId, BuildContext context) async {
+    try {
+      log(userId);
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getMenuPermissionPrint}/$userId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          var rawData = data as List<dynamic>;
+
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
+          var filteredData =
+              rawData.where((item) => (item['Menu_Status'] ?? 1) != 0).toList();
+
+          _getMenuPermission = filteredData
+              .map((item) => GetMenuPermissionModel.fromJson(item))
+              .toList();
+          // _getMenuPermission
+          //     .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
+
+          // Rename or add permission 55 as Print Quotation 2
+          // bool has55 = false;
+          // bool has32 = false;
+          // for (var i = 0; i < _getMenuPermission.length; i++) {
+          //   if (_getMenuPermission[i].menuId == 55) {
+          //     _getMenuPermission[i].menuName = 'Print Quotation 2';
+          //     has55 = true;
+          //   }
+          //   if (_getMenuPermission[i].menuId == 32) {
+          //     _getMenuPermission[i].menuName = 'Print Quotation 1';
+          //     has32 = true;
+          //   }
+          // }
+
+          // if (!has32) {
+          //   _getMenuPermission.add(GetMenuPermissionModel(
+          //       menuId: 32,
+          //       menuName: 'Print Quotation 1',
+          //       isView: 0,
+          //       isSave: 0,
+          //       isEdit: 0,
+          //       isDelete: 0));
+          // }
+
+          // if (!has55) {
+          //   _getMenuPermission.add(GetMenuPermissionModel(
+          //       menuId: 55,
+          //       menuName: 'Print Quotation 2',
+          //       isView: 0,
+          //       isSave: 0,
+          //       isEdit: 0,
+          //       isDelete: 0));
+          // }
+
+          // if (!_getMenuPermission.any((element) => element.menuId == 67)) {
+          //   _getMenuPermission.add(GetMenuPermissionModel(
+          //       menuId: 67,
+          //       menuName: 'Voice Recording',
+          //       isView: 0,
+          //       isSave: 0,
+          //       isEdit: 0,
+          //       isDelete: 0));
+          // }
+
+          // // Register Dashboard Tabs and new Report IDs
+          // final Map<int, String> customPermissions = {
+          //   49: 'Leads Overview',
+          //   50: 'Work Overview',
+          //   51: 'Task Overview',
+          //   52: 'Task Summary',
+          //   65: 'Balance Reports',
+          //   72: 'Payment Reports',
+          //   73: 'Upcoming Payment Reports',
+          //   74: 'Total Outstanding Reports',
+          //   75: 'Outstanding Reports',
+          //   76: 'AMC Notification',
+          //   77: 'Payment Reminders',
+          //   84: 'Dashboard count',
+          //   120: 'Lead Search',
+          // };
+
+          // for (var entry in customPermissions.entries) {
+          //   for (var i = 0; i < _getMenuPermission.length; i++) {
+          //     if (_getMenuPermission[i].menuId == entry.key) {
+          //       _getMenuPermission[i].menuName = entry.value;
+          //       break;
+          //     }
+          //   }
+          // }
+
+          // SharedPreferences preferences = await SharedPreferences.getInstance();
+          // String loginuserId = preferences.getString('userId') ?? "";
+          // if (loginuserId == userId) {
+          _menuIsViewMapPrint.clear();
+          _menuIsEditMapPrint.clear();
+          _menuIsDeleteMapPrint.clear();
+          _menuIsSaveMapPrint.clear();
+
+          //view
+          for (var permission in _getMenuPermission) {
+            menuIsViewMapPrint[permission.menuId] = permission.isView;
+            menuIsEditMapPrint[permission.menuId] = permission.isEdit;
+            menuIsDeleteMapPrint[permission.menuId] = permission.isDelete;
+            menuIsSaveMapPrint[permission.menuId] = permission.isSave;
+          }
+
+          // Example: Access IsView dynamically for Menu_Id = 1
+          // log('IsView for Users: ${menuIsViewMap[1]}');
+          // log('IsView for Settings: ${menuIsViewMap[2]}');
+          // log('IsView for Leads: ${menuIsViewMap[3]}');
+          // log('IsView for Customer: ${menuIsViewMap[4]}');
+          // log('IsView for Lead Status: ${menuIsViewMap[5]}');
+          // log('IsView for Enquiry Source: ${menuIsViewMap[6]}');
+          // log('IsView for Reports: ${menuIsViewMap[7]}');
+          // log('IsDelete for Users: ${menuIsDeleteMap[1]}');
+          // log('IsDelete for Settings: ${menuIsDeleteMap[2]}');
+          // log('IsDelete for Leads: ${menuIsDeleteMap[3]}');
+          // log('IsDelete for Customer: ${menuIsDeleteMap[4]}');
+          // log('IsDelete for Lead Status: ${menuIsDeleteMap[5]}');
+          // log('IsDelete for Enquiry Source: ${menuIsDeleteMap[6]}');
+          // log('IsDelete for Reports: ${menuIsDeleteMap[7]}');
+          // }
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<void> searchPermissionPrint(BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchmenuPrint}?menu_Name');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          _showMenu = (data as List<dynamic>)
+              .map((item) => MenuPermissionModel.fromJson(item))
+              .toList();
+
+          // Filter out permissions that are hidden by the backend (Menu_Status == 0)
+          _showMenu.removeWhere((item) => item.menuStatus == 0);
+
+          // _showMenu
+          //     .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
+
+          // // Rename or add permission 55 as Print Quotation 2
+          // bool has55 = false;
+          // bool has32 = false;
+          // for (var i = 0; i < _showMenu.length; i++) {
+          //   if (_showMenu[i].menuId == 55) {
+          //     _showMenu[i].menuName = 'Print Quotation 2';
+          //     has55 = true;
+          //   }
+          //   if (_showMenu[i].menuId == 32) {
+          //     _showMenu[i].menuName = 'Print Quotation 1';
+          //     has32 = true;
+          //   }
+          // }
+
+          // if (!has32) {
+          //   _showMenu.add(MenuPermissionModel(
+          //       menuId: 32,
+          //       menuName: 'Print Quotation 1',
+          //       menuOrder: 0,
+          //       menuOrderSub: 0,
+          //       isEdit: 1,
+          //       isSave: 1,
+          //       isDelete: 1,
+          //       isView: 1,
+          //       menuStatus: 1,
+          //       menuType: 1));
+          // }
+
+          // if (!has55) {
+          //   _showMenu.add(MenuPermissionModel(
+          //       menuId: 55,
+          //       menuName: 'Print Quotation 2',
+          //       menuOrder: 0,
+          //       menuOrderSub: 0,
+          //       isEdit: 1,
+          //       isSave: 1,
+          //       isDelete: 1,
+          //       isView: 1,
+          //       menuStatus: 1,
+          //       menuType: 1));
+          // }
+
+          // Register Dashboard Tabs and new Report IDs for showMenu fallback
+          // final Map<int, String> customPermissionsShow = {
+          //   49: 'Leads Overview',
+          //   50: 'Work Overview',
+          //   51: 'Task Overview',
+          //   52: 'Task Summary',
+          //   65: 'Balance Reports',
+          //   72: 'Payment Reports',
+          //   73: 'Upcoming Payment Reports',
+          //   74: 'Total Outstanding Reports',
+          //   75: 'Outstanding Reports',
+          //   76: 'AMC Notification',
+          //   77: 'Payment Reminders',
+          //   84: 'Dashboard count',
+          //   120: 'Lead Search',
+          // };
+
+          // for (var entry in customPermissionsShow.entries) {
+          //   for (var i = 0; i < _showMenu.length; i++) {
+          //     if (_showMenu[i].menuId == entry.key) {
+          //       _showMenu[i].menuName = entry.value;
+          //       break;
+          //     }
+          //   }
+          // }
+
+          // var recordingMenu = _showMenu.firstWhere((e) => e.menuId == 67,
+          //     orElse: () => MenuPermissionModel(
+          //         menuId: 67,
+          //         menuName: 'Voice Recording', // Fallback name
+          //         // Audio Recording Section
+          //         menuOrder: 0,
+          //         menuOrderSub: 0,
+          //         isEdit: 0, // Default to 0
+          //         isSave: 0, // Default to 0
+          //         isDelete: 0, // Default to 0
+          //         isView: 0, // Default to 0
+          //         menuStatus: 1,
+          //         menuType: 1));
+
+          // // Ensure it's in the list
+          // if (!_showMenu.contains(recordingMenu)) {
+          //   _showMenu.add(recordingMenu);
+          // } else {
+          //   // Force enable checkboxes if it came from backend with 0
+          //   recordingMenu.isView = 1;
+          //   recordingMenu.isEdit = 1;
+          //   recordingMenu.isSave = 1;
+          //   recordingMenu.isDelete = 1;
+          // }
+
+          _showViewPrint.clear();
+          _showEditPrint.clear();
+          _showDeletePrint.clear();
+          _showSavePrint.clear();
+
+          //view
+          for (var permission in _showMenu) {
+            showViewPrint[permission.menuId] = permission.isView;
+          }
+          //edit
+          for (var permission in _showMenu) {
+            showEditPrint[permission.menuId] = permission.isEdit;
+          }
+          //delete
+          for (var permission in _showMenu) {
+            showDeletePrint[permission.menuId] = permission.isDelete;
+          }
+          //save
+          for (var permission in _showMenu) {
+            showSavePrint[permission.menuId] = permission.isSave;
+          }
+
+          // Example: Access IsView dynamically for Menu_Id = 1
+          // log('IsView for Users: ${menuIsViewMap[1]}');
+          // log('IsView for Settings: ${menuIsViewMap[2]}');
+          // log('IsView for Leads: ${menuIsViewMap[3]}');
+          // log('IsView for Customer: ${menuIsViewMap[4]}');
+          // log('IsView for Lead Status: ${menuIsViewMap[5]}');
+          // log('IsView for Enquiry Source: ${menuIsViewMap[6]}');
+          // log('IsView for Reports: ${menuIsViewMap[7]}');
+          // log('IsDelete for Users: ${menuIsDeleteMap[1]}');
+          // log('IsDelete for Settings: ${menuIsDeleteMap[2]}');
+          // log('IsDelete for Leads: ${menuIsDeleteMap[3]}');
+          // log('IsDelete for Customer: ${menuIsDeleteMap[4]}');
+          // log('IsDelete for Lead Status: ${menuIsDeleteMap[5]}');
+          // log('IsDelete for Enquiry Source: ${menuIsDeleteMap[6]}');
+          // log('IsDelete for Reports: ${menuIsDeleteMap[7]}');
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<void> saveMenuPermissionPrint({
+    required BuildContext context,
+    required int userId,
+    required List<UserMenuSelection> menuPermissions,
+  }) async {
+    try {
+      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+
+      final menuSelectionModel = MenuSelectionModel(
+        userId: userId,
+        userMenuSelection: menuPermissions,
+      );
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveMenuPermissionPrint,
+        bodyData: menuSelectionModel.toJson(),
+      );
+
+      if (response?.statusCode == 200) {
+        final data = response?.data;
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        print(data);
+        getMenuPermissionDataPrint(userId.toString(), context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server error')),
+        );
+
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      const errorMessage = 'An error occurred';
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(errorMessage)),
+      );
+
+      Loader.stopLoader(context);
     }
   }
 

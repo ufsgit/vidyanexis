@@ -11,11 +11,13 @@ import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button
 class PermissionHandlingPage extends StatefulWidget {
   final String userName;
   final String userId;
+  final bool isPrintPermission;
 
   const PermissionHandlingPage({
     super.key,
     required this.userName,
     required this.userId,
+    this.isPrintPermission = false,
   });
 
   @override
@@ -71,7 +73,9 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
               ),
             ),
             Text(
-              'User: ${widget.userName}',
+              widget.isPrintPermission
+                  ? 'Enquiry For: ${widget.userName}'
+                  : 'User: ${widget.userName}',
               style: GoogleFonts.plusJakartaSans(
                 color: AppColors.textGrey2,
                 fontSize: 13,
@@ -155,12 +159,19 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                                       isDelete: item.isDelete,
                                     ))
                                 .toList();
-
-                        settingsProvider.saveMenuPermission(
-                          context: context,
-                          userId: int.parse(widget.userId),
-                          menuPermissions: permissions,
-                        );
+                        if (widget.isPrintPermission) {
+                          settingsProvider.saveMenuPermissionPrint(
+                            context: context,
+                            userId: int.parse(widget.userId),
+                            menuPermissions: permissions,
+                          );
+                        } else {
+                          settingsProvider.saveMenuPermission(
+                            context: context,
+                            userId: int.parse(widget.userId),
+                            menuPermissions: permissions,
+                          );
+                        }
                       },
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       textStyle: GoogleFonts.plusJakartaSans(
@@ -275,12 +286,19 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                                     isDelete: item.isDelete,
                                   ))
                               .toList();
-
-                      settingsProvider.saveMenuPermission(
-                        context: context,
-                        userId: int.parse(widget.userId),
-                        menuPermissions: permissions,
-                      );
+                      if (widget.isPrintPermission) {
+                        settingsProvider.saveMenuPermissionPrint(
+                          context: context,
+                          userId: int.parse(widget.userId),
+                          menuPermissions: permissions,
+                        );
+                      } else {
+                        settingsProvider.saveMenuPermission(
+                          context: context,
+                          userId: int.parse(widget.userId),
+                          menuPermissions: permissions,
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryBlue,
@@ -455,25 +473,33 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                   ),
                 ),
                 _buildCheckboxCell(
-                  settingsProvider.showView[item.menuId] == 1,
+                  widget.isPrintPermission
+                      ? settingsProvider.showViewPrint[item.menuId] == 1
+                      : settingsProvider.showView[item.menuId] == 1,
                   item.isView == 1,
                   (value) =>
                       updatePermission(item.menuId, 'isView', value ?? false),
                 ),
                 _buildCheckboxCell(
-                  settingsProvider.showSave[item.menuId] == 1,
+                  widget.isPrintPermission
+                      ? settingsProvider.showSavePrint[item.menuId] == 1
+                      : settingsProvider.showSave[item.menuId] == 1,
                   item.isSave == 1,
                   (value) =>
                       updatePermission(item.menuId, 'isSave', value ?? false),
                 ),
                 _buildCheckboxCell(
-                  settingsProvider.showEdit[item.menuId] == 1,
+                  widget.isPrintPermission
+                      ? settingsProvider.showEditPrint[item.menuId] == 1
+                      : settingsProvider.showEdit[item.menuId] == 1,
                   item.isEdit == 1,
                   (value) =>
                       updatePermission(item.menuId, 'isEdit', value ?? false),
                 ),
                 _buildCheckboxCell(
-                  settingsProvider.showDelete[item.menuId] == 1,
+                  widget.isPrintPermission
+                      ? settingsProvider.showDeletePrint[item.menuId] == 1
+                      : settingsProvider.showDelete[item.menuId] == 1,
                   item.isDelete == 1,
                   (value) =>
                       updatePermission(item.menuId, 'isDelete', value ?? false),
@@ -610,25 +636,33 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                   spacing: 12,
                   runSpacing: 12,
                   children: [
-                    if (settingsProvider.showView[item.menuId] == 1)
+                    if (widget.isPrintPermission
+                        ? settingsProvider.showViewPrint[item.menuId] == 1
+                        : settingsProvider.showView[item.menuId] == 1)
                       _buildMobileCheckbox(
                           'View',
                           item.isView == 1,
                           (v) => updatePermission(
                               item.menuId, 'isView', v ?? false)),
-                    if (settingsProvider.showSave[item.menuId] == 1)
+                    if (widget.isPrintPermission
+                        ? settingsProvider.showSavePrint[item.menuId] == 1
+                        : settingsProvider.showSave[item.menuId] == 1)
                       _buildMobileCheckbox(
                           'Save',
                           item.isSave == 1,
                           (v) => updatePermission(
                               item.menuId, 'isSave', v ?? false)),
-                    if (settingsProvider.showEdit[item.menuId] == 1)
+                    if (widget.isPrintPermission
+                        ? settingsProvider.showEditPrint[item.menuId] == 1
+                        : settingsProvider.showEdit[item.menuId] == 1)
                       _buildMobileCheckbox(
                           'Edit',
                           item.isEdit == 1,
                           (v) => updatePermission(
                               item.menuId, 'isEdit', v ?? false)),
-                    if (settingsProvider.showDelete[item.menuId] == 1)
+                    if (widget.isPrintPermission
+                        ? settingsProvider.showDeletePrint[item.menuId] == 1
+                        : settingsProvider.showDelete[item.menuId] == 1)
                       _buildMobileCheckbox(
                           'Delete',
                           item.isDelete == 1,
