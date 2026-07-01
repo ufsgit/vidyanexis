@@ -21,6 +21,7 @@ class ItemListModel {
   String priceFrom;
   String priceTo;
   List<ItemSettings> multiItemMaterials;
+  String itemDescription;
 
   // Constructor
   ItemListModel({
@@ -40,6 +41,7 @@ class ItemListModel {
     required this.hsnCode,
     required this.quantity,
     required this.primaryCheckBox,
+    this.itemDescription = '',
     this.priceFrom = '',
     this.priceTo = '',
     this.multiItemMaterials = const [],
@@ -70,6 +72,7 @@ class ItemListModel {
           .map((material) =>
               ItemSettings.fromJson(material as Map<String, dynamic>))
           .toList(),
+      itemDescription: json['Description']?.toString() ?? '',
     );
   }
 
@@ -93,6 +96,7 @@ class ItemListModel {
       'Price_Range_From': priceFrom,
       'Price_Range_To': priceTo,
       'itemMaterials': multiItemMaterials.map((m) => m.toJson()).toList(),
+      "Description": itemDescription,
     };
   }
 }

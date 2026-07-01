@@ -77,6 +77,7 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController searchitemNameController =
       TextEditingController();
   final TextEditingController itemNameController = TextEditingController();
+  final TextEditingController itemDescriptionController = TextEditingController();
   final TextEditingController itemCategoryController = TextEditingController();
   final TextEditingController itemUnitController = TextEditingController();
   int _selectedItemCategory = 0;
@@ -281,6 +282,13 @@ class ExpenseProvider extends ChangeNotifier {
   bool get isQuantity => _isQuantity;
   set isQuantity(bool value) {
     _isQuantity = value;
+    notifyListeners();
+  }
+
+  bool _asPerRequired = false;
+  bool get asPerRequired => _asPerRequired;
+  set asPerRequired(bool value) {
+    _asPerRequired = value;
     notifyListeners();
   }
 
@@ -1422,6 +1430,7 @@ class ExpenseProvider extends ChangeNotifier {
       priceFrom: materialPriceFromController.text,
       priceTo: materialPriceToController.text,
       includeInTotal: _isQuantity ? "1" : "0",
+      showQuantity: _asPerRequired ? "1" : "0",
       itemTypeId: _selectedItemTypeId.toString(),
       unitId: _selectedItemMaterialUnit.toString(),
     );
@@ -1458,6 +1467,7 @@ class ExpenseProvider extends ChangeNotifier {
     setSubId(-1);
     _subItemId = null;
     _isQuantity = false;
+    _asPerRequired = false;
     _selectedItemMaterialUnit = 0;
     notifyListeners();
   }
@@ -1476,6 +1486,7 @@ class ExpenseProvider extends ChangeNotifier {
       materialPriceFromController.text = itemToEdit.priceFrom;
       materialPriceToController.text = itemToEdit.priceTo;
       _isQuantity = itemToEdit.includeInTotal == "1";
+      _asPerRequired = itemToEdit.showQuantity == "1";
       setSubId(itemToEdit.subItemId);
       setEditItemIndex(index);
       setItemMaterialUnit(int.tryParse(itemToEdit.unitId) ?? 0);
@@ -1493,6 +1504,7 @@ class ExpenseProvider extends ChangeNotifier {
   void clearItemAdd() {
     searchitemNameController.clear();
     itemNameController.clear();
+    itemDescriptionController.clear();
     itemCategoryController.clear();
     itemUnitController.clear();
     itemUnitPriceController.clear();
@@ -1904,6 +1916,7 @@ class ExpenseProvider extends ChangeNotifier {
             "Price_Range_From": priceRangeFromController.text.toString(),
             "Price_Range_To": priceRangeToController.text.toString(),
             "itemMaterials": _items.map((item) => item.toJson()).toList(),
+            "Description": itemDescriptionController.text.toString(),
           });
 
       if (response!.statusCode == 200) {

@@ -120,6 +120,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
       expenseProvider.gstController.text = "18";
       if (widget.isEdit) {
         expenseProvider.itemNameController.text = widget.item!.itemName;
+        expenseProvider.itemDescriptionController.text =
+            widget.item!.itemDescription;
         expenseProvider.itemCategoryController.text = widget.item!.categoryName;
         expenseProvider.itemUnitController.text = widget.item!.unitName;
         expenseProvider.itemUnitPriceController.text = widget.item!.unitPrice;
@@ -188,6 +190,14 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                         height: 56,
                         controller: expenseProvider.itemNameController,
                         hintText: 'Item Name*',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 56,
+                        controller: expenseProvider.itemDescriptionController,
+                        hintText: 'Description',
                         labelText: '',
                       ),
                       const SizedBox(height: 16),
@@ -275,15 +285,16 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               hintText: 'CGST %*',
                               labelText: '',
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
                               ],
                               onChanged: (p0) {
-                                int gst = (int.tryParse(expenseProvider
+                                double gst = (double.tryParse(expenseProvider
                                             .cgstController.text) ??
-                                        0) +
-                                    (int.tryParse(expenseProvider
+                                        0.0) +
+                                    (double.tryParse(expenseProvider
                                             .sgstController.text) ??
-                                        0);
+                                        0.0);
                                 expenseProvider.igstController.text =
                                     gst.toString();
                                 expenseProvider.gstController.text =
@@ -300,15 +311,16 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               hintText: 'SGST %*',
                               labelText: '',
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
                               ],
                               onChanged: (p0) {
-                                int gst = (int.tryParse(expenseProvider
+                                double gst = (double.tryParse(expenseProvider
                                             .cgstController.text) ??
-                                        0) +
-                                    (int.tryParse(expenseProvider
+                                        0.0) +
+                                    (double.tryParse(expenseProvider
                                             .sgstController.text) ??
-                                        0);
+                                        0.0);
                                 expenseProvider.igstController.text =
                                     gst.toString();
                                 expenseProvider.gstController.text =
@@ -329,7 +341,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               hintText: 'IGST %*',
                               labelText: '',
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
                               ],
                             ),
                           ),
@@ -342,7 +355,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                               hintText: 'GST %*',
                               labelText: '',
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}')),
                               ],
                             ),
                           ),
@@ -574,10 +588,18 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                 ],
                               ),
                               CheckboxListTile(
-                                title: const Text(''),
+                                title: const Text('Show Item in Print'),
                                 value: expenseProvider.isQuantity,
                                 onChanged: (value) {
                                   expenseProvider.isQuantity = value ?? false;
+                                },
+                              ),
+                              const SizedBox(height: 12),
+                              CheckboxListTile(
+                                title: const Text('Quantity As Per Required'),
+                                value: expenseProvider.asPerRequired,
+                                onChanged: (value) {
+                                  expenseProvider.asPerRequired = value ?? false;
                                 },
                               ),
                               const SizedBox(height: 12),
