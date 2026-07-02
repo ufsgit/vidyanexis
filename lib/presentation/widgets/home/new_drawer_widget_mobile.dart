@@ -1701,6 +1701,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         Provider.of<LeadDetailsProvider>(context, listen: false);
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
     return Column(
       children: [
         CustomTextfieldWidgetMobile(
@@ -1709,64 +1711,70 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           showError: dropDownProvider.showValidation &&
               !_isFieldValid(leadProvider.addressController.text),
         ),
-        const SizedBox(height: 8),
-        Stack(
-          alignment: Alignment.centerRight,
-          children: [
-            CustomTextfieldWidgetMobile(
-              controller: leadProvider.mapLinkController,
-              labelText: 'Map link',
-              onChanged: (value) {
-                leadProvider.extractCoordinates();
-              },
-              showError: dropDownProvider.showValidation &&
-                  !_isFieldValid(leadProvider.mapLinkController.text),
-            ),
-            Positioned(
-              right: 8,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  PopupMenuButton<String>(
-                    icon: Icon(Icons.keyboard_arrow_down_rounded,
-                        color: AppColors.textBlack),
-                    onSelected: (String value) {
-                      if (value == 'current') {
-                        leadProvider.useCurrentLocation();
-                      } else if (value == 'custom') {
-                        leadProvider.mapLinkController.text = '';
-                        leadProvider.latitudeController.text = '';
-                        leadProvider.longitudeController.text = '';
-                        leadProvider.extractCoordinates();
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
-                      const PopupMenuItem<String>(
-                        value: 'current',
-                        child: Text('Use current location'),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'custom',
-                        child: Text('Custom entry'),
-                      ),
-                    ],
-                  ),
-                ],
+        if (settingsProvider.menuIsViewMap[160] == 1) ...[
+          const SizedBox(height: 8),
+          Stack(
+            alignment: Alignment.centerRight,
+            children: [
+              CustomTextfieldWidgetMobile(
+                controller: leadProvider.mapLinkController,
+                labelText: 'Map link',
+                onChanged: (value) {
+                  leadProvider.extractCoordinates();
+                },
+                showError: dropDownProvider.showValidation &&
+                    !_isFieldValid(leadProvider.mapLinkController.text),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        CustomTextfieldWidgetMobile(
-          controller: leadProvider.latitudeController,
-          labelText: 'Latitude',
-        ),
-        const SizedBox(height: 8),
-        CustomTextfieldWidgetMobile(
-          controller: leadProvider.longitudeController,
-          labelText: 'Longitude',
-        ),
+              Positioned(
+                right: 8,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PopupMenuButton<String>(
+                      icon: Icon(Icons.keyboard_arrow_down_rounded,
+                          color: AppColors.textBlack),
+                      onSelected: (String value) {
+                        if (value == 'current') {
+                          leadProvider.useCurrentLocation();
+                        } else if (value == 'custom') {
+                          leadProvider.mapLinkController.text = '';
+                          leadProvider.latitudeController.text = '';
+                          leadProvider.longitudeController.text = '';
+                          leadProvider.extractCoordinates();
+                        }
+                      },
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'current',
+                          child: Text('Use current location'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'custom',
+                          child: Text('Custom entry'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+        if (settingsProvider.menuIsViewMap[158] == 1) ...[
+          const SizedBox(height: 8),
+          CustomTextfieldWidgetMobile(
+            controller: leadProvider.latitudeController,
+            labelText: 'Latitude',
+          ),
+        ],
+        if (settingsProvider.menuIsViewMap[159] == 1) ...[
+          const SizedBox(height: 8),
+          CustomTextfieldWidgetMobile(
+            controller: leadProvider.longitudeController,
+            labelText: 'Longitude',
+          ),
+        ],
         const SizedBox(height: 8),
         CommonDropdown<int>(
           hintText: 'District',

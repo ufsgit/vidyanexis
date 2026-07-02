@@ -1276,109 +1276,115 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           leadProvider.addressController.text),
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Stack(
-                                  alignment: Alignment.centerRight,
-                                  children: [
-                                    CustomTextField(
-                                      height: 90,
-                                      controller:
-                                          leadProvider.mapLinkController,
-                                      hintText: 'Map link',
-                                      labelText: '',
-                                      onChanged: (value) {
-                                        leadProvider.extractCoordinates();
-                                      },
-                                      showError:
-                                          dropDownProvider.showValidation &&
-                                              !_isFieldValid(leadProvider
-                                                  .mapLinkController.text),
-                                    ),
-                                    Positioned(
-                                      right: 8,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          PopupMenuButton<String>(
-                                            icon: Icon(
-                                                Icons
-                                                    .keyboard_arrow_down_rounded,
-                                                color: AppColors.textBlack),
-                                            onSelected: (String value) {
-                                              if (value == 'current') {
-                                                leadProvider
-                                                    .useCurrentLocation();
-                                              } else if (value == 'custom') {
-                                                leadProvider.mapLinkController
-                                                    .text = '';
-                                                leadProvider.latitudeController
-                                                    .text = '';
-                                                leadProvider.longitudeController
-                                                    .text = '';
-                                                leadProvider
-                                                    .extractCoordinates();
-                                              }
-                                            },
-                                            itemBuilder:
-                                                (BuildContext context) =>
-                                                    <PopupMenuEntry<String>>[
-                                              const PopupMenuItem<String>(
-                                                value: 'current',
-                                                child: Text(
-                                                    'Use current location'),
-                                              ),
-                                              const PopupMenuItem<String>(
-                                                value: 'custom',
-                                                child: Text('Custom entry'),
-                                              ),
-                                            ],
-                                          ),
-                                          // // Button to get current location directly
-                                          // IconButton(
-                                          //   icon: Icon(
-                                          //     Icons.my_location,
-                                          //     color: AppColors.textGrey4,
-                                          //     size: 16,
-                                          //   ),
-                                          //   onPressed: () {
-                                          //     leadProvider.useCurrentLocation();
-                                          //   },
-                                          //   tooltip: 'Get current location',
-                                          // ),
-                                        ],
+                              if (settingsProvider.menuIsViewMap[160] == 1) ...[
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Stack(
+                                    alignment: Alignment.centerRight,
+                                    children: [
+                                      CustomTextField(
+                                        height: 90,
+                                        controller:
+                                            leadProvider.mapLinkController,
+                                        hintText: 'Map link',
+                                        labelText: '',
+                                        onChanged: (value) {
+                                          leadProvider.extractCoordinates();
+                                        },
+                                        showError:
+                                            dropDownProvider.showValidation &&
+                                                !_isFieldValid(leadProvider
+                                                    .mapLinkController.text),
                                       ),
-                                    ),
-                                  ],
+                                      Positioned(
+                                        right: 8,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            PopupMenuButton<String>(
+                                              icon: Icon(
+                                                  Icons
+                                                      .keyboard_arrow_down_rounded,
+                                                  color: AppColors.textBlack),
+                                              onSelected: (String value) {
+                                                if (value == 'current') {
+                                                  leadProvider
+                                                      .useCurrentLocation();
+                                                } else if (value == 'custom') {
+                                                  leadProvider.mapLinkController
+                                                      .text = '';
+                                                  leadProvider.latitudeController
+                                                      .text = '';
+                                                  leadProvider.longitudeController
+                                                      .text = '';
+                                                  leadProvider
+                                                      .extractCoordinates();
+                                                }
+                                              },
+                                              itemBuilder:
+                                                  (BuildContext context) =>
+                                                      <PopupMenuEntry<String>>[
+                                                const PopupMenuItem<String>(
+                                                  value: 'current',
+                                                  child: Text(
+                                                      'Use current location'),
+                                                ),
+                                                const PopupMenuItem<String>(
+                                                  value: 'custom',
+                                                  child: Text('Custom entry'),
+                                                ),
+                                              ],
+                                            ),
+                                            // // Button to get current location directly
+                                            // IconButton(
+                                            //   icon: Icon(
+                                            //     Icons.my_location,
+                                            //     color: AppColors.textGrey4,
+                                            //     size: 16,
+                                            //   ),
+                                            //   onPressed: () {
+                                            //     leadProvider.useCurrentLocation();
+                                            //   },
+                                            //   tooltip: 'Get current location',
+                                            // ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: CustomTextField(
-                                  height: 90,
-                                  controller: leadProvider.latitudeController,
-                                  hintText: 'Latitude',
-                                  labelText: '',
+                              ],
+                              if (settingsProvider.menuIsViewMap[158] == 1) ...[
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: CustomTextField(
+                                    height: 90,
+                                    controller: leadProvider.latitudeController,
+                                    hintText: 'Latitude',
+                                    labelText: '',
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          ResponsiveRow(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: CustomTextField(
-                                  height: 90,
-                                  controller: leadProvider.longitudeController,
-                                  hintText: 'Longitude',
-                                  labelText: '',
+                          if (settingsProvider.menuIsViewMap[159] == 1) ...[
+                            const SizedBox(height: 8),
+                            ResponsiveRow(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    height: 90,
+                                    controller: leadProvider.longitudeController,
+                                    hintText: 'Longitude',
+                                    labelText: '',
+                                  ),
                                 ),
-                              ),
-                              const Spacer(),
-                              const Spacer(),
-                            ],
-                          ),
+                                const Spacer(),
+                                const Spacer(),
+                              ],
+                            ),
+                          ],
                           const SizedBox(height: 8),
                           ResponsiveRow(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
