@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/settings/permission_handling_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_enquiry_for_widget.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_enquiry_for_mobile_page.dart';
@@ -133,6 +134,46 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
                             ),
                           ),
                           const SizedBox(width: 8),
+                          SizedBox(
+                            width: 200,
+                            child: CustomOutlinedSvgButton(
+                              showIcon: false,
+                              onPressed: () async {
+                                print(settingsProvider
+                                    .searchEnquiryFor[index].enquiryForId
+                                    .toString());
+                                await settingsProvider
+                                    .getMenuPermissionDataPrint(
+                                        settingsProvider.searchEnquiryFor[index]
+                                            .enquiryForId
+                                            .toString(),
+                                        context);
+                                settingsProvider.searchPermissionPrint(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        PermissionHandlingPage(
+                                      userId: settingsProvider
+                                          .searchEnquiryFor[index].enquiryForId
+                                          .toString(),
+                                      userName: settingsProvider
+                                          .searchEnquiryFor[index]
+                                          .enquiryForName,
+                                      isPrintPermission: true,
+                                    ),
+                                  ),
+                                );
+                              },
+                              svgPath: 'assets/images/Print.svg',
+                              label: 'Permissions',
+                              breakpoint: 860,
+                              foregroundColor: AppColors.primaryBlue,
+                              backgroundColor: Colors.white,
+                              borderSide:
+                                  BorderSide(color: AppColors.primaryBlue),
+                            ),
+                          ),
                           if (settingsProvider.menuIsEditMap[17].toString() ==
                               '1')
                             TextButton(

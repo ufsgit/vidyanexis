@@ -432,4 +432,9 @@ class HttpUrls {
   static String getTargetEnquirySource = "lead/Get_Target_Enquiry_Source";
   static String deleteTargetEnquirySource = "lead/Delete_Target_Enquiry_Source";
   static String saveRegistrationDate = "lead/Save_Registration_Date";
+  static String getMenuPermissionPrint = "user_details/Get_print_Permission";
+  static String searchmenuPrint =
+      "user_details/Get_Selected_Print_Permission";
+  static String saveMenuPermissionPrint =
+      "user_details/Save_Print_Menu_Selection";
 }
