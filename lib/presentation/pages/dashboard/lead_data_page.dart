@@ -1373,23 +1373,24 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         13)),
                                                             color: Color(
                                                                 0xFF607185)),
-                                                        TableWidget(
-                                                            width: 150,
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    vertical:
-                                                                        6.0,
-                                                                    horizontal:
-                                                                        8.0),
-                                                            data: Text(
-                                                                'Follow-Up Date',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        13)),
-                                                            color: Color(
-                                                                0xFF607185)),
+                                                        if (widget.source != 'Not_Interested')
+                                                          TableWidget(
+                                                              width: 150,
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          6.0,
+                                                                      horizontal:
+                                                                          8.0),
+                                                              data: Text(
+                                                                  'Follow-Up Date',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontSize:
+                                                                          13)),
+                                                              color: Color(
+                                                                  0xFF607185)),
                                                       ],
                                                     ),
                                                   ),
@@ -1650,27 +1651,28 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               .ellipsis,
                                                                           style:
                                                                               const TextStyle(fontSize: 13))),
-                                                                  TableWidget(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              6.0,
-                                                                          horizontal:
-                                                                              8.0),
-                                                                      width:
-                                                                          150,
-                                                                      data: Text(
-                                                                          lead.nextFollowUpDate.isNotEmpty
-                                                                              ? lead.nextFollowUpDate
-                                                                                  .toDayMonthYearFormat()
-                                                                              : '',
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow: TextOverflow
-                                                                              .ellipsis,
-                                                                          style:
-                                                                              const TextStyle(fontSize: 13))),
-                                                                ],
+                                                                  if (widget.source != 'Not_Interested')
+                                                                    TableWidget(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            vertical:
+                                                                                6.0,
+                                                                            horizontal:
+                                                                                8.0),
+                                                                        width:
+                                                                            150,
+                                                                        data: Text(
+                                                                            lead.nextFollowUpDate.isNotEmpty
+                                                                                ? lead.nextFollowUpDate
+                                                                                    .toDayMonthYearFormat()
+                                                                                : '',
+                                                                            maxLines:
+                                                                                1,
+                                                                            overflow: TextOverflow
+                                                                                .ellipsis,
+                                                                            style:
+                                                                                const TextStyle(fontSize: 13))),
+                                                                  ],
                                                               ),
                                                             ),
                                                           );
