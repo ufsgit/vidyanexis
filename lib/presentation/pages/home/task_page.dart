@@ -1431,7 +1431,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                       color: Colors.white),
                                   TableWidget(
                                       width: 110,
-                                      title: 'Date',
+                                      title: 'Created Date',
+                                      fontSize: 13,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 12.0),
+                                      color: Colors.white),
+                                  TableWidget(
+                                      width: 110,
+                                      title: 'Followup Date',
+                                      fontSize: 13,
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 12.0),
+                                      color: Colors.white),
+                                  TableWidget(
+                                      width: 100,
+                                      title: 'Followup Time',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 12.0),
@@ -2209,8 +2223,64 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       vertical: 4.0,
                                                       horizontal: 12.0),
                                                   data: Text(
+                                                    task.entryDate
+                                                        .toDayMonthYearFormat(),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      color: Color(0xFF334155),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Task Date column
+                                                TableWidget(
+                                                  width: 110,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                                  data: Text(
                                                     task.taskDate
                                                         .toDayMonthYearFormat(),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      color: Color(0xFF334155),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Task Time column
+                                                TableWidget(
+                                                  width: 100,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                                  data: Text(
+                                                    () {
+                                                      if (task.taskTime.isEmpty)
+                                                        return '-';
+                                                      try {
+                                                        final parsed =
+                                                            DateFormat(
+                                                                    'HH:mm:ss')
+                                                                .parse(task
+                                                                    .taskTime);
+                                                        return DateFormat(
+                                                                'hh:mm a')
+                                                            .format(parsed);
+                                                      } catch (_) {
+                                                        return task.taskTime;
+                                                      }
+                                                    }(),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 1,
