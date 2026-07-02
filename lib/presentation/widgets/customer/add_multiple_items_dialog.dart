@@ -5,7 +5,9 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/added_multi_item.dart';
+import 'package:vidyanexis/controller/models/item_list_model.dart';
 import 'package:vidyanexis/controller/models/item_settings_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
@@ -28,9 +30,12 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   String _selectedItemName = '';
   final TextEditingController _quantityController =
       TextEditingController(text: '1');
+  final TextEditingController _itemNameController = TextEditingController();
+  FocusNode itemNode = FocusNode();
 
   // Controllers
   final Map<int, TextEditingController> _mainQtyControllers = {};
+  final Map<int, TextEditingController> _mainMakeControllers = {};
   final Map<String, TextEditingController> _materialPriceControllers = {};
   final Map<String, TextEditingController> _materialQtyControllers = {};
   final Map<String, TextEditingController> _materialNameControllers = {};
@@ -53,6 +58,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       final item = _addedItems[i];
       _mainQtyControllers[i] =
           TextEditingController(text: item.quantity.toStringAsFixed(0));
+      _mainMakeControllers[i] = TextEditingController(text: item.make);
 
       for (int j = 0; j < item.materials.length; j++) {
         final mat = item.materials[j];
@@ -74,6 +80,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     for (var c in _mainQtyControllers.values) {
       c.dispose();
     }
+    for (var c in _mainMakeControllers.values) {
+      c.dispose();
+    }
     for (var c in _materialPriceControllers.values) {
       c.dispose();
     }
@@ -91,6 +100,11 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   TextEditingController _getMainQtyController(int index, double value) {
     return _mainQtyControllers.putIfAbsent(
         index, () => TextEditingController(text: value.toStringAsFixed(0)));
+  }
+
+  TextEditingController _getMainMakeController(int index, String value) {
+    return _mainMakeControllers.putIfAbsent(
+        index, () => TextEditingController(text: value));
   }
 
   TextEditingController _getMaterialPriceController(
@@ -169,6 +183,13 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     });
   }
 
+  void _updateMainItemMake(int index, String val) {
+    setState(() {
+      final item = _addedItems[index];
+      item.make = val;
+    });
+  }
+
   void _updateMaterialPrice(int itemIndex, int matIndex, String val) {
     final price = double.tryParse(val) ?? 0.0;
     if (price < 0) return;
@@ -223,6 +244,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   void _removeItem(int index) {
     setState(() {
       _mainQtyControllers.remove(index);
+      _mainMakeControllers.remove(index);
       final item = _addedItems[index];
       for (int matIndex = 0; matIndex < item.materials.length; matIndex++) {
         final key = '${index}_$matIndex';
@@ -295,6 +317,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       _selectedItemId = null;
       _selectedItemName = '';
       _quantityController.text = '1';
+      _itemNameController.clear();
     });
   }
 
@@ -379,22 +402,29 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
               child: Row(
                 children: [
                   Expanded(
-                    flex: 3,
-                    child: CommonDropdown(
-                      hintText: "Select Item",
-                      items: expenseProvider.itemList
-                          .map((e) =>
-                              DropdownItem(id: e.itemId, name: e.itemName))
-                          .toList(),
-                      onItemSelected: (id) {
+                    child: CustomAutocompleteSearch<ItemListModel>(
+                      focusNode: itemNode,
+                      showOptionsOnTap: true,
+                      maxHeight: 300,
+                      optionsViewOpenDirection: OptionsViewOpenDirection.down,
+                      items: expenseProvider.itemList,
+                      displayStringFunction: (staff) =>
+                          "${staff.itemName}\n${staff.itemDescription}",
+                      defaultText: _selectedItemName,
+                      controller: _itemNameController,
+                      labelText: 'Select Item',
+                      suffixIcon: const Icon(Icons.search),
+                      onSelected: (ItemListModel items) {
                         final selected = expenseProvider.itemList
-                            .firstWhere((e) => e.itemId == id);
+                            .firstWhere((e) => e.itemId == items.itemId);
                         setState(() {
                           _selectedItemId = selected.itemId;
                           _selectedItemName = selected.itemName;
+                          _itemNameController.text = selected.itemName;
                         });
                       },
-                      selectedValue: _selectedItemId,
+                      onChanged: (value) {},
+                      onSearch: (query) async {},
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -486,6 +516,29 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold),
                                       ),
+                                    ),
+                                    SizedBox(
+                                      width: 300,
+                                      child: TextField(
+                                        controller: _getMainMakeController(
+                                            itemIndex, item.make),
+                                        textAlign: TextAlign.center,
+                                        decoration: InputDecoration(
+                                          labelText: 'Make',
+                                          isDense: true,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 8),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                        ),
+                                        onChanged: (val) =>
+                                            _updateMainItemMake(itemIndex, val),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
                                     ),
                                     SizedBox(
                                       width: 110,

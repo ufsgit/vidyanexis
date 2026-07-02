@@ -4,7 +4,7 @@ class AddedMultiItem {
   final int itemId;
   final String itemName;
   double quantity;
-  final String make;
+  String make;
   final String unitName;
   final String itemTypeId;
   final List<ItemSettings> materials;
