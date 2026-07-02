@@ -117,6 +117,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
           leadsProvider.getCustomFieldsByEnquiryForId(context,
               enquiryForId: lead.enquiryForId, leadId: lead.customerId);
+
+          final settingsProvider =
+              Provider.of<SettingsProvider>(context, listen: false);
+          settingsProvider.getMenuPermissionDataPrint(
+              lead.enquiryForId.toString(), context);
         }
       });
       customerDetailsProvider.getServiceList(widget.customerId, context);
@@ -2079,8 +2084,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             );
                                                                           },
                                                                         ),
-                                                                    if (settingsprovider.menuIsViewMap[61] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[61] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[61] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2113,8 +2120,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[63] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[63] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[63] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2147,8 +2156,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[62] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[62] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[62] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2181,8 +2192,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[101] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[101] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[101] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2214,8 +2227,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[102] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[102] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[102] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2247,8 +2262,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[103] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[103] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[103] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2282,8 +2299,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[105] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[105] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[105] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2317,8 +2336,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[106] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[106] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[106] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2352,8 +2373,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[107] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[107] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[107] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2387,8 +2410,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[108] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[108] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[108] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2422,8 +2447,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[109] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[109] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[109] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2457,8 +2484,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[110] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[110] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[110] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2492,8 +2521,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[111] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[111] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[111] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
@@ -2527,8 +2558,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[112] ==
-                                                                            1 &&
+                                                                    if ((settingsprovider.menuIsViewMap[112] ==
+                                                                                1 ||
+                                                                            settingsprovider.menuIsViewMapPrint[112] ==
+                                                                                1) &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
                                                                       CustomElevatedButton(
