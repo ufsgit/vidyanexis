@@ -560,7 +560,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             children: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (selectedStatus.followup == 1) ...[
+                                if (selectedStatus.followup == 1 || selectedStatus.viewDateFollowup == 1) ...[
                                   _buildFieldLabel('Next FollowUp Date'),
                                   _buildInputField(
                                     controller:

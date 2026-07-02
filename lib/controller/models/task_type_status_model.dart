@@ -25,6 +25,7 @@ class TaskTypeStatusModel {
   int? enquiryForId; // Added field
   int? isTime;
   List<SubStatus>? subStatuses;
+  int? viewDateFollowup;
 
   TaskTypeStatusModel({
     this.statusId,
@@ -37,6 +38,7 @@ class TaskTypeStatusModel {
     this.enquiryForId, // Added parameter
     this.isTime,
     this.subStatuses,
+    this.viewDateFollowup,
   });
 
   TaskTypeStatusModel copyWith({
@@ -50,6 +52,7 @@ class TaskTypeStatusModel {
     int? enquiryForId, // Added parameter
     int? isTime,
     List<SubStatus>? subStatuses,
+    int? viewDateFollowup,
   }) =>
       TaskTypeStatusModel(
         statusId: statusId ?? this.statusId,
@@ -62,6 +65,7 @@ class TaskTypeStatusModel {
         enquiryForId: enquiryForId ?? this.enquiryForId, // Added assignment
         isTime: isTime ?? this.isTime,
         subStatuses: subStatuses ?? this.subStatuses,
+        viewDateFollowup: viewDateFollowup ?? this.viewDateFollowup,
       );
 
   factory TaskTypeStatusModel.fromJson(Map<String, dynamic> json) =>
@@ -86,6 +90,8 @@ class TaskTypeStatusModel {
                     json["sub_statuses"] ??
                     json["Sub_Status"])!
                 .map((x) => SubStatus.fromJson(x))),
+        viewDateFollowup: json["view_date_followup"]?.toInt() ??
+            json["View_Date_Followup"]?.toInt(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -100,5 +106,6 @@ class TaskTypeStatusModel {
         "Sub_Statuses": subStatuses == null
             ? []
             : List<dynamic>.from(subStatuses!.map((x) => x.toJson())),
+        "View_Date_Followup": viewDateFollowup,
       };
 }

@@ -103,8 +103,9 @@ class _tasksPageReportState extends State<TaskPage> {
       provider.getTaskType(context);
       provider.getFollowUpStatus(context, "3");
       provider.getEnquiryFor(context);
-      
-      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
       provider.getEnquirySource(context);
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
@@ -700,22 +701,33 @@ class _tasksPageReportState extends State<TaskPage> {
                             if (settingsProvider.menuIsViewMap[156] == 1)
                               ElevatedButton.icon(
                                 onPressed: () async {
-                                  final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
-                                  final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+                                  final dropDownProvider =
+                                      Provider.of<DropDownProvider>(context,
+                                          listen: false);
+                                  final leadsProvider =
+                                      Provider.of<LeadsProvider>(context,
+                                          listen: false);
 
-                                  dropDownProvider.updateEnquiryForName(null, '');
+                                  dropDownProvider.updateEnquiryForName(
+                                      null, '');
                                   dropDownProvider.updateDistrict(null, '');
 
                                   await leadsProvider.getLeadDropdowns(context);
-                                  await dropDownProvider.getFollowUpStatus(context, "1");
-                                  
+                                  await dropDownProvider.getFollowUpStatus(
+                                      context, "1");
+
                                   // Fetch missing dropdown data for the Lead drawer explicitly
-                                  await dropDownProvider.getEnquirySource(context);
+                                  await dropDownProvider
+                                      .getEnquirySource(context);
                                   await dropDownProvider.getEnquiryFor(context);
-                                  final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-                                  await settingsProvider.searchsourceCategoryData('', context);
+                                  final settingsProvider =
+                                      Provider.of<SettingsProvider>(context,
+                                          listen: false);
+                                  await settingsProvider
+                                      .searchsourceCategoryData('', context);
                                   settingsProvider.searchBranch(context);
-                                  settingsProvider.searchDepartment('', context);
+                                  settingsProvider.searchDepartment(
+                                      '', context);
 
                                   if (!context.mounted) return;
 
@@ -730,7 +742,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                   );
 
                                   if (context.mounted) {
-                                    dropDownProvider.getFollowUpStatus(context, "3");
+                                    dropDownProvider.getFollowUpStatus(
+                                        context, "3");
                                   }
                                 },
                                 icon: const Icon(Icons.add, size: 16),
@@ -1825,17 +1838,38 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         return;
                                                                     }
 
-                                                                    await dropDownProvider.getFollowUpStatus(context, "1");
-                                                                    
+                                                                    await dropDownProvider
+                                                                        .getFollowUpStatus(
+                                                                            context,
+                                                                            "1");
+
                                                                     // Fetch missing dropdown data for the Lead drawer explicitly
-                                                                    await dropDownProvider.getEnquirySource(context);
-                                                                    await dropDownProvider.getEnquiryFor(context);
-                                                                    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-                                                                    await settingsProvider.searchsourceCategoryData('', context);
-                                                                    settingsProvider.searchBranch(context);
-                                                                    settingsProvider.searchDepartment('', context);
-                                                                    
-                                                                    if (!context.mounted) return;
+                                                                    await dropDownProvider
+                                                                        .getEnquirySource(
+                                                                            context);
+                                                                    await dropDownProvider
+                                                                        .getEnquiryFor(
+                                                                            context);
+                                                                    final settingsProvider = Provider.of<
+                                                                            SettingsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                    await settingsProvider
+                                                                        .searchsourceCategoryData(
+                                                                            '',
+                                                                            context);
+                                                                    settingsProvider
+                                                                        .searchBranch(
+                                                                            context);
+                                                                    settingsProvider
+                                                                        .searchDepartment(
+                                                                            '',
+                                                                            context);
+
+                                                                    if (!context
+                                                                        .mounted)
+                                                                      return;
 
                                                                     Navigator.pop(
                                                                         context); // Close loading dialog
@@ -1853,8 +1887,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       },
                                                                     );
 
-                                                                    if (context.mounted) {
-                                                                      dropDownProvider.getFollowUpStatus(context, "3");
+                                                                    if (context
+                                                                        .mounted) {
+                                                                      dropDownProvider.getFollowUpStatus(
+                                                                          context,
+                                                                          "3");
                                                                     }
                                                                   },
                                                                   child: Row(
@@ -2706,7 +2743,8 @@ class _tasksPageReportState extends State<TaskPage> {
                               ValueListenableBuilder<TaskTypeStatusModel>(
                                 valueListenable: selectedStatus,
                                 builder: (ctx, status, child) {
-                                  bool showDate = status.followup == 1;
+                                  bool showDate = status.followup == 1 ||
+                                      status.viewDateFollowup == 1;
                                   bool showTime = status.isTime == 1;
                                   if (!showDate && !showTime) {
                                     return const SizedBox.shrink();
@@ -3599,7 +3637,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                 builder: (ctx, status, child) {
                                   return Consumer<TaskPageProvider>(
                                     builder: (context, reportsProvider, child) {
-                                      bool showDate = status.followup == 1;
+                                      bool showDate = status.followup == 1 ||
+                                          status.viewDateFollowup == 1;
                                       bool showTime = status.isTime == 1;
                                       bool hasDocs = reportsProvider
                                           .documentTypeModel.isNotEmpty;

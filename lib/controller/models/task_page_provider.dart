@@ -745,7 +745,7 @@ class TaskPageProvider extends ChangeNotifier {
             "Description": descriptionController.text,
             // "Next_FollowUp_Date":
             //     DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            "Next_FollowUp_Date": statusModel.followup == 1
+            "Next_FollowUp_Date": (statusModel.followup == 1 || statusModel.viewDateFollowup == 1)
                 ? followUpDateController.text.toyyyymmdd()
                 : "",
             "Followup_Time":
