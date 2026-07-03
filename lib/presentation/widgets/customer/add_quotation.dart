@@ -553,10 +553,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           1) ...[
                         residentialItemWidget(context),
                       ],
-                      // if (customerDetailsProvider.selectedQuotationType ==
-                      //     2) ...[
-                      //   commercialItemWidget(context),
-                      // ],
+                      if (customerDetailsProvider.selectedQuotationType ==
+                          2) ...[
+                        commercialItemWidget(context),
+                      ],
                     ],
                   ),
 
