@@ -71,6 +71,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       // await customerDetailsProvider.getCustomFieldsByQuotationId(context);
       await customerDetailsProvider.getQuotationFieldsApi();
       await customerDetailsProvider.getCommercialCustomFieldsApi(context);
+      customerDetailsProvider.getCustomFieldsByQuotationId(context);
 
       if (widget.isEdit) {
         // Fetch existing quotation details if editing
@@ -384,10 +385,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       CommonDropdown(
                         hintText: 'Quotation Type*',
                         items: [
-                          DropdownItem<int>(
-                            id: 0,
-                            name: 'All',
-                          ),
+                          DropdownItem<int>(id: 0, name: 'All'),
                           ...customerDetailsProvider.quotationTypeData.map(
                             (status) => DropdownItem<int>(
                               id: status.quotationTypeId,
@@ -397,13 +395,20 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         ],
                         onItemSelected: (value) {
                           customerDetailsProvider.selectedQuotationType = value;
-                          final selectedItem = customerDetailsProvider
-                              .quotationTypeData
-                              .firstWhere(
-                            (status) => status.quotationTypeId == value,
-                          );
-                          customerDetailsProvider.quotationTypeController.text =
-                              selectedItem.quotationTypeName;
+
+                          // Simple handling for All vs others
+                          if (value == 0) {
+                            customerDetailsProvider
+                                .quotationTypeController.text = 'All';
+                          } else {
+                            final selectedItem = customerDetailsProvider
+                                .quotationTypeData
+                                .firstWhere((status) =>
+                                    status.quotationTypeId == value);
+                            customerDetailsProvider.quotationTypeController
+                                .text = selectedItem.quotationTypeName;
+                          }
+
                           customerDetailsProvider
                               .getCustomFieldsByQuotationId(context);
                         },

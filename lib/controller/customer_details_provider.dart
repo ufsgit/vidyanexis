@@ -1277,6 +1277,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   Future<void> getCustomFieldsByQuotationId(BuildContext context) async {
     try {
       _isLoadingQuotationCustomFields = true;
+      _customFieldQuotation.clear();
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               "${HttpUrls.getCustomFieldQuotation}/$_selectedQuotationType");
