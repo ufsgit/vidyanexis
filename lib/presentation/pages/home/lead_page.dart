@@ -255,6 +255,202 @@ class _LeadsPageState extends State<LeadPage> {
     }
   }
 
+  Widget _buildSearchField({
+    required LeadsProvider leadProvider,
+    required bool isMobile,
+    required FocusNode focusNode,
+  }) {
+    return RawAutocomplete<SearchLeadModel>(
+      focusNode: focusNode,
+      textEditingController: searchController,
+      optionsBuilder: (TextEditingValue textEditingValue) async {
+        return leadProvider.fetchSuggestions(textEditingValue.text);
+      },
+      displayStringForOption: (SearchLeadModel option) => option.customerName,
+      onSelected: (SearchLeadModel selection) {
+        if (_debounce?.isActive ?? false) _debounce!.cancel();
+        searchController.text = selection.customerName;
+        leadProvider.setSearchCriteria(
+            selection.customerName,
+            leadProvider.fromDateS,
+            leadProvider.toDateS,
+            leadId: selection.customerId.toString());
+        leadProvider.getSearchLeads(context);
+      },
+      fieldViewBuilder: (BuildContext context,
+          TextEditingController textEditingController,
+          FocusNode fieldFocusNode,
+          VoidCallback onFieldSubmitted) {
+        return ValueListenableBuilder<TextEditingValue>(
+          valueListenable: textEditingController,
+          builder: (context, value, child) {
+            return TextField(
+              controller: textEditingController,
+              focusNode: fieldFocusNode,
+              textAlignVertical: TextAlignVertical.center,
+              onTap: () {
+                Future.microtask(() {
+                  if (textEditingController.text.isNotEmpty &&
+                      textEditingController.selection.baseOffset == 0 &&
+                      textEditingController.selection.extentOffset ==
+                          textEditingController.text.length) {
+                    textEditingController.selection = TextSelection.collapsed(
+                        offset: textEditingController.text.length);
+                  }
+                });
+              },
+              onSubmitted: (query) {
+                onFieldSubmitted();
+                if (_debounce?.isActive ?? false) _debounce!.cancel();
+                leadProvider.setSearchCriteria(
+                    query, leadProvider.fromDateS, leadProvider.toDateS,
+                    leadId: leadIdController.text);
+                leadProvider.getSearchLeads(context);
+              },
+              decoration: InputDecoration(
+                hintText: 'Search here...',
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  color: isMobile ? Colors.grey : const Color(0xFF94A3B8),
+                  fontSize: 13,
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16, vertical: isMobile ? 8 : 10),
+                suffixIcon: textEditingController.text.isNotEmpty
+                    ? GestureDetector(
+                        onTap: () {
+                          textEditingController.clear();
+                          leadProvider.setSearchCriteria(
+                              '', leadProvider.fromDateS, leadProvider.toDateS,
+                              leadId: '');
+                          leadProvider.getSearchLeads(context);
+                        },
+                        child: Icon(Icons.close,
+                            color: isMobile ? Colors.black : const Color(0xFF64748B),
+                            size: 18),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          if (_debounce?.isActive ?? false) _debounce!.cancel();
+                          leadProvider.setSearchCriteria(
+                              textEditingController.text,
+                              leadProvider.fromDateS,
+                              leadProvider.toDateS,
+                              leadId: leadIdController.text);
+                          leadProvider.getSearchLeads(context);
+                        },
+                        child: Icon(Icons.search,
+                            color: isMobile ? Colors.black : const Color(0xFF64748B),
+                            size: 18),
+                      ),
+              ),
+            );
+          },
+        );
+      },
+      optionsViewBuilder: (BuildContext context,
+          AutocompleteOnSelected<SearchLeadModel> onSelected,
+          Iterable<SearchLeadModel> options) {
+        return Align(
+          alignment: Alignment.topLeft,
+          child: Material(
+            elevation: 4.0,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: isMobile ? MediaQuery.of(context).size.width / 4 : 280,
+              constraints: const BoxConstraints(maxHeight: 250),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: options.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'No matching leads found.',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.grey,
+                          fontSize: 13,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: options.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final SearchLeadModel option = options.elementAt(index);
+                        
+                        // Highlight matching text logic
+                        final query = searchController.text.toLowerCase();
+                        final name = option.customerName;
+                        final nameLower = name.toLowerCase();
+                        
+                        List<TextSpan> nameSpans = [];
+                        if (query.isNotEmpty && nameLower.contains(query)) {
+                          final startIndex = nameLower.indexOf(query);
+                          final endIndex = startIndex + query.length;
+                          
+                          if (startIndex > 0) {
+                            nameSpans.add(TextSpan(text: name.substring(0, startIndex)));
+                          }
+                          nameSpans.add(TextSpan(
+                              text: name.substring(startIndex, endIndex),
+                              style: const TextStyle(
+                                  backgroundColor: Color(0xFFE2E8F0),
+                                  color: AppColors.primaryBlue)));
+                          if (endIndex < name.length) {
+                            nameSpans.add(TextSpan(text: name.substring(endIndex)));
+                          }
+                        } else {
+                          nameSpans.add(TextSpan(text: name));
+                        }
+                        
+                        return InkWell(
+                          onTap: () {
+                            onSelected(option);
+                          },
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9))),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                  text: TextSpan(
+                                    children: nameSpans,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'ID: ${option.customerId} | Contact: ${option.contactNumber}',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: Colors.grey,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -415,61 +611,10 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ],
                               ),
-                              child: TextField(
-                                controller: searchController,
+                              child: _buildSearchField(
+                                leadProvider: leadProvider,
+                                isMobile: false,
                                 focusNode: searchFocusNodeWeb,
-                                textAlignVertical: TextAlignVertical.center,
-                                onTap: () {
-                                  Future.microtask(() {
-                                    if (searchController.text.isNotEmpty &&
-                                        searchController.selection.baseOffset ==
-                                            0 &&
-                                        searchController
-                                                .selection.extentOffset ==
-                                            searchController.text.length) {
-                                      searchController.selection =
-                                          TextSelection.collapsed(
-                                              offset:
-                                                  searchController.text.length);
-                                    }
-                                  });
-                                },
-                                onSubmitted: (query) {
-                                  if (_debounce?.isActive ?? false)
-                                    _debounce!.cancel();
-                                  leadProvider.setSearchCriteria(
-                                      query,
-                                      leadProvider.fromDateS,
-                                      leadProvider.toDateS,
-                                      leadId: leadIdController.text);
-                                  leadProvider.getSearchLeads(context);
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Search here...',
-                                  hintStyle: GoogleFonts.plusJakartaSans(
-                                    color: const Color(0xFF94A3B8),
-                                    fontSize: 13,
-                                  ),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 10),
-                                  suffixIcon: GestureDetector(
-                                    onTap: () {
-                                      if (_debounce?.isActive ?? false) {
-                                        _debounce!.cancel();
-                                      }
-                                      leadProvider.setSearchCriteria(
-                                          searchController.text,
-                                          leadProvider.fromDateS,
-                                          leadProvider.toDateS,
-                                          leadId: leadIdController.text);
-                                      leadProvider.getSearchLeads(context);
-                                    },
-                                    child: const Icon(Icons.search,
-                                        color: Color(0xFF64748B), size: 18),
-                                  ),
-                                ),
                               ),
                             ),
                             PopupMenuButton<int>(
@@ -598,53 +743,10 @@ class _LeadsPageState extends State<LeadPage> {
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(color: Colors.black, width: 1.5),
                           ),
-                          child: TextField(
-                            controller: searchController,
+                          child: _buildSearchField(
+                            leadProvider: leadProvider,
+                            isMobile: true,
                             focusNode: searchFocusNodeMobile,
-                            textAlignVertical: TextAlignVertical.center,
-                            onTap: () {
-                              Future.microtask(() {
-                                if (searchController.text.isNotEmpty &&
-                                    searchController.selection.baseOffset ==
-                                        0 &&
-                                    searchController.selection.extentOffset ==
-                                        searchController.text.length) {
-                                  searchController.selection =
-                                      TextSelection.collapsed(
-                                          offset: searchController.text.length);
-                                }
-                              });
-                            },
-                            onSubmitted: (query) {
-                              if (_debounce?.isActive ?? false)
-                                _debounce!.cancel();
-                              leadProvider.setSearchCriteria(query,
-                                  leadProvider.fromDateS, leadProvider.toDateS,
-                                  leadId: leadIdController.text);
-                              leadProvider.getSearchLeads(context);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search here....',
-                              border: InputBorder.none,
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              suffixIcon: GestureDetector(
-                                onTap: () {
-                                  if (_debounce?.isActive ?? false) {
-                                    _debounce!.cancel();
-                                  }
-                                  leadProvider.setSearchCriteria(
-                                      searchController.text,
-                                      leadProvider.fromDateS,
-                                      leadProvider.toDateS,
-                                      leadId: leadIdController.text);
-                                  leadProvider.getSearchLeads(context);
-                                },
-                                child: const Icon(Icons.search,
-                                    color: Colors.black),
-                              ),
-                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
