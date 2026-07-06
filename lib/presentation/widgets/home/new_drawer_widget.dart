@@ -201,6 +201,15 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
     } else if (leadProvider.searchUserController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please Assign Staff';
+    } else if (settingsProvider.companyDetails.isNotEmpty &&
+        settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
+        (dropDownProvider.selectedDistrictId == null ||
+            dropDownProvider.selectedDistrictId == 0)) {
+      errorMessage = 'Please select District';
+    } else if (settingsProvider.companyDetails.isNotEmpty &&
+        settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
+        leadProvider.cityController.text.isEmpty) {
+      errorMessage = 'Place is required';
     } else if (settingsProvider.enquiryForMandatory == 1 &&
         (dropDownProvider.selectedEnquiryForId == null ||
             dropDownProvider.selectedEnquiryForId == 0) &&
@@ -728,6 +737,78 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 8),
 
+                          // Row 1.5: District & City (Conditional)
+                          if (settingsProvider.companyDetails.isNotEmpty &&
+                              settingsProvider.companyDetails[0].districtCityMandatory == 1) ...[
+                            ResponsiveRow(
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                          child: CommonDropdown<int>(
+                                            hintText: 'District*',
+                                            items: dropDownProvider.districtList
+                                                .map((status) => DropdownItem<int>(
+                                                      id: status.districtId ?? 0,
+                                                      name: status.districtName ?? '',
+                                                    ))
+                                                .toList(),
+                                            controller: leadProvider.districtController,
+                                            onItemSelected: (int? newValue) {
+                                              if (newValue != null) {
+                                                final selectedEnquiryFor =
+                                                    dropDownProvider.districtList
+                                                        .firstWhere((task) =>
+                                                            task.districtId == newValue);
+                                                dropDownProvider.updateDistrict(
+                                                    newValue,
+                                                    selectedEnquiryFor.districtName ??
+                                                        '');
+                                              }
+                                            },
+                                            selectedValue: dropDownProvider.selectedDistrictId !=
+                                                        null &&
+                                                    dropDownProvider.districtList.any((item) =>
+                                                        item.districtId ==
+                                                        dropDownProvider.selectedDistrictId)
+                                                ? dropDownProvider.selectedDistrictId
+                                                : null,
+                                            showError: dropDownProvider.showValidation && dropDownProvider.selectedDistrictId == null,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 48), // Spacer for alignment
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                          child: CustomTextField(
+                                            height: 54,
+                                            controller: leadProvider.cityController,
+                                            hintText: 'Place*',
+                                            labelText: '',
+                                            showError: dropDownProvider.showValidation &&
+                                                !_isFieldValid(leadProvider.cityController.text),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 48), // Spacer for alignment
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+
                           // Row 2: Reference Name
                           if (settingsProvider.menuIsViewMap[145] == 1) ...[
                             ResponsiveRow(
@@ -774,31 +855,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller:
-                                                leadProvider.cityController,
-                                            hintText: 'Place',
-                                            labelText: '',
-                                            showError: dropDownProvider
-                                                    .showValidation &&
-                                                !_isFieldValid(leadProvider
-                                                    .cityController.text),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          width: 48), // Spacer for alignment
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4.0),
                                           child: CommonDropdown<int>(
                                             hintText: 'Location',
                                             items: dropDownProvider.locationList
@@ -822,6 +878,22 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ],
                                   ),
                                 ),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          child: Container(),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          width: 48), // Spacer for alignment
+                                    ],
+                                  ),
+                                ),
+
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -1386,44 +1458,62 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ),
                           ],
                           const SizedBox(height: 8),
+                          if (settingsProvider.companyDetails.isEmpty ||
+                              settingsProvider.companyDetails[0].districtCityMandatory == 0) ...[
+                            ResponsiveRow(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: CommonDropdown<int>(
+                                    hintText: 'District',
+                                    items: dropDownProvider.districtList
+                                        .map((status) => DropdownItem<int>(
+                                              id: status.districtId ?? 0,
+                                              name: status.districtName ?? '',
+                                            ))
+                                        .toList(),
+                                    controller: leadProvider.districtController,
+                                    onItemSelected: (int? newValue) {
+                                      if (newValue != null) {
+                                        final selectedEnquiryFor =
+                                            dropDownProvider.districtList
+                                                .firstWhere((task) =>
+                                                    task.districtId == newValue);
+                                        dropDownProvider.updateDistrict(
+                                            newValue,
+                                            selectedEnquiryFor.districtName ??
+                                                '');
+                                      }
+                                    },
+                                    selectedValue:
+                                        dropDownProvider.selectedDistrictId !=
+                                                    null &&
+                                                dropDownProvider.districtList.any(
+                                                    (item) =>
+                                                        item.districtId ==
+                                                        dropDownProvider
+                                                            .selectedDistrictId)
+                                            ? dropDownProvider.selectedDistrictId
+                                            : null,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: CustomTextField(
+                                    height: 54,
+                                    controller: leadProvider.cityController,
+                                    hintText: 'Place',
+                                    labelText: '',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                          ],
                           ResponsiveRow(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
-                                child: CommonDropdown<int>(
-                                  hintText: 'District',
-                                  items: dropDownProvider.districtList
-                                      .map((status) => DropdownItem<int>(
-                                            id: status.districtId ?? 0,
-                                            name: status.districtName ?? '',
-                                          ))
-                                      .toList(),
-                                  controller: leadProvider.districtController,
-                                  onItemSelected: (int? newValue) {
-                                    if (newValue != null) {
-                                      final selectedEnquiryFor =
-                                          dropDownProvider.districtList
-                                              .firstWhere((task) =>
-                                                  task.districtId == newValue);
-                                      dropDownProvider.updateDistrict(
-                                          newValue,
-                                          selectedEnquiryFor.districtName ??
-                                              '');
-                                    }
-                                  },
-                                  selectedValue:
-                                      dropDownProvider.selectedDistrictId !=
-                                                  null &&
-                                              dropDownProvider.districtList.any(
-                                                  (item) =>
-                                                      item.districtId ==
-                                                      dropDownProvider
-                                                          .selectedDistrictId)
-                                          ? dropDownProvider.selectedDistrictId
-                                          : null,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
+
                               Expanded(
                                 child: CustomTextField(
                                   height: 54,

@@ -259,6 +259,15 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     } else if (leadProvider.searchUserController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please Assign Staff';
+    } else if (settingsProvider.companyDetails.isNotEmpty &&
+        settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
+        (dropDownProvider.selectedDistrictId == null ||
+            dropDownProvider.selectedDistrictId == 0)) {
+      errorMessage = 'Please select District';
+    } else if (settingsProvider.companyDetails.isNotEmpty &&
+        settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
+        leadProvider.cityController.text.isEmpty) {
+      errorMessage = 'Place is required';
     } else if (settingsProvider.enquiryForMandatory == 1 &&
         (dropDownProvider.selectedEnquiryForId == null ||
             dropDownProvider.selectedEnquiryForId == 0) &&
@@ -1776,30 +1785,38 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           ),
         ],
         const SizedBox(height: 8),
-        CommonDropdown<int>(
-          hintText: 'District',
-          items: dropDownProvider.districtList
-              .map((status) => DropdownItem<int>(
-                    id: status.districtId ?? 0,
-                    name: status.districtName ?? '',
-                  ))
-              .toList(),
-          controller: leadProvider.districtController,
-          onItemSelected: (int? newValue) {
-            if (newValue != null) {
-              final selectedEnquiryFor = dropDownProvider.districtList
-                  .firstWhere((task) => task.districtId == newValue);
-              dropDownProvider.updateDistrict(
-                  newValue, selectedEnquiryFor.districtName ?? '');
-            }
-          },
-          selectedValue: dropDownProvider.selectedDistrictId != null &&
-                  dropDownProvider.districtList.any((item) =>
-                      item.districtId == dropDownProvider.selectedDistrictId)
-              ? dropDownProvider.selectedDistrictId
-              : null,
-        ),
-        const SizedBox(height: 8),
+        if (settingsProvider.companyDetails.isEmpty ||
+            settingsProvider.companyDetails[0].districtCityMandatory == 0) ...[
+          CommonDropdown<int>(
+            hintText: 'District',
+            items: dropDownProvider.districtList
+                .map((status) => DropdownItem<int>(
+                      id: status.districtId ?? 0,
+                      name: status.districtName ?? '',
+                    ))
+                .toList(),
+            controller: leadProvider.districtController,
+            onItemSelected: (int? newValue) {
+              if (newValue != null) {
+                final selectedEnquiryFor = dropDownProvider.districtList
+                    .firstWhere((task) => task.districtId == newValue);
+                dropDownProvider.updateDistrict(
+                    newValue, selectedEnquiryFor.districtName ?? '');
+              }
+            },
+            selectedValue: dropDownProvider.selectedDistrictId != null &&
+                    dropDownProvider.districtList.any((item) =>
+                        item.districtId == dropDownProvider.selectedDistrictId)
+                ? dropDownProvider.selectedDistrictId
+                : null,
+          ),
+          const SizedBox(height: 8),
+          CustomTextfieldWidgetMobile(
+            controller: leadProvider.cityController,
+            labelText: 'Place',
+          ),
+          const SizedBox(height: 8),
+        ],
         CustomTextfieldWidgetMobile(
           controller: leadProvider.pincodeController,
           labelText: 'Pincode',
@@ -2336,13 +2353,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           const SizedBox(height: 10),
         ],
         if (settingsProvider.menuIsViewMap[146] == 1) ...[
-          CustomTextfieldWidgetMobile(
-            controller: leadProvider.cityController,
-            labelText: 'Place',
-            showError: dropDownProvider.showValidation &&
-                !_isFieldValid(leadProvider.cityController.text),
-          ),
-          const SizedBox(height: 10),
           CommonDropdown<int>(
             hintText: 'Location',
             items: dropDownProvider.locationList
@@ -2491,6 +2501,43 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         ),
 
         const SizedBox(height: 10),
+
+        if (settingsProvider.companyDetails.isNotEmpty &&
+            settingsProvider.companyDetails[0].districtCityMandatory == 1) ...[
+          CommonDropdown<int>(
+            hintText: 'District*',
+            items: dropDownProvider.districtList
+                .map((status) => DropdownItem<int>(
+                      id: status.districtId ?? 0,
+                      name: status.districtName ?? '',
+                    ))
+                .toList(),
+            controller: leadProvider.districtController,
+            onItemSelected: (int? newValue) {
+              if (newValue != null) {
+                final selectedEnquiryFor = dropDownProvider.districtList
+                    .firstWhere((task) => task.districtId == newValue);
+                dropDownProvider.updateDistrict(
+                    newValue, selectedEnquiryFor.districtName ?? '');
+              }
+            },
+            selectedValue: dropDownProvider.selectedDistrictId != null &&
+                    dropDownProvider.districtList.any((item) =>
+                        item.districtId == dropDownProvider.selectedDistrictId)
+                ? dropDownProvider.selectedDistrictId
+                : null,
+            showError: dropDownProvider.showValidation &&
+                dropDownProvider.selectedDistrictId == null,
+          ),
+          const SizedBox(height: 10),
+          CustomTextfieldWidgetMobile(
+            controller: leadProvider.cityController,
+            labelText: 'Place*',
+            showError: dropDownProvider.showValidation &&
+                !_isFieldValid(leadProvider.cityController.text),
+          ),
+          const SizedBox(height: 10),
+        ],
 
         Row(
           children: [
