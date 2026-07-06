@@ -717,7 +717,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         int itemId = item['itemId'];
         double userQty = item['quantity'];
 
-        await expenseProvider.getItemMaterialList(itemId, context);
+        // await expenseProvider.getItemMaterialList(itemId, context);
 
         // Add to aggregated prices
         final selectedData = expenseProvider.itemList
@@ -773,6 +773,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print("Error fetching materials for multiple items: $e");
     } finally {
       Loader.stopLoader(context);
+      Navigator.pop(context);
     }
   }
 
