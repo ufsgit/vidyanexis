@@ -15,6 +15,7 @@ class CommonDropdown<T> extends StatelessWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final FloatingLabelBehavior? floatingLabelBehavior;
+  final bool showError;
 
   const CommonDropdown({
     super.key,
@@ -32,6 +33,7 @@ class CommonDropdown<T> extends StatelessWidget {
     this.borderRadius,
     this.borderColor,
     this.focusedBorderColor,
+    this.showError = false,
   });
 
   final double? borderRadius;
@@ -49,9 +51,11 @@ class CommonDropdown<T> extends StatelessWidget {
     }
 
     return LayoutBuilder(builder: (context, constraints) {
-      return SizedBox(
-        width: constraints.biggest.width,
-        child: DropdownButtonFormField<T>(
+      return Stack(
+        children: [
+          SizedBox(
+            width: constraints.biggest.width,
+            child: DropdownButtonFormField<T>(
           style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -102,20 +106,20 @@ class CommonDropdown<T> extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
               borderSide: BorderSide(
-                  color: borderColor ?? AppColors.textGrey2, width: 1),
+                  color: showError ? Colors.red : (borderColor ?? AppColors.textGrey2), width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
               borderSide: BorderSide(
-                  color: focusedBorderColor ?? AppColors.textGrey2, width: 1),
+                  color: showError ? Colors.red : (focusedBorderColor ?? AppColors.textGrey2), width: 1),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
               borderSide: BorderSide(
-                  color: borderColor ??
+                  color: showError ? Colors.red : (borderColor ??
                       (AppStyles.isWebScreen(context)
                           ? AppColors.textGrey2
-                          : AppColors.grey),
+                          : AppColors.grey)),
                   width: 1),
             ),
             contentPadding:
@@ -167,6 +171,20 @@ class CommonDropdown<T> extends StatelessWidget {
                 }
               : null, // Set onChanged to null when disabled
         ),
+          ),
+          if (showError)
+            Positioned(
+              right: 12,
+              top: 8,
+              child: Text(
+                '*',
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.red,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+        ],
       );
     });
   }

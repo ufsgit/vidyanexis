@@ -198,6 +198,16 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                             ? 'Enabled'
                             : 'Disabled',
                       ),
+                      // District & City in Basic Details
+                      _buildInfoTile(
+                        Icons.check_box,
+                        "District & City in Basic Details",
+                        settingsProvider
+                                    .companyDetails[0].districtCityMandatory ==
+                                1
+                            ? 'Enabled'
+                            : 'Disabled',
+                      ),
                     ],
                   )
               ],

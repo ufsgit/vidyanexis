@@ -511,6 +511,7 @@ class SettingsProvider extends ChangeNotifier {
   int _quotationItem = 0;
   int _additionalExpense = 0;
   int _commercialProposal = 0;
+  int _districtCityMandatory = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -522,6 +523,7 @@ class SettingsProvider extends ChangeNotifier {
   int get quotationItem => _quotationItem;
   int get additionalExpense => _additionalExpense;
   int get commercialProposal => _commercialProposal;
+  int get districtCityMandatory => _districtCityMandatory;
 
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
@@ -1086,6 +1088,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setCommercialProposal(int value) {
     _commercialProposal = value;
+    notifyListeners();
+  }
+
+  void setDistrictCityMandatory(int value) {
+    _districtCityMandatory = value;
     notifyListeners();
   }
 
@@ -4028,6 +4035,7 @@ class SettingsProvider extends ChangeNotifier {
               _quotationItem = _companyDetails[0].quotationItemValue;
               _additionalExpense = _companyDetails[0].additionalExpense;
               _commercialProposal = _companyDetails[0].commercialProposal;
+              _districtCityMandatory = _companyDetails[0].districtCityMandatory;
             }
           } catch (e) {
             print(
@@ -4080,6 +4088,7 @@ class SettingsProvider extends ChangeNotifier {
           _quotationItem = data['Quotation_Item_Value'] ?? 0;
           _additionalExpense = data['Additional_Expense'] ?? 0;
           _commercialProposal = data['Commercial_Proposal'] ?? 0;
+          _districtCityMandatory = data['District_City_Mandatory'] ?? 0;
 
           if (newLogo != logo ||
               newTitle != title ||
@@ -4155,6 +4164,7 @@ class SettingsProvider extends ChangeNotifier {
             "Quotation_Item_Value": _quotationItem,
             "Additional_Expense": _additionalExpense,
             "Commercial_Proposal": _commercialProposal,
+            "District_City_Mandatory": _districtCityMandatory,
           });
 
       if (response!.statusCode == 200) {

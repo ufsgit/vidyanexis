@@ -24,6 +24,7 @@ class Company {
   final int quotationItemValue;
   final int additionalExpense;
   final int commercialProposal;
+  final int districtCityMandatory;
 
   Company({
     required this.companyId,
@@ -51,6 +52,7 @@ class Company {
     required this.quotationItemValue,
     required this.additionalExpense,
     required this.commercialProposal,
+    required this.districtCityMandatory,
   });
 
   // Factory constructor for creating an instance from JSON with null checks
@@ -81,6 +83,7 @@ class Company {
       quotationItemValue: json['Quotation_Item_Value'] ?? 0,
       additionalExpense: json['Additional_Expense'] ?? 0,
       commercialProposal: json['Commercial_Proposal'] ?? 0,
+      districtCityMandatory: json['District_City_Mandatory'] ?? 0,
     );
   }
 
@@ -112,6 +115,7 @@ class Company {
       'Quotation_Item_Value': quotationItemValue,
       'Additional_Expense': additionalExpense,
       'Commercial_Proposal': commercialProposal,
+      'District_City_Mandatory': districtCityMandatory,
     };
   }
 }
