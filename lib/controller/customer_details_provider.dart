@@ -710,8 +710,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       Loader.showLoader(context);
       List<BillOfMaterialItem> combinedMaterials = [];
       _newItemId = selectedItems.isNotEmpty ? selectedItems.first['itemId'] : 0;
-      aggregatedPriceFrom = 0.0;
-      aggregatedPriceTo = 0.0;
+      // aggregatedPriceFrom = 0.0;
+      // aggregatedPriceTo = 0.0;
 
       for (var item in selectedItems) {
         int itemId = item['itemId'];
@@ -720,12 +720,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
         // await expenseProvider.getItemMaterialList(itemId, context);
 
         // Add to aggregated prices
-        final selectedData = expenseProvider.itemList
-            .firstWhere((element) => element.itemId == itemId);
-        double priceFrom = double.tryParse(selectedData.priceFrom) ?? 0.0;
-        double priceTo = double.tryParse(selectedData.priceTo) ?? 0.0;
-        aggregatedPriceFrom += (priceFrom * userQty);
-        aggregatedPriceTo += (priceTo * userQty);
+        // final selectedData = expenseProvider.itemList
+        //     .firstWhere((element) => element.itemId == itemId);
+        // double priceFrom = double.tryParse(selectedData.priceFrom) ?? 0.0;
+        // double priceTo = double.tryParse(selectedData.priceTo) ?? 0.0;
+        // aggregatedPriceFrom += (priceFrom * userQty);
+        // aggregatedPriceTo += (priceTo * userQty);
 
         final materialsData = item['materials'] as List<dynamic>? ?? [];
         if (materialsData.isNotEmpty) {

@@ -268,7 +268,8 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
           const SnackBar(content: Text('Please enter a valid quantity')));
       return;
     }
-
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
     final expenseProvider =
         Provider.of<ExpenseProvider>(context, listen: false);
     await expenseProvider.getItemMultipleMaterialList(
@@ -279,6 +280,11 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
           .showSnackBar(const SnackBar(content: Text('No items found')));
       return;
     }
+
+    customerDetailsProvider.aggregatedPriceFrom =
+        double.tryParse(expenseProvider.multiItems.first.priceFrom) ?? 0;
+    customerDetailsProvider.aggregatedPriceTo =
+        double.tryParse(expenseProvider.multiItems.first.priceTo) ?? 0;
 
     setState(() {
       for (final mainItem in expenseProvider.multiItems) {
