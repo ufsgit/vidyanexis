@@ -82,9 +82,12 @@ class CustomFieldModel {
         isViewInQuotation:
             json["view_in_quotation"] ?? json["isViewInQuotation"],
         isCommercial: json["is_commercial"] ?? json["isCommercial"],
-        isChecked: json["is_checked"] != null
-            ? int.tryParse(json["is_checked"].toString())
-            : null,
+        isChecked: (json["is_checked"] != null
+                ? int.tryParse(json["is_checked"].toString())
+                : null) ??
+            (json["events"] != null
+                ? int.tryParse(json["events"].toString())
+                : null),
         dropDownValues:
             (json["Dropdown_Values"] ?? json["dropdown_values"]) == null
                 ? []
@@ -110,6 +113,7 @@ class CustomFieldModel {
         "view_in_quotation": isViewInQuotation,
         "is_commercial": isCommercial,
         "is_checked": isChecked,
+        "events": isChecked,
         "Dropdown_Values": dropDownValues == null
             ? []
             : List<dynamic>.from(dropDownValues!.map((x) => x)),

@@ -139,6 +139,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
             widget.customFieldTypeModel?.isViewInQuotation == 1);
         settingsProvider
             .toggleCommercial(widget.customFieldTypeModel?.isCommercial == 1);
+        settingsProvider
+            .toggleIsChecked(widget.customFieldTypeModel?.isChecked == 1);
         customerDetailsProvider.selectedQuotationType =
             widget.customFieldTypeModel?.quotationTypeId ?? 0;
       } else {
@@ -148,6 +150,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
         settingsProvider.toggleQuotationCustom(false);
         settingsProvider.toggleViewInQuotation(false);
         settingsProvider.toggleCommercial(false);
+        settingsProvider.toggleIsChecked(false);
         customerDetailsProvider.selectedQuotationType = 0;
         customerDetailsProvider.quotationTypeController.clear();
         // settingsProvider.setFieldId(0);
@@ -228,6 +231,15 @@ class _AddCustomFieldState extends State<AddCustomField> {
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
                   ),
+                CheckboxListTile(
+                  title: const Text("Events Name"),
+                  value: settingsProvider.isChecked,
+                  onChanged: (value) {
+                    settingsProvider.toggleIsChecked(value!);
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                ),
               ] else
                 Row(
                   children: [
@@ -265,6 +277,17 @@ class _AddCustomFieldState extends State<AddCustomField> {
                           contentPadding: EdgeInsets.zero,
                         ),
                       ),
+                    Expanded(
+                      child: CheckboxListTile(
+                        title: const Text("Events Name"),
+                        value: settingsProvider.isChecked,
+                        onChanged: (value) {
+                          settingsProvider.toggleIsChecked(value!);
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
                   ],
                 ),
               const SizedBox(height: 16),
@@ -478,6 +501,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
                               settingsProvider.isViewInQuotation ? 1 : 0;
                           customFieldTypeModel.isCommercial =
                               settingsProvider.isCommercial ? 1 : 0;
+                          customFieldTypeModel.isChecked =
+                              settingsProvider.isChecked ? 1 : 0;
 
                           final navigator = Navigator.of(context);
                           await settingsProvider.saveCustomField(
@@ -584,6 +609,8 @@ class _AddCustomFieldState extends State<AddCustomField> {
                 settingsProvider.isViewInQuotation ? 1 : 0;
             customFieldTypeModel.isCommercial =
                 settingsProvider.isCommercial ? 1 : 0;
+            customFieldTypeModel.isChecked =
+                settingsProvider.isChecked ? 1 : 0;
             customFieldTypeModel.quotationTypeId =
                 customerDetailsProvider.selectedQuotationType;
 

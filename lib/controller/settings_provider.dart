@@ -3882,6 +3882,9 @@ class SettingsProvider extends ChangeNotifier {
   bool _isCommercial = false;
   bool get isCommercial => _isCommercial;
 
+  bool _isChecked = false;
+  bool get isChecked => _isChecked;
+
   void toggleEnquiryForVisible(bool value) {
     _isEnquiryForVisible = value;
     notifyListeners();
@@ -3899,6 +3902,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void toggleCommercial(bool value) {
     _isCommercial = value;
+    notifyListeners();
+  }
+
+  void toggleIsChecked(bool value) {
+    _isChecked = value;
     notifyListeners();
   }
 
