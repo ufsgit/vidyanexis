@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 
 class AttendanceReport extends StatefulWidget {
   const AttendanceReport({super.key});
@@ -227,7 +228,31 @@ class _AttendanceReportState extends State<AttendanceReport> {
                     const SizedBox(width: 16),
                     // Export Button
                     CommonReportExportButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        exportToExcel(
+                          headers: [
+                            'Staff Name',
+                            'Date',
+                            'Check-In',
+                            'Check-Out',
+                            'Location',
+                          ],
+                          data: reportsProvider.taskReport.map((task) {
+                            return {
+                              'Staff Name': task.userDetailsName,
+                              'Date': task.checkInDate,
+                              'Check-In': task.checkInTimeOnly,
+                              'Check-Out': task.checkOutTimeOnly.isEmpty
+                                  ? '-'
+                                  : task.checkOutTimeOnly,
+                              'Location': task.location.isEmpty
+                                  ? 'No Location'
+                                  : task.location,
+                            };
+                          }).toList(),
+                          fileName: 'Attendance_Report',
+                        );
+                      },
                       label: 'Export',
                     ),
                   ],
