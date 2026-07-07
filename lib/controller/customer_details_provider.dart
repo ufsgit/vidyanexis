@@ -107,7 +107,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool get isLoadingQuotationCustomFields => _isLoadingQuotationCustomFields;
   List<CustomFieldByStatusId> _customFieldQuotation = [];
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
-  
+
   List<CustomFieldByStatusId> _commercialCustomFields = [];
   List<CustomFieldByStatusId> get commercialCustomFields => _commercialCustomFields;
 
@@ -148,10 +148,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<Map<int, CustomFieldByStatusId>> get commercialTableRows {
     List<Map<int, CustomFieldByStatusId>> rows = [];
     Map<int, CustomFieldByStatusId> currentRow = {};
-    
+
     for (var field in _selectedCommercialFields) {
       int realId = virtualToRealCommercialFieldId[field.customFieldId!] ?? field.customFieldId!;
-      
+
       if (currentRow.containsKey(realId)) {
         rows.add(currentRow);
         currentRow = {};
@@ -174,7 +174,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     for (var field in _commercialCustomFields) {
       final clonedField = CustomFieldByStatusId.fromJson(field.toJson());
       clonedField.isChecked = 1;
-      
+
       String val = '';
       if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
         val = commercialTableRowDropdowns[field.customFieldId!] ?? '';
@@ -188,7 +188,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       clonedField.customFieldId = vId;
       _selectedCommercialFields.add(clonedField);
     }
-    
+
     for (var controller in commercialTableRowControllers.values) {
       controller.clear();
     }
@@ -222,19 +222,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
     if (rowIndex >= 0 && rowIndex < rows.length) {
       _editingCommercialRowIndex = rowIndex;
       var rowToEdit = rows[rowIndex];
-      
+
       for (var field in _commercialCustomFields) {
         int realId = field.customFieldId!;
         var existingField = rowToEdit[realId];
         String val = existingField?.datavalue ?? '';
-        
+
         if (field.customFieldTypeId == 3 || field.customFieldTypeId == 4) {
           commercialTableRowDropdowns[realId] = val;
         } else {
           getCommercialTableRowController(realId).text = val;
         }
       }
-      
+
       notifyListeners();
     }
   }
@@ -244,7 +244,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     var rows = commercialTableRows;
     if (_editingCommercialRowIndex! >= 0 && _editingCommercialRowIndex! < rows.length) {
       var rowToEdit = rows[_editingCommercialRowIndex!];
-      
+
       for (var field in _commercialCustomFields) {
         int realId = field.customFieldId!;
         var existingField = rowToEdit[realId];
@@ -258,7 +258,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           existingField.datavalue = val;
         }
       }
-      
+
       for (var controller in commercialTableRowControllers.values) {
         controller.clear();
       }
@@ -1322,7 +1322,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           } else if (data is List) {
             fieldsData = data;
           }
-          
+
           if (fieldsData.isNotEmpty) {
             _commercialCustomFields = fieldsData
                 .map((e) => CustomFieldByStatusId.fromJson(e))
@@ -1380,6 +1380,18 @@ class CustomerDetailsProvider extends ChangeNotifier {
       return field.quotationFieldsName ?? defaultName;
     } catch (e) {
       return defaultName;
+    }
+  }
+
+  bool isQuotationFieldVisible(int fieldId) {
+    if (_quotationFields.isEmpty) return true;
+    try {
+      final field = _quotationFields.firstWhere(
+        (element) => element.quotationFieldsId == fieldId,
+      );
+      return field.isVisibility == 1;
+    } catch (e) {
+      return true;
     }
   }
 
@@ -4663,7 +4675,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 ((customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
                         []) +
                     (customFieldCommercialKey.currentState?.getFieldValuesAsJson() ?? []))
-                    .where((field) {
+                .where((field) {
               final fieldId = field['custom_field_id'];
               return _customFieldQuotation.any((element) =>
                       element.customFieldId == fieldId &&
@@ -5027,19 +5039,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
             _customFieldQuotation[i].datavalue = value;
           }
         }
-        
+
         for (var i = 0; i < _commercialCustomFields.length; i++) {
           if (_commercialCustomFields[i].customFieldId == fieldId) {
             // Clone to support duplicates
             final clonedField = CustomFieldByStatusId.fromJson(_commercialCustomFields[i].toJson());
             clonedField.datavalue = value;
             clonedField.isChecked = 1;
-            
+
             // Assign virtual ID
             final vId = virtualIdCounter--;
             virtualToRealCommercialFieldId[vId] = fieldId;
             clonedField.customFieldId = vId;
-            
+
             _selectedCommercialFields.add(clonedField);
           }
         }

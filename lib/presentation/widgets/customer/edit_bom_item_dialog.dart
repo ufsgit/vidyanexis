@@ -74,44 +74,50 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                 ],
               ),
               const Divider(height: 24),
-              CustomTextField(
-                controller: provider.billdescriptionController,
-                labelText: provider.getQuotationFieldName(10, 'Equipment'),
-                hintText: provider.getQuotationFieldName(10, 'Equipment'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: provider.billmakeController,
-                labelText: provider.getQuotationFieldName(11, 'Specification'),
-                hintText: provider.getQuotationFieldName(11, 'Specification'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(10)) ...[
+                CustomTextField(
+                  controller: provider.billdescriptionController,
+                  labelText: provider.getQuotationFieldName(10, 'Equipment'),
+                  hintText: provider.getQuotationFieldName(10, 'Equipment'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+              ],
+              if (provider.isQuotationFieldVisible(11)) ...[
+                CustomTextField(
+                  controller: provider.billmakeController,
+                  labelText: provider.getQuotationFieldName(11, 'Specification'),
+                  hintText: provider.getQuotationFieldName(11, 'Specification'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+              ],
               Row(
                 children: [
-                  Expanded(
-                    child: CustomTextField(
-                      controller: provider.billquantityController,
-                      labelText: provider.getQuotationFieldName(12, 'Quantity'),
-                      hintText: provider.getQuotationFieldName(12, 'Quantity'),
-                      height: 54,
-                      borderRadius: 12,
-                      borderColor: const Color(0xFFD0D5DD),
-                      focusedBorderColor: AppColors.bluebutton,
-                      onChanged: (value) {
-                        if (companyQuotationItems) {
-                          provider.companyQuotationItemsCalulate(context);
-                        }
-                      },
+                  if (provider.isQuotationFieldVisible(12)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        controller: provider.billquantityController,
+                        labelText: provider.getQuotationFieldName(12, 'Quantity'),
+                        hintText: provider.getQuotationFieldName(12, 'Quantity'),
+                        height: 54,
+                        borderRadius: 12,
+                        borderColor: const Color(0xFFD0D5DD),
+                        focusedBorderColor: AppColors.bluebutton,
+                        onChanged: (value) {
+                          if (companyQuotationItems) {
+                            provider.companyQuotationItemsCalulate(context);
+                          }
+                        },
+                      ),
                     ),
-                  ),
+                  ],
                   // const SizedBox(width: 16),
                   // Expanded(
                   //   child: CommonDropdown<int>(
@@ -139,67 +145,77 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                 ],
               ),
               const SizedBox(height: 16),
-              CustomTextField(
-                controller: provider.billdistributorController,
-                labelText: provider.getQuotationFieldName(13, 'Manufacturer'),
-                hintText: provider.getQuotationFieldName(13, 'Manufacturer'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(13)) ...[
+                CustomTextField(
+                  controller: provider.billdistributorController,
+                  labelText: provider.getQuotationFieldName(13, 'Manufacturer'),
+                  hintText: provider.getQuotationFieldName(13, 'Manufacturer'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+              ],
               if (companyQuotationItems) ...[
-                CustomTextField(
-                  controller: provider.billuomController,
-                  labelText: provider.getQuotationFieldName(17, 'Unit'),
-                  hintText: provider.getQuotationFieldName(17, 'Unit'),
-                  height: 54,
-                  borderRadius: 12,
-                  borderColor: const Color(0xFFD0D5DD),
-                  focusedBorderColor: AppColors.bluebutton,
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: provider.billpriceController,
-                  labelText: provider.getQuotationFieldName(15, 'Price'),
-                  hintText: provider.getQuotationFieldName(15, 'Price'),
-                  height: 54,
-                  borderRadius: 12,
-                  borderColor: const Color(0xFFD0D5DD),
-                  focusedBorderColor: AppColors.bluebutton,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d+\.?\d{0,2}')),
-                  ],
-                  onChanged: (value) {
-                    if (companyQuotationItems) {
-                      provider.companyQuotationItemsCalulate(context);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: provider.billamountController,
-                  labelText: provider.getQuotationFieldName(16, 'Amount'),
-                  hintText: provider.getQuotationFieldName(16, 'Amount'),
-                  height: 54,
-                  borderRadius: 12,
-                  borderColor: const Color(0xFFD0D5DD),
-                  focusedBorderColor: AppColors.bluebutton,
-                  readOnly: true,
-                ),
+                if (provider.isQuotationFieldVisible(17)) ...[
+                  CustomTextField(
+                    controller: provider.billuomController,
+                    labelText: provider.getQuotationFieldName(17, 'Unit'),
+                    hintText: provider.getQuotationFieldName(17, 'Unit'),
+                    height: 54,
+                    borderRadius: 12,
+                    borderColor: const Color(0xFFD0D5DD),
+                    focusedBorderColor: AppColors.bluebutton,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if (provider.isQuotationFieldVisible(15)) ...[
+                  CustomTextField(
+                    controller: provider.billpriceController,
+                    labelText: provider.getQuotationFieldName(15, 'Price'),
+                    hintText: provider.getQuotationFieldName(15, 'Price'),
+                    height: 54,
+                    borderRadius: 12,
+                    borderColor: const Color(0xFFD0D5DD),
+                    focusedBorderColor: AppColors.bluebutton,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d+\.?\d{0,2}')),
+                    ],
+                    onChanged: (value) {
+                      if (companyQuotationItems) {
+                        provider.companyQuotationItemsCalulate(context);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if (provider.isQuotationFieldVisible(16)) ...[
+                  CustomTextField(
+                    controller: provider.billamountController,
+                    labelText: provider.getQuotationFieldName(16, 'Amount'),
+                    hintText: provider.getQuotationFieldName(16, 'Amount'),
+                    height: 54,
+                    borderRadius: 12,
+                    borderColor: const Color(0xFFD0D5DD),
+                    focusedBorderColor: AppColors.bluebutton,
+                    readOnly: true,
+                  ),
+                ],
               ] else ...[
-                CustomTextField(
-                  controller: provider.billinvoiceController,
-                  labelText: provider.getQuotationFieldName(14, 'Comments'),
-                  hintText: provider.getQuotationFieldName(14, 'Comments'),
-                  height: 54,
-                  borderRadius: 12,
-                  borderColor: const Color(0xFFD0D5DD),
-                  focusedBorderColor: AppColors.bluebutton,
-                ),
+                if (provider.isQuotationFieldVisible(14)) ...[
+                  CustomTextField(
+                    controller: provider.billinvoiceController,
+                    labelText: provider.getQuotationFieldName(14, 'Comments'),
+                    hintText: provider.getQuotationFieldName(14, 'Comments'),
+                    height: 54,
+                    borderRadius: 12,
+                    borderColor: const Color(0xFFD0D5DD),
+                    focusedBorderColor: AppColors.bluebutton,
+                  ),
+                ],
               ],
               const SizedBox(height: 24),
               Row(
