@@ -101,10 +101,38 @@ class TaskReportModel {
       taskId: json['Task_Id'] ?? 0,
       taskMasterId: json['Task_Master_Id'] ?? 0,
       locationTracking: json["Location_Tracking"] ?? 0,
-      location: parseString(json['Location'] ?? json['location']),
-      locationName: parseString(json['Location_Name'] ?? json['location_name']),
       latitude: parseString(json['Latitude'] ?? json['latitude']),
       longitude: parseString(json['Longitude'] ?? json['longitude']),
+      location: () {
+        String lat = parseString(json['Latitude'] ?? json['latitude']);
+        String lng = parseString(json['Longitude'] ?? json['longitude']);
+        String loc = [
+          json['Location_Name'], json['location_name'],
+          json['Location'], json['location'],
+          json['Address'], json['address']
+        ].firstWhere(
+          (val) => val != null && val.toString().trim().isNotEmpty && val.toString().trim() != 'null' && val.toString().trim() != 'Unknown Location', 
+          orElse: () => ''
+        )?.toString() ?? '';
+
+        if (loc.isEmpty) {
+          if (lat.isNotEmpty && lng.isNotEmpty && lat != '0.0' && lng != '0.0' && lat != '0' && lng != '0') {
+            return '$lat,$lng';
+          }
+        }
+        return loc;
+      }(),
+      locationName: () {
+        String loc = [
+          json['Location_Name'], json['location_name'],
+          json['Location'], json['location'],
+          json['Address'], json['address']
+        ].firstWhere(
+          (val) => val != null && val.toString().trim().isNotEmpty && val.toString().trim() != 'null' && val.toString().trim() != 'Unknown Location', 
+          orElse: () => ''
+        )?.toString() ?? '';
+        return loc;
+      }(),
       description: json['Description'] ?? '',
       entryDate: json['Entry_Date'] ?? '',
       taskStatusId: json['Task_Status_Id'] ?? 0,

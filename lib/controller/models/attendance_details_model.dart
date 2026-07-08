@@ -67,9 +67,28 @@ class AttendanceDetails {
       employeeCode: json['Employee_Code']?.toString() ?? '',
       checkInTime: json['Check_In_Time']?.toString() ?? '',
       checkOutTime: json['Check_Out_Time']?.toString() ?? '',
-      location: (json['Location'] ?? json['location'])?.toString() ?? '',
       latitude: (json['Latitude'] ?? json['latitude'])?.toString() ?? '',
       longitude: (json['Longitude'] ?? json['longitude'])?.toString() ?? '',
+      location: () {
+        String lat = (json['Latitude'] ?? json['latitude'])?.toString() ?? '';
+        String lng = (json['Longitude'] ?? json['longitude'])?.toString() ?? '';
+        String loc = [
+          json['Check_In_Location'], json['check_in_location'], json['Checkin_Location'],
+          json['Attendance_Location'], json['attendance_location'],
+          json['Address'], json['address'], json['Location_Name'],
+          json['Location'], json['location']
+        ].firstWhere(
+          (val) => val != null && val.toString().trim().isNotEmpty && val.toString().trim() != 'null' && val.toString().trim() != 'Unknown Location', 
+          orElse: () => ''
+        )?.toString() ?? '';
+        
+        if (loc.isEmpty) {
+          if (lat.isNotEmpty && lng.isNotEmpty && lat != '0.0' && lng != '0.0' && lat != '0' && lng != '0') {
+            return '$lat,$lng';
+          }
+        }
+        return loc;
+      }(),
       checkInDate: checkInDate,
       checkInTimeOnly: checkInTimeOnly,
       checkOutDate: checkOutDate,

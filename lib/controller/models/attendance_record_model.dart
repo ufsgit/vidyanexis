@@ -35,8 +35,12 @@ class AttendanceRecord {
       userDetailsName: json['User_Details_Name'] ??
           '', // Default to empty string if 'User_Details_Name' is null
       photo: json['photo'] ?? '', // Default to empty string if 'photo' is null
-      location: json['Location'] ?? json['location'] ??
-          '', // Default to empty string if 'location' is null
+      location: [
+        json['Check_In_Location'], json['check_in_location'], json['Checkin_Location'],
+        json['Attendance_Location'], json['attendance_location'],
+        json['Address'], json['address'], json['Location_Name'],
+        json['Location'], json['location']
+      ].firstWhere((val) => val != null && val.toString().trim().isNotEmpty && val.toString().trim() != 'null', orElse: () => '')?.toString() ?? '',
       latitude: json['Latitude'] ?? json['latitude'] ??
           "0.0", // Convert to double and default to 0.0 if null
       longitude: json['Longitude'] ?? json['longitude'] ??

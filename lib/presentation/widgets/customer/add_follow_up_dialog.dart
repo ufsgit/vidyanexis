@@ -318,7 +318,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       leadProvider.nextFollowUpDateController.clear();
     }
 
-    final selectedStatus = dropDownProvider.followUpData.firstWhere(
+    final selectedStatus = _filteredFollowUpStatuses.firstWhere(
       (status) => status.statusId == dropDownProvider.selectedStatusId,
       orElse: () => SearchLeadStatusModel(
         followup: 0,
@@ -524,7 +524,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
               dropDownProvider.setSelectedStatusId(selectedId);
 
               if (selectedId != null) {
-                final selectedItem = dropDownProvider.followUpData.firstWhere(
+                final selectedItem = _filteredFollowUpStatuses.firstWhere(
                   (status) => status.statusId == selectedId,
                   orElse: () => SearchLeadStatusModel(
                       statusId: selectedId, statusName: ''),
