@@ -109,10 +109,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
 
   List<CustomFieldByStatusId> _commercialCustomFields = [];
-  List<CustomFieldByStatusId> get commercialCustomFields => _commercialCustomFields;
+  List<CustomFieldByStatusId> get commercialCustomFields =>
+      _commercialCustomFields;
 
   List<CustomFieldByStatusId> _selectedCommercialFields = [];
-  List<CustomFieldByStatusId> get selectedCommercialFields => _selectedCommercialFields;
+  List<CustomFieldByStatusId> get selectedCommercialFields =>
+      _selectedCommercialFields;
   set selectedCommercialFields(List<CustomFieldByStatusId> value) {
     _selectedCommercialFields = value;
     notifyListeners();
@@ -129,7 +131,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     commercialTableRowDropdowns.clear();
     _editingCommercialRowIndex = null;
     for (var field in _commercialCustomFields) {
-      commercialTableRowControllers[field.customFieldId!] = TextEditingController();
+      commercialTableRowControllers[field.customFieldId!] =
+          TextEditingController();
     }
   }
 
@@ -150,7 +153,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     Map<int, CustomFieldByStatusId> currentRow = {};
 
     for (var field in _selectedCommercialFields) {
-      int realId = virtualToRealCommercialFieldId[field.customFieldId!] ?? field.customFieldId!;
+      int realId = virtualToRealCommercialFieldId[field.customFieldId!] ??
+          field.customFieldId!;
 
       if (currentRow.containsKey(realId)) {
         rows.add(currentRow);
@@ -210,7 +214,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
           controller.clear();
         }
         commercialTableRowDropdowns.clear();
-      } else if (_editingCommercialRowIndex != null && rowIndex < _editingCommercialRowIndex!) {
+      } else if (_editingCommercialRowIndex != null &&
+          rowIndex < _editingCommercialRowIndex!) {
         _editingCommercialRowIndex = _editingCommercialRowIndex! - 1;
       }
       notifyListeners();
@@ -242,7 +247,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void updateCommercialTableRow() {
     if (_editingCommercialRowIndex == null) return;
     var rows = commercialTableRows;
-    if (_editingCommercialRowIndex! >= 0 && _editingCommercialRowIndex! < rows.length) {
+    if (_editingCommercialRowIndex! >= 0 &&
+        _editingCommercialRowIndex! < rows.length) {
       var rowToEdit = rows[_editingCommercialRowIndex!];
 
       for (var field in _commercialCustomFields) {
@@ -952,6 +958,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController();
   TextEditingController commercialUnitPriceController = TextEditingController();
   TextEditingController commercialTotalController = TextEditingController();
+  TextEditingController commercialQtyController = TextEditingController();
+  TextEditingController commercialGSTController = TextEditingController();
+  TextEditingController commercialGSTPercController = TextEditingController();
   List<CommercialItemModel> _commercialItems = [];
   List<CommercialItemModel> get commercialItems => _commercialItems;
   set commercialItems(List<CommercialItemModel> value) {
@@ -3038,7 +3047,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         //
         "QuotationTypeId": _selectedQuotationType,
         "QuotationTypeName": quotationTypeController.text,
-        "Commercial_Description": commercialDescriptionController.text.toString(),
+        "Commercial_Description":
+            commercialDescriptionController.text.toString(),
         "CommercialItems": _commercialItems.map((e) => e.toJson()).toList(),
         "CableStructure": cableStructureController.text,
         "CableType": cableTypeController.text,
@@ -4304,6 +4314,31 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  void calculateCommercialTotal() {
+    double gstPercentage = double.tryParse(
+            commercialGSTPercController.text.isEmpty
+                ? '0'
+                : commercialGSTPercController.text) ??
+        0.0;
+    double unitPrice = double.tryParse(
+            commercialUnitPriceController.text.isEmpty
+                ? '0'
+                : commercialUnitPriceController.text) ??
+        0.0;
+    double qty = double.tryParse(commercialQtyController.text.isEmpty
+            ? '1'
+            : commercialQtyController.text) ??
+        1.0;
+
+    double total = unitPrice * qty;
+    double gstAmount = total * (gstPercentage / 100);
+    double totalWithGst = total + gstAmount;
+
+    // Update the total and gst amount
+    commercialGSTController.text = gstAmount.toStringAsFixed(2);
+    commercialTotalController.text = totalWithGst.toStringAsFixed(2);
+  }
+
   void addOrEditCommercialItem(BuildContext context) {
     // Validate input fields
     if (commercialDescriptionController.text.isEmpty) {
@@ -4356,6 +4391,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       acCapacity: commercialACCapacityController.text,
       unitPrice: commercialUnitPriceController.text,
       total: commercialTotalController.text,
+      qty: commercialQtyController.text,
+      gstPerc: commercialGSTPercController.text,
+      gst: commercialGSTController.text,
     );
 
     if (_editCommercialIndex != null &&
@@ -4382,6 +4420,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     commercialACCapacityController.clear();
     commercialUnitPriceController.clear();
     commercialTotalController.clear();
+    commercialQtyController.clear();
+    commercialGSTPercController.clear();
+    commercialGSTController.clear();
   }
 
   void populateCommercialItemFieldsForEditing(int index) {
@@ -4394,6 +4435,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       commercialACCapacityController.text = itemToEdit.acCapacity ?? '';
       commercialUnitPriceController.text = itemToEdit.unitPrice ?? '';
       commercialTotalController.text = itemToEdit.total ?? '';
+      commercialQtyController.text = itemToEdit.qty ?? '';
+      commercialGSTPercController.text = itemToEdit.gstPerc ?? '';
+      commercialGSTController.text = itemToEdit.gst ?? '';
 
       setEditCommercialItemIndex(index);
       notifyListeners();
@@ -4671,17 +4715,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.loadQuotationFromCustomFields,
           bodyData: {
-            "custom_fields":
-                ((customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
+            "custom_fields": ((customFieldQuotationKey.currentState
+                            ?.getFieldValuesAsJson() ??
                         []) +
-                    (customFieldCommercialKey.currentState?.getFieldValuesAsJson() ?? []))
+                    (customFieldCommercialKey.currentState
+                            ?.getFieldValuesAsJson() ??
+                        []))
                 .where((field) {
               final fieldId = field['custom_field_id'];
               return _customFieldQuotation.any((element) =>
                       element.customFieldId == fieldId &&
                       element.isQuotationCustom == 1) ||
-                  _commercialCustomFields.any((element) =>
-                      element.customFieldId == fieldId);
+                  _commercialCustomFields
+                      .any((element) => element.customFieldId == fieldId);
             }).toList(),
             "type": type,
             "quotation_type_id": quotationType
@@ -5043,7 +5089,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         for (var i = 0; i < _commercialCustomFields.length; i++) {
           if (_commercialCustomFields[i].customFieldId == fieldId) {
             // Clone to support duplicates
-            final clonedField = CustomFieldByStatusId.fromJson(_commercialCustomFields[i].toJson());
+            final clonedField = CustomFieldByStatusId.fromJson(
+                _commercialCustomFields[i].toJson());
             clonedField.datavalue = value;
             clonedField.isChecked = 1;
 

@@ -4,6 +4,9 @@ class CommercialItemModel {
   String? acCapacity;
   String? unitPrice;
   String? total;
+  String? qty;
+  String? gstPerc;
+  String? gst;
 
   CommercialItemModel({
     this.description,
@@ -11,6 +14,9 @@ class CommercialItemModel {
     this.acCapacity,
     this.unitPrice,
     this.total,
+    this.qty,
+    this.gstPerc,
+    this.gst,
   });
 
   factory CommercialItemModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +26,9 @@ class CommercialItemModel {
       acCapacity: json['acCapacity']?.toString() ?? '',
       unitPrice: json['unitPrice']?.toString() ?? '',
       total: json['total']?.toString() ?? '',
+      qty: json['Quantity']?.toString() ?? '',
+      gst: json['GST']?.toString() ?? '',
+      gstPerc: json['GSTPercent']?.toString() ?? '',
     );
   }
 
@@ -30,6 +39,9 @@ class CommercialItemModel {
       'acCapacity': acCapacity ?? '',
       'unitPrice': unitPrice ?? '',
       'total': total ?? '',
+      'Quantity': qty,
+      'GST': gst,
+      'GSTPercent': gstPerc,
     };
   }
 }

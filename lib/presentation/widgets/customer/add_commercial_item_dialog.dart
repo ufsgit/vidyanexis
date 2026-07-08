@@ -150,6 +150,72 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                   ],
                 ],
               ),
+              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(93)) ...[
+                CustomTextField(
+                  controller: provider.commercialQtyController,
+                  labelText: provider.getQuotationFieldName(93, 'Quantity'),
+                  hintText: provider.getQuotationFieldName(93, 'Quantity'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}')),
+                  ],
+                  onChanged: (value) {
+                    provider.calculateCommercialTotal();
+                  },
+                ),
+              ],
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  if (provider.isQuotationFieldVisible(95)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        controller: provider.commercialGSTPercController,
+                        labelText: provider.getQuotationFieldName(95, 'GST %'),
+                        hintText: provider.getQuotationFieldName(95, 'GST %'),
+                        height: 54,
+                        borderRadius: 12,
+                        borderColor: const Color(0xFFD0D5DD),
+                        focusedBorderColor: AppColors.bluebutton,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                        onChanged: (value) {
+                          provider.calculateCommercialTotal();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                  ],
+                  if (provider.isQuotationFieldVisible(94)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        controller: provider.commercialGSTController,
+                        labelText: provider.getQuotationFieldName(94, 'GST'),
+                        hintText: provider.getQuotationFieldName(94, 'GST'),
+                        height: 54,
+                        borderRadius: 12,
+                        borderColor: const Color(0xFFD0D5DD),
+                        focusedBorderColor: AppColors.bluebutton,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                        readOnly: true,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
               const SizedBox(height: 24),
               Row(
                 children: [
