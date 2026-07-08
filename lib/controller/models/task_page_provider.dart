@@ -248,9 +248,7 @@ class TaskPageProvider extends ChangeNotifier {
       return {
         "latitude": position.latitude,
         "longitude": position.longitude,
-        "address": address.isNotEmpty
-            ? address
-            : "Unknown Location"
+        "address": address.isNotEmpty ? address : "Unknown Location"
       };
     } catch (e) {
       print("General error in getCurrentLocation: $e");
@@ -727,15 +725,7 @@ class TaskPageProvider extends ChangeNotifier {
         final fieldValues =
             customFieldTaskStatusKey.currentState!.getFieldValues();
 
-        final checkedFieldIds = _showCustomFields
-            .where((cf) => cf.isChecked == 1 || cf.isChecked == null)
-            .map((cf) => cf.customFieldId)
-            .toSet();
-
-        customFieldsData = fieldValues
-            .where((field) => checkedFieldIds.contains(field.customFieldId))
-            .map((field) => field.toJson())
-            .toList();
+        customFieldsData = fieldValues.map((field) => field.toJson()).toList();
       }
 
       final response = await HttpRequest.httpPostRequest(
@@ -751,9 +741,10 @@ class TaskPageProvider extends ChangeNotifier {
             "Description": descriptionController.text,
             // "Next_FollowUp_Date":
             //     DateFormat('yyyy-MM-dd').format(DateTime.now()),
-            "Next_FollowUp_Date": (statusModel.followup == 1 || statusModel.viewDateFollowup == 1)
-                ? followUpDateController.text.toyyyymmdd()
-                : "",
+            "Next_FollowUp_Date":
+                (statusModel.followup == 1 || statusModel.viewDateFollowup == 1)
+                    ? followUpDateController.text.toyyyymmdd()
+                    : "",
             "Followup_Time":
                 statusModel.isTime == 1 ? followUpTimeController.text : "",
             "Tasks": _selectedTaskTypeIds.join(","),
