@@ -3533,6 +3533,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         .toggleTaskTypeSelection(
                                                             taskItem.taskTypeId
                                                                 .toString());
+                                                    dropDownProvider
+                                                        .filterStaffByBranchAndDepartment(
+                                                      branchId:
+                                                          taskItem.branchIds,
+                                                      departmentId: taskItem
+                                                          .departmentIds,
+                                                    );
                                                   },
                                                   child: Padding(
                                                     padding: const EdgeInsets

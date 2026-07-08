@@ -145,29 +145,29 @@ class _CustomAutocompleteSearchState<T extends Object>
                           widget.onChanged?.call(value);
                         },
                   onTap: () {
+                    final controller =
+                        widget.controller ?? textEditingController;
+
                     if (!fieldFocusNode.hasFocus) {
                       fieldFocusNode.requestFocus();
                     }
 
-                    // Show all items when clicked
-                    if (widget.onChanged != null) {
-                      widget.onChanged!('');
-                    }
+                    // Show all options
+                    widget.onChanged?.call('');
 
-                    // Refresh autocomplete overlay
-                    final originalText = textEditingController.text;
+                    // Simple & effective force open
+                    Future.delayed(const Duration(milliseconds: 50), () {
+                      final text = controller.text;
+                      controller.text = '$text ';
+                      controller.selection =
+                          TextSelection.collapsed(offset: text.length);
 
-                    textEditingController.text = "$originalText ";
-                    Future.microtask(() {
-                      textEditingController.text = originalText;
-                      textEditingController.selection = TextSelection.collapsed(
-                        offset: originalText.length,
-                      );
+                      Future.delayed(const Duration(milliseconds: 20), () {
+                        controller.text = text;
+                        controller.selection =
+                            TextSelection.collapsed(offset: text.length);
+                      });
                     });
-
-                    if (widget.disableSearch ?? false) {
-                      textEditingController.clear();
-                    }
                   },
                   validator: widget.validator,
                   minLines: 1,
