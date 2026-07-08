@@ -73,16 +73,18 @@ class _AddItemDialogState extends State<AddItemDialog> {
               ],
 
               // HSN
-              CustomTextField(
-                controller: provider.itemHsnController,
-                labelText: 'HSN',
-                hintText: 'HSN',
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(87)) ...[
+                CustomTextField(
+                  controller: provider.itemHsnController,
+                  labelText: provider.getQuotationFieldName(87, 'HSN'),
+                  hintText: provider.getQuotationFieldName(87, 'HSN'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // As Per Standard Warranty (MRP)
               if (provider.isQuotationFieldVisible(2)) ...[
@@ -106,7 +108,8 @@ class _AddItemDialogState extends State<AddItemDialog> {
                   controller: provider.itemUnitController,
                   labelText:
                       provider.getQuotationFieldName(3, 'As Per Standards'),
-                  hintText: provider.getQuotationFieldName(3, 'As Per Standards'),
+                  hintText:
+                      provider.getQuotationFieldName(3, 'As Per Standards'),
                   height: 54,
                   borderRadius: 12,
                   borderColor: const Color(0xFFD0D5DD),
