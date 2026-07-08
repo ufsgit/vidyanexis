@@ -59,79 +59,95 @@ class _AddCommercialItemDialogState extends State<AddCommercialItemDialog> {
                 ],
               ),
               const Divider(height: 24),
-              CustomTextField(
-                controller: provider.commercialDescriptionController,
-                labelText: 'Description',
-                hintText: 'Description',
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(88)) ...[
+                CustomTextField(
+                  controller: provider.commercialDescriptionController,
+                  labelText: provider.getQuotationFieldName(88, 'Description'),
+                  hintText: provider.getQuotationFieldName(88, 'Description'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+              ],
               Row(
                 children: [
-                  Expanded(
-                    child: CustomTextField(
-                      controller: provider.commercialDCCapacityController,
-                      labelText: 'Solar Plant DC Capacity',
-                      hintText: 'Solar Plant DC Capacity',
-                      height: 54,
-                      borderRadius: 12,
-                      borderColor: const Color(0xFFD0D5DD),
-                      focusedBorderColor: AppColors.bluebutton,
+                  if (provider.isQuotationFieldVisible(89)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        controller: provider.commercialDCCapacityController,
+                        labelText: provider.getQuotationFieldName(
+                            89, 'Solar Plant DC Capacity'),
+                        hintText: provider.getQuotationFieldName(
+                            89, 'Solar Plant DC Capacity'),
+                        height: 54,
+                        borderRadius: 12,
+                        borderColor: const Color(0xFFD0D5DD),
+                        focusedBorderColor: AppColors.bluebutton,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      controller: provider.commercialACCapacityController,
-                      labelText: 'Solar Plant AC Capacity',
-                      hintText: 'Solar Plant AC Capacity',
-                      height: 54,
-                      borderRadius: 12,
-                      borderColor: const Color(0xFFD0D5DD),
-                      focusedBorderColor: AppColors.bluebutton,
+                    const SizedBox(width: 16),
+                  ],
+                  if (provider.isQuotationFieldVisible(90)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        controller: provider.commercialACCapacityController,
+                        labelText: provider.getQuotationFieldName(
+                            90, 'Solar Plant AC Capacity'),
+                        hintText: provider.getQuotationFieldName(
+                            90, 'Solar Plant AC Capacity'),
+                        height: 54,
+                        borderRadius: 12,
+                        borderColor: const Color(0xFFD0D5DD),
+                        focusedBorderColor: AppColors.bluebutton,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Expanded(
-                    child: CustomTextField(
-                      controller: provider.commercialUnitPriceController,
-                      labelText: 'Unit Price',
-                      hintText: 'Unit Price',
-                      height: 54,
-                      borderRadius: 12,
-                      borderColor: const Color(0xFFD0D5DD),
-                      focusedBorderColor: AppColors.bluebutton,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d{0,2}')),
-                      ],
+                  if (provider.isQuotationFieldVisible(91)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        controller: provider.commercialUnitPriceController,
+                        labelText:
+                            provider.getQuotationFieldName(91, 'Unit Price'),
+                        hintText:
+                            provider.getQuotationFieldName(91, 'Unit Price'),
+                        height: 54,
+                        borderRadius: 12,
+                        borderColor: const Color(0xFFD0D5DD),
+                        focusedBorderColor: AppColors.bluebutton,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      controller: provider.commercialTotalController,
-                      labelText: 'Total',
-                      hintText: 'Total',
-                      height: 54,
-                      borderRadius: 12,
-                      borderColor: const Color(0xFFD0D5DD),
-                      focusedBorderColor: AppColors.bluebutton,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d{0,2}')),
-                      ],
+                    const SizedBox(width: 16),
+                  ],
+                  if (provider.isQuotationFieldVisible(92)) ...[
+                    Expanded(
+                      child: CustomTextField(
+                        controller: provider.commercialTotalController,
+                        labelText: provider.getQuotationFieldName(92, 'Total'),
+                        hintText: provider.getQuotationFieldName(92, 'Total'),
+                        height: 54,
+                        borderRadius: 12,
+                        borderColor: const Color(0xFFD0D5DD),
+                        focusedBorderColor: AppColors.bluebutton,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
               const SizedBox(height: 24),
