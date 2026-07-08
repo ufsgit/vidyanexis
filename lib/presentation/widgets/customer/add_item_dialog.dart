@@ -59,16 +59,18 @@ class _AddItemDialogState extends State<AddItemDialog> {
               const Divider(height: 24),
 
               // Item Name
-              CustomTextField(
-                controller: provider.itemNameController,
-                labelText: provider.getQuotationFieldName(1, 'Item Name'),
-                hintText: provider.getQuotationFieldName(1, 'Item Name'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(1)) ...[
+                CustomTextField(
+                  controller: provider.itemNameController,
+                  labelText: provider.getQuotationFieldName(1, 'Item Name'),
+                  hintText: provider.getQuotationFieldName(1, 'Item Name'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // HSN
               CustomTextField(
@@ -83,132 +85,148 @@ class _AddItemDialogState extends State<AddItemDialog> {
               const SizedBox(height: 16),
 
               // As Per Standard Warranty (MRP)
-              CustomTextField(
-                controller: provider.itemMrpController,
-                labelText: provider.getQuotationFieldName(
-                    2, 'As Per Standard Warranty'),
-                hintText: provider.getQuotationFieldName(
-                    2, 'As Per Standard Warranty'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(2)) ...[
+                CustomTextField(
+                  controller: provider.itemMrpController,
+                  labelText: provider.getQuotationFieldName(
+                      2, 'As Per Standard Warranty'),
+                  hintText: provider.getQuotationFieldName(
+                      2, 'As Per Standard Warranty'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // As Per Standards (Unit Dropdown)
-              CustomTextField(
-                controller: provider.itemUnitController,
-                labelText:
-                    provider.getQuotationFieldName(3, 'As Per Standards'),
-                hintText: provider.getQuotationFieldName(3, 'As Per Standards'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(3)) ...[
+                CustomTextField(
+                  controller: provider.itemUnitController,
+                  labelText:
+                      provider.getQuotationFieldName(3, 'As Per Standards'),
+                  hintText: provider.getQuotationFieldName(3, 'As Per Standards'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // Price
-              CustomTextField(
-                controller: provider.itemPriceController,
-                labelText: provider.getQuotationFieldName(4, 'Price'),
-                hintText: provider.getQuotationFieldName(4, 'Price'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'^\d*\.?\d{0,2}'),
-                  ),
-                ],
-                onChanged: (_) => provider.calculateTotalAmount(),
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(4)) ...[
+                CustomTextField(
+                  controller: provider.itemPriceController,
+                  labelText: provider.getQuotationFieldName(4, 'Price'),
+                  hintText: provider.getQuotationFieldName(4, 'Price'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*\.?\d{0,2}'),
+                    ),
+                  ],
+                  onChanged: (_) => provider.calculateTotalAmount(),
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // Quantity
-              CustomTextField(
-                controller: provider.itemQuantityController,
-                labelText: provider.getQuotationFieldName(5, 'Quantity'),
-                hintText: provider.getQuotationFieldName(5, 'Quantity'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                onChanged: (_) => provider.calculateTotalAmount(),
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(5)) ...[
+                CustomTextField(
+                  controller: provider.itemQuantityController,
+                  labelText: provider.getQuotationFieldName(5, 'Quantity'),
+                  hintText: provider.getQuotationFieldName(5, 'Quantity'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  onChanged: (_) => provider.calculateTotalAmount(),
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // GST %
-              CustomTextField(
-                controller: provider.itemGstPercentController,
-                labelText: provider.getQuotationFieldName(6, 'GST %'),
-                hintText: provider.getQuotationFieldName(6, 'GST %'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'^\d*\.?\d{0,2}'),
-                  ),
-                ],
-                onChanged: (_) => provider.calculateTotalAmount(),
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(6)) ...[
+                CustomTextField(
+                  controller: provider.itemGstPercentController,
+                  labelText: provider.getQuotationFieldName(6, 'GST %'),
+                  hintText: provider.getQuotationFieldName(6, 'GST %'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*\.?\d{0,2}'),
+                    ),
+                  ],
+                  onChanged: (_) => provider.calculateTotalAmount(),
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // GST (read-only)
-              CustomTextField(
-                controller: provider.itemGstController,
-                labelText: provider.getQuotationFieldName(7, 'GST'),
-                hintText: provider.getQuotationFieldName(7, 'GST'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-                readOnly: true,
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(7)) ...[
+                CustomTextField(
+                  controller: provider.itemGstController,
+                  labelText: provider.getQuotationFieldName(7, 'GST'),
+                  hintText: provider.getQuotationFieldName(7, 'GST'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  readOnly: true,
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // Other Tax (Ad CESS)
-              CustomTextField(
-                controller: provider.itemAdCessController,
-                labelText: provider.getQuotationFieldName(8, 'Other Tax'),
-                hintText: provider.getQuotationFieldName(8, 'Other Tax'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'^\d*\.?\d{0,2}'),
-                  ),
-                ],
-                onChanged: (_) => provider.calculateTotalAmount(),
-              ),
-              const SizedBox(height: 16),
+              if (provider.isQuotationFieldVisible(8)) ...[
+                CustomTextField(
+                  controller: provider.itemAdCessController,
+                  labelText: provider.getQuotationFieldName(8, 'Other Tax'),
+                  hintText: provider.getQuotationFieldName(8, 'Other Tax'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d*\.?\d{0,2}'),
+                    ),
+                  ],
+                  onChanged: (_) => provider.calculateTotalAmount(),
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // Amount (read-only)
-              CustomTextField(
-                controller: provider.itemTotalController,
-                labelText: provider.getQuotationFieldName(9, 'Amount'),
-                hintText: provider.getQuotationFieldName(9, 'Amount'),
-                height: 54,
-                borderRadius: 12,
-                borderColor: const Color(0xFFD0D5DD),
-                focusedBorderColor: AppColors.bluebutton,
-                readOnly: true,
-              ),
-              const SizedBox(height: 24),
+              if (provider.isQuotationFieldVisible(9)) ...[
+                CustomTextField(
+                  controller: provider.itemTotalController,
+                  labelText: provider.getQuotationFieldName(9, 'Amount'),
+                  hintText: provider.getQuotationFieldName(9, 'Amount'),
+                  height: 54,
+                  borderRadius: 12,
+                  borderColor: const Color(0xFFD0D5DD),
+                  focusedBorderColor: AppColors.bluebutton,
+                  readOnly: true,
+                ),
+                const SizedBox(height: 24),
+              ],
 
               // Action Buttons
               Row(

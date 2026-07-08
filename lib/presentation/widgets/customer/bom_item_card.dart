@@ -203,56 +203,72 @@ class _BomItemCardState extends State<BomItemCard> {
               // Details
               if (companyQuotationItems) ...[
                 // Quantity row (editable)
-                _buildEditableQuantityRow(
-                  provider.getQuotationFieldName(12, 'Quantity'),
-                  _qtyController,
-                ),
-                SizedBox(height: 8),
-                _buildDetailRow(
-                  provider.getQuotationFieldName(17, 'Unit'),
-                  widget.item.uom,
-                ),
+                if (provider.isQuotationFieldVisible(12)) ...[
+                  _buildEditableQuantityRow(
+                    provider.getQuotationFieldName(12, 'Quantity'),
+                    _qtyController,
+                  ),
+                  SizedBox(height: 8),
+                ],
+                if (provider.isQuotationFieldVisible(17)) ...[
+                  _buildDetailRow(
+                    provider.getQuotationFieldName(17, 'Unit'),
+                    widget.item.uom,
+                  ),
+                ],
               ] else ...[
                 // Quantity row
+                if (provider.isQuotationFieldVisible(12)) ...[
+                  _buildDetailRow(
+                    provider.getQuotationFieldName(12, 'Quantity'),
+                    '${widget.item.quantity} ${widget.item.uom}',
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ],
+              const SizedBox(height: 8),
+              if (provider.isQuotationFieldVisible(11)) ...[
                 _buildDetailRow(
-                  provider.getQuotationFieldName(12, 'Quantity'),
-                  '${widget.item.quantity} ${widget.item.uom}',
+                  provider.getQuotationFieldName(11, 'Specification'),
+                  widget.item.brand.isNotEmpty ? widget.item.brand : '-',
                 ),
                 const SizedBox(height: 8),
               ],
-              const SizedBox(height: 8),
-              _buildDetailRow(
-                provider.getQuotationFieldName(11, 'Specification'),
-                widget.item.brand.isNotEmpty ? widget.item.brand : '-',
-              ),
-              const SizedBox(height: 8),
-              _buildDetailRow(
-                provider.getQuotationFieldName(13, 'Manufacturer'),
-                (widget.item.distributor?.isNotEmpty ?? false)
-                    ? widget.item.distributor!
-                    : '-',
-              ),
+              if (provider.isQuotationFieldVisible(13)) ...[
+                _buildDetailRow(
+                  provider.getQuotationFieldName(13, 'Manufacturer'),
+                  (widget.item.distributor?.isNotEmpty ?? false)
+                      ? widget.item.distributor!
+                      : '-',
+                ),
+                const SizedBox(height: 8),
+              ],
               if (companyQuotationItems) ...[
-                const SizedBox(height: 8),
-                _buildEditablePriceRow(
-                  provider.getQuotationFieldName(15, 'Price'),
-                  _priceController,
-                ),
-                const SizedBox(height: 8),
-                _buildDetailRow(
-                  provider.getQuotationFieldName(16, 'Amount'),
-                  (widget.item.amount?.isNotEmpty ?? false)
-                      ? widget.item.amount!
-                      : '-',
-                ),
+                if (provider.isQuotationFieldVisible(15)) ...[
+                  _buildEditablePriceRow(
+                    provider.getQuotationFieldName(15, 'Price'),
+                    _priceController,
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                if (provider.isQuotationFieldVisible(16)) ...[
+                  _buildDetailRow(
+                    provider.getQuotationFieldName(16, 'Amount'),
+                    (widget.item.amount?.isNotEmpty ?? false)
+                        ? widget.item.amount!
+                        : '-',
+                  ),
+                  const SizedBox(height: 8),
+                ]
               ] else ...[
-                const SizedBox(height: 8),
-                _buildDetailRow(
-                  provider.getQuotationFieldName(14, 'Comments'),
-                  (widget.item.comments?.isNotEmpty ?? false)
-                      ? widget.item.comments!
-                      : '-',
-                ),
+                if (provider.isQuotationFieldVisible(14)) ...[
+                  _buildDetailRow(
+                    provider.getQuotationFieldName(14, 'Comments'),
+                    (widget.item.comments?.isNotEmpty ?? false)
+                        ? widget.item.comments!
+                        : '-',
+                  ),
+                ],
               ],
             ],
           ),

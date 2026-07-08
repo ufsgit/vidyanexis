@@ -161,418 +161,444 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //basic details
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    title: Text(
-                      'Basic details',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
+                  if (customerDetailsProvider.isQuotationFieldVisible(55))
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
-                    ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: true,
-                    children: [
-                      const SizedBox(
-                        height: 5,
+                      title: Text(
+                        customerDetailsProvider.getQuotationFieldName(
+                            55, 'Basic details'),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
                       ),
-                      CommonDropdown(
-                        hintText: 'Branch',
-                        items: settingsProvider.branchModel
-                            .map((branch) => DropdownItem<int>(
-                                  id: branch.branchId ?? 0,
-                                  name: branch.branchName ?? '',
-                                ))
-                            .toList(),
-                        onItemSelected: (value) {
-                          customerDetailsProvider.selectedBranchId = value;
-                        },
-                        selectedValue: customerDetailsProvider.selectedBranchId,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller:
-                            customerDetailsProvider.qEntryDateController,
-                        hintText: 'Entry Date',
-                        labelText: '',
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller:
-                            customerDetailsProvider.qproductnameController,
-                        hintText: 'Product name*',
-                        labelText: '',
-                      ),
-                      const SizedBox(height: 16.0),
-                      DropdownButtonFormField<int>(
-                        initialValue: (customerDetailsProvider
-                                        .selectedQuotationStatus !=
-                                    null &&
-                                [1, 2, 3].contains(customerDetailsProvider
-                                    .selectedQuotationStatus))
-                            ? customerDetailsProvider.selectedQuotationStatus
-                            : 1,
-                        items: const [
-                          DropdownMenuItem<int>(
-                            value: 1,
-                            child: Text('Pending'),
-                          ),
-                          DropdownMenuItem<int>(
-                            value: 3,
-                            child: Text('Rejected'),
-                          ),
-                          DropdownMenuItem<int>(
-                            value: 2,
-                            child: Text('Approved'),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: true,
+                      children: [
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(24)) ...[
+                          CommonDropdown(
+                            hintText: customerDetailsProvider
+                                .getQuotationFieldName(24, 'Branch'),
+                            items: settingsProvider.branchModel
+                                .map((branch) => DropdownItem<int>(
+                                      id: branch.branchId ?? 0,
+                                      name: branch.branchName ?? '',
+                                    ))
+                                .toList(),
+                            onItemSelected: (value) {
+                              customerDetailsProvider.selectedBranchId = value;
+                            },
+                            selectedValue:
+                                customerDetailsProvider.selectedBranchId,
                           ),
                         ],
-                        // items: dropDownProvider.amcStatus
-                        //     .map((status) => DropdownMenuItem<int>(
-                        //           value: status.amcStatusId,
-                        //           child: Text(
-                        //             status.amcStatusName,
-                        //             style: TextStyle(fontSize: 14),
-                        //           ),
-                        //         ))
-                        //     .toList(),
-                        onChanged: (int? newValue) {
-                          // if (newValue != null) {
-                          //   final selectedAmcStatus = dropDownProvider.amcStatus
-                          //       .firstWhere((task) => task.amcStatusId == newValue);
-                          //   customerDetailsProvider.updateQuotationStatus(
-                          //       newValue, selectedAmcStatus.amcStatusName);
-                          // }
-                          if (newValue != null) {
-                            customerDetailsProvider
-                                .updateQuotationStatus(newValue);
-                          }
-                        },
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14, // Custom font size
-                          fontWeight: FontWeight.w600, // Custom font weight
-                          color: AppColors
-                              .textBlack, // Custom color for selected item
-                        ),
-                        decoration: InputDecoration(
-                          label: RichText(
-                            text: TextSpan(
-                              text: 'Choose Status',
-                              style: GoogleFonts.plusJakartaSans(
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(25)) ...[
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller:
+                                customerDetailsProvider.qEntryDateController,
+                            hintText: customerDetailsProvider
+                                .getQuotationFieldName(25, 'Entry Date'),
+                            labelText: '',
+                          ),
+                        ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(26)) ...[
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller:
+                                customerDetailsProvider.qproductnameController,
+                            hintText: customerDetailsProvider
+                                .getQuotationFieldName(26, 'Product name*'),
+                            labelText: '',
+                          ),
+                        ],
+                        const SizedBox(height: 16.0),
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(27)) ...[
+                          DropdownButtonFormField<int>(
+                            initialValue: (customerDetailsProvider
+                                            .selectedQuotationStatus !=
+                                        null &&
+                                    [1, 2, 3].contains(customerDetailsProvider
+                                        .selectedQuotationStatus))
+                                ? customerDetailsProvider
+                                    .selectedQuotationStatus
+                                : 1,
+                            items: const [
+                              DropdownMenuItem<int>(
+                                value: 1,
+                                child: Text('Pending'),
+                              ),
+                              DropdownMenuItem<int>(
+                                value: 3,
+                                child: Text('Rejected'),
+                              ),
+                              DropdownMenuItem<int>(
+                                value: 2,
+                                child: Text('Approved'),
+                              ),
+                            ],
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                customerDetailsProvider
+                                    .updateQuotationStatus(newValue);
+                              }
+                            },
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14, // Custom font size
+                              fontWeight: FontWeight.w600, // Custom font weight
+                              color: AppColors
+                                  .textBlack, // Custom color for selected item
+                            ),
+                            decoration: InputDecoration(
+                              label: RichText(
+                                text: TextSpan(
+                                  text: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          27, 'Choose Status'),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.textGrey3,
+                                  ),
+                                  children: const <TextSpan>[
+                                    TextSpan(
+                                      text: ' *', // The asterisk part
+                                      style: TextStyle(
+                                          color: Colors
+                                              .red), // Red color for asterisk
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              floatingLabelBehavior: FloatingLabelBehavior
+                                  .auto, // Always show the label
+                              floatingLabelStyle: GoogleFonts.plusJakartaSans(
+                                fontSize:
+                                    16, // Slightly smaller size for floating label
+                                fontWeight: FontWeight.w500,
+                                color: AppColors
+                                    .textGrey1, // Color for floating label
+                              ),
+                              labelStyle: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.textGrey3,
                               ),
-                              children: const <TextSpan>[
-                                TextSpan(
-                                  text: ' *', // The asterisk part
-                                  style: TextStyle(
-                                      color:
-                                          Colors.red), // Red color for asterisk
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // Rounded corners
+                                borderSide: BorderSide(
+                                  color: AppColors.textGrey2, // Border color
+                                  width: 1, // Border width
                                 ),
-                              ],
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // Rounded corners
+                                borderSide: BorderSide(
+                                  color: AppColors.textGrey2, // Border color
+                                  width: 1, // Border width
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(4), // Rounded corners
+                                borderSide: BorderSide(
+                                  color: AppColors.textGrey2, // Border color
+                                  width: 1, // Border width
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 18, horizontal: 12),
                             ),
+                            isDense: true,
+                            iconSize: 18,
                           ),
-                          floatingLabelBehavior: FloatingLabelBehavior
-                              .auto, // Always show the label
-                          floatingLabelStyle: GoogleFonts.plusJakartaSans(
-                            fontSize:
-                                16, // Slightly smaller size for floating label
-                            fontWeight: FontWeight.w500,
-                            color:
-                                AppColors.textGrey1, // Color for floating label
-                          ),
-                          labelStyle: GoogleFonts.plusJakartaSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textGrey3,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(4), // Rounded corners
-                            borderSide: BorderSide(
-                              color: AppColors.textGrey2, // Border color
-                              width: 1, // Border width
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(4), // Rounded corners
-                            borderSide: BorderSide(
-                              color: AppColors.textGrey2, // Border color
-                              width: 1, // Border width
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(4), // Rounded corners
-                            borderSide: BorderSide(
-                              color: AppColors.textGrey2, // Border color
-                              width: 1, // Border width
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 18, horizontal: 12),
-                        ),
-                        isDense: true,
-                        iconSize: 18,
-                      ),
-                      const SizedBox(height: 16),
-                      Row(children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.qvalidityController,
-                            hintText: 'Validity',
-                            labelText: '',
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.qtendorNumberController,
-                            hintText: 'Tendor Number',
-                            labelText: '',
-                          ),
-                        ),
-                      ]),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller: customerDetailsProvider
-                            .quotationDescriptionController,
-                        hintText: 'Description',
-                        labelText: '',
-                        minLines: 3,
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller: customerDetailsProvider
-                            .quotationDescription2Controller,
-                        hintText: 'Description 2',
-                        labelText: '',
-                        minLines: 3,
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller: customerDetailsProvider
-                            .quotationDescription3Controller,
-                        hintText: 'Description 3',
-                        labelText: '',
-                        minLines: 3,
-                      ),
-                      const SizedBox(height: 16),
-                      CommonDropdown(
-                        hintText: 'Quotation Type*',
-                        items: [
-                          DropdownItem<int>(id: 0, name: 'All'),
-                          ...customerDetailsProvider.quotationTypeData.map(
-                            (status) => DropdownItem<int>(
-                              id: status.quotationTypeId,
-                              name: status.quotationTypeName,
-                            ),
-                          ),
+                          const SizedBox(height: 16),
                         ],
-                        onItemSelected: (value) {
-                          customerDetailsProvider.selectedQuotationType = value;
-
-                          // Simple handling for All vs others
-                          if (value == 0) {
-                            customerDetailsProvider
-                                .quotationTypeController.text = 'All';
-                          } else {
-                            final selectedItem = customerDetailsProvider
-                                .quotationTypeData
-                                .firstWhere((status) =>
-                                    status.quotationTypeId == value);
-                            customerDetailsProvider.quotationTypeController
-                                .text = selectedItem.quotationTypeName;
-                          }
-
-                          customerDetailsProvider
-                              .getCustomFieldsByQuotationId(context);
-                        },
-                        selectedValue:
-                            customerDetailsProvider.selectedQuotationType,
-                      ),
-                      if (companyQuotationItems) ...[
-                        const SizedBox(height: 16),
                         Row(
                           children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        AddMultipleItemsDialog(
-                                      isEdit: true,
-                                      initialItems:
-                                          customerDetailsProvider.multiItems,
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.add,
-                                    color: AppColors.primaryBlue),
-                                label: const Text(
-                                  'Add Material',
-                                  style:
-                                      TextStyle(color: AppColors.primaryBlue),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: AppColors.primaryBlue),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
+                            if (customerDetailsProvider
+                                .isQuotationFieldVisible(28)) ...[
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .qvalidityController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(28, 'Validity'),
+                                  labelText: '',
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: CustomTextField(
-                                readOnly: false,
-                                height: 54,
-                                controller:
-                                    customerDetailsProvider.profitController,
-                                hintText: customerDetailsProvider.isPercentage
-                                    ? "Profit %"
-                                    : "Profit",
-                                labelText: '',
-                                onChanged: (value) {
-                                  customerDetailsProvider
-                                      .recalculateCompanyQuotationItem();
-                                },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'^\d*\.?\d{0,2}')),
-                                ],
+                              const SizedBox(width: 16),
+                            ],
+                            if (customerDetailsProvider
+                                .isQuotationFieldVisible(29)) ...[
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .qtendorNumberController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          29, 'Tendor Number'),
+                                  labelText: '',
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Tooltip(
-                              message: "Is Percentage %",
-                              child: Checkbox(
-                                value: customerDetailsProvider.isPercentage,
-                                onChanged: (value) {
-                                  customerDetailsProvider.isPercentage =
-                                      value ?? false;
-                                },
-                              ),
-                            ),
-                            // Expanded(
-                            //   child: CommonDropdown<int>(
-                            //     hintText: 'Profit',
-                            //     items: customerDetailsProvider.profitList
-                            //         .map((e) => DropdownItem<int>(
-                            //             id: e.id, name: e.name))
-                            //         .toList(),
-                            //     onItemSelected: (value) {
-                            //       final selected = customerDetailsProvider
-                            //           .profitList
-                            //           .firstWhere((e) => e.id == value);
-                            //       customerDetailsProvider.setSelectedProfitId(
-                            //           value,
-                            //           name: selected.name);
-                            //     },
-                            //     selectedValue:
-                            //         customerDetailsProvider.selectedProfitId,
-                            //   ),
-                            // ),
+                            ],
                           ],
                         ),
-                        multiItemsWidget(context),
-                      ],
-                      const SizedBox(height: 16),
-                      if (customerDetailsProvider
-                          .customFieldQuotation.isNotEmpty) ...[
-                        Builder(
-                          builder: (context) {
-                            final nonCommercialFields = customerDetailsProvider
-                                .customFieldQuotation
-                                .where((e) => e.isCommercial != 1)
-                                .toList();
-                            if (nonCommercialFields.isEmpty)
-                              return const SizedBox.shrink();
-                            return Column(
-                              children: [
-                                CustomFieldSectionWidget(
-                                  key: customFieldQuotationKey,
-                                  customFields: nonCommercialFields,
-                                  initialFieldValues: nonCommercialFields
-                                      .map((e) => FieldValueModel(
-                                            customFieldId: e.customFieldId,
-                                            value: e.datavalue,
-                                          ))
-                                      .toList(),
-                                  controllerKey: 'quotation',
-                                  showEditButton: true,
+                        const SizedBox(height: 16),
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(30)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .quotationDescriptionController,
+                            hintText: customerDetailsProvider
+                                .getQuotationFieldName(30, 'Description'),
+                            labelText: '',
+                            minLines: 3,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(31)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .quotationDescription2Controller,
+                            hintText: customerDetailsProvider
+                                .getQuotationFieldName(31, 'Description 2'),
+                            labelText: '',
+                            minLines: 3,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(32)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .quotationDescription3Controller,
+                            hintText: customerDetailsProvider
+                                .getQuotationFieldName(32, 'Description 3'),
+                            labelText: '',
+                            minLines: 3,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(33)) ...[
+                          CommonDropdown(
+                            hintText: customerDetailsProvider
+                                .getQuotationFieldName(33, 'Quotation Type*'),
+                            items: [
+                              DropdownItem<int>(id: 0, name: 'All'),
+                              ...customerDetailsProvider.quotationTypeData.map(
+                                (status) => DropdownItem<int>(
+                                  id: status.quotationTypeId,
+                                  name: status.quotationTypeName,
                                 ),
-                                const SizedBox(height: 16),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                      Align(
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          width: 200,
-                          child: loadFromCustomField(context),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      if (settingsProvider.companyDetails.isNotEmpty &&
-                          settingsProvider
-                                  .companyDetails.first.commercialProposal ==
-                              1)
-                        const Column(
-                          children: [
-                            CommercialCustomFieldsTableWidget(),
-                            SizedBox(height: 16),
-                          ],
-                        ),
-                      if (customerDetailsProvider.selectedQuotationType ==
-                          1) ...[
-                        residentialItemWidget(context),
-                      ],
-                      if (customerDetailsProvider.selectedQuotationType ==
-                          2) ...[
-                        commercialItemWidget(context),
-                      ],
-                    ],
-                  ),
+                              ),
+                            ],
+                            onItemSelected: (value) {
+                              customerDetailsProvider.selectedQuotationType =
+                                  value;
 
-                  if (customerDetailsProvider.selectedQuotationType == 2)
+                              // Simple handling for All vs others
+                              if (value == 0) {
+                                customerDetailsProvider
+                                    .quotationTypeController.text = 'All';
+                              } else {
+                                final selectedItem = customerDetailsProvider
+                                    .quotationTypeData
+                                    .firstWhere((status) =>
+                                        status.quotationTypeId == value);
+                                customerDetailsProvider.quotationTypeController
+                                    .text = selectedItem.quotationTypeName;
+                              }
+
+                              customerDetailsProvider
+                                  .getCustomFieldsByQuotationId(context);
+                            },
+                            selectedValue:
+                                customerDetailsProvider.selectedQuotationType,
+                          ),
+                        ],
+                        if (companyQuotationItems) ...[
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          AddMultipleItemsDialog(
+                                        isEdit: true,
+                                        initialItems:
+                                            customerDetailsProvider.multiItems,
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.add,
+                                      color: AppColors.primaryBlue),
+                                  label: const Text(
+                                    'Add Material',
+                                    style:
+                                        TextStyle(color: AppColors.primaryBlue),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                        color: AppColors.primaryBlue),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                  ),
+                                ),
+                              ),
+                              if (customerDetailsProvider
+                                  .isQuotationFieldVisible(34)) ...[
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: CustomTextField(
+                                    readOnly: false,
+                                    height: 54,
+                                    controller: customerDetailsProvider
+                                        .profitController,
+                                    hintText: customerDetailsProvider
+                                            .isPercentage
+                                        ? '${customerDetailsProvider.getQuotationFieldName(34, 'Profit')} %'
+                                        : customerDetailsProvider
+                                            .getQuotationFieldName(
+                                                34, 'Profit'),
+                                    labelText: '',
+                                    onChanged: (value) {
+                                      customerDetailsProvider
+                                          .recalculateCompanyQuotationItem();
+                                    },
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d*\.?\d{0,2}')),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Tooltip(
+                                  message: "Is Percentage %",
+                                  child: Checkbox(
+                                    value: customerDetailsProvider.isPercentage,
+                                    onChanged: (value) {
+                                      customerDetailsProvider.isPercentage =
+                                          value ?? false;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          multiItemsWidget(context),
+                        ],
+                        const SizedBox(height: 16),
+                        if (customerDetailsProvider
+                            .customFieldQuotation.isNotEmpty) ...[
+                          Builder(
+                            builder: (context) {
+                              final nonCommercialFields =
+                                  customerDetailsProvider.customFieldQuotation
+                                      .where((e) => e.isCommercial != 1)
+                                      .toList();
+                              if (nonCommercialFields.isEmpty)
+                                return const SizedBox.shrink();
+                              return Column(
+                                children: [
+                                  CustomFieldSectionWidget(
+                                    key: customFieldQuotationKey,
+                                    customFields: nonCommercialFields,
+                                    initialFieldValues: nonCommercialFields
+                                        .map((e) => FieldValueModel(
+                                              customFieldId: e.customFieldId,
+                                              value: e.datavalue,
+                                            ))
+                                        .toList(),
+                                    controllerKey: 'quotation',
+                                    showEditButton: true,
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(36)) ...[
+                          Align(
+                            alignment: Alignment.center,
+                            child: SizedBox(
+                              width: 200,
+                              child: loadFromCustomField(context),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (settingsProvider.companyDetails.isNotEmpty &&
+                            settingsProvider
+                                    .companyDetails.first.commercialProposal ==
+                                1)
+                          const Column(
+                            children: [
+                              CommercialCustomFieldsTableWidget(),
+                              SizedBox(height: 16),
+                            ],
+                          ),
+                        if (customerDetailsProvider.selectedQuotationType ==
+                            1) ...[
+                          residentialItemWidget(context),
+                        ],
+                        if (customerDetailsProvider.selectedQuotationType ==
+                            2) ...[
+                          commercialItemWidget(context),
+                        ],
+                      ],
+                    ),
+
+                  if (customerDetailsProvider.isQuotationFieldVisible(57) &&
+                      customerDetailsProvider.selectedQuotationType == 2)
                     //solar pv system specification
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                       title: Text(
-                        'Solar PV System Specification',
+                        customerDetailsProvider.getQuotationFieldName(
+                            57, 'Solar PV System Specification'),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -586,14 +612,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ],
                     ),
 
-                  if (customerDetailsProvider.selectedQuotationType == 2)
+                  if (customerDetailsProvider.isQuotationFieldVisible(66) &&
+                      customerDetailsProvider.selectedQuotationType == 2)
                     //scope of work
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                       title: Text(
-                        'Scope of Work',
+                        customerDetailsProvider.getQuotationFieldName(
+                            66, 'Scope of Work'),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -607,14 +635,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ],
                     ),
 
-                  if (customerDetailsProvider.selectedQuotationType == 2)
+                  if (customerDetailsProvider.isQuotationFieldVisible(70) &&
+                      customerDetailsProvider.selectedQuotationType == 2)
                     //cable details
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                       title: Text(
-                        'Cable Details',
+                        customerDetailsProvider.getQuotationFieldName(
+                            70, 'Cable Details'),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -629,323 +659,394 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
 
                   //additional expenses
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    title: Text(
-                      'Additional Expenses',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
+                  if (customerDetailsProvider.isQuotationFieldVisible(53)) ...[
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
-                    ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: false,
-                    children: [
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        readOnly: false,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        height: 54,
-                        controller:
-                            customerDetailsProvider.systemPriceController,
-                        hintText: customerDetailsProvider.getQuotationFieldName(
-                            22, 'System price excluding KSEB paper work'),
-                        labelText: '',
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller: customerDetailsProvider
-                            .additionalStructureController,
-                        hintText: customerDetailsProvider.getQuotationFieldName(
-                            23, 'Additional Paper Work'),
-                        labelText: '',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller:
-                            customerDetailsProvider.feasibilityFeeController,
-                        hintText: customerDetailsProvider.getQuotationFieldName(
-                            19, 'Fee in KSEB for Feasibility study'),
-                        labelText: '',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        onChanged: (p0) {
-                          if (settingsProvider.additionalExpense == 1) {
-                            customerDetailsProvider.updateTotal();
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller:
-                            customerDetailsProvider.registrationFeeController,
-                        keyboardType: TextInputType.number,
-                        onChanged: (p0) {
-                          if (settingsProvider.additionalExpense == 1) {
-                            customerDetailsProvider.updateTotal();
-                          }
-                        },
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        hintText: customerDetailsProvider.getQuotationFieldName(
-                            18,
-                            'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
-                        labelText: '',
-                      ),
-                      const SizedBox(height: 16),
-                      if (settingsProvider.menuIsViewMap[154] == 1) ...[
-                        CustomTextField(
-                          readOnly: false,
-                          height: 54,
-                          controller: customerDetailsProvider
-                              .feasibilityFeeThreeController,
-                          hintText: customerDetailsProvider.getQuotationFieldName(
-                              21,
-                              'Fee in KSEB for Feasibility study Three phase'),
-                          labelText: '',
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          onChanged: (p0) {
-                            if (settingsProvider.additionalExpense == 1) {
-                              customerDetailsProvider.updateTotal();
-                            }
-                          },
+                      title: Text(
+                        customerDetailsProvider.getQuotationFieldName(
+                          53,
+                          'Additional Expenses',
                         ),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
                         const SizedBox(height: 16),
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(37)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            height: 54,
+                            controller:
+                                customerDetailsProvider.systemPriceController,
+                            hintText:
+                                customerDetailsProvider.getQuotationFieldName(
+                                    37,
+                                    'System price excluding KSEB paper work'),
+                            labelText: '',
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(38)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .additionalStructureController,
+                            hintText:
+                                customerDetailsProvider.getQuotationFieldName(
+                                    38, 'Additional Paper Work'),
+                            labelText: '',
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(39)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .feasibilityFeeController,
+                            hintText:
+                                customerDetailsProvider.getQuotationFieldName(
+                                    39, 'Fee in KSEB for Feasibility study'),
+                            labelText: '',
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: (p0) {
+                              if (settingsProvider.additionalExpense == 1) {
+                                customerDetailsProvider.updateTotal();
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                            .isQuotationFieldVisible(40)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .registrationFeeController,
+                            keyboardType: TextInputType.number,
+                            onChanged: (p0) {
+                              if (settingsProvider.additionalExpense == 1) {
+                                customerDetailsProvider.updateTotal();
+                              }
+                            },
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            hintText: customerDetailsProvider.getQuotationFieldName(
+                                40,
+                                'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
+                            labelText: '',
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                                .isQuotationFieldVisible(41) ||
+                            (settingsProvider.menuIsViewMap[154] == 1)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .feasibilityFeeThreeController,
+                            hintText: customerDetailsProvider.getQuotationFieldName(
+                                41,
+                                'Fee in KSEB for Feasibility study Three phase'),
+                            labelText: '',
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: (p0) {
+                              if (settingsProvider.additionalExpense == 1) {
+                                customerDetailsProvider.updateTotal();
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                                .isQuotationFieldVisible(42) ||
+                            (settingsProvider.menuIsViewMap[154] == 1)) ...[
+                          CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller: customerDetailsProvider
+                                .registrationFeeThreeController,
+                            keyboardType: TextInputType.number,
+                            onChanged: (p0) {
+                              if (settingsProvider.additionalExpense == 1) {
+                                customerDetailsProvider.updateTotal();
+                              }
+                            },
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            hintText: customerDetailsProvider.getQuotationFieldName(
+                                42,
+                                'Registration Fee in KSEB - 1000/- per kW (80% refundable) Three phase'),
+                            labelText: '',
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ],
+                    ),
+                  ],
+                  //terms
+                  if (customerDetailsProvider.isQuotationFieldVisible(43))
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      title: Text(
+                        customerDetailsProvider.getQuotationFieldName(
+                            43, 'Terms and Conditions'),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
+                        const SizedBox(
+                          height: 5,
+                        ),
                         CustomTextField(
                           readOnly: false,
                           height: 54,
                           controller: customerDetailsProvider
-                              .registrationFeeThreeController,
-                          keyboardType: TextInputType.number,
-                          onChanged: (p0) {
-                            if (settingsProvider.additionalExpense == 1) {
-                              customerDetailsProvider.updateTotal();
-                            }
-                          },
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          hintText: customerDetailsProvider.getQuotationFieldName(
-                              20,
-                              'Registration Fee in KSEB - 1000/- per kW (80% refundable) Three phase'),
+                              .qtermsConditionsController,
+                          hintText:
+                              customerDetailsProvider.getQuotationFieldName(
+                                  43, 'Terms and Conditions'),
                           labelText: '',
+                          minLines: 4,
+                          keyboardType: TextInputType.multiline,
                         ),
                         const SizedBox(height: 16),
                       ],
-                    ],
-                  ),
-
-                  //terms
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
                     ),
-                    title: Text(
-                      'Terms and Conditions',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
+                  //warranty
+                  if (customerDetailsProvider.isQuotationFieldVisible(44))
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
-                    ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: false,
-                    children: [
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller:
-                            customerDetailsProvider.qtermsConditionsController,
-                        hintText: 'Terms and Conditions',
-                        labelText: '',
-                        minLines: 4,
-                        keyboardType: TextInputType.multiline,
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                  //terms
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    title: Text(
-                      'Warranty',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
-                      ),
-                    ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: false,
-                    children: [
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      SizedBox(
-                        child: TextFormField(
-                          controller:
-                              customerDetailsProvider.qwarrentyController,
-                          readOnly: false,
-                          minLines: 12,
-                          maxLines: 12,
-                          keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(
-                              hintText: 'Warranty',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    10), // Rounded corners
-                                borderSide: BorderSide(
-                                  color: AppColors.textGrey2, // Border color
-                                  width: 1, // Border width
-                                ),
-                              ),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.auto),
+                      title: Text(
+                        customerDetailsProvider.getQuotationFieldName(
+                            44, 'Warranty'),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        SizedBox(
+                          child: TextFormField(
+                            controller:
+                                customerDetailsProvider.qwarrentyController,
+                            readOnly: false,
+                            minLines: 12,
+                            maxLines: 12,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(
+                                hintText: customerDetailsProvider
+                                    .getQuotationFieldName(44, 'Warranty'),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                  borderSide: BorderSide(
+                                    color: AppColors.textGrey2, // Border color
+                                    width: 1, // Border width
+                                  ),
+                                ),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
-                    title: Text(
-                      'Payment Terms',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
+
+                  //Payment terms
+                  if (customerDetailsProvider.isQuotationFieldVisible(48))
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
+                      title: Text(
+                        customerDetailsProvider.getQuotationFieldName(
+                            48, 'Payment Terms'),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        if (customerDetailsProvider
+                                .isQuotationFieldVisible(45) ||
+                            customerDetailsProvider
+                                .isQuotationFieldVisible(84)) ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller:
+                                      customerDetailsProvider.advanceController,
+                                  hintText: customerDetailsProvider
+                                              .selectedQuotationType ==
+                                          1
+                                      ? customerDetailsProvider
+                                          .getQuotationFieldName(84,
+                                              'Advance payment up on conformation')
+                                      : customerDetailsProvider
+                                          .getQuotationFieldName(45,
+                                              'Advance Against Purchase Order %'),
+                                  labelText: '',
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                                .isQuotationFieldVisible(46) ||
+                            customerDetailsProvider
+                                .isQuotationFieldVisible(85)) ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .deliveryController,
+                                  hintText: customerDetailsProvider
+                                              .selectedQuotationType ==
+                                          1
+                                      ? customerDetailsProvider
+                                          .getQuotationFieldName(85,
+                                              'Upon the material ready for dispatch')
+                                      : customerDetailsProvider
+                                          .getQuotationFieldName(46,
+                                              'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice %'),
+                                  labelText: '',
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (customerDetailsProvider
+                                .isQuotationFieldVisible(47) ||
+                            customerDetailsProvider
+                                .isQuotationFieldVisible(86)) ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .workCompletionController,
+                                  hintText: customerDetailsProvider
+                                              .selectedQuotationType ==
+                                          1
+                                      ? customerDetailsProvider
+                                          .getQuotationFieldName(
+                                              86, 'Installation Completion')
+                                      : customerDetailsProvider
+                                          .getQuotationFieldName(
+                                              47, 'After project completion %'),
+                                  labelText: '',
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        Row(
+                          children: [
+                            if (customerDetailsProvider
+                                .isQuotationFieldVisible(48)) ...[
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .paymentTermsController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(
+                                          48, 'Payment Terms'),
+                                  labelText: '',
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                            ],
+                            if (customerDetailsProvider
+                                .isQuotationFieldVisible(49)) ...[
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller: customerDetailsProvider
+                                      .incoTermsController,
+                                  hintText: customerDetailsProvider
+                                      .getQuotationFieldName(49, 'Inco Terms'),
+                                  labelText: '',
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
                     ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: false,
-                    children: [
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller:
-                                  customerDetailsProvider.advanceController,
-                              hintText: customerDetailsProvider
-                                          .selectedQuotationType ==
-                                      1
-                                  ? 'Advance payment up on conformation'
-                                  : 'Advance Against Purchase Order %',
-                              labelText: '',
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              // onChanged: (value) => _validateTotal(),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller:
-                                  customerDetailsProvider.deliveryController,
-                              hintText: customerDetailsProvider
-                                          .selectedQuotationType ==
-                                      1
-                                  ? 'Upon the material ready for dispatch'
-                                  : 'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
-                              labelText: '',
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              // onChanged: (value) => _validateTotal(),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .workCompletionController,
-                              hintText: customerDetailsProvider
-                                          .selectedQuotationType ==
-                                      1
-                                  ? 'Installation Completion'
-                                  : 'After project completion %',
-                              labelText: '',
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              // onChanged: (value) => _validateTotal(),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .paymentTermsController,
-                              hintText: 'Payment Terms',
-                              labelText: '',
-                              // onChanged: (value) => _validateTotal(),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller:
-                                  customerDetailsProvider.incoTermsController,
-                              hintText: 'Inco Terms',
-                              labelText: '',
-                              // onChanged: (value) => _validateTotal(),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
                   // ExpansionTile(
                   //   shape: const RoundedRectangleBorder(
                   //     borderRadius: BorderRadius.zero,
@@ -1373,14 +1474,17 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   //     ),
                   //   ],
                   // ),
+
                   //bill of details
-                  if (companyQuotationItems == false)
+                  if (customerDetailsProvider.isQuotationFieldVisible(56) &&
+                      companyQuotationItems == false)
                     ExpansionTile(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
                       title: Text(
-                        'Bill of Materials',
+                        customerDetailsProvider.getQuotationFieldName(
+                            56, 'Bill of Materials'),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -1393,24 +1497,27 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         billofMaterialsWidget(context),
                       ],
                     ),
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    title: Text(
-                      'Structure Materials',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
+                  //Structure of Material
+                  if (customerDetailsProvider.isQuotationFieldVisible(54))
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
+                      title: Text(
+                        customerDetailsProvider.getQuotationFieldName(
+                            54, 'Structure Materials'),
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
+                        structureMaterialsWidget(context),
+                      ],
                     ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: false,
-                    children: [
-                      structureMaterialsWidget(context),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -1785,14 +1892,15 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   ],
                 ),
               if (customerDetailsProvider.items.isNotEmpty &&
-                  !isCommercialProposal)
+                  !isCommercialProposal &&
+                  customerDetailsProvider.isQuotationFieldVisible(80))
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
                     Text(
-                      'CGST amount:  ₹ ',
+                      '${customerDetailsProvider.getQuotationFieldName(80, 'CGST Amount')}:  ₹ ',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -1817,14 +1925,15 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   ],
                 ),
               if (customerDetailsProvider.items.isNotEmpty &&
-                  !isCommercialProposal)
+                  !isCommercialProposal &&
+                  customerDetailsProvider.isQuotationFieldVisible(81))
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
                     Text(
-                      'SGST amount:  ₹ ',
+                      '${customerDetailsProvider.getQuotationFieldName(81, 'SGST Amount')}:  ₹ ',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -1849,14 +1958,15 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   ],
                 ),
               if (customerDetailsProvider.items.isNotEmpty &&
-                  !isCommercialProposal)
+                  !isCommercialProposal &&
+                  customerDetailsProvider.isQuotationFieldVisible(82))
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
                     Text(
-                      'GST amount:  ₹ ',
+                      '${customerDetailsProvider.getQuotationFieldName(82, 'GST Amount')}:  ₹ ',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -2032,14 +2142,15 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   ],
                 ),
               if (customerDetailsProvider.items.isNotEmpty &&
-                  !isCommercialProposal)
+                  !isCommercialProposal &&
+                  customerDetailsProvider.isQuotationFieldVisible(83))
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
                     Text(
-                      'Shipping Charges:   ',
+                      '${customerDetailsProvider.getQuotationFieldName(83, 'Shipping Charges')}:   ',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -2249,123 +2360,150 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         const SizedBox(height: 4),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.cableStructureController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Structure',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(71)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.cableStructureController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      71, 'Structure'),
+                  labelText: '',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.cableTypeController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Type',
-                labelText: '',
+              const SizedBox(width: 16),
+            ],
+            if (customerDetailsProvider.isQuotationFieldVisible(72)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.cableTypeController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText:
+                      customerDetailsProvider.getQuotationFieldName(72, 'Type'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ],
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller:
-                    customerDetailsProvider.cableShortCircuitTempController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Short circuit temperature range',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(73)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.cableShortCircuitTempController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      73, 'Short circuit temperature range'),
+                  labelText: '',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.cableStandardController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Standard',
-                labelText: '',
+              const SizedBox(width: 16),
+            ],
+            if (customerDetailsProvider.isQuotationFieldVisible(74)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.cableStandardController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      74, 'Standard'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ]
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller:
-                    customerDetailsProvider.cableConductorClassController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Conductor Class',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(75)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.cableConductorClassController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      75, 'Conductor Class'),
+                  labelText: '',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.cableMaterialController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Material',
-                labelText: '',
+              const SizedBox(width: 16),
+            ],
+            if (customerDetailsProvider.isQuotationFieldVisible(76)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.cableMaterialController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      76, 'Material'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ]
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.cableProtectionController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Protection',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(77)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.cableProtectionController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      77, 'Protection'),
+                  labelText: '',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.cableWarrantyController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Warranty',
-                labelText: '',
+              const SizedBox(width: 16),
+            ],
+            if (customerDetailsProvider.isQuotationFieldVisible(78)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.cableWarrantyController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      78, 'Warranty'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ]
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller:
-                    customerDetailsProvider.cableTensileStrengthController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Tensile strength',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(79)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.cableTensileStrengthController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      79, 'Tensile strength'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ]
           ],
         ),
       ],
@@ -2561,41 +2699,51 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(
-                child: CustomTextField(
-                  controller:
-                      customerDetailsProvider.designAndEngineeringController,
-                  readOnly: false,
-                  keyboardType: TextInputType.multiline,
-                  height: 54,
-                  hintText: 'Design and Engineering',
-                  labelText: '',
+              if (customerDetailsProvider.isQuotationFieldVisible(67)) ...[
+                Expanded(
+                  child: CustomTextField(
+                    controller:
+                        customerDetailsProvider.designAndEngineeringController,
+                    readOnly: false,
+                    keyboardType: TextInputType.multiline,
+                    height: 54,
+                    hintText: customerDetailsProvider.getQuotationFieldName(
+                        67, 'Design and Engineering'),
+                    labelText: '',
+                  ),
                 ),
-              ),
+                const SizedBox(width: 16),
+              ],
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(
-                child: CustomTextField(
-                  controller: customerDetailsProvider.a3SScopeController,
-                  readOnly: false,
-                  height: 54,
-                  hintText: 'A3S Scope',
-                  labelText: '',
+              if (customerDetailsProvider.isQuotationFieldVisible(68)) ...[
+                Expanded(
+                  child: CustomTextField(
+                    controller: customerDetailsProvider.a3SScopeController,
+                    readOnly: false,
+                    height: 54,
+                    hintText: customerDetailsProvider.getQuotationFieldName(
+                        68, 'A3S Scope'),
+                    labelText: '',
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: CustomTextField(
-                  controller: customerDetailsProvider.clientScopeController,
-                  readOnly: false,
-                  height: 54,
-                  hintText: 'Client Scope',
-                  labelText: '',
+                const SizedBox(width: 16),
+              ],
+              if (customerDetailsProvider.isQuotationFieldVisible(69)) ...[
+                Expanded(
+                  child: CustomTextField(
+                    controller: customerDetailsProvider.clientScopeController,
+                    readOnly: false,
+                    height: 54,
+                    hintText: customerDetailsProvider.getQuotationFieldName(
+                        69, 'Client Scope'),
+                    labelText: '',
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
           const SizedBox(height: 16),
@@ -2651,108 +2799,132 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         const SizedBox(height: 4),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.plantCapacityController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Plant Capacity',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(58)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.plantCapacityController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      58, 'Plant Capacity'),
+                  labelText: '',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                controller:
-                    customerDetailsProvider.moduleTechnologiesController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Module Technologies',
-                labelText: '',
+              const SizedBox(width: 16),
+            ],
+            if (customerDetailsProvider.isQuotationFieldVisible(59)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.moduleTechnologiesController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      59, 'Module Technologies'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ],
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider
-                    .mountingStructureTechnologiesController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Mounting Structure Technologies',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(60)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider
+                      .mountingStructureTechnologiesController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      60, 'Mounting Structure Technologies'),
+                  labelText: '',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.projectSchemeController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Project Scheme',
-                labelText: '',
+              const SizedBox(width: 16),
+            ],
+            if (customerDetailsProvider.isQuotationFieldVisible(61)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.projectSchemeController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      61, 'Project Scheme'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ],
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.powerEvacuationController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Power Evacuation',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(62)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.powerEvacuationController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      62, 'Power Evacuation'),
+                  labelText: '',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.areaApproximateController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Area (Approximate)',
-                labelText: '',
+              const SizedBox(width: 16),
+            ],
+            if (customerDetailsProvider.isQuotationFieldVisible(63)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.areaApproximateController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      63, 'Area (Approximate)'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ],
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider
-                    .solarPlantOutputConnectionController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Solar Plant output Connection ',
-                labelText: '',
+            if (customerDetailsProvider.isQuotationFieldVisible(64)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider
+                      .solarPlantOutputConnectionController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      64, 'Solar Plant output Connection '),
+                  labelText: '',
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: CustomTextField(
-                controller: customerDetailsProvider.schemeController,
-                readOnly: false,
-                keyboardType: TextInputType.text,
-                height: 54,
-                hintText: 'Scheme',
-                labelText: '',
+              const SizedBox(width: 16),
+            ],
+            if (customerDetailsProvider.isQuotationFieldVisible(65)) ...[
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.schemeController,
+                  readOnly: false,
+                  keyboardType: TextInputType.text,
+                  height: 54,
+                  hintText: customerDetailsProvider.getQuotationFieldName(
+                      65, 'Scheme'),
+                  labelText: '',
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ],
@@ -2881,7 +3053,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: 'Structure Materials ',
+                text: customerDetailsProvider.getQuotationFieldName(
+                    54, 'Structure Materials'),
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -2994,7 +3167,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               quotation, widget.customerId);
         }
       },
-      buttonText: 'Load Quotation',
+      buttonText:
+          customerDetailsProvider.getQuotationFieldName(36, 'Load Quotation'),
       backgroundColor: Colors.blue,
       borderColor: Colors.blue,
       textColor: Colors.white,
