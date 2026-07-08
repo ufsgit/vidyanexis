@@ -125,6 +125,12 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removePendingDocument(int documentTypeId) {
+    _documentTypeModel
+        .removeWhere((doc) => doc.documentTypeId == documentTypeId);
+    notifyListeners();
+  }
+
   void toggleExpansion(int index) {
     if (_expandedIndex == index) {
       _expandedIndex = null;
@@ -1114,7 +1120,8 @@ class TaskPageProvider extends ChangeNotifier {
   }
 
   Future<void> fetchTaskTypesWithCustomFields(int tasktypeId, int statusId,
-      int customerId, int enquiryForId, BuildContext context) async {
+      int customerId, int enquiryForId, BuildContext context,
+      {bool forceRefresh = false}) async {
     print(statusId);
     print(tasktypeId);
     List<Map<String, dynamic>> customFieldsData = [];
@@ -1134,11 +1141,15 @@ class TaskPageProvider extends ChangeNotifier {
     }
 
     if (customFieldsData.isEmpty) {
+      if (forceRefresh) {
+        return fetchTaskTypes(
+            tasktypeId, statusId, customerId, enquiryForId, context);
+      }
       return; // No need to call the API if there are no active custom fields to pass
     }
 
     final payloadJson = jsonEncode(customFieldsData);
-    if (payloadJson == _lastFetchPayload) {
+    if (!forceRefresh && payloadJson == _lastFetchPayload) {
       // Payload hasn't changed (e.g., interacted with unchecked fields)
       return;
     }
@@ -1203,10 +1214,12 @@ class TaskPageProvider extends ChangeNotifier {
               .map((item) => MandatoryStatusModel.fromJson(item))
               .toList();
 
-          // _showCustomFields = (customFieldData as List)
-          //     .map((e) => CustomFieldByStatusId.fromJson(e))
-          //     .toList();
-
+          final customFieldData = data['show_custom_field'] ?? [];
+          if (customFieldData.isNotEmpty) {
+            _showCustomFields = (customFieldData as List)
+                .map((e) => CustomFieldByStatusId.fromJson(e))
+                .toList();
+          }
           // Update forms in FormProvider if present
           final formProvider =
               Provider.of<FormProvider>(context, listen: false);

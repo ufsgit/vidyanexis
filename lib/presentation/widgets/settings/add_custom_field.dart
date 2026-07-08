@@ -232,7 +232,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
                     contentPadding: EdgeInsets.zero,
                   ),
                 CheckboxListTile(
-                  title: const Text("Events Name"),
+                  title: const Text("Events"),
                   value: settingsProvider.isChecked,
                   onChanged: (value) {
                     settingsProvider.toggleIsChecked(value!);
@@ -279,7 +279,7 @@ class _AddCustomFieldState extends State<AddCustomField> {
                       ),
                     Expanded(
                       child: CheckboxListTile(
-                        title: const Text("Events Name"),
+                        title: const Text("Events"),
                         value: settingsProvider.isChecked,
                         onChanged: (value) {
                           settingsProvider.toggleIsChecked(value!);

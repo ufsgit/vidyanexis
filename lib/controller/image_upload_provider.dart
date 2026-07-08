@@ -466,7 +466,7 @@ class ImageUploadProvider extends ChangeNotifier {
         customerDetailsProvider.getDocument(customerId, context);
 
         if (shouldPop) {
-          navigator.pop();
+          navigator.pop(true);
         }
       } else {
         scaffoldMessenger.showSnackBar(
@@ -557,7 +557,7 @@ class ImageUploadProvider extends ChangeNotifier {
         clearFiles();
         customerDetailsProvider.getDocument(customerId, context);
         if (shouldPop) {
-          navigator.pop();
+          navigator.pop(true);
         }
       } else {
         scaffoldMessenger.showSnackBar(

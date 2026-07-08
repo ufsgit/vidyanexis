@@ -120,8 +120,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     int tasktypeId = selectedStatus.taskTypeId ?? 0;
     int customerId = widget.task.customerId;
     int enquiryForId = widget.task.enquiryForId;
-    reportsProvider.fetchTaskTypes(
-        tasktypeId, statusId, customerId, enquiryForId, context);
+    reportsProvider.fetchTaskTypesWithCustomFields(
+        tasktypeId, statusId, customerId, enquiryForId, context, forceRefresh: true);
   }
 
   @override
@@ -783,7 +783,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                                     .uploadAllDocumentsGrouped(
                                                         context,
                                                         shouldPop: false);
-                                                _refreshData();
+                                                
+                                                if (imageProvider.fileInfoList.isEmpty) {
+                                                  reportsProvider.removePendingDocument(doc.documentTypeId ?? 0);
+                                                }
                                               }
                                             },
                                           );

@@ -3786,7 +3786,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           InkWell(
                                                                             onTap:
                                                                                 () async {
-                                                                              await showDialog(
+                                                                              final result = await showDialog(
                                                                                 barrierDismissible: false,
                                                                                 context: context,
                                                                                 builder: (context) => ImageUploadAlert(
@@ -3800,7 +3800,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                               int tId = selectedStatus.value.taskTypeId ?? 0;
                                                                               int cId = task.customerId ?? 0;
                                                                               int eId = task.enquiryForId ?? 0;
-                                                                              reportsProvider.fetchTaskTypes(tId, sId, cId, eId, context);
+                                                                              if (result == true) { reportsProvider.removePendingDocument(doc.documentTypeId ?? 0); }
                                                                             },
                                                                             child:
                                                                                 Container(

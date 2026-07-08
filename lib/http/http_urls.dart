@@ -21,7 +21,7 @@ class HttpUrls {
   // static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
   // static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
   // static String baseUrl = 'https://framesolarapi.trackbox.net.in/';
-  static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
+  // static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
   // static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
   // static String baseUrl = 'https://sunxpertapi.trackbox.net.in/';
   // static String baseUrl = 'https://ramcoelectronicsapi.trackbox.net.in/';
@@ -37,7 +37,7 @@ class HttpUrls {
 //   static String baseUrl = 'https://demo2api.ufstech.net.in/';
   // static String baseUrl = 'https://coopaenergyapi.ufstech.net.in/';
   // static String baseUrl = 'https://bodhieapi.ufstech.net.in/';
-  // static String baseUrl = 'https://solarisapi.ufstech.net.in/';
+  static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
@@ -433,8 +433,7 @@ class HttpUrls {
   static String deleteTargetEnquirySource = "lead/Delete_Target_Enquiry_Source";
   static String saveRegistrationDate = "lead/Save_Registration_Date";
   static String getMenuPermissionPrint = "user_details/Get_print_Permission";
-  static String searchmenuPrint =
-      "user_details/Get_Selected_Print_Permission";
+  static String searchmenuPrint = "user_details/Get_Selected_Print_Permission";
   static String saveMenuPermissionPrint =
       "user_details/Save_Print_Menu_Selection";
 }
