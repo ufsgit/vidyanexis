@@ -109,7 +109,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
       if (processFlowProvider.processFlowModel.taskTypeId.isGreaterThanZero()) {
         await processFlowProvider.getStatusAndSubStatusByTaskType(
             context, processFlowProvider.processFlowModel.taskTypeId!);
-        
+
         final selectedStatus = processFlowProvider.dynamicTaskTypeStatusList
             .where((element) =>
                 element.statusId ==
@@ -117,7 +117,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
             .firstOrNull;
         if (selectedStatus != null) {
           taskStatusController.text = selectedStatus.statusName ?? '';
-          
+
           final selectedSubStatus = selectedStatus.subStatuses
               ?.where((element) =>
                   element.subStatusId ==
@@ -334,38 +334,41 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                           processFlowProvider.processFlowModel.leadStatusId)
                       .firstOrNull;
 
-                  final leadSubStatusDropdown = (selectedLeadStatus?.subStatuses?.isNotEmpty ?? false)
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: CommonDropdown<SubStatus>(
-                            hintText: 'Lead sub status',
-                            items: selectedLeadStatus!.subStatuses!
-                                .map((sub) => DropdownItem<SubStatus>(
-                                      id: sub,
-                                      name: sub.subStatusName ?? '',
-                                    ))
-                                .toList(),
-                            controller: leadSubStatusController,
-                            key: ValueKey('leadSub_'),
-                            onItemSelected: (SubStatus? newValue) {
-                              if (newValue != null) {
-                                processFlowProvider.processFlowModel.leadSubStatusId =
-                                    newValue.subStatusId;
-                                processFlowProvider.processFlowModel.leadSubStatusName =
-                                    newValue.subStatusName;
-                                processFlowProvider.setProcessFlowModel(
-                                    processFlowProvider.processFlowModel);
-                                setState(() {});
-                              }
-                            },
-                            selectedValue: selectedLeadStatus.subStatuses!
-                                .where((element) =>
-                                    element.subStatusId ==
-                                    processFlowProvider.processFlowModel.leadSubStatusId)
-                                .firstOrNull,
-                          ),
-                        )
-                      : const SizedBox.shrink();
+                  final leadSubStatusDropdown =
+                      (selectedLeadStatus?.subStatuses?.isNotEmpty ?? false)
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: CommonDropdown<SubStatus>(
+                                hintText: 'Lead sub status',
+                                items: selectedLeadStatus!.subStatuses!
+                                    .map((sub) => DropdownItem<SubStatus>(
+                                          id: sub,
+                                          name: sub.subStatusName ?? '',
+                                        ))
+                                    .toList(),
+                                controller: leadSubStatusController,
+                                key: ValueKey('leadSub_'),
+                                onItemSelected: (SubStatus? newValue) {
+                                  if (newValue != null) {
+                                    processFlowProvider.processFlowModel
+                                        .leadSubStatusId = newValue.subStatusId;
+                                    processFlowProvider.processFlowModel
+                                            .leadSubStatusName =
+                                        newValue.subStatusName;
+                                    processFlowProvider.setProcessFlowModel(
+                                        processFlowProvider.processFlowModel);
+                                    setState(() {});
+                                  }
+                                },
+                                selectedValue: selectedLeadStatus.subStatuses!
+                                    .where((element) =>
+                                        element.subStatusId ==
+                                        processFlowProvider
+                                            .processFlowModel.leadSubStatusId)
+                                    .firstOrNull,
+                              ),
+                            )
+                          : const SizedBox.shrink();
 
                   final leadStatusWidget = processFlowProvider.showLeadStatus
                       ? leadStatusDropdown
@@ -437,8 +440,10 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
 
                         processFlowProvider.processFlowModel.statusId = 0;
                         processFlowProvider.processFlowModel.statusName = "";
-                        processFlowProvider.processFlowModel.taskSubStatusId = 0;
-                        processFlowProvider.processFlowModel.taskSubStatusName = "";
+                        processFlowProvider.processFlowModel.taskSubStatusId =
+                            0;
+                        processFlowProvider.processFlowModel.taskSubStatusName =
+                            "";
 
                         processFlowProvider.setProcessFlowModel(
                             processFlowProvider.processFlowModel);
@@ -448,8 +453,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                         taskSubStatusController.clear();
                         setState(() {});
 
-                        await processFlowProvider.getStatusAndSubStatusByTaskType(
-                            context, newValue.taskTypeId);
+                        await processFlowProvider
+                            .getStatusAndSubStatusByTaskType(
+                                context, newValue.taskTypeId);
                         setState(() {});
                       }
                     },
@@ -473,8 +479,10 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             newValue.statusId;
                         processFlowProvider.processFlowModel.statusName =
                             newValue.statusName;
-                        processFlowProvider.processFlowModel.taskSubStatusId = 0;
-                        processFlowProvider.processFlowModel.taskSubStatusName = "";
+                        processFlowProvider.processFlowModel.taskSubStatusId =
+                            0;
+                        processFlowProvider.processFlowModel.taskSubStatusName =
+                            "";
                         processFlowProvider.setProcessFlowModel(
                             processFlowProvider.processFlowModel);
                         taskSubStatusController.clear();
@@ -487,45 +495,51 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                             processFlowProvider.processFlowModel.statusId)
                         .firstOrNull,
                   );
-                  
-                  final selectedTaskTypeStatus = processFlowProvider.dynamicTaskTypeStatusList
+
+                  final selectedTaskTypeStatus = processFlowProvider
+                      .dynamicTaskTypeStatusList
                       .where((element) =>
                           element.statusId ==
                           processFlowProvider.processFlowModel.statusId)
                       .firstOrNull;
 
-                  final taskTypeSubStatusDropdown = (selectedTaskTypeStatus?.subStatuses?.isNotEmpty ?? false)
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: CommonDropdown<SubStatus>(
-                            hintText: 'Task type sub status',
-                            items: selectedTaskTypeStatus!.subStatuses!
-                                .map((sub) => DropdownItem<SubStatus>(
-                                      id: sub,
-                                      name: sub.subStatusName ?? '',
-                                    ))
-                                .toList(),
-                            controller: taskSubStatusController,
-                            key: ValueKey('taskSub_${processFlowProvider.processFlowModel.statusId}'),
-                            onItemSelected: (SubStatus? newValue) {
-                              if (newValue != null) {
-                                processFlowProvider.processFlowModel.taskSubStatusId =
-                                    newValue.subStatusId;
-                                processFlowProvider.processFlowModel.taskSubStatusName =
-                                    newValue.subStatusName;
-                                processFlowProvider.setProcessFlowModel(
-                                    processFlowProvider.processFlowModel);
-                                setState(() {});
-                              }
-                            },
-                            selectedValue: selectedTaskTypeStatus.subStatuses!
-                                .where((element) =>
-                                    element.subStatusId ==
-                                    processFlowProvider.processFlowModel.taskSubStatusId)
-                                .firstOrNull,
-                          ),
-                        )
-                      : const SizedBox.shrink();
+                  final taskTypeSubStatusDropdown =
+                      (selectedTaskTypeStatus?.subStatuses?.isNotEmpty ?? false)
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: CommonDropdown<SubStatus>(
+                                hintText: 'Task type sub status',
+                                items: selectedTaskTypeStatus!.subStatuses!
+                                    .map((sub) => DropdownItem<SubStatus>(
+                                          id: sub,
+                                          name: sub.subStatusName ?? '',
+                                        ))
+                                    .toList(),
+                                controller: taskSubStatusController,
+                                key: ValueKey(
+                                    'taskSub_${processFlowProvider.processFlowModel.statusId}'),
+                                onItemSelected: (SubStatus? newValue) {
+                                  if (newValue != null) {
+                                    processFlowProvider.processFlowModel
+                                        .taskSubStatusId = newValue.subStatusId;
+                                    processFlowProvider.processFlowModel
+                                            .taskSubStatusName =
+                                        newValue.subStatusName;
+                                    processFlowProvider.setProcessFlowModel(
+                                        processFlowProvider.processFlowModel);
+                                    setState(() {});
+                                  }
+                                },
+                                selectedValue: selectedTaskTypeStatus
+                                    .subStatuses!
+                                    .where((element) =>
+                                        element.subStatusId ==
+                                        processFlowProvider
+                                            .processFlowModel.taskSubStatusId)
+                                    .firstOrNull,
+                              ),
+                            )
+                          : const SizedBox.shrink();
 
                   final branchDropdown = CommonDropdown<int>(
                     hintText: 'Branch *',
@@ -579,8 +593,8 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                       onChanged: (bool? value) {
                         processFlowProvider.taskFlowModel.showUser =
                             value == true ? 1 : 0;
-                        processFlowProvider
-                            .setTaskFlowModel(processFlowProvider.taskFlowModel);
+                        processFlowProvider.setTaskFlowModel(
+                            processFlowProvider.taskFlowModel);
                       },
                     ),
                   );
@@ -712,7 +726,9 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                                       child: Column(
                                         children: [
                                           leadStatusWidget,
-                                          if (processFlowProvider.showLeadStatus) leadSubStatusDropdown,
+                                          if (processFlowProvider
+                                              .showLeadStatus)
+                                            leadSubStatusDropdown,
                                         ],
                                       ),
                                     ),
@@ -1816,12 +1832,6 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
 
     if (processFlowProvider.processFlowModel.statusId.isNullOrZero()) {
       showToastInDialog('Please select a task status', context);
-
-      return;
-    }
-
-    if (processFlowProvider.taskFlowList.isEmpty) {
-      showToastInDialog('Please add at least one task to the flow', context);
 
       return;
     }
