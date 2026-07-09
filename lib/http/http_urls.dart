@@ -436,4 +436,6 @@ class HttpUrls {
   static String searchmenuPrint = "user_details/Get_Selected_Print_Permission";
   static String saveMenuPermissionPrint =
       "user_details/Save_Print_Menu_Selection";
+  static String getTermsAndWarranty = "settings/Get_Terms_And_Warranty";
+  static String saveTermsAndWarranty = "settings/Save_Terms_And_Warranty";
 }

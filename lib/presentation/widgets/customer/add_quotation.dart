@@ -72,6 +72,12 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       await customerDetailsProvider.getQuotationFieldsApi();
       await customerDetailsProvider.getCommercialCustomFieldsApi(context);
       customerDetailsProvider.getCustomFieldsByQuotationId(context);
+      settingsProvider.clearTermsFields();
+      await settingsProvider.getTermsAndWarranty(context);
+      customerDetailsProvider.qtermsConditionsController.text =
+          settingsProvider.termsText;
+      customerDetailsProvider.qwarrentyController.text =
+          settingsProvider.warrantyText;
 
       if (widget.isEdit) {
         // Fetch existing quotation details if editing

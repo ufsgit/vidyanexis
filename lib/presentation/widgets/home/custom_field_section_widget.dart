@@ -5,6 +5,7 @@ import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield_search.dart';
 import 'package:file_picker/file_picker.dart';
 // File uploads are deferred to Save Lead
 import 'package:url_launcher/url_launcher.dart' as launcher;
@@ -1267,7 +1268,7 @@ class CustomFieldWidgetBuilder {
         );
 
       case CustomFieldType.dropdown:
-        return _buildDropdownField(field, validator, onChanged);
+        return _buildDropdownField(field, controller, validator, onChanged);
 
       case CustomFieldType.datePicker:
         return GestureDetector(
@@ -1323,8 +1324,9 @@ class CustomFieldWidgetBuilder {
 
   Widget _buildDropdownField(
     CustomFieldByStatusId field,
+    TextEditingController controller,
     String? Function(String?) validator,
-    Function(String?) onChanged,
+    Function(String?) onFieldValueChanged,
   ) {
     final dropdownItems = field.dropdownValues;
     final isRequired = field.isMandatory == 1;
@@ -1364,33 +1366,49 @@ class CustomFieldWidgetBuilder {
       }
     }
 
-    return DropdownButtonFormField<DropdownValue>(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        labelText: '$fieldName${isRequired ? ' *' : ''}',
-      ),
-      validator: (v) => validator(v?.dropdownValue ?? ""),
-      items: enabled
-          ? dropdownItems.map((item) {
-              return DropdownMenuItem<DropdownValue>(
-                value: item,
-                child: Text(
-                  item.dropdownValue ?? "Unknown",
-                  overflow: TextOverflow.ellipsis,
-                ),
-              );
-            }).toList()
-          : [],
-      hint: Text("Select $fieldName"),
-      initialValue: selectedValue,
-      onChanged: enabled
-          ? (value) {
-              onChanged(value?.dropdownValue);
-            }
-          : null,
+    if (controller.text.isEmpty && selectedValue != null) {
+      controller.text = selectedValue.dropdownValue ?? '';
+    }
+
+    final String labelText = '$fieldName${isRequired ? ' *' : ''}';
+
+    String? customValidator(String? value) {
+      if (isRequired && (value == null || value.trim().isEmpty)) {
+        return 'Please enter $fieldName';
+      }
+      if (value != null && value.trim().isNotEmpty) {
+        final exists = dropdownItems.any((item) =>
+            item.dropdownValue?.toLowerCase().trim() ==
+            value.toLowerCase().trim());
+        if (!exists) {
+          return 'Please select a valid option';
+        }
+      }
+      return validator(value);
+    }
+
+    return CustomAutocompleteSearch<DropdownValue>(
+      showOptionsOnTap: true,
+      maxHeight: 300,
+      optionsViewOpenDirection: OptionsViewOpenDirection.down,
+      items: dropdownItems,
+      displayStringFunction: (item) => item.dropdownValue ?? '',
+      defaultText: controller.text,
+      controller: controller,
+      labelText: labelText,
+      enabled: enabled,
+      validator: customValidator,
+      suffixIcon: const Icon(Icons.search),
+      onSelected: (DropdownValue selected) {
+        onFieldValueChanged(selected.dropdownValue);
+      },
+      onChanged: (value) {
+        final matchedItem = dropdownItems.firstWhere(
+          (item) => item.dropdownValue?.toLowerCase().trim() == value.toLowerCase().trim(),
+          orElse: () => DropdownValue(dropdownId: null, dropdownValue: null),
+        );
+        onFieldValueChanged(matchedItem.dropdownValue);
+      },
     );
   }
 

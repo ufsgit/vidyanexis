@@ -6082,4 +6082,83 @@ class SettingsProvider extends ChangeNotifier {
     }
     return [];
   }
+
+  // Terms & Warranty
+  final TextEditingController warrantyController = TextEditingController();
+  final TextEditingController termsController = TextEditingController();
+
+  String _warrantyText = '';
+  String _termsText = '';
+  int _termsWarrantyId = 0;
+
+  String get warrantyText => _warrantyText;
+  String get termsText => _termsText;
+  int get termsWarrantyId => _termsWarrantyId;
+
+  Future<void> getTermsAndWarranty(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getTermsAndWarranty,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        if (data != null) {
+          _termsWarrantyId = data['Id'] ?? 0;
+          _warrantyText = data['Warranty']?.toString() ?? '';
+          _termsText = data['Terms_And_Conditions']?.toString() ?? '';
+        }
+
+        warrantyController.text = _warrantyText;
+        termsController.text = _termsText;
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Exception in getTermsAndWarranty: $e');
+    }
+  }
+
+  Future<void> saveTermsAndWarranty(BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveTermsAndWarranty,
+        bodyData: {
+          "Id": _termsWarrantyId,
+          "Terms_And_Conditions": termsController.text.trim(),
+          "Warranty": warrantyController.text.trim(),
+        },
+      );
+
+      if (response != null && response.statusCode == 200) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Terms and Warranty updated successfully')),
+        );
+        await getTermsAndWarranty(context);
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to save')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception in saveTermsAndWarranty: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  void clearTermsFields() {
+    warrantyController.clear();
+    termsController.clear();
+    _warrantyText = '';
+    _termsText = '';
+    _termsWarrantyId = 0;
+    notifyListeners();
+  }
 }
