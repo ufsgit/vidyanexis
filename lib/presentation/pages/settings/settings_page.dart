@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/pages/settings/warrenty_terms_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_category_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_item_page.dart';
@@ -370,7 +371,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
   Widget _buildWebHeader(SettingsProvider settingsProvider) {
     if (settingsProvider.selectedMenu == 'Company Details' ||
         settingsProvider.selectedMenu == 'Excel Import' ||
-        settingsProvider.selectedMenu == 'Version') {
+        settingsProvider.selectedMenu == 'Version' ||
+        settingsProvider.selectedMenu == 'Terms & Warranty') {
       return const SizedBox.shrink();
     }
     return Column(
@@ -945,6 +947,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         return const CampaignContent();
       case 'Target Enquiry Source':
         return const TargetEnquirySourcePage();
+      case 'Terms & Warranty':
+        return const TermsWarrantyContent();
       default:
         return const SizedBox.shrink();
     }
@@ -1008,6 +1012,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       if (settingsProvider.menuIsViewMap[155].toString() == '1')
         _buildMenuItem(context, 'Target Enquiry Source', Icons.track_changes,
             isMobile: isMobile),
+      _buildMenuItem(context, 'Terms & Warranty', Icons.description,
+          isMobile: isMobile), //new
     ];
   }
 }
