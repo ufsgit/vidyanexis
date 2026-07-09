@@ -1012,8 +1012,9 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       if (settingsProvider.menuIsViewMap[155].toString() == '1')
         _buildMenuItem(context, 'Target Enquiry Source', Icons.track_changes,
             isMobile: isMobile),
-      _buildMenuItem(context, 'Terms & Warranty', Icons.description,
-          isMobile: isMobile), //new
+      if (settingsProvider.menuIsViewMap[161].toString() == '1')
+        _buildMenuItem(context, 'Terms & Warranty', Icons.description,
+            isMobile: isMobile), //new
     ];
   }
 }
