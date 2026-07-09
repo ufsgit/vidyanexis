@@ -587,6 +587,18 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 12),
+                              CustomTextField(
+                                readOnly: false,
+                                height: 56,
+                                controller: expenseProvider
+                                    .itemMaterialOrderByController,
+                                hintText: 'Order By',
+                                labelText: '',
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                              ),
                               CheckboxListTile(
                                 title: const Text('Show Item in Print'),
                                 value: expenseProvider.isQuantity,
@@ -599,7 +611,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                 title: const Text('Quantity As Per Required'),
                                 value: expenseProvider.asPerRequired,
                                 onChanged: (value) {
-                                  expenseProvider.asPerRequired = value ?? false;
+                                  expenseProvider.asPerRequired =
+                                      value ?? false;
                                 },
                               ),
                               const SizedBox(height: 12),

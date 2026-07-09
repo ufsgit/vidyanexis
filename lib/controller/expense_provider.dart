@@ -77,7 +77,8 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController searchitemNameController =
       TextEditingController();
   final TextEditingController itemNameController = TextEditingController();
-  final TextEditingController itemDescriptionController = TextEditingController();
+  final TextEditingController itemDescriptionController =
+      TextEditingController();
   final TextEditingController itemCategoryController = TextEditingController();
   final TextEditingController itemUnitController = TextEditingController();
   int _selectedItemCategory = 0;
@@ -92,6 +93,8 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController gstController = TextEditingController();
   final TextEditingController itemMaterialController = TextEditingController();
   final TextEditingController itemQuantityController = TextEditingController();
+  final TextEditingController itemMaterialOrderByController =
+      TextEditingController();
   final TextEditingController itemPriceController = TextEditingController();
   final TextEditingController itemMaterialSpecificationController =
       TextEditingController();
@@ -1433,6 +1436,7 @@ class ExpenseProvider extends ChangeNotifier {
       showQuantity: _asPerRequired ? "1" : "0",
       itemTypeId: _selectedItemTypeId.toString(),
       unitId: _selectedItemMaterialUnit.toString(),
+      orderBy: itemMaterialOrderByController.text,
     );
 
     if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
@@ -1469,6 +1473,7 @@ class ExpenseProvider extends ChangeNotifier {
     _isQuantity = false;
     _asPerRequired = false;
     _selectedItemMaterialUnit = 0;
+    itemMaterialOrderByController.clear();
     notifyListeners();
   }
 
@@ -1487,6 +1492,7 @@ class ExpenseProvider extends ChangeNotifier {
       materialPriceToController.text = itemToEdit.priceTo;
       _isQuantity = itemToEdit.includeInTotal == "1";
       _asPerRequired = itemToEdit.showQuantity == "1";
+      itemMaterialOrderByController.text = itemToEdit.orderBy;
       setSubId(itemToEdit.subItemId);
       setEditItemIndex(index);
       setItemMaterialUnit(int.tryParse(itemToEdit.unitId) ?? 0);

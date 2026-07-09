@@ -15,6 +15,7 @@ class ItemSettings {
   String includeInTotal;
   String showQuantity;
   String itemTypeId;
+  String orderBy;
 
   // Constructor
   ItemSettings({
@@ -34,6 +35,7 @@ class ItemSettings {
     this.showQuantity = "0",
     this.itemTypeId = '0',
     this.unitId = '0',
+    this.orderBy = '0'
   });
 
   // Factory method to create an instance from a JSON object
@@ -55,6 +57,7 @@ class ItemSettings {
       showQuantity: json['quantity_checkbox']?.toString() ?? '0',
       itemTypeId: json['Item_Type_Id']?.toString() ?? '0',
       unitId: json['Unit_Id']?.toString() ?? '0',
+      orderBy: json['order_by']?.toString() ?? '0',
     );
   }
 
@@ -77,6 +80,7 @@ class ItemSettings {
       'quantity_checkbox': showQuantity,
       'Item_Type_Id': itemTypeId,
       'Unit_Id': unitId,
+      'order_by': orderBy,
     };
   }
 }
