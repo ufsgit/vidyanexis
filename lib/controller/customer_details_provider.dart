@@ -70,6 +70,12 @@ import 'package:vidyanexis/controller/models/structure_material_model.dart';
 class CustomerDetailsProvider extends ChangeNotifier {
   AddTaskModel addTaskModel = AddTaskModel();
 
+  String? _initialTabName;
+  String? get initialTabName => _initialTabName;
+  void setInitialTabName(String? name) {
+    _initialTabName = name;
+  }
+
   bool _isLoading = false;
   bool _isLoadingDetails = false;
   bool get isLoading => _isLoading;

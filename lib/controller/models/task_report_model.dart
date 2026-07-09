@@ -44,6 +44,7 @@ class TaskReportModel {
   final bool isRepeating;
   final int userDetailsId;
   final String? nextFollowupDate;
+  final String? leadCode;
 
   TaskReportModel({
     required this.taskId,
@@ -86,6 +87,7 @@ class TaskReportModel {
     required this.isRepeating,
     required this.userDetailsId,
     this.nextFollowupDate,
+    this.leadCode,
   });
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
@@ -189,6 +191,7 @@ class TaskReportModel {
       isRepeating: json['Is_Repeating'] ?? false,
       userDetailsId: json['User_Details_Id'] ?? 0,
       nextFollowupDate: json['next_followup_date'],
+      leadCode: json['Lead_Code'],
     );
   }
 

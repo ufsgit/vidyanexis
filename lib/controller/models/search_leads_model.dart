@@ -47,6 +47,7 @@ class SearchLeadModel {
   final String commission;
   final String consumerName;
   final String contactNo;
+  final String leadCode;
 
   // ─────────────────── Additional Fields ───────────────────
   final int tp;
@@ -191,6 +192,7 @@ class SearchLeadModel {
     required this.consumerName,
     required this.contactNo,
     required this.amount,
+    required this.leadCode,
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -298,6 +300,7 @@ class SearchLeadModel {
       consumerName: parseString(json['Consumer_Name']),
       contactNo: parseString(json['Contact_No']),
       amount: parseString(json['Amount']),
+      leadCode: parseString(json['Lead_Code']),
     );
   }
 
@@ -385,11 +388,13 @@ class SearchLeadModel {
       "Location_Id": locationId,
       "Location_Name": locationName,
       "Closed_Date": closedDate,
+      'Audio_Files': audioFiles.map((item) => item.toJson()).toList(),
       "Total_Project_Cost": totalProjectCost,
       "Commission": commission,
       "Consumer_Name": consumerName,
       "Contact_No": contactNo,
       "Amount": amount,
+      "Lead_Code": leadCode,
     };
   }
 
@@ -481,10 +486,12 @@ class SearchLeadModel {
     String? consumerName,
     String? contactNo,
     String? amount,
+    String? leadCode,
     List<AudioFileLead>? audioFiles,
   }) {
     return SearchLeadModel(
       amount: amount ?? this.amount,
+      leadCode: leadCode ?? this.leadCode,
       audioFiles: audioFiles ?? this.audioFiles,
       customerId: customerId ?? this.customerId,
       customerName: customerName ?? this.customerName,

@@ -24,9 +24,11 @@ class CustomerProvider extends ChangeNotifier {
   int? _selectedUser;
   int? _selectedEnquiryFor;
   int? _selectedEnquirySource;
+  int? _selectedBranch;
   List<int> _selectedUserIds = [0];
   List<int> _selectedEnquiryForIds = [0];
   List<int> _selectedEnquirySourceIds = [0];
+  List<int> _selectedBranchIds = [0];
   int _customerId = 0;
   int _startLimit = 1;
   int _endLimit = 20;
@@ -41,9 +43,11 @@ class CustomerProvider extends ChangeNotifier {
   int? get selectedUser => _selectedUser;
   int? get selectedEnquiryFor => _selectedEnquiryFor;
   int? get selectedEnquirySource => _selectedEnquirySource;
+  int? get selectedBranch => _selectedBranch;
   List<int> get selectedUserIds => _selectedUserIds;
   List<int> get selectedEnquiryForIds => _selectedEnquiryForIds;
   List<int> get selectedEnquirySourceIds => _selectedEnquirySourceIds;
+  List<int> get selectedBranchIds => _selectedBranchIds;
 
   int get startLimit => _startLimit;
   int get endLimit => _endLimit;
@@ -217,9 +221,11 @@ class CustomerProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
+    _selectedBranch = null;
     _selectedUserIds = [0];
     _selectedEnquiryForIds = [0];
     _selectedEnquirySourceIds = [0];
+    _selectedBranchIds = [0];
     notifyListeners();
   }
 
@@ -233,10 +239,12 @@ class CustomerProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
+    _selectedBranch = null;
     _selectedStatusIds = [0];
     _selectedUserIds = [0];
     _selectedEnquiryForIds = [0];
     _selectedEnquirySourceIds = [0];
+    _selectedBranchIds = [0];
     _fromDate = null;
     _toDate = null;
     _formattedFromDate = '';
@@ -292,6 +300,13 @@ class CustomerProvider extends ChangeNotifier {
   void setEnquirySourceFilter(int? value) {
     _selectedEnquirySource = value;
     _selectedEnquirySourceIds = [value ?? 0];
+    _isFilter = true;
+    notifyListeners();
+  }
+
+  void setBranchFilter(int? value) {
+    _selectedBranch = value;
+    _selectedBranchIds = [value ?? 0];
     _isFilter = true;
     notifyListeners();
   }
@@ -441,6 +456,7 @@ class CustomerProvider extends ChangeNotifier {
       String toUserId = _selectedUserIds.join(',');
       String enquiryForId = _selectedEnquiryForIds.join(',');
       String enquirySourceId = _selectedEnquirySourceIds.join(',');
+      String branchIds = _selectedBranchIds.join(',');
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userIdPref = preferences.getString('userId') ?? "0";
@@ -452,7 +468,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -508,6 +524,7 @@ class CustomerProvider extends ChangeNotifier {
       String toUserId = _selectedUserIds.join(',');
       String enquiryForId = _selectedEnquiryForIds.join(',');
       String enquirySourceId = _selectedEnquirySourceIds.join(',');
+      String branchIds = _selectedBranchIds.join(',');
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userIdPref = preferences.getString('userId') ?? "0";
@@ -515,7 +532,7 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -561,9 +578,11 @@ class CustomerProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
+    _selectedBranch = null;
     _selectedUserIds = [0];
     _selectedEnquiryForIds = [0];
     _selectedEnquirySourceIds = [0];
+    _selectedBranchIds = [0];
     notifyListeners();
   }
 

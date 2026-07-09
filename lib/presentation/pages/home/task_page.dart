@@ -1066,6 +1066,65 @@ class _tasksPageReportState extends State<TaskPage> {
                       ),
                     ),
 
+                    // Department Filter
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: reportsProvider.selectedBranch != null &&
+                                    reportsProvider.selectedBranch != 0
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Department: ',
+                              style: TextStyle(fontSize: 14)),
+                          DropdownButton<int>(
+                            value: reportsProvider.selectedBranch,
+                            hint: const Text('All',
+                                style: TextStyle(fontSize: 14)),
+                            items: [
+                                  const DropdownMenuItem<int>(
+                                    value: 0,
+                                    child: Text('All',
+                                        style: TextStyle(fontSize: 14)),
+                                  ),
+                                ] +
+                                settingsProvider.branchModel
+                                    .map((branch) => DropdownMenuItem<int>(
+                                          value: branch.branchId,
+                                          child: ConstrainedBox(
+                                            constraints: const BoxConstraints(
+                                                maxWidth: 150),
+                                            child: Text(
+                                              branch.branchName ?? '',
+                                              overflow: TextOverflow.ellipsis,
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                reportsProvider.setBranchFilter(newValue);
+                                reportsProvider.goToPage(1);
+                                reportsProvider.searchTaskByCustomer(context);
+                              }
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+
                     // Reset Button
                     if (reportsProvider.fromDate != null ||
                         reportsProvider.toDate != null ||
@@ -1077,6 +1136,8 @@ class _tasksPageReportState extends State<TaskPage> {
                             reportsProvider.selectedTaskType != 0) ||
                         (reportsProvider.selectedEnquiryFor != null &&
                             reportsProvider.selectedEnquiryFor != 0) ||
+                        (reportsProvider.selectedBranch != null &&
+                            reportsProvider.selectedBranch != 0) ||
                         reportsProvider.Search.isNotEmpty)
                       ElevatedButton(
                         onPressed: () {
@@ -1389,6 +1450,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                   ),
                                   TableWidget(
                                       flex: 2,
+                                      title: 'Lead Code',
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 12.0),
+                                      alignment: Alignment.centerLeft,
+                                      color: Colors.white),
+                                  TableWidget(
+                                      flex: 2,
                                       title: 'Customer',
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 12.0),
@@ -1402,7 +1470,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
-                                      flex: 2,
+                                      width: 180,
                                       title: 'Task',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
@@ -1416,7 +1484,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
-                                      flex: 2,
+                                      width: 120,
                                       title: 'Staff',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
@@ -1430,22 +1498,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                           vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
-                                      width: 110,
+                                      width: 140,
                                       title: 'Created Date',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
                                   TableWidget(
-                                      width: 110,
-                                      title: 'Followup Date',
-                                      fontSize: 13,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 4.0, horizontal: 12.0),
-                                      color: Colors.white),
-                                  TableWidget(
-                                      width: 100,
-                                      title: 'Followup Time',
+                                      width: 160,
+                                      title: 'Followup Date&Time',
                                       fontSize: 13,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 12.0),
@@ -1609,6 +1670,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       ),
                                                     ),
                                                   ),
+                                                ),
+                                                TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 13,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                                  title: task.leadCode ?? '-',
                                                 ),
                                                 TableWidget(
                                                   flex: 2,
@@ -2121,7 +2191,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 2,
+                                                  width: 180,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 4.0,
@@ -2174,7 +2244,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 2,
+                                                  width: 120,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 4.0,
@@ -2217,7 +2287,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  width: 110,
+                                                  width: 140,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 4.0,
@@ -2236,50 +2306,26 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     ),
                                                   ),
                                                 ),
-                                                // Task Date column
+                                                // Task Date&Time column
                                                 TableWidget(
-                                                  width: 110,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  data: Text(
-                                                    task.taskDate
-                                                        .toDayMonthYearFormat(),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
-                                                      color: Color(0xFF334155),
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Task Time column
-                                                TableWidget(
-                                                  width: 100,
+                                                  width: 160,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 4.0,
                                                       horizontal: 12.0),
                                                   data: Text(
                                                     () {
-                                                      if (task.taskTime.isEmpty)
-                                                        return '-';
-                                                      try {
-                                                        final parsed =
-                                                            DateFormat(
-                                                                    'HH:mm:ss')
-                                                                .parse(task
-                                                                    .taskTime);
-                                                        return DateFormat(
-                                                                'hh:mm a')
-                                                            .format(parsed);
-                                                      } catch (_) {
-                                                        return task.taskTime;
+                                                      String date = task.taskDate.toDayMonthYearFormat();
+                                                      String time = '';
+                                                      if (task.taskTime.isNotEmpty) {
+                                                        try {
+                                                          final parsed = DateFormat('HH:mm:ss').parse(task.taskTime);
+                                                          time = DateFormat('hh:mm a').format(parsed);
+                                                        } catch (_) {
+                                                          time = task.taskTime;
+                                                        }
                                                       }
+                                                      return time.isEmpty ? date : '$date $time';
                                                     }(),
                                                     overflow:
                                                         TextOverflow.ellipsis,

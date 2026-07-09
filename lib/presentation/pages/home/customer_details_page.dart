@@ -212,7 +212,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     if (!_isControllerInitialized || newTabs.length != _tabs.length) {
       _tabs = newTabs;
-      _tabController = TabController(length: _tabs.length, vsync: this);
+
+      int initialIndex = 0;
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      if (customerDetailsProvider.initialTabName != null) {
+        initialIndex = _tabs.indexWhere(
+            (tab) => tab.text == customerDetailsProvider.initialTabName);
+        if (initialIndex == -1) initialIndex = 0;
+        customerDetailsProvider.setInitialTabName(null);
+      }
+
+      _tabController = TabController(
+          length: _tabs.length, vsync: this, initialIndex: initialIndex);
       _tabController.addListener(() {
         setState(() {});
       });

@@ -902,6 +902,7 @@ class _LeadsPageState extends State<LeadPage> {
                     ],
                     _buildEnquiryForFilter(leadProvider),
                     _buildEnquirySourceFilter(leadProvider),
+                    _buildBranchFilter(leadProvider),
                     if (leadProvider.fromDate != null ||
                         leadProvider.toDate != null ||
                         (leadProvider.selectedStatus != null &&
@@ -912,6 +913,8 @@ class _LeadsPageState extends State<LeadPage> {
                             leadProvider.selectedEnquiryFor != 0) ||
                         (leadProvider.selectedEnquirySource != null &&
                             leadProvider.selectedEnquirySource != 0) ||
+                        (leadProvider.selectedBranch != null &&
+                            leadProvider.selectedBranch != 0) ||
                         leadProvider.search.isNotEmpty)
                       ElevatedButton(
                         onPressed: () {
@@ -1007,6 +1010,19 @@ class _LeadsPageState extends State<LeadPage> {
                                         alignment: Alignment.center,
                                         data: Text(
                                           'ID',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      TableWidget(
+                                        width: 100,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 4.0, horizontal: 12.0),
+                                        alignment: Alignment.centerLeft,
+                                        data: Text(
+                                          'Lead code',
                                           style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
@@ -1171,6 +1187,26 @@ class _LeadsPageState extends State<LeadPage> {
                                                         data: Text(
                                                           lead.customerId
                                                               .toString(),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 13),
+                                                        ),
+                                                      ),
+                                                      TableWidget(
+                                                        width: 100,
+                                                        alignment:
+                                                            Alignment.centerLeft,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 4.0,
+                                                                horizontal:
+                                                                    12.0),
+                                                        data: Text(
+                                                          lead.leadCode,
+                                                          maxLines: 1,
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 13),
@@ -1393,6 +1429,28 @@ class _LeadsPageState extends State<LeadPage> {
                                                                         ),
                                                                       ),
                                                                 if (settingsProvider
+                                                                            .menuIsViewMap[
+                                                                        16] ==
+                                                                    1)
+                                                                  (onHover) =>
+                                                                      MenuItemButton(
+                                                                        onHover:
+                                                                            onHover,
+                                                                        onPressed: () => _handleLeadAction(
+                                                                            'quotation_list_tab',
+                                                                            lead),
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            Icon(Icons.list_alt,
+                                                                                size: 18,
+                                                                                color: Colors.orangeAccent),
+                                                                            SizedBox(width: 8),
+                                                                            Text('Quotation list'),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                if (settingsProvider
                                                                             .menuIsSaveMap[
                                                                         19] ==
                                                                     1)
@@ -1411,6 +1469,28 @@ class _LeadsPageState extends State<LeadPage> {
                                                                                 color: Colors.purple),
                                                                             SizedBox(width: 8),
                                                                             Text('Document'),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                if (settingsProvider
+                                                                            .menuIsViewMap[
+                                                                        19] ==
+                                                                    1)
+                                                                  (onHover) =>
+                                                                      MenuItemButton(
+                                                                        onHover:
+                                                                            onHover,
+                                                                        onPressed: () => _handleLeadAction(
+                                                                            'documents_tab',
+                                                                            lead),
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            Icon(Icons.folder,
+                                                                                size: 18,
+                                                                                color: Colors.blue),
+                                                                            SizedBox(width: 8),
+                                                                            Text('Documents List'),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -2952,6 +3032,82 @@ class _LeadsPageState extends State<LeadPage> {
     );
   }
 
+  Widget _buildBranchFilter(LeadsProvider leadProvider) {
+    return Consumer<SettingsProvider>(
+      builder: (context, settingsProvider, child) {
+        final List<DropdownMenuItem<int>> items = [
+              const DropdownMenuItem<int>(
+                value: 0,
+                child: Text(
+                  'All',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ] +
+            settingsProvider.branchModel
+                .map((branch) => DropdownMenuItem<int>(
+                      value: branch.branchId,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        child: Text(
+                          branch.branchName ?? '',
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ))
+                .toList();
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: (leadProvider.selectedBranch != null &&
+                      leadProvider.selectedBranch != 0)
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: leadProvider.selectedBranch ?? 0,
+              hint: const Text('Department: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
+              items: items,
+              selectedItemBuilder: (BuildContext context) {
+                return items.map<Widget>((DropdownMenuItem<int> item) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Department: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
+                      item.child,
+                    ],
+                  );
+                }).toList();
+              },
+              onChanged: (int? newValue) {
+                if (newValue != null) {
+                  leadProvider.setBranchFilter(newValue);
+                }
+                String fromDate = leadProvider.formattedFromDate;
+                String toDate = leadProvider.formattedToDate;
+                leadProvider.setSearchCriteria(
+                    searchController.text, fromDate, toDate);
+                leadProvider.getSearchLeads(context);
+              },
+              isDense: true,
+              iconSize: 18,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   List<String> dateButtonTitles = [
     'Yesterday',
     'Today',
@@ -3034,6 +3190,15 @@ class _LeadsPageState extends State<LeadPage> {
           quotationId: '0',
         ),
       );
+    } else if (value == 'quotation_list_tab') {
+      CustomerDetailsProvider customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.setCustomerId(lead.customerId);
+      customerDetailsProvider.setInitialTabName("Quotations");
+      final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+      sideProvider.name = 'Lead /';
+
+      context.push('/customerDetails/${lead.customerId}/false');
     } else if (value == 'document') {
       showDialog(
         barrierDismissible: false,
@@ -3042,6 +3207,15 @@ class _LeadsPageState extends State<LeadPage> {
           customerId: lead.customerId.toString(),
         ),
       );
+    } else if (value == 'documents_tab') {
+      CustomerDetailsProvider customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.setCustomerId(lead.customerId);
+      customerDetailsProvider.setInitialTabName("Documents");
+      final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+      sideProvider.name = 'Lead /';
+
+      context.push('/customerDetails/${lead.customerId}/false');
     }
   }
 

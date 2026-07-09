@@ -606,6 +606,7 @@ class _CustomerPageState extends State<CustomerPage> {
                       _buildAssignedStaffFilter(customerProvider),
                       _buildEnquiryForFilter(customerProvider),
                       _buildEnquirySourceFilter(customerProvider),
+                      _buildBranchFilter(customerProvider),
                       if (customerProvider.fromDate != null ||
                           customerProvider.toDate != null ||
                           (customerProvider.selectedStatusIds.isNotEmpty &&
@@ -616,6 +617,8 @@ class _CustomerPageState extends State<CustomerPage> {
                               customerProvider.selectedEnquiryFor != 0) ||
                           (customerProvider.selectedEnquirySource != null &&
                               customerProvider.selectedEnquirySource != 0) ||
+                          (customerProvider.selectedBranch != null &&
+                              customerProvider.selectedBranch != 0) ||
                           customerProvider.search.isNotEmpty)
                         ElevatedButton(
                           onPressed: () {
@@ -683,6 +686,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                         vertical: 4.0, horizontal: 12.0),
                                     color: Color(0xFFFFFFFF),
                                   ),
+                                  TableWidget(
+                                      flex: 2,
+                                      title: 'Lead Code',
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 8.0),
+                                      color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Customer Name',
@@ -782,6 +791,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                                             .startLimit -
                                                         1)
                                                     .toString(),
+                                              ),
+                                              TableWidget(
+                                                flex: 2,
+                                                fontSize: 12,
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 6.0, horizontal: 8.0),
+                                                title: lead.leadCode ?? '-',
                                               ),
                                               // TableWidget(title: lead.orderNo),
                                               TableWidget(
@@ -925,55 +941,109 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                 16] ==
                                                             1)
                                                           (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'quotation',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .request_quote,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .orange),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Quotation'),
-                                                                  ],
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'quotation',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .request_quote,
+                                                                          size:
+                                                                              18,
+                                                                          color: Colors
+                                                                              .orange),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      const Text(
+                                                                          'Quotation'),
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsSaveMap[
-                                                                19] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'document',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .description,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .purple),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Document'),
-                                                                  ],
+                                                          if (settingsProvider
+                                                                      .menuIsViewMap[
+                                                                  16] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'quotation_list_tab',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .list_alt,
+                                                                          size:
+                                                                              18,
+                                                                          color: Colors
+                                                                              .orangeAccent),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      const Text(
+                                                                          'Quotation list'),
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              ),
+                                                          if (settingsProvider
+                                                                      .menuIsSaveMap[
+                                                                  19] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'document',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .description,
+                                                                          size:
+                                                                              18,
+                                                                          color: Colors
+                                                                              .purple),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      const Text(
+                                                                          'Document'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsViewMap[
+                                                                  19] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'documents_tab',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .folder,
+                                                                          size:
+                                                                              18,
+                                                                          color: Colors
+                                                                              .blue),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      const Text(
+                                                                          'Documents Tab'),
+                                                                    ],
+                                                                  ),
+                                                                ),
                                                         if (settingsProvider
                                                                     .menuIsEditMap[
                                                                 4] ==
@@ -1576,6 +1646,15 @@ class _CustomerPageState extends State<CustomerPage> {
           quotationId: '0',
         ),
       );
+    } else if (value == 'quotation_list_tab') {
+      CustomerDetailsProvider customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.setCustomerId(lead.customerId);
+      customerDetailsProvider.setInitialTabName("Quotations");
+      final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+      sideProvider.name = 'Customers /';
+
+      context.push('/customerDetails/${lead.customerId}/false');
     } else if (value == 'document') {
       showDialog(
         barrierDismissible: false,
@@ -1584,6 +1663,15 @@ class _CustomerPageState extends State<CustomerPage> {
           customerId: lead.customerId.toString(),
         ),
       );
+    } else if (value == 'documents_tab') {
+      CustomerDetailsProvider customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.setCustomerId(lead.customerId);
+      customerDetailsProvider.setInitialTabName("Documents");
+      final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
+      sideProvider.name = 'Customers /';
+
+      context.push('/customerDetails/${lead.customerId}/false');
     } else if (value == 'task') {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
@@ -2101,6 +2189,78 @@ class _CustomerPageState extends State<CustomerPage> {
               onChanged: (int? newValue) {
                 if (newValue != null) {
                   customerProvider.setEnquirySourceFilter(newValue);
+                }
+                customerProvider.getSearchCustomers(context, isSilent: true);
+              },
+              isDense: true,
+              iconSize: 18,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBranchFilter(CustomerProvider customerProvider) {
+    return Consumer<SettingsProvider>(
+      builder: (context, settingsProvider, child) {
+        final List<DropdownMenuItem<int>> items = [
+              const DropdownMenuItem<int>(
+                value: 0,
+                child: Text(
+                  'All',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ] +
+            settingsProvider.branchModel
+                .map((branch) => DropdownMenuItem<int>(
+                      value: branch.branchId,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 150),
+                        child: Text(
+                          branch.branchName ?? '',
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ))
+                .toList();
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: (customerProvider.selectedBranch != null &&
+                      customerProvider.selectedBranch != 0)
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              value: customerProvider.selectedBranch ?? 0,
+              hint: const Text('Department: All',
+                  style: TextStyle(fontSize: 14, color: Colors.black87)),
+              items: items,
+              selectedItemBuilder: (BuildContext context) {
+                return items.map<Widget>((DropdownMenuItem<int> item) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Department: ',
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.black87)),
+                      item.child,
+                    ],
+                  );
+                }).toList();
+              },
+              onChanged: (int? newValue) {
+                if (newValue != null) {
+                  customerProvider.setBranchFilter(newValue);
                 }
                 customerProvider.getSearchCustomers(context, isSilent: true);
               },

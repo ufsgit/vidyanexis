@@ -186,11 +186,13 @@ class LeadsProvider extends ChangeNotifier {
   List<int> _selectedUserIds = [0];
   List<int> _selectedEnquiryForIds = [0];
   List<int> _selectedEnquirySourceIds = [0];
+  List<int> _selectedBranchIds = [0];
 
   int? _selectedStatus;
   int? _selectedUser;
   int? _selectedEnquiryFor;
   int? _selectedEnquirySource;
+  int? _selectedBranch;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -224,11 +226,13 @@ class LeadsProvider extends ChangeNotifier {
   List<int> get selectedStatusIds => _selectedStatusIds;
   List<int> get selectedUserIds => _selectedUserIds;
   List<int> get selectedEnquiryForIds => _selectedEnquiryForIds;
+  List<int> get selectedBranchIds => _selectedBranchIds;
 
   int? get selectedStatus => _selectedStatus;
   int? get selectedUser => _selectedUser;
   int? get selectedEnquiryFor => _selectedEnquiryFor;
   int? get selectedEnquirySource => _selectedEnquirySource;
+  int? get selectedBranch => _selectedBranch;
   bool get isFilter => _isFilter;
   List<SearchLeadModel> get leadData => _leadData;
   List<LeadReportModel> get leadReportData => _leadReportData;
@@ -332,6 +336,12 @@ class LeadsProvider extends ChangeNotifier {
   void setEnquirySourceFilter(int? value) {
     _selectedEnquirySource = value;
     _selectedEnquirySourceIds = [value ?? 0];
+    notifyListeners();
+  }
+
+  void setBranchFilter(int? value) {
+    _selectedBranch = value;
+    _selectedBranchIds = [value ?? 0];
     notifyListeners();
   }
 
@@ -760,10 +770,12 @@ class LeadsProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
+    _selectedBranch = null;
     _selectedStatusIds = [0];
     _selectedUserIds = [0];
     _selectedEnquiryForIds = [0];
     _selectedEnquirySourceIds = [0];
+    _selectedBranchIds = [0];
     _fromDate = null;
     _toDate = null;
     _formattedFromDate = '';
@@ -997,6 +1009,7 @@ class LeadsProvider extends ChangeNotifier {
 
       String toUserId = _selectedUserIds.join(',');
       String enquirySourceIds = _selectedEnquirySourceIds.join(',');
+      String branchIds = _selectedBranchIds.join(',');
 
       if (!isSilent && !isPagination && !isWebPagination) {
         Loader.showLoader(context);
@@ -1004,7 +1017,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1076,6 +1089,7 @@ class LeadsProvider extends ChangeNotifier {
       
       String toUserId = _selectedUserIds.join(',');
       String enquirySourceIds = _selectedEnquirySourceIds.join(',');
+      String branchIds = _selectedBranchIds.join(',');
       String statusStr = _selectedStatusIds.join(',');
       if (statusStr.isEmpty || statusStr == 'null') statusStr = '0';
       String enquiryForStr = _selectedEnquiryForIds.join(',');
@@ -1088,7 +1102,7 @@ class LeadsProvider extends ChangeNotifier {
       
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$query&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$statusStr&Page_Index1_=1&Page_Index2_=10&Enquiry_For_Id_=$enquiryForStr&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=0&Order_Type_=DESC&Entry_Type_=$_entryType');
+              '${HttpUrls.searchLead}?Customer_Name_=$query&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$statusStr&Page_Index1_=1&Page_Index2_=10&Enquiry_For_Id_=$enquiryForStr&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=0&Order_Type_=DESC&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -2009,10 +2023,12 @@ class LeadsProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
+    _selectedBranch = null;
     _selectedStatusIds = [0];
     _selectedUserIds = [0];
     _selectedEnquiryForIds = [0];
     _selectedEnquirySourceIds = [0];
+    _selectedBranchIds = [0];
     notifyListeners();
   }
 
