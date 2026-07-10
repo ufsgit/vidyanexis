@@ -71,7 +71,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       // await customerDetailsProvider.getCustomFieldsByQuotationId(context);
       await customerDetailsProvider.getQuotationFieldsApi();
       await customerDetailsProvider.getCommercialCustomFieldsApi(context);
-      customerDetailsProvider.getCustomFieldsByQuotationId(context);
+
       settingsProvider.clearTermsFields();
       await settingsProvider.getTermsAndWarranty(context);
       customerDetailsProvider.qtermsConditionsController.text =
@@ -104,6 +104,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           }
         }
       }
+      customerDetailsProvider.getCustomFieldsByQuotationId(context);
     });
   }
 

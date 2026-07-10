@@ -5027,7 +5027,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // ---- QUOTATION TYPE ----
     quotationTypeController.text = quotation.quotationTypeName;
-    selectedQuotationType = quotation.quotationTypeId;
+    _selectedQuotationType = quotation.quotationTypeId;
 
     // ---- CABLE DETAILS ----
     cableStructureController.text = quotation.cableStructure;
