@@ -986,10 +986,12 @@ class SettingsProvider extends ChangeNotifier {
         if (id > 0) {
           Loader.stopLoader(context);
           showToastInDialog("Success", context);
+          Navigator.pop(context);
         } else {
           showToastInDialog("Not deleted", context);
 
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
         return id > 0;
@@ -5002,10 +5004,12 @@ class SettingsProvider extends ChangeNotifier {
         if (id > 0) {
           Loader.stopLoader(context);
           showToastInDialog(message, context);
+          Navigator.pop(context);
         } else {
           showToastInDialog(message, context);
 
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
         return id > 0;
@@ -5038,10 +5042,12 @@ class SettingsProvider extends ChangeNotifier {
         if (id > 0) {
           Loader.stopLoader(context);
           showToastInDialog(message, context);
+          Navigator.pop(context);
         } else {
           showToastInDialog(message, context);
 
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
         return id > 0;
@@ -5194,6 +5200,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Expense Type deleted successfully')),
           );
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
       } else {

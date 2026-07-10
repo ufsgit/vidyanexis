@@ -188,7 +188,6 @@ class _CustomFieldState extends State<CustomField> {
                                                       getData();
                                                     }
                                                   });
-                                                  Navigator.pop(context);
                                                 },
                                                 child: const Text(
                                                   'Delete',

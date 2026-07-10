@@ -220,8 +220,6 @@ class _CheckListCategoryPageState extends State<CheckListCategoryPage> {
                                                                 getData();
                                                               }
                                                             });
-                                                            Navigator.pop(
-                                                                context);
                                                           },
                                                           child: const Text(
                                                             'Delete',
