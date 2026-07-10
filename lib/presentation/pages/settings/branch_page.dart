@@ -167,7 +167,6 @@ class _BranchPageState extends State<BranchPage> {
                                                                           index]
                                                                       .branchId ??
                                                                   0);
-                                                      Navigator.pop(context);
                                                     },
                                                     child: const Text(
                                                       'Delete',

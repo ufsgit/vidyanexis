@@ -266,7 +266,6 @@ class _EnquiryForContentState extends State<EnquiryForContent> {
                                                   settingsProvider
                                                       .searchEnquiryFor[index]
                                                       .enquiryForId);
-                                              Navigator.pop(context);
                                             },
                                             child: const Text(
                                               'Delete',

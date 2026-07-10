@@ -448,7 +448,6 @@ class _DepartmentPageState extends State<DepartmentPage> {
                     onPressed: () async {
                       await provider.deleteDepartment(
                           context, dept.departmentId);
-                      Navigator.pop(context);
                     },
                     child: const Text("Delete",
                         style: TextStyle(color: Colors.red)),

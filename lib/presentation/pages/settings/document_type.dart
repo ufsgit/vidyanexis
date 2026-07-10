@@ -185,7 +185,6 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                             context,
                             settingsProvider.documentType[index].documentTypeId,
                           );
-                          Navigator.pop(context);
                         },
                         child: const Text(
                           'Delete',

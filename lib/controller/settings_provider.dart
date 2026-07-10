@@ -1010,8 +1010,8 @@ class SettingsProvider extends ChangeNotifier {
   Future<void> deleteBranch(BuildContext context, int branchId) async {
     try {
       Loader.showLoader(context);
-      final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.deleteBranch, bodyData: {"branch_id": branchId});
+      final response = await HttpRequest.httpDeleteRequest(
+          endPoint: "${HttpUrls.deleteBranch}/$branchId");
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
@@ -1031,6 +1031,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Branch deleted successfully')),
           );
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
       } else {
@@ -1461,6 +1462,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Enquiry deleted successfully')),
           );
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
       } else {
@@ -3584,6 +3586,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Enquiry For deleted successfully')),
           );
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
       } else {
@@ -3684,19 +3687,20 @@ class SettingsProvider extends ChangeNotifier {
         if (data['department_id'] == -1) {
           Loader.stopLoader(context);
           alert(context,
-              "You are attempting to delete an Task Type \n that is currently in use");
+              "You are attempting to delete an Department \n that is currently in use");
         } else {
           searchDepartment('', context);
           departmentController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Task Type deleted successfully')),
+            const SnackBar(content: Text('Department deleted successfully')),
           );
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete Task Type')),
+          const SnackBar(content: Text('Failed to delete Department')),
         );
       }
     } catch (e) {
@@ -4668,6 +4672,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Document Type deleted successfully')),
           );
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
         notifyListeners();
       } else {
