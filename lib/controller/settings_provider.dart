@@ -1424,6 +1424,7 @@ class SettingsProvider extends ChangeNotifier {
             const SnackBar(content: Text('Lead Status deleted successfully')),
           );
           Loader.stopLoader(context);
+          Navigator.pop(context);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -4537,6 +4538,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  //not using
   void deleteStatus(BuildContext context, int statusId) async {
     try {
       Loader.showLoader(context);
