@@ -1436,7 +1436,8 @@ class ExpenseProvider extends ChangeNotifier {
       showQuantity: _asPerRequired ? "1" : "0",
       itemTypeId: _selectedItemTypeId.toString(),
       unitId: _selectedItemMaterialUnit.toString(),
-      orderBy: itemMaterialOrderByController.text,
+      orderBy:
+          (int.tryParse(itemMaterialOrderByController.text) ?? 0).toString(),
     );
 
     if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
