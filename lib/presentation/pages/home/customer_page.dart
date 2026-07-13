@@ -682,6 +682,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                   TableWidget(
                                     width: 80,
                                     title: 'Sl No.',
+                                    fontWeight: FontWeight.bold,
                                     padding: EdgeInsets.symmetric(
                                         vertical: 4.0, horizontal: 12.0),
                                     color: Color(0xFFFFFFFF),
@@ -689,48 +690,56 @@ class _CustomerPageState extends State<CustomerPage> {
                                   TableWidget(
                                       flex: 2,
                                       title: 'Lead Code',
+                                      fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Customer Name',
+                                      fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Address',
+                                      fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Mobile no',
+                                      fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Assigned Staff',
+                                      fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Remarks',
+                                      fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Status',
+                                      fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Date',
+                                      fontWeight: FontWeight.bold,
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
@@ -738,6 +747,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                     TableWidget(
                                         flex: 2,
                                         title: 'Location',
+                                        fontWeight: FontWeight.bold,
                                         padding: EdgeInsets.symmetric(
                                             vertical: 4.0, horizontal: 8.0),
                                         color: Color(0xFFFFFFFF)),
@@ -782,6 +792,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                 width: 80,
                                                 fontSize: 12,
+                                                fontWeight: FontWeight.normal,
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         vertical: 6.0,
@@ -795,6 +806,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                 flex: 2,
                                                 fontSize: 12,
+                                                fontWeight: FontWeight.normal,
                                                 padding: const EdgeInsets.symmetric(
                                                     vertical: 6.0, horizontal: 8.0),
                                                 title: lead.leadCode ?? '-',
@@ -828,7 +840,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                   Colors.blue,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w600,
+                                                                      .normal,
                                                               fontSize: 12,
                                                             ),
                                                           ),
@@ -1126,6 +1138,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                   flex: 2,
                                                   fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 6.0,
@@ -1134,6 +1147,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                   flex: 2,
                                                   fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 6.0,
@@ -1142,6 +1156,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                   flex: 2,
                                                   fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 6.0,
@@ -1196,6 +1211,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                   flex: 2,
                                                   fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
                                                   padding: const EdgeInsets
                                                       .symmetric(
                                                       vertical: 4.0,
@@ -1211,6 +1227,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 TableWidget(
                                                     flex: 2,
                                                     fontSize: 12,
+                                                    fontWeight: FontWeight.normal,
                                                     padding: const EdgeInsets
                                                         .symmetric(
                                                         vertical: 4.0,

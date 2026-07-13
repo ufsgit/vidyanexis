@@ -40,7 +40,8 @@ class HttpRequest {
   static Future<Response> httpGetRequest(
       {Map<String, dynamic>? bodyData,
       String endPoint = '',
-      bool returnBytes = false}) async {
+      bool returnBytes = false,
+      int? menuId}) async {
     if (kDebugMode) {
       print('get request ====> $endPoint $bodyData ');
     }
@@ -60,7 +61,7 @@ class HttpRequest {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
           if (token.isNotEmpty) "Authorization": "Bearer $token",
-          "menuId": sideBarProvider.menuId
+          "menuId": menuId ?? sideBarProvider.menuId
         }, responseType: returnBytes ? ResponseType.bytes : ResponseType.json),
         queryParameters: bodyData,
       );
@@ -83,7 +84,7 @@ class HttpRequest {
   }
 
   static Future<Response?> httpPostRequest(
-      {Map<String, dynamic>? bodyData, String endPoint = ''}) async {
+      {Map<String, dynamic>? bodyData, String endPoint = '', int? menuId}) async {
     if (kDebugMode) {
       print('post request ====> $endPoint $bodyData');
     }
@@ -98,7 +99,7 @@ class HttpRequest {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
           if (token.isNotEmpty) "Authorization": "Bearer $token",
-          "menuId": sideBarProvider.menuId
+          "menuId": menuId ?? sideBarProvider.menuId
         }),
         data: bodyData,
       );
@@ -123,7 +124,7 @@ class HttpRequest {
   }
 
   static Future<Response?> httpDeleteRequest(
-      {Map<String, dynamic>? bodyData, String endPoint = ''}) async {
+      {Map<String, dynamic>? bodyData, String endPoint = '', int? menuId}) async {
     if (kDebugMode) {
       print('delete request ====> $endPoint $bodyData');
     }
@@ -138,7 +139,7 @@ class HttpRequest {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
           if (token.isNotEmpty) "Authorization": "Bearer $token",
-          "menuId": sideBarProvider.menuId
+          "menuId": menuId ?? sideBarProvider.menuId
         }),
         data: bodyData,
       );
@@ -160,7 +161,7 @@ class HttpRequest {
   }
 
   static Future<Response?> httpPutRequest(
-      {Map<String, dynamic>? bodyData, String endPoint = ''}) async {
+      {Map<String, dynamic>? bodyData, String endPoint = '', int? menuId}) async {
     if (kDebugMode) {
       print('put request ====> $endPoint $bodyData');
     }
@@ -175,7 +176,7 @@ class HttpRequest {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
           if (token.isNotEmpty) "Authorization": "Bearer $token",
-          "menuId": sideBarProvider.menuId
+          "menuId": menuId ?? sideBarProvider.menuId
         }),
         data: bodyData, // data remains the same
       );

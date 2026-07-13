@@ -11,11 +11,13 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
+import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class TaskPageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -66,6 +68,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
     final provider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     if (!AppStyles.isWebScreen(context)) {
       return const TaskPageReportMobile();

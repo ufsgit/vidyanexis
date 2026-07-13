@@ -1207,6 +1207,10 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                 color: Color(0xFF607185)),
                                             TableWidget(
                                                 width: 130,
+                                                title: 'Conversion Date',
+                                                color: Color(0xFF607185)),
+                                            TableWidget(
+                                                width: 130,
                                                 title: 'Created Date',
                                                 color: Color(0xFF607185)),
                                             TableWidget(
@@ -1377,6 +1381,12 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                               fontSize: 12,
                                                               title: conversion
                                                                   .statusName),
+                                                          TableWidget(
+                                                              width: 130,
+                                                              fontSize: 12,
+                                                              title: _formatDateSafely(
+                                                                  conversion
+                                                                      .registeredDate)),
                                                           TableWidget(
                                                               width: 130,
                                                               fontSize: 12,
@@ -1756,6 +1766,7 @@ final List<String> _exportHeaders = [
   'By User',
   'Assigned Staff',
   'Status',
+  'Conversion Date',
   'Created Date',
   'Next Follow-up',
   'Remark'
@@ -1778,6 +1789,7 @@ List<Map<String, dynamic>> _prepareExportData(
       'By User': task.byUserName,
       'Assigned Staff': task.toUserName,
       'Status': task.statusName,
+      'Conversion Date': _formatDateSafely(task.registeredDate),
       'Created Date': _formatDateSafely(task.creationDate),
       'Next Follow-up': _formatDateSafely(task.nextFollowUpDate),
       'Remark': task.remark,

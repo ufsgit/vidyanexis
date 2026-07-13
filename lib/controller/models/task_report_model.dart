@@ -100,8 +100,8 @@ class TaskReportModel {
       } catch (e) {}
     }
     return TaskReportModel(
-      taskId: json['Task_Id'] ?? 0,
-      taskMasterId: json['Task_Master_Id'] ?? 0,
+      taskId: json['Task_Id'] ?? json['task_id'] ?? json['taskId'] ?? 0,
+      taskMasterId: json['Task_Master_Id'] ?? json['task_master_id'] ?? json['taskMasterId'] ?? 0,
       locationTracking: json["Location_Tracking"] ?? 0,
       latitude: parseString(json['Latitude'] ?? json['latitude']),
       longitude: parseString(json['Longitude'] ?? json['longitude']),

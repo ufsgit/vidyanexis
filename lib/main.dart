@@ -58,6 +58,7 @@ import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/controller/solar_lead_report_provider.dart';
 import 'package:vidyanexis/controller/lead_status_report_provider.dart';
 import 'package:vidyanexis/controller/task_summary_provider.dart';
+import 'package:vidyanexis/controller/job_sheet_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/controller/company_provider.dart';
 import 'package:vidyanexis/firebase_options.dart';
@@ -72,6 +73,7 @@ import 'package:vidyanexis/controller/customer_lead_search_provider.dart';
 import 'package:vidyanexis/controller/customer_task_month_provider.dart';
 import 'package:vidyanexis/controller/sales_report_provider.dart';
 import 'package:vidyanexis/controller/target_enquiry_source_provider.dart';
+import 'package:vidyanexis/controller/job_sheet_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -187,6 +189,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => SalesReportProvider()),
         ChangeNotifierProvider(
             create: (context) => TargetEnquirySourceProvider()),
+        ChangeNotifierProvider(create: (context) => JobSheetProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {

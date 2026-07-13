@@ -40,7 +40,7 @@ class HttpUrls {
   static String baseUrl = 'https://solarisapi.ufstech.net.in/';
 //dev
 
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+// static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
@@ -97,6 +97,8 @@ class HttpUrls {
   static String getTaskOverview = "task/Task_Overview";
   static String searchLeadReports = "lead/Search_lead_Report";
   static String saveTask = "task/Save_task";
+  static String saveJobSheet = "task/Save_job_sheet";
+  static String getJobSheet = "task/Get_job_sheet";
   static String saveService = "service/Save_service";
   static String getServiceByCustomer = "service/Get_Service_By_Customer";
   static String getServiceDetails = "service/Get_service";

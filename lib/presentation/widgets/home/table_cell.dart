@@ -10,6 +10,7 @@ class TableWidget extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final Alignment alignment;
   final int maxLines;
+  final FontWeight? fontWeight;
 
   const TableWidget({
     super.key,
@@ -22,6 +23,7 @@ class TableWidget extends StatelessWidget {
     this.padding,
     this.alignment = Alignment.centerLeft,
     this.maxLines = 4,
+    this.fontWeight,
   });
 
   @override
@@ -58,7 +60,7 @@ class TableWidget extends StatelessWidget {
                       overflow: TextOverflow.visible,
                       maxLines: maxLines,
                       style: TextStyle(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: fontWeight ?? FontWeight.w600,
                           color: color,
                           fontSize: fontSize)),
                 ),
@@ -76,7 +78,7 @@ class TableWidget extends StatelessWidget {
                       overflow: TextOverflow.visible,
                       maxLines: maxLines,
                       style: TextStyle(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: fontWeight ?? FontWeight.w600,
                           color: color,
                           fontSize: fontSize)),
                 ),

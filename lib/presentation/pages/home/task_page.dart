@@ -32,6 +32,7 @@ import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/controller/models/sub_status_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/pages/home/job_sheet_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
@@ -110,6 +111,7 @@ class _tasksPageReportState extends State<TaskPage> {
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
       settingsProvider.searchsourceCategoryData('', context);
+      settingsProvider.searchPermission(context);
       provider.getDistricts(context);
     });
   }
@@ -1433,7 +1435,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 color: AppColors.primaryBlue,
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -1518,6 +1520,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 12.0),
                                       color: Colors.white),
+                                  if (settingsProvider.showView[162] == 1)
+                                    TableWidget(
+                                        width: 130,
+                                        title: 'Job Sheet',
+                                        fontSize: 13,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 4.0, horizontal: 12.0),
+                                        color: Colors.white),
                                 ],
                               ),
                             ),
@@ -2435,6 +2445,41 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     ),
                                                   ),
                                                 ),
+                                                if (settingsProvider.showView[162] == 1)
+                                                  TableWidget(
+                                                    width: 130,
+                                                    padding: const EdgeInsets.symmetric(
+                                                        vertical: 4.0, horizontal: 12.0),
+                                                    data: Center(
+                                                      child: SizedBox(
+                                                        height: 32,
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                              backgroundColor: AppColors.primaryBlue,
+                                                              foregroundColor: Colors.white,
+                                                              padding: const EdgeInsets.symmetric(
+                                                                  horizontal: 16, vertical: 6),
+                                                              minimumSize: const Size(80, 32),
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(4))),
+                                                          onPressed: () async {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => JobSheetPage(
+                                                                  taskId: task.taskId,
+                                                                  customerId: int.tryParse(task.customerId.toString()) ?? 0,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: const Text('Job Sheet',
+                                                              style: TextStyle(fontSize: 12)),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
                                               ],
                                             ),
                                           ),
