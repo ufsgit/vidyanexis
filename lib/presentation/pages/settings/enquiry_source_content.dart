@@ -164,7 +164,6 @@ class _EnquirySourceContentState extends State<EnquirySourceContent> {
                                                       .searchEnquiryStatus[
                                                           index]
                                                       .enquirySourceId);
-                                              Navigator.pop(context);
                                             },
                                             child: const Text(
                                               'Delete',

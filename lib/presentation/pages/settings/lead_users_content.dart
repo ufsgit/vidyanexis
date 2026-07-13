@@ -191,7 +191,7 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
                                                 title: const Text(
                                                     'Confirm Delete'),
                                                 content: const Text(
-                                                    'Are you sure you want to delete this lead?'),
+                                                    'Are you sure you want to delete this status'),
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () =>
@@ -207,7 +207,6 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
                                                                       index]
                                                                   .statusId ??
                                                               0);
-                                                      Navigator.pop(context);
                                                     },
                                                     child: const Text(
                                                       'Delete',

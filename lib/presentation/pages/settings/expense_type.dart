@@ -164,7 +164,6 @@ class _ExpenseTypeState extends State<ExpenseType> {
                                                           .expenseTypeList[
                                                               index]
                                                           .expenseTypeId);
-                                              Navigator.pop(context);
                                             },
                                             child: const Text(
                                               'Delete',

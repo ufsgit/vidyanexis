@@ -203,7 +203,6 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
                                                             getData();
                                                           }
                                                         });
-                                                        Navigator.pop(context);
                                                       },
                                                       child: const Text(
                                                         'Delete',
