@@ -106,6 +106,40 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
     }
   }
 
+  bool _areCustomFieldsEqual(
+      List<CustomFieldByStatusId> list1, List<CustomFieldByStatusId> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      final f1 = list1[i];
+      final f2 = list2[i];
+      if (f1.customFieldId != f2.customFieldId) return false;
+      if (f1.customFieldName != f2.customFieldName) return false;
+      if (f1.customFieldTypeId != f2.customFieldTypeId) return false;
+      if (f1.isMandatory != f2.isMandatory) return false;
+
+      final dv1 = f1.dropdownValues ?? [];
+      final dv2 = f2.dropdownValues ?? [];
+      if (dv1.length != dv2.length) return false;
+      for (int j = 0; j < dv1.length; j++) {
+        if (dv1[j].dropdownId != dv2[j].dropdownId ||
+            dv1[j].dropdownValue != dv2[j].dropdownValue) {
+          return false;
+        }
+      }
+
+      final cv1 = f1.checkboxValues ?? [];
+      final cv2 = f2.checkboxValues ?? [];
+      if (cv1.length != cv2.length) return false;
+      for (int j = 0; j < cv1.length; j++) {
+        if (cv1[j].checkBoxId != cv2[j].checkBoxId ||
+            cv1[j].checkBoxValues != cv2[j].checkBoxValues) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   @override
   void didUpdateWidget(CustomFieldSectionWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -113,6 +147,20 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
     // Handle updates to initial values
     if (widget.initialFieldValues != oldWidget.initialFieldValues ||
         widget.initialValues != oldWidget.initialValues) {
+      _isInitialized = false;
+      _initializeData();
+    }
+
+    // Check if customFields list changed
+    if (!_areCustomFieldsEqual(widget.customFields, oldWidget.customFields)) {
+      widgetBuilder = CustomFieldWidgetBuilder(
+        context,
+        widget.controllerKey,
+        onFieldChanged: _onFieldChanged,
+        enabled: widget.enabled,
+        showEditButton: widget.showEditButton,
+      );
+      _isInitialized = false;
       _initializeData();
     }
 
@@ -175,7 +223,8 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
                       runSpacing: spacing / 2,
                       children: mandatoryFields
                           .map((field) => SizedBox(
-                                width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                                width:
+                                    (constraints.maxWidth - spacing) / 2 - 0.1,
                                 child: widgetBuilder.buildWidget(field),
                               ))
                           .toList(),
@@ -226,7 +275,10 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
                               runSpacing: spacing / 2,
                               children: nonMandatoryFields
                                   .map((field) => SizedBox(
-                                        width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                                        width:
+                                            (constraints.maxWidth - spacing) /
+                                                    2 -
+                                                0.1,
                                         child: widgetBuilder.buildWidget(field),
                                       ))
                                   .toList(),
@@ -256,7 +308,8 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
                         runSpacing: spacing / 2,
                         children: nonMandatoryFields
                             .map((field) => SizedBox(
-                                  width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                                  width: (constraints.maxWidth - spacing) / 2 -
+                                      0.1,
                                   child: widgetBuilder.buildWidget(field),
                                 ))
                             .toList(),
@@ -1425,6 +1478,7 @@ class CustomFieldWidgetBuilder {
     }
 
     return CustomAutocompleteSearch<DropdownValue>(
+      key: ValueKey('${field.customFieldId}_$controllerkey'),
       showOptionsOnTap: true,
       maxHeight: 300,
       optionsViewOpenDirection: OptionsViewOpenDirection.down,
@@ -1441,7 +1495,9 @@ class CustomFieldWidgetBuilder {
       },
       onChanged: (value) {
         final matchedItem = dropdownItems.firstWhere(
-          (item) => item.dropdownValue?.toLowerCase().trim() == value.toLowerCase().trim(),
+          (item) =>
+              item.dropdownValue?.toLowerCase().trim() ==
+              value.toLowerCase().trim(),
           orElse: () => DropdownValue(dropdownId: null, dropdownValue: null),
         );
         onFieldValueChanged(matchedItem.dropdownValue);
@@ -1608,10 +1664,14 @@ class CustomFieldWidgetHelper {
       {required String key, required int fieldId, String? initialValue}) {
     if (!_controllers.containsKey(key)) {
       _controllers[key] = TextEditingController(text: initialValue ?? '');
-      _initialValues[fieldId] = initialValue;
-    } else if (initialValue != null && _initialValues[key] != initialValue) {
-      _controllers[key]!.text = initialValue;
-      _initialValues[fieldId] = initialValue;
+      _initialValues[fieldId] = initialValue ?? '';
+    } else {
+      final currentInitial = _initialValues[fieldId] ?? '';
+      final newInitial = initialValue ?? '';
+      if (currentInitial != newInitial) {
+        _controllers[key]!.text = newInitial;
+        _initialValues[fieldId] = newInitial;
+      }
     }
     return _controllers[key]!;
   }

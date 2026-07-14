@@ -1067,26 +1067,26 @@ class LeadsProvider extends ChangeNotifier {
     if (query.isEmpty) {
       return _leadData.take(10).toList();
     }
-    
+
     final lowerQuery = query.toLowerCase();
-    
+
     // First try client-side filtering on already loaded leads
     final clientSideMatches = _leadData.where((lead) {
       return lead.customerName.toLowerCase().contains(lowerQuery) ||
           lead.customerId.toString().contains(lowerQuery) ||
           lead.contactNumber.toLowerCase().contains(lowerQuery);
     }).toList();
-    
+
     if (clientSideMatches.isNotEmpty) {
       return clientSideMatches.take(10).toList();
     }
-    
+
     // Fallback: If no matches locally, make an API request to fetch matches
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
       int loginUserId = int.tryParse(userId) ?? 0;
-      
+
       String toUserId = _selectedUserIds.join(',');
       String enquirySourceIds = _selectedEnquirySourceIds.join(',');
       String branchIds = _selectedBranchIds.join(',');
@@ -1094,12 +1094,12 @@ class LeadsProvider extends ChangeNotifier {
       if (statusStr.isEmpty || statusStr == 'null') statusStr = '0';
       String enquiryForStr = _selectedEnquiryForIds.join(',');
       if (enquiryForStr.isEmpty || enquiryForStr == 'null') enquiryForStr = '0';
-      
+
       String isDate = "0";
       if (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) {
         isDate = "1";
       }
-      
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               '${HttpUrls.searchLead}?Customer_Name_=$query&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$statusStr&Page_Index1_=1&Page_Index2_=10&Enquiry_For_Id_=$enquiryForStr&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=0&Order_Type_=DESC&Entry_Type_=$_entryType');
@@ -1117,7 +1117,7 @@ class LeadsProvider extends ChangeNotifier {
     } catch (e) {
       log('Exception in fetchSuggestions: $e');
     }
-    
+
     return [];
   }
 
@@ -1854,6 +1854,7 @@ class LeadsProvider extends ChangeNotifier {
 
   void clearCustomFieldEnquiryFor() {
     _customFieldEnquiryFor = [];
+    _customFieldValues.clear();
     notifyListeners();
   }
   // saveFollowUp({

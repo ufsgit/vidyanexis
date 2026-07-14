@@ -88,6 +88,24 @@ class _CustomAutocompleteSearchState<T extends Object>
   }
 
   @override
+  void didUpdateWidget(CustomAutocompleteSearch<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      if (oldWidget.controller == null) {
+        _textController.dispose();
+      }
+      _textController =
+          widget.controller ?? TextEditingController(text: widget.defaultText);
+    }
+    if (widget.focusNode != oldWidget.focusNode) {
+      if (oldWidget.focusNode == null) {
+        _localFocusNode.dispose();
+      }
+      _localFocusNode = widget.focusNode ?? FocusNode();
+    }
+  }
+
+  @override
   void dispose() {
     if (widget.controller == null) _textController.dispose();
     if (widget.focusNode == null) _localFocusNode.dispose();
