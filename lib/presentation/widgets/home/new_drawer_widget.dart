@@ -784,26 +784,32 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ],
                                   ),
                                 ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                          child: CustomTextField(
-                                            height: 54,
-                                            controller: leadProvider.cityController,
-                                            hintText: 'Place*',
-                                            labelText: '',
-                                            showError: dropDownProvider.showValidation &&
-                                                !_isFieldValid(leadProvider.cityController.text),
+                                if (settingsProvider.menuIsViewMap[146] == 1)
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: CustomTextField(
+                                              height: 54,
+                                              controller:
+                                                  leadProvider.cityController,
+                                              hintText: 'Place*',
+                                              labelText: '',
+                                              showError: dropDownProvider
+                                                      .showValidation &&
+                                                  !_isFieldValid(leadProvider
+                                                      .cityController.text),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 48), // Spacer for alignment
-                                    ],
+                                        const SizedBox(
+                                            width: 48), // Spacer for alignment
+                                      ],
+                                    ),
                                   ),
-                                ),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -845,7 +851,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ],
 
                           // Row 3: Place, Location
-                          if (settingsProvider.menuIsViewMap[146] == 1) ...[
+                          if (settingsProvider.menuIsViewMap[147] == 1) ...[
                             ResponsiveRow(
                               children: [
                                 Expanded(
@@ -899,7 +905,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             const SizedBox(height: 8),
                           ],
                           // Row 4: Source
-                          if (settingsProvider.menuIsViewMap[149] == 1) ...[
+                          if (settingsProvider.menuIsViewMap[151] == 1) ...[
                             ResponsiveRow(
                               children: [
                                 Expanded(
@@ -1181,7 +1187,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 )
                               else
                                 const Expanded(child: SizedBox.shrink()),
-                              if (settingsProvider.menuIsViewMap[147] == 1)
+                              if (settingsProvider.menuIsViewMap[148] == 1)
                                 Expanded(
                                   child: Row(
                                     children: [
@@ -1215,10 +1221,10 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           const SizedBox(height: 8),
 
                           // Row 7: Consumer Details
-                          if (settingsProvider.menuIsViewMap[148] == 1)
-                            ResponsiveRow(
-                              children: [
-                                if (settingsProvider.consumerNameMandatory == 1)
+                          ResponsiveRow(
+                            children: [
+                              if (settingsProvider.consumerNameMandatory == 1)
+                                if (settingsProvider.menuIsViewMap[149] == 1)
                                   Expanded(
                                     child: Row(
                                       children: [
@@ -1239,9 +1245,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                       ],
                                     ),
                                   ),
-                                if (settingsProvider
-                                        .consumerContactNoMandatory ==
-                                    1)
+                              if (settingsProvider.consumerContactNoMandatory ==
+                                  1)
+                                if (settingsProvider.menuIsViewMap[150] == 1)
                                   Expanded(
                                     child: Row(
                                       children: [
@@ -1267,9 +1273,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                       ],
                                     ),
                                   ),
-                                const Spacer(),
-                              ],
-                            ),
+                              const Spacer(),
+                            ],
+                          ),
                           const SizedBox(height: 8),
 
                           if (dropDownProvider.selectedEnquiryForId != null &&
