@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
+import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
@@ -18,6 +19,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_enquiry_for_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_new_enquiry_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_new_status_widget.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_custom_field.dart';
 
 import '../../../constants/enums.dart';
 
@@ -287,7 +289,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
     dropDownProvider.setSelectedUserId(0);
     dropDownProvider.updateEnquiryForName(null, '');
     leadProvider.customFieldList.clear();
-    leadProvider.customFieldEnquiryFor.clear();
+    leadProvider.clearCustomFieldEnquiryFor();
 
     // Restore unfiltered master lists so that list page lookup remains fully populated
     dropDownProvider.getEnquirySource(context, fetchUserSpecific: false);
@@ -413,12 +415,25 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
               .firstWhere((task) => task.enquiryForId == defaultEnquiryForId);
           dropDownProvider.updateEnquiryForName(
               defaultEnquiryForId, selectedEnquiryFor.enquiryForName);
-          leadProvider.customFieldEnquiryFor.clear();
-          leadProvider.getCustomFieldsByEnquiryForId(
-            context,
-            leadId: widget.isEdit ? leadProvider.customerId : 0,
-            enquiryForId: defaultEnquiryForId,
-          );
+          leadProvider.clearCustomFieldEnquiryFor();
+          if (widget.isEdit) {
+            leadProvider.getCustomFieldsByEnquiryForId(
+              context,
+              leadId: leadProvider.customerId,
+              enquiryForId: defaultEnquiryForId,
+            );
+          } else {
+            if (selectedEnquiryFor.parsedCustomFields.isNotEmpty) {
+              leadProvider.setCustomFieldEnquiryFor(
+                  selectedEnquiryFor.parsedCustomFields);
+            } else {
+              leadProvider.getCustomFieldsByEnquiryForId(
+                context,
+                leadId: 0,
+                enquiryForId: defaultEnquiryForId,
+              );
+            }
+          }
         }
       }
       dropDownProvider.getUserDetails(context);
@@ -1075,8 +1090,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                                       newValue,
                                                       selectedEnquiryFor
                                                           .enquiryForName);
-                                              leadProvider.customFieldEnquiryFor
-                                                  .clear();
+                                              leadProvider.clearCustomFieldEnquiryFor();
                                               if (widget.isEdit) {
                                                 leadProvider
                                                     .getCustomFieldsByEnquiryForId(
@@ -1276,44 +1290,75 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                               dropDownProvider.selectedEnquiryForId != 0)
                             if (leadProvider.isLoadingEnquiryCustomFields)
                               const Center(child: CircularProgressIndicator())
-                            else if (leadProvider
-                                .customFieldEnquiryFor.isNotEmpty)
-                              Consumer<LeadsProvider>(
-                                builder: (context, provider, child) {
-                                  return CustomFieldSectionWidget(
-                                    controllerKey: CustomFieldControllerkey
-                                        .enquirySource.value,
-                                    key: customFieldEnquirySourceKey,
-                                    initialFieldValues: widget.isEdit
-                                        ? leadProvider.customFieldEnquiryFor
-                                            .map((e) => FieldValueModel(
-                                                customFieldId: e.customFieldId,
-                                                value: e.datavalue))
-                                            .toList()
-                                        : leadProvider.customFieldEnquiryFor
-                                            .map((e) => FieldValueModel(
-                                                customFieldId: e.customFieldId,
-                                                value: provider
-                                                    .getCustomFieldValue(
-                                                        e.customFieldId ?? 0)))
-                                            .toList(),
-                                    onFieldValuesChanged: (fieldValues) {
-                                      if (!widget.isEdit) {
-                                        for (var fieldValue in fieldValues) {
-                                          provider.updateCustomFieldValue(
-                                              fieldValue.customFieldId ?? 0,
-                                              fieldValue.value ?? '');
-                                        }
-                                      }
-                                    },
-                                    customFields:
-                                        leadProvider.customFieldEnquiryFor,
-                                    initialValues: const {},
-                                  );
-                                },
+                            else
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (leadProvider.customFieldEnquiryFor.isNotEmpty)
+                                    Consumer<LeadsProvider>(
+                                      builder: (context, provider, child) {
+                                        return CustomFieldSectionWidget(
+                                          showEditButton: true,
+                                          controllerKey: CustomFieldControllerkey
+                                              .enquirySource.value,
+                                          key: customFieldEnquirySourceKey,
+                                          showMore: false,
+                                          initialFieldValues: widget.isEdit
+                                              ? leadProvider.customFieldEnquiryFor
+                                                  .map((e) => FieldValueModel(
+                                                      customFieldId: e.customFieldId,
+                                                      value: e.datavalue))
+                                                  .toList()
+                                              : leadProvider.customFieldEnquiryFor
+                                                  .map((e) => FieldValueModel(
+                                                      customFieldId: e.customFieldId,
+                                                      value: provider
+                                                          .getCustomFieldValue(
+                                                              e.customFieldId ?? 0)))
+                                                  .toList(),
+                                          onFieldValuesChanged: (fieldValues) {
+                                            if (!widget.isEdit) {
+                                              for (var fieldValue in fieldValues) {
+                                                provider.updateCustomFieldValue(
+                                                    fieldValue.customFieldId ?? 0,
+                                                    fieldValue.value ?? '');
+                                              }
+                                            }
+                                          },
+                                          customFields:
+                                              leadProvider.customFieldEnquiryFor,
+                                          initialValues: const {},
+                                        );
+                                      },
+                                    ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: TextButton.icon(
+                                      onPressed: () {
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const AddCustomField(
+                                              editId: '0',
+                                              isEdit: false,
+                                              status: '',
+                                            );
+                                          },
+                                        ).then((value) async {
+                                          if (context.mounted) {
+                                            if (null != value && value) {
+                                              settingsProvider.getCustomField(context);
+                                            }
+                                          }
+                                        });
+                                      },
+                                      icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+                                      label: Text('Choose Custom Field', style: GoogleFonts.plusJakartaSans(color: AppColors.primaryViolet, fontWeight: FontWeight.w600)),
+                                    ),
+                                  ),
+                                ],
                               ),
-                        ],
-                      ),
                       //address
                       ExpansionTile(
                         key: _addressKey,
@@ -2441,6 +2486,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   else if (leadProvider
                                       .customFieldList.isNotEmpty)
                                     CustomFieldSectionWidget(
+                                      showEditButton: true,
                                       controllerKey: CustomFieldControllerkey
                                           .leadStatus.value,
                                       key: customFieldLeadStatusKey,
@@ -2456,6 +2502,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ],
                         ),
                       const SizedBox(height: 8),
+                    ],
+                  ),
                     ],
                   ),
                 ),

@@ -230,73 +230,29 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               searchController: searchController,
               customActionWidget: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        leadProvider.setEntryType('myown');
-                        leadProvider.getSearchLeads(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: leadProvider.entryType != 'all'
-                                  ? AppColors.primaryBlue
-                                  : Colors.transparent,
-                              width: 2.0,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'ME',
-                          style: TextStyle(
-                            color: leadProvider.entryType != 'all'
-                                ? AppColors.primaryBlue
-                                : Colors.grey,
-                            fontWeight: leadProvider.entryType != 'all'
-                                ? FontWeight.w500
-                                : FontWeight.normal,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
+                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+                    style: const TextStyle(
+                      color: AppColors.primaryBlue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
                     ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: () {
-                        leadProvider.setEntryType('all');
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
                         leadProvider.getSearchLeads(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: leadProvider.entryType == 'all'
-                                  ? AppColors.primaryBlue
-                                  : Colors.transparent,
-                              width: 2.0,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'ALL',
-                          style: TextStyle(
-                            color: leadProvider.entryType == 'all'
-                                ? AppColors.primaryBlue
-                                : Colors.grey,
-                            fontWeight: leadProvider.entryType == 'all'
-                                ? FontWeight.w500
-                                : FontWeight.normal,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                      }
+                    },
+                    items: <String>['ME', 'ALL']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             )
@@ -337,73 +293,29 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               searchController: searchController,
               customActionWidget: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        leadProvider.setEntryType('myown');
-                        leadProvider.getSearchLeads(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: leadProvider.entryType != 'all'
-                                  ? AppColors.primaryBlue
-                                  : Colors.transparent,
-                              width: 2.0,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'ME',
-                          style: TextStyle(
-                            color: leadProvider.entryType != 'all'
-                                ? AppColors.primaryBlue
-                                : Colors.grey,
-                            fontWeight: leadProvider.entryType != 'all'
-                                ? FontWeight.w500
-                                : FontWeight.normal,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: leadProvider.entryType == 'all' ? 'ALL' : 'ME',
+                    icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+                    style: const TextStyle(
+                      color: AppColors.primaryBlue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
                     ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: () {
-                        leadProvider.setEntryType('all');
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        leadProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
                         leadProvider.getSearchLeads(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: leadProvider.entryType == 'all'
-                                  ? AppColors.primaryBlue
-                                  : Colors.transparent,
-                              width: 2.0,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'ALL',
-                          style: TextStyle(
-                            color: leadProvider.entryType == 'all'
-                                ? AppColors.primaryBlue
-                                : Colors.grey,
-                            fontWeight: leadProvider.entryType == 'all'
-                                ? FontWeight.w500
-                                : FontWeight.normal,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                      }
+                    },
+                    items: <String>['ME', 'ALL']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             ),

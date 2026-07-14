@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_custom_field.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 // Global keys for specific instances
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldLeadStatusKey =
@@ -168,7 +169,19 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
               LayoutBuilder(
                 builder: (context, constraints) {
                   final spacing = widget.spacing ?? 16.0;
-                  // Always single column
+                  if (AppStyles.isWebScreen(context)) {
+                    return Wrap(
+                      spacing: spacing,
+                      runSpacing: spacing / 2,
+                      children: mandatoryFields
+                          .map((field) => SizedBox(
+                                width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                                child: widgetBuilder.buildWidget(field),
+                              ))
+                          .toList(),
+                    );
+                  }
+                  // Always single column for mobile
                   return Column(
                     children: mandatoryFields
                         .map((field) => Padding(
@@ -207,6 +220,18 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final spacing = widget.spacing ?? 16.0;
+                          if (AppStyles.isWebScreen(context)) {
+                            return Wrap(
+                              spacing: spacing,
+                              runSpacing: spacing / 2,
+                              children: nonMandatoryFields
+                                  .map((field) => SizedBox(
+                                        width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                                        child: widgetBuilder.buildWidget(field),
+                                      ))
+                                  .toList(),
+                            );
+                          }
                           return Column(
                             children: nonMandatoryFields
                                 .map((field) => Padding(
@@ -225,6 +250,18 @@ class _CustomFieldSectionWidgetState extends State<CustomFieldSectionWidget> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final spacing = widget.spacing ?? 16.0;
+                    if (AppStyles.isWebScreen(context)) {
+                      return Wrap(
+                        spacing: spacing,
+                        runSpacing: spacing / 2,
+                        children: nonMandatoryFields
+                            .map((field) => SizedBox(
+                                  width: (constraints.maxWidth - spacing) / 2 - 0.1,
+                                  child: widgetBuilder.buildWidget(field),
+                                ))
+                            .toList(),
+                      );
+                    }
                     return Column(
                       children: nonMandatoryFields
                           .map((field) => Padding(

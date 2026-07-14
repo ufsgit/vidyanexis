@@ -7,12 +7,14 @@ import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
+import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/save_lead_dropdown_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
@@ -26,8 +28,10 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_enquiry_for_widget.dart';
+import 'package:vidyanexis/presentation/pages/settings/add_enquiry_for_mobile_page.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_new_enquiry_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_new_status_widget.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_custom_field.dart';
 
 class NewLeadDrawerMobileWidget extends StatefulWidget {
   final bool isEdit;
@@ -344,6 +348,8 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     dropDownProvider.setSelectedFollowUPId(0);
     dropDownProvider.setSelectedUserId(0);
     dropDownProvider.updateEnquiryForName(null, '');
+    leadProvider.customFieldList.clear();
+    leadProvider.clearCustomFieldEnquiryFor();
 
     // Restore unfiltered master lists so that list page lookup remains fully populated
     dropDownProvider.getEnquirySource(context, fetchUserSpecific: false);
@@ -483,12 +489,25 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               .firstWhere((task) => task.enquiryForId == defaultEnquiryForId);
           dropDownProvider.updateEnquiryForName(
               defaultEnquiryForId, selectedEnquiryFor.enquiryForName);
-          leadProvider.customFieldEnquiryFor.clear();
-          leadProvider.getCustomFieldsByEnquiryForId(
-            context,
-            leadId: widget.isEdit ? leadProvider.customerId : 0,
-            enquiryForId: defaultEnquiryForId,
-          );
+          leadProvider.clearCustomFieldEnquiryFor();
+          if (widget.isEdit) {
+            leadProvider.getCustomFieldsByEnquiryForId(
+              context,
+              leadId: leadProvider.customerId,
+              enquiryForId: defaultEnquiryForId,
+            );
+          } else {
+            if (selectedEnquiryFor.parsedCustomFields.isNotEmpty) {
+              leadProvider.setCustomFieldEnquiryFor(
+                  selectedEnquiryFor.parsedCustomFields);
+            } else {
+              leadProvider.getCustomFieldsByEnquiryForId(
+                context,
+                leadId: 0,
+                enquiryForId: defaultEnquiryForId,
+              );
+            }
+          }
         }
       }
       dropDownProvider.getUserDetails(context);
@@ -1101,8 +1120,10 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (leadProvider.customFieldList.isNotEmpty) {
                     return CustomFieldSectionWidget(
+                      showEditButton: true,
                       controllerKey: CustomFieldControllerkey.leadStatus.value,
                       key: customFieldLeadStatusKey,
+                      showMore: false,
                       onFieldValuesChanged: (p0) {
                         print("kikisdhuqe $p0");
                         var f = [];
@@ -2560,12 +2581,25 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                         .firstWhere((task) => task.enquiryForId == newValue);
                     dropDownProvider.updateEnquiryForName(
                         newValue, selectedEnquiryFor.enquiryForName);
-                    leadProvider.customFieldEnquiryFor.clear();
-                    leadProvider.getCustomFieldsByEnquiryForId(
-                      context,
-                      leadId: widget.isEdit ? leadProvider.customerId : 0,
-                      enquiryForId: newValue,
-                    );
+                    leadProvider.clearCustomFieldEnquiryFor();
+                    if (widget.isEdit) {
+                      leadProvider.getCustomFieldsByEnquiryForId(
+                        context,
+                        leadId: leadProvider.customerId,
+                        enquiryForId: newValue,
+                      );
+                    } else {
+                      if (selectedEnquiryFor.parsedCustomFields.isNotEmpty) {
+                        leadProvider.setCustomFieldEnquiryFor(
+                            selectedEnquiryFor.parsedCustomFields);
+                      } else {
+                        leadProvider.getCustomFieldsByEnquiryForId(
+                          context,
+                          leadId: 0,
+                          enquiryForId: newValue,
+                        );
+                      }
+                    }
                   }
                 },
                 selectedValue: dropDownProvider.selectedEnquiryForId,
@@ -2670,37 +2704,68 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             builder: (context, leadProvider, child) {
               if (leadProvider.isLoadingEnquiryCustomFields) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (leadProvider.customFieldEnquiryFor.isNotEmpty) {
-                // Use Consumer to rebuild only when custom field values change
-                return CustomFieldSectionWidget(
-                  controllerKey: CustomFieldControllerkey.enquirySource.value,
-                  key: customFieldEnquirySourceKey,
-                  initialFieldValues: widget.isEdit
-                      ? leadProvider.customFieldEnquiryFor
-                          .map((e) => FieldValueModel(
-                              customFieldId: e.customFieldId,
-                              value: e.datavalue))
-                          .toList()
-                      : leadProvider.customFieldEnquiryFor
-                          .map((e) => FieldValueModel(
-                              customFieldId: e.customFieldId,
-                              value: leadProvider
-                                  .getCustomFieldValue(e.customFieldId ?? 0)))
-                          .toList(),
-                  onFieldValuesChanged: (fieldValues) {
-                    if (!widget.isEdit) {
-                      for (var fieldValue in fieldValues) {
-                        leadProvider.updateCustomFieldValue(
-                            fieldValue.customFieldId ?? 0,
-                            fieldValue.value ?? '');
-                      }
-                    }
-                  },
-                  customFields: leadProvider.customFieldEnquiryFor,
-                  initialValues: const {},
-                );
               } else {
-                return const SizedBox.shrink();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (leadProvider.customFieldEnquiryFor.isNotEmpty)
+                      CustomFieldSectionWidget(
+                        showEditButton: true,
+                        controllerKey: CustomFieldControllerkey.enquirySource.value,
+                        key: customFieldEnquirySourceKey,
+                        showMore: false,
+                        initialFieldValues: widget.isEdit
+                            ? leadProvider.customFieldEnquiryFor
+                                .map((e) => FieldValueModel(
+                                    customFieldId: e.customFieldId,
+                                    value: e.datavalue))
+                                .toList()
+                            : leadProvider.customFieldEnquiryFor
+                                .map((e) => FieldValueModel(
+                                    customFieldId: e.customFieldId,
+                                    value: leadProvider
+                                        .getCustomFieldValue(e.customFieldId ?? 0)))
+                                .toList(),
+                        onFieldValuesChanged: (fieldValues) {
+                          if (!widget.isEdit) {
+                            for (var fieldValue in fieldValues) {
+                              leadProvider.updateCustomFieldValue(
+                                  fieldValue.customFieldId ?? 0,
+                                  fieldValue.value ?? '');
+                            }
+                          }
+                        },
+                        customFields: leadProvider.customFieldEnquiryFor,
+                        initialValues: const {},
+                      ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AddCustomField(
+                                editId: '0',
+                                isEdit: false,
+                                status: '',
+                              );
+                            },
+                          ).then((value) async {
+                            if (context.mounted) {
+                              if (null != value && value) {
+                                settingsProvider.getCustomField(context);
+                              }
+                            }
+                          });
+                        },
+                        icon: Icon(Icons.add_circle, color: AppColors.primaryViolet),
+                        label: Text('Choose Custom Field', style: GoogleFonts.plusJakartaSans(color: AppColors.primaryViolet, fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                  ],
+                );
               }
             },
           ),

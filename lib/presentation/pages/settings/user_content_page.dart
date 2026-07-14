@@ -69,7 +69,7 @@ class _UsersContentState extends State<UsersContent> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    const double minContentWidth = 1300.0;
+    const double minContentWidth = 1100.0;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -179,7 +179,7 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 110,
+                                    width: 60,
                                     child: Center(
                                       child: Text(
                                         'Team',
@@ -192,7 +192,7 @@ class _UsersContentState extends State<UsersContent> {
                                   ),
                                   const SizedBox(width: 16),
                                   SizedBox(
-                                    width: 120,
+                                    width: 90,
                                     child: Center(
                                       child: Text(
                                         'Enquiry For',
@@ -205,7 +205,7 @@ class _UsersContentState extends State<UsersContent> {
                                   ),
                                   const SizedBox(width: 16),
                                   SizedBox(
-                                    width: 130,
+                                    width: 110,
                                     child: Center(
                                       child: Text(
                                         'Enquiry Source',
@@ -218,7 +218,7 @@ class _UsersContentState extends State<UsersContent> {
                                   ),
                                   const SizedBox(width: 16),
                                   SizedBox(
-                                    width: 120,
+                                    width: 80,
                                     child: Center(
                                       child: Text(
                                         'Task Type',
@@ -584,146 +584,104 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                       SizedBox(
-                                        width: 110,
+                                        width: 60,
                                         child: Center(
-                                          child: ActionChip(
-                                            onPressed: () => assignTeamDialogue(
-                                                context,
-                                                settingsProvider
-                                                    .searchUserDetails[index]),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            backgroundColor:
-                                                const Color(0xFFEFF6FF),
-                                            side: BorderSide.none,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFFEFF6FF),
+                                              shape: BoxShape.circle,
                                             ),
-                                            avatar: Icon(
-                                              Icons.group_add_rounded,
-                                              size: 14,
-                                              color: AppColors.primaryBlue,
-                                            ),
-                                            label: Text(
-                                              'Team',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
+                                            child: IconButton(
+                                              onPressed: () => assignTeamDialogue(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchUserDetails[index]),
+                                              icon: Icon(
+                                                Icons.group_add_rounded,
+                                                size: 18,
                                                 color: AppColors.primaryBlue,
                                               ),
+                                              constraints: const BoxConstraints(),
+                                              padding: const EdgeInsets.all(8),
+                                              tooltip: 'Team',
                                             ),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(width: 16),
                                       SizedBox(
-                                        width: 120,
+                                        width: 90,
                                         child: Center(
-                                          child: ActionChip(
-                                            onPressed: () =>
-                                                assignEnquiryForDialogue(
-                                                    context,
-                                                    settingsProvider
-                                                            .searchUserDetails[
-                                                        index]),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            backgroundColor:
-                                                const Color(0xFFF5F3FF),
-                                            side: BorderSide.none,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFFF5F3FF),
+                                              shape: BoxShape.circle,
                                             ),
-                                            avatar: const Icon(
-                                              Icons.assignment_rounded,
-                                              size: 14,
-                                              color: Color(0xFF6D28D9),
-                                            ),
-                                            label: Text(
-                                              'Enquiry For',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: const Color(0xFF6D28D9),
+                                            child: IconButton(
+                                              onPressed: () => assignEnquiryForDialogue(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchUserDetails[index]),
+                                              icon: const Icon(
+                                                Icons.assignment_rounded,
+                                                size: 18,
+                                                color: Color(0xFF6D28D9),
                                               ),
+                                              constraints: const BoxConstraints(),
+                                              padding: const EdgeInsets.all(8),
+                                              tooltip: 'Enquiry For',
                                             ),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(width: 16),
                                       SizedBox(
-                                        width: 130,
+                                        width: 110,
                                         child: Center(
-                                          child: ActionChip(
-                                            onPressed: () =>
-                                                assignEnquirySourceDialogue(
-                                                    context,
-                                                    settingsProvider
-                                                            .searchUserDetails[
-                                                        index]),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            backgroundColor:
-                                                const Color(0xFFECFDF5),
-                                            side: BorderSide.none,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFFECFDF5),
+                                              shape: BoxShape.circle,
                                             ),
-                                            avatar: const Icon(
-                                              Icons.campaign_rounded,
-                                              size: 14,
-                                              color: Color(0xFF059669),
-                                            ),
-                                            label: Text(
-                                              'Enquiry Source',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: const Color(0xFF059669),
+                                            child: IconButton(
+                                              onPressed: () => assignEnquirySourceDialogue(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchUserDetails[index]),
+                                              icon: const Icon(
+                                                Icons.campaign_rounded,
+                                                size: 18,
+                                                color: Color(0xFF059669),
                                               ),
+                                              constraints: const BoxConstraints(),
+                                              padding: const EdgeInsets.all(8),
+                                              tooltip: 'Enquiry Source',
                                             ),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(width: 16),
                                       SizedBox(
-                                        width: 120,
+                                        width: 80,
                                         child: Center(
-                                          child: ActionChip(
-                                            onPressed: () =>
-                                                assignTaskTypeDialogue(
-                                                    context,
-                                                    settingsProvider
-                                                            .searchUserDetails[
-                                                        index]),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            backgroundColor:
-                                                const Color(0xFFFFF7ED),
-                                            side: BorderSide.none,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFFFFF7ED),
+                                              shape: BoxShape.circle,
                                             ),
-                                            avatar: const Icon(
-                                              Icons.task_rounded,
-                                              size: 14,
-                                              color: Color(0xFFEA580C),
-                                            ),
-                                            label: Text(
-                                              'Task Type',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: const Color(0xFFEA580C),
+                                            child: IconButton(
+                                              onPressed: () => assignTaskTypeDialogue(
+                                                  context,
+                                                  settingsProvider
+                                                      .searchUserDetails[index]),
+                                              icon: const Icon(
+                                                Icons.task_rounded,
+                                                size: 18,
+                                                color: Color(0xFFEA580C),
                                               ),
+                                              constraints: const BoxConstraints(),
+                                              padding: const EdgeInsets.all(8),
+                                              tooltip: 'Task Type',
                                             ),
                                           ),
                                         ),

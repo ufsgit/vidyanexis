@@ -169,73 +169,29 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         searchController: searchController,
         customActionWidget: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  customerProvider.setEntryType('myown');
-                  customerProvider.getSearchCustomers(context);
-                },
-                child: Container(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: customerProvider.entryType != 'all'
-                            ? AppColors.primaryBlue
-                            : Colors.transparent,
-                        width: 2.0,
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    'ME',
-                    style: TextStyle(
-                      color: customerProvider.entryType != 'all'
-                          ? AppColors.primaryBlue
-                          : Colors.grey,
-                      fontWeight: customerProvider.entryType != 'all'
-                          ? FontWeight.w500
-                          : FontWeight.normal,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: customerProvider.entryType == 'all' ? 'ALL' : 'ME',
+              icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.primaryBlue),
+              style: const TextStyle(
+                color: AppColors.primaryBlue,
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
               ),
-              const SizedBox(width: 12),
-              GestureDetector(
-                onTap: () {
-                  customerProvider.setEntryType('all');
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  customerProvider.setEntryType(newValue == 'ALL' ? 'all' : 'myown');
                   customerProvider.getSearchCustomers(context);
-                },
-                child: Container(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: customerProvider.entryType == 'all'
-                            ? AppColors.primaryBlue
-                            : Colors.transparent,
-                        width: 2.0,
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    'ALL',
-                    style: TextStyle(
-                      color: customerProvider.entryType == 'all'
-                          ? AppColors.primaryBlue
-                          : Colors.grey,
-                      fontWeight: customerProvider.entryType == 'all'
-                          ? FontWeight.w500
-                          : FontWeight.normal,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+                }
+              },
+              items: <String>['ME', 'ALL']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),
