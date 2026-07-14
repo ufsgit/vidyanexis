@@ -145,7 +145,7 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 120,
+                                    width: 90,
                                     child: Text(
                                       'Branch',
                                       style: GoogleFonts.plusJakartaSans(
@@ -183,6 +183,7 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Center(
                                       child: Text(
                                         'Team',
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -190,12 +191,13 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
                                     width: 90,
                                     child: Center(
                                       child: Text(
                                         'Enquiry For',
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -203,12 +205,13 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
                                     width: 110,
                                     child: Center(
                                       child: Text(
                                         'Enquiry Source',
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -216,12 +219,17 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
-                                    width: 80,
+
+                             
+
+                                    width: 60,
+
                                     child: Center(
                                       child: Text(
                                         'Task Type',
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -229,7 +237,7 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
                                     width: 80,
                                     child: Text(
@@ -240,7 +248,7 @@ class _UsersContentState extends State<UsersContent> {
                                           color: const Color(0xFF475569)),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
                                     width: 200,
                                     child: Text(
@@ -401,7 +409,7 @@ class _UsersContentState extends State<UsersContent> {
                                             : const SizedBox(),
                                       ),
                                       SizedBox(
-                                        width: 120,
+                                        width: 90,
                                         child: (settingsProvider
                                                     .searchUserDetails[index]
                                                     .branchName !=
@@ -608,7 +616,7 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
                                         width: 90,
                                         child: Center(
@@ -634,7 +642,7 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
                                         width: 110,
                                         child: Center(
@@ -660,7 +668,7 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
                                         width: 80,
                                         child: Center(
@@ -686,7 +694,7 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
                                         width: 80,
                                         child: Container(
@@ -725,7 +733,7 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
                                         width: 200,
                                         child: CustomOutlinedSvgButton(
