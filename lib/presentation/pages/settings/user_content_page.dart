@@ -145,7 +145,7 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 120,
+                                    width: 90,
                                     child: Text(
                                       'Branch',
                                       style: GoogleFonts.plusJakartaSans(
@@ -179,10 +179,11 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 110,
+                                    width: 60,
                                     child: Center(
                                       child: Text(
                                         'Team',
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -190,12 +191,13 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
-                                    width: 120,
+                                    width: 60,
                                     child: Center(
                                       child: Text(
                                         'Enquiry For',
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -203,12 +205,13 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
-                                    width: 130,
+                                    width: 60,
                                     child: Center(
                                       child: Text(
                                         'Enquiry Source',
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -216,12 +219,13 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
-                                    width: 120,
+                                    width: 60,
                                     child: Center(
                                       child: Text(
                                         'Task Type',
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -229,7 +233,7 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
                                     width: 80,
                                     child: Text(
@@ -240,7 +244,7 @@ class _UsersContentState extends State<UsersContent> {
                                           color: const Color(0xFF475569)),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 8),
                                   SizedBox(
                                     width: 200,
                                     child: Text(
@@ -401,7 +405,7 @@ class _UsersContentState extends State<UsersContent> {
                                             : const SizedBox(),
                                       ),
                                       SizedBox(
-                                        width: 120,
+                                        width: 90,
                                         child: (settingsProvider
                                                     .searchUserDetails[index]
                                                     .branchName !=
@@ -584,15 +588,14 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                       SizedBox(
-                                        width: 110,
+                                        width: 60,
                                         child: Center(
                                           child: ActionChip(
                                             onPressed: () => assignTeamDialogue(
                                                 context,
                                                 settingsProvider
                                                     .searchUserDetails[index]),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
+                                            padding: EdgeInsets.zero,
                                             backgroundColor:
                                                 const Color(0xFFEFF6FF),
                                             side: BorderSide.none,
@@ -600,26 +603,18 @@ class _UsersContentState extends State<UsersContent> {
                                               borderRadius:
                                                   BorderRadius.circular(4),
                                             ),
-                                            avatar: Icon(
+                                            tooltip: 'Assign Team',
+                                            label: Icon(
                                               Icons.group_add_rounded,
-                                              size: 14,
+                                              size: 16,
                                               color: AppColors.primaryBlue,
-                                            ),
-                                            label: Text(
-                                              'Team',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.primaryBlue,
-                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
-                                        width: 120,
+                                        width: 60,
                                         child: Center(
                                           child: ActionChip(
                                             onPressed: () =>
@@ -628,8 +623,7 @@ class _UsersContentState extends State<UsersContent> {
                                                     settingsProvider
                                                             .searchUserDetails[
                                                         index]),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
+                                            padding: EdgeInsets.zero,
                                             backgroundColor:
                                                 const Color(0xFFF5F3FF),
                                             side: BorderSide.none,
@@ -637,26 +631,18 @@ class _UsersContentState extends State<UsersContent> {
                                               borderRadius:
                                                   BorderRadius.circular(4),
                                             ),
-                                            avatar: const Icon(
+                                            tooltip: 'Assign Enquiry For',
+                                            label: const Icon(
                                               Icons.assignment_rounded,
-                                              size: 14,
+                                              size: 16,
                                               color: Color(0xFF6D28D9),
-                                            ),
-                                            label: Text(
-                                              'Enquiry For',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: const Color(0xFF6D28D9),
-                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
-                                        width: 130,
+                                        width: 60,
                                         child: Center(
                                           child: ActionChip(
                                             onPressed: () =>
@@ -665,8 +651,7 @@ class _UsersContentState extends State<UsersContent> {
                                                     settingsProvider
                                                             .searchUserDetails[
                                                         index]),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
+                                            padding: EdgeInsets.zero,
                                             backgroundColor:
                                                 const Color(0xFFECFDF5),
                                             side: BorderSide.none,
@@ -674,26 +659,18 @@ class _UsersContentState extends State<UsersContent> {
                                               borderRadius:
                                                   BorderRadius.circular(4),
                                             ),
-                                            avatar: const Icon(
+                                            tooltip: 'Assign Enquiry Source',
+                                            label: const Icon(
                                               Icons.campaign_rounded,
-                                              size: 14,
+                                              size: 16,
                                               color: Color(0xFF059669),
-                                            ),
-                                            label: Text(
-                                              'Enquiry Source',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: const Color(0xFF059669),
-                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
-                                        width: 120,
+                                        width: 60,
                                         child: Center(
                                           child: ActionChip(
                                             onPressed: () =>
@@ -702,8 +679,7 @@ class _UsersContentState extends State<UsersContent> {
                                                     settingsProvider
                                                             .searchUserDetails[
                                                         index]),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
+                                            padding: EdgeInsets.zero,
                                             backgroundColor:
                                                 const Color(0xFFFFF7ED),
                                             side: BorderSide.none,
@@ -711,24 +687,16 @@ class _UsersContentState extends State<UsersContent> {
                                               borderRadius:
                                                   BorderRadius.circular(4),
                                             ),
-                                            avatar: const Icon(
+                                            tooltip: 'Assign Task Type',
+                                            label: const Icon(
                                               Icons.task_rounded,
-                                              size: 14,
+                                              size: 16,
                                               color: Color(0xFFEA580C),
-                                            ),
-                                            label: Text(
-                                              'Task Type',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: const Color(0xFFEA580C),
-                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
                                         width: 80,
                                         child: Container(
@@ -767,7 +735,7 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 16),
+                                      const SizedBox(width: 8),
                                       SizedBox(
                                         width: 200,
                                         child: CustomOutlinedSvgButton(
