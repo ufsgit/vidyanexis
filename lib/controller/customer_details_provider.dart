@@ -5204,6 +5204,25 @@ class CustomerDetailsProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> verifyDocument(int documentId, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.verifyDocument,
+        bodyData: {"images_id": documentId, "is_verified": 1},
+      );
+
+      if (response?.statusCode == 200) {
+        log('Structure materials saved successfully');
+        getDocument(customerId, context);
+        notifyListeners();
+      } else {
+        log('Failed to save structure materials');
+      }
+    } catch (e) {
+      log('Error saving structure materials: $e');
+    }
+  }
 }
 
 class ProfitModel {

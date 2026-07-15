@@ -15,6 +15,8 @@ class CustomElevatedButton extends StatelessWidget {
   final IconData? prefixIcon; // Optional icon
   final double? iconSize; // Optional icon size
   final double? iconSpacing; // Optional spacing between icon and text
+  final double horizontalPadding;
+  final double verticalPadding; 
 
   const CustomElevatedButton({
     super.key,
@@ -30,6 +32,8 @@ class CustomElevatedButton extends StatelessWidget {
     this.prefixIcon, // Default is null (no icon)
     this.iconSize = 18, // Default icon size
     this.iconSpacing = 8, // Default spacing between icon and text
+    this.horizontalPadding = 16,
+    this.verticalPadding = 12,
   });
 
   @override
@@ -45,8 +49,8 @@ class CustomElevatedButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(radius),
                 ),
                 padding: AppStyles.isWebScreen(context)
-                    ? const EdgeInsets.symmetric(horizontal: 16, vertical: 12)
-                    : const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                    ? EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding)
+                    : EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 0),
                 elevation: elevation),
             child: Row(
               mainAxisSize: MainAxisSize.min, // Make row wrap its content

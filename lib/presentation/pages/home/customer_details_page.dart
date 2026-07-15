@@ -4296,6 +4296,63 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           ),
                                                                           const SizedBox(
                                                                               height: 6),
+                                                                          if (image.isVerified ==
+                                                                              '1') ...[
+                                                                            Row(
+                                                                              children: [
+                                                                                Icon(
+                                                                                  Icons.check,
+                                                                                  color: Colors.green,
+                                                                                ),
+                                                                                Expanded(
+                                                                                  child: Text(
+                                                                                    "Verified by ${image.verifiedName}",
+                                                                                    style: TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                                    textAlign: TextAlign.left,
+                                                                                    maxLines: 1,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                            Text(
+                                                                              DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.verifiedDate)),
+                                                                              style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
+                                                                              textAlign: TextAlign.center,
+                                                                            ),
+                                                                          ] else
+                                                                            Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  child: Text(
+                                                                                    "Verification Pending",
+                                                                                    style: TextStyle(fontSize: 10, color: AppColors.textBlack, fontWeight: FontWeight.w600),
+                                                                                    textAlign: TextAlign.center,
+                                                                                    maxLines: 2,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 10,
+                                                                                ),
+                                                                                Expanded(
+                                                                                  child: CustomElevatedButton(
+                                                                                    onPressed: () {
+                                                                                      customerDetailsProvider.verifyDocument(image.imageId, context);
+                                                                                    },
+                                                                                    buttonText: 'Verify',
+                                                                                    backgroundColor: AppColors.primaryBlue,
+                                                                                    textColor: AppColors.whiteColor,
+                                                                                    borderColor: AppColors.primaryBlue,
+                                                                                    textSize: 12,
+                                                                                    horizontalPadding: 2,
+                                                                                    verticalPadding: 2,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          const SizedBox(
+                                                                              height: 10),
                                                                           Text(
                                                                             image.documentTypeName,
                                                                             style:
