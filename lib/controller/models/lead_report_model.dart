@@ -231,14 +231,16 @@ class LeadReportModel {
           roofType: json["Roof_Type"]?.toString() ?? '',
           orderNo: json["Order_No"]?.toString() ?? '',
           description: json["Description"]?.toString() ?? '',
-          remark: json["Remark"]?.toString() ?? '',
+          remark: json["remark"]?.toString() ?? json["Remark"]?.toString() ?? '',
           deleteStatus: json["DeleteStatus"]?.toString() ?? '0',
           lateFollowUp: json["Late_Followup"]?.toString() ?? '0',
           colorCode: json["Color_Code"]?.toString() ?? "Color(0xff34c759)",
           enquiryFor: json["Enquiry_For_Name"]?.toString() ?? "",
           enquirySourceName: json["Enquiry_Source_Name"]?.toString() ?? '',
           enquirySourceId: json["Enquiry_Source_Id"]?.toString() ?? '',
-          creationDate: json["creationDate"]?.toString() ?? '');
+          creationDate: json["Entry_Date"]?.toString() ??
+              json["creationDate"]?.toString() ??
+              '');
 
   Map<String, dynamic> toJson() => {
         "Customer_Id": customerId,
