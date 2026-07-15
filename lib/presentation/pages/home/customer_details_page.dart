@@ -2607,6 +2607,48 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
+                                                                    if (sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius: 4,
+                                                                        backgroundColor: AppColors.whiteColor,
+                                                                        borderColor: AppColors.bluebutton,
+                                                                        textColor: AppColors.bluebutton,
+                                                                        buttonText: 'Work Completion Report',
+                                                                        onPressed: () async {
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Work Completion Report',
+                                                                            pdfUrl: '${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    if (sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        radius: 4,
+                                                                        backgroundColor: AppColors.whiteColor,
+                                                                        borderColor: AppColors.bluebutton,
+                                                                        textColor: AppColors.bluebutton,
+                                                                        buttonText: 'Checklist',
+                                                                        onPressed: () async {
+                                                                          PdfActionHelper.showPdfOptions(
+                                                                            context: context,
+                                                                            title: 'Checklist',
+                                                                            pdfUrl: '${HttpUrls.getPdfChecklist}${widget.customerId}',
+                                                                            onGenerate: () async {
+                                                                              await Loader.showLoader(context);
+                                                                              final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklist}${widget.customerId}');
+                                                                              Loader.stopLoader(context);
+                                                                              return bytes ?? Uint8List(0);
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
@@ -3656,6 +3698,48 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             context);
                                                                         return bytes ??
                                                                             Uint8List(0);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              if (sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  radius: 4,
+                                                                  backgroundColor: AppColors.whiteColor,
+                                                                  borderColor: AppColors.bluebutton,
+                                                                  textColor: AppColors.bluebutton,
+                                                                  buttonText: 'Work Completion Report',
+                                                                  onPressed: () async {
+                                                                    PdfActionHelper.showPdfOptions(
+                                                                      context: context,
+                                                                      title: 'Work Completion Report',
+                                                                      pdfUrl: '${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}',
+                                                                      onGenerate: () async {
+                                                                        await Loader.showLoader(context);
+                                                                        final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}');
+                                                                        Loader.stopLoader(context);
+                                                                        return bytes ?? Uint8List(0);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              if (sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  radius: 4,
+                                                                  backgroundColor: AppColors.whiteColor,
+                                                                  borderColor: AppColors.bluebutton,
+                                                                  textColor: AppColors.bluebutton,
+                                                                  buttonText: 'Checklist',
+                                                                  onPressed: () async {
+                                                                    PdfActionHelper.showPdfOptions(
+                                                                      context: context,
+                                                                      title: 'Checklist',
+                                                                      pdfUrl: '${HttpUrls.getPdfChecklist}${widget.customerId}',
+                                                                      onGenerate: () async {
+                                                                        await Loader.showLoader(context);
+                                                                        final bytes = await customerDetailsProvider.getAnnexurePdfBytes('${HttpUrls.getPdfChecklist}${widget.customerId}');
+                                                                        Loader.stopLoader(context);
+                                                                        return bytes ?? Uint8List(0);
                                                                       },
                                                                     );
                                                                   },
