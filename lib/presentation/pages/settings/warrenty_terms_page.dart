@@ -93,9 +93,63 @@ class _TermsWarrantyContentState extends State<TermsWarrantyContent> {
                   const SizedBox(height: 12),
                   TextField(
                     controller: provider.termsController,
-                    maxLines: 16,
+                    maxLines: 12,
                     decoration: InputDecoration(
                       hintText: 'Enter terms and conditions...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  _buildSectionHeader('Description 1'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: provider.description1Controller,
+                    maxLines: 12,
+                    decoration: InputDecoration(
+                      hintText: 'Enter description...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  _buildSectionHeader('Description 2'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: provider.description2Controller,
+                    maxLines: 12,
+                    decoration: InputDecoration(
+                      hintText: 'Enter description...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(16),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  _buildSectionHeader('Description 3'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: provider.description3Controller,
+                    maxLines: 12,
+                    decoration: InputDecoration(
+                      hintText: 'Enter description...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide(color: Colors.grey.shade300),
