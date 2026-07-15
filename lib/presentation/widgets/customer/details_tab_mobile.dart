@@ -396,6 +396,52 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
+                                if ((settingsProvider.menuIsViewMap[163] == 1 || settingsProvider.menuIsViewMapPrint[163] == 1) && sideProvider.name != 'Lead /')
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Work Completion Report',
+                                    icon: Icons.assignment_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Work Completion Report',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfWorkCompletionReport}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                if ((settingsProvider.menuIsViewMap[164] == 1 || settingsProvider.menuIsViewMapPrint[164] == 1) && sideProvider.name != 'Lead /')
+                                  _buildActionBtn(
+                                    context,
+                                    text: 'Checklist',
+                                    icon: Icons.checklist_rtl_outlined,
+                                    onTap: () async {
+                                      PdfActionHelper.showPdfOptions(
+                                        context: context,
+                                        title: 'Checklist',
+                                        pdfUrl:
+                                            '${HttpUrls.getPdfChecklist}${widget.customerId}',
+                                        onGenerate: () async {
+                                          await Loader.showLoader(context);
+                                          final bytes =
+                                              await customerDetailsProvider
+                                                  .getAnnexurePdfBytes(
+                                                      '${HttpUrls.getPdfChecklist}${widget.customerId}');
+                                          Loader.stopLoader(context);
+                                          return bytes ?? Uint8List(0);
+                                        },
+                                      );
+                                    },
+                                  ),
                               ],
                             ),
                           ),

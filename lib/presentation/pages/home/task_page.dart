@@ -1371,17 +1371,56 @@ class _tasksPageReportState extends State<TaskPage> {
                       child: Column(
                         children: [
                           if (!AppStyles.isWebScreen(context))
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                            Expanded(
+                              child: Column(
                                 children: [
-                                  CustomText(
-                                    'Total Tasks: ${reportsProvider.totalSize}',
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.textGrey3,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        CustomText(
+                                          'Total Tasks: ${reportsProvider.totalSize}',
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textGrey3,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: reportsProvider.taskReport.isEmpty
+                                        ? const Center(child: Text("No tasks found"))
+                                        : ListView.builder(
+                                            controller: _scrollController,
+                                            itemCount: reportsProvider.taskReport.length +
+                                                (_isLoadingMore ? 1 : 0),
+                                            itemBuilder: (context, index) {
+                                              if (index == reportsProvider.taskReport.length && _isLoadingMore) {
+                                                return const Padding(
+                                                  padding: EdgeInsets.all(16),
+                                                  child: Center(child: CircularProgressIndicator()),
+                                                );
+                                              }
+                                              var task = reportsProvider.taskReport[index];
+                                              return Column(
+                                                children: [
+                                                  Divider(
+                                                    height: 1,
+                                                    thickness: 1,
+                                                    color: AppColors.grey,
+                                                  ),
+                                                  TaskCard(
+                                                    task: task,
+                                                    isExpanded: reportsProvider.expandedIndex == index,
+                                                    onTap: () => reportsProvider.toggleExpansion(index),
+                                                    showStatusUpdate: (context, task) => updateStatusDialogWithoutTask(task),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ),
                                   ),
                                 ],
                               ),
@@ -1390,16 +1429,24 @@ class _tasksPageReportState extends State<TaskPage> {
                           // === WEB TABLE WITH HORIZONTAL SCROLLING ===
                           else
                             Expanded(
-                              child: Scrollbar(
-                                controller:
-                                    _horizontalScrollController, // Add this controller if not present
-                                thumbVisibility: true,
-                                trackVisibility: true,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  controller: _horizontalScrollController,
-                                  child: SizedBox(
-                                    width: 1650,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  double minWidth = 1650;
+                                  if (settingsProvider.showView[162] != 1) {
+                                    minWidth -= 130;
+                                  }
+                                  double tableWidth = minWidth > constraints.maxWidth
+                                      ? minWidth
+                                      : constraints.maxWidth;
+                                  return Scrollbar(
+                                    controller: _horizontalScrollController,
+                                    thumbVisibility: true,
+                                    trackVisibility: true,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      controller: _horizontalScrollController,
+                                      child: SizedBox(
+                                        width: tableWidth,
                                     child: Column(
                                       children: [
                                         // Header
@@ -1486,7 +1533,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       horizontal: 12.0),
                                                   color: Colors.white),
                                               TableWidget(
-                                                  width: 180,
+                                                  flex: 1,
                                                   title: 'Description',
                                                   fontSize: 13,
                                                   padding: const EdgeInsets
@@ -1970,7 +2017,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   ),
                                                                 ),
                                                                 TableWidget(
-                                                                  width: 180,
+                                                                  flex: 1,
                                                                   padding: const EdgeInsets
                                                                       .symmetric(
                                                                       vertical:
@@ -2088,7 +2135,32 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           12.0),
                                                                   data: InkWell(
                                                                     onTap: () {
-                                                                      // Your status dialog logic
+                                                                      reportsProvider.selectedTaskTypeIds.clear();
+                                                                      reportsProvider.taskTypeModel.clear();
+                                                                      if (task.customerName.isEmpty) {
+                                                                        updateStatusDialogWithoutTask(task).then((value) {
+                                                                          if (value == true) {
+                                                                            reportsProvider.goToPage(1);
+                                                                            reportsProvider.searchTaskByCustomer(context);
+                                                                          }
+                                                                        });
+                                                                      } else {
+                                                                        if (AppStyles.isWebScreen(context)) {
+                                                                          statusDialog(task).then((value) {
+                                                                            if (value == true) {
+                                                                              reportsProvider.goToPage(1);
+                                                                              reportsProvider.searchTaskByCustomer(context);
+                                                                            }
+                                                                          });
+                                                                        } else {
+                                                                          statusDialogMobile(task).then((value) {
+                                                                            if (value == true) {
+                                                                              reportsProvider.goToPage(1);
+                                                                              reportsProvider.searchTaskByCustomer(context);
+                                                                            }
+                                                                          });
+                                                                        }
+                                                                      }
                                                                     },
                                                                     child:
                                                                         Container(
@@ -2185,8 +2257,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
+                          ),
+                        ),
                         ],
                       ),
                     ),
