@@ -786,7 +786,6 @@ class LeadsProvider extends ChangeNotifier {
     _leadId = '0';
     _status = '';
     _enquiryForS = '';
-    _entryType = 'myown';
     _isFilter = false;
     _selectedDateFilterIndex = null;
     notifyListeners();

@@ -270,10 +270,8 @@ class _LeadsPageState extends State<LeadPage> {
       onSelected: (SearchLeadModel selection) {
         if (_debounce?.isActive ?? false) _debounce!.cancel();
         searchController.text = selection.customerName;
-        leadProvider.setSearchCriteria(
-            selection.customerName,
-            leadProvider.fromDateS,
-            leadProvider.toDateS,
+        leadProvider.setSearchCriteria(selection.customerName,
+            leadProvider.fromDateS, leadProvider.toDateS,
             leadId: selection.customerId.toString());
         leadProvider.getSearchLeads(context);
       },
@@ -327,7 +325,9 @@ class _LeadsPageState extends State<LeadPage> {
                           leadProvider.getSearchLeads(context);
                         },
                         child: Icon(Icons.close,
-                            color: isMobile ? Colors.black : const Color(0xFF64748B),
+                            color: isMobile
+                                ? Colors.black
+                                : const Color(0xFF64748B),
                             size: 18),
                       )
                     : GestureDetector(
@@ -341,7 +341,9 @@ class _LeadsPageState extends State<LeadPage> {
                           leadProvider.getSearchLeads(context);
                         },
                         child: Icon(Icons.search,
-                            color: isMobile ? Colors.black : const Color(0xFF64748B),
+                            color: isMobile
+                                ? Colors.black
+                                : const Color(0xFF64748B),
                             size: 18),
                       ),
               ),
@@ -381,19 +383,20 @@ class _LeadsPageState extends State<LeadPage> {
                       itemCount: options.length,
                       itemBuilder: (BuildContext context, int index) {
                         final SearchLeadModel option = options.elementAt(index);
-                        
+
                         // Highlight matching text logic
                         final query = searchController.text.toLowerCase();
                         final name = option.customerName;
                         final nameLower = name.toLowerCase();
-                        
+
                         List<TextSpan> nameSpans = [];
                         if (query.isNotEmpty && nameLower.contains(query)) {
                           final startIndex = nameLower.indexOf(query);
                           final endIndex = startIndex + query.length;
-                          
+
                           if (startIndex > 0) {
-                            nameSpans.add(TextSpan(text: name.substring(0, startIndex)));
+                            nameSpans.add(
+                                TextSpan(text: name.substring(0, startIndex)));
                           }
                           nameSpans.add(TextSpan(
                               text: name.substring(startIndex, endIndex),
@@ -401,19 +404,21 @@ class _LeadsPageState extends State<LeadPage> {
                                   backgroundColor: Color(0xFFE2E8F0),
                                   color: AppColors.primaryBlue)));
                           if (endIndex < name.length) {
-                            nameSpans.add(TextSpan(text: name.substring(endIndex)));
+                            nameSpans
+                                .add(TextSpan(text: name.substring(endIndex)));
                           }
                         } else {
                           nameSpans.add(TextSpan(text: name));
                         }
-                        
+
                         return InkWell(
                           onTap: () {
                             onSelected(option);
                           },
                           child: Container(
                             decoration: const BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9))),
+                              border: Border(
+                                  bottom: BorderSide(color: Color(0xFFF1F5F9))),
                             ),
                             padding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 16),
@@ -918,13 +923,9 @@ class _LeadsPageState extends State<LeadPage> {
                         leadProvider.search.isNotEmpty)
                       ElevatedButton(
                         onPressed: () {
-                          leadProvider.selectDateFilterOption(null);
-                          leadProvider.toggleStatus(0); // Reset status to [0]
-                          leadProvider.setEntryType('myown');
+                          leadProvider.clearAllFilters();
                           searchController.clear();
                           leadIdController.clear();
-                          leadProvider.setSearchCriteria('', '', '',
-                              leadId: '0');
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1194,8 +1195,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                       ),
                                                       TableWidget(
                                                         width: 100,
-                                                        alignment:
-                                                            Alignment.centerLeft,
+                                                        alignment: Alignment
+                                                            .centerLeft,
                                                         padding: EdgeInsets
                                                             .symmetric(
                                                                 vertical: 4.0,
@@ -1204,9 +1205,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         data: Text(
                                                           lead.leadCode,
                                                           maxLines: 1,
-                                                          overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 13),
