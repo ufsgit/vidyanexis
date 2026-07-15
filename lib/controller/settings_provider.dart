@@ -1823,6 +1823,8 @@ class SettingsProvider extends ChangeNotifier {
           // Rename or add permission 55 as Print Quotation 2
           bool has55 = false;
           bool has32 = false;
+          bool has163 = false;
+          bool has164 = false;
           for (var i = 0; i < _getMenuPermission.length; i++) {
             if (_getMenuPermission[i].menuId == 55) {
               _getMenuPermission[i].menuName = 'Print Quotation 2';
@@ -1831,6 +1833,14 @@ class SettingsProvider extends ChangeNotifier {
             if (_getMenuPermission[i].menuId == 32) {
               _getMenuPermission[i].menuName = 'Print Quotation 1';
               has32 = true;
+            }
+            if (_getMenuPermission[i].menuId == 163) {
+              _getMenuPermission[i].menuName = 'Work Completion Report';
+              has163 = true;
+            }
+            if (_getMenuPermission[i].menuId == 164) {
+              _getMenuPermission[i].menuName = 'Checklist';
+              has164 = true;
             }
           }
 
@@ -1848,6 +1858,26 @@ class SettingsProvider extends ChangeNotifier {
             _getMenuPermission.add(GetMenuPermissionModel(
                 menuId: 55,
                 menuName: 'Print Quotation 2',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
+          if (!has163) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 163,
+                menuName: 'Work Completion Report',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
+          if (!has164) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 164,
+                menuName: 'Checklist',
                 isView: 0,
                 isSave: 0,
                 isEdit: 0,
@@ -1963,7 +1993,9 @@ class SettingsProvider extends ChangeNotifier {
           // Rename or add permission 55 as Print Quotation 2
           // bool has55 = false;
           // bool has32 = false;
-          // for (var i = 0; i < _getMenuPermission.length; i++) {
+          bool has163 = false;
+          bool has164 = false;
+          for (var i = 0; i < _getMenuPermission.length; i++) {
           //   if (_getMenuPermission[i].menuId == 55) {
           //     _getMenuPermission[i].menuName = 'Print Quotation 2';
           //     has55 = true;
@@ -1972,7 +2004,15 @@ class SettingsProvider extends ChangeNotifier {
           //     _getMenuPermission[i].menuName = 'Print Quotation 1';
           //     has32 = true;
           //   }
-          // }
+            if (_getMenuPermission[i].menuId == 163) {
+              _getMenuPermission[i].menuName = 'Work Completion Report';
+              has163 = true;
+            }
+            if (_getMenuPermission[i].menuId == 164) {
+              _getMenuPermission[i].menuName = 'Checklist';
+              has164 = true;
+            }
+          }
 
           // if (!has32) {
           //   _getMenuPermission.add(GetMenuPermissionModel(
@@ -1993,6 +2033,26 @@ class SettingsProvider extends ChangeNotifier {
           //       isEdit: 0,
           //       isDelete: 0));
           // }
+
+          if (!has163) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 163,
+                menuName: 'Work Completion Report',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
+          if (!has164) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 164,
+                menuName: 'Checklist',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
 
           // if (!_getMenuPermission.any((element) => element.menuId == 67)) {
           //   _getMenuPermission.add(GetMenuPermissionModel(

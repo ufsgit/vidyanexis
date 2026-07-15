@@ -2607,7 +2607,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (sideprovider.name != 'Lead /')
+                                                                    if ((settingsprovider.menuIsViewMap[163] == 1 || settingsprovider.menuIsViewMapPrint[163] == 1) && sideprovider.name != 'Lead /')
                                                                       CustomElevatedButton(
                                                                         radius: 4,
                                                                         backgroundColor: AppColors.whiteColor,
@@ -2628,7 +2628,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           );
                                                                         },
                                                                       ),
-                                                                    if (sideprovider.name != 'Lead /')
+                                                                    if ((settingsprovider.menuIsViewMap[164] == 1 || settingsprovider.menuIsViewMapPrint[164] == 1) && sideprovider.name != 'Lead /')
                                                                       CustomElevatedButton(
                                                                         radius: 4,
                                                                         backgroundColor: AppColors.whiteColor,

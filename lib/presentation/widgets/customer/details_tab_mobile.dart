@@ -396,7 +396,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (sideProvider.name != 'Lead /')
+                                if ((settingsProvider.menuIsViewMap[163] == 1 || settingsProvider.menuIsViewMapPrint[163] == 1) && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Work Completion Report',
@@ -419,7 +419,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                       );
                                     },
                                   ),
-                                if (sideProvider.name != 'Lead /')
+                                if ((settingsProvider.menuIsViewMap[164] == 1 || settingsProvider.menuIsViewMapPrint[164] == 1) && sideProvider.name != 'Lead /')
                                   _buildActionBtn(
                                     context,
                                     text: 'Checklist',
