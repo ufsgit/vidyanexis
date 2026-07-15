@@ -1278,6 +1278,18 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  void clearAllPermissions() {
+    for (int i = 0; i < _getMenuPermission.length; i++) {
+      _getMenuPermission[i] = _getMenuPermission[i].copyWith(
+        isView: 0,
+        isSave: 0,
+        isEdit: 0,
+        isDelete: 0,
+      );
+    }
+    notifyListeners();
+  }
+
   Future<void> getSubUsers(String userdetailsId, BuildContext context,
       {Function(List<SubUsersDatum>)? onSubUsersLoaded}) async {
     try {
@@ -1996,14 +2008,14 @@ class SettingsProvider extends ChangeNotifier {
           bool has163 = false;
           bool has164 = false;
           for (var i = 0; i < _getMenuPermission.length; i++) {
-          //   if (_getMenuPermission[i].menuId == 55) {
-          //     _getMenuPermission[i].menuName = 'Print Quotation 2';
-          //     has55 = true;
-          //   }
-          //   if (_getMenuPermission[i].menuId == 32) {
-          //     _getMenuPermission[i].menuName = 'Print Quotation 1';
-          //     has32 = true;
-          //   }
+            //   if (_getMenuPermission[i].menuId == 55) {
+            //     _getMenuPermission[i].menuName = 'Print Quotation 2';
+            //     has55 = true;
+            //   }
+            //   if (_getMenuPermission[i].menuId == 32) {
+            //     _getMenuPermission[i].menuName = 'Print Quotation 1';
+            //     has32 = true;
+            //   }
             if (_getMenuPermission[i].menuId == 163) {
               _getMenuPermission[i].menuName = 'Work Completion Report';
               has163 = true;
