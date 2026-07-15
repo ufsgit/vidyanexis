@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -191,6 +193,57 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
+  Future<String> _getOnlineAddress(double latitude, double longitude) async {
+    try {
+      final dioInstance = dio.Dio(dio.BaseOptions(
+        connectTimeout: const Duration(seconds: 4),
+        receiveTimeout: const Duration(seconds: 4),
+        headers: {
+          "User-Agent": "SuryaprabhaApp/1.0",
+        },
+      ));
+      final response = await dioInstance.get(
+        "https://nominatim.openstreetmap.org/reverse",
+        queryParameters: {
+          "format": "json",
+          "lat": latitude,
+          "lon": longitude,
+          "zoom": 18,
+          "addressdetails": 1,
+        },
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        if (data is Map) {
+          final displayName = data["display_name"];
+          if (displayName != null && displayName.toString().isNotEmpty) {
+            return displayName.toString();
+          }
+
+          final addressMap = data["address"];
+          if (addressMap is Map) {
+            List<String> parts = [];
+            final road = addressMap["road"] ?? addressMap["suburb"];
+            final city = addressMap["city"] ??
+                addressMap["town"] ??
+                addressMap["village"] ??
+                addressMap["county"];
+            final state = addressMap["state"];
+            if (road != null) parts.add(road.toString());
+            if (city != null) parts.add(city.toString());
+            if (state != null) parts.add(state.toString());
+            if (parts.isNotEmpty) {
+              return parts.join(", ");
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print("Error fetching online address from Nominatim: $e");
+    }
+    return "";
+  }
+
   Future<Map<String, dynamic>> getCurrentLocation() async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -199,9 +252,11 @@ class TaskPageProvider extends ChangeNotifier {
         return {};
       }
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
+      if (!kIsWeb) {
+        LocationPermission permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+        }
         if (permission == LocationPermission.denied ||
             permission == LocationPermission.deniedForever) {
           print("Location permissions are denied");
@@ -210,45 +265,91 @@ class TaskPageProvider extends ChangeNotifier {
       }
 
       print("Getting current position...");
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+      LocationSettings locationSettings;
+      if (kIsWeb) {
+        locationSettings = WebSettings(
+          accuracy: LocationAccuracy.best,
+          maximumAge: Duration.zero,
+          timeLimit: const Duration(seconds: 15),
+        );
+      } else if (defaultTargetPlatform == TargetPlatform.android) {
+        locationSettings = AndroidSettings(
+          accuracy: LocationAccuracy.best,
+          forceLocationManager: true,
+          timeLimit: const Duration(seconds: 15),
+        );
+      } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+        locationSettings = AppleSettings(
+          accuracy: LocationAccuracy.best,
+          timeLimit: const Duration(seconds: 15),
+        );
+      } else {
+        locationSettings = const LocationSettings(
+          accuracy: LocationAccuracy.best,
+          timeLimit: Duration(seconds: 15),
+        );
+      }
+
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: locationSettings,
+        ).timeout(const Duration(seconds: 15));
+      } catch (e) {
+        print("Error/Timeout getting current position, trying last known: $e");
+        position = await Geolocator.getLastKnownPosition();
+      }
+
+      if (position == null) {
+        print("Could not obtain any position.");
+        return {};
+      }
 
       print("Position obtained: ${position.latitude}, ${position.longitude}");
       String address = "";
 
-      try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-            position.latitude, position.longitude);
+      // Try native geocoding first (only on Mobile)
+      if (!kIsWeb) {
+        try {
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude,
+            position.longitude,
+          ).timeout(const Duration(seconds: 3));
 
-        if (placemarks.isNotEmpty) {
-          Placemark place = placemarks.first;
+          if (placemarks.isNotEmpty) {
+            Placemark place = placemarks.first;
 
-          String? locality = place.locality;
-          String? subLocality = place.subLocality;
-          String? subAdminArea = place.subAdministrativeArea;
-          String? adminArea = place.administrativeArea;
+            String? locality = place.locality;
+            String? subLocality = place.subLocality;
+            String? subAdminArea = place.subAdministrativeArea;
+            String? adminArea = place.administrativeArea;
 
-          List<String> addressParts = [];
-          if (subLocality != null && subLocality.isNotEmpty) {
-            addressParts.add(subLocality);
+            List<String> addressParts = [];
+            if (subLocality != null && subLocality.isNotEmpty) {
+              addressParts.add(subLocality);
+            }
+            if (locality != null && locality.isNotEmpty) {
+              addressParts.add(locality);
+            } else if (subAdminArea != null && subAdminArea.isNotEmpty) {
+              addressParts.add(subAdminArea);
+            }
+            if (adminArea != null && adminArea.isNotEmpty) {
+              addressParts.add(adminArea);
+            }
+
+            address = addressParts.join(', ');
+            print("Resolved Native Address: $address");
           }
-          if (locality != null && locality.isNotEmpty) {
-            addressParts.add(locality);
-          } else if (subAdminArea != null && subAdminArea.isNotEmpty) {
-            addressParts.add(subAdminArea);
-          }
-          if (adminArea != null && adminArea.isNotEmpty) {
-            addressParts.add(adminArea);
-          }
-
-          address = addressParts.join(', ');
-
-          print("Resolved Address: $address");
-        } else {
-          print("No placemarks found.");
+        } catch (geoError) {
+          print("Error in native geocoding: $geoError");
         }
-      } catch (geoError) {
-        print("Error in geocoding: $geoError");
+      }
+
+      // If native geocoding fails or is empty, or if we are on Web, fallback to online OSM reverse geocoding API
+      if (address.isEmpty) {
+        print("Fetching address using online Nominatim geocoder...");
+        address =
+            await _getOnlineAddress(position.latitude, position.longitude);
       }
 
       return {
@@ -569,7 +670,8 @@ class TaskPageProvider extends ChangeNotifier {
   }
 
   void setTaskSearchCriteria(String search, String fromDate, String toDate,
-      String status, String assignedTo, String taskType, String enquiryFor, [String branchId = '']) {
+      String status, String assignedTo, String taskType, String enquiryFor,
+      [String branchId = '']) {
     _Search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
