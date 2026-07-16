@@ -1278,6 +1278,18 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  void clearAllPermissions() {
+    for (int i = 0; i < _getMenuPermission.length; i++) {
+      _getMenuPermission[i] = _getMenuPermission[i].copyWith(
+        isView: 0,
+        isSave: 0,
+        isEdit: 0,
+        isDelete: 0,
+      );
+    }
+    notifyListeners();
+  }
+
   Future<void> getSubUsers(String userdetailsId, BuildContext context,
       {Function(List<SubUsersDatum>)? onSubUsersLoaded}) async {
     try {
@@ -1996,14 +2008,14 @@ class SettingsProvider extends ChangeNotifier {
           bool has163 = false;
           bool has164 = false;
           for (var i = 0; i < _getMenuPermission.length; i++) {
-          //   if (_getMenuPermission[i].menuId == 55) {
-          //     _getMenuPermission[i].menuName = 'Print Quotation 2';
-          //     has55 = true;
-          //   }
-          //   if (_getMenuPermission[i].menuId == 32) {
-          //     _getMenuPermission[i].menuName = 'Print Quotation 1';
-          //     has32 = true;
-          //   }
+            //   if (_getMenuPermission[i].menuId == 55) {
+            //     _getMenuPermission[i].menuName = 'Print Quotation 2';
+            //     has55 = true;
+            //   }
+            //   if (_getMenuPermission[i].menuId == 32) {
+            //     _getMenuPermission[i].menuName = 'Print Quotation 1';
+            //     has32 = true;
+            //   }
             if (_getMenuPermission[i].menuId == 163) {
               _getMenuPermission[i].menuName = 'Work Completion Report';
               has163 = true;
@@ -6160,13 +6172,22 @@ class SettingsProvider extends ChangeNotifier {
   // Terms & Warranty
   final TextEditingController warrantyController = TextEditingController();
   final TextEditingController termsController = TextEditingController();
+  final TextEditingController description1Controller = TextEditingController();
+  final TextEditingController description2Controller = TextEditingController();
+  final TextEditingController description3Controller = TextEditingController();
 
   String _warrantyText = '';
   String _termsText = '';
+  String _description1Text = '';
+  String _description2Text = '';
+  String _description3Text = '';
   int _termsWarrantyId = 0;
 
   String get warrantyText => _warrantyText;
   String get termsText => _termsText;
+  String get description1Text => _description1Text;
+  String get description2Text => _description2Text;
+  String get description3Text => _description3Text;
   int get termsWarrantyId => _termsWarrantyId;
 
   Future<void> getTermsAndWarranty(BuildContext context) async {
@@ -6181,10 +6202,16 @@ class SettingsProvider extends ChangeNotifier {
           _termsWarrantyId = data['Id'] ?? 0;
           _warrantyText = data['Warranty']?.toString() ?? '';
           _termsText = data['Terms_And_Conditions']?.toString() ?? '';
+          _description1Text = data['Description_1']?.toString() ?? '';
+          _description2Text = data['Description_2']?.toString() ?? '';
+          _description3Text = data['Description_3']?.toString() ?? '';
         }
 
         warrantyController.text = _warrantyText;
         termsController.text = _termsText;
+        description1Controller.text = _description1Text;
+        description2Controller.text = _description2Text;
+        description3Controller.text = _description3Text;
         notifyListeners();
       }
     } catch (e) {
@@ -6202,6 +6229,9 @@ class SettingsProvider extends ChangeNotifier {
           "Id": _termsWarrantyId,
           "Terms_And_Conditions": termsController.text.trim(),
           "Warranty": warrantyController.text.trim(),
+          "Description_1": description1Controller.text.trim(),
+          "Description_2": description2Controller.text.trim(),
+          "Description_3": description3Controller.text.trim(),
         },
       );
 
@@ -6230,8 +6260,14 @@ class SettingsProvider extends ChangeNotifier {
   void clearTermsFields() {
     warrantyController.clear();
     termsController.clear();
+    description1Controller.clear();
+    description2Controller.clear();
+    description3Controller.clear();
     _warrantyText = '';
     _termsText = '';
+    _description1Text = '';
+    _description2Text = '';
+    _description3Text = '';
     _termsWarrantyId = 0;
     notifyListeners();
   }

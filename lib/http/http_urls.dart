@@ -442,4 +442,5 @@ class HttpUrls {
       "user_details/Save_Print_Menu_Selection";
   static String getTermsAndWarranty = "settings/Get_Terms_And_Warranty";
   static String saveTermsAndWarranty = "settings/Save_Terms_And_Warranty";
+  static String verifyDocument = "category/Update_Document_Verification_Status";
 }

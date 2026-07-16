@@ -2,7 +2,7 @@ import 'package:vidyanexis/controller/models/item_settings_model.dart';
 
 class AddedMultiItem {
   final int itemId;
-  final String itemName;
+  String itemName;
   double quantity;
   String make;
   final String unitName;

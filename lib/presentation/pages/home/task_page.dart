@@ -1840,7 +1840,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             },
                                                                             child:
                                                                                 Text(
-                                                                              task.customerName ?? 'Unknown',
+                                                                              task.customerName.isNotEmpty ? task.customerName : 'Unknown',
                                                                               overflow: TextOverflow.ellipsis,
                                                                               maxLines: 1,
                                                                               style: const TextStyle(

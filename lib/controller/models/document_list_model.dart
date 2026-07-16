@@ -24,6 +24,9 @@ class ImageDetail {
   final String entryDate;
   final String documentTypeId;
   final String documentTypeName;
+  final String isVerified;
+  final String verifiedName;
+  final String verifiedDate;
 
   ImageDetail({
     required this.filePath,
@@ -31,6 +34,9 @@ class ImageDetail {
     required this.entryDate,
     required this.documentTypeId,
     required this.documentTypeName,
+    required this.isVerified,
+    required this.verifiedName,
+    required this.verifiedDate,
   });
 
   factory ImageDetail.fromJson(Map<String, dynamic> json) {
@@ -40,6 +46,9 @@ class ImageDetail {
       entryDate: json['Entry_Date'] ?? '',
       documentTypeId: json['Document_Type_Id'] ?? '',
       documentTypeName: json['Document_Type_Name'] ?? '',
+      isVerified: json['Is_Verified']?.toString() ?? '0',
+      verifiedName: json['Verified_By_Name']?.toString() ?? '',
+      verifiedDate: json['Verified_Date']?.toString() ?? '',
     );
   }
 }

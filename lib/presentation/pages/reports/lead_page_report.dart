@@ -153,7 +153,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     context.visitAncestorElements((element) {
                                       if (element is StatefulElement &&
                                           element.state is ScaffoldState) {
-                                        ScaffoldState scaffold = element.state as ScaffoldState;
+                                        ScaffoldState scaffold =
+                                            element.state as ScaffoldState;
                                         if (scaffold.hasDrawer) {
                                           parent = scaffold;
                                           return false;
@@ -166,7 +167,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   icon: Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: AppColors.secondaryBlue.withOpacity(0.1),
+                                      color: AppColors.secondaryBlue
+                                          .withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const Icon(
@@ -290,7 +292,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const SizedBox(width: 8),
                             CommonReportExportButton(
-                      onPressed: () async {
+                              onPressed: () async {
                                 final allLeads = await leadReportProvider
                                     .fetchAllLeadsForExport(context);
                                 if (allLeads.isNotEmpty) {
@@ -316,9 +318,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                 leadReportProvider
                                                     .selectedLeadIds
                                                     .contains(lead.customerId)))
+                                        .toList()
+                                        .reversed
                                         .map((task) {
                                       return {
-                                        'Cus. ID': task.customerId,
+                                        'Cus. ID': task.customerId.toString(),
                                         'Customer Name': task.customerName,
                                         'Mobile no': task.contactNumber,
                                         'Address': [
@@ -350,11 +354,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   );
                                 }
                               },
-                      label: 'Export to Excel',
-                    ),
+                              label: 'Export to Excel',
+                            ),
                             const SizedBox(width: 8),
                             CommonReportExportButton(
-                      onPressed: () async {
+                              onPressed: () async {
                                 final allLeads = await leadReportProvider
                                     .fetchAllLeadsForExport(context);
                                 if (allLeads.isNotEmpty) {
@@ -380,9 +384,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                 leadReportProvider
                                                     .selectedLeadIds
                                                     .contains(lead.customerId)))
+                                        .toList()
+                                        .reversed
                                         .map((task) {
                                       return {
-                                        'Cus. ID': task.customerId,
+                                        'Cus. ID': task.customerId.toString(),
                                         'Customer Name': task.customerName,
                                         'Mobile no': task.contactNumber,
                                         'Address': [
@@ -414,8 +420,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   );
                                 }
                               },
-                      label: 'Export to PDF',
-                    ),
+                              label: 'Export to PDF',
+                            ),
                           ],
                         ),
                       ],
@@ -425,8 +431,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                 if (leadReportProvider.isFilter)
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-                              decoration: BoxDecoration(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 12),
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
@@ -451,7 +458,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             Container(
                               width: 250,
                               height: 40,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -465,64 +473,70 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Status: ',
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 13)),
-                                  Expanded(child: DropdownButton<int>(
-                                    value:
-                                        leadReportProvider.selectedStatus ?? 0,
-                                    hint: const Text('All',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13)),
-                                    items: [
-                                          const DropdownMenuItem<int>(
-                                            value: 0,
-                                            child: Text('All',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13)),
-                                          ),
-                                        ] +
-                                        provider.followUpData
-                                            .map((status) =>
-                                                DropdownMenuItem<int>(
-                                                  value: status.statusId ?? 0,
-                                                  child: ConstrainedBox(
-                                                    constraints:
-                                                        const BoxConstraints(
-                                                            maxWidth: 150),
-                                                    child: Text(
-                                                      status.statusName ?? '',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 13),
+                                  Expanded(
+                                    child: DropdownButton<int>(
+                                      value:
+                                          leadReportProvider.selectedStatus ??
+                                              0,
+                                      hint: const Text('All',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13)),
+                                      items: [
+                                            const DropdownMenuItem<int>(
+                                              value: 0,
+                                              child: Text('All',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 13)),
+                                            ),
+                                          ] +
+                                          provider.followUpData
+                                              .map((status) =>
+                                                  DropdownMenuItem<int>(
+                                                    value: status.statusId ?? 0,
+                                                    child: ConstrainedBox(
+                                                      constraints:
+                                                          const BoxConstraints(
+                                                              maxWidth: 150),
+                                                      child: Text(
+                                                        status.statusName ?? '',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 13),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                    onChanged: (int? newValue) {
-                                      if (newValue != null) {
-                                        leadReportProvider.setStatus(newValue);
-                                      }
-                                      leadReportProvider.getSearchLeadReports(
-                                          leadReportProvider.search,
-                                          leadReportProvider.fromDateS,
-                                          leadReportProvider.toDateS,
-                                          (newValue ?? 0).toString(),
-                                          context);
-                                    },
-                                    underline: Container(),
-                                    isDense: true,
-                                    isExpanded: true,
-                                    iconSize: 18,
-                                  ),)
+                                                  ))
+                                              .toList(),
+                                      onChanged: (int? newValue) {
+                                        if (newValue != null) {
+                                          leadReportProvider
+                                              .setStatus(newValue);
+                                        }
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            (newValue ?? 0).toString(),
+                                            context);
+                                      },
+                                      underline: Container(),
+                                      isDense: true,
+                                      isExpanded: true,
+                                      iconSize: 18,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -533,8 +547,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               child: Container(
                                 width: 250,
                                 height: 40,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
@@ -546,7 +561,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     if (leadReportProvider.fromDate == null &&
                                         leadReportProvider.toDate == null)
@@ -569,11 +585,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                           style: TextStyle(
                                               color: Colors.grey[600],
                                               fontSize: 13)),
-                                                                        if (leadReportProvider.fromDate != null &&
+                                    if (leadReportProvider.fromDate != null &&
                                         leadReportProvider.toDate != null)
                                       Expanded(
-                                        child: Text(
-                                            '\ - ',
+                                        child: Text('\ - ',
                                             overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.w600,
@@ -593,7 +608,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             Container(
                               width: 250,
                               height: 40,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -606,68 +622,74 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Assigned Staff: ',
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 13)),
-                                  Expanded(child: DropdownButton<int>(
-                                    value: leadReportProvider.selectedUser ?? 0,
-                                    hint: const Text('All',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13)),
-                                    items: [
-                                          const DropdownMenuItem<int>(
-                                            value: 0,
-                                            child: Text('All',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13)),
-                                          ),
-                                        ] +
-                                        provider.searchUserDetails
-                                            .map((user) =>
-                                                DropdownMenuItem<int>(
-                                                  value:
-                                                      user.userDetailsId ?? 0,
-                                                  child: ConstrainedBox(
-                                                    constraints:
-                                                        const BoxConstraints(
-                                                            maxWidth: 150),
-                                                    child: Text(
-                                                      user.userDetailsName ??
-                                                          '',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 13),
+                                  Expanded(
+                                    child: DropdownButton<int>(
+                                      value:
+                                          leadReportProvider.selectedUser ?? 0,
+                                      hint: const Text('All',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13)),
+                                      items: [
+                                            const DropdownMenuItem<int>(
+                                              value: 0,
+                                              child: Text('All',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 13)),
+                                            ),
+                                          ] +
+                                          provider.searchUserDetails
+                                              .map((user) =>
+                                                  DropdownMenuItem<int>(
+                                                    value:
+                                                        user.userDetailsId ?? 0,
+                                                    child: ConstrainedBox(
+                                                      constraints:
+                                                          const BoxConstraints(
+                                                              maxWidth: 150),
+                                                      child: Text(
+                                                        user.userDetailsName ??
+                                                            '',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 13),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                    onChanged: (int? newValue) {
-                                      if (newValue != null) {
-                                        leadReportProvider
-                                            .setUserFilterStatus(newValue);
-                                      }
-                                      leadReportProvider.getSearchLeadReports(
-                                          leadReportProvider.search,
-                                          leadReportProvider.fromDateS,
-                                          leadReportProvider.toDateS,
-                                          (leadReportProvider.selectedStatus ??
-                                                  0)
-                                              .toString(),
-                                          context);
-                                    },
-                                    underline: Container(),
-                                    isDense: true,
-                                    isExpanded: true,
-                                    iconSize: 18,
-                                  ),)
+                                                  ))
+                                              .toList(),
+                                      onChanged: (int? newValue) {
+                                        if (newValue != null) {
+                                          leadReportProvider
+                                              .setUserFilterStatus(newValue);
+                                        }
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            (leadReportProvider
+                                                        .selectedStatus ??
+                                                    0)
+                                                .toString(),
+                                            context);
+                                      },
+                                      underline: Container(),
+                                      isDense: true,
+                                      isExpanded: true,
+                                      iconSize: 18,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -676,7 +698,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             Container(
                               width: 250,
                               height: 40,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -692,70 +715,76 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Enquiry For: ',
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 13)),
-                                  Expanded(child: DropdownButton<int>(
-                                    value:
-                                        leadReportProvider.selectedEnquiryFor ??
-                                            0,
-                                    hint: const Text('All',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13)),
-                                    items: [
-                                          const DropdownMenuItem<int>(
-                                            value: 0,
-                                            child: Text('All',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13)),
-                                          ),
-                                        ] +
-                                        provider.enquiryForList
-                                            .map((enquiry) =>
-                                                DropdownMenuItem<int>(
-                                                  value:
-                                                      enquiry.enquiryForId ?? 0,
-                                                  child: ConstrainedBox(
-                                                    constraints:
-                                                        const BoxConstraints(
-                                                            maxWidth: 150),
-                                                    child: Text(
-                                                      enquiry.enquiryForName ??
-                                                          '',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 13),
+                                  Expanded(
+                                    child: DropdownButton<int>(
+                                      value: leadReportProvider
+                                              .selectedEnquiryFor ??
+                                          0,
+                                      hint: const Text('All',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13)),
+                                      items: [
+                                            const DropdownMenuItem<int>(
+                                              value: 0,
+                                              child: Text('All',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 13)),
+                                            ),
+                                          ] +
+                                          provider.enquiryForList
+                                              .map((enquiry) =>
+                                                  DropdownMenuItem<int>(
+                                                    value:
+                                                        enquiry.enquiryForId ??
+                                                            0,
+                                                    child: ConstrainedBox(
+                                                      constraints:
+                                                          const BoxConstraints(
+                                                              maxWidth: 150),
+                                                      child: Text(
+                                                        enquiry.enquiryForName ??
+                                                            '',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 13),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                    onChanged: (int? newValue) {
-                                      if (newValue != null) {
-                                        leadReportProvider
-                                            .setEnquiryForFilter(newValue);
-                                      }
-                                      leadReportProvider.getSearchLeadReports(
-                                          leadReportProvider.search,
-                                          leadReportProvider.fromDateS,
-                                          leadReportProvider.toDateS,
-                                          (leadReportProvider.selectedStatus ??
-                                                  0)
-                                              .toString(),
-                                          context);
-                                    },
-                                    underline: Container(),
-                                    isDense: true,
-                                    isExpanded: true,
-                                    iconSize: 18,
-                                  ),)
+                                                  ))
+                                              .toList(),
+                                      onChanged: (int? newValue) {
+                                        if (newValue != null) {
+                                          leadReportProvider
+                                              .setEnquiryForFilter(newValue);
+                                        }
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            (leadReportProvider
+                                                        .selectedStatus ??
+                                                    0)
+                                                .toString(),
+                                            context);
+                                      },
+                                      underline: Container(),
+                                      isDense: true,
+                                      isExpanded: true,
+                                      iconSize: 18,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -764,7 +793,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             Container(
                               width: 250,
                               height: 40,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(4),
@@ -780,71 +810,76 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 ),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Enquiry Source: ',
                                       style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 13)),
-                                  Expanded(child: DropdownButton<int>(
-                                    value: leadReportProvider
-                                            .selectedEnquirySource ??
-                                        0,
-                                    hint: const Text('All',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13)),
-                                    items: [
-                                          const DropdownMenuItem<int>(
-                                            value: 0,
-                                            child: Text('All',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13)),
-                                          ),
-                                        ] +
-                                        provider.enquiryData
-                                            .map((source) =>
-                                                DropdownMenuItem<int>(
-                                                  value:
-                                                      source.enquirySourceId ??
-                                                          0,
-                                                  child: ConstrainedBox(
-                                                    constraints:
-                                                        const BoxConstraints(
-                                                            maxWidth: 150),
-                                                    child: Text(
-                                                      source.enquirySourceName ??
-                                                          '',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 13),
+                                  Expanded(
+                                    child: DropdownButton<int>(
+                                      value: leadReportProvider
+                                              .selectedEnquirySource ??
+                                          0,
+                                      hint: const Text('All',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13)),
+                                      items: [
+                                            const DropdownMenuItem<int>(
+                                              value: 0,
+                                              child: Text('All',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 13)),
+                                            ),
+                                          ] +
+                                          provider.enquiryData
+                                              .map((source) =>
+                                                  DropdownMenuItem<int>(
+                                                    value: source
+                                                            .enquirySourceId ??
+                                                        0,
+                                                    child: ConstrainedBox(
+                                                      constraints:
+                                                          const BoxConstraints(
+                                                              maxWidth: 150),
+                                                      child: Text(
+                                                        source.enquirySourceName ??
+                                                            '',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 13),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                    onChanged: (int? newValue) {
-                                      if (newValue != null) {
-                                        leadReportProvider
-                                            .setEnquirySourceFilter(newValue);
-                                      }
-                                      leadReportProvider.getSearchLeadReports(
-                                          leadReportProvider.search,
-                                          leadReportProvider.fromDateS,
-                                          leadReportProvider.toDateS,
-                                          (leadReportProvider.selectedStatus ??
-                                                  0)
-                                              .toString(),
-                                          context);
-                                    },
-                                    underline: Container(),
-                                    isDense: true,
-                                    isExpanded: true,
-                                    iconSize: 18,
-                                  ),)
+                                                  ))
+                                              .toList(),
+                                      onChanged: (int? newValue) {
+                                        if (newValue != null) {
+                                          leadReportProvider
+                                              .setEnquirySourceFilter(newValue);
+                                        }
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            (leadReportProvider
+                                                        .selectedStatus ??
+                                                    0)
+                                                .toString(),
+                                            context);
+                                      },
+                                      underline: Container(),
+                                      isDense: true,
+                                      isExpanded: true,
+                                      iconSize: 18,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),

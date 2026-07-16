@@ -78,6 +78,12 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           settingsProvider.termsText;
       customerDetailsProvider.qwarrentyController.text =
           settingsProvider.warrantyText;
+      customerDetailsProvider.quotationDescriptionController.text =
+          settingsProvider.description1Text;
+      customerDetailsProvider.quotationDescription2Controller.text =
+          settingsProvider.description2Text;
+      customerDetailsProvider.quotationDescription3Controller.text =
+          settingsProvider.description3Text;
 
       if (widget.isEdit) {
         // Fetch existing quotation details if editing

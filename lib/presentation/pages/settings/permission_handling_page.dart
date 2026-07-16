@@ -125,6 +125,31 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                     height: 32,
                     child: CustomOutlinedSvgButton(
                       showIcon: false,
+                      onPressed: () {
+                        settingsProvider.clearAllPermissions();
+                      },
+                      svgPath: 'assets/images/Print.svg',
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      textStyle: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.red,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      label: 'Clear',
+                      breakpoint: 860,
+                      foregroundColor: Colors.red,
+                      backgroundColor: Colors.white,
+                      borderSide: const BorderSide(color: Colors.red),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    height: 32,
+                    child: CustomOutlinedSvgButton(
+                      showIcon: false,
                       onPressed: () => Navigator.pop(context),
                       svgPath: 'assets/images/Print.svg',
                       padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -271,51 +296,81 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                 ),
               ),
               child: SafeArea(
-                child: SizedBox(
-                  height: 48,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final List<UserMenuSelection> permissions =
-                          settingsProvider.getMenu
-                              .map((item) => UserMenuSelection(
-                                    menuId: item.menuId,
-                                    isView: item.isView,
-                                    isSave: item.isSave,
-                                    isEdit: item.isEdit,
-                                    isDelete: item.isDelete,
-                                  ))
-                              .toList();
-                      if (widget.isPrintPermission) {
-                        settingsProvider.saveMenuPermissionPrint(
-                          context: context,
-                          userId: int.parse(widget.userId),
-                          menuPermissions: permissions,
-                        );
-                      } else {
-                        settingsProvider.saveMenuPermission(
-                          context: context,
-                          userId: int.parse(widget.userId),
-                          menuPermissions: permissions,
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            settingsProvider.clearAllPermissions();
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.red),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          child: Text(
+                            'Clear',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    child: Text(
-                      'Save Changes',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final List<UserMenuSelection> permissions =
+                                settingsProvider.getMenu
+                                    .map((item) => UserMenuSelection(
+                                          menuId: item.menuId,
+                                          isView: item.isView,
+                                          isSave: item.isSave,
+                                          isEdit: item.isEdit,
+                                          isDelete: item.isDelete,
+                                        ))
+                                    .toList();
+                            if (widget.isPrintPermission) {
+                              settingsProvider.saveMenuPermissionPrint(
+                                context: context,
+                                userId: int.parse(widget.userId),
+                                menuPermissions: permissions,
+                              );
+                            } else {
+                              settingsProvider.saveMenuPermission(
+                                context: context,
+                                userId: int.parse(widget.userId),
+                                menuPermissions: permissions,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBlue,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          child: Text(
+                            'Save Changes',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),

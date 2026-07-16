@@ -823,7 +823,6 @@ class LeadsProvider extends ChangeNotifier {
     _leadId = '0';
     _status = '';
     _enquiryForS = '';
-    _entryType = 'myown';
     _isFilter = false;
     _selectedDateFilterIndex = null;
     notifyListeners();
@@ -1580,6 +1579,9 @@ class LeadsProvider extends ChangeNotifier {
         } else if (data['Customer_Id_'] == -1) {
           Loader.stopLoader(context);
           alert(context, "Mobile No. Already Exists");
+        } else if (data['Customer_Id_'] == -3) {
+          Loader.stopLoader(context);
+          alert(context, "Consumer No. Already Exists");
         } else {
           log('Success');
           leadData.clear();
