@@ -36,6 +36,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
   // Controllers
   final Map<int, TextEditingController> _mainQtyControllers = {};
   final Map<int, TextEditingController> _mainMakeControllers = {};
+  final Map<int, TextEditingController> _mainNameControllers = {};
   final Map<String, TextEditingController> _materialPriceControllers = {};
   final Map<String, TextEditingController> _materialQtyControllers = {};
   final Map<String, TextEditingController> _materialNameControllers = {};
@@ -59,6 +60,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
       _mainQtyControllers[i] =
           TextEditingController(text: item.quantity.toStringAsFixed(0));
       _mainMakeControllers[i] = TextEditingController(text: item.make);
+      _mainNameControllers[i] = TextEditingController(text: item.itemName);
 
       for (int j = 0; j < item.materials.length; j++) {
         final mat = item.materials[j];
@@ -83,6 +85,9 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     for (var c in _mainMakeControllers.values) {
       c.dispose();
     }
+    for (var c in _mainNameControllers.values) {
+      c.dispose();
+    }
     for (var c in _materialPriceControllers.values) {
       c.dispose();
     }
@@ -104,6 +109,11 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
 
   TextEditingController _getMainMakeController(int index, String value) {
     return _mainMakeControllers.putIfAbsent(
+        index, () => TextEditingController(text: value));
+  }
+
+  TextEditingController _getMainNameController(int index, String value) {
+    return _mainNameControllers.putIfAbsent(
         index, () => TextEditingController(text: value));
   }
 
@@ -190,6 +200,13 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     });
   }
 
+  void _updateMainItemName(int index, String val) {
+    setState(() {
+      final item = _addedItems[index];
+      item.itemName = val;
+    });
+  }
+
   void _updateMaterialPrice(int itemIndex, int matIndex, String val) {
     final price = double.tryParse(val) ?? 0.0;
     if (price < 0) return;
@@ -245,6 +262,7 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
     setState(() {
       _mainQtyControllers.remove(index);
       _mainMakeControllers.remove(index);
+      _mainNameControllers.remove(index);
       final item = _addedItems[index];
       for (int matIndex = 0; matIndex < item.materials.length; matIndex++) {
         final key = '${index}_$matIndex';
@@ -516,12 +534,26 @@ class _AddMultipleItemsDialogState extends State<AddMultipleItemsDialog> {
                                 child: Row(
                                   children: [
                                     Expanded(
-                                      child: Text(
-                                        item.itemName,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                                      child: TextField(
+                                        controller: _getMainNameController(
+                                            itemIndex, item.itemName),
+                                        textAlign: TextAlign.left,
+                                        decoration: InputDecoration(
+                                          labelText: 'Name',
+                                          isDense: true,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 8),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                        ),
+                                        onChanged: (val) =>
+                                            _updateMainItemName(itemIndex, val),
                                       ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
                                     ),
                                     SizedBox(
                                       width: 300,
