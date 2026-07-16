@@ -116,7 +116,44 @@ class LeadsProvider extends ChangeNotifier {
   String get sortOrder => _sortOrder;
 
   void setSortOption(int option, BuildContext context) {
-    _selectedSortOption = option;
+    switch (option) {
+      case 0:
+        _selectedSortOption = 0;
+        _sortOrder = 'DESC';
+        break;
+      case 1:
+        _selectedSortOption = 1;
+        _sortOrder = 'DESC';
+        break;
+      case 2:
+        _selectedSortOption = 1;
+        _sortOrder = 'ASC';
+        break;
+      case 3:
+        _selectedSortOption = 2;
+        _sortOrder = 'DESC';
+        break;
+      case 4:
+        _selectedSortOption = 2;
+        _sortOrder = 'ASC';
+        break;
+      case 5:
+        _selectedSortOption = 3;
+        _sortOrder = 'DESC';
+        break;
+      case 6:
+        _selectedSortOption = 3;
+        _sortOrder = 'ASC';
+        break;
+      case 7:
+        _selectedSortOption = 4;
+        _sortOrder = 'ASC';
+        break;
+      case 8:
+        _selectedSortOption = 4;
+        _sortOrder = 'DESC';
+        break;
+    }
     notifyListeners();
     getSearchLeads(context);
   }
@@ -1015,9 +1052,11 @@ class LeadsProvider extends ChangeNotifier {
         Loader.showLoader(context);
       }
 
+      int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&Branch_Id_=$branchIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1032,6 +1071,14 @@ class LeadsProvider extends ChangeNotifier {
 
           if (newItems.isNotEmpty) {
             _leadData.addAll(newItems);
+
+            if (_selectedSortOption == 4) {
+              if (_sortOrder == 'ASC') {
+                _leadData.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+              } else {
+                _leadData.sort((a, b) => b.customerName.toLowerCase().compareTo(a.customerName.toLowerCase()));
+              }
+            }
 
             // Find metadata (tp == 2) safely
             int metadataIndex = allItems.indexWhere((item) => item.tp == 2);

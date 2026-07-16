@@ -376,37 +376,16 @@ class _CustomerPageState extends State<CustomerPage> {
                                       value, context);
                                 },
                                 itemBuilder: (BuildContext context) => [
-                                  const PopupMenuItem(
-                                    value: 0,
-                                    child: Text('Default'),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 1,
-                                    child: Text('ID No'),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 2,
-                                    child: Text('Creation Date'),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 3,
-                                    child: Text('Followup Date'),
-                                  ),
+                                  const PopupMenuItem(value: 0, child: Text('Default')),
+                                  const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
+                                  const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
+                                  const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
+                                  const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
+                                  const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
+                                  const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
+                                  const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
+                                  const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
                                 ],
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  customerProvider.sortOrder == 'ASC'
-                                      ? Icons.arrow_upward
-                                      : Icons.arrow_downward,
-                                  color: const Color(0xFF64748B),
-                                  size: 20,
-                                ),
-                                onPressed: () =>
-                                    customerProvider.toggleSortOrder(context),
-                                tooltip: customerProvider.sortOrder == 'ASC'
-                                    ? 'Ascending'
-                                    : 'Descending',
                               ),
                               CustomFilterButton(
                                 onPressed: () {
@@ -499,38 +478,16 @@ class _CustomerPageState extends State<CustomerPage> {
                               customerProvider.setSortOption(value, context);
                             },
                             itemBuilder: (BuildContext context) => [
-                              const PopupMenuItem(
-                                value: 0,
-                                child: Text('Default'),
-                              ),
-                              const PopupMenuItem(
-                                value: 1,
-                                child: Text('ID No'),
-                              ),
-                              const PopupMenuItem(
-                                value: 2,
-                                child: Text('Creation Date'),
-                              ),
-                              const PopupMenuItem(
-                                value: 3,
-                                child: Text('Followup Date'),
-                              ),
+                              const PopupMenuItem(value: 0, child: Text('Default')),
+                              const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
+                              const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
+                              const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
+                              const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
+                              const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
+                              const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
+                              const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
+                              const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
                             ],
-                          ),
-                          const SizedBox(width: 4),
-                          IconButton(
-                            icon: Icon(
-                              customerProvider.sortOrder == 'ASC'
-                                  ? Icons.arrow_upward
-                                  : Icons.arrow_downward,
-                              color: const Color(0xFF152D70),
-                              size: 20,
-                            ),
-                            onPressed: () =>
-                                customerProvider.toggleSortOrder(context),
-                            tooltip: customerProvider.sortOrder == 'ASC'
-                                ? 'Ascending'
-                                : 'Descending',
                           ),
                           const SizedBox(width: 8),
                           CustomFilterButton(

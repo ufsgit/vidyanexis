@@ -92,7 +92,44 @@ class CustomerProvider extends ChangeNotifier {
   String get sortOrder => _sortOrder;
 
   void setSortOption(int option, BuildContext context) {
-    _selectedSortOption = option;
+    switch (option) {
+      case 0:
+        _selectedSortOption = 0;
+        _sortOrder = 'DESC';
+        break;
+      case 1:
+        _selectedSortOption = 1;
+        _sortOrder = 'DESC';
+        break;
+      case 2:
+        _selectedSortOption = 1;
+        _sortOrder = 'ASC';
+        break;
+      case 3:
+        _selectedSortOption = 2;
+        _sortOrder = 'DESC';
+        break;
+      case 4:
+        _selectedSortOption = 2;
+        _sortOrder = 'ASC';
+        break;
+      case 5:
+        _selectedSortOption = 3;
+        _sortOrder = 'DESC';
+        break;
+      case 6:
+        _selectedSortOption = 3;
+        _sortOrder = 'ASC';
+        break;
+      case 7:
+        _selectedSortOption = 4;
+        _sortOrder = 'ASC';
+        break;
+      case 8:
+        _selectedSortOption = 4;
+        _sortOrder = 'DESC';
+        break;
+    }
     notifyListeners();
     getSearchCustomers(context);
   }
@@ -161,9 +198,11 @@ class CustomerProvider extends ChangeNotifier {
       String userIdPref = preferences.getString('userId') ?? "0";
       int loginUserId = int.parse(userIdPref);
 
+      int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -179,6 +218,14 @@ class CustomerProvider extends ChangeNotifier {
             hasMoreData = false;
           } else {
             _customerData.addAll(newItems);
+
+            if (_selectedSortOption == 4) {
+              if (_sortOrder == 'ASC') {
+                _customerData.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+              } else {
+                _customerData.sort((a, b) => b.customerName.toLowerCase().compareTo(a.customerName.toLowerCase()));
+              }
+            }
 
             // Find metadata safely
             int metadataIndex = allItems.indexWhere((item) => item.tp == 2);
@@ -466,17 +513,26 @@ class CustomerProvider extends ChangeNotifier {
         Loader.showLoader(context);
       }
 
+      int apiSortOption = _selectedSortOption == 4 ? 0 : _selectedSortOption;
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Order_By_=$_selectedSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&Branch_Id_=$branchIds&User_Details_Id_=$loginUserId&Order_By_=$apiSortOption&Order_Type_=$_sortOrder&Entry_Type_=$_entryType');
 
       if (response.statusCode == 200) {
         var data = response.data;
         if (data != null && data is List) {
           List<SearchLeadModel> allItems =
               data.map((item) => SearchLeadModel.fromJson(item)).toList();
-          // Correct metadata handling using tp field
           _customerData = allItems.where((item) => item.tp == 1).toList();
+
+          if (_selectedSortOption == 4) {
+            if (_sortOrder == 'ASC') {
+              _customerData.sort((a, b) => a.customerName.toLowerCase().compareTo(b.customerName.toLowerCase()));
+            } else {
+              _customerData.sort((a, b) => b.customerName.toLowerCase().compareTo(a.customerName.toLowerCase()));
+            }
+          }
 
           int metadataIndex = allItems.indexWhere((item) => item.tp == 2);
           if (metadataIndex != -1) {

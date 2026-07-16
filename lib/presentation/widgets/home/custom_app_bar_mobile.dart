@@ -348,22 +348,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 onSelected: onSortTap,
                 itemBuilder: (context) => [
                   const PopupMenuItem(value: 0, child: Text('Default')),
-                  const PopupMenuItem(value: 1, child: Text('ID No')),
-                  const PopupMenuItem(value: 2, child: Text('Creation Date')),
-                  const PopupMenuItem(value: 3, child: Text('Followup Date')),
+                  const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
+                  const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
+                  const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
+                  const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
+                  const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
+                  const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
+                  const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
+                  const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
                 ],
-              ),
-            if (widget.showOrder && onOrderTap != null)
-              IconButton(
-                icon: Icon(
-                  sortOrder == 'ASC'
-                      ? Icons.arrow_upward
-                      : Icons.arrow_downward,
-                  color: widget.iconColor,
-                  size: widget.searchIconSize,
-                ),
-                onPressed: onOrderTap,
-                tooltip: sortOrder == 'ASC' ? 'Ascending' : 'Descending',
               ),
             if (widget.showExcel)
               IconButton(
