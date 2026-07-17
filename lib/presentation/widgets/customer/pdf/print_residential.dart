@@ -56,6 +56,7 @@ Future<void> printResidentialPDFs({
     await Printing.layoutPdf(
       onLayout: (_) async => pdfBytes,
       name: 'Residential.pdf',
+      format: PdfPageFormat.a4,
     );
   }
 }
@@ -115,17 +116,19 @@ Future<void> _addItemPage(pw.Document pdf) async {
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           pw.Text('Prop. No: ${quotation?.quotationNo ?? ''}',
-                              style: pw.TextStyle(font: boldFont, fontSize: 12)),
+                              style:
+                                  pw.TextStyle(font: boldFont, fontSize: 12)),
                           pw.SizedBox(height: 4),
                           pw.Row(
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text('Buyer Details : ',
-                                  style:
-                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                                  style: pw.TextStyle(
+                                      font: boldFont, fontSize: 11)),
                               pw.Flexible(
                                 child: pw.Text(customer?.customerName ?? '',
-                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                                    style:
+                                        pw.TextStyle(font: font, fontSize: 11)),
                               ),
                             ],
                           ),
@@ -138,21 +141,24 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text('Mob : ',
-                                  style:
-                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                                  style: pw.TextStyle(
+                                      font: boldFont, fontSize: 11)),
                               pw.Flexible(
                                 child: pw.Text(customer?.phoneNumber ?? '',
-                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                                    style:
+                                        pw.TextStyle(font: font, fontSize: 11)),
                               ),
                             ],
                           ),
                           pw.SizedBox(height: 4),
                           pw.Text('GST : 32AAXCA0127A1Z8',
-                              style: pw.TextStyle(font: boldFont, fontSize: 11)),
+                              style:
+                                  pw.TextStyle(font: boldFont, fontSize: 11)),
                           pw.SizedBox(height: 4),
                           pw.Text(
                               'Scope of Work: ${quotation?.productName ?? ''}',
-                              style: pw.TextStyle(font: boldFont, fontSize: 12)),
+                              style:
+                                  pw.TextStyle(font: boldFont, fontSize: 12)),
                         ],
                       ),
                     ),
@@ -167,12 +173,14 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text('Date: ',
-                                  style:
-                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                                  style: pw.TextStyle(
+                                      font: boldFont, fontSize: 11)),
                               pw.Flexible(
-                                child: pw.Text(quotation?.entryDate.toDDMMYYYY() ?? '',
+                                child: pw.Text(
+                                    quotation?.entryDate.toDDMMYYYY() ?? '',
                                     textAlign: pw.TextAlign.right,
-                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                                    style:
+                                        pw.TextStyle(font: font, fontSize: 11)),
                               ),
                             ],
                           ),
@@ -182,12 +190,14 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text('Payment Terms : ',
-                                  style:
-                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                                  style: pw.TextStyle(
+                                      font: boldFont, fontSize: 11)),
                               pw.Flexible(
-                                child: pw.Text(quotation?.paymentTermsName ?? '',
+                                child: pw.Text(
+                                    quotation?.paymentTermsName ?? '',
                                     textAlign: pw.TextAlign.right,
-                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                                    style:
+                                        pw.TextStyle(font: font, fontSize: 11)),
                               ),
                             ],
                           ),
@@ -197,12 +207,13 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text('Inco Terms : ',
-                                  style:
-                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                                  style: pw.TextStyle(
+                                      font: boldFont, fontSize: 11)),
                               pw.Flexible(
                                 child: pw.Text(quotation?.incoTerms ?? '',
                                     textAlign: pw.TextAlign.right,
-                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                                    style:
+                                        pw.TextStyle(font: font, fontSize: 11)),
                               ),
                             ],
                           ),
@@ -212,12 +223,13 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text('Quote Validity : ',
-                                  style:
-                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                                  style: pw.TextStyle(
+                                      font: boldFont, fontSize: 11)),
                               pw.Flexible(
                                 child: pw.Text(quotation?.validity ?? '',
                                     textAlign: pw.TextAlign.right,
-                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                                    style:
+                                        pw.TextStyle(font: font, fontSize: 11)),
                               ),
                             ],
                           ),
@@ -227,12 +239,13 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text('MNRE Empanelment Number : ',
-                                  style:
-                                      pw.TextStyle(font: boldFont, fontSize: 11)),
+                                  style: pw.TextStyle(
+                                      font: boldFont, fontSize: 11)),
                               pw.Flexible(
                                 child: pw.Text(quotation?.tendorNumber ?? '',
                                     textAlign: pw.TextAlign.right,
-                                    style: pw.TextStyle(font: font, fontSize: 11)),
+                                    style:
+                                        pw.TextStyle(font: font, fontSize: 11)),
                               ),
                             ],
                           ),

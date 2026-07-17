@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -15,6 +16,7 @@ class PdfActionHelper {
     Future<Uint8List> Function()? onGenerate,
     String? pdfUrl,
     String? fileName,
+    PdfPageFormat format = PdfPageFormat.a4,
   }) {
     showModalBottomSheet(
       context: context,
@@ -50,6 +52,7 @@ class PdfActionHelper {
                       await Printing.layoutPdf(
                         onLayout: (format) async => bytes,
                         name: fileName ?? 'document.pdf',
+                        format: format,
                       );
                     } catch (e) {
                       Loader.stopLoader(context);

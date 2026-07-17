@@ -81,5 +81,6 @@ Future<void> exportToPDF({
   await Printing.layoutPdf(
     onLayout: (PdfPageFormat format) async => pdf.save(),
     name: '$fileName.pdf',
+    format: PdfPageFormat.a4.landscape,
   );
 }
