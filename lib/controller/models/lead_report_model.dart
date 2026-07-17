@@ -192,9 +192,17 @@ class LeadReportModel {
           contactNumber: (json["Phone_Number"]?.toString() ?? '').trim(),
           contactPerson: json["Contact_Person"]?.toString() ?? '',
           email: json["Email"]?.toString() ?? '',
-          address1: (json["Address1"]?.toString() ?? '').trim() == '0'
+          address1: (json["Address1"]?.toString() ??
+                  json["address"]?.toString() ??
+                  json["Address"]?.toString() ??
+                  '')
+                      .trim() ==
+                  '0'
               ? ''
-              : (json["Address1"]?.toString() ?? ''),
+              : (json["Address1"]?.toString() ??
+                  json["address"]?.toString() ??
+                  json["Address"]?.toString() ??
+                  ''),
           address2: (json["Address2"]?.toString() ?? '').trim() == '0'
               ? ''
               : (json["Address2"]?.toString() ?? ''),

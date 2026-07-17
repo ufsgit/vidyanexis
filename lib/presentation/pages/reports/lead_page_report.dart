@@ -337,7 +337,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         'By User': task.byUserName,
                                         'Assigned To': task.toUserName,
                                         'Status': task.statusName,
-                                        'Created Date': _formatDateSafely(
+                                        'Created Date': _formatDateTimeSafely(
                                             task.creationDate),
                                         'Next Follow-up Date':
                                             _formatDateSafely(
@@ -403,7 +403,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         'By User': task.byUserName,
                                         'Assigned To': task.toUserName,
                                         'Status': task.statusName,
-                                        'Created Date': _formatDateSafely(
+                                        'Created Date': _formatDateTimeSafely(
                                             task.creationDate),
                                         'Next Follow-up Date':
                                             _formatDateSafely(
@@ -1667,6 +1667,32 @@ class _LeadsPageReportState extends State<LeadPageReport> {
             final year = int.parse(parts[2]);
             final date = DateTime(year, month, day);
             return DateFormat('dd MMM yyyy').format(date);
+          }
+        }
+      } catch (innerE) {
+        // Fallback or ignore
+      }
+      return dateStr; // Return as-is if parsing still fails
+    }
+  }
+
+  String _formatDateTimeSafely(String dateStr) {
+    if (dateStr.isEmpty) return '';
+    try {
+      // Try standard parse (handles YYYY-MM-DD HH:mm:ss)
+      final date = DateTime.parse(dateStr);
+      return DateFormat('dd MMM yyyy, hh:mm a').format(date);
+    } catch (e) {
+      try {
+        // Try DD-MM-YYYY (like 24-03-2026)
+        if (dateStr.contains('-')) {
+          final parts = dateStr.split('-');
+          if (parts.length == 3) {
+            final day = int.parse(parts[0]);
+            final month = int.parse(parts[1]);
+            final year = int.parse(parts[2]);
+            final date = DateTime(year, month, day);
+            return DateFormat('dd MMM yyyy, hh:mm a').format(date);
           }
         }
       } catch (innerE) {
