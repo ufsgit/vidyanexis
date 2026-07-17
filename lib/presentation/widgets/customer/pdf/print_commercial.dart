@@ -530,6 +530,16 @@ Future<void> _addEightPage(pw.Document pdf) async {
   pw.MemoryImage? footerImage;
   double totalAmount = double.tryParse(quotation?.netTotal ?? '0') ?? 0.0;
   String amountInWords = convertNumberToWords(totalAmount);
+  String noOfPanels = '';
+  if (quotation?.quotationCustomFields != null) {
+    for (var field in quotation!.quotationCustomFields) {
+      if (field['custom_field_id']?.toString() == '250') {
+        noOfPanels = field['value']?.toString() ?? '';
+        break;
+      }
+    }
+  }
+
   try {
     final ByteData headerImageData = await rootBundle.load(headerImagePath);
     headerImageBytes = headerImageData.buffer.asUint8List();
@@ -564,6 +574,16 @@ Future<void> _addEightPage(pw.Document pdf) async {
               fontSize: 10,
             ),
           ),
+          if (noOfPanels.isNotEmpty) ...[
+            pw.SizedBox(height: 5),
+            pw.Text(
+              'No of Panels : $noOfPanels',
+              style: pw.TextStyle(
+                font: boldFont,
+                fontSize: 10,
+              ),
+            ),
+          ],
           pw.SizedBox(height: 10),
           // Dynamic Table
           pw.Table(

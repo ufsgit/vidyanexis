@@ -2431,6 +2431,8 @@ class _tasksPageReportState extends State<TaskPage> {
             getStatusType(context, task.taskTypeId.toString());
         final reportsProvider =
             Provider.of<TaskPageProvider>(context, listen: false);
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
 
         return Dialog(
           backgroundColor: Colors.white,
@@ -2731,6 +2733,41 @@ class _tasksPageReportState extends State<TaskPage> {
                                       fontSize: 14, color: Color(0xFF1E293B)),
                                 ),
                               ),
+                              if (settingsProvider.showView[165] == 1) ...[
+                                const SizedBox(height: 12),
+                                Text('Remarks / Feedback',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade600,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.3)),
+                                const SizedBox(height: 6),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                        color: Colors.grey.shade300, width: 1),
+                                  ),
+                                  child: TextField(
+                                    controller:
+                                        reportsProvider.remarksController,
+                                    maxLines: 3,
+                                    minLines: 2,
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 12),
+                                      border: InputBorder.none,
+                                      hintText: 'Enter remarks here...',
+                                      hintStyle: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey.shade400),
+                                    ),
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Color(0xFF1E293B)),
+                                  ),
+                                ),
+                              ],
                               const SizedBox(height: 20),
                             ],
                           ),
@@ -2901,6 +2938,8 @@ class _tasksPageReportState extends State<TaskPage> {
         // Create a future to fetch the status options
         final Future<List<TaskTypeStatusModel>> statusOptionsFuture =
             getStatusType(context, task.taskTypeId.toString());
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
 
         return Dialog(
           backgroundColor: Colors.white,
@@ -3765,7 +3804,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
 
                               // Row 4: Description text area
-                              Text('Description',
+                              Text('Comments',
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey.shade600,
@@ -3799,6 +3838,43 @@ class _tasksPageReportState extends State<TaskPage> {
                                       fontSize: 14, color: Color(0xFF1E293B)),
                                 ),
                               ),
+                              if (settingsProvider.showView[165] == 1) ...[
+                                const SizedBox(height: 12),
+                                Text('Remarks / Feedback',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade600,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.3)),
+                                const SizedBox(height: 6),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                        color: Colors.grey.shade300, width: 1),
+                                  ),
+                                  child: TextField(
+                                    controller: Provider.of<TaskPageProvider>(
+                                            context,
+                                            listen: false)
+                                        .remarksController,
+                                    maxLines: 3,
+                                    minLines: 2,
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 12),
+                                      border: InputBorder.none,
+                                      hintText: 'Enter remarks here...',
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey.shade400,
+                                          fontSize: 13),
+                                    ),
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Color(0xFF1E293B)),
+                                  ),
+                                ),
+                              ],
                               const SizedBox(height: 20),
                               Consumer<FormProvider>(
                                 builder: (context, formProvider, child) {

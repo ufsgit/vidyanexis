@@ -159,11 +159,13 @@ class TaskPageProvider extends ChangeNotifier {
   List<String> get selectedTaskTypeIds => _selectedTaskTypeIds;
 
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController remarksController = TextEditingController();
   final TextEditingController followUpDateController = TextEditingController();
   final TextEditingController followUpTimeController = TextEditingController();
 
   void clearDescription() {
     descriptionController.clear();
+    remarksController.clear();
     followUpDateController.clear();
     followUpTimeController.clear();
     notifyListeners();
@@ -884,6 +886,7 @@ class TaskPageProvider extends ChangeNotifier {
             "Status_Name": statusModel.statusName,
             "By_User_Id": userId,
             "Description": descriptionController.text,
+            "Remarks": remarksController.text,
             // "Next_FollowUp_Date":
             //     DateFormat('yyyy-MM-dd').format(DateTime.now()),
             "Next_FollowUp_Date":
@@ -910,6 +913,7 @@ class TaskPageProvider extends ChangeNotifier {
           bool isSuccess = data["success"];
           if (isSuccess) {
             descriptionController.clear();
+            remarksController.clear();
             _pageIndex = 1;
             clearTaskUserAssignments();
             try {
