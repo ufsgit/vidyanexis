@@ -264,7 +264,8 @@ class _LeadsPageState extends State<LeadPage> {
       focusNode: focusNode,
       textEditingController: searchController,
       optionsBuilder: (TextEditingValue textEditingValue) async {
-        return leadProvider.fetchSuggestions(textEditingValue.text);
+        // return leadProvider.fetchSuggestions(textEditingValue.text);
+        return []; // told to comment the suggestion
       },
       displayStringForOption: (SearchLeadModel option) => option.customerName,
       onSelected: (SearchLeadModel selection) {
@@ -1664,7 +1665,21 @@ class _LeadsPageState extends State<LeadPage> {
                                                   horizontal: 12.0),
                                               alignment: Alignment.centerLeft,
                                               data: Text(
-                                                'Date',
+                                                'Created Date',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                              width: 110,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 4.0,
+                                                  horizontal: 12.0),
+                                              alignment: Alignment.centerLeft,
+                                              data: Text(
+                                                'Duration',
                                                 style: TextStyle(
                                                   fontSize: 13,
                                                   color: Colors.white,
@@ -2203,6 +2218,26 @@ class _LeadsPageState extends State<LeadPage> {
                                                         data: Text(
                                                           _formatDateSafely(
                                                               lead.entryDate),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      TableWidget(
+                                                        width: 110,
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                vertical: 4.0,
+                                                                horizontal:
+                                                                    12.0),
+                                                        data: Text(
+                                                          lead.leadDuration,
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           maxLines: 1,

@@ -20,6 +20,7 @@ class SearchLeadModel {
   final int createdBy;
   final String createdByName;
   final String entryDate;
+  final String leadDuration;
   final int statusId;
   final String statusName;
   final int byUserId;
@@ -193,6 +194,7 @@ class SearchLeadModel {
     required this.contactNo,
     required this.amount,
     required this.leadCode,
+    required this.leadDuration,
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -301,6 +303,7 @@ class SearchLeadModel {
       contactNo: parseString(json['Contact_No']),
       amount: parseString(json['Amount']),
       leadCode: parseString(json['Lead_Code']),
+      leadDuration: parseString(json['Lead_Age_Days']),
     );
   }
 
@@ -488,11 +491,13 @@ class SearchLeadModel {
     String? amount,
     String? leadCode,
     List<AudioFileLead>? audioFiles,
+    String? leadDuration,
   }) {
     return SearchLeadModel(
       amount: amount ?? this.amount,
       leadCode: leadCode ?? this.leadCode,
       audioFiles: audioFiles ?? this.audioFiles,
+      leadDuration: leadDuration ?? this.leadDuration,
       customerId: customerId ?? this.customerId,
       customerName: customerName ?? this.customerName,
       contactNumber: contactNumber ?? this.contactNumber,
