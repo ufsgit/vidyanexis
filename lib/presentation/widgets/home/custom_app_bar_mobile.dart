@@ -41,9 +41,10 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final TextStyle? searchHintStyle;
   final TextStyle? searchTextStyle;
   final InputDecoration? searchDecoration;
-  final bool showSearch;
   final bool showExcel;
   final bool showPdf;
+  final bool showImportExcel;
+  final void Function()? onImportExcelTap;
   final void Function()? onOrderTap;
   final String? sortOrder;
   final bool showOrder;
@@ -55,6 +56,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool showAddIcon;
   final void Function()? onAddTap;
   final Widget? customActionWidget;
+  final bool showSearch;
 
   const CustomAppBar({
     super.key,
@@ -94,6 +96,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showSearch = true,
     this.showExcel = false,
     this.showPdf = false,
+    this.showImportExcel = false,
+    this.onImportExcelTap,
     this.showTransfer = false,
     this.onTransferTap,
     this.onSortTap,
@@ -288,8 +292,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: widget.actionsPadding,
         child: Row(
           children: [
-            if (widget.customActionWidget != null)
-              widget.customActionWidget!,
+            if (widget.customActionWidget != null) widget.customActionWidget!,
             if (widget.showFilterIcon &&
                 onFilterTap != null &&
                 !widget.showSearch)
@@ -348,12 +351,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 onSelected: onSortTap,
                 itemBuilder: (context) => [
                   const PopupMenuItem(value: 0, child: Text('Default')),
-                  const PopupMenuItem(value: 1, child: Text('ID No (Descending)')),
-                  const PopupMenuItem(value: 2, child: Text('ID No (Ascending)')),
-                  const PopupMenuItem(value: 3, child: Text('Creation Date (Newest)')),
-                  const PopupMenuItem(value: 4, child: Text('Creation Date (Oldest)')),
-                  const PopupMenuItem(value: 5, child: Text('Followup Date (Newest)')),
-                  const PopupMenuItem(value: 6, child: Text('Followup Date (Oldest)')),
+                  const PopupMenuItem(
+                      value: 1, child: Text('ID No (Descending)')),
+                  const PopupMenuItem(
+                      value: 2, child: Text('ID No (Ascending)')),
+                  const PopupMenuItem(
+                      value: 3, child: Text('Creation Date (Newest)')),
+                  const PopupMenuItem(
+                      value: 4, child: Text('Creation Date (Oldest)')),
+                  const PopupMenuItem(
+                      value: 5, child: Text('Followup Date (Newest)')),
+                  const PopupMenuItem(
+                      value: 6, child: Text('Followup Date (Oldest)')),
                   const PopupMenuItem(value: 7, child: Text('Name (A-Z)')),
                   const PopupMenuItem(value: 8, child: Text('Name (Z-A)')),
                 ],
@@ -366,6 +375,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   size: widget.searchIconSize,
                 ),
                 onPressed: onExcelTap,
+              ),
+            if (widget.showImportExcel && widget.onImportExcelTap != null)
+              IconButton(
+                icon: Icon(
+                  Icons.upload_file,
+                  color: widget.iconColor,
+                  size: widget.searchIconSize,
+                ),
+                onPressed: widget.onImportExcelTap,
               ),
             if (widget.showPdf)
               IconButton(

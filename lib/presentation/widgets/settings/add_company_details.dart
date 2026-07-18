@@ -488,6 +488,22 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lead Mobile Already Existed Check :   ${settingsProvider.leadMobileExistedCheck == 1 ? "On" : "Off"}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 10),
+                  Switch(
+                    value: settingsProvider.leadMobileExistedCheck == 1,
+                    onChanged: (bool value) {
+                      settingsProvider.setLeadMobileExistedCheck(value ? 1 : 0);
+                    },
+                  ),
+                ],
+              ),
               const SizedBox(height: 10),
               CustomElevatedButton(
                 buttonText: 'Upload Image',

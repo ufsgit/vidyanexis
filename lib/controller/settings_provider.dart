@@ -512,6 +512,7 @@ class SettingsProvider extends ChangeNotifier {
   int _additionalExpense = 0;
   int _commercialProposal = 0;
   int _districtCityMandatory = 0;
+  int _leadMobileExistedCheck = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -524,6 +525,7 @@ class SettingsProvider extends ChangeNotifier {
   int get additionalExpense => _additionalExpense;
   int get commercialProposal => _commercialProposal;
   int get districtCityMandatory => _districtCityMandatory;
+  int get leadMobileExistedCheck => _leadMobileExistedCheck;
 
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
@@ -1096,6 +1098,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void setDistrictCityMandatory(int value) {
     _districtCityMandatory = value;
+    notifyListeners();
+  }
+
+  void setLeadMobileExistedCheck(int value) {
+    _leadMobileExistedCheck = value;
     notifyListeners();
   }
 
@@ -4115,6 +4122,7 @@ class SettingsProvider extends ChangeNotifier {
               _additionalExpense = _companyDetails[0].additionalExpense;
               _commercialProposal = _companyDetails[0].commercialProposal;
               _districtCityMandatory = _companyDetails[0].districtCityMandatory;
+              _leadMobileExistedCheck = _companyDetails[0].leadMobileExistedCheck;
             }
           } catch (e) {
             print(
@@ -4168,6 +4176,12 @@ class SettingsProvider extends ChangeNotifier {
           _additionalExpense = data['Additional_Expense'] ?? 0;
           _commercialProposal = data['Commercial_Proposal'] ?? 0;
           _districtCityMandatory = data['District_City_Mandatory'] ?? 0;
+          _leadMobileExistedCheck = data['Lead_Mobile_Existed_Check'] ?? 0;
+          try {
+            _companyDetails = [Company.fromJson(data)];
+          } catch (e) {
+            print('SettingsProvider.getCompanyDetails (map): Failed to parse Company format - $e');
+          }
 
           if (newLogo != logo ||
               newTitle != title ||
@@ -4244,6 +4258,7 @@ class SettingsProvider extends ChangeNotifier {
             "Additional_Expense": _additionalExpense,
             "Commercial_Proposal": _commercialProposal,
             "District_City_Mandatory": _districtCityMandatory,
+            "Lead_Mobile_Existed_Check": _leadMobileExistedCheck,
           });
 
       if (response!.statusCode == 200) {

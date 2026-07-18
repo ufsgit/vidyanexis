@@ -23,6 +23,8 @@ import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.da
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 
 class LeadPagePhone extends StatefulWidget {
   final bool fromDashBoard;
@@ -167,6 +169,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     final leadProvider = Provider.of<LeadsProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
     final searchProvider = Provider.of<SidebarProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(
       drawer: const SidebarDrawer(),
@@ -212,6 +215,42 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showFilterIcon: false,
               showSort: true,
               showOrder: true,
+              showExcel: settingsProvider.menuIsSaveMap[20].toString() == '1',
+              onExcelTap: () {
+                if (leadProvider.leadData.isNotEmpty) {
+                  exportToExcel(
+                    headers: [
+                      'Lead Code',
+                      'Customer Name',
+                      'Mobile No',
+                      'Email',
+                      'Enquiry For',
+                      'Enquiry Source',
+                      'Assigned To',
+                      'Next Follow-up Date',
+                      'Status',
+                    ],
+                    data: leadProvider.leadData.map((lead) {
+                      return {
+                        'Lead Code': lead.leadCode,
+                        'Customer Name': lead.customerName,
+                        'Mobile No': lead.contactNumber,
+                        'Email': lead.email,
+                        'Enquiry For': lead.enquiryFor,
+                        'Enquiry Source': lead.enquirySourceName,
+                        'Assigned To': lead.toUserName,
+                        'Next Follow-up Date': lead.nextFollowUpDate,
+                        'Status': lead.statusName,
+                      };
+                    }).toList(),
+                    fileName: 'Leads_Export',
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('No data to export')),
+                  );
+                }
+              },
               sortOrder: leadProvider.sortOrder,
               onOrderTap: () => leadProvider.toggleSortOrder(context),
               onSortTap: (value) {
@@ -276,6 +315,42 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showFilterIcon: false,
               showSort: true,
               showOrder: true,
+              showExcel: settingsProvider.menuIsSaveMap[20].toString() == '1',
+              onExcelTap: () {
+                if (leadProvider.leadData.isNotEmpty) {
+                  exportToExcel(
+                    headers: [
+                      'Lead Code',
+                      'Customer Name',
+                      'Mobile No',
+                      'Email',
+                      'Enquiry For',
+                      'Enquiry Source',
+                      'Assigned To',
+                      'Next Follow-up Date',
+                      'Status',
+                    ],
+                    data: leadProvider.leadData.map((lead) {
+                      return {
+                        'Lead Code': lead.leadCode,
+                        'Customer Name': lead.customerName,
+                        'Mobile No': lead.contactNumber,
+                        'Email': lead.email,
+                        'Enquiry For': lead.enquiryFor,
+                        'Enquiry Source': lead.enquirySourceName,
+                        'Assigned To': lead.toUserName,
+                        'Next Follow-up Date': lead.nextFollowUpDate,
+                        'Status': lead.statusName,
+                      };
+                    }).toList(),
+                    fileName: 'Leads_Export',
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('No data to export')),
+                  );
+                }
+              },
               sortOrder: leadProvider.sortOrder,
               onOrderTap: () => leadProvider.toggleSortOrder(context),
               onSortTap: (value) {

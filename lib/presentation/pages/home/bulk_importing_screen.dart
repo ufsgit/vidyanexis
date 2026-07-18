@@ -16,7 +16,8 @@ import 'package:vidyanexis/utils/csv_function.dart';
 
 class BulkImportScreen extends StatefulWidget {
   static String route = '/bulkImport';
-  const BulkImportScreen({super.key});
+  final bool isCustomer;
+  const BulkImportScreen({super.key, this.isCustomer = false});
 
   @override
   State<BulkImportScreen> createState() => _BulkImportScreenState();
@@ -40,8 +41,12 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
       if (dropDownProvider.searchUserDetails.isEmpty) {
         dropDownProvider.getUserDetails(context);
       }
-      if (dropDownProvider.followUpData.isEmpty) {
-        dropDownProvider.getFollowUpStatus(context, '1');
+      if (widget.isCustomer) {
+        dropDownProvider.getFollowUpStatusCustomer(context);
+      } else {
+        if (dropDownProvider.followUpData.isEmpty) {
+          dropDownProvider.getFollowUpStatus(context, '1');
+        }
       }
       if (dropDownProvider.enquiryForList.isEmpty) {
         dropDownProvider.getEnquiryFor(context);
@@ -193,6 +198,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                         0,
                                 enquirySourceName:
                                     selectedEnquirySource.enquirySourceName,
+                                isCustomer: widget.isCustomer,
                               );
 
                               if (leadProvider.importProgress == 1.0) {

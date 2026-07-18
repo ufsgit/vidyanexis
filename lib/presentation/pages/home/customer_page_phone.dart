@@ -18,6 +18,8 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 
 class CustomerPagePhone extends StatefulWidget {
   const CustomerPagePhone({super.key});
@@ -121,6 +123,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
     final provider = Provider.of<DropDownProvider>(context);
     final sideprovider = Provider.of<SidebarProvider>(context);
     final searchProvider = Provider.of<SidebarProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -152,6 +155,44 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         showFilterIcon: false,
         showSort: true,
         showOrder: true,
+        showExcel: settingsProvider.menuIsSaveMap[20].toString() == '1',
+        onExcelTap: () {
+          if (customerProvider.customerData.isNotEmpty) {
+            exportToExcel(
+              headers: [
+                'Customer Code',
+                'Customer Name',
+                'Mobile No',
+                'Email',
+                'Enquiry For',
+                'Enquiry Source',
+                'Assigned To',
+                'Next Follow-up Date',
+                'Status',
+                'Total Project Cost',
+              ],
+              data: customerProvider.customerData.map((cust) {
+                return {
+                  'Customer Code': cust.leadCode,
+                  'Customer Name': cust.customerName,
+                  'Mobile No': cust.contactNumber,
+                  'Email': cust.email,
+                  'Enquiry For': cust.enquiryFor,
+                  'Enquiry Source': cust.enquirySourceName,
+                  'Assigned To': cust.toUserName,
+                  'Next Follow-up Date': cust.nextFollowUpDate,
+                  'Status': cust.statusName,
+                  'Total Project Cost': cust.totalProjectCost,
+                };
+              }).toList(),
+              fileName: 'Customers_Export',
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No data to export')),
+            );
+          }
+        },
         sortOrder: customerProvider.sortOrder,
         onOrderTap: () => customerProvider.toggleSortOrder(context),
         onSortTap: (value) {

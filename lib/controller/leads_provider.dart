@@ -1468,10 +1468,20 @@ class LeadsProvider extends ChangeNotifier {
         }
       }
 
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      final leadMobileExistedCheck = settingsProvider.companyDetails.isNotEmpty
+          ? settingsProvider.companyDetails[0].leadMobileExistedCheck
+          : 0;
+
       final response = await HttpRequest
           .httpPostRequest(endPoint: HttpUrls.saveLead, bodyData: {
+        "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
+        "Lead_Mobile_Check": leadMobileExistedCheck,
         "lead": {
           "Customer_Id": custId,
+          "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
+          "Lead_Mobile_Check": leadMobileExistedCheck,
           "Customer_Name": leadNameController.text.isEmpty
               ? 'Null'
               : leadNameController.text,
@@ -1578,7 +1588,9 @@ class LeadsProvider extends ChangeNotifier {
           alert(context, "Email Already Exists");
         } else if (data['Customer_Id_'] == -1) {
           Loader.stopLoader(context);
-          alert(context, "Mobile No. Already Exists");
+          if (leadMobileExistedCheck == 1) {
+            alert(context, "Mobile No. Already Exists");
+          }
         } else if (data['Customer_Id_'] == -3) {
           Loader.stopLoader(context);
           alert(context, "Consumer No. Already Exists");
@@ -2234,6 +2246,7 @@ class LeadsProvider extends ChangeNotifier {
     required String enquiryForName,
     required int enquirySourceId,
     required String enquirySourceName,
+    bool isCustomer = false,
   }) async {
     try {
       _isImporting = true;
@@ -2327,7 +2340,9 @@ class LeadsProvider extends ChangeNotifier {
       notifyListeners();
 
       Fluttertoast.showToast(
-        msg: "Success! $totalRecords leads imported.",
+        msg: isCustomer
+            ? "Success! $totalRecords customers imported."
+            : "Success! $totalRecords leads imported.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.black,
@@ -2337,6 +2352,13 @@ class LeadsProvider extends ChangeNotifier {
       final dashboardProvider =
           Provider.of<DashboardProvider>(context, listen: false);
       dashboardProvider.refreshDashboardData(context, isSilent: true);
+      if (isCustomer) {
+        final customerProvider =
+            Provider.of<CustomerProvider>(context, listen: false);
+        customerProvider.getSearchCustomers(context, isSilent: true);
+      } else {
+        getSearchLeads(context, isSilent: true);
+      }
     } catch (e) {
       log('Import Exception: $e');
       _importStatusText = 'Import failed. Process stopped.';

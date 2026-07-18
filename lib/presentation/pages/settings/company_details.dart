@@ -96,6 +96,8 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                         settingsProvider.setEnquirySourceMandatory(
                             settingsProvider
                                 .companyDetails[0].enquirySourceMandatory);
+                        settingsProvider.setLeadMobileExistedCheck(
+                            settingsProvider.companyDetails[0].leadMobileExistedCheck);
                         showDialog(
                           barrierDismissible: false,
                           context: context,

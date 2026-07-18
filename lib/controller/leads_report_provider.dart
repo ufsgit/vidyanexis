@@ -1407,11 +1407,21 @@ class LeadReportProvider extends ChangeNotifier {
         }
       }
 
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      final leadMobileExistedCheck = settingsProvider.companyDetails.isNotEmpty
+          ? settingsProvider.companyDetails[0].leadMobileExistedCheck
+          : 0;
+
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveLead,
           bodyData: {
+            "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
+            "Lead_Mobile_Check": leadMobileExistedCheck,
             "lead": {
               "Customer_Id": custId,
+              "Lead_Mobile_Existed_Check": leadMobileExistedCheck,
+              "Lead_Mobile_Check": leadMobileExistedCheck,
               "Customer_Name": leadNameController.text,
               "Address": addressController.text,
               "City": cityController.text,
@@ -1516,7 +1526,9 @@ class LeadReportProvider extends ChangeNotifier {
           alert(context, "Email Already Exists");
         } else if (data['Customer_Id_'] == -1) {
           Loader.stopLoader(context);
-          alert(context, "Mobile No. Already Exists");
+          if (leadMobileExistedCheck == 1) {
+            alert(context, "Mobile No. Already Exists");
+          }
         } else {
           log('Success');
           leadData.clear();

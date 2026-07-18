@@ -18,6 +18,8 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
@@ -392,6 +394,67 @@ class _CustomerPageState extends State<CustomerPage> {
                                   customerProvider.toggleFilter();
                                 },
                                 isFilter: customerProvider.isFilter,
+                              ),
+                            if (settingsProvider.menuIsSaveMap[20].toString() == '1')
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  if (customerProvider.customerData.isNotEmpty) {
+                                    exportToExcel(
+                                      headers: [
+                                        'Customer Code',
+                                        'Customer Name',
+                                        'Mobile No',
+                                        'Email',
+                                        'Enquiry For',
+                                        'Enquiry Source',
+                                        'Assigned To',
+                                        'Next Follow-up Date',
+                                        'Status',
+                                        'Total Project Cost',
+                                      ],
+                                      data: customerProvider.customerData.map((cust) {
+                                        return {
+                                          'Customer Code': cust.leadCode,
+                                          'Customer Name': cust.customerName,
+                                          'Mobile No': cust.contactNumber,
+                                          'Email': cust.email,
+                                          'Enquiry For': cust.enquiryFor,
+                                          'Enquiry Source': cust.enquirySourceName,
+                                          'Assigned To': cust.toUserName,
+                                          'Next Follow-up Date': cust.nextFollowUpDate,
+                                          'Status': cust.statusName,
+                                          'Total Project Cost': cust.totalProjectCost,
+                                        };
+                                      }).toList(),
+                                      fileName: 'Customers_Export',
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('No data to export')),
+                                    );
+                                  }
+                                },
+                                icon: const Icon(Icons.file_download, size: 16),
+                                label: Text(
+                                  'Export Excel',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.whiteColor,
+                                  foregroundColor: AppColors.secondaryBlue,
+                                  side: const BorderSide(color: Color(0xFFE2E8F0)),
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
                               ),
                             ],
                           ),

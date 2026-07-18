@@ -21,6 +21,8 @@ import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_history_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
@@ -681,6 +683,67 @@ class _LeadsPageState extends State<LeadPage> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primaryBlue,
                                   foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ),
+                            if (settingsProvider.menuIsSaveMap[170].toString() == '1')
+                              const SizedBox(width: 8),
+                            if (settingsProvider.menuIsSaveMap[170].toString() == '1')
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  if (leadProvider.leadData.isNotEmpty) {
+                                    exportToExcel(
+                                      headers: [
+                                        'Lead Code',
+                                        'Customer Name',
+                                        'Mobile No',
+                                        'Email',
+                                        'Enquiry For',
+                                        'Enquiry Source',
+                                        'Assigned To',
+                                        'Next Follow-up Date',
+                                        'Status',
+                                      ],
+                                      data: leadProvider.leadData.map((lead) {
+                                        return {
+                                          'Lead Code': lead.leadCode,
+                                          'Customer Name': lead.customerName,
+                                          'Mobile No': lead.contactNumber,
+                                          'Email': lead.email,
+                                          'Enquiry For': lead.enquiryFor,
+                                          'Enquiry Source': lead.enquirySourceName,
+                                          'Assigned To': lead.toUserName,
+                                          'Next Follow-up Date': lead.nextFollowUpDate,
+                                          'Status': lead.statusName,
+                                        };
+                                      }).toList(),
+                                      fileName: 'Leads_Export',
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('No data to export')),
+                                    );
+                                  }
+                                },
+                                icon: const Icon(Icons.file_download, size: 16),
+                                label: Text(
+                                  'Export Excel',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.whiteColor,
+                                  foregroundColor: AppColors.secondaryBlue,
+                                  side: const BorderSide(color: Color(0xFFE2E8F0)),
                                   elevation: 0,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
