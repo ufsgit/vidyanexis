@@ -732,55 +732,47 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(39)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .feasibilityFeeController,
-                            hintText:
-                                customerDetailsProvider.getQuotationFieldName(
-                                    39, 'Fee in KSEB for Feasibility study'),
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            onChanged: (p0) {
-                              if (settingsProvider.additionalExpense == 1) {
-                                customerDetailsProvider.updateTotal();
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                            .isQuotationFieldVisible(40)) ...[
-                          CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .registrationFeeController,
-                            keyboardType: TextInputType.number,
-                            onChanged: (p0) {
-                              if (settingsProvider.additionalExpense == 1) {
-                                customerDetailsProvider.updateTotal();
-                              }
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            hintText: customerDetailsProvider.getQuotationFieldName(
-                                40,
-                                'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
-                            labelText: '',
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                                .isQuotationFieldVisible(41) ||
-                            (settingsProvider.menuIsViewMap[154] == 1)) ...[
+                        CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: customerDetailsProvider
+                              .feasibilityFeeController,
+                          hintText:
+                              customerDetailsProvider.getQuotationFieldName(
+                                  39, 'Fee in KSEB for Feasibility study'),
+                          labelText: '',
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          onChanged: (p0) {
+                            if (settingsProvider.additionalExpense == 1) {
+                              customerDetailsProvider.updateTotal();
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: customerDetailsProvider
+                              .registrationFeeController,
+                          keyboardType: TextInputType.number,
+                          onChanged: (p0) {
+                            if (settingsProvider.additionalExpense == 1) {
+                              customerDetailsProvider.updateTotal();
+                            }
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          hintText: customerDetailsProvider.getQuotationFieldName(
+                              40,
+                              'Registration Fee in KSEB - 1000/- per kW (80% refundable)'),
+                          labelText: '',
+                        ),
+                        const SizedBox(height: 16),
+                        if (settingsProvider.menuIsViewMap[154] == 1) ...[
                           CustomTextField(
                             readOnly: false,
                             height: 54,
@@ -801,10 +793,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             },
                           ),
                           const SizedBox(height: 16),
-                        ],
-                        if (customerDetailsProvider
-                                .isQuotationFieldVisible(42) ||
-                            (settingsProvider.menuIsViewMap[154] == 1)) ...[
                           CustomTextField(
                             readOnly: false,
                             height: 54,

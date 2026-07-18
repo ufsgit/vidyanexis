@@ -802,6 +802,22 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       },
                     ),
                     const SizedBox(height: 16),
+                    if (settingsProvider.menuIsViewMap[154] == 1) ...[
+                      CustomTextfieldWidgetMobile(
+                        readOnly: false,
+                        keyBoardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        controller:
+                            customerDetailsProvider.feasibilityFeeThreeController,
+                        labelText: 'Fee in KSEB for Feasibility study Three phase',
+                        onChanged: (p0) {
+                          if (settingsProvider.additionalExpense == 1) {
+                            customerDetailsProvider.updateTotal();
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -817,6 +833,23 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       },
                     ),
                     const SizedBox(height: 16),
+                    if (settingsProvider.menuIsViewMap[154] == 1) ...[
+                      CustomTextfieldWidgetMobile(
+                        readOnly: false,
+                        keyBoardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        controller:
+                            customerDetailsProvider.registrationFeeThreeController,
+                        labelText:
+                            'Registration Fee in KSEB - 1000/- per kW (80% refundable) Three phase',
+                        onChanged: (p0) {
+                          if (settingsProvider.additionalExpense == 1) {
+                            customerDetailsProvider.updateTotal();
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ],
                 ),
 

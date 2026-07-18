@@ -3103,10 +3103,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Is_Profit_Percentage": isPercentage ? "1" : "0",
         "Multiple_Item_Material": _multiItems.map((e) => e.toJson()).toList(),
         "Multiple_Items_TotalAmount": _mutipleItemsTotalAmount,
-        "KSEB_Feasibility_Study_Fees_3Phase":
-            double.tryParse(feasibilityFeeThreeController.text) ?? 0.0,
-        "KSEB_Registration_Fees_3Phase":
-            double.tryParse(registrationFeeThreeController.text) ?? 0.0,
+        "KSEB_Feasibility_Study_Fees_3Phase": feasibilityFeeThreeController.text.isNotEmpty
+            ? feasibilityFeeThreeController.text
+            : "0",
+        "KSEB_Registration_Fees_3Phase": registrationFeeThreeController.text.isNotEmpty
+            ? registrationFeeThreeController.text
+            : "0",
       });
 
       if (response!.statusCode == 200) {

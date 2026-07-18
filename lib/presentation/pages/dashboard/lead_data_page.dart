@@ -1373,7 +1373,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         13)),
                                                             color: Color(
                                                                 0xFF607185)),
-                                                        if (widget.source != 'Not_Interested')
+                                                        if (widget.source != 'Not_Interested' && widget.source != 'Closed_Leads' && widget.source != 'Missed_Leads')
                                                           TableWidget(
                                                               width: 150,
                                                               padding: EdgeInsets
@@ -1651,7 +1651,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               .ellipsis,
                                                                           style:
                                                                               const TextStyle(fontSize: 13))),
-                                                                  if (widget.source != 'Not_Interested')
+                                                                  if (widget.source != 'Not_Interested' && widget.source != 'Closed_Leads' && widget.source != 'Missed_Leads')
                                                                     TableWidget(
                                                                         padding: const EdgeInsets
                                                                             .symmetric(

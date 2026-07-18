@@ -260,7 +260,7 @@ class QuotationPDFPrinterWeb {
 
     // System price
     graphics.drawString(
-      quotationData.totalAmount?.toString() ?? '',
+      quotationData.ksebSystemPrice?.toString() ?? '0',
       font,
       brush: PdfSolidBrush(PdfColor(0, 0, 0)),
       bounds: Rect.fromLTWH(400, yPosition, 150, 30),
@@ -269,7 +269,7 @@ class QuotationPDFPrinterWeb {
 
     // Additional structure work
     graphics.drawString(
-      quotationData.additionalAmount?.toString() ?? '0',
+      quotationData.additionalStructure?.toString() ?? '0',
       font,
       brush: PdfSolidBrush(PdfColor(0, 0, 0)),
       bounds: Rect.fromLTWH(400, yPosition, 150, 30),
@@ -278,7 +278,7 @@ class QuotationPDFPrinterWeb {
 
     // Total amount
     double totalAmount = toDouble(quotationData.totalAmount) +
-        toDouble(quotationData.additionalAmount);
+        toDouble(quotationData.additionalStructure);
     graphics.drawString(
       totalAmount.toString(),
       boldFont,
@@ -315,5 +315,40 @@ class QuotationPDFPrinterWeb {
       brush: PdfSolidBrush(PdfColor(0, 0, 0)),
       bounds: Rect.fromLTWH(400, yPosition, 150, 30),
     );
+
+    // KSEB Grid Connectivity Table
+    double ksebYPosition = 500; // Guessed Y position for KSEB table
+    
+    graphics.drawString(
+      quotationData.ksebFeasibilityFee?.toString() ?? '0',
+      font,
+      brush: PdfSolidBrush(PdfColor(0, 0, 0)),
+      bounds: Rect.fromLTWH(400, ksebYPosition, 150, 30),
+    );
+    ksebYPosition += 30;
+
+    graphics.drawString(
+      quotationData.ksebRegistrationFee?.toString() ?? '0',
+      font,
+      brush: PdfSolidBrush(PdfColor(0, 0, 0)),
+      bounds: Rect.fromLTWH(400, ksebYPosition, 150, 30),
+    );
+    ksebYPosition += 30;
+
+    graphics.drawString(
+      quotationData.ksebFeasibilityFeeThreePhase?.toString() ?? '0',
+      font,
+      brush: PdfSolidBrush(PdfColor(0, 0, 0)),
+      bounds: Rect.fromLTWH(400, ksebYPosition, 150, 30),
+    );
+    ksebYPosition += 30;
+
+    graphics.drawString(
+      quotationData.ksebRegistrationFeeThreePhase?.toString() ?? '0',
+      font,
+      brush: PdfSolidBrush(PdfColor(0, 0, 0)),
+      bounds: Rect.fromLTWH(400, ksebYPosition, 150, 30),
+    );
   }
 }
+
