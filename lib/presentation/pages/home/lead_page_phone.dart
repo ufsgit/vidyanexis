@@ -215,7 +215,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showFilterIcon: false,
               showSort: true,
               showOrder: true,
-              showExcel: settingsProvider.menuIsSaveMap[20].toString() == '1',
+              showExcel: settingsProvider.menuIsSaveMap[167].toString() == '1',
               onExcelTap: () {
                 if (leadProvider.leadData.isNotEmpty) {
                   exportToExcel(
@@ -315,7 +315,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
               showFilterIcon: false,
               showSort: true,
               showOrder: true,
-              showExcel: settingsProvider.menuIsSaveMap[20].toString() == '1',
+              showExcel: settingsProvider.menuIsSaveMap[167].toString() == '1',
               onExcelTap: () {
                 if (leadProvider.leadData.isNotEmpty) {
                   exportToExcel(

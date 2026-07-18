@@ -155,7 +155,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         showFilterIcon: false,
         showSort: true,
         showOrder: true,
-        showExcel: settingsProvider.menuIsSaveMap[20].toString() == '1',
+        showExcel: settingsProvider.menuIsSaveMap[167].toString() == '1',
         onExcelTap: () {
           if (customerProvider.customerData.isNotEmpty) {
             exportToExcel(

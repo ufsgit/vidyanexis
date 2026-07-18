@@ -395,7 +395,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                 },
                                 isFilter: customerProvider.isFilter,
                               ),
-                            if (settingsProvider.menuIsSaveMap[20].toString() == '1')
+                            if (settingsProvider.menuIsSaveMap[167].toString() == '1')
                               ElevatedButton.icon(
                                 onPressed: () {
                                   if (customerProvider.customerData.isNotEmpty) {

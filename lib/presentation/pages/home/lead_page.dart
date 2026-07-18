@@ -693,9 +693,9 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                               ),
-                            if (settingsProvider.menuIsSaveMap[170].toString() == '1')
+                            if (settingsProvider.menuIsSaveMap[167].toString() == '1')
                               const SizedBox(width: 8),
-                            if (settingsProvider.menuIsSaveMap[170].toString() == '1')
+                            if (settingsProvider.menuIsSaveMap[167].toString() == '1')
                               ElevatedButton.icon(
                                 onPressed: () {
                                   if (leadProvider.leadData.isNotEmpty) {
