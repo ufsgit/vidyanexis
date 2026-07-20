@@ -87,7 +87,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                   reportsProvider.fromDateS,
                   reportsProvider.toDateS,
                   reportsProvider.Status,
-                  reportsProvider.AssignedTo,
+                  reportsProvider.selectedUser?.toString() ?? '0',
                   reportsProvider.TaskType,
                 );
                 reportsProvider.getSearchTaskReport(context);
@@ -98,7 +98,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                   reportsProvider.fromDateS,
                   reportsProvider.toDateS,
                   reportsProvider.Status,
-                  reportsProvider.AssignedTo,
+                  reportsProvider.selectedUser?.toString() ?? '0',
                   reportsProvider.TaskType,
                 );
                 reportsProvider.getSearchTaskReport(context);
@@ -109,7 +109,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                   reportsProvider.fromDateS,
                   reportsProvider.toDateS,
                   reportsProvider.Status,
-                  reportsProvider.AssignedTo,
+                  reportsProvider.selectedUser?.toString() ?? '0',
                   reportsProvider.TaskType,
                 );
                 reportsProvider.getSearchTaskReport(context);
@@ -625,7 +625,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                       reportsProvider.formattedFromDate,
                       reportsProvider.formattedToDate,
                       reportsProvider.Status,
-                      reportsProvider.AssignedTo,
+                      reportsProvider.selectedUser?.toString() ?? '0',
                       reportsProvider.TaskType,
                     );
                     reportsProvider.getSearchTaskReport(context);
@@ -698,7 +698,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                 ),
                 Expanded(
                   child: DropdownButton<int>(
-                    value: int.tryParse(reportsProvider.AssignedTo) ?? 0,
+                    value: reportsProvider.selectedUser ?? 0,
                     isExpanded: true,
                   hint: const Text('All'),
                   items: [
@@ -743,7 +743,7 @@ class _AttendanceReportState extends State<AttendanceReport> {
                 reportsProvider.formattedFromDate,
                 reportsProvider.formattedToDate,
                 reportsProvider.Status,
-                reportsProvider.AssignedTo,
+                reportsProvider.selectedUser?.toString() ?? '0',
                 reportsProvider.TaskType,
               );
               reportsProvider.getSearchTaskReport(context);

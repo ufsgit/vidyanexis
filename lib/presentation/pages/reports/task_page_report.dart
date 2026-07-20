@@ -184,8 +184,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           reportsProvider.fromDateS,
                           reportsProvider.toDateS,
                           reportsProvider.Status,
-                          reportsProvider.AssignedTo,
-                          reportsProvider.TaskType,
+                          reportsProvider.selectedUser?.toString() ?? '0',
+                          reportsProvider.selectedTaskType?.toString() ?? '0',
                         );
                         reportsProvider.getSearchTaskReport(context,
                             resetPage: true);
@@ -207,8 +207,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                               reportsProvider.fromDateS,
                               reportsProvider.toDateS,
                               reportsProvider.Status,
-                              reportsProvider.AssignedTo,
-                              reportsProvider.TaskType,
+                              reportsProvider.selectedUser?.toString() ?? '0',
+                              reportsProvider.selectedTaskType?.toString() ?? '0',
                             );
                             reportsProvider.getSearchTaskReport(context,
                                 resetPage: true);
@@ -357,15 +357,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                 reportsProvider.setUserFilterStatus(
                                     newValue); // Update the status in the provider
                               }
-                              String status =
-                                  reportsProvider.selectedStatus.toString();
-                              String assignedTo =
-                                  reportsProvider.selectedUser.toString();
-                              String fromDate =
-                                  reportsProvider.formattedFromDate;
+                              String status = reportsProvider.Status;
+                              String assignedTo = reportsProvider.selectedUser?.toString() ?? '0';
+                              String fromDate = reportsProvider.formattedFromDate;
                               String toDate = reportsProvider.formattedToDate;
-                              String taskType =
-                                  reportsProvider.selectedTaskType.toString();
+                              String taskType = reportsProvider.selectedTaskType?.toString() ?? '0';
                               reportsProvider.setTaskSearchCriteria(
                                 reportsProvider.Search,
                                 fromDate,
@@ -436,15 +432,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                 reportsProvider.setTaskType(
                                     newValue); // Update the status in the provider
                               }
-                              String status =
-                                  reportsProvider.selectedStatus.toString();
-                              String assignedTo =
-                                  reportsProvider.selectedUser.toString();
-                              String fromDate =
-                                  reportsProvider.formattedFromDate;
+                              String status = reportsProvider.Status;
+                              String assignedTo = reportsProvider.selectedUser?.toString() ?? '0';
+                              String fromDate = reportsProvider.formattedFromDate;
                               String toDate = reportsProvider.formattedToDate;
-                              String tasktype =
-                                  reportsProvider.selectedTaskType.toString();
+                              String tasktype = reportsProvider.selectedTaskType?.toString() ?? '0';
                               reportsProvider.setTaskSearchCriteria(
                                 reportsProvider.Search,
                                 fromDate,
@@ -1023,14 +1015,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           print(reportsProvider.formattedFromDate);
                           print(reportsProvider.formattedToDate);
 
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
+                          String status = reportsProvider.Status;
+                          String assignedTo = reportsProvider.selectedUser?.toString() ?? '0';
                           String fromDate = reportsProvider.formattedFromDate;
                           String toDate = reportsProvider.formattedToDate;
-                          String taskType =
-                              reportsProvider.selectedTaskType.toString();
+                          String taskType = reportsProvider.selectedTaskType?.toString() ?? '0';
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
                           reportsProvider.setTaskSearchCriteria(
@@ -1067,14 +1056,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         onPressed: () {
                           Navigator.pop(context);
                           reportsProvider.selectDateFilterOption(null);
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
+                          String status = reportsProvider.Status;
+                          String assignedTo = reportsProvider.selectedUser?.toString() ?? '0';
                           String fromDate = '';
                           String toDate = '';
-                          String taskType =
-                              reportsProvider.selectedTaskType.toString();
+                          String taskType = reportsProvider.selectedTaskType?.toString() ?? '0';
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
                           reportsProvider.setTaskSearchCriteria(
@@ -1274,8 +1260,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         reportsProvider.fromDateS,
                         reportsProvider.toDateS,
                         reportsProvider.Status,
-                        reportsProvider.AssignedTo,
-                        reportsProvider.TaskType,
+                        reportsProvider.selectedUser?.toString() ?? '0',
+                        reportsProvider.selectedTaskType?.toString() ?? '0',
                       );
                       reportsProvider.getSearchTaskReport(context,
                           resetPage: true);
@@ -1319,8 +1305,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                   reportsProvider.fromDateS,
                   reportsProvider.toDateS,
                   reportsProvider.Status,
-                  reportsProvider.AssignedTo,
-                  reportsProvider.TaskType,
+                  reportsProvider.selectedUser?.toString() ?? '0',
+                  reportsProvider.selectedTaskType?.toString() ?? '0',
                 );
                 reportsProvider.getSearchTaskReport(context, resetPage: true);
               },

@@ -37,7 +37,8 @@ class ConversionReportProvider extends ChangeNotifier {
   int? _selectedAMCStatus;
   int? _selectedUser;
   int? _selectedToUserId;
-  int? _selectedByUserId;
+  int? _selectedByUserId; // used as Registered By
+  int? _selectedCreatedByUserId;
   int? selectedFollowUpStatusId;
   int? _selectedEnquirySourceId;
   int? get selectedEnquirySourceId => _selectedEnquirySourceId;
@@ -48,6 +49,7 @@ class ConversionReportProvider extends ChangeNotifier {
   int? get selectedUser => _selectedUser;
   int? get selectedToUserId => _selectedToUserId;
   int? get selectedByUserId => _selectedByUserId;
+  int? get selectedCreatedByUserId => _selectedCreatedByUserId;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -188,6 +190,11 @@ class ConversionReportProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setCreatedByFilterStatus(int? value) {
+    _selectedCreatedByUserId = value;
+    notifyListeners();
+  }
+
   void setLeadId(String value) {
     _leadId = value.isEmpty ? '0' : value;
     notifyListeners();
@@ -199,6 +206,7 @@ class ConversionReportProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedToUserId = null;
     _selectedByUserId = null;
+    _selectedCreatedByUserId = null;
     _selectedDateFilterIndex = null;
     selectedFollowUpStatusId = null;
     _fromDate = null;
@@ -248,7 +256,7 @@ class ConversionReportProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
       String toUserIdStr = (_selectedToUserId ?? 0).toString();
-      String byUserIdStr = (_selectedByUserId ?? 0).toString();
+      String byUserIdStr = (_selectedCreatedByUserId ?? 0).toString();
       String registeredByStr =
           (_selectedByUserId ?? _selectedUser ?? 0).toString();
       String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();
@@ -305,7 +313,7 @@ class ConversionReportProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       String toUserIdStr = (_selectedToUserId ?? 0).toString();
-      String byUserIdStr = (_selectedByUserId ?? 0).toString();
+      String byUserIdStr = (_selectedCreatedByUserId ?? 0).toString();
       String registeredByStr =
           (_selectedByUserId ?? _selectedUser ?? 0).toString();
       String enquirySourceIdStr = (_selectedEnquirySourceId ?? 0).toString();

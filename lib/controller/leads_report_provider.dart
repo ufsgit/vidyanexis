@@ -158,6 +158,8 @@ class LeadReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   int? _selectedStatus;
   int? _selectedUser;
+  int? _selectedByUser;
+  int? _selectedCreatedBy;
   int? _selectedEnquiryFor;
   int? _selectedEnquirySource;
   DateTime? _fromDate = DateTime.now();
@@ -196,6 +198,8 @@ class LeadReportProvider extends ChangeNotifier {
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
   int? get selectedStatus => _selectedStatus;
   int? get selectedUser => _selectedUser;
+  int? get selectedByUser => _selectedByUser;
+  int? get selectedCreatedBy => _selectedCreatedBy;
   int? get selectedEnquiryFor => _selectedEnquiryFor;
   int? get selectedEnquirySource => _selectedEnquirySource;
   bool get isFilter => _isFilter;
@@ -707,6 +711,18 @@ class LeadReportProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void setByUserFilterStatus(int newStatus) {
+    _selectedByUser = newStatus;
+    print(_selectedByUser.toString());
+    notifyListeners(); // Notify listeners about the change
+  }
+
+  void setCreatedByFilterStatus(int newStatus) {
+    _selectedCreatedBy = newStatus;
+    print(_selectedCreatedBy.toString());
+    notifyListeners(); // Notify listeners about the change
+  }
+
   void setEnquiryForFilter(int newStatus) {
     _selectedEnquiryFor = newStatus;
     _enquiryForS = newStatus.toString();
@@ -895,7 +911,7 @@ class LeadReportProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=${_selectedUser ?? 0}&Login_User_Id=$_loginUserId&Status_Id=${_selectedStatus ?? 0}&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}&User_Details_Id=$_loginUserId&Lead_Id=0');
+              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=${_selectedUser ?? 0}&Login_User_Id=$_loginUserId&Status_Id=${_selectedStatus ?? 0}&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}&User_Details_Id=$_loginUserId&Lead_Id=0&By_User_Id=${_selectedCreatedBy ?? 0}&Registered_By=${_selectedByUser ?? 0}');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -965,7 +981,7 @@ class LeadReportProvider extends ChangeNotifier {
       // Fetch with a large range (e.g., 1 to 10000) to get all results
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=${_selectedUser ?? 0}&Login_User_Id=$_loginUserId&Status_Id=${_selectedStatus ?? 0}&Page_Index1=1&Page_Index2=10000&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}&User_Details_Id=$_loginUserId&Lead_Id=0');
+              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=${_selectedUser ?? 0}&Login_User_Id=$_loginUserId&Status_Id=${_selectedStatus ?? 0}&Page_Index1=1&Page_Index2=10000&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}&User_Details_Id=$_loginUserId&Lead_Id=0&By_User_Id=${_selectedCreatedBy ?? 0}&Registered_By=${_selectedByUser ?? 0}');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1028,7 +1044,7 @@ class LeadReportProvider extends ChangeNotifier {
 
     final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Login_User_Id=$_loginUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}&User_Details_Id=$_loginUserId&Lead_Id=0');
+            '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Login_User_Id=$_loginUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}&User_Details_Id=$_loginUserId&Lead_Id=0&By_User_Id=${_selectedCreatedBy ?? 0}&Registered_By=${_selectedByUser ?? 0}');
 
     if (response.statusCode == 200) {
       final data = response.data;
@@ -1899,6 +1915,8 @@ class LeadReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
+    _selectedByUser = null;
+    _selectedCreatedBy = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
     _fromDate = null;

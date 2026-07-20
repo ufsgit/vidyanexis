@@ -517,7 +517,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           onTap: () => onClickTopButton(context),
                         ),
 
-                        // By User
+                        // Registered By
                         Container(
                           height: 40,
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -535,7 +535,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('By User: ',
+                              Text('Registered By: ',
                                   style: TextStyle(
                                       color: Colors.grey[600], fontSize: 13)),
                               DropdownButton<int>(
@@ -605,6 +605,93 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 style: const TextStyle(
                                     fontSize: 13, color: Colors.black),
                               ),
+                            ],
+                          ),
+                        ),
+
+                        // Created By
+                        Container(
+                          height: 40,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color:
+                                  (reportsProvider.selectedCreatedByUserId != null &&
+                                          reportsProvider.selectedCreatedByUserId != 0)
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('Created By: ',
+                                  style: TextStyle(
+                                      color: Colors.grey[600], fontSize: 13)),
+                              DropdownButton<int>(
+                                value: reportsProvider.selectedCreatedByUserId ?? 0,
+                                hint: const Text('All',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13)),
+                                items: [
+                                      const DropdownMenuItem<int>(
+                                        value: 0,
+                                        child: Text('All',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 13)),
+                                      ),
+                                    ] +
+                                    provider.searchUserDetails
+                                        .map((user) => DropdownMenuItem<int>(
+                                              value: user.userDetailsId ?? 0,
+                                              child: ConstrainedBox(
+                                                constraints: const BoxConstraints(
+                                                    maxWidth: 150),
+                                                child: Text(
+                                                  user.userDetailsName ?? '',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 13),
+                                                ),
+                                              ),
+                                            ))
+                                        .toList(),
+                                onChanged: (int? newValue) {
+                                  if (newValue != null) {
+                                    reportsProvider.setCreatedByFilterStatus(newValue);
+                                  }
+                                  String status =
+                                      (reportsProvider.selectedStatus ?? 0)
+                                          .toString();
+                                  String assignedTo =
+                                      (reportsProvider.selectedToUserId ?? 0)
+                                          .toString();
+                                  String fromDate =
+                                      reportsProvider.formattedFromDate;
+                                  String toDate =
+                                      reportsProvider.formattedToDate;
+
+                                  reportsProvider.setTaskSearchCriteria(
+                                    reportsProvider.Search,
+                                    fromDate,
+                                    toDate,
+                                    status,
+                                    assignedTo,
+                                  );
+                                  reportsProvider
+                                      .getSearchConversionReport(context);
+                                },
+                                underline: Container(),
+                                isDense: true,
+                                iconSize: 18,
+                              )
                             ],
                           ),
                         ),
@@ -953,7 +1040,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                         onTap: () => onClickTopButton(context),
                       ),
                       const SizedBox(height: 16),
-                      CustomText('By User',
+                      CustomText('Registered By',
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textBlack),
@@ -1195,7 +1282,11 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                 color: Color(0xFF607185)),
                                             TableWidget(
                                                 flex: 1,
-                                                title: 'By User',
+                                                title: 'Registered By',
+                                                color: Color(0xFF607185)),
+                                            TableWidget(
+                                                flex: 1,
+                                                title: 'Created By',
                                                 color: Color(0xFF607185)),
                                             TableWidget(
                                                 flex: 1,
@@ -1763,7 +1854,8 @@ final List<String> _exportHeaders = [
   'Address',
   'Enquiry For',
   'Enquiry Source',
-  'By User',
+  'Registered By',
+  'Created By',
   'Assigned Staff',
   'Status',
   'Conversion Date',
@@ -1786,7 +1878,8 @@ List<Map<String, dynamic>> _prepareExportData(
           '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
       'Enquiry For': task.enquiryForName.toString(),
       'Enquiry Source': task.enquirySourceName,
-      'By User': task.byUserName,
+      'Registered By': task.registerdBy,
+      'Created By': task.byUserName,
       'Assigned Staff': task.toUserName,
       'Status': task.statusName,
       'Conversion Date': _formatDateSafely(task.registeredDate),
