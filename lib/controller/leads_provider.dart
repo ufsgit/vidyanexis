@@ -21,6 +21,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/controller/models/caption_model.dart';
 import 'package:vidyanexis/controller/models/save_lead_dropdown_model.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -2104,8 +2105,43 @@ class LeadsProvider extends ChangeNotifier {
     print(_customerId);
   }
 
+  List<CaptionModel> _captionList = [];
+  List<CaptionModel> get captionList => _captionList;
+
+  String getConsumerNameCaption() {
+    final match = _captionList.firstWhere(
+      (c) => c.captionId == 1 || c.caption.toLowerCase().contains('name'),
+      orElse: () => CaptionModel(captionId: 1, caption: 'Consumer Name', displayOrder: 1),
+    );
+    return match.caption.isNotEmpty ? match.caption : 'Consumer Name';
+  }
+
+  String getConsumerNoCaption() {
+    final match = _captionList.firstWhere(
+      (c) => c.captionId == 2 || c.caption.toLowerCase().contains('no') || c.caption.toLowerCase().contains('contact'),
+      orElse: () => CaptionModel(captionId: 2, caption: 'Contact No', displayOrder: 2),
+    );
+    return match.caption.isNotEmpty ? match.caption : 'Contact No';
+  }
+
+  Future<void> getCaptionMaster(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCaptionMaster);
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          _captionList = data.map((e) => CaptionModel.fromJson(e)).toList();
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print('Error loading caption master: $e');
+    }
+  }
+
   Future<void> getLeadDropdowns(BuildContext context) async {
     try {
+      await getCaptionMaster(context);
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getLeadDropdowns);
 

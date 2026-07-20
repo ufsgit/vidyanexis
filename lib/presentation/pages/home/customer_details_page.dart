@@ -72,6 +72,7 @@ import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/utils/pdf_action_helper.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_customer_details_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/common/common_empty_state.dart';
 
 class CustomerDetailsScreen extends StatefulWidget {
@@ -601,6 +602,28 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   icon: const Icon(Icons.delete_outline,
                                       color: Colors.red),
                                 ),
+                              IconButton(
+                                tooltip: 'Export PDF',
+                                icon: const Icon(Icons.picture_as_pdf,
+                                    color: Colors.blue),
+                                onPressed: () async {
+                                  if (customerDetailsProvider.leadDetails != null &&
+                                      customerDetailsProvider.leadDetails!.isNotEmpty) {
+                                    final companyName = settingsprovider.companyDetails.isNotEmpty
+                                        ? settingsprovider.companyDetails[0].companyName
+                                        : '3rd Eye Security Systems';
+                                    await generateCustomerDetailsPdf(
+                                      customerData: customerDetailsProvider.leadDetails![0],
+                                      customFields: leadProvider.customFieldEnquiryFor ?? [],
+                                      companyName: companyName,
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('No details available to export')),
+                                    );
+                                  }
+                                },
+                              ),
                               const SizedBox(width: 20),
                               if (_canScrollLeft)
                                 IconButton(
