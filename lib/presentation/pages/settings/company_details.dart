@@ -183,7 +183,7 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                       // Enquiry For Mandatory
                       _buildInfoTile(
                         Icons.check_box,
-                        "Enquiry For Mandatory",
+                        settingsProvider.getPermissionCaption("Enquiry For", "Enquiry For Mandatory"),
                         settingsProvider
                                     .companyDetails[0].enquiryForMandatory ==
                                 1
@@ -193,7 +193,7 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                       // Enquiry Source Mandatory
                       _buildInfoTile(
                         Icons.check_box,
-                        "Enquiry Source Mandatory",
+                        settingsProvider.getPermissionCaption("Enquiry Source", "Enquiry Source Mandatory"),
                         settingsProvider
                                     .companyDetails[0].enquirySourceMandatory ==
                                 1
@@ -203,7 +203,7 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                       // District & City in Basic Details
                       _buildInfoTile(
                         Icons.check_box,
-                        "District & City in Basic Details",
+                        settingsProvider.getPermissionCaption("District", "District & City in Basic Details"),
                         settingsProvider
                                     .companyDetails[0].districtCityMandatory ==
                                 1

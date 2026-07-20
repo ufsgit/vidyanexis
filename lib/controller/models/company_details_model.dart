@@ -1,3 +1,32 @@
+class CompanyPermission {
+  final int companyPermissionId;
+  final String caption;
+  final int value;
+
+  CompanyPermission({
+    required this.companyPermissionId,
+    required this.caption,
+    required this.value,
+  });
+
+  factory CompanyPermission.fromJson(Map<String, dynamic> json) {
+    return CompanyPermission(
+      companyPermissionId:
+          json['Company_Permission_Id'] ?? json['company_permission_id'] ?? 0,
+      caption: json['Caption'] ?? json['caption'] ?? '',
+      value: json['Value'] ?? json['value'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Company_Permission_Id': companyPermissionId,
+      'Caption': caption,
+      'Value': value,
+    };
+  }
+}
+
 class Company {
   final int companyId;
   final String companyName;
@@ -26,6 +55,7 @@ class Company {
   final int commercialProposal;
   final int districtCityMandatory;
   final int leadMobileExistedCheck;
+  final List<CompanyPermission> permissions;
 
   Company({
     required this.companyId,
@@ -55,6 +85,7 @@ class Company {
     required this.commercialProposal,
     required this.districtCityMandatory,
     required this.leadMobileExistedCheck,
+    this.permissions = const [],
   });
 
   // Factory constructor for creating an instance from JSON with null checks
@@ -87,6 +118,10 @@ class Company {
       commercialProposal: json['Commercial_Proposal'] ?? 0,
       districtCityMandatory: json['District_City_Mandatory'] ?? 0,
       leadMobileExistedCheck: json['Lead_Mobile_Existed_Check'] ?? 0,
+      permissions: (json['permissions'] as List<dynamic>?)
+              ?.map((e) => CompanyPermission.fromJson(e))
+              .toList() ??
+          const [],
     );
   }
 
@@ -120,6 +155,7 @@ class Company {
       'Commercial_Proposal': commercialProposal,
       'District_City_Mandatory': districtCityMandatory,
       'Lead_Mobile_Existed_Check': leadMobileExistedCheck,
+      'permissions': permissions.map((e) => e.toJson()).toList(),
     };
   }
 }

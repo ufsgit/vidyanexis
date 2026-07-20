@@ -527,6 +527,44 @@ class SettingsProvider extends ChangeNotifier {
   int get districtCityMandatory => _districtCityMandatory;
   int get leadMobileExistedCheck => _leadMobileExistedCheck;
 
+  String getPermissionCaption(dynamic key, String defaultCaption) {
+    if (_companyDetails.isNotEmpty && _companyDetails[0].permissions.isNotEmpty) {
+      for (var p in _companyDetails[0].permissions) {
+        if (key is int && p.companyPermissionId == key && p.caption.isNotEmpty) {
+          return p.caption;
+        }
+        if (key is String &&
+            p.caption.toLowerCase().contains(key.toLowerCase()) &&
+            p.caption.isNotEmpty) {
+          return p.caption;
+        }
+      }
+    }
+    return defaultCaption;
+  }
+
+  void updateCompanyPermission(int permissionId, int newValue) {
+    if (_companyDetails.isNotEmpty && _companyDetails[0].permissions.isNotEmpty) {
+      final index = _companyDetails[0]
+          .permissions
+          .indexWhere((p) => p.companyPermissionId == permissionId);
+      if (index != -1) {
+        final old = _companyDetails[0].permissions[index];
+        _companyDetails[0].permissions[index] = CompanyPermission(
+          companyPermissionId: old.companyPermissionId,
+          caption: old.caption,
+          value: newValue,
+        );
+        if (permissionId == 2) {
+          _leadMobileExistedCheck = newValue;
+        } else if (permissionId == 1) {
+          _toggleValue = newValue;
+        }
+        notifyListeners();
+      }
+    }
+  }
+
   int? _selectedBranchId = -1;
   int? get selectedBranchId => _selectedBranchId;
 
@@ -4259,6 +4297,10 @@ class SettingsProvider extends ChangeNotifier {
             "Commercial_Proposal": _commercialProposal,
             "District_City_Mandatory": _districtCityMandatory,
             "Lead_Mobile_Existed_Check": _leadMobileExistedCheck,
+            "permissions": _companyDetails.isNotEmpty &&
+                    _companyDetails[0].permissions.isNotEmpty
+                ? _companyDetails[0].permissions.map((e) => e.toJson()).toList()
+                : [],
           });
 
       if (response!.statusCode == 200) {
