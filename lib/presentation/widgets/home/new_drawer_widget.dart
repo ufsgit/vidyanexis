@@ -717,6 +717,57 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 8),
 
+                          // Consumer Details (Dynamic labels from Get_Caption_Master)
+                          ResponsiveRow(
+                            children: [
+                              if (settingsProvider.consumerNameMandatory == 1 &&
+                                  settingsProvider.menuIsViewMap[149] == 1)
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: CustomTextField(
+                                            height: 54,
+                                            controller: leadProvider.consumerNameController,
+                                            hintText: leadProvider.getConsumerNameCaption(),
+                                            labelText: '',
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 48), // Spacer
+                                    ],
+                                  ),
+                                ),
+                              if (settingsProvider.consumerContactNoMandatory == 1 &&
+                                  settingsProvider.menuIsViewMap[150] == 1)
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                          child: CustomTextField(
+                                            height: 54,
+                                            controller: leadProvider.consumerContactNoController,
+                                            hintText: leadProvider.getConsumerNoCaption(),
+                                            labelText: '',
+                                            keyboardType: TextInputType.phone,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.digitsOnly,
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 48), // Spacer
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+
                           // Row 1.5: District & City (Conditional)
                           if (settingsProvider.companyDetails.isNotEmpty &&
                               settingsProvider.companyDetails[0]
@@ -1220,63 +1271,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 8),
 
-                          // Row 7: Consumer Details
-                          ResponsiveRow(
-                            children: [
-                              if (settingsProvider.consumerNameMandatory == 1)
-                                if (settingsProvider.menuIsViewMap[149] == 1)
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 8.0),
-                                            child: CustomTextField(
-                                              height: 54,
-                                              controller: leadProvider
-                                                  .consumerNameController,
-                                              hintText: 'Consumer Name',
-                                              labelText: '',
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 48), // Spacer
-                                      ],
-                                    ),
-                                  ),
-                              if (settingsProvider.consumerContactNoMandatory ==
-                                  1)
-                                if (settingsProvider.menuIsViewMap[150] == 1)
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 4.0),
-                                            child: CustomTextField(
-                                              height: 54,
-                                              controller: leadProvider
-                                                  .consumerContactNoController,
-                                              hintText: 'Contact No',
-                                              labelText: '',
-                                              keyboardType: TextInputType.phone,
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter
-                                                    .digitsOnly,
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 48), // Spacer
-                                      ],
-                                    ),
-                                  ),
-                              const Spacer(),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
+
 
                           if (dropDownProvider.selectedEnquiryForId != null &&
                               dropDownProvider.selectedEnquiryForId != 0)

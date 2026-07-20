@@ -2523,6 +2523,27 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
         const SizedBox(height: 10),
 
+        if (settingsProvider.menuIsViewMap[148] == 1) ...[
+          if (settingsProvider.consumerNameMandatory == 1) ...[
+            CustomTextfieldWidgetMobile(
+              controller: leadProvider.consumerNameController,
+              labelText: leadProvider.getConsumerNameCaption(),
+            ),
+            const SizedBox(height: 10),
+          ],
+          if (settingsProvider.consumerContactNoMandatory == 1) ...[
+            CustomTextfieldWidgetMobile(
+              controller: leadProvider.consumerContactNoController,
+              labelText: leadProvider.getConsumerNoCaption(),
+              keyBoardType: TextInputType.phone,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+        ],
+
         if (settingsProvider.companyDetails.isNotEmpty &&
             settingsProvider.companyDetails[0].districtCityMandatory == 1) ...[
           CommonDropdown<int>(
@@ -2658,26 +2679,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           ),
           const SizedBox(height: 10),
         ],
-        if (settingsProvider.menuIsViewMap[148] == 1) ...[
-          if (settingsProvider.consumerNameMandatory == 1) ...[
-            CustomTextfieldWidgetMobile(
-              controller: leadProvider.consumerNameController,
-              labelText: 'Consumer Name',
-            ),
-            const SizedBox(height: 10),
-          ],
-          if (settingsProvider.consumerContactNoMandatory == 1) ...[
-            CustomTextfieldWidgetMobile(
-              controller: leadProvider.consumerContactNoController,
-              labelText: 'Contact No',
-              keyBoardType: TextInputType.phone,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-            ),
-            const SizedBox(height: 10),
-          ],
-        ],
+
         // if (dropDownProvider.selectedEnquiryForId != null &&
         //     dropDownProvider.selectedEnquiryForId != 0)
         //   // customFieldSection(),
