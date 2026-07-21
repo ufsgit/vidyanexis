@@ -134,10 +134,12 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile> {
           PeriodicServicesMobile(customerId: widget.customerId.toString()));
     }
 
-    if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1) {
+    if (settingsprovider.menuIsViewMap[18] == 1) {
       tabLabels.add("Receipt");
       tabPages.add(RecieptPhone(widget.customerId.toString()));
+    }
 
+    if (settingsprovider.menuIsViewMap[48] == 1) {
       tabLabels.add("Expense");
       tabPages.add(ExpenseTabWidget(customerId: widget.customerId.toString()));
     }
