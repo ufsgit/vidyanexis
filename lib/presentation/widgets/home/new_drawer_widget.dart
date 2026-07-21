@@ -635,7 +635,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           height: 54,
                                           controller:
                                               leadProvider.leadNameController,
-                                          hintText: 'Lead Name',
+                                          hintText: settingsProvider.leadNameLabel,
                                           labelText: '',
                                           focusNode: _leadNameFocusNode,
                                           showError:
@@ -728,11 +728,14 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     children: [
                                       Expanded(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(right: 8.0),
+                                          padding:
+                                              const EdgeInsets.only(right: 8.0),
                                           child: CustomTextField(
                                             height: 54,
-                                            controller: leadProvider.consumerNameController,
-                                            hintText: leadProvider.getConsumerNameCaption(),
+                                            controller: leadProvider
+                                                .consumerNameController,
+                                            hintText: leadProvider
+                                                .getConsumerNameCaption(),
                                             labelText: '',
                                           ),
                                         ),
@@ -741,22 +744,27 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ],
                                   ),
                                 ),
-                              if (settingsProvider.consumerContactNoMandatory == 1 &&
+                              if (settingsProvider.consumerContactNoMandatory ==
+                                      1 &&
                                   settingsProvider.menuIsViewMap[150] == 1)
                                 Expanded(
                                   child: Row(
                                     children: [
                                       Expanded(
                                         child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 4.0),
                                           child: CustomTextField(
                                             height: 54,
-                                            controller: leadProvider.consumerContactNoController,
-                                            hintText: leadProvider.getConsumerNoCaption(),
+                                            controller: leadProvider
+                                                .consumerContactNoController,
+                                            hintText: leadProvider
+                                                .getConsumerNoCaption(),
                                             labelText: '',
                                             keyboardType: TextInputType.phone,
                                             inputFormatters: [
-                                              FilteringTextInputFormatter.digitsOnly,
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
                                             ],
                                           ),
                                         ),
@@ -1271,8 +1279,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ],
                           ),
                           const SizedBox(height: 8),
-
-
 
                           if (dropDownProvider.selectedEnquiryForId != null &&
                               dropDownProvider.selectedEnquiryForId != 0)

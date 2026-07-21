@@ -1154,7 +1154,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       ),
                                     ),
                                     TableWidget(
-                                        width: 50,
+                                        width: 80,
                                         title: 'Cus. ID',
                                         color: Color(0xFF607185)),
                                     TableWidget(
@@ -1198,7 +1198,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         title: 'Next Follow-up',
                                         color: Color(0xFF607185)),
                                     TableWidget(
-                                        width: 80,
+                                        width: 100,
                                         title: 'Follow-Up',
                                         color: Color(0xFF607185)),
                                     TableWidget(
@@ -1391,12 +1391,16 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                               lead.enquiryFor),
                                                       TableWidget(
                                                           flex: 1,
-                                                          title: lead
-                                                              .enquirySourceName),
+                                                          title:
+                                                              lead.enquirySourceName),
                                                       TableWidget(
                                                           flex: 1,
                                                           title:
                                                               lead.byUserName),
+                                                      TableWidget(
+                                                          flex: 1,
+                                                          title:
+                                                              lead.createdByName),
                                                       TableWidget(
                                                           flex: 1,
                                                           title:
@@ -1451,7 +1455,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                           title: _formatDateSafely(
                                                               lead.nextFollowUpDate)),
                                                       TableWidget(
-                                                        width: 80,
+                                                        width: 100,
                                                         data: InkWell(
                                                           onTap: () async {
                                                             setState(() {
@@ -1901,27 +1905,23 @@ class _LeadsPageReportState extends State<LeadPageReport> {
             border: Border(top: BorderSide(color: Colors.grey[200]!)),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Stack(
-            alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Total Leads: ${provider.totalSize}',
-                  style: const TextStyle(
-                    color: Color(0xFF6C7C93),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+              Text(
+                'Total Leads: ${provider.totalSize}',
+                style: const TextStyle(
+                  color: Color(0xFF6C7C93),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   ...List.generate(provider.totalPages, (index) {
                     int page = index + 1;
-                    // Logic to show limited pages if many (simple version for now: max 5 pages or smart check)
-                    // If pages > 7, show 1, 2, ..., current-1, current, current+1, ..., last
+                    // Logic to show limited pages if many
                     if (provider.totalPages > 7) {
                       if (index > 1 &&
                           index < provider.totalPages - 2 &&

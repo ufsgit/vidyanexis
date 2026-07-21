@@ -2357,7 +2357,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         CustomTextfieldWidgetMobile(
           // height: 54,
           controller: leadProvider.leadNameController,
-          labelText: 'Lead Name',
+          labelText: settingsProvider.leadNameLabel,
           // labelText: '',
           focusNode: _leadNameFocusNode,
           // showError: dropDownProvider.showValidation &&
