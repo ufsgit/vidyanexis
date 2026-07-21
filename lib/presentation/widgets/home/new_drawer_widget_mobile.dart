@@ -270,6 +270,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       errorMessage = 'Please select District';
     } else if (settingsProvider.companyDetails.isNotEmpty &&
         settingsProvider.companyDetails[0].districtCityMandatory == 1 &&
+        (settingsProvider.menuIsViewMap[146] ?? 0) == 1 &&
         leadProvider.cityController.text.isEmpty) {
       errorMessage = 'Place is required';
     } else if (settingsProvider.enquiryForMandatory == 1 &&

@@ -543,6 +543,71 @@ class SettingsProvider extends ChangeNotifier {
     return defaultCaption;
   }
 
+  void _syncPermissionValueToState(int permissionId, int value) {
+    if (permissionId == 1 || permissionId == 3) {
+      _toggleValue = value;
+    } else if (permissionId == 4) {
+      _enquiryForMandatory = value;
+    } else if (permissionId == 5) {
+      _enquirySourceMandatory = value;
+    } else if (permissionId == 6) {
+      _consumerNameMandatory = value;
+    } else if (permissionId == 7) {
+      _consumerContactNoMandatory = value;
+    } else if (permissionId == 8) {
+      _leadInSales = value;
+    } else if (permissionId == 9) {
+      _quotationItem = value;
+    } else if (permissionId == 10) {
+      _additionalExpense = value;
+    } else if (permissionId == 11) {
+      _commercialProposal = value;
+    } else if (permissionId == 12) {
+      _districtCityMandatory = value;
+    } else if (permissionId == 2 || permissionId == 13) {
+      _leadMobileExistedCheck = value;
+    }
+  }
+
+  void _syncStateToPermissionsList(int permissionId, int value) {
+    if (_companyDetails.isNotEmpty &&
+        _companyDetails[0].permissions.isNotEmpty) {
+      final index = _companyDetails[0]
+          .permissions
+          .indexWhere((p) => p.companyPermissionId == permissionId);
+      if (index != -1) {
+        final old = _companyDetails[0].permissions[index];
+        _companyDetails[0].permissions[index] = CompanyPermission(
+          companyPermissionId: old.companyPermissionId,
+          caption: old.caption,
+          value: value,
+        );
+      }
+    }
+  }
+
+  void _syncAllCompanyPermissions() {
+    if (_companyDetails.isNotEmpty) {
+      _enquiryForMandatory = _companyDetails[0].enquiryForMandatory;
+      _enquirySourceMandatory = _companyDetails[0].enquirySourceMandatory;
+      _consumerNameMandatory = _companyDetails[0].consumerNameMandatory;
+      _consumerContactNoMandatory = _companyDetails[0].consumerContactNoMandatory;
+      _leadInSales = _companyDetails[0].leadInSales;
+      _quotationItem = _companyDetails[0].quotationItemValue;
+      _additionalExpense = _companyDetails[0].additionalExpense;
+      _commercialProposal = _companyDetails[0].commercialProposal;
+      _districtCityMandatory = _companyDetails[0].districtCityMandatory;
+      _leadMobileExistedCheck = _companyDetails[0].leadMobileExistedCheck;
+      _toggleValue = _companyDetails[0].isLocation;
+
+      if (_companyDetails[0].permissions.isNotEmpty) {
+        for (var p in _companyDetails[0].permissions) {
+          _syncPermissionValueToState(p.companyPermissionId, p.value);
+        }
+      }
+    }
+  }
+
   void updateCompanyPermission(int permissionId, int newValue) {
     if (_companyDetails.isNotEmpty && _companyDetails[0].permissions.isNotEmpty) {
       final index = _companyDetails[0]
@@ -555,11 +620,7 @@ class SettingsProvider extends ChangeNotifier {
           caption: old.caption,
           value: newValue,
         );
-        if (permissionId == 2) {
-          _leadMobileExistedCheck = newValue;
-        } else if (permissionId == 1) {
-          _toggleValue = newValue;
-        }
+        _syncPermissionValueToState(permissionId, newValue);
         notifyListeners();
       }
     }
@@ -1091,56 +1152,69 @@ class SettingsProvider extends ChangeNotifier {
 
   void setToggleValue(int value) {
     _toggleValue = value;
+    _syncStateToPermissionsList(1, value);
+    _syncStateToPermissionsList(3, value);
     notifyListeners();
   }
 
   void setEnquiryForMandatory(int value) {
     _enquiryForMandatory = value;
+    _syncStateToPermissionsList(4, value);
     notifyListeners();
   }
 
   void setEnquirySourceMandatory(int value) {
     _enquirySourceMandatory = value;
+    _syncStateToPermissionsList(5, value);
     notifyListeners();
   }
 
   void setConsumerNameMandatory(int value) {
     _consumerNameMandatory = value;
+    _syncStateToPermissionsList(6, value);
     notifyListeners();
   }
 
   void setConsumerContactNoMandatory(int value) {
     _consumerContactNoMandatory = value;
+    _syncStateToPermissionsList(7, value);
     notifyListeners();
   }
 
   void setLeadInSales(int value) {
     _leadInSales = value;
+    _syncStateToPermissionsList(8, value);
     notifyListeners();
   }
 
   void setQuotationItem(int value) {
     _quotationItem = value;
+    _syncStateToPermissionsList(9, value);
     notifyListeners();
   }
 
   void setAdditionalExpense(int value) {
     _additionalExpense = value;
+    _syncStateToPermissionsList(10, value);
     notifyListeners();
   }
 
   void setCommercialProposal(int value) {
     _commercialProposal = value;
+    _syncStateToPermissionsList(11, value);
     notifyListeners();
   }
 
   void setDistrictCityMandatory(int value) {
     _districtCityMandatory = value;
+    _syncStateToPermissionsList(12, value);
     notifyListeners();
   }
 
   void setLeadMobileExistedCheck(int value) {
     _leadMobileExistedCheck = value;
+    _syncStateToPermissionsList(2, value);
+    _syncStateToPermissionsList(13, value);
     notifyListeners();
   }
 
@@ -4149,18 +4223,7 @@ class SettingsProvider extends ChangeNotifier {
             _companyDetails =
                 data.map((item) => Company.fromJson(item)).toList();
             if (_companyDetails.isNotEmpty) {
-              _enquiryForMandatory = _companyDetails[0].enquiryForMandatory;
-              _enquirySourceMandatory =
-                  _companyDetails[0].enquirySourceMandatory;
-              _consumerNameMandatory = _companyDetails[0].consumerNameMandatory;
-              _consumerContactNoMandatory =
-                  _companyDetails[0].consumerContactNoMandatory;
-              _leadInSales = _companyDetails[0].leadInSales;
-              _quotationItem = _companyDetails[0].quotationItemValue;
-              _additionalExpense = _companyDetails[0].additionalExpense;
-              _commercialProposal = _companyDetails[0].commercialProposal;
-              _districtCityMandatory = _companyDetails[0].districtCityMandatory;
-              _leadMobileExistedCheck = _companyDetails[0].leadMobileExistedCheck;
+              _syncAllCompanyPermissions();
             }
           } catch (e) {
             print(
@@ -4217,6 +4280,7 @@ class SettingsProvider extends ChangeNotifier {
           _leadMobileExistedCheck = data['Lead_Mobile_Existed_Check'] ?? 0;
           try {
             _companyDetails = [Company.fromJson(data)];
+            _syncAllCompanyPermissions();
           } catch (e) {
             print('SettingsProvider.getCompanyDetails (map): Failed to parse Company format - $e');
           }
