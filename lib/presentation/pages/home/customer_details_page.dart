@@ -185,8 +185,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           sideprovider.name != 'Lead /')
         const Tab(text: "Periodic Service"),
       if (settingsprovider.menuIsViewMap[100] == 1) const Tab(text: "History"),
-      if (settingsprovider.menuIsViewMap[18] == 1 &&
-          sideprovider.name != 'Lead /')
+      if (settingsprovider.menuIsViewMap[18] == 1)
         const Tab(text: "Receipt"),
       if (settingsprovider.menuIsViewMap[48] == 1) const Tab(text: "Expense"),
       // Payment Tab (New)
@@ -4748,7 +4747,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             if (settingsprovider
                                                     .menuIsViewMap[18] ==
                                                 1)
-                                              if (sideprovider.name != 'Lead /')
                                                 ReceiptScreen(
                                                     widget.customerId),
 
