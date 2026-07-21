@@ -1415,7 +1415,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     task: task,
                                                     isExpanded: reportsProvider.expandedIndex == index,
                                                     onTap: () => reportsProvider.toggleExpansion(index),
-                                                    showStatusUpdate: (context, task) => updateStatusDialogWithoutTask(task),
+                                                    showStatusUpdate: (context, task) {
+                                                      reportsProvider.selectedTaskTypeIds.clear();
+                                                      reportsProvider.taskTypeModel.clear();
+                                                      if (task.customerName.isEmpty) {
+                                                        updateStatusDialogWithoutTask(task).then((value) {
+                                                          if (value == true) {
+                                                            reportsProvider.goToPage(1);
+                                                            reportsProvider.searchTaskByCustomer(context);
+                                                          }
+                                                        });
+                                                      } else {
+                                                        statusDialogMobile(task).then((value) {
+                                                          if (value == true) {
+                                                            reportsProvider.goToPage(1);
+                                                            reportsProvider.searchTaskByCustomer(context);
+                                                          }
+                                                        });
+                                                      }
+                                                    },
                                                   ),
                                                 ],
                                               );

@@ -3,9 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/department_model.dart';
 import 'package:vidyanexis/controller/models/get_menu_permsiion_model.dart';
 import 'package:vidyanexis/controller/models/dummy_models.dart';
+import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 class PermissionHandlingPage extends StatefulWidget {
@@ -32,6 +38,54 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _openDuplicateDialog(
+      BuildContext context, SettingsProvider settingsProvider) async {
+    final selectedUser = await showDialog<SearchUserDetails>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _DuplicatePermissionsDialog(
+        isPrintPermission: widget.isPrintPermission,
+        currentUserName: widget.userName,
+      ),
+    );
+
+    if (selectedUser != null && mounted) {
+      try {
+        Loader.showLoader(context);
+        if (widget.isPrintPermission) {
+          await settingsProvider.getMenuPermissionDataPrint(
+            selectedUser.userDetailsId.toString(),
+            context,
+          );
+        } else {
+          await settingsProvider.getMenuPermissionData(
+            selectedUser.userDetailsId.toString(),
+            context,
+          );
+        }
+      } finally {
+        if (mounted) {
+          Loader.stopLoader(context);
+          String sourceUserName = selectedUser.userDetailsName.isNotEmpty
+              ? selectedUser.userDetailsName
+              : '${selectedUser.firstName ?? ''} ${selectedUser.lastName ?? ''}'.trim();
+          if (sourceUserName.isEmpty) {
+            sourceUserName = 'selected user';
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Permissions duplicated from $sourceUserName',
+                style: GoogleFonts.plusJakartaSans(color: Colors.white),
+              ),
+              backgroundColor: AppColors.primaryBlue,
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -121,6 +175,31 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
               padding: const EdgeInsets.only(right: 16.0),
               child: Row(
                 children: [
+                  SizedBox(
+                    height: 32,
+                    child: CustomOutlinedSvgButton(
+                      showIcon: false,
+                      onPressed: () =>
+                          _openDuplicateDialog(context, settingsProvider),
+                      svgPath: 'assets/images/Print.svg',
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      textStyle: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryBlue,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      label: 'Duplicate',
+                      breakpoint: 860,
+                      foregroundColor: AppColors.primaryBlue,
+                      backgroundColor: Colors.white,
+                      borderSide:
+                          const BorderSide(color: AppColors.primaryBlue),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   SizedBox(
                     height: 32,
                     child: CustomOutlinedSvgButton(
@@ -296,15 +375,40 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                 ),
               ),
               child: SafeArea(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 48,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            settingsProvider.clearAllPermissions();
-                          },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: OutlinedButton(
+                            onPressed: () =>
+                                _openDuplicateDialog(context, settingsProvider),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: AppColors.primaryBlue),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            child: Text(
+                              'Duplicate',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.primaryBlue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: SizedBox(
+                          height: 48,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              settingsProvider.clearAllPermissions();
+                            },
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(color: Colors.red),
                             shape: RoundedRectangleBorder(
@@ -772,6 +876,328 @@ class _PermissionHandlingPageState extends State<PermissionHandlingPage> {
                 fontWeight: FontWeight.w600,
                 color: value ? AppColors.primaryBlue : const Color(0xFF475569),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DuplicatePermissionsDialog extends StatefulWidget {
+  final bool isPrintPermission;
+  final String currentUserName;
+
+  const _DuplicatePermissionsDialog({
+    required this.isPrintPermission,
+    required this.currentUserName,
+  });
+
+  @override
+  State<_DuplicatePermissionsDialog> createState() =>
+      __DuplicatePermissionsDialogState();
+}
+
+class __DuplicatePermissionsDialogState
+    extends State<_DuplicatePermissionsDialog> {
+  List<DepartmentModel> _departments = [];
+  List<SearchUserDetails> _users = [];
+
+  DepartmentModel? _selectedDepartment;
+  SearchUserDetails? _selectedUser;
+
+  bool _isLoadingDepartments = true;
+  bool _isLoadingUsers = false;
+  String? _departmentError;
+  String? _userError;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDepartments();
+  }
+
+  Future<void> _fetchDepartments() async {
+    setState(() {
+      _isLoadingDepartments = true;
+      _departmentError = null;
+    });
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.searchDepartment}?Search_department=',
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        if (data['success'] == true &&
+            data['data'] != null &&
+            (data['data'] as List).isNotEmpty) {
+          List<dynamic> list = data['data'][0];
+          setState(() {
+            _departments =
+                list.map((item) => DepartmentModel.fromJson(item)).toList();
+            _isLoadingDepartments = false;
+          });
+          return;
+        }
+      }
+      setState(() {
+        _isLoadingDepartments = false;
+        _departmentError = 'Failed to load departments';
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingDepartments = false;
+        _departmentError = 'Error loading departments';
+      });
+    }
+  }
+
+  Future<void> _fetchUsersForDepartment(int departmentId) async {
+    setState(() {
+      _isLoadingUsers = true;
+      _users = [];
+      _selectedUser = null;
+      _userError = null;
+    });
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint:
+            '${HttpUrls.searchUserDetails}?user_details_Name=&Department_Id=$departmentId',
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        List<dynamic> userList = [];
+        final data = response.data;
+        if (data is List) {
+          userList = data;
+        } else if (data['data'] != null) {
+          if (data['data'] is List &&
+              (data['data'] as List).isNotEmpty &&
+              data['data'][0] is List) {
+            userList = data['data'][0];
+          } else if (data['data'] is List) {
+            userList = data['data'];
+          }
+        }
+
+        setState(() {
+          _users =
+              userList.map((item) => SearchUserDetails.fromJson(item)).toList();
+          _isLoadingUsers = false;
+        });
+        return;
+      }
+      setState(() {
+        _isLoadingUsers = false;
+        _userError = 'No users found for this department';
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingUsers = false;
+        _userError = 'Error loading users';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: Container(
+        width: 460,
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.copy_rounded,
+                    color: AppColors.primaryBlue, size: 22),
+                const SizedBox(width: 8),
+                Text(
+                  'Duplicate Permissions',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textBlack,
+                  ),
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  onPressed: () => Navigator.pop(context),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Choose a department and user to copy menu permissions to ${widget.currentUserName}.',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                color: const Color(0xFF64748B),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Department Dropdown
+            Text(
+              'Select Department *',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textBlack,
+              ),
+            ),
+            const SizedBox(height: 6),
+            _isLoadingDepartments
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  )
+                : CommonDropdown<DepartmentModel>(
+                    hintText: 'Choose Department',
+                    selectedValue: _selectedDepartment,
+                    items: _departments
+                        .map((dept) => DropdownItem<DepartmentModel>(
+                              id: dept,
+                              name: dept.departmentName,
+                            ))
+                        .toList(),
+                    onItemSelected: (dept) {
+                      setState(() {
+                        _selectedDepartment = dept;
+                      });
+                      if (dept.departmentId != null) {
+                        _fetchUsersForDepartment(dept.departmentId!);
+                      }
+                    },
+                  ),
+            if (_departmentError != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  _departmentError!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ),
+            const SizedBox(height: 16),
+
+            // User Dropdown
+            Text(
+              'Select User *',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textBlack,
+              ),
+            ),
+            const SizedBox(height: 6),
+            _isLoadingUsers
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  )
+                : CommonDropdown<SearchUserDetails>(
+                    hintText: _selectedDepartment == null
+                        ? 'Select a department first'
+                        : (_users.isEmpty
+                            ? 'No users found'
+                            : 'Choose User'),
+                    selectedValue: _selectedUser,
+                    items: _users.map((user) {
+                      String name = user.userDetailsName;
+                      if ((user.firstName != null && user.firstName!.isNotEmpty) ||
+                          (user.lastName != null && user.lastName!.isNotEmpty)) {
+                        name = '${user.firstName ?? ''} ${user.lastName ?? ''}'.trim();
+                      }
+                      if (name.isEmpty) {
+                        name = 'User #${user.userDetailsId}';
+                      }
+                      return DropdownItem<SearchUserDetails>(
+                        id: user,
+                        name: name,
+                      );
+                    }).toList(),
+                    onItemSelected: (user) {
+                      setState(() {
+                        _selectedUser = user;
+                      });
+                    },
+                  ),
+            if (_userError != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  _userError!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ),
+            const SizedBox(height: 24),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Color(0xFFCBD5E1)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: const Color(0xFF64748B),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: _selectedUser == null
+                      ? null
+                      : () {
+                          Navigator.pop(context, _selectedUser);
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryBlue,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)),
+                  ),
+                  child: Text(
+                    'Duplicate',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

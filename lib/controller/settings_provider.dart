@@ -515,6 +515,7 @@ class SettingsProvider extends ChangeNotifier {
   int _commercialProposal = 0;
   int _districtCityMandatory = 0;
   int _leadMobileExistedCheck = 0;
+  int _leadNameChangeToCustomerName = 0;
   int? _selectedStatusId;
 
   int get toggleValue => _toggleValue;
@@ -528,6 +529,8 @@ class SettingsProvider extends ChangeNotifier {
   int get commercialProposal => _commercialProposal;
   int get districtCityMandatory => _districtCityMandatory;
   int get leadMobileExistedCheck => _leadMobileExistedCheck;
+  int get leadNameChangeToCustomerName => _leadNameChangeToCustomerName;
+  String get leadNameLabel => _leadNameChangeToCustomerName == 1 ? 'Customer Name' : 'Lead Name';
 
   String getPermissionCaption(dynamic key, String defaultCaption) {
     if (_companyDetails.isNotEmpty && _companyDetails[0].permissions.isNotEmpty) {
@@ -566,8 +569,10 @@ class SettingsProvider extends ChangeNotifier {
       _commercialProposal = value;
     } else if (permissionId == 12) {
       _districtCityMandatory = value;
-    } else if (permissionId == 2 || permissionId == 13) {
+    } else if (permissionId == 13) {
       _leadMobileExistedCheck = value;
+    } else if (permissionId == 14) {
+      _leadNameChangeToCustomerName = value;
     }
   }
 
@@ -1217,6 +1222,12 @@ class SettingsProvider extends ChangeNotifier {
     _leadMobileExistedCheck = value;
     _syncStateToPermissionsList(2, value);
     _syncStateToPermissionsList(13, value);
+    notifyListeners();
+  }
+
+  void setLeadNameChangeToCustomerName(int value) {
+    _leadNameChangeToCustomerName = value;
+    _syncStateToPermissionsList(14, value);
     notifyListeners();
   }
 
