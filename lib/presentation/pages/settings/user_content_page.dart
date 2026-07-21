@@ -113,45 +113,58 @@ class _UsersContentState extends State<UsersContent> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 14),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   SizedBox(
                                     width: 40,
-                                    child: Text(
-                                      'No',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF475569)),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'No',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(
                                     width: 180,
-                                    child: Text(
-                                      'User name',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF475569)),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'User name',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(
                                     width: 140,
-                                    child: Text(
-                                      'Department',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF475569)),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Department',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(
                                     width: 90,
-                                    child: Text(
-                                      'Branch',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF475569)),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Branch',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(
@@ -193,10 +206,10 @@ class _UsersContentState extends State<UsersContent> {
                                   ),
                                   const SizedBox(width: 8),
                                   SizedBox(
-                                    width: 90,
+                                    width: 65,
                                     child: Center(
                                       child: Text(
-                                        'Enquiry For',
+                                        'Enquiry\nFor',
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
@@ -207,10 +220,10 @@ class _UsersContentState extends State<UsersContent> {
                                   ),
                                   const SizedBox(width: 8),
                                   SizedBox(
-                                    width: 110,
+                                    width: 65,
                                     child: Center(
                                       child: Text(
-                                        'Enquiry Source',
+                                        'Enquiry\nSource',
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
@@ -221,14 +234,10 @@ class _UsersContentState extends State<UsersContent> {
                                   ),
                                   const SizedBox(width: 8),
                                   SizedBox(
-
-                             
-
                                     width: 60,
-
                                     child: Center(
                                       child: Text(
-                                        'Task Type',
+                                        'Task\nType',
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
@@ -239,24 +248,30 @@ class _UsersContentState extends State<UsersContent> {
                                   ),
                                   const SizedBox(width: 8),
                                   SizedBox(
-                                    width: 80,
-                                    child: Text(
-                                      'Status',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF475569)),
+                                    width: 60,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Status',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   SizedBox(
                                     width: 200,
-                                    child: Text(
-                                      'View details',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF475569)),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'View details',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF475569)),
+                                      ),
                                     ),
                                   ),
                                   const Expanded(child: SizedBox()),
@@ -620,7 +635,7 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                       const SizedBox(width: 8),
                                       SizedBox(
-                                        width: 90,
+                                        width: 65,
                                         child: Center(
                                           child: Container(
                                             decoration: const BoxDecoration(
@@ -646,7 +661,7 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                       const SizedBox(width: 8),
                                       SizedBox(
-                                        width: 110,
+                                        width: 65,
                                         child: Center(
                                           child: Container(
                                             decoration: const BoxDecoration(
@@ -672,7 +687,7 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                       const SizedBox(width: 8),
                                       SizedBox(
-                                        width: 80,
+                                        width: 60,
                                         child: Center(
                                           child: Container(
                                             decoration: const BoxDecoration(
@@ -698,10 +713,12 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                       const SizedBox(width: 8),
                                       SizedBox(
-                                        width: 80,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 4),
+                                        width: 60,
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 6, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: settingsProvider
                                                         .searchUserDetails[
@@ -734,6 +751,7 @@ class _UsersContentState extends State<UsersContent> {
                                             ),
                                           ),
                                         ),
+                                      ),
                                       ),
                                       const SizedBox(width: 8),
                                       SizedBox(
