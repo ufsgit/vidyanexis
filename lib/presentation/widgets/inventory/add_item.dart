@@ -735,9 +735,13 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                                                 Icons.edit_outlined,
                                                 size: 20,
                                                 color: Color(0xFF3B82F6)),
-                                            onPressed: () => expenseProvider
-                                                .populateItemFieldsForEditing(
-                                                    index),
+                                            onPressed: () {
+                                              _showEditMaterialDialog(context,
+                                                  expenseProvider, provider);
+                                              expenseProvider
+                                                  .populateItemFieldsForEditing(
+                                                      index);
+                                            },
                                           ),
                                           IconButton(
                                             icon: const Icon(
@@ -847,6 +851,245 @@ class _AddItemWidgetState extends State<AddItemWidget> {
         fontWeight: FontWeight.w700,
         color: const Color(0xFF1E293B),
       ),
+    );
+  }
+
+  void _showEditMaterialDialog(
+    BuildContext context,
+    ExpenseProvider expenseProvider,
+    SettingsProvider provider,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Edit Material"),
+          contentPadding: const EdgeInsets.all(16),
+          backgroundColor: Colors.white,
+          content: SizedBox(
+            width: double.maxFinite,
+            // Constrain height to avoid overflow
+            height: MediaQuery.of(context).size.height * 0.75,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Expanded(
+                        child: CommonDropdown(
+                          hintText: "Select Material",
+                          items: expenseProvider.itemDropdownList
+                              .map((status) => DropdownItem<int>(
+                                    id: status.itemId,
+                                    name: status.itemName,
+                                  ))
+                              .toList(),
+                          controller: expenseProvider.itemMaterialController,
+                          onItemSelected: (selectedItem) {
+                            final selectedData =
+                                expenseProvider.itemDropdownList.firstWhere(
+                                    (item) => item.itemId == selectedItem);
+                            expenseProvider.setSubId(selectedData.itemId);
+                            expenseProvider
+                                .setItemMaterialUnit(selectedData.unitId);
+                            expenseProvider.itemMaterialUnitController.text =
+                                selectedData.unitName;
+                            expenseProvider.itemPriceController.text =
+                                selectedData.unitPrice;
+                            expenseProvider.materialPriceToController.text =
+                                selectedData.priceTo;
+                            expenseProvider.materialPriceFromController.text =
+                                selectedData.priceFrom;
+                          },
+                          selectedValue: expenseProvider.subItemId,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: expenseProvider.itemPriceController,
+                          hintText: 'Price',
+                          labelText: '',
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,2}')),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: expenseProvider
+                              .itemMaterialSpecificationController,
+                          hintText: 'Specification',
+                          labelText: '',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller:
+                              expenseProvider.itemMaterialManufactureController,
+                          hintText: 'Manufacturer',
+                          labelText: '',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CommonDropdown<int>(
+                          hintText: 'Unit',
+                          selectedValue:
+                              expenseProvider.selectedItemMaterialUnit,
+                          items: provider.searchUnit
+                              .map((status) => DropdownItem<int>(
+                                    id: status.unitId,
+                                    name: status.unitName,
+                                  ))
+                              .toList(),
+                          controller:
+                              expenseProvider.itemMaterialUnitController,
+                          onItemSelected: (selectedId) {
+                            expenseProvider.setItemMaterialUnit(selectedId);
+                            final selectedData = provider.searchUnit.firstWhere(
+                                (item) => item.unitId == selectedId);
+                            expenseProvider.itemMaterialUnitController.text =
+                                selectedData.unitName;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: expenseProvider.itemQuantityController,
+                          hintText: 'Quantity',
+                          labelText: '',
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,2}')),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 56,
+                    controller: expenseProvider.itemMaterialOrderByController,
+                    hintText: 'Order By',
+                    labelText: '',
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Show Item in Print'),
+                    value: expenseProvider.isQuantity,
+                    onChanged: (value) {
+                      expenseProvider.isQuantity = value ?? false;
+                    },
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Quantity As Per Required'),
+                    value: expenseProvider.asPerRequired,
+                    onChanged: (value) {
+                      expenseProvider.asPerRequired = value ?? false;
+                    },
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSectionTitle('Price Range'),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller:
+                              expenseProvider.materialPriceFromController,
+                          hintText: 'From Price',
+                          labelText: '',
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,2}')),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 56,
+                          controller: expenseProvider.materialPriceToController,
+                          hintText: 'To Price',
+                          labelText: '',
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,2}')),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.secondaryBlue),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    expenseProvider.addOrEditItem(context);
+                    Navigator.pop(context); // Close dialog after save
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondaryBlue,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text('Save'),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
