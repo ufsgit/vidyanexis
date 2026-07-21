@@ -2366,7 +2366,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print('Exception occurred: $e');
       if (!isLoadMore) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred')),
+          SnackBar(content: Text('Error: $e')),
         );
       }
     } finally {
@@ -2403,7 +2403,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
+        SnackBar(content: Text('Error: $e')),
       );
     } finally {
       _isLoadingDetails = false;
@@ -2610,7 +2610,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
+        SnackBar(content: Text('Error: $e')),
       );
     } finally {
       _isLoading = false; // Set loading to false once the request completes
@@ -2633,29 +2633,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          // var listData = data[0];
-          // print(listData);
-
-          // _serviceDetails = (listData as List)
-          //     .map((item) => ServiceDetailsModel.fromJson(item))
-          //     .toList();
           _serviceDetails = [ServiceDetailsModel.fromJson(data)];
-
-          // // Check if data is a List and map it to TaskDetails objects
-          // if (data is List) {
-          //   _taskDetails =
-          //       data.map((item) => TaskDetails.fromJson(item)).toList();
-          // } else if (data is Map) {
-          //   // Handle Map data if needed
-          //   if (data['task_notes'] != null && data['task_notes'] is List) {
-          //     var taskNotesList = data['task_notes'] as List<dynamic>;
-          //     _taskDetails = taskNotesList
-          //         .map((item) => TaskDetails.fromJson(item))
-          //         .toList();
-          //   }
-          // }
           notifyListeners();
-          // Notify listeners to update the UI
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -2665,7 +2644,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
+        SnackBar(content: Text('Error: $e')),
       );
     } finally {
       _isLoadingDetails = false;
@@ -2882,9 +2861,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
         if (data != null) {
           log(data.toString());
 
-          _quotationList = (data as List)
-              .map((item) =>
-                  QuatationListModel.fromMap(item as Map<String, dynamic>))
+          List<dynamic> rawList = [];
+          if (data is List) {
+            rawList = data;
+          } else if (data is Map && data['data'] != null && data['data'] is List) {
+            rawList = data['data'] as List;
+          }
+
+          _quotationList = rawList
+              .map((item) => QuatationListModel.fromMap(
+                  Map<String, dynamic>.from(item as Map)))
               .toList();
         }
       } else {

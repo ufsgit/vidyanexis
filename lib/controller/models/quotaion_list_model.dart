@@ -71,51 +71,57 @@ class QuatationListModel {
 
   factory QuatationListModel.fromMap(Map<String, dynamic> json) =>
       QuatationListModel(
-        advancePercentage: json["advance_percentage"] ?? "",
-        onDeliveryPercentage: json["onmaterialdelivery_percentage"] ?? "",
-        workCompletionPercentage: json["onWork_completetion_percentage"] ?? "",
-        quotationMasterId: json["Quotation_Master_Id"] ?? 0,
-        customerId: json["Customer_Id"] ?? 0,
+        advancePercentage: json["advance_percentage"]?.toString() ?? "",
+        onDeliveryPercentage:
+            json["onmaterialdelivery_percentage"]?.toString() ?? "",
+        workCompletionPercentage:
+            json["onWork_completetion_percentage"]?.toString() ?? "",
+        quotationMasterId:
+            int.tryParse(json["Quotation_Master_Id"]?.toString() ?? '') ?? 0,
+        customerId: int.tryParse(json["Customer_Id"]?.toString() ?? '') ?? 0,
         entryDate: json["EntryDate"],
-        quotationNo: json["Quotation_No"] ?? '',
-        paymentTerms: json["PaymentTerms"] ?? 0,
-        paymentTermDescription: json["Payment_Term_Description"] ?? '',
-        totalAmount: json["TotalAmount"] ?? '0.0',
-        subsidyAmount: json["Subsidy_Amount"] ?? '0.0',
+        quotationNo: json["Quotation_No"]?.toString() ?? '',
+        paymentTerms: int.tryParse(json["PaymentTerms"]?.toString() ?? '') ?? 0,
+        paymentTermDescription:
+            json["Payment_Term_Description"]?.toString() ?? '',
+        totalAmount: json["TotalAmount"]?.toString() ?? '0.0',
+        subsidyAmount: json["Subsidy_Amount"]?.toString() ?? '0.0',
         subsidyticked: json["Subsidyticked"] != null
             ? int.tryParse(json["Subsidyticked"].toString())
             : null,
-        netTotal: json["NetTotal"] ?? '0.0',
-        productName: json["Product_Name"] ?? '',
-        warranty: json["Warranty"] ?? '',
-        termsAndConditions: json["Terms_And_Conditions"] ?? '',
-        isConfirm: json["Is_Confirm"] ?? 0,
-        orderNo: json["Order_No"] ?? '',
+        netTotal: json["NetTotal"]?.toString() ?? '0.0',
+        productName: json["Product_Name"]?.toString() ?? '',
+        warranty: json["Warranty"]?.toString() ?? '',
+        termsAndConditions: json["Terms_And_Conditions"]?.toString() ?? '',
+        isConfirm: int.tryParse(json["Is_Confirm"]?.toString() ?? '') ?? 0,
+        orderNo: json["Order_No"]?.toString() ?? '',
         orderDate: json["Order_Date"] != null
-            ? DateTime.tryParse(json["Order_Date"])
+            ? DateTime.tryParse(json["Order_Date"].toString())
             : null,
-        confirmedBy: json["Confirmed_By"] ?? 0,
-        quotationStatusId: json["Quotation_Status_Id"] ?? 0,
-        quotationStatusName: json["Quotation_Status_Name"] ?? '',
-        activeStatus: json["Active_Status"] ?? 0,
-        createdBy: json["Created_By"] ?? 0,
-        description: json["Description"] ?? '',
-        deleteStatus: json["DeleteStatus"] ?? 0,
-        createdByName: json["Created_By_Name"] ?? '',
-        quotationTypeId: json["QuotationTypeId"] ?? 0,
+        confirmedBy: int.tryParse(json["Confirmed_By"]?.toString() ?? '') ?? 0,
+        quotationStatusId:
+            int.tryParse(json["Quotation_Status_Id"]?.toString() ?? '') ?? 0,
+        quotationStatusName: json["Quotation_Status_Name"]?.toString() ?? '',
+        activeStatus: int.tryParse(json["Active_Status"]?.toString() ?? '') ?? 0,
+        createdBy: int.tryParse(json["Created_By"]?.toString() ?? '') ?? 0,
+        description: json["Description"]?.toString() ?? '',
+        deleteStatus: int.tryParse(json["DeleteStatus"]?.toString() ?? '') ?? 0,
+        createdByName: json["Created_By_Name"]?.toString() ?? '',
+        quotationTypeId:
+            int.tryParse(json["QuotationTypeId"]?.toString() ?? '') ?? 0,
         quotationDetails: json["quotation_details"] == null
             ? []
-            : List<QuotationDetail>.from(json["quotation_details"]!
-                .map((x) => QuotationDetail.fromMap(x))),
+            : List<QuotationDetail>.from((json["quotation_details"] as List)
+                .map((x) => QuotationDetail.fromMap(Map<String, dynamic>.from(x)))),
         billOfMaterials: json["bill_of_materials"] == null
             ? []
-            : List<BillOfMaterial>.from(json["bill_of_materials"]
-                .map((x) => BillOfMaterial.fromMap(x))),
+            : List<BillOfMaterial>.from((json["bill_of_materials"] as List)
+                .map((x) => BillOfMaterial.fromMap(Map<String, dynamic>.from(x)))),
         productionChartModel: json["production_chart"] == null
             ? []
-            : List<ProductionChartModel>.from(json["production_chart"]
-                .map((x) => ProductionChartModel.fromJson(x))),
-        branchId: json["Branch_Id"] ?? 0,
+            : List<ProductionChartModel>.from((json["production_chart"] as List)
+                .map((x) => ProductionChartModel.fromJson(Map<String, dynamic>.from(x)))),
+        branchId: int.tryParse(json["Branch_Id"]?.toString() ?? '') ?? 0,
       );
 
   Map<String, dynamic> toMap() => {
