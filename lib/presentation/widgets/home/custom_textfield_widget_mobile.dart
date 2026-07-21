@@ -290,10 +290,16 @@ class _CustomTextfieldWidgetMobileState
     super.initState();
     _focusNode = widget.focusNode ?? FocusNode();
     _controller = widget.controller ?? TextEditingController();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
     // Only dispose if we created the focus node
     if (widget.focusNode == null) {
       _focusNode.dispose();
@@ -314,7 +320,12 @@ class _CustomTextfieldWidgetMobileState
             borderRadius: BorderRadius.circular(4),
             border: widget.showError
                 ? Border.all(color: Colors.red, width: 1)
-                : Border.all(color: AppColors.grey)),
+                : Border.all(
+                    color: _focusNode.hasFocus
+                        ? AppColors.bluebutton
+                        : AppColors.grey,
+                    width: _focusNode.hasFocus ? 1.5 : 1.0,
+                  )),
         child: ValueListenableBuilder<TextEditingValue>(
             valueListenable: widget.controller!,
             builder: (context, value, child) {

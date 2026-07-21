@@ -267,8 +267,8 @@ class _CustomAutocompleteSearchState<T extends Object>
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide(
-                        color: AppColors.textGrey2,
-                        width: 1,
+                        color: AppColors.bluebutton,
+                        width: 1.5,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(

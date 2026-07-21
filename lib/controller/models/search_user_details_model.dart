@@ -23,10 +23,14 @@ class SearchUserDetails {
   String? empCode;
   String? designation;
   String? doj;
+  String? firstName;
+  String? lastName;
 
   SearchUserDetails(
       {required this.userDetailsId,
       required this.userDetailsName,
+      this.firstName,
+      this.lastName,
       this.password,
       this.workingStatus,
       this.userType,
@@ -54,6 +58,8 @@ class SearchUserDetails {
       SearchUserDetails(
           userDetailsId: json["User_Details_Id"] ?? 0,
           userDetailsName: json["User_Details_Name"] ?? '',
+          firstName: json["First_Name"]?.toString() ?? json["first_name"]?.toString() ?? '',
+          lastName: json["Last_Name"]?.toString() ?? json["last_name"]?.toString() ?? '',
           password: json["Password"]?.toString() ?? '0',
           workingStatus: json["Working_Status"]?.toString() ?? '0',
           userType: json["User_Type"]?.toString() ?? '0',

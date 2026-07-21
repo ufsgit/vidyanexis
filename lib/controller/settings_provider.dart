@@ -176,6 +176,8 @@ class SettingsProvider extends ChangeNotifier {
   //controllers
   final TextEditingController versionController = TextEditingController();
   final TextEditingController userNameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController userTypeController = TextEditingController();
   final TextEditingController passWordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -2987,6 +2989,8 @@ class SettingsProvider extends ChangeNotifier {
     required String branchId,
     required String branchName,
     required String appLogin,
+    String? firstName,
+    String? lastName,
   }) async {
     if (_isAddingUser) return;
     _isAddingUser = true;
@@ -3003,7 +3007,15 @@ class SettingsProvider extends ChangeNotifier {
           bodyData: {
             "User_Details_Id": userDetailsId,
             "User_Details_Name": userDetailsName,
+            "User_Name": userDetailsName,
+            "First_Name": firstNameController.text.isNotEmpty
+                ? firstNameController.text
+                : (firstName ?? ''),
+            "Last_Name": lastNameController.text.isNotEmpty
+                ? lastNameController.text
+                : (lastName ?? ''),
             "Password": password,
+            "Pass": password,
             "Working_Status": workingStatus,
             "User_Type": userType,
             "Address1": addressName1,
@@ -4034,6 +4046,8 @@ class SettingsProvider extends ChangeNotifier {
     _selectedBranchId = -1;
     _selectedTransferDepartments.clear();
 
+    firstNameController.clear();
+    lastNameController.clear();
     userNameController.clear();
     userTypeController.clear();
     passWordController.clear();

@@ -105,8 +105,8 @@ class CustomPasswordWidget extends StatelessWidget {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4), // Rounded corners
                 borderSide: BorderSide(
-                  color: AppColors.textGrey2, // Border color
-                  width: 1, // Border width
+                  color: AppColors.bluebutton, // Border color on focus
+                  width: 1.5, // Highlight border width
                 ),
               ),
               enabledBorder: OutlineInputBorder(

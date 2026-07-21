@@ -96,7 +96,7 @@ class CommonDropdown<T> extends StatelessWidget {
             floatingLabelStyle: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textGrey1,
+              color: showError ? Colors.red : (focusedBorderColor ?? AppColors.bluebutton),
             ),
             labelStyle: GoogleFonts.plusJakartaSans(
               fontSize: 14,
@@ -111,7 +111,7 @@ class CommonDropdown<T> extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
               borderSide: BorderSide(
-                  color: showError ? Colors.red : (focusedBorderColor ?? AppColors.textGrey2), width: 1),
+                  color: showError ? Colors.red : (focusedBorderColor ?? AppColors.bluebutton), width: 1.5),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),

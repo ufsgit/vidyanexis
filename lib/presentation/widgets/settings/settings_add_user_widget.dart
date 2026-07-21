@@ -17,6 +17,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 class SettingsAddUserWidget extends StatefulWidget {
   final bool isEdit;
   final String? userName;
+  final String? firstName;
+  final String? lastName;
   final String? email;
   final String? mobileNo;
   final String? password;
@@ -37,6 +39,8 @@ class SettingsAddUserWidget extends StatefulWidget {
       {super.key,
       required this.isEdit,
       this.userName,
+      this.firstName,
+      this.lastName,
       this.email,
       this.mobileNo,
       this.password,
@@ -72,6 +76,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
         settingsProvider.confirmPasswordController.text = widget.password!;
         settingsProvider.passWordController.text = widget.password!;
         settingsProvider.userNameController.text = widget.userName!;
+        settingsProvider.firstNameController.text = widget.firstName ?? '';
+        settingsProvider.lastNameController.text = widget.lastName ?? '';
         settingsProvider.employeeCodeController.text = widget.empCode!;
         settingsProvider.dateOfJoinController.text = widget.doj!;
         settingsProvider.designationController.text = widget.designation!;
@@ -372,6 +378,22 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                 CustomTextField(
                   readOnly: false,
                   height: 54,
+                  controller: settingsProvider.firstNameController,
+                  hintText: 'First Name',
+                  labelText: '',
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.lastNameController,
+                  hintText: 'Last Name',
+                  labelText: '',
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
                   controller: settingsProvider.userNameController,
                   hintText: 'User Name *',
                   labelText: '',
@@ -551,6 +573,30 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   labelText: '',
                 ),
               ] else ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.firstNameController,
+                        hintText: 'First Name',
+                        labelText: '',
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.lastNameController,
+                        hintText: 'Last Name',
+                        labelText: '',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
                 Row(
                   children: [
                     Expanded(
@@ -889,7 +935,11 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                                           .selectedBranchId
                                           .toString(),
                                       branchName: settingsProvider
-                                          .branchController.text);
+                                          .branchController.text,
+                                      firstName: settingsProvider
+                                          .firstNameController.text,
+                                      lastName: settingsProvider
+                                          .lastNameController.text);
 
                                   settingsProvider.resetStates();
                                   Navigator.pop(context);
@@ -1001,7 +1051,9 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                         departmentName:
                             settingsProvider.departmentUserController.text,
                         branchId: settingsProvider.selectedBranchId.toString(),
-                        branchName: settingsProvider.branchController.text);
+                        branchName: settingsProvider.branchController.text,
+                        firstName: settingsProvider.firstNameController.text,
+                        lastName: settingsProvider.lastNameController.text);
 
                     settingsProvider.resetStates();
                     Navigator.pop(context);

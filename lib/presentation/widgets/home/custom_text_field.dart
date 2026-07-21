@@ -110,7 +110,9 @@ class CustomTextField extends StatelessWidget {
               floatingLabelStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 14, // Slightly smaller size for floating label
                 fontWeight: FontWeight.w500,
-                color: AppColors.textGrey1, // Color for floating label
+                color: showError
+                    ? Colors.red
+                    : (focusedBorderColor ?? AppColors.bluebutton), // Color for floating label when focused
               ),
               labelStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
@@ -129,9 +131,10 @@ class CustomTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                     borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
-                  color:
-                      focusedBorderColor ?? AppColors.textGrey2, // Border color
-                  width: 1, // Border width
+                  color: showError
+                      ? Colors.red
+                      : (focusedBorderColor ?? AppColors.bluebutton), // Border color on focus
+                  width: 1.5, // Highlight border width
                 ),
               ),
               enabledBorder: OutlineInputBorder(
