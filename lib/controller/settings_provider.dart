@@ -499,6 +499,7 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController cgstNoController = TextEditingController();
   final TextEditingController cpanNoController = TextEditingController();
   final TextEditingController ccinNoController = TextEditingController();
+  final TextEditingController ccompanyCodeController = TextEditingController();
 
   final List<Uint8List> _images = [];
   List<Uint8List> get images => _images;
@@ -4375,6 +4376,7 @@ class SettingsProvider extends ChangeNotifier {
             "Gst_No": cgstNoController.text.toString(),
             "Pan_No": cpanNoController.text.toString(),
             "Cin_No": ccinNoController.text.toString(),
+            "Company_Code": ccompanyCodeController.text.toString(),
             "Is_Location": _toggleValue,
             "Enquiry_For_Mandatory": _enquiryForMandatory,
             "Enquiry_Source_Mandatory": _enquirySourceMandatory,
@@ -4506,6 +4508,7 @@ class SettingsProvider extends ChangeNotifier {
     cgstNoController.clear();
     cpanNoController.clear();
     ccinNoController.clear();
+    ccompanyCodeController.clear();
     uploadedFilePath = '';
     _toggleValue = 0;
     _enquiryForMandatory = 0;

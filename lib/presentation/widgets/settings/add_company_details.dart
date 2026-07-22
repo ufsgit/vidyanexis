@@ -186,6 +186,14 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                   hintText: 'CIN NO',
                   labelText: '',
                 ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.ccompanyCodeController,
+                  hintText: 'Company Code',
+                  labelText: '',
+                ),
               ] else ...[
                 Row(
                   children: [
@@ -315,6 +323,16 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                         height: 54,
                         controller: settingsProvider.ccinNoController,
                         hintText: 'CIN NO',
+                        labelText: '',
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.ccompanyCodeController,
+                        hintText: 'Company Code',
                         labelText: '',
                       ),
                     ),
